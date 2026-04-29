@@ -1,0 +1,415 @@
+{
+  "Sidebar": {
+    "openNav": "ナビゲーションを開く",
+    "closeNav": "ナビゲーションを閉じる",
+    "newTranscript": "新規文字起こし",
+    "aiTools": "AIツール",
+    "browserExtension": "ブラウザ拡張機能",
+    "myLibrary": "マイライブラリ",
+    "pricing": "料金",
+    "pricingBadge": "50% OFF",
+    "freePlan": "フリープラン",
+    "freePlanQuota": "4 / 日",
+    "upgradePlan": "プランをアップグレード",
+    "signIn": "サインイン",
+    "language": "言語",
+    "docs": "ドキュメント",
+    "help": "ヘルプ",
+    "nav": [
+      { "label": "ホーム", "href": "#top", "icon": "Home", "active": true },
+      { "label": "音声を文字に", "href": "#generator", "icon": "AudioLines" },
+      { "label": "動画を文字に", "href": "#generator", "icon": "Clapperboard" },
+      { "label": "YouTube 文字起こし", "href": "#generator", "icon": "PlaySquare" },
+      { "label": "TikTok 文字起こし", "href": "#generator", "icon": "Music2" },
+      { "label": "Instagram 文字起こし", "href": "#generator", "icon": "Camera" }
+    ],
+    "tools": [
+      { "label": "要約", "href": "#features" },
+      { "label": "翻訳", "href": "#features" },
+      { "label": "字幕（SRT/VTT）", "href": "#features" }
+    ]
+  },
+  "Header": {
+    "tryFree": "無料で試す",
+    "expandSidebar": "サイドバーを開く",
+    "collapseSidebar": "サイドバーを閉じる",
+    "language": "言語"
+  },
+  "Generator": {
+    "issue": "REC · 00:00:00",
+    "issueLabel": "Issue №01 · 動画から文字へ",
+    "h1Part1": "動画を文字に変換。",
+    "h1Part2": "<accent>無料の AI 文字起こし。</accent>",
+    "description": "Scribix は任意の動画を、話者ラベル付きの正確なテキストに秒単位で変換します。MP4、MOV、WebM、AVI ファイルをアップロード、または YouTube リンクを貼り付けるだけで、<stat>200以上の言語</stat>での完全な文字起こしが、単語レベルのタイムスタンプ付きで得られます。<stat>無料</stat>、登録不要、長さ制限なし。",
+    "trust": [
+      { "label": "99.9% 精度", "icon": "Target" },
+      { "label": "200以上の言語", "icon": "Globe" },
+      { "label": "最大 5GB ファイル", "icon": "InfinityIcon" },
+      { "label": "話者識別", "icon": "Users" },
+      { "label": "プライベート＆セキュア", "icon": "ShieldCheck" }
+    ],
+    "tabs": [
+      { "id": "upload", "label": "ファイルアップロード", "hint": "動画 · 音声", "icon": "Upload" },
+      { "id": "youtube", "label": "YouTube リンク", "hint": "URL を貼り付け", "icon": "PlaySquare" },
+      { "id": "record", "label": "録音", "hint": "ライブ音声", "icon": "Mic" }
+    ],
+    "upload": {
+      "instruction": "動画または音声ファイルをドラッグ＆ドロップ、またはクリックして参照してください。",
+      "specs": "最大 5GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
+      "button": "ファイルアップロード"
+    },
+    "youtube": {
+      "label": "YouTube URL を貼り付け",
+      "placeholder": "https://www.youtube.com/watch?v=…",
+      "submit": "動画を文字起こし",
+      "hint": "最大 6 時間の動画をサポート · 自動字幕をスキップ、より高い精度のため音声を再取得"
+    },
+    "record": {
+      "active": "録音中…",
+      "idle": "ライブ音声を録音",
+      "activeTime": "00:00:12",
+      "idleHint": "マイクをタップして開始"
+    },
+    "examplesTitle": "例",
+    "examplesHint": "デモを試す · クリックで読み込み",
+    "examples": [
+      {
+        "type": "audio",
+        "title": "Learn Case Interviews in Under 30 Minutes.mp3",
+        "duration": "29:04",
+        "icon": "FileAudio",
+        "color": "text-sage"
+      },
+      {
+        "type": "youtube",
+        "title": "Optimal Protocols for Studying & Learning",
+        "duration": "01:41:39",
+        "icon": "PlaySquare",
+        "color": "text-[#cc0000]"
+      },
+      {
+        "type": "video",
+        "title": "Joy is all around us — David Larbi · TED",
+        "duration": "04:15",
+        "icon": "FileVideo",
+        "color": "text-accent"
+      },
+      {
+        "type": "audio",
+        "title": "Aphantasia Explained — Visualization & Memory",
+        "duration": "01:30",
+        "icon": "FileAudio",
+        "color": "text-sage"
+      }
+    ]
+  },
+  "TrustStrip": {
+    "tagline": "世界中の動画クリエイター、ジャーナリスト、ポッドキャスターに信頼されています",
+    "logos": [
+      "Stanford Podcast Network",
+      "TED Conferences",
+      "The Atlantic",
+      "Y Combinator",
+      "Wirecutter",
+      "MIT Sloan Review"
+    ],
+    "stats": [
+      { "value": "10M+", "label": "文字起こし分数" },
+      { "value": "100K+", "label": "アクティブクリエイター" },
+      { "value": "200+", "label": "対応言語" },
+      { "value": "99.9%", "label": "単語レベル精度" }
+    ]
+  },
+  "Features": {
+    "label": "機能",
+    "number": "01",
+    "h2": "<accent>精度</accent>を重視する動画クリエイター向け。",
+    "intro": "動画から文字起こしツールは、動画内の話された音声をテキストに文字起こしします。最新の AI スピーチモデルは、単語を認識し、話者を分離し、タイムスタンプを付与します。数時間ではなく数分で編集可能な文字起こしを作成します。Scribix は、プロフェッショナルな文字起こしスイートを支える同じレベルのスピーチモデルを実行します。登録不要、長さ制限なし、発行可能なほど出力品質が高いです。",
+    "items": [
+      {
+        "icon": "Users",
+        "title": "話者認識、最大 8 音声",
+        "body": "音声指紋認証は各話者を分離・ラベル付けします—「話者 1」「話者 2」は 1 クリックで実名に。インタビュー、ポッドキャスト、パネルディスカッションに最適。",
+        "span": "lg:col-span-2"
+      },
+      {
+        "icon": "Globe",
+        "title": "200以上の言語、自動検出",
+        "body": "北京官話からマルタ語まで、コード交換サポート付き。モデルは話者が言語を切り替える際に中途で適応します。"
+      },
+      {
+        "icon": "Clock",
+        "title": "単語レベルのタイムスタンプ",
+        "body": "任意の単語をクリックしてその時点を再生できます。タイムスタンプは SRT および VTT 字幕とともにエクスポート、ビデオプレイヤーに対応。"
+      },
+      {
+        "icon": "FileDown",
+        "title": "7 つのエクスポート形式",
+        "body": "TXT、DOCX、PDF、SRT、VTT、JSON、HTML — ブログエディター、ビデオプレイヤー、アクセシビリティツール、開発パイプラインに対応、余分な変換不要。",
+        "span": "lg:col-span-2"
+      },
+      {
+        "icon": "Sparkles",
+        "title": "スタジオグレード精度",
+        "body": "クリアな音声の主言語では 99.9%、TED トーク、ポッドキャスト、インタビューの 50 時間ベンチマークで測定。背景ノイズとアクセントに対応。"
+      },
+      {
+        "icon": "Lock",
+        "title": "ファイルは 24 時間で削除",
+        "body": "転送時は TLS 1.3、保存時は AES-256、処理は暗号化メモリで実行。SOC 2 準拠、GDPR 対応。お客様の音声でモデルをトレーニングすることはありません。"
+      }
+    ]
+  },
+  "HowItWorks": {
+    "label": "使い方",
+    "number": "02",
+    "h2Part1": "3 ステップ。",
+    "h2Part2": "<accent>1 分以内で動画を文字に。</accent>",
+    "steps": [
+      {
+        "n": "01",
+        "icon": "CloudUpload",
+        "title": "動画をアップロード—またはリンクを貼り付け。",
+        "body": "MP4、MOV、AVI、MKV、WebM ファイル（最大 5 GB）をドラッグ＆ドロップ、または YouTube、TikTok、Instagram URL を貼り付けます。形式変換不要—Scribix はあらゆる一般的なコンテナに対応。",
+        "duration": "最大 5 GB · 6 時間"
+      },
+      {
+        "n": "02",
+        "icon": "Cpu",
+        "title": "AI が話者ラベル付きで文字起こし。",
+        "body": "モデルは言語を自動検出（200以上対応）、最大 8 人の話者を分離、すべての単語にタイムスタンプを付与します。1 時間の動画は約 90 秒で文字起こし。",
+        "duration": "1 時間動画で ~90秒"
+      },
+      {
+        "n": "03",
+        "icon": "Download",
+        "title": "編集、コピー、またはエクスポート。",
+        "body": "任意の単語をクリックしてその時点を再生できます。インラインで編集、TXT、DOCX、PDF、SRT、VTT、JSON、HTML としてダウンロード—またはエディターに文字起こしをコピー。",
+        "duration": "7 つのエクスポート形式"
+      }
+    ]
+  },
+  "UseCases": {
+    "label": "ユースケース",
+    "number": "03",
+    "h2Part1": "毎日",
+    "h2Part2": "<accent>動画をテキストに変換する</accent>人たち向け。",
+    "intro": "90 分のフッテージをショートフォーム動画に転用する YouTuber から、2 時間インタビューから正確に引用するジャーナリストまで、動画から文字起こしは、記録された会話を発行された作品に変えます。Scribix はその原動力です。",
+    "items": [
+      {
+        "icon": "Clapperboard",
+        "title": "YouTube クリエイター",
+        "audience": "ロングフォーム→ショートフォーム",
+        "body": "アクセシビリティのため字幕を生成、ロング動画をブログに転用、エピソードアーカイブを検索可能に。単語レベルのタイムスタンプにより、[12:04 – 12:38] の精度でバイラルクリップ抽出が簡単。",
+        "workflow": ["ロング動画", "正確な字幕", "クリップ＆ショート"]
+      },
+      {
+        "icon": "Mic",
+        "title": "ポッドキャスター＆プロデューサー",
+        "audience": "音声＋動画番組",
+        "body": "各エピソードをショーノート、ブログコンテンツ、SEO インデックス対象の文字起こしに変換—Google で見つかるかどうかの分岐点。話者ラベルは発行可能な状態で到着。",
+        "workflow": ["エピソード録音", "話者ラベル付き文字起こし", "ショーノート＋クリップ"]
+      },
+      {
+        "icon": "Newspaper",
+        "title": "ジャーナリスト＆インタビュアー",
+        "audience": "調査報道",
+        "body": "90 分インタビューを次の取材に向かう途中で文字起こし。話者ラベルはソースを再リスニングなしで正確に引用可能—引用可能なテキストが時間の分の一で。",
+        "workflow": ["ソースインタビュー", "逐語的文字起こし", "引用を抽出"]
+      },
+      {
+        "icon": "FlaskConical",
+        "title": "研究者＆UX",
+        "audience": "フォーカスグループ、フィールドワーク",
+        "body": "人間による文字起こしに $1.50/分 を払うことなく、フォーカスグループ、講義、フィールド録音の定性コーディングを実行。テーマをタグ付け、あらゆる単語を検索、Dovetail や Notion にエクスポート。",
+        "workflow": ["ユーザーインタビュー", "タグ付きテーマ", "合成対応"]
+      },
+      {
+        "icon": "GraduationCap",
+        "title": "学生",
+        "audience": "講義＆学習",
+        "body": "2 時間の講義を検索可能なノートに変換。混乱した瞬間をマーク、単語をクリック、再度聞く。フリープランは多くの学生がセメスター全体をカバーします。",
+        "workflow": ["講義録画", "検索可能なノート", "AI 要約"]
+      },
+      {
+        "icon": "Scale",
+        "title": "法務＆コンプライアンス",
+        "audience": "証言、聴聞会",
+        "body": "証言、役員会議、コンプライアンスインタビューの一次文字起こし—重要な部分を人間に検証させます。タイムコード付き文字起こしと監査可能な処理チェーン。SOC 2 準拠。",
+        "workflow": ["聴聞録音", "タイムコード付き文字起こし", "監査証跡"]
+      }
+    ]
+  },
+  "Comparison": {
+    "label": "比較",
+    "number": "04",
+    "h2": "より高速で、より正確、<accent>フリープランは無制限。</accent>",
+    "intro": "毎月、12 言語、48 話者、4 つのオーディオ環境（スタジオ、電話、会議、屋外）にまたがる 200 時間のテストセットで、主要な動画から文字起こしツールに対してベンチマークを実施します。",
+    "featureHeader": "機能",
+    "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
+    "rows": [
+      { "feature": "フリープラン", "cells": ["Unlimited", "300 / 月", "45 トライアル", "Unlimited"] },
+      { "feature": "ファイルサイズ上限", "cells": ["5 GB", "1.5 GB", "2 GB", "Local"] },
+      { "feature": "対応言語", "cells": ["200+", "30+", "38", "99"] },
+      { "feature": "話者分離", "cells": ["yes", "yes", "yes", "no"] },
+      { "feature": "単語レベルタイムスタンプ", "cells": ["yes", "no", "yes", "yes"] },
+      { "feature": "YouTube URL サポート", "cells": ["yes", "no", "no", "no"] },
+      { "feature": "エクスポート形式", "cells": ["7", "4", "5", "1"] },
+      { "feature": "ファイル削除期間", "cells": ["24 hr", "30 days+", "30 days+", "Self-host"] },
+      { "feature": "料金 — 100 時間", "cells": ["$12", "$30", "$150", "Compute only"] }
+    ]
+  },
+  "Testimonials": {
+    "label": "ユーザーの声",
+    "number": "05",
+    "h2": "<accent>記録された動画の現実</accent>に対応。",
+    "items": [
+      {
+        "quote": "週 1 回 3 人のゲスト出演の動画ポッドキャストを制作します。Scribix は 3 時間の重なった音声を CMS に貼り付けられる形に変換します。話者ラベルだけで丸一日分の手間を削減。",
+        "name": "Maya Bhattacharya",
+        "role": "Senior Producer · The Open Notebook",
+        "rating": "5.0"
+      },
+      {
+        "quote": "14 時間の証言動画のタイムコード付き文字起こしが必要な裁判がありました。Scribix は、$4/分 で使っていた認定サービスより清潔な出力を提供。驚きです。",
+        "name": "Daniel Reyes",
+        "role": "Litigation Counsel · Reyes & Patel",
+        "rating": "4.9"
+      },
+      {
+        "quote": "バハサ語でコード交換された英語ですべてのフィールドワークインタビューを動画記録。他のツールはつまずきます。Scribix は言語設定に触れることなく全体を文字起こし。",
+        "name": "Dr. Aisha Mohktar",
+        "role": "Anthropologist · NUS",
+        "rating": "5.0"
+      }
+    ]
+  },
+  "Pricing": {
+    "label": "料金",
+    "number": "06",
+    "h2": "分単位で支払い、<accent>マーケティングには不要。</accent>",
+    "intro": "実際に役立つ 1 つのフリープラン。シート税や予期しないオーバーチャージのない 2 つの有料プラン。いつでもキャンセル、すべてエクスポート可能。",
+    "mostLoved": "最も人気",
+    "plans": [
+      {
+        "name": "Free",
+        "price": "$0",
+        "cadence": "永遠",
+        "blurb": "たまの文字起こし、学生、試しに使う人向け。",
+        "features": [
+          "無制限動画文字起こし",
+          "1 ファイルあたり最大 30 分",
+          "話者ラベル（最大 4）",
+          "SRT、VTT＆DOCX エクスポート"
+        ],
+        "cta": "無料で開始",
+        "primary": false
+      },
+      {
+        "name": "Studio",
+        "price": "$12",
+        "cadence": "月額",
+        "blurb": "YouTuber、ポッドキャスター、小規模チームに最も人気。",
+        "features": [
+          "無制限文字起こし、任意の長さ",
+          "1 ファイルあたり最大 6 時間",
+          "話者ラベル（最大 8）",
+          "AI 要約、チャプター、アクションアイテム",
+          "優先キュー（5×リアルタイム）",
+          "自動削除またはセルフホスティングオプション"
+        ],
+        "cta": "7 日間無料で試す",
+        "primary": true
+      },
+      {
+        "name": "Newsroom",
+        "price": "$48",
+        "cadence": "1 ユーザー / 月",
+        "blurb": "毎日動画をストーリーに変えるチーム向け。",
+        "features": [
+          "Studio のすべての機能",
+          "共有ワークスペース＆ロール",
+          "SOC 2 Type II + 監査ログ",
+          "カスタムボキャブラリ＆用語集",
+          "API アクセス（月 100 万分）",
+          "専任サクセスマネージャー"
+        ],
+        "cta": "営業に相談",
+        "primary": false
+      }
+    ]
+  },
+  "FAQ": {
+    "label": "よくある質問",
+    "number": "07",
+    "h2Part1": "ご質問、",
+    "h2Part2": "<accent>丁寧にお答えします。</accent>",
+    "contactPrefix": "お探しの情報が見つかりません。メール",
+    "contactEmail": "hello@scribix.app",
+    "contactSuffix": "で送信すると、実際の人間が営業日以内に返信します。",
+    "items": [
+      {
+        "q": "Scribix は動画から文字への変換が本当に無料ですか？",
+        "a": "はい。フリープランは分数上限なし、登録なし、クレジットカード不要。6 時間の会議録画を $0 で文字起こしできます。有料プランは優先キュー、チームライブラリ、より長いファイル保持期間をアンロック。"
+      },
+      {
+        "q": "Scribix はどの動画形式に対応していますか？",
+        "a": "MP4、MOV、AVI、MKV、WebM（各最大 5 GB）。音声のみファイル（MP3、WAV、M4A）も対応。YouTube、TikTok、Instagram URL を貼り付け—ダウンロード不要。"
+      },
+      {
+        "q": "Scribix の動画から文字への精度はどのくらいですか？",
+        "a": "主言語のクリアな音声では 99.9%（TED トーク、ポッドキャスト、インタビューの 50 時間ベンチマークで測定）。重いアクセント、背景音楽、低ビットレート音声では若干低下—ただし話者ラベルと単語レベルタイムスタンプで修正が素早い。"
+      },
+      {
+        "q": "YouTube 動画をテキストに文字起こしできますか？",
+        "a": "はい。ジェネレータに YouTube URL を貼り付けます。Scribix は YouTube の自動字幕（通常 70–80% の精度）を使う代わりに、モデルで音声を再取得します。よりクリーンな出力、話者ラベル、YouTube が公開していない単語レベルタイムスタンプが得られます。"
+      },
+      {
+        "q": "Scribix は何言語に対応していますか？",
+        "a": "200 以上、自動言語検出付き。モデルはコード交換（英語↔スペイン語、英語↔北京官話）を同一録音内で処理。主言語を事前選択する必要なし。"
+      },
+      {
+        "q": "Scribix は異なる話者を区別できますか？",
+        "a": "はい。音声指紋認証は最大 8 人の異なる話者を識別し、各行をラベル付けします。文字起こし後に「話者 1」「話者 2」を実名に変更でき、モデルは複数録音にわたって音声を記憶。"
+      },
+      {
+        "q": "動画から文字への文字起こしはどのくらい時間がかかりますか？",
+        "a": "クリアな音声の MP4 の場合、動画 1 時間あたり約 1 分の計算時間。30 分会議は約 45 秒。YouTube 動画の取得ステップはダウンロードで 5–15 秒追加。"
+      },
+      {
+        "q": "動画をアップロードする際、データは安全ですか？",
+        "a": "ファイルは TLS 1.3 でアップロード、暗号化メモリで処理、24 時間以内に削除。ユーザー音声でモデルをトレーニングしません。SOC 2 準拠インフラ、GDPR 対応データ処理、EU + US 地域処理オプション。"
+      },
+      {
+        "q": "文字起こしは何形式でエクスポートできますか？",
+        "a": "7 つの形式：TXT（プレーン）、DOCX（Word）、PDF、SRT（字幕）、VTT（ウェブ字幕）、JSON（開発者向け）、HTML（フォーマット済み）。エクスポート前にインラインで編集可能。"
+      },
+      {
+        "q": "Scribix はポッドキャストと音声のみファイルに対応していますか？",
+        "a": "はい—ただし音声優先ワークフローの場合、専用音声から文字への変換ツールが目的に特化。同じエンジン、同じ精度、音声チューニング UI。"
+      }
+    ]
+  },
+  "FinalCTA": {
+    "kicker": "準備ができたとき",
+    "h2Part1": "動画をドロップ。",
+    "h2Part2": "<accent>残りは私たちが。</accent>",
+    "body": "フリープランは無制限—登録なし、クレジットカード不要、分数上限なし。最初の文字起こしはコーヒーを飲み終わる前に出現。",
+    "primaryCta": "動画をアップロード",
+    "secondaryCta": "YouTube リンクを貼り付け",
+    "stats": [
+      { "value": "99.9%", "label": "精度" },
+      { "value": "5×", "label": "リアルタイム" },
+      { "value": "24h", "label": "自動削除" }
+    ]
+  },
+  "Footer": {
+    "tagline": "記録された会話をストーリーに変えるプロたちのためのスタジオグレード動画から文字。サンフランシスコとシンガポールで構築。",
+    "copyright": "© {year} Scribix Audio Lab, Inc. All rights reserved.",
+    "credit": "Fraunces & Geist でセット · 愛を込めて制作",
+    "legal": [
+      { "label": "利用規約", "href": "/terms" },
+      { "label": "プライバシーポリシー", "href": "/privacy" }
+    ]
+  }
+}

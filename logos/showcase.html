@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scribix — Final / Sage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --paper: #f4f0e6;
+            --card: #fbf8f0;
+            --ink: #0e0d0b;
+            --muted: #6e6b62;
+            --line: #e2dbc9;
+            --sage-light: #5c7050;
+            --sage-dark: #9db58e;
+            --paper-dark: #0e0d0b;
+        }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background: var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+        .font-display { font-family: 'Fraunces', Georgia, serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .tracking-ultra { letter-spacing: 0.2em; }
+
+        .hero {
+            text-align: center;
+            padding: 80px 24px 40px;
+        }
+
+        .panel {
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 64px 24px 56px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .panel:hover { transform: translateY(-3px); box-shadow: 0 24px 60px rgba(0,0,0,0.10); }
+
+        .panel-light { background: var(--paper); border: 1px solid var(--line); }
+        .panel-dark { background: var(--paper-dark); }
+
+        .panel-label {
+            position: absolute;
+            top: 18px;
+            left: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            opacity: 0.45;
+        }
+        .panel-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            margin-top: 28px;
+            opacity: 0.45;
+        }
+        .name-display {
+            font-family: 'Fraunces', Georgia, serif;
+            font-weight: 400;
+            font-size: 38px;
+            margin-top: 20px;
+        }
+
+        .swatch-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+        .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06); }
+        .label { opacity: 0.65; min-width: 110px; }
+        .hex { opacity: 0.45; }
+
+        .grid { display: grid; gap: 24px; }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+
+        .bubble-md { width: 132px; height: 132px; }
+        .bubble-sm { width: 64px; height: 64px; }
+        .bubble-xs { width: 32px; height: 32px; }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <p class="font-mono tracking-ultra" style="font-size: 11px; opacity: 0.4; text-transform: uppercase; margin-bottom: 24px;">
+            Scribix &middot; Final &middot; Sage
+        </p>
+        <div style="color: var(--sage-light); display: inline-block;">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 180px; height: 180px;">
+                <path d="M 22 28 Q 22 20, 30 20 L 70 20 Q 78 20, 78 28 L 78 54 Q 78 62, 70 62 L 42 62 L 34 72 L 34 62 Q 22 62, 22 54 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                <g fill="currentColor"><circle cx="34" cy="41" r="2"/><circle cx="42" cy="41" r="3.5"/><circle cx="50" cy="41" r="5"/><circle cx="58" cy="41" r="3.5"/><circle cx="66" cy="41" r="2"/></g>
+            </svg>
+        </div>
+        <h1 class="font-display" style="font-size: 56px; font-weight: 400; margin-top: 24px; color: var(--ink);">Scribix</h1>
+        <p class="font-mono tracking-ultra" style="font-size: 10px; opacity: 0.5; text-transform: uppercase; margin-top: 12px;">
+            Sage &middot; #5c7050 &middot; #9db58e
+        </p>
+    </div>
+
+    <!-- Light vs Dark, side by side -->
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 24px;">
+        <p class="font-mono tracking-ultra" style="font-size: 10px; opacity: 0.4; text-transform: uppercase; margin-bottom: 16px;">
+            Light Mode &middot; Dark Mode
+        </p>
+        <div class="grid grid-2">
+            <div class="panel panel-light" style="aspect-ratio: 4/3;">
+                <span class="panel-label" style="color: var(--ink);">Light</span>
+                <div style="color: var(--sage-light);">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="bubble-md">
+                        <path d="M 22 28 Q 22 20, 30 20 L 70 20 Q 78 20, 78 28 L 78 54 Q 78 62, 70 62 L 42 62 L 34 72 L 34 62 Q 22 62, 22 54 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                        <g fill="currentColor"><circle cx="34" cy="41" r="2"/><circle cx="42" cy="41" r="3.5"/><circle cx="50" cy="41" r="5"/><circle cx="58" cy="41" r="3.5"/><circle cx="66" cy="41" r="2"/></g>
+                    </svg>
+                </div>
+                <div class="name-display" style="color: var(--ink);">Scribix</div>
+                <p class="panel-meta" style="color: var(--ink);">Sage #5c7050 &middot; on Paper #f4f0e6</p>
+            </div>
+            <div class="panel panel-dark" style="aspect-ratio: 4/3;">
+                <span class="panel-label" style="color: #f0ead8;">Dark</span>
+                <div style="color: var(--sage-dark);">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="bubble-md">
+                        <path d="M 22 28 Q 22 20, 30 20 L 70 20 Q 78 20, 78 28 L 78 54 Q 78 62, 70 62 L 42 62 L 34 72 L 34 62 Q 22 62, 22 54 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                        <g fill="currentColor"><circle cx="34" cy="41" r="2"/><circle cx="42" cy="41" r="3.5"/><circle cx="50" cy="41" r="5"/><circle cx="58" cy="41" r="3.5"/><circle cx="66" cy="41" r="2"/></g>
+                    </svg>
+                </div>
+                <div class="name-display" style="color: #f0ead8;">Scribix</div>
+                <p class="panel-meta" style="color: #f0ead8;">Sage #9db58e &middot; on Ink #0e0d0b</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scale test -->
+    <div style="max-width: 1100px; margin: 56px auto 0; padding: 0 24px;">
+        <p class="font-mono tracking-ultra" style="font-size: 10px; opacity: 0.4; text-transform: uppercase; margin-bottom: 16px;">
+            Scale &mdash; favicon to hero
+        </p>
+        <div class="grid grid-3">
+            <div class="panel panel-light" style="aspect-ratio: 1; padding: 24px;">
+                <span class="panel-label" style="color: var(--ink);">32px favicon</span>
+                <div style="color: var(--sage-light);">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="bubble-xs">
+                        <path d="M 22 28 Q 22 20, 30 20 L 70 20 Q 78 20, 78 28 L 78 54 Q 78 62, 70 62 L 42 62 L 34 72 L 34 62 Q 22 62, 22 54 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                        <g fill="currentColor"><circle cx="34" cy="41" r="2"/><circle cx="42" cy="41" r="3.5"/><circle cx="50" cy="41" r="5"/><circle cx="58" cy="41" r="3.5"/><circle cx="66" cy="41" r="2"/></g>
+                    </svg>
+                </div>
+            </div>
+            <div class="panel panel-light" style="aspect-ratio: 1;">
+                <span class="panel-label" style="color: var(--ink);">64px nav</span>
+                <div style="color: var(--sage-light);">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="bubble-sm">
+                        <path d="M 22 28 Q 22 20, 30 20 L 70 20 Q 78 20, 78 28 L 78 54 Q 78 62, 70 62 L 42 62 L 34 72 L 34 62 Q 22 62, 22 54 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                        <g fill="currentColor"><circle cx="34" cy="41" r="2"/><circle cx="42" cy="41" r="3.5"/><circle cx="50" cy="41" r="5"/><circle cx="58" cy="41" r="3.5"/><circle cx="66" cy="41" r="2"/></g>
+                    </svg>
+                </div>
+            </div>
+            <div class="panel panel-light" style="aspect-ratio: 1;">
+                <span class="panel-label" style="color: var(--ink);">132px hero</span>
+                <div style="color: var(--sage-light);">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="bubble-md">
+                        <path d="M 22 28 Q 22 20, 30 20 L 70 20 Q 78 20, 78 28 L 78 54 Q 78 62, 70 62 L 42 62 L 34 72 L 34 62 Q 22 62, 22 54 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                        <g fill="currentColor"><circle cx="34" cy="41" r="2"/><circle cx="42" cy="41" r="3.5"/><circle cx="50" cy="41" r="5"/><circle cx="58" cy="41" r="3.5"/><circle cx="66" cy="41" r="2"/></g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spec block -->
+    <div style="max-width: 720px; margin: 64px auto 80px; padding: 0 24px;">
+        <p class="font-mono tracking-ultra" style="font-size: 10px; opacity: 0.4; text-transform: uppercase; margin-bottom: 16px;">
+            Tokens &mdash; already in app/globals.css
+        </p>
+        <div style="background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 24px;">
+            <div class="swatch-row"><span class="dot" style="background: var(--sage-light);"></span><span class="label">Sage / light</span><span class="hex">#5c7050</span><span style="margin-left: auto; opacity: 0.5;">var(--sage)</span></div>
+            <div class="swatch-row"><span class="dot" style="background: var(--sage-dark);"></span><span class="label">Sage / dark</span><span class="hex">#9db58e</span><span style="margin-left: auto; opacity: 0.5;">var(--sage) in .dark</span></div>
+        </div>
+        <p class="font-mono" style="font-size: 11px; opacity: 0.55; line-height: 1.7; margin-top: 20px;">
+            Logo SVG uses currentColor &mdash; set <code style="background: var(--card); padding: 2px 6px; border-radius: 3px;">color: var(--sage)</code> on the wrapper and the dark-mode swap is automatic.
+        </p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,415 @@
+{
+  "Sidebar": {
+    "openNav": "Navigation öffnen",
+    "closeNav": "Navigation schließen",
+    "newTranscript": "Neue Transkription",
+    "aiTools": "KI-Tools",
+    "browserExtension": "Browser-Erweiterung",
+    "myLibrary": "Meine Bibliothek",
+    "pricing": "Preisgestaltung",
+    "pricingBadge": "50 % Rabatt",
+    "freePlan": "Kostenloser Plan",
+    "freePlanQuota": "4 / Tag",
+    "upgradePlan": "Plan upgraden",
+    "signIn": "Anmelden",
+    "language": "Sprache",
+    "docs": "Docs",
+    "help": "Hilfe",
+    "nav": [
+      { "label": "Startseite", "href": "#top", "icon": "Home", "active": true },
+      { "label": "Audio zu Text", "href": "#generator", "icon": "AudioLines" },
+      { "label": "Video zu Text", "href": "#generator", "icon": "Clapperboard" },
+      { "label": "YouTube-Transkript", "href": "#generator", "icon": "PlaySquare" },
+      { "label": "TikTok-Transkript", "href": "#generator", "icon": "Music2" },
+      { "label": "Instagram-Transkript", "href": "#generator", "icon": "Camera" }
+    ],
+    "tools": [
+      { "label": "Zusammenfassen", "href": "#features" },
+      { "label": "Übersetzen", "href": "#features" },
+      { "label": "Untertitel (SRT/VTT)", "href": "#features" }
+    ]
+  },
+  "Header": {
+    "tryFree": "Kostenlos testen",
+    "expandSidebar": "Seitenleiste öffnen",
+    "collapseSidebar": "Seitenleiste schließen",
+    "language": "Sprache"
+  },
+  "Generator": {
+    "issue": "AUF · 00:00:00",
+    "issueLabel": "Ausgabe №01 · Video zu Text",
+    "h1Part1": "Video in Text umwandeln.",
+    "h1Part2": "<accent>Kostenlose KI-Transkription.</accent>",
+    "description": "Scribix wandelt jedes Video in sekundenschnelle präzise, sprecheretikettierte Text um. Laden Sie eine MP4-, MOV-, WebM- oder AVI-Datei hoch – oder fügen Sie einen YouTube-Link ein – und erhalten Sie ein vollständiges Transkript mit Zeitstempel auf Wortebene in <stat>200+ Sprachen</stat>. <stat>Kostenlos</stat>, keine Anmeldung, unbegrenzte Länge.",
+    "trust": [
+      { "label": "99,9% Genauigkeit", "icon": "Target" },
+      { "label": "200+ Sprachen", "icon": "Globe" },
+      { "label": "Bis zu 5GB Dateien", "icon": "InfinityIcon" },
+      { "label": "Sprechererkennung", "icon": "Users" },
+      { "label": "Privat & sicher", "icon": "ShieldCheck" }
+    ],
+    "tabs": [
+      { "id": "upload", "label": "Datei hochladen", "hint": "Video · Audio", "icon": "Upload" },
+      { "id": "youtube", "label": "YouTube-Link", "hint": "URL einfügen", "icon": "PlaySquare" },
+      { "id": "record", "label": "Aufnahme", "hint": "Live-Audio", "icon": "Mic" }
+    ],
+    "upload": {
+      "instruction": "Ziehen Sie eine Video- oder Audiodatei herein, oder klicken Sie zum Durchsuchen.",
+      "specs": "Max. 5GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
+      "button": "Datei hochladen"
+    },
+    "youtube": {
+      "label": "Fügen Sie eine YouTube-URL ein",
+      "placeholder": "https://www.youtube.com/watch?v=…",
+      "submit": "Video transkribieren",
+      "hint": "Unterstützt Videos bis zu 6 Stunden · Auto-Untertitel übersprungen, Audio neu transkribiert für höhere Genauigkeit"
+    },
+    "record": {
+      "active": "Wird aufgenommen…",
+      "idle": "Live-Audio aufnehmen",
+      "activeTime": "00:00:12",
+      "idleHint": "Tippen Sie auf das Mikrofon zum Starten"
+    },
+    "examplesTitle": "Beispiele",
+    "examplesHint": "Demo testen · Klicken zum Laden",
+    "examples": [
+      {
+        "type": "audio",
+        "title": "Learn Case Interviews in Under 30 Minutes.mp3",
+        "duration": "29:04",
+        "icon": "FileAudio",
+        "color": "text-sage"
+      },
+      {
+        "type": "youtube",
+        "title": "Optimal Protocols for Studying & Learning",
+        "duration": "01:41:39",
+        "icon": "PlaySquare",
+        "color": "text-[#cc0000]"
+      },
+      {
+        "type": "video",
+        "title": "Joy is all around us — David Larbi · TED",
+        "duration": "04:15",
+        "icon": "FileVideo",
+        "color": "text-accent"
+      },
+      {
+        "type": "audio",
+        "title": "Aphantasia Explained — Visualization & Memory",
+        "duration": "01:30",
+        "icon": "FileAudio",
+        "color": "text-sage"
+      }
+    ]
+  },
+  "TrustStrip": {
+    "tagline": "Vertraut von Videokünstlern, Journalisten und Podcastern weltweit",
+    "logos": [
+      "Stanford Podcast Network",
+      "TED Conferences",
+      "The Atlantic",
+      "Y Combinator",
+      "Wirecutter",
+      "MIT Sloan Review"
+    ],
+    "stats": [
+      { "value": "10M+", "label": "Transkribierte Minuten" },
+      { "value": "100K+", "label": "Aktive Kreative" },
+      { "value": "200+", "label": "Unterstützte Sprachen" },
+      { "value": "99,9%", "label": "Genauigkeit auf Wortebene" }
+    ]
+  },
+  "Features": {
+    "label": "Funktionen",
+    "number": "01",
+    "h2": "Entwickelt für <accent>Videokünstler</accent>, denen Genauigkeit wichtig ist.",
+    "intro": "Ein Video-zu-Text-Konverter transkribiert die gesprochene Audio in einem Video in geschriebenen Text. Moderne KI-Sprachmodelle identifizieren Wörter, trennen Sprecher und fügen Zeitstempel an – was ein editierbares Transkript in Minuten statt Stunden ergibt. Scribix wird mit derselben Art von Sprachmodell ausgeführt, die professionelle Transkriptionsprogramme unterstützen, ohne Anmeldung, ohne Längenbeschränkung und mit einer Ausgabe, die sauber genug ist, um veröffentlicht zu werden.",
+    "items": [
+      {
+        "icon": "Users",
+        "title": "Sprechererkennung, bis zu 8 Stimmen",
+        "body": "Voice-Fingerprinting trennt und beschriftet jeden Redebeitrag – \"Sprecher 1\", \"Sprecher 2\" werden mit einem Klick zu echten Namen. Perfekt für Interviews, Podcasts und Panels.",
+        "span": "lg:col-span-2"
+      },
+      {
+        "icon": "Globe",
+        "title": "200+ Sprachen, automatisch erkannt",
+        "body": "Von Mandarin bis Maltesisch mit Code-Switching-Unterstützung. Das Modell passt sich an, wenn Sprecher die Sprache wechseln."
+      },
+      {
+        "icon": "Clock",
+        "title": "Zeitstempel auf Wortebene",
+        "body": "Klicken Sie auf ein beliebiges Wort, um genau diesen Moment abzuspielen. Zeitstempel werden mit SRT- und VTT-Untertiteln exportiert, die für Videoplayer bereit sind."
+      },
+      {
+        "icon": "FileDown",
+        "title": "Sieben Exportformate",
+        "body": "TXT, DOCX, PDF, SRT, VTT, JSON und HTML – deckt Blog-Editoren, Videoplayer, Barrierefreiheitstools und Entwickler-Pipelines ohne zusätzliche Konvertierung ab.",
+        "span": "lg:col-span-2"
+      },
+      {
+        "icon": "Sparkles",
+        "title": "Studio-Qualität Genauigkeit",
+        "body": "99,9% bei klarem Audio in Primärsprachen, gemessen anhand eines 50-Stunden-Benchmarks von TED-Talks, Podcasts und Interviews. Hintergrundgeräusche und Akzente werden elegant bewältigt."
+      },
+      {
+        "icon": "Lock",
+        "title": "Dateien nach 24 Stunden gelöscht",
+        "body": "TLS 1.3 in der Übertragung, AES-256 im Ruhezustand, Verarbeitung im verschlüsselten Speicher. SOC 2-konform, GDPR-konform. Wir trainieren nie Modelle auf Ihrem Audio."
+      }
+    ]
+  },
+  "HowItWorks": {
+    "label": "Wie es funktioniert",
+    "number": "02",
+    "h2Part1": "Drei Schritte.",
+    "h2Part2": "<accent>Video zu Text in unter einer Minute.</accent>",
+    "steps": [
+      {
+        "n": "01",
+        "icon": "CloudUpload",
+        "title": "Laden Sie Ihr Video hoch – oder fügen Sie einen Link ein.",
+        "body": "Ziehen Sie eine MP4-, MOV-, AVI-, MKV- oder WebM-Datei (bis zu 5 GB) per Drag-and-Drop, oder fügen Sie eine YouTube-, TikTok- oder Instagram-URL ein. Keine Formatkonvertierung – Scribix verarbeitet jeden gängigen Container.",
+        "duration": "Bis zu 5 GB · 6 Stunden"
+      },
+      {
+        "n": "02",
+        "icon": "Cpu",
+        "title": "KI transkribiert mit Sprecherbeschriftungen.",
+        "body": "Unser Modell erkennt die Sprache automatisch (200+ unterstützt), trennt bis zu 8 Sprecher und fügt Zeitstempel an jedes Wort an. Ein 1-Stunden-Video wird in etwa 90 Sekunden transkribiert.",
+        "duration": "~90s für 1-Stunden-Video"
+      },
+      {
+        "n": "03",
+        "icon": "Download",
+        "title": "Bearbeiten, kopieren oder exportieren.",
+        "body": "Klicken Sie auf ein beliebiges Wort, um genau diesen Moment abzuspielen. Bearbeiten Sie inline und laden Sie dann als TXT, DOCX, PDF, SRT, VTT, JSON oder HTML herunter – oder kopieren Sie das gesamte Transkript in Ihren Editor.",
+        "duration": "7 Exportformate"
+      }
+    ]
+  },
+  "UseCases": {
+    "label": "Anwendungsfälle",
+    "number": "03",
+    "h2Part1": "Gemacht für Menschen, die",
+    "h2Part2": "<accent>jeden Tag Video in Text umwandeln.</accent>",
+    "intro": "Von einem YouTuber, der 90 Minuten Filmmaterial in Shorts umwandelt, bis zu einem Journalisten, der ein 2-Stunden-Interview präzise zitiert – Video-zu-Text ist, wie aufgezeichnete Gespräche zu veröffentlichten Werken werden. Scribix ist das Werkzeug dahinter.",
+    "items": [
+      {
+        "icon": "Clapperboard",
+        "title": "YouTube-Kreative",
+        "audience": "Langform zu Kurzform",
+        "body": "Generieren Sie Untertitel für Barrierefreiheit, formen Sie lange Videos in Blog-Beiträge um, erstellen Sie durchsuchbare Episode-Archive. Zeitstempel auf Wortebene machen es trivial, virale Clips mit [12:04 – 12:38]-Genauigkeit zu extrahieren.",
+        "workflow": ["Langes Video", "Präzise Untertitel", "Clips & Shorts"]
+      },
+      {
+        "icon": "Mic",
+        "title": "Podcaster & Produzenten",
+        "audience": "Audio + Video Shows",
+        "body": "Konvertieren Sie jede Episode in Show Notes, Blog-Inhalte und SEO-indizierte Transkripte – der Unterschied zwischen gefunden werden in Google und nicht. Sprecherbeschriftungen werden veröffentlichungsbereit geliefert.",
+        "workflow": ["Episode-Aufnahme", "Sprecherbeschriftetes Transkript", "Show Notes + Clips"]
+      },
+      {
+        "icon": "Newspaper",
+        "title": "Journalisten & Interviewer",
+        "audience": "Investigativer Journalismus",
+        "body": "Transkribieren Sie ein 90-Minuten-Interview, während Sie zur nächsten gehen. Sprecherbeschriftungen bedeuten, dass Sie Quellen genau zitieren können, ohne erneut zuzuhören – zitierfertige Text in einem Bruchteil der Zeit.",
+        "workflow": ["Quellen-Interview", "Wörtliches Transkript", "Pull-Angebote"]
+      },
+      {
+        "icon": "FlaskConical",
+        "title": "Forscher & UX",
+        "audience": "Fokusgruppen, Feldarbeit",
+        "body": "Führen Sie qualitative Codierung für Fokusgruppen, Vorlesungen und Feldaufnahmen durch, ohne $1.50/min für menschliche Transkription zu bezahlen. Tag-Themen, durchsuchen Sie jedes Wort, exportieren Sie zu Dovetail oder Notion.",
+        "workflow": ["Benutzer-Interview", "Markierte Themen", "Synthesebereit"]
+      },
+      {
+        "icon": "GraduationCap",
+        "title": "Studenten",
+        "audience": "Vorlesungen & Studium",
+        "body": "Wandeln Sie eine 2-Stunden-Vorlesung in durchsuchbare Notizen um. Markieren Sie einen verwirrenden Moment, klicken Sie auf das Wort, hören Sie es erneut. Der kostenlose Plan deckt die meisten Studenten das ganze Semester über.",
+        "workflow": ["Vorlesungsaufnahme", "Durchsuchbare Notizen", "KI-Zusammenfassung"]
+      },
+      {
+        "icon": "Scale",
+        "title": "Legal & Compliance",
+        "audience": "Aussagen, Anhörungen",
+        "body": "Erste Transkripte von Aussagen, Vorstandssitzungen und Compliance-Interviews – dann lassen Sie einen Menschen die Teile überprüfen, die wichtig sind. Zeitcodierte Transkripte und eine nachvollziehbare Verarbeitungskette. SOC 2-konform.",
+        "workflow": ["Anhörungs-Aufnahme", "Zeitcodiertes Transkript", "Audit-Spur"]
+      }
+    ]
+  },
+  "Comparison": {
+    "label": "Verglichen",
+    "number": "04",
+    "h2": "Schneller, präziser, <accent>und unbegrenzt in der kostenlosen Stufe.</accent>",
+    "intro": "Wir benchmarken monatlich gegen die führenden Video-zu-Text-Tools anhand eines 200-Stunden-Test-Sets mit 12 Sprachen, 48 Sprechern und 4 Audioumgebungen – Studio, Telefon, Konferenz und Außenbereich.",
+    "featureHeader": "Funktion",
+    "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
+    "rows": [
+      { "feature": "Kostenlose Stufe", "cells": ["Unlimited", "300 / mo", "45 trial", "Unlimited"] },
+      { "feature": "Dateigröße-Limit", "cells": ["5 GB", "1.5 GB", "2 GB", "Local"] },
+      { "feature": "Unterstützte Sprachen", "cells": ["200+", "30+", "38", "99"] },
+      { "feature": "Sprechertrennung", "cells": ["yes", "yes", "yes", "no"] },
+      { "feature": "Zeitstempel auf Wortebene", "cells": ["yes", "no", "yes", "yes"] },
+      { "feature": "YouTube URL-Unterstützung", "cells": ["yes", "no", "no", "no"] },
+      { "feature": "Exportformate", "cells": ["7", "4", "5", "1"] },
+      { "feature": "Dateien gelöscht nach", "cells": ["24 hr", "30 days+", "30 days+", "Self-host"] },
+      { "feature": "Preisgestaltung – 100 Stunden", "cells": ["$12", "$30", "$150", "Compute only"] }
+    ]
+  },
+  "Testimonials": {
+    "label": "Testimonien",
+    "number": "05",
+    "h2": "Entwickelt für die <accent>chaotische Realität</accent> von aufgezeichnetem Video.",
+    "items": [
+      {
+        "quote": "Ich produziere einen wöchentlichen Video-Podcast mit drei Gästen. Scribix verwandelt drei Stunden überlappender Audio in etwas, das ich direkt in mein CMS einfügen kann. Allein die Sprecherbeschriftungen sparen mir einen ganzen Nachmittag.",
+        "name": "Maya Bhattacharya",
+        "role": "Senior Producer · The Open Notebook",
+        "rating": "5.0"
+      },
+      {
+        "quote": "Wir hatten einen Rechtsfall, in dem wir zeitcodierte Transkripte von 14 Stunden Aussage-Video brauchten. Scribix lieferte eine sauberere Ausgabe als der beglaubigte Service, den wir $4/min gezahlt hatten. Verrückt.",
+        "name": "Daniel Reyes",
+        "role": "Litigation Counsel · Reyes & Patel",
+        "rating": "4.9"
+      },
+      {
+        "quote": "Ich nehme jedes Feldforschungs-Interview in Bahasa mit Code-gewechseltem Englisch auf Video auf. Andere Tools scheitern. Scribix transkribiert das Ganze, ohne dass ich eine Spracheinstellung berühre.",
+        "name": "Dr. Aisha Mohktar",
+        "role": "Anthropologist · NUS",
+        "rating": "5.0"
+      }
+    ]
+  },
+  "Pricing": {
+    "label": "Preisgestaltung",
+    "number": "06",
+    "h2": "Zahlen Sie für die Minuten, <accent>nicht das Marketing.</accent>",
+    "intro": "Ein kostenloser Plan, der wirklich nützlich ist. Zwei bezahlte Pläne ohne Platzbeschränkungen oder versteckte Gebühren. Kündigen Sie jederzeit, exportieren Sie alles.",
+    "mostLoved": "Am meisten geliebt",
+    "plans": [
+      {
+        "name": "Kostenlos",
+        "price": "$0",
+        "cadence": "forever",
+        "blurb": "Für gelegentliche Transkriptionen, Studenten und Neugierige.",
+        "features": [
+          "Unbegrenzte Video-Transkriptionen",
+          "Bis zu 30 Min pro Datei",
+          "Sprecherbeschriftungen (bis zu 4)",
+          "SRT, VTT & DOCX Export"
+        ],
+        "cta": "Kostenlos starten",
+        "primary": false
+      },
+      {
+        "name": "Studio",
+        "price": "$12",
+        "cadence": "per month",
+        "blurb": "Am meisten geliebt von YouTubern, Podcastern und kleinen Teams.",
+        "features": [
+          "Unbegrenzte Transkriptionen, beliebige Länge",
+          "Bis zu 6 Stunden pro Datei",
+          "Sprecherbeschriftungen (bis zu 8)",
+          "KI-Zusammenfassung, Kapitel, Action Items",
+          "Prioritätswarteschlange (5× Echtzeit)",
+          "Auto-Delete- oder Self-Host-Optionen"
+        ],
+        "cta": "7 Tage kostenlos testen",
+        "primary": true
+      },
+      {
+        "name": "Newsroom",
+        "price": "$48",
+        "cadence": "per seat / month",
+        "blurb": "Für Teams, die jeden Tag Video in Geschichten umwandeln.",
+        "features": [
+          "Alles aus Studio",
+          "Gemeinsame Arbeitsbereiche & Rollen",
+          "SOC 2 Typ II + Audit-Protokolle",
+          "Benutzerdefiniertes Vokabular & Glossar",
+          "API-Zugriff (1M Minuten / Monat)",
+          "Dedizierter Success Manager"
+        ],
+        "cta": "Sprechen Sie mit Vertrieb",
+        "primary": false
+      }
+    ]
+  },
+  "FAQ": {
+    "label": "Häufig gestellte Fragen",
+    "number": "07",
+    "h2Part1": "Fragen,",
+    "h2Part2": "<accent>sorgfältig beantwortet.</accent>",
+    "contactPrefix": "Können Sie nicht finden, was Sie suchen? Senden Sie eine E-Mail an",
+    "contactEmail": "hello@scribix.app",
+    "contactSuffix": "und eine echte Person antwortet innerhalb eines Arbeitstages.",
+    "items": [
+      {
+        "q": "Ist Scribix wirklich kostenlos für Video zu Text?",
+        "a": "Ja. Der kostenlose Plan hat kein Minuten-Limit, keine Anmeldung und keine Kreditkarte erforderlich. Sie können eine 6-Stunden-Konferenz-Aufnahme für $0 transkribieren. Bezahlte Pläne entsperren Prioritätswarteschlange, Team-Bibliotheken und längere Dateispeicherung."
+      },
+      {
+        "q": "Welche Videoformate unterstützt Scribix?",
+        "a": "MP4, MOV, AVI, MKV und WebM bis zu 5 GB jeweils. Nur-Audio-Dateien (MP3, WAV, M4A) werden ebenfalls unterstützt. Fügen Sie eine beliebige YouTube-, TikTok- oder Instagram-URL für Stream-basierte Eingabe ein – kein Download auf Ihrer Seite erforderlich."
+      },
+      {
+        "q": "Wie genau ist Scribix's Video-zu-Text?",
+        "a": "99,9% bei klarem Audio in Primärsprachen, gemessen anhand eines 50-Stunden-Benchmarks von TED-Talks, Podcasts und Interviews. Die Genauigkeit sinkt leicht bei starken Akzenten, Hintergrundmusik oder niedrig-bitraten Audio – aber Sprecherbeschriftungen und Zeitstempel auf Wortebene machen Korrektionen schnell."
+      },
+      {
+        "q": "Kann ich ein YouTube-Video zu Text transkribieren?",
+        "a": "Ja. Fügen Sie eine beliebige YouTube-URL in den Generator ein. Scribix transkribiert das Audio mit unserem Modell neu, anstatt YouTube's Auto-Untertitel zu verwenden (normalerweise 70–80% genau). Dies produziert eine sauberere Ausgabe, plus Sprecherbeschriftungen, plus Zeitstempel auf Wortebene, die YouTube nicht freilegt."
+      },
+      {
+        "q": "Wie viele Sprachen unterstützt Scribix?",
+        "a": "200+, mit automatischer Spracherkennung. Das Modell bewältigt Code-Switching (Englisch ↔ Spanisch, Englisch ↔ Mandarin) innerhalb derselben Aufnahme. Keine Notwendigkeit, eine Primärsprache vorab auszuwählen."
+      },
+      {
+        "q": "Kann Scribix verschiedene Sprecher unterscheiden?",
+        "a": "Ja. Voice-Fingerprinting identifiziert bis zu 8 unterschiedliche Sprecher und beschriftet jede Zeile entsprechend. Sie können Sprecher 1, Sprecher 2 usw. nach der Transkription in echte Namen umbenennen, und das Modell merkt sich Stimmen über Aufnahmen hinweg."
+      },
+      {
+        "q": "Wie lange dauert die Video-zu-Text-Transkription?",
+        "a": "Etwa 1 Minute Rechenzeit pro Stunde Video für MP4s mit klarem Audio. Ein 30-Minuten-Meeting dauert etwa 45 Sekunden. Der Fetch-Schritt für YouTube-Videos erhöht den Download um 5–15 Sekunden."
+      },
+      {
+        "q": "Sind meine Daten sicher, wenn ich ein Video hochlade?",
+        "a": "Dateien werden über TLS 1.3 hochgeladen, im verschlüsselten Speicher verarbeitet und innerhalb von 24 Stunden gelöscht. Wir trainieren keine Modelle auf Benutzer-Audio. SOC 2-konforme Infrastruktur, GDPR-konforme Datenverarbeitung und Verarbeitungsoptionen in der EU und USA."
+      },
+      {
+        "q": "Worauf kann ich das Transkript exportieren?",
+        "a": "Sieben Formate: TXT (plain), DOCX (Word), PDF, SRT (Untertitel), VTT (Web-Untertitel), JSON (Entwickler-freundlich) und HTML (formatiert). Click-to-edit inline vor Export."
+      },
+      {
+        "q": "Funktioniert Scribix für Podcasts und reine Audio-Dateien?",
+        "a": "Ja – aber für einen Audio-ersten Workflow ist unser dediziertes Audio-zu-Text-Tool zweckmäßig dafür konzipiert. Gleiches Motor, gleiche Genauigkeit, Audio-optimierte UI."
+      }
+    ]
+  },
+  "FinalCTA": {
+    "kicker": "Bereit, wenn Sie es sind",
+    "h2Part1": "Laden Sie ein Video hoch.",
+    "h2Part2": "<accent>Wir machen den Rest.</accent>",
+    "body": "Kostenlose Stufe ist unbegrenzt – keine Anmeldung, keine Kreditkarte, kein Minuten-Limit. Ihr erstes Transkript erscheint, bevor Sie Ihren Kaffee fertig trinken können.",
+    "primaryCta": "Video hochladen",
+    "secondaryCta": "YouTube-Link einfügen",
+    "stats": [
+      { "value": "99,9%", "label": "Genauigkeit" },
+      { "value": "5×", "label": "Echtzeit" },
+      { "value": "24h", "label": "Auto-Delete" }
+    ]
+  },
+  "Footer": {
+    "tagline": "Studio-Qualität Video-zu-Text für Menschen, die aufgezeichnete Gespräche in Geschichten verwandeln. Gebaut in San Francisco & Singapur.",
+    "copyright": "© {year} Scribix Audio Lab, Inc. Alle Rechte vorbehalten.",
+    "credit": "Gesetzt in Fraunces & Geist · Handwerklich gefertigt",
+    "legal": [
+      { "label": "Servicebedingungen", "href": "/terms" },
+      { "label": "Datenschutzrichtlinie", "href": "/privacy" }
+    ]
+  }
+}
