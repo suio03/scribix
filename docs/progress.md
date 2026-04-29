@@ -15,7 +15,7 @@ This document is the source of truth for v1 scope. Updated after a full plan-cha
 | Tiers | **Free**, **Basic**, **Pro** |
 | Auth | Google OAuth only (no email magic link, no Resend) |
 | Transcript features | Plain text + word-level timestamps + speaker diarization + synced playback (7 days) + TXT/SRT/VTT export. Read-only viewer. |
-| Hosting | Cloudflare Pages, single Next.js service. D1 + R2 bound directly. No separate Worker. |
+| Hosting | Cloudflare Workers (via `@opennextjs/cloudflare`), single Next.js service. D1 + R2 bound directly. No separate Worker. |
 | Speech models | Free → Universal-2. Basic + Pro → Universal-3 Pro with Universal-2 fallback (Option A: resubmit on language-unsupported error). |
 | Payments | Creem (same as pixfy). |
 | Quota cycle | Each Creem cycle event resets the bucket to full. No rollover. Yearly subscribers receive the full annual pool upfront. |
@@ -61,14 +61,15 @@ Margins (worst case, max usage, including diarization, at AAI ~$0.23/hr):
 
 ## 3. Architecture
 
-Single service, all on Cloudflare Pages with edge runtime.
+Single service on Cloudflare Workers via the OpenNext Cloudflare adapter (`@opennextjs/cloudflare`). Workers IS edge runtime, so no per-route `runtime = 'edge'` annotation is needed — every route runs at the edge by default. `nodejs_compat` is enabled in `wrangler.jsonc` so we can opt into Node stdlib if a library needs it.
 
 ```
                        ┌─────────────────────────────────────────────┐
-                       │   Next.js (Cloudflare Pages, edge runtime)   │
+                       │   Next.js (Cloudflare Workers, OpenNext)     │
  user / browser ──────▶│   marketing pages, dashboard, /api/*         │
                        │   D1 binding: DB                             │
                        │   R2 binding: SCRIBIX_MEDIA                  │
+                       │   ASSETS binding: static assets              │
                        └─────────────────────────────────────────────┘
                                   │ ▲                  │ ▲
               POST /v2/transcript │ │ webhook callback │ │ webhook
@@ -78,12 +79,16 @@ Single service, all on Cloudflare Pages with edge runtime.
                       └──────────────────┘    └──────────────────┘
 ```
 
-- Next.js app handles UI, auth, all `/api/*` route handlers (edge runtime), AssemblyAI submission, Creem checkout, webhook receivers.
-- D1 and R2 are bound directly to the Pages project. No separate Worker, no inter-service bearer auth.
-- Edge runtime supports both bindings; the only Node-only APIs we'd need (`fs`, `child_process`) aren't required because AAI handles audio extraction and the Creem client uses Web Crypto.
+- Next.js app handles UI, auth, all `/api/*` route handlers, AssemblyAI submission, Creem checkout, webhook receivers.
+- D1 and R2 are bound directly to the Worker via `wrangler.jsonc`. Bindings accessed via `getCloudflareContext()` from `@opennextjs/cloudflare`. No separate service, no inter-service bearer auth.
+
+Why Workers + OpenNext (vs the original Pages plan):
+- `@cloudflare/next-on-pages` was deprecated in favor of `@opennextjs/cloudflare` as Cloudflare consolidates Pages into Workers.
+- Workers gives broader Next.js feature parity (ISR via KV, image optimization works, `nodejs_compat` available).
+- Same D1 + R2 bindings, same edge execution model — all the architectural decisions from the original plan still apply.
 
 Why no separate Worker (vs pixfy):
-- Pages now supports D1 + R2 bindings directly. The original reason pixfy split (clean bindings) doesn't apply.
+- Bindings work directly inside the same Worker — the original reason pixfy split (clean bindings on Pages) doesn't apply.
 - Inter-service hops add latency and another secret to manage (`API_SECRET`).
 - Webhook reliability is solved by handler idempotency + inline reconcile (§9.3), not by a second service.
 
@@ -93,14 +98,14 @@ Why no separate Worker (vs pixfy):
 
 | Layer | Choice | Notes |
 |---|---|---|
-| Framework | Next.js 15 (App Router) | already in repo |
+| Framework | Next.js 16 (App Router) | bumped to 16.x for OpenNext compat |
 | i18n | next-intl | already in repo |
 | Auth | next-auth v5 + Google provider | lift from pixfy |
-| DB | Cloudflare D1 (SQLite) | bound directly to Pages as `DB` |
-| Storage | Cloudflare R2 | bucket `scribix-media`, bound to Pages as `SCRIBIX_MEDIA` |
+| DB | Cloudflare D1 (SQLite) | bound to the Worker as `DB` |
+| Storage | Cloudflare R2 | bucket `scribix-media`, bound to the Worker as `SCRIBIX_MEDIA` |
 | Payments | Creem REST API | edge-compatible client lifted from pixfy |
 | Transcription | AssemblyAI (Universal-2 / Universal-3 Pro) | URL-based + webhook |
-| Runtime | All `/api/*` routes use `runtime = 'edge'` | required by Pages |
+| Runtime | Cloudflare Workers (via `@opennextjs/cloudflare`) | implicit edge — no per-route annotation |
 | Email | none in v1 | Creem sends its own receipts |
 | Analytics | next-intl + light server-event logger | port pixfy's `server-analytics.ts` lazily |
 
@@ -417,25 +422,27 @@ Period reset is event-driven (Creem webhook), not lazy:
 
 ## 11. API routes inventory
 
-| Route | Method | Purpose | Runtime |
-|---|---|---|---|
-| `/api/auth/[...nextauth]` | * | next-auth handlers | edge |
-| `/api/transcripts/init` | POST | tier check + create row + presign R2 upload | edge |
-| `/api/transcripts/[id]/start` | POST | atomic quota reservation + submit to AssemblyAI | edge |
-| `/api/transcripts/[id]/status` | GET | poll endpoint (DB read + inline reconcile) | edge |
-| `/api/transcripts/[id]` | GET | fetch transcript JSON for viewer | edge |
-| `/api/transcripts/[id]` | DELETE | delete row + R2 keys (audio + JSON) | edge |
-| `/api/transcripts/[id]` | PATCH | rename | edge |
-| `/api/transcripts/[id]/export` | GET `?format=txt\|srt\|vtt` | format on the fly from JSON | edge |
-| `/api/transcripts/[id]/media` | GET | signed R2 URL for the original audio (synced playback, only ≤ 7 days) | edge |
-| `/api/account` | DELETE | soft-delete user + cascade soft-delete all transcripts + remove R2 keys | edge |
-| `/api/webhook/assemblyai` | POST | AssemblyAI completion callback (idempotent, see §9.2) | edge |
-| `/api/webhook/creem` | POST | Creem subscription events (dedup'd by event_id) | edge |
-| `/api/billing/checkout` | POST | start Creem checkout | edge |
-| `/api/billing/portal` | POST | open Creem customer portal | edge |
-| `/api/admin/users` | GET | admin list | edge |
-| `/api/admin/transcripts` | GET | admin list | edge |
-| `/api/admin/users/[id]` | PATCH | admin grant/revoke tier | edge |
+All routes run on Cloudflare Workers (edge) by default — no per-route runtime annotation.
+
+| Route | Method | Purpose |
+|---|---|---|
+| `/api/auth/[...nextauth]` | * | next-auth handlers |
+| `/api/transcripts/init` | POST | tier check + create row + presign R2 upload |
+| `/api/transcripts/[id]/start` | POST | atomic quota reservation + submit to AssemblyAI |
+| `/api/transcripts/[id]/status` | GET | poll endpoint (DB read + inline reconcile) |
+| `/api/transcripts/[id]` | GET | fetch transcript JSON for viewer |
+| `/api/transcripts/[id]` | DELETE | delete row + R2 keys (audio + JSON) |
+| `/api/transcripts/[id]` | PATCH | rename |
+| `/api/transcripts/[id]/export` | GET `?format=txt\|srt\|vtt` | format on the fly from JSON |
+| `/api/transcripts/[id]/media` | GET | signed R2 URL for the original audio (synced playback, only ≤ 7 days) |
+| `/api/account` | DELETE | soft-delete user + cascade soft-delete all transcripts + remove R2 keys |
+| `/api/webhook/assemblyai` | POST | AssemblyAI completion callback (idempotent, see §9.2) |
+| `/api/webhook/creem` | POST | Creem subscription events (dedup'd by event_id) |
+| `/api/billing/checkout` | POST | start Creem checkout |
+| `/api/billing/portal` | POST | open Creem customer portal |
+| `/api/admin/users` | GET | admin list |
+| `/api/admin/transcripts` | GET | admin list |
+| `/api/admin/users/[id]` | PATCH | admin grant/revoke tier |
 
 `DELETE /api/transcripts/[id]` and `DELETE /api/account` only touch our R2 + D1. AssemblyAI-side cleanup is a separate **admin-side bulk job** that runs monthly: collects all `aai_transcript_id` for soft-deleted rows, batch-DELETEs against AAI, then hard-deletes the rows. This satisfies GDPR Article 17's "without undue delay" with a defined cadence.
 
@@ -454,7 +461,7 @@ Period reset is event-driven (Creem webhook), not lazy:
 
 | Pixfy pattern | Why it doesn't fit Scribix | What we do instead |
 |---|---|---|
-| Two-service split (Next.js + D1/R2 Worker) + bearer-token API | Pages now supports D1 + R2 bindings cleanly. The split was historical, not architectural. | Single Pages app with bindings. No `API_SECRET`. |
+| Two-service split (Next.js + D1/R2 Worker) + bearer-token API | Workers (via OpenNext) handles bindings cleanly in the same service. The split was historical, not architectural. | Single Worker with D1 + R2 bindings. No `API_SECRET`. |
 | `users.credits`, `users.topup_credits`, `daily_free_quota_table` | Three counters for a credit economy | Single `minutes_used_this_period` + cycle-event reset |
 | `migration-add-topup-credits.sql`, `migration-add-credit-usage-logs.sql` | Credit ledger overhead | No equivalent |
 | Pre-flight content moderation on prompts/images | Transcription has no generative prompt | Drop. Handle abuse via post-hoc reports + `is_banned` flag if needed later |
@@ -492,9 +499,9 @@ Period reset is event-driven (Creem webhook), not lazy:
 Each phase ends in something demonstrable.
 
 ### Phase 0 — repo bootstrap (½ day)
-- D1 + R2 bindings on the Pages project (`wrangler.jsonc`).
+- `@opennextjs/cloudflare` adapter installed; `wrangler.jsonc` declares D1 + R2 bindings.
 - Migration `0001_initial.sql` (schema in §5).
-- Local dev: `wrangler pages dev` for the full app.
+- Local dev: `next dev` (with `initOpenNextCloudflareForDev()` exposing bindings) or `npm run preview` for full Worker emulation.
 - Env vars table established (see §15).
 - R2 bucket CORS configured for direct browser PUT.
 
@@ -610,5 +617,6 @@ This plan was rewritten on 2026-04-29 after a ten-question challenge pass. Key c
 8. **`expires_at` column dropped.** R2 lifecycle is the sole authority for audio expiry. (§5)
 9. **Speech model fallback (Option A).** Submit with U3P; on language error, webhook resubmits with U2. `speech_model` column tracks the actual model used. (§9.6)
 10. **Webhook idempotency formalized.** AAI: atomic UPDATE with status guard. Creem: `event_id` dedup table. (§9.2, §5)
+11. **Hosting: Pages → Workers via OpenNext.** `@cloudflare/next-on-pages` was deprecated in favor of `@opennextjs/cloudflare`. Same D1 + R2 bindings, same edge model. `runtime = 'edge'` annotations dropped — Workers IS the runtime. Next.js bumped to 16.x for OpenNext peer compat. (§3, §4, §11, §14)
 
 *This plan is the source of truth for v1 scope. Any change goes here first, then into code.*

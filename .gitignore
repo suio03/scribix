@@ -6,3 +6,18 @@ yarn-error.log*
 pnpm-debug.log*
 dist
 coverage
+
+# env
+.env
+.env.local
+.env*.local
+.dev.vars
+
+# cloudflare / opennext
+.wrangler/
+.open-next/
+cloudflare-env.d.ts
+
+# build / tooling
+*.tsbuildinfo
+.claude/

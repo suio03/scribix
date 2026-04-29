@@ -1,0 +1,38 @@
+/**
+ * Cloudflare Workers config for Scribix (Next.js via @opennextjs/cloudflare).
+ *
+ * After running `wrangler d1 create scribix-db` and `wrangler r2 bucket create scribix-media`,
+ * paste the database_id into d1_databases[0].database_id below.
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "scribix",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+
+  "observability": {
+    "enabled": true
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "scribix-db",
+      "database_id": "PLACEHOLDER_RUN_WRANGLER_D1_CREATE",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "SCRIBIX_MEDIA",
+      "bucket_name": "scribix-media"
+    }
+  ]
+}
