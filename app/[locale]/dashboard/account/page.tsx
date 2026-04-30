@@ -1,19 +1,18 @@
-import Link from "next/link";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { Link } from "@/i18n/navigation";
 import { auth, signOut } from "@/auth";
+import { quotaMinutesFor, type BillingCycle, type Tier } from "@/lib/plans";
+import { BillingPortalButton } from "@/app/components/BillingPortalButton";
 
 type UserRow = {
   email: string;
   full_name: string | null;
-  tier: "free" | "basic" | "pro";
-  billing_cycle: "monthly" | "yearly" | null;
+  tier: Tier;
+  billing_cycle: BillingCycle | null;
+  subscription_status: string | null;
+  customer_id: string | null;
+  minutes_used_this_period: number;
   period_ends_at: string;
-};
-
-const TIER_QUOTA_MIN: Record<UserRow["tier"], number> = {
-  free: 30,
-  basic: 600,
-  pro: 1800,
 };
 
 export default async function AccountPage() {
@@ -22,16 +21,19 @@ export default async function AccountPage() {
 
   const { env } = getCloudflareContext();
   const row = await env.DB.prepare(
-    `SELECT email, full_name, tier, billing_cycle, period_ends_at
+    `SELECT email, full_name, tier, billing_cycle, subscription_status,
+            customer_id, minutes_used_this_period, period_ends_at
        FROM users
       WHERE id = ?1`
   )
     .bind(userId)
     .first<UserRow>();
 
-  // Phase 1: usage hardcoded to 0. Real counter wires up in Phase 5.
-  const usedMin = 0;
-  const quotaMin = row ? TIER_QUOTA_MIN[row.tier] : TIER_QUOTA_MIN.free;
+  const tier: Tier = row?.tier ?? "free";
+  const cycle = row?.billing_cycle ?? null;
+  const usedMin = row?.minutes_used_this_period ?? 0;
+  const quotaMin = quotaMinutesFor(tier, cycle);
+  const hasBilling = Boolean(row?.customer_id);
 
   return (
     <main className="mx-auto max-w-[720px] px-4 py-12 sm:px-8">
@@ -48,23 +50,22 @@ export default async function AccountPage() {
       <dl className="mt-10 space-y-6 rounded-2xl border border-line p-6">
         <Field label="Email" value={row?.email ?? session!.user.email ?? "—"} />
         <Field label="Name" value={row?.full_name ?? session!.user.name ?? "—"} />
-        <Field
-          label="Plan"
-          value={
-            row
-              ? `${capitalize(row.tier)}${row.billing_cycle ? ` · ${row.billing_cycle}` : ""}`
-              : "Free"
-          }
-        />
-        <Field
-          label="Usage this period"
-          value={`${usedMin} / ${quotaMin} min`}
-        />
-        <Field
-          label="Period resets"
-          value={row ? formatDate(row.period_ends_at) : "—"}
-        />
+        <Field label="Plan" value={planLabel(tier, cycle, row?.subscription_status ?? null)} />
+        <Field label="Usage this period" value={`${usedMin} / ${quotaMin} min`} />
+        <Field label="Period resets" value={row ? formatDate(row.period_ends_at) : "—"} />
       </dl>
+
+      <div className="mt-6 flex flex-wrap gap-3">
+        {tier === "free" ? (
+          <Link
+            href="/#pricing"
+            className="rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper hover:bg-accent"
+          >
+            Upgrade plan
+          </Link>
+        ) : null}
+        {hasBilling ? <BillingPortalButton /> : null}
+      </div>
 
       <form
         action={async () => {
@@ -93,8 +94,14 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
-function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
+function planLabel(tier: Tier, cycle: BillingCycle | null, status: string | null): string {
+  const name = tier.charAt(0).toUpperCase() + tier.slice(1);
+  if (tier === "free") return name;
+  const parts: string[] = [name];
+  if (cycle) parts.push(cycle);
+  if (status === "canceled") parts.push("(canceled — access until period end)");
+  if (status === "expired") parts.push("(expired)");
+  return parts.join(" · ");
 }
 
 function formatDate(s: string) {

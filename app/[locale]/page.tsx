@@ -38,7 +38,7 @@ export default async function HomePage({
         <UseCases />
         <Comparison />
         <Testimonials />
-        {/* <Pricing /> */}
+        <Pricing />
         <FAQ />
         <FinalCTA />
       </main>
