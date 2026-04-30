@@ -1,0 +1,113 @@
+import { auth } from "@/auth";
+import { submitTranscript } from "@/lib/aai";
+import { cf } from "@/lib/cf";
+import { PLANS, type Tier } from "@/lib/plans";
+import { presignGet } from "@/lib/r2";
+import { reconcileQuota, reserveQuota } from "@/lib/quota";
+
+type Params = { params: Promise<{ id: string }> };
+
+export async function POST(req: Request, { params }: Params) {
+  const session = await auth();
+  if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
+  const userId = session.user.id;
+  const { id: transcriptId } = await params;
+
+  let body: { durationSecEstimate?: number };
+  try {
+    body = await req.json();
+  } catch {
+    return Response.json({ error: "invalid_json" }, { status: 400 });
+  }
+  const estimate = Number(body.durationSecEstimate);
+  if (!Number.isFinite(estimate) || estimate <= 0) {
+    return Response.json({ error: "invalid_duration" }, { status: 400 });
+  }
+
+  const env = cf();
+
+  const row = await env.DB.prepare(
+    `SELECT t.id, t.user_id, t.status, t.audio_r2_key, t.webhook_token, u.tier
+       FROM transcripts t
+       JOIN users u ON u.id = t.user_id
+      WHERE t.id = ?1 AND t.deleted_at IS NULL`
+  )
+    .bind(transcriptId)
+    .first<{
+      id: string;
+      user_id: string;
+      status: string;
+      audio_r2_key: string | null;
+      webhook_token: string;
+      tier: Tier;
+    }>();
+  if (!row) return Response.json({ error: "not_found" }, { status: 404 });
+  if (row.user_id !== userId) return Response.json({ error: "forbidden" }, { status: 403 });
+  if (row.status !== "pending") {
+    return Response.json({ error: "already_started", status: row.status }, { status: 409 });
+  }
+  if (!row.audio_r2_key) {
+    return Response.json({ error: "no_audio_key" }, { status: 400 });
+  }
+
+  const plan = PLANS[row.tier];
+  const estimateMin = Math.ceil(estimate / 60);
+  if (estimate > plan.maxFileSec) {
+    return Response.json(
+      { error: "duration_exceeds_tier", maxSec: plan.maxFileSec },
+      { status: 413 }
+    );
+  }
+
+  const reservation = await reserveQuota(env.DB, userId, estimateMin);
+  if ("error" in reservation) {
+    return Response.json({ error: reservation.error }, { status: 429 });
+  }
+  const reservedMin = reservation.reservedMin;
+
+  // Upload-status sentinel before AAI submit. Either AAI accepts (we move to queued)
+  // or we throw, which leaves the row at 'uploading' for inline reconcile to mop up.
+  await env.DB.prepare(
+    `UPDATE transcripts SET status = 'uploading', reserved_minutes = ?1 WHERE id = ?2`
+  )
+    .bind(reservedMin, transcriptId)
+    .run();
+
+  let audioUrl: string;
+  let aaiId: string;
+  try {
+    audioUrl = await presignGet(row.audio_r2_key, 60 * 60 * 24);
+    const webhookUrl =
+      process.env.ASSEMBLYAI_WEBHOOK_URL ||
+      `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/api/webhook/assemblyai`;
+    const submitted = await submitTranscript({
+      audio_url: audioUrl,
+      speech_models: plan.speechModels,
+      speaker_labels: true,
+      language_detection: true,
+      audio_end_at: reservedMin * 60 * 1000,
+      webhook_url: webhookUrl || undefined,
+      webhook_auth_header_name: webhookUrl ? "X-Scribix-Token" : undefined,
+      webhook_auth_header_value: webhookUrl ? row.webhook_token : undefined,
+    });
+    aaiId = submitted.id;
+  } catch (err) {
+    // Refund the reservation — AAI never accepted the job, so no work is
+    // outstanding. Without this, presign/AAI outages permanently strand quota.
+    await reconcileQuota(env.DB, userId, reservedMin, 0);
+    await env.DB.prepare(
+      `UPDATE transcripts SET status = 'error', error = ?1, reserved_minutes = 0 WHERE id = ?2`
+    )
+      .bind(err instanceof Error ? err.message : "submit_failed", transcriptId)
+      .run();
+    return Response.json({ error: "aai_submit_failed" }, { status: 502 });
+  }
+
+  await env.DB.prepare(
+    `UPDATE transcripts SET status = 'queued', aai_transcript_id = ?1 WHERE id = ?2`
+  )
+    .bind(aaiId, transcriptId)
+    .run();
+
+  return Response.json({ ok: true, status: "queued" });
+}

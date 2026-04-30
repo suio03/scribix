@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Upload,
   PlaySquare,
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Waveform } from "./Waveform";
+import { ProgressView, UPLOAD_ACCEPT, useUpload } from "./Uploader";
 
 type TabId = "upload" | "youtube" | "record";
 type Tab = { id: TabId; label: string; hint: string };
@@ -46,7 +47,13 @@ const trustIcons: LucideIcon[] = [
 
 const exampleIcons: LucideIcon[] = [FileAudio, PlaySquare, FileVideo, FileAudio];
 
-export function Generator() {
+export function Generator({
+  signedIn,
+  postSignInPath,
+}: {
+  signedIn: boolean;
+  postSignInPath: string;
+}) {
   const t = useTranslations("Generator");
   const [tab, setTab] = useState<TabId>("upload");
   const [recording, setRecording] = useState(false);
@@ -133,7 +140,9 @@ export function Generator() {
             </div>
 
             <div className="p-6 sm:p-10">
-              {tab === "upload" && <UploadPane />}
+              {tab === "upload" && (
+                <UploadPane signedIn={signedIn} postSignInPath={postSignInPath} />
+              )}
               {tab === "youtube" && <YouTubePane />}
               {tab === "record" && (
                 <RecordPane
@@ -193,34 +202,83 @@ export function Generator() {
   );
 }
 
-function UploadPane() {
+function UploadPane({
+  signedIn,
+  postSignInPath,
+}: {
+  signedIn: boolean;
+  postSignInPath: string;
+}) {
   const t = useTranslations("Generator.upload");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const { phase, progress, errorMsg, filename, onPick } = useUpload({
+    signedIn,
+    postSignInPath,
+  });
+
   return (
     <div className="rise-in">
-      <div className="rounded-2xl border border-dashed border-line bg-paper/40 px-6 py-12 text-center sm:py-16">
-        <div className="mx-auto flex w-fit items-center gap-3">
-          <span className="inline-grid size-14 place-items-center rounded-xl bg-sage/15 text-sage">
-            <FileVideo size={26} strokeWidth={1.5} />
-          </span>
-          <span className="inline-grid size-14 place-items-center rounded-xl bg-sage/15 text-sage">
-            <FileAudio size={26} strokeWidth={1.5} />
-          </span>
-        </div>
-        <p className="mt-6 text-[15px] text-ink">{t("instruction")}</p>
-        <p className="mt-1.5 font-mono text-[12px] uppercase tracking-[0.15em] text-muted">
-          {t("specs")}
-        </p>
-        <button
-          type="button"
-          className="group mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
-        >
-          <CloudUpload
-            size={16}
-            strokeWidth={1.8}
-            className="transition group-hover:-translate-y-0.5"
-          />
-          {t("button")}
-        </button>
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragOver(true);
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          const file = e.dataTransfer.files?.[0];
+          if (file) onPick(file);
+        }}
+        className={`rounded-2xl border border-dashed bg-paper/40 px-6 py-12 text-center transition sm:py-16 ${
+          dragOver ? "border-accent bg-accent/5" : "border-line"
+        }`}
+      >
+        <input
+          ref={inputRef}
+          type="file"
+          accept={UPLOAD_ACCEPT}
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) onPick(f);
+          }}
+        />
+
+        {phase === "idle" || phase === "error" ? (
+          <>
+            <div className="mx-auto flex w-fit items-center gap-3">
+              <span className="inline-grid size-14 place-items-center rounded-xl bg-sage/15 text-sage">
+                <FileVideo size={26} strokeWidth={1.5} />
+              </span>
+              <span className="inline-grid size-14 place-items-center rounded-xl bg-sage/15 text-sage">
+                <FileAudio size={26} strokeWidth={1.5} />
+              </span>
+            </div>
+            <p className="mt-6 text-[15px] text-ink">{t("instruction")}</p>
+            <p className="mt-1.5 font-mono text-[12px] uppercase tracking-[0.15em] text-muted">
+              {t("specs")}
+            </p>
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="group mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
+            >
+              <CloudUpload
+                size={16}
+                strokeWidth={1.8}
+                className="transition group-hover:-translate-y-0.5"
+              />
+              {t("button")}
+            </button>
+            {errorMsg && (
+              <p className="mt-4 text-[13px] text-red-600">{errorMsg}</p>
+            )}
+          </>
+        ) : (
+          <ProgressView phase={phase} progress={progress} filename={filename} />
+        )}
       </div>
     </div>
   );

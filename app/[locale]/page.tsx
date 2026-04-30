@@ -1,4 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
+import { auth } from "@/auth";
+import { getPathname } from "@/i18n/navigation";
 import { Shell } from "../components/Shell";
 import { Sidebar } from "../components/Sidebar";
 import { Header } from "../components/Header";
@@ -22,11 +24,14 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const session = await auth();
+  const postSignInPath = getPathname({ href: "/dashboard/new", locale });
+
   return (
     <Shell /* sidebar={<Sidebar />} */>
       <Header />
       <main>
-        <Generator />
+        <Generator signedIn={!!session} postSignInPath={postSignInPath} />
         <TrustStrip />
         <Features />
         <HowItWorks />
