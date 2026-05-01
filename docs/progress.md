@@ -529,14 +529,14 @@ Each phase ends in something demonstrable.
 - [x] Webhook handler with all 5 event types + `event_id` dedup + cycle-detection logic from §8.3.
 - [x] Pricing page wires to checkout.
 
-### Phase 5 — quota enforcement (1 day) — ✅ done
+### Phase 5 — quota enforcement (1 day) — ✅ done (commit `c534eee`)
 - [x] Atomic reservation at `/start` (`lib/quota.ts:reserveQuota`).
 - [x] `audio_end_at` cap on AAI submit (`start/route.ts`).
 - [x] Reconciliation in webhook completion (success + error paths in `webhook/assemblyai/route.ts`).
 - [x] 402 / 413 / 429 error UX — split `no_quota` (429) vs `insufficient_quota` (402, remaining < estimate/2 per §10.2); 413 for size/duration tier caps; friendly messages in `Uploader.readError`.
 - [x] Speech model fallback (§9.6) — wired via AAI's native `speech_models` array (`["universal-3-pro", "universal-2"]` for paid tiers); `transcripts.speech_model` records the model that actually completed.
 
-### Phase 6 — admin + ops (1 day) — ✅ done
+### Phase 6 — admin + ops (1 day) — ✅ done (commit `c534eee`)
 - [x] Admin list pages (users + transcripts) — gated by `ADMIN_EMAILS` (`lib/admin.ts`); paginated lists at `/admin/users` and `/admin/transcripts` with search/filter and "include deleted" toggle.
 - [x] Discord error alerts — added `transcription_failed` and `account_deleted` kinds; wired AAI submit failure (`start/route.ts`), AAI-side error completion + bad webhook token (`webhook/assemblyai/route.ts`), and account deletion.
 - [x] Account-delete endpoint — `DELETE /api/account` soft-deletes user + cascade-soft-deletes transcripts + bulk-removes R2 audio + transcript JSON; UI in `DeleteAccountButton` on `/dashboard/account`.
