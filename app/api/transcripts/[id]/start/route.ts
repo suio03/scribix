@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { submitTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
+import { discordAlert } from "@/lib/discord";
 import { PLANS, type Tier } from "@/lib/plans";
 import { presignGet } from "@/lib/r2";
 import { reconcileQuota, reserveQuota } from "@/lib/quota";
@@ -54,14 +55,37 @@ export async function POST(req: Request, { params }: Params) {
   const estimateMin = Math.ceil(estimate / 60);
   if (estimate > plan.maxFileSec) {
     return Response.json(
-      { error: "duration_exceeds_tier", maxSec: plan.maxFileSec },
+      { error: "duration_exceeds_tier", maxSec: plan.maxFileSec, tier: row.tier },
       { status: 413 }
     );
   }
 
   const reservation = await reserveQuota(env.DB, userId, estimateMin);
   if ("error" in reservation) {
-    return Response.json({ error: reservation.error }, { status: 429 });
+    if (reservation.error === "no_quota") {
+      return Response.json(
+        {
+          error: "no_quota",
+          remainingMin: reservation.remainingMin,
+          capMin: reservation.capMin,
+          tier: row.tier,
+        },
+        { status: 429 }
+      );
+    }
+    if (reservation.error === "insufficient_quota") {
+      return Response.json(
+        {
+          error: "insufficient_quota",
+          remainingMin: reservation.remainingMin,
+          capMin: reservation.capMin,
+          neededMin: estimateMin,
+          tier: row.tier,
+        },
+        { status: 402 }
+      );
+    }
+    return Response.json({ error: reservation.error }, { status: 400 });
   }
   const reservedMin = reservation.reservedMin;
 
@@ -94,12 +118,19 @@ export async function POST(req: Request, { params }: Params) {
   } catch (err) {
     // Refund the reservation — AAI never accepted the job, so no work is
     // outstanding. Without this, presign/AAI outages permanently strand quota.
+    const errMsg = err instanceof Error ? err.message : "submit_failed";
     await reconcileQuota(env.DB, userId, reservedMin, 0);
     await env.DB.prepare(
       `UPDATE transcripts SET status = 'error', error = ?1, reserved_minutes = 0 WHERE id = ?2`
     )
-      .bind(err instanceof Error ? err.message : "submit_failed", transcriptId)
+      .bind(errMsg, transcriptId)
       .run();
+    await discordAlert("transcription_failed", {
+      stage: "submit",
+      transcriptId,
+      userId,
+      error: errMsg.slice(0, 200),
+    });
     return Response.json({ error: "aai_submit_failed" }, { status: 502 });
   }
 

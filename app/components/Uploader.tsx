@@ -233,8 +233,38 @@ async function pollStatus(id: string): Promise<"completed" | "error"> {
 
 async function readError(res: Response): Promise<string> {
   try {
-    const j = (await res.json()) as { error?: string };
-    return j.error ?? `Request failed (${res.status}).`;
+    const j = (await res.json()) as {
+      error?: string;
+      maxBytes?: number;
+      maxSec?: number;
+      remainingMin?: number;
+      capMin?: number;
+      neededMin?: number;
+    };
+    switch (j.error) {
+      case "file_too_large": {
+        const mb = j.maxBytes ? Math.floor(j.maxBytes / (1024 * 1024)) : null;
+        return mb
+          ? `That file is larger than your tier allows (max ${mb} MB). Upgrade for higher limits.`
+          : "That file is larger than your tier allows. Upgrade for higher limits.";
+      }
+      case "duration_exceeds_tier": {
+        const min = j.maxSec ? Math.floor(j.maxSec / 60) : null;
+        return min
+          ? `That file is longer than your tier allows (max ${min} min per file). Upgrade for longer files.`
+          : "That file is longer than your tier allows. Upgrade for longer files.";
+      }
+      case "no_quota":
+        return j.capMin
+          ? `You've used all ${j.capMin} minutes for this period. Upgrade or wait for the next cycle.`
+          : "You're out of minutes for this period. Upgrade or wait for the next cycle.";
+      case "insufficient_quota":
+        return `This file needs ~${j.neededMin ?? "?"} min but you only have ${j.remainingMin ?? 0} min left this period. Upgrade or wait for the next cycle.`;
+      case "aai_submit_failed":
+        return "Transcription service is unavailable. Please try again in a moment.";
+      default:
+        return j.error ?? `Request failed (${res.status}).`;
+    }
   } catch {
     return `Request failed (${res.status}).`;
   }

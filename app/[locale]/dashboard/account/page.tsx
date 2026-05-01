@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { auth, signOut } from "@/auth";
 import { quotaMinutesFor, type BillingCycle, type Tier } from "@/lib/plans";
 import { BillingPortalButton } from "@/app/components/BillingPortalButton";
+import { DeleteAccountButton } from "@/app/components/DeleteAccountButton";
 
 type UserRow = {
   email: string;
@@ -81,6 +82,16 @@ export default async function AccountPage() {
           Sign out
         </button>
       </form>
+
+      <div className="mt-12 rounded-2xl border border-red-200 p-6">
+        <h2 className="text-sm font-semibold text-red-700">Danger zone</h2>
+        <p className="mt-1 text-sm text-ink/60">
+          Permanently delete your account, transcripts, and audio. This cannot be undone.
+        </p>
+        <div className="mt-4">
+          <DeleteAccountButton />
+        </div>
+      </div>
     </main>
   );
 }

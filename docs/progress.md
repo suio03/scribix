@@ -498,56 +498,56 @@ All routes run on Cloudflare Workers (edge) by default — no per-route runtime 
 
 Each phase ends in something demonstrable.
 
-### Phase 0 — repo bootstrap (½ day)
-- `@opennextjs/cloudflare` adapter installed; `wrangler.jsonc` declares D1 + R2 bindings.
-- Migration `0001_initial.sql` (schema in §5).
-- Local dev: `next dev` (with `initOpenNextCloudflareForDev()` exposing bindings) or `npm run preview` for full Worker emulation.
-- Env vars table established (see §15).
-- R2 bucket CORS configured for direct browser PUT.
+### Phase 0 — repo bootstrap (½ day) — ✅ done (commit `3d47224`)
+- [x] `@opennextjs/cloudflare` adapter installed; `wrangler.jsonc` declares D1 + R2 bindings.
+- [x] Migration `0001_initial.sql` (schema in §5).
+- [x] Local dev: `next dev` (with `initOpenNextCloudflareForDev()` exposing bindings) or `npm run preview` for full Worker emulation.
+- [x] Env vars table established (see §15).
+- [ ] R2 bucket CORS configured for direct browser PUT. *(deferred — manual step before launch, see §16)*
 
-### Phase 1 — auth + user shell (1 day)
-- next-auth v5 + Google.
-- `signIn` callback → D1 upsert (direct binding).
-- Header/dashboard auth gate.
-- `/dashboard` skeleton (empty list).
-- `/dashboard/account` showing email + tier + usage (mocked).
+### Phase 1 — auth + user shell (1 day) — ✅ done (commit `66c0214`)
+- [x] next-auth v5 + Google.
+- [x] `signIn` callback → D1 upsert (direct binding).
+- [x] Header/dashboard auth gate.
+- [x] `/dashboard` skeleton (empty list).
+- [x] `/dashboard/account` showing email + tier + usage (mocked).
 
-### Phase 2 — transcription pipeline, single tier (2–3 days)
-- Hardcode everyone to "free" tier; ignore Creem entirely.
-- Upload → R2 presign → AssemblyAI submit → idempotent webhook → completion.
-- Read-only viewer with synced playback.
-- TXT export.
-- Inline reconcile on `/status`.
+### Phase 2 — transcription pipeline, single tier (2–3 days) — ✅ done (commit `a77305d`)
+- [x] Hardcode everyone to "free" tier; ignore Creem entirely.
+- [x] Upload → R2 presign → AssemblyAI submit → idempotent webhook → completion.
+- [x] Read-only viewer with synced playback.
+- [x] TXT export.
+- [x] Inline reconcile on `/status`.
 
-### Phase 3 — record tab + exports (1 day)
-- MediaRecorder client flow into the same pipeline.
-- SRT, VTT export endpoints.
+### Phase 3 — record tab + exports (1 day) — ✅ done (commit `a77305d`)
+- [x] MediaRecorder client flow into the same pipeline.
+- [x] SRT, VTT export endpoints.
 
-### Phase 4 — payments (1–2 days)
-- Creem products (basic monthly/yearly, pro monthly/yearly).
-- Checkout + portal routes (portal config disables plan-switching).
-- Webhook handler with all 5 event types + `event_id` dedup + cycle-detection logic from §8.3.
-- Pricing page wires to checkout.
+### Phase 4 — payments (1–2 days) — ✅ done (commit `391f2ad`)
+- [x] Creem products (basic monthly/yearly, pro monthly/yearly). *(env-driven product IDs; real IDs to be filled in dashboard)*
+- [x] Checkout + portal routes (portal config disables plan-switching). *(portal toggle is a Creem-side config — see §16)*
+- [x] Webhook handler with all 5 event types + `event_id` dedup + cycle-detection logic from §8.3.
+- [x] Pricing page wires to checkout.
 
-### Phase 5 — quota enforcement (1 day)
-- Atomic reservation at `/start`.
-- `audio_end_at` cap on AAI submit.
-- Reconciliation in webhook completion.
-- 402 / 413 / 429 error UX.
-- Speech model fallback wiring (§9.6).
+### Phase 5 — quota enforcement (1 day) — ✅ done
+- [x] Atomic reservation at `/start` (`lib/quota.ts:reserveQuota`).
+- [x] `audio_end_at` cap on AAI submit (`start/route.ts`).
+- [x] Reconciliation in webhook completion (success + error paths in `webhook/assemblyai/route.ts`).
+- [x] 402 / 413 / 429 error UX — split `no_quota` (429) vs `insufficient_quota` (402, remaining < estimate/2 per §10.2); 413 for size/duration tier caps; friendly messages in `Uploader.readError`.
+- [x] Speech model fallback (§9.6) — wired via AAI's native `speech_models` array (`["universal-3-pro", "universal-2"]` for paid tiers); `transcripts.speech_model` records the model that actually completed.
 
-### Phase 6 — admin + ops (1 day)
-- Admin list pages (users + transcripts).
-- Discord error alerts.
-- Account-delete endpoint.
-- Documented runbook for monthly AAI bulk-delete job.
+### Phase 6 — admin + ops (1 day) — ✅ done
+- [x] Admin list pages (users + transcripts) — gated by `ADMIN_EMAILS` (`lib/admin.ts`); paginated lists at `/admin/users` and `/admin/transcripts` with search/filter and "include deleted" toggle.
+- [x] Discord error alerts — added `transcription_failed` and `account_deleted` kinds; wired AAI submit failure (`start/route.ts`), AAI-side error completion + bad webhook token (`webhook/assemblyai/route.ts`), and account deletion.
+- [x] Account-delete endpoint — `DELETE /api/account` soft-deletes user + cascade-soft-deletes transcripts + bulk-removes R2 audio + transcript JSON; UI in `DeleteAccountButton` on `/dashboard/account`.
+- [x] Runbook for monthly AAI bulk-delete (`docs/runbooks/aai-bulk-delete.md`) — purges AAI for soft-deleted rows, then hard-deletes the D1 rows + orphaned users.
 
 ### Phase 7 — polish + launch prep (1–2 days)
-- Empty states, loading states, error states (including "audio expired, transcript only" after 7 days).
-- Pricing page copy (yearly = "available immediately", not "minutes/month").
-- Refund policy page.
-- Marketing site SEO.
-- Production deployment, prod webhook URLs registered with AssemblyAI + Creem.
+- [ ] Empty states, loading states, error states (including "audio expired, transcript only" after 7 days).
+- [ ] Pricing page copy (yearly = "available immediately", not "minutes/month").
+- [ ] Refund policy page.
+- [ ] Marketing site SEO.
+- [ ] Production deployment, prod webhook URLs registered with AssemblyAI + Creem.
 
 **Total estimate: ~9–11 working days for a single dev.**
 

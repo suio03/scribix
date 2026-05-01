@@ -51,16 +51,27 @@ export function parseDbDate(s: string): Date {
 }
 
 /**
- * Atomic reservation. Returns the actual minutes reserved (capped to remaining)
- * or null if the user has no quota left at all.
+ * Atomic reservation per §10.2.
  *
- * Reserved = min(estimateMin, remaining). We never reserve a fraction of a minute.
+ * - `no_quota`: user has 0 minutes left this period.
+ * - `insufficient_quota`: user has some quota but `< estimate/2`. We reject
+ *   up-front rather than half-transcribing — the spec's UX call to avoid
+ *   silently truncated outputs (audio_end_at would still cap AAI billing).
+ * - Otherwise reserve `min(estimate, remaining)`. If remaining < estimate
+ *   (but ≥ estimate/2), the AAI submit's `audio_end_at` clips cleanly.
+ *
+ * `remainingMin` / `capMin` are returned alongside errors so the caller can
+ * shape user-facing messages ("X of Y minutes remaining").
  */
 export async function reserveQuota(
   db: D1Database,
   userId: string,
   estimateMin: number
-): Promise<{ reservedMin: number } | { error: "no_quota" | "user_not_found" }> {
+): Promise<
+  | { reservedMin: number; remainingMin: number; capMin: number }
+  | { error: "no_quota" | "insufficient_quota"; remainingMin: number; capMin: number }
+  | { error: "user_not_found" }
+> {
   const user = await db
     .prepare(
       `SELECT id, tier, billing_cycle, minutes_used_this_period, period_started_at, period_ends_at
@@ -73,9 +84,14 @@ export async function reserveQuota(
   const fresh = await maybeResetFreePeriod(db, user);
   const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle);
   const remaining = Math.max(0, cap - fresh.minutes_used_this_period);
-  if (remaining === 0) return { error: "no_quota" };
+  if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
 
-  const reservedMin = Math.min(Math.max(1, Math.ceil(estimateMin)), remaining);
+  const wantedMin = Math.max(1, Math.ceil(estimateMin));
+  if (remaining * 2 < wantedMin) {
+    return { error: "insufficient_quota", remainingMin: remaining, capMin: cap };
+  }
+
+  const reservedMin = Math.min(wantedMin, remaining);
   const result = await db
     .prepare(
       `UPDATE users
@@ -87,8 +103,8 @@ export async function reserveQuota(
     .bind(reservedMin, userId, cap)
     .run();
 
-  if (!result.meta?.changes) return { error: "no_quota" };
-  return { reservedMin };
+  if (!result.meta?.changes) return { error: "no_quota", remainingMin: 0, capMin: cap };
+  return { reservedMin, remainingMin: remaining - reservedMin, capMin: cap };
 }
 
 /**

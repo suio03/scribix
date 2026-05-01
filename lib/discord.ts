@@ -7,7 +7,9 @@ type AlertKind =
   | "subscription_expired"
   | "payment_failed"
   | "downgrade_blocked"
-  | "webhook_error";
+  | "webhook_error"
+  | "transcription_failed"
+  | "account_deleted";
 
 const STYLE: Record<AlertKind, { title: string; color: number }> = {
   checkout_success: { title: "✅ New payment", color: 0x57f287 },
@@ -16,6 +18,8 @@ const STYLE: Record<AlertKind, { title: string; color: number }> = {
   payment_failed: { title: "❌ Payment failed", color: 0xed4245 },
   downgrade_blocked: { title: "🛑 Downgrade blocked", color: 0xeb459e },
   webhook_error: { title: "🚨 Webhook error", color: 0x992d22 },
+  transcription_failed: { title: "❌ Transcription failed", color: 0xed4245 },
+  account_deleted: { title: "👋 Account deleted", color: 0x95a5a6 },
 };
 
 export async function discordAlert(

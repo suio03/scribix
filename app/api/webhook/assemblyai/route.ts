@@ -1,5 +1,6 @@
 import { getTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
+import { discordAlert } from "@/lib/discord";
 import { reconcileQuota } from "@/lib/quota";
 import { R2 } from "@/lib/r2";
 
@@ -34,6 +35,11 @@ export async function POST(req: Request) {
 
   const token = req.headers.get("x-scribix-token");
   if (token !== row.webhook_token) {
+    await discordAlert("webhook_error", {
+      source: "assemblyai",
+      reason: "bad_token",
+      transcriptId: row.id,
+    });
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
@@ -107,5 +113,10 @@ export async function applyAaiResult(
       .run();
     if (!guard.meta?.changes) return;
     await reconcileQuota(env.DB, row.user_id, row.reserved_minutes ?? 0, 0);
+    await discordAlert("transcription_failed", {
+      transcriptId: row.id,
+      userId: row.user_id,
+      error: aai.error ?? "aai_error",
+    });
   }
 }
