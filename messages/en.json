@@ -345,7 +345,7 @@
     "h2Part1": "Questions,",
     "h2Part2": "<accent>answered carefully.</accent>",
     "contactPrefix": "Can't find what you're looking for? Email",
-    "contactEmail": "hello@scribix.app",
+    "contactEmail": "hello@scribix.io",
     "contactSuffix": "and a real person responds within a working day.",
     "items": [
       {
@@ -409,7 +409,8 @@
     "credit": "Set in Fraunces & Geist · Crafted with care",
     "legal": [
       { "label": "Terms of Service", "href": "/terms" },
-      { "label": "Privacy Policy", "href": "/privacy" }
+      { "label": "Privacy Policy", "href": "/privacy" },
+      { "label": "Refund Policy", "href": "/refunds" }
     ]
   }
 }

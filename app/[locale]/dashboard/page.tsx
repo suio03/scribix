@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { auth } from "@/auth";
+import { redirect } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 
 type Row = {
@@ -10,10 +11,22 @@ type Row = {
   duration_sec: number | null;
 };
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ checkout?: string }>;
+}) {
+  const { locale } = await params;
   const session = await auth();
-  const userId = session!.user.id;
+  const userId = session?.user?.id;
+  if (!userId) {
+    redirect({ href: "/", locale });
+  }
   const env = cf();
+  const sp = await searchParams;
+  const showCheckoutOk = sp.checkout === "ok";
 
   const { results } = await env.DB.prepare(
     `SELECT id, title, status, created_at, duration_sec
@@ -49,6 +62,19 @@ export default async function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {showCheckoutOk ? (
+        <div className="mt-8 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
+          <p className="font-medium">Subscription active — welcome aboard.</p>
+          <p className="mt-0.5 text-emerald-800/80">
+            Your new plan is live. Visit{" "}
+            <Link href="/dashboard/account" className="underline underline-offset-2">
+              account
+            </Link>{" "}
+            to see your usage.
+          </p>
+        </div>
+      ) : null}
 
       {results.length === 0 ? (
         <div className="mt-10 rounded-2xl border border-dashed border-line p-12 text-center">

@@ -50,7 +50,7 @@ const PLANS: PlanCard[] = [
         "TXT, SRT & VTT export",
       ],
       yearly: [
-        "120 hours / year, available immediately",
+        "120 hours / year, available immediately, refreshed at renewal",
         "Up to 2 hr per file · 2 GB",
         "Universal-3 Pro speech model",
         "Speaker labels + synced playback",
@@ -72,7 +72,7 @@ const PLANS: PlanCard[] = [
         "All export formats",
       ],
       yearly: [
-        "360 hours / year, available immediately",
+        "360 hours / year, available immediately, refreshed at renewal",
         "Up to 10 hr per file · 5 GB",
         "Universal-3 Pro speech model",
         "Priority queue",

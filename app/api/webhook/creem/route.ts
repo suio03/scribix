@@ -233,7 +233,7 @@ export async function POST(req: Request) {
                   subscription_status = 'expired',
                   minutes_used_this_period = 0,
                   period_started_at = CURRENT_TIMESTAMP,
-                  period_ends_at = datetime('now', '+30 days')
+                  period_ends_at = datetime('now', 'start of day', '+1 day')
             WHERE customer_id = ?1 AND deleted_at IS NULL`
         )
           .bind(customerId)

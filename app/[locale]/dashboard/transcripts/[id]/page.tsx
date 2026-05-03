@@ -1,15 +1,19 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
+import { Link } from "@/i18n/navigation";
+import { redirect } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
 
 type Params = { params: Promise<{ locale: string; id: string }> };
 
 export default async function TranscriptViewerPage({ params }: Params) {
-  const { id } = await params;
+  const { locale, id } = await params;
   const session = await auth();
-  const userId = session!.user.id;
+  const userId = session?.user?.id;
+  if (!userId) {
+    redirect({ href: "/", locale });
+  }
   const env = cf();
 
   const row = await env.DB.prepare(
@@ -78,6 +82,13 @@ export default async function TranscriptViewerPage({ params }: Params) {
         {metaLine(row)}
       </p>
 
+      {row.status === "completed" && audioExpired(row.created_at) ? (
+        <div className="mt-6 rounded-2xl border border-line bg-card/60 px-4 py-3 text-[13px] text-ink/70">
+          <span className="font-medium text-ink">Audio expired.</span> Source files are kept
+          for 7 days; the transcript stays as long as you want.
+        </div>
+      ) : null}
+
       <div className="mt-10">
         {row.status !== "completed" ? (
           <StatusPanel status={row.status} error={row.error} />
@@ -89,6 +100,14 @@ export default async function TranscriptViewerPage({ params }: Params) {
       </div>
     </main>
   );
+}
+
+const AUDIO_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+function audioExpired(createdAt: string): boolean {
+  const t = new Date(createdAt.includes("T") ? createdAt : createdAt.replace(" ", "T") + "Z").getTime();
+  if (Number.isNaN(t)) return false;
+  return Date.now() - t > AUDIO_TTL_MS;
 }
 
 function metaLine(row: { duration_sec: number | null; language: string | null; status: string }) {

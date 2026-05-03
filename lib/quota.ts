@@ -14,9 +14,11 @@ export type UserQuotaRow = {
 };
 
 /**
- * For free users, the period rolls forward 30 days at a time on read.
- * Paid users reset on Creem cycle events (Phase 4) — never lazy-reset paid.
- * Race on concurrent reads at the boundary is harmless: both writes converge.
+ * For free users, the period rolls forward one UTC day at a time on read.
+ * `period_ends_at` is anchored to UTC midnight at signup, so each `+1 day`
+ * advance stays aligned. Paid users reset on Creem cycle events (Phase 4) —
+ * never lazy-reset paid. Race on concurrent reads at the boundary is
+ * harmless: both writes converge.
  */
 export async function maybeResetFreePeriod(db: D1Database, user: UserQuotaRow): Promise<UserQuotaRow> {
   if (user.tier !== "free") return user;
@@ -29,7 +31,7 @@ export async function maybeResetFreePeriod(db: D1Database, user: UserQuotaRow): 
       `UPDATE users
           SET minutes_used_this_period = 0,
               period_started_at = period_ends_at,
-              period_ends_at    = datetime(period_ends_at, '+30 days')
+              period_ends_at    = datetime(period_ends_at, '+1 day')
         WHERE id = ?1 AND tier = 'free'`
     )
     .bind(user.id)

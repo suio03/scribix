@@ -1,5 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { redirect } from "@/i18n/navigation";
 import { auth, signOut } from "@/auth";
 import { quotaMinutesFor, type BillingCycle, type Tier } from "@/lib/plans";
 import { BillingPortalButton } from "@/app/components/BillingPortalButton";
@@ -17,8 +19,12 @@ type UserRow = {
 };
 
 export default async function AccountPage() {
+  const locale = await getLocale();
   const session = await auth();
-  const userId = session!.user.id;
+  const userId = session?.user?.id;
+  if (!userId) {
+    redirect({ href: "/", locale });
+  }
 
   const { env } = getCloudflareContext();
   const row = await env.DB.prepare(
@@ -49,8 +55,8 @@ export default async function AccountPage() {
       </div>
 
       <dl className="mt-10 space-y-6 rounded-2xl border border-line p-6">
-        <Field label="Email" value={row?.email ?? session!.user.email ?? "—"} />
-        <Field label="Name" value={row?.full_name ?? session!.user.name ?? "—"} />
+        <Field label="Email" value={row?.email ?? session?.user?.email ?? "—"} />
+        <Field label="Name" value={row?.full_name ?? session?.user?.name ?? "—"} />
         <Field label="Plan" value={planLabel(tier, cycle, row?.subscription_status ?? null)} />
         <Field label="Usage this period" value={`${usedMin} / ${quotaMin} min`} />
         <Field label="Period resets" value={row ? formatDate(row.period_ends_at) : "—"} />

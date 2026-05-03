@@ -26,7 +26,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://scribix.app"),
+  metadataBase: new URL("https://scribix.io"),
   title: {
     default: "Video to Text — Free AI Transcription Online | Scribix",
     template: "%s · Scribix",
@@ -95,6 +95,7 @@ export default async function LocaleLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script src="https://accounts.google.com/gsi/client" async defer />
       </head>
       <body className="bg-paper text-ink antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>

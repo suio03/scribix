@@ -118,8 +118,14 @@ Paste into `.env.local` and `.dev.vars` as `AUTH_SECRET=...`.
    - `http://localhost:3000/api/auth/callback/google`
    - `https://<your-ngrok-id>.ngrok.io/api/auth/callback/google` (Phase 2 webhook testing — see 2.1)
    - `https://scribix.io/api/auth/callback/google` (production)
-4. Copy the **Client ID** and **Client Secret**.
-5. Drop into `.env.local` and `.dev.vars`:
+4. **Authorized JavaScript origins** — required for **Google One-Tap** (Phase 8). This is a separate field from redirect URIs. Add:
+   - `http://localhost:3000`
+   - `https://<your-ngrok-id>.ngrok.io` (only if testing One-Tap on a public dev URL)
+   - `https://scribix.io` (production)
+
+   One-Tap loads `gsi/client` in the browser; the prompt silently fails if the page origin isn't on this list. Missing origins is the #1 cause of "One-Tap not showing up" in dev.
+5. Copy the **Client ID** and **Client Secret**.
+6. Drop into `.env.local` and `.dev.vars`:
    ```
    GOOGLE_ID=...
    GOOGLE_SECRET=...
@@ -169,6 +175,8 @@ npx wrangler secret put ASSEMBLYAI_API_KEY
 ---
 
 ## Phase 4 — payments (Creem)
+
+> **v1.0 soft-launch note:** this entire phase is **deferred to v1.1**. The soft launch ships auth + Free tier only — `/api/billing/checkout` + `/api/billing/portal` return 404, the Pricing component is hidden from the homepage, and the Creem webhook handler stays mounted but dormant. Skip the rest of this section until you're ready to flip paid tiers on. See `progress.md` §14 Phase 8 for the soft-launch checklist.
 
 ### 4.1 Creem dashboard setup (blocking — Phase 4 onwards)
 

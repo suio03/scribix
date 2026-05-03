@@ -13,7 +13,7 @@ This document is the source of truth for v1 scope. Updated after a full plan-cha
 | Inputs (v1) | Upload + Record. YouTube deferred. |
 | Pricing model | Subscription tiers (not credits). |
 | Tiers | **Free**, **Basic**, **Pro** |
-| Auth | Google OAuth only (no email magic link, no Resend) |
+| Auth | Google OAuth + Google One-Tap (no email magic link, no Resend) |
 | Transcript features | Plain text + word-level timestamps + speaker diarization + synced playback (7 days) + TXT/SRT/VTT export. Read-only viewer. |
 | Hosting | Cloudflare Workers (via `@opennextjs/cloudflare`), single Next.js service. D1 + R2 bound directly. No separate Worker. |
 | Speech models | Free → Universal-2. Basic + Pro → Universal-3 Pro with Universal-2 fallback (Option A: resubmit on language-unsupported error). |
@@ -22,6 +22,7 @@ This document is the source of truth for v1 scope. Updated after a full plan-cha
 | Tier downgrades | Pro → Basic blocked at Creem portal level. Cancel-to-free remains self-service. |
 | Audio retention | 7 days (R2 lifecycle), then deleted. Transcript JSON kept until user deletes. |
 | Account deletion | Soft-delete via `deleted_at`. AAI-side cleanup is a separate admin-side bulk job (monthly cadence). |
+| Launch posture | **v1.0 soft launch:** auth + Free tier only. Pricing UI hidden, `/api/billing/*` disabled, Creem webhook dormant. Paid tiers re-enabled in v1.1 once transcription quality is validated with real users. |
 
 ### Tier table
 
@@ -29,7 +30,7 @@ This document is the source of truth for v1 scope. Updated after a full plan-cha
 |---|---|---|---|
 | Monthly price | $0 | $9 / mo | $19 / mo |
 | Yearly price (40% off) | — | $64.80 / yr (~$5.40/mo) | $136.80 / yr (~$11.40/mo) |
-| Quota — monthly plan | 30 min | 600 min (10 hr) | 1,800 min (30 hr) |
+| Quota — monthly plan | 30 min / day | 600 min (10 hr) | 1,800 min (30 hr) |
 | Quota — yearly plan | — | 7,200 min (120 hr) upfront | 21,600 min (360 hr) upfront |
 | Per-file duration cap | 30 min | 2 hr | 10 hr (AssemblyAI ceiling) |
 | Per-file size cap | 500 MB | 2 GB | 5 GB (AssemblyAI ceiling) |
@@ -39,7 +40,7 @@ This document is the source of truth for v1 scope. Updated after a full plan-cha
 | Priority queue | — | — | ✅ |
 
 Margins (worst case, max usage, including diarization, at AAI ~$0.23/hr):
-- Free $0.08 cost.
+- Free **$0.085 / day** worst case per active user (30 min × $0.17/hr Universal-2 + diarization).
 - Basic monthly: $2.30 vs $9 (3.9×).
 - Pro monthly: $6.90 vs $19 (2.75×).
 - Basic yearly: $27.60 cost vs $64.80 (2.35×, $37 profit).
@@ -135,7 +136,14 @@ CREATE TABLE users (
   -- Quota counter (single counter, full reset on each Creem cycle event)
   minutes_used_this_period   INTEGER NOT NULL DEFAULT 0,
   period_started_at          DATETIME DEFAULT CURRENT_TIMESTAMP,
-  period_ends_at             DATETIME,                      -- next quota reset (Creem current_period_end for paid; +30d for free)
+  period_ends_at             DATETIME,                      -- next quota reset (Creem current_period_end for paid; +1d for free)
+
+  -- Engagement tracking (post-launch targeted-discount signals; see §14 Phase 8)
+  total_minutes_lifetime     INTEGER NOT NULL DEFAULT 0,
+  total_files_lifetime       INTEGER NOT NULL DEFAULT 0,
+  active_days_count          INTEGER NOT NULL DEFAULT 0,    -- distinct calendar days the user submitted a job
+  last_active_at             DATETIME,
+  hit_daily_cap_count        INTEGER NOT NULL DEFAULT 0,    -- bumped on `no_quota` reservation reject — strongest upgrade signal
 
   -- Soft delete
   deleted_at      DATETIME
@@ -212,9 +220,11 @@ transcripts/{user_id}/{transcript_id}.json        ← AssemblyAI completion payl
 
 ## 7. Auth flow (next-auth v5 + Google)
 
-1. User clicks "Sign in" → next-auth Google OAuth.
-2. `signIn` callback fires → upserts the user row directly via the D1 binding (no inter-service hop).
-3. New users get `tier='free'`, `period_ends_at = now + 30 days`.
+1. **Two entry paths, one upsert:**
+   - **Primary (One-Tap):** Google Identity Services renders an inline prompt for unauthenticated visitors on home / dashboard. The returned ID token POSTs to `/api/auth/onetap`, which verifies via Google's `tokeninfo` endpoint, upserts the user row, and mints a next-auth-compatible JWT cookie.
+   - **Fallback (redirect):** standard next-auth Google OAuth (Header "Sign in" button). Used when One-Tap is dismissed, the user is in incognito, FedCM is disabled, or an ad-blocker silences the prompt.
+2. Both paths run the same D1 upsert keyed on `profile.sub` (no inter-service hop — direct D1 binding).
+3. New users get `tier='free'`, `period_ends_at = now + 1 day` (free quota is a daily-rolling window).
 4. JWT carries `id`, `tier`, `minutes_used_this_period`, `period_ends_at` (refreshed on token rotation).
 
 Admin gating: env var `ADMIN_EMAILS=a@x.com,b@x.com`. `auth()` helper enriches session with `isAdmin` boolean. No DB column needed.
@@ -410,11 +420,11 @@ UPDATE users
 ### 10.4 Period reset
 Period reset is event-driven (Creem webhook), not lazy:
 - On `checkout.completed`, `subscription.updated` (renewal detected), and `subscription.expired`, the counter is set to 0 explicitly. See §8.3.
-- For free users (no Creem coupling), `period_ends_at` is a self-rolling 30-day window. On any read of the user row where `now() >= period_ends_at`, lazy-reset:
+- For free users (no Creem coupling), `period_ends_at` is a self-rolling **1-day** window. On any read of the user row where `now() >= period_ends_at`, lazy-reset:
   ```
   minutes_used_this_period = 0
   period_started_at = period_ends_at
-  period_ends_at    = period_started_at + 30 days
+  period_ends_at    = period_started_at + 1 day
   ```
   The race on lazy reset (two concurrent reads at the boundary) is harmless — both writes converge on the same end state.
 
@@ -542,14 +552,25 @@ Each phase ends in something demonstrable.
 - [x] Account-delete endpoint — `DELETE /api/account` soft-deletes user + cascade-soft-deletes transcripts + bulk-removes R2 audio + transcript JSON; UI in `DeleteAccountButton` on `/dashboard/account`.
 - [x] Runbook for monthly AAI bulk-delete (`docs/runbooks/aai-bulk-delete.md`) — purges AAI for soft-deleted rows, then hard-deletes the D1 rows + orphaned users.
 
-### Phase 7 — polish + launch prep (1–2 days)
-- [ ] Empty states, loading states, error states (including "audio expired, transcript only" after 7 days).
-- [ ] Pricing page copy (yearly = "available immediately", not "minutes/month").
-- [ ] Refund policy page.
-- [ ] Marketing site SEO.
-- [ ] Production deployment, prod webhook URLs registered with AssemblyAI + Creem.
+### Phase 7 — polish + launch prep (1–2 days) — ✅ done
+- [x] Empty states, loading states, error states — viewer shows "Audio expired" panel for completed rows older than 7 days; dashboard shows checkout-success banner on `?checkout=ok`. Existing list/processing/error states already in place from earlier phases.
+- [x] Pricing page copy — yearly bullets now read "available immediately, refreshed at renewal" matching §1 marketing copy note.
+- [x] Refund policy page (`/refunds`) — 3-day window, 60-min usage cap, 6% processing fee. Terms (`/terms`) and Privacy (`/privacy`) stubbed alongside; footer links updated.
+- [x] Marketing site SEO — fixed `metadataBase` (`scribix.app` → `scribix.io`); added `app/robots.ts`, `app/sitemap.ts` (locale-alternate aware), and JSON-LD (Organization + WebSite + SoftwareApplication) on the home page.
+- [x] Production deployment — `docs/runbooks/launch-checklist.md` ties together prod webhook flip (Creem dashboard), §16 open items, and day-1 monitoring. Manual-setup §7 already covers Worker secrets + custom domain.
 
-**Total estimate: ~9–11 working days for a single dev.**
+### Phase 8 — Soft-launch retrofit (½ day) — pending
+
+Pre-launch posture: ship auth + Free tier only, defer paid path until transcription quality is validated with real users. **Does not delete Phase 4–6 code** — gates the UI surface and disables billing routes so paid is one config flip away.
+
+- [ ] **Free tier → daily window.** `lib/plans.ts` Free `minutesPerCycle` stays 30; `lib/quota.ts:maybeResetFreePeriod` and `auth.ts` upsert change `'+30 days'` → `'+1 day'`. No migration needed (column shapes unchanged).
+- [ ] **Engagement tracking.** Migration `0002_engagement.sql` adds `total_minutes_lifetime`, `total_files_lifetime`, `active_days_count`, `last_active_at`, `hit_daily_cap_count` to `users`. `lib/quota.ts:reconcileQuota` bumps lifetime + active-day stats on completion; `reserveQuota` bumps `hit_daily_cap_count` when it returns `no_quota`.
+- [ ] **Google One-Tap.** Add Google Identity Services script (`gsi/client`) in root layout. New `<GoogleOneTap />` client component renders on home + dashboard when `!signedIn` and calls `google.accounts.id.prompt()`. New route `app/api/auth/onetap/route.ts` verifies the ID token (Google `tokeninfo` endpoint), upserts the user row (same logic as `auth.ts:32-46`), mints a next-auth-compatible JWT cookie. Standard Sign in button stays as fallback.
+- [ ] **Hide pricing surface.** Remove `<Pricing />` from `app/[locale]/page.tsx:81`. Drop `AggregateOffer` from JSON-LD (`app/[locale]/page.tsx:44-50`). Drop pricing footer link from `messages/en.json` `Footer.legal`.
+- [ ] **Disable checkout / portal.** `/api/billing/checkout` + `/api/billing/portal` return 404. `/dashboard/account` hides the "Upgrade" CTA + `<BillingPortalButton />` (keep usage display). Creem webhook handler stays mounted — no-op without checkouts.
+- [ ] **Launch checklist split.** Carve `docs/runbooks/launch-checklist.md` Creem smoke tests + portal config into a "v1.1" section. v1.0 list is auth + free-tier transcription smoke tests only.
+
+**Total estimate: ~9–11 working days for a single dev.** (Phase 8 adds ~½ day on top.)
 
 ---
 
@@ -618,5 +639,12 @@ This plan was rewritten on 2026-04-29 after a ten-question challenge pass. Key c
 9. **Speech model fallback (Option A).** Submit with U3P; on language error, webhook resubmits with U2. `speech_model` column tracks the actual model used. (§9.6)
 10. **Webhook idempotency formalized.** AAI: atomic UPDATE with status guard. Creem: `event_id` dedup table. (§9.2, §5)
 11. **Hosting: Pages → Workers via OpenNext.** `@cloudflare/next-on-pages` was deprecated in favor of `@opennextjs/cloudflare`. Same D1 + R2 bindings, same edge model. `runtime = 'edge'` annotations dropped — Workers IS the runtime. Next.js bumped to 16.x for OpenNext peer compat. (§3, §4, §11, §14)
+
+### 2026-05-02 — Soft-launch retrofit
+
+12. **v1.0 launch posture.** Ship auth + Free tier only. Pricing UI hidden, `/api/billing/checkout` + `/portal` return 404, Creem webhook handler stays mounted but dormant. Paid path re-enabled in v1.1 after quality is validated with real users. (§1 launch posture, §14 Phase 8)
+13. **Free tier: 30 min / 30 days → 30 min / day.** Daily-rolling window matches industry default and gives users a "real workflow" daily quota instead of a one-shot monthly sample. `lib/quota.ts:maybeResetFreePeriod` and `auth.ts` upsert change `'+30 days'` → `'+1 day'`. Worst-case AAI cost per active free user: $0.085/day. (§1 tier table, §10.4)
+14. **Engagement tracking columns on `users`.** `total_minutes_lifetime`, `total_files_lifetime`, `active_days_count`, `last_active_at`, `hit_daily_cap_count`. Powers post-launch targeted-discount logic; `hit_daily_cap_count` is the strongest upgrade signal — a user who hits the daily wall repeatedly is literally telling you they want more. (§5)
+15. **Google One-Tap added as primary auth entry.** ID token verified server-side via Google `tokeninfo`, then mints a next-auth-compatible JWT cookie. Standard OAuth redirect remains as fallback for incognito / blocked-prompt cases. Manual-setup §1.2 gains an "Authorized JavaScript origins" config step. (§7)
 
 *This plan is the source of truth for v1 scope. Any change goes here first, then into code.*

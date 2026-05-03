@@ -24,7 +24,7 @@
     {
       "binding": "DB",
       "database_name": "scribix-db",
-      "database_id": "PLACEHOLDER_RUN_WRANGLER_D1_CREATE",
+      "database_id": "c031ef5c-899a-426a-897a-279e011be78d",
       "migrations_dir": "migrations"
     }
   ],

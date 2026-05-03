@@ -15,6 +15,43 @@ import { Pricing } from "../components/Pricing";
 import { FAQ } from "../components/FAQ";
 import { FinalCTA } from "../components/FinalCTA";
 import { Footer } from "../components/Footer";
+import { GoogleOneTap } from "../components/GoogleOneTap";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://scribix.io/#org",
+      name: "Scribix",
+      url: "https://scribix.io",
+      logo: "https://scribix.io/icon.svg",
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://scribix.io/#site",
+      url: "https://scribix.io",
+      name: "Scribix",
+      publisher: { "@id": "https://scribix.io/#org" },
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "Scribix",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: "https://scribix.io",
+      description:
+        "Convert any video or audio to text. Speaker labels, word-level timestamps, 200+ languages, TXT/SRT/VTT export.",
+      offers: {
+        "@type": "AggregateOffer",
+        priceCurrency: "USD",
+        lowPrice: "0",
+        highPrice: "19",
+        offerCount: 5,
+      },
+    },
+  ],
+};
 
 export default async function HomePage({
   params,
@@ -29,6 +66,13 @@ export default async function HomePage({
 
   return (
     <Shell /* sidebar={<Sidebar />} */>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      {!session && process.env.GOOGLE_ID ? (
+        <GoogleOneTap clientId={process.env.GOOGLE_ID} />
+      ) : null}
       <Header />
       <main>
         <Generator signedIn={!!session} postSignInPath={postSignInPath} />

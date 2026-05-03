@@ -2,7 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 import { auth, signIn } from "@/auth";
-import { getPathname } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
 import { Logo } from "./Logo";
 import { SidebarToggle } from "./SidebarToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -19,12 +19,12 @@ export async function Header() {
       <div className="mx-auto flex h-14 max-w-[1180px] items-center justify-between gap-4 px-4 sm:px-8">
         <div className="flex items-center gap-2">
           {/* <SidebarToggle /> */}
-          <a href="#top" className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5">
             <Logo size={28} />
             <span className="font-display text-[19px] font-semibold tracking-tight">
               Scribix
             </span>
-          </a>
+          </Link>
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -32,7 +32,7 @@ export async function Header() {
           <ThemeToggle />
 
           {session ? (
-            <a
+            <Link
               href={dashboardHref}
               className="ml-1 inline-flex items-center gap-2 rounded-full border border-line px-2 py-1 text-[13px] font-medium hover:bg-ink/5"
             >
@@ -50,7 +50,7 @@ export async function Header() {
                 </span>
               )}
               <span className="pr-1">Dashboard</span>
-            </a>
+            </Link>
           ) : (
             <form
               action={async () => {

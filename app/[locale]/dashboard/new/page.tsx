@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { getLocale } from "next-intl/server";
 import { UploadOrRecord } from "@/app/components/UploadOrRecord";
-import { getPathname } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
 
 export default async function NewTranscriptPage() {
   const locale = await getLocale();
