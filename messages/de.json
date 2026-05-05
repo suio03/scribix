@@ -40,11 +40,11 @@
     "issueLabel": "Ausgabe №01 · Video zu Text",
     "h1Part1": "Video in Text umwandeln.",
     "h1Part2": "<accent>Kostenlose KI-Transkription.</accent>",
-    "description": "Scribix wandelt jedes Video in sekundenschnelle präzise, sprecheretikettierte Text um. Laden Sie eine MP4-, MOV-, WebM- oder AVI-Datei hoch – oder fügen Sie einen YouTube-Link ein – und erhalten Sie ein vollständiges Transkript mit Zeitstempel auf Wortebene in <stat>200+ Sprachen</stat>. <stat>Kostenlos</stat>, keine Anmeldung, unbegrenzte Länge.",
+    "description": "Scribix wandelt jedes Video in sekundenschnelle präzise, sprecheretikettierte Text um. Laden Sie eine MP4-, MOV-, WebM- oder AVI-Datei hoch – oder fügen Sie einen YouTube-Link ein – und erhalten Sie ein vollständiges Transkript mit Zeitstempel auf Wortebene in <stat>200+ Sprachen</stat>. <stat>Kostenlos</stat> mit Google-Anmeldung, Dateien bis zu 1 GB.",
     "trust": [
       { "label": "99,9% Genauigkeit", "icon": "Target" },
       { "label": "200+ Sprachen", "icon": "Globe" },
-      { "label": "Bis zu 5GB Dateien", "icon": "InfinityIcon" },
+      { "label": "Bis zu 1GB Dateien", "icon": "InfinityIcon" },
       { "label": "Sprechererkennung", "icon": "Users" },
       { "label": "Privat & sicher", "icon": "ShieldCheck" }
     ],
@@ -55,7 +55,7 @@
     ],
     "upload": {
       "instruction": "Ziehen Sie eine Video- oder Audiodatei herein, oder klicken Sie zum Durchsuchen.",
-      "specs": "Max. 5GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
+      "specs": "Max. 1GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
       "button": "Datei hochladen"
     },
     "youtube": {
@@ -124,7 +124,7 @@
     "label": "Funktionen",
     "number": "01",
     "h2": "Entwickelt für <accent>Videokünstler</accent>, denen Genauigkeit wichtig ist.",
-    "intro": "Ein Video-zu-Text-Konverter transkribiert die gesprochene Audio in einem Video in geschriebenen Text. Moderne KI-Sprachmodelle identifizieren Wörter, trennen Sprecher und fügen Zeitstempel an – was ein editierbares Transkript in Minuten statt Stunden ergibt. Scribix wird mit derselben Art von Sprachmodell ausgeführt, die professionelle Transkriptionsprogramme unterstützen, ohne Anmeldung, ohne Längenbeschränkung und mit einer Ausgabe, die sauber genug ist, um veröffentlicht zu werden.",
+    "intro": "Ein Video-zu-Text-Konverter transkribiert die gesprochene Audio in einem Video in geschriebenen Text. Moderne KI-Sprachmodelle identifizieren Wörter, trennen Sprecher und fügen Zeitstempel an – was ein editierbares Transkript in Minuten statt Stunden ergibt. Scribix wird mit derselben Art von Sprachmodell ausgeführt, die professionelle Transkriptionsprogramme unterstützen — melden Sie sich mit Google an, um loszulegen und eine Ausgabe zu erzeugen, die sauber genug ist, um veröffentlicht zu werden.",
     "items": [
       {
         "icon": "Users",
@@ -170,8 +170,8 @@
         "n": "01",
         "icon": "CloudUpload",
         "title": "Laden Sie Ihr Video hoch – oder fügen Sie einen Link ein.",
-        "body": "Ziehen Sie eine MP4-, MOV-, AVI-, MKV- oder WebM-Datei (bis zu 5 GB) per Drag-and-Drop, oder fügen Sie eine YouTube-, TikTok- oder Instagram-URL ein. Keine Formatkonvertierung – Scribix verarbeitet jeden gängigen Container.",
-        "duration": "Bis zu 5 GB · 6 Stunden"
+        "body": "Ziehen Sie eine MP4-, MOV-, AVI-, MKV- oder WebM-Datei (bis zu 1 GB) per Drag-and-Drop, oder fügen Sie eine YouTube-, TikTok- oder Instagram-URL ein. Keine Formatkonvertierung – Scribix verarbeitet jeden gängigen Container.",
+        "duration": "Bis zu 1 GB · 6 Stunden"
       },
       {
         "n": "02",
@@ -228,7 +228,7 @@
         "icon": "GraduationCap",
         "title": "Studenten",
         "audience": "Vorlesungen & Studium",
-        "body": "Wandeln Sie eine 2-Stunden-Vorlesung in durchsuchbare Notizen um. Markieren Sie einen verwirrenden Moment, klicken Sie auf das Wort, hören Sie es erneut. Der kostenlose Plan deckt die meisten Studenten das ganze Semester über.",
+        "body": "Wandeln Sie eine 2-Stunden-Vorlesung in durchsuchbare Notizen um. Markieren Sie einen verwirrenden Moment, klicken Sie auf das Wort, hören Sie es erneut. Testen Sie kostenlos, dann deckt ein einziger Basic-Monat ein ganzes Semester an Vorlesungen ab.",
         "workflow": ["Vorlesungsaufnahme", "Durchsuchbare Notizen", "KI-Zusammenfassung"]
       },
       {
@@ -243,13 +243,13 @@
   "Comparison": {
     "label": "Verglichen",
     "number": "04",
-    "h2": "Schneller, präziser, <accent>und unbegrenzt in der kostenlosen Stufe.</accent>",
+    "h2": "Schneller, präziser, <accent>und eine echte kostenlose Testversion.</accent>",
     "intro": "Wir benchmarken monatlich gegen die führenden Video-zu-Text-Tools anhand eines 200-Stunden-Test-Sets mit 12 Sprachen, 48 Sprechern und 4 Audioumgebungen – Studio, Telefon, Konferenz und Außenbereich.",
     "featureHeader": "Funktion",
     "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
     "rows": [
-      { "feature": "Kostenlose Stufe", "cells": ["Unlimited", "300 / mo", "45 trial", "Unlimited"] },
-      { "feature": "Dateigröße-Limit", "cells": ["5 GB", "1.5 GB", "2 GB", "Local"] },
+      { "feature": "Kostenlose Testversion", "cells": ["45 Min einmalig", "300 / mo", "45 trial", "Unlimited"] },
+      { "feature": "Dateigröße-Limit", "cells": ["1 GB", "1.1 GB", "2 GB", "Local"] },
       { "feature": "Unterstützte Sprachen", "cells": ["200+", "30+", "38", "99"] },
       { "feature": "Sprechertrennung", "cells": ["yes", "yes", "yes", "no"] },
       { "feature": "Zeitstempel auf Wortebene", "cells": ["yes", "no", "yes", "yes"] },
@@ -288,7 +288,7 @@
     "label": "Preisgestaltung",
     "number": "06",
     "h2": "Zahlen Sie für die Minuten, <accent>nicht das Marketing.</accent>",
-    "intro": "Ein kostenloser Plan, der wirklich nützlich ist. Zwei bezahlte Pläne ohne Platzbeschränkungen oder versteckte Gebühren. Kündigen Sie jederzeit, exportieren Sie alles.",
+    "intro": "Eine 45-minütige kostenlose Testversion, um die Qualität zu beweisen. Zwei bezahlte Pläne ohne Platzbeschränkungen oder versteckte Gebühren. Kündigen Sie jederzeit, exportieren Sie alles.",
     "mostLoved": "Am meisten geliebt",
     "plans": [
       {
@@ -350,11 +350,11 @@
     "items": [
       {
         "q": "Ist Scribix wirklich kostenlos für Video zu Text?",
-        "a": "Ja. Der kostenlose Plan hat kein Minuten-Limit, keine Anmeldung und keine Kreditkarte erforderlich. Sie können eine 6-Stunden-Konferenz-Aufnahme für $0 transkribieren. Bezahlte Pläne entsperren Prioritätswarteschlange, Team-Bibliotheken und längere Dateispeicherung."
+        "a": "Ja. Die kostenlose Testversion benötigt nur eine Google-Anmeldung – keine Kreditkarte. Sie erhalten 45 Minuten Transkription, um die Qualität zu testen, bevor Sie sich entscheiden. Bezahlte Pläne entsperren längere Dateien, Prioritätswarteschlange, Team-Bibliotheken und längere Dateispeicherung."
       },
       {
         "q": "Welche Videoformate unterstützt Scribix?",
-        "a": "MP4, MOV, AVI, MKV und WebM bis zu 5 GB jeweils. Nur-Audio-Dateien (MP3, WAV, M4A) werden ebenfalls unterstützt. Fügen Sie eine beliebige YouTube-, TikTok- oder Instagram-URL für Stream-basierte Eingabe ein – kein Download auf Ihrer Seite erforderlich."
+        "a": "MP4, MOV, AVI, MKV und WebM bis zu 1 GB jeweils. Nur-Audio-Dateien (MP3, WAV, M4A) werden ebenfalls unterstützt. Fügen Sie eine beliebige YouTube-, TikTok- oder Instagram-URL für Stream-basierte Eingabe ein – kein Download auf Ihrer Seite erforderlich."
       },
       {
         "q": "Wie genau ist Scribix's Video-zu-Text?",
@@ -394,7 +394,7 @@
     "kicker": "Bereit, wenn Sie es sind",
     "h2Part1": "Laden Sie ein Video hoch.",
     "h2Part2": "<accent>Wir machen den Rest.</accent>",
-    "body": "Kostenlose Stufe ist unbegrenzt – keine Anmeldung, keine Kreditkarte, kein Minuten-Limit. Ihr erstes Transkript erscheint, bevor Sie Ihren Kaffee fertig trinken können.",
+    "body": "Testen Sie kostenlos mit einer Google-Anmeldung – 45 Minuten, keine Kreditkarte. Ihr erstes Transkript erscheint, bevor Sie Ihren Kaffee fertig trinken können.",
     "primaryCta": "Video hochladen",
     "secondaryCta": "YouTube-Link einfügen",
     "stats": [

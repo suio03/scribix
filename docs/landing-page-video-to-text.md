@@ -45,7 +45,7 @@ Scribix runs the same class of speech model that powers professional transcripti
 ## Section 2 — How Scribix Works in 3 Steps
 
 ### 1. Upload your video — or paste a link
-Drag and drop an `MP4`, `MOV`, `AVI`, `MKV`, or `WebM` file (up to **5 GB**), or paste a `YouTube`, `TikTok`, or `Instagram` URL. No format conversion needed — Scribix handles every common container.
+Drag and drop an `MP4`, `MOV`, `AVI`, `MKV`, or `WebM` file (up to **1 GB**), or paste a `YouTube`, `TikTok`, or `Instagram` URL. No format conversion needed — Scribix handles every common container.
 
 ### 2. AI transcribes with speaker labels
 Our model auto-detects the language (200+ supported), separates speakers, attaches timestamps to every word, and returns the full transcript in **under a minute for most one-hour videos**. Background noise, accents, and overlapping speech are handled by the same engine used in professional dictation tools.
@@ -63,7 +63,7 @@ Click any word to play that exact moment. Edit inline, then download as `TXT`, `
 | **200+ languages** | Auto-detected; switch mid-recording handled. Outperforms competitors at 30–120 language counts. |
 | **Speaker recognition** | Identifies up to 8 distinct voices and labels every line. No manual tagging. |
 | **Word-level timestamps** | Click any word to play that moment — make corrections fast. |
-| **5 GB file support** | The largest free-tier limit in the category. Most competitors cap at 100 MB–2 GB. |
+| **1 GB file support** | The largest free-tier limit in the category. Most competitors cap at 100 MB–2 GB. |
 | **7 export formats** | TXT · DOCX · PDF · SRT · VTT · JSON · HTML — covers blog editors, video players, accessibility tools, and dev pipelines. |
 | **No sign-up** | Free tier requires zero account, zero credit card. |
 | **Private by default** | Files are processed in-memory and deleted within 24 hours. SOC 2-aligned infrastructure. No model training on your audio. |
@@ -76,16 +76,16 @@ Scribix accepts every common video and audio format used on the web today.
 
 | Format | Type | Max Size | Notes |
 |---|---|---|---|
-| `MP4` | Video | 5 GB | Most common — phone, camera, screen recording |
-| `MOV` | Video | 5 GB | Apple QuickTime / iPhone native |
-| `WebM` | Video | 5 GB | Browser-recorded video |
-| `AVI` | Video | 5 GB | Older Windows codec |
-| `MKV` | Video | 5 GB | Open-container, supports multi-track audio |
+| `MP4` | Video | 1 GB | Most common — phone, camera, screen recording |
+| `MOV` | Video | 1 GB | Apple QuickTime / iPhone native |
+| `WebM` | Video | 1 GB | Browser-recorded video |
+| `AVI` | Video | 1 GB | Older Windows codec |
+| `MKV` | Video | 1 GB | Open-container, supports multi-track audio |
 | YouTube URL | Stream | up to 6 hrs | Auto-captions are skipped — audio is re-transcribed for higher accuracy |
 | TikTok / Instagram URL | Stream | up to 1 hr | Public posts only |
-| `MP3` | Audio | 5 GB | Podcasts, voice notes |
-| `WAV` | Audio | 5 GB | Lossless studio recordings |
-| `M4A` | Audio | 5 GB | iPhone Voice Memos |
+| `MP3` | Audio | 1 GB | Podcasts, voice notes |
+| `WAV` | Audio | 1 GB | Lossless studio recordings |
+| `M4A` | Audio | 1 GB | iPhone Voice Memos |
 
 > **Looking for audio-only?** See our dedicated [audio-to-text tool](/audio-to-text). For YouTube specifically, the [YouTube Transcript Generator](/youtube-transcript) is optimized for that single workflow.
 
@@ -139,7 +139,7 @@ Get a first-pass transcript of depositions, board meetings, and compliance inter
 |---|---|---|---|---|---|
 | Free tier | **Unlimited** | 300 min/mo | 45 min trial | 10 min trial | Unlimited (self-host) |
 | Sign-up required | No | Yes | Yes | Yes | n/a |
-| File size limit | **5 GB** | 1.5 GB | 2 GB | 4 GB | hardware-bound |
+| File size limit | **1 GB** | 1.1 GB | 2 GB | 4 GB | hardware-bound |
 | Languages | **200+** | 30+ | 38 | 120+ | 99 |
 | Speaker recognition | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Word-level timestamps | ✅ | Sentence-level | ✅ | ✅ | ✅ |
@@ -178,7 +178,7 @@ For regulated workflows (legal, medical, financial), Scribix can sign an NDA and
 Yes. The free tier has no minute cap, no sign-up, and no credit card. You can transcribe a 6-hour conference recording for $0. Paid plans unlock priority queue, team libraries, and longer file retention.
 
 ### What video formats does Scribix support?
-MP4, MOV, AVI, MKV, WebM up to 5 GB each. Audio-only files (MP3, WAV, M4A) are also supported. Paste any YouTube, TikTok, or Instagram URL for stream-based input — no download needed on your end.
+MP4, MOV, AVI, MKV, WebM up to 1 GB each. Audio-only files (MP3, WAV, M4A) are also supported. Paste any YouTube, TikTok, or Instagram URL for stream-based input — no download needed on your end.
 
 ### How accurate is Scribix's video-to-text?
 99.9% on clear audio in primary languages, measured against a 50-hour benchmark of TED talks, podcasts, and interviews. Accuracy drops slightly with heavy accents, background music, or low-bitrate audio — but speaker labels and word-level timestamps make corrections quick.
@@ -247,7 +247,7 @@ Place inside `<head>`:
         "200+ languages with auto-detection",
         "Speaker recognition (up to 8 voices)",
         "Word-level timestamps",
-        "5 GB file size limit",
+        "1 GB file size limit",
         "7 export formats: TXT, DOCX, PDF, SRT, VTT, JSON, HTML",
         "YouTube, TikTok, Instagram URL support",
         "No sign-up required",
@@ -263,7 +263,7 @@ Place inside `<head>`:
           "@type": "HowToStep",
           "position": 1,
           "name": "Upload your video or paste a link",
-          "text": "Drag and drop an MP4, MOV, AVI, MKV, or WebM file (up to 5 GB), or paste a YouTube, TikTok, or Instagram URL."
+          "text": "Drag and drop an MP4, MOV, AVI, MKV, or WebM file (up to 1 GB), or paste a YouTube, TikTok, or Instagram URL."
         },
         {
           "@type": "HowToStep",
@@ -295,7 +295,7 @@ Place inside `<head>`:
           "name": "What video formats does Scribix support?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "MP4, MOV, AVI, MKV, WebM up to 5 GB each. Audio-only files (MP3, WAV, M4A) are also supported. Paste any YouTube, TikTok, or Instagram URL for stream-based input."
+            "text": "MP4, MOV, AVI, MKV, WebM up to 1 GB each. Audio-only files (MP3, WAV, M4A) are also supported. Paste any YouTube, TikTok, or Instagram URL for stream-based input."
           }
         },
         {

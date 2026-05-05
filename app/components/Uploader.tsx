@@ -5,8 +5,16 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 const ACCEPT = "audio/*,video/*";
+const MAX_BROWSER_VIDEO_BYTES = 1024 * 1024 * 1024;
 
-export type UploadPhase = "idle" | "preparing" | "uploading" | "submitting" | "polling" | "error";
+export type UploadPhase =
+  | "idle"
+  | "preparing"
+  | "extracting"
+  | "uploading"
+  | "submitting"
+  | "polling"
+  | "error";
 
 export type UseUploadOpts = {
   signedIn: boolean;
@@ -37,11 +45,20 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
       setProgress(0);
 
       try {
+        const isVideo = file.type.startsWith("video/");
+        if (isVideo && file.size > MAX_BROWSER_VIDEO_BYTES) {
+          throw new Error(
+            "Video uploads are currently limited to 1 GB in the browser. For larger files, please convert to audio first."
+          );
+        }
+
         const durationSec =
           durationSecOverride && durationSecOverride > 0
             ? durationSecOverride
             : await readMediaDuration(file);
 
+        // Pre-flight: server validates duration cap + quota BEFORE we spend
+        // time on extraction or upload bandwidth.
         const initRes = await fetch("/api/transcripts/init", {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -49,6 +66,8 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
             filename: file.name,
             bytes: file.size,
             mime: file.type || "application/octet-stream",
+            durationSec,
+            isVideo,
             source,
           }),
         });
@@ -58,8 +77,17 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
           uploadUrl: string;
         };
 
+        let uploadBody: Blob = file;
+        if (isVideo) {
+          setPhase("extracting");
+          setProgress(0);
+          const { extractAudioFromVideo } = await import("@/lib/audio-extractor");
+          const { blob } = await extractAudioFromVideo(file, (p) => setProgress(p));
+          uploadBody = blob;
+        }
+
         setPhase("uploading");
-        await uploadWithProgress(uploadUrl, file, (p) => setProgress(p));
+        await uploadWithProgress(uploadUrl, uploadBody, (p) => setProgress(p));
 
         setPhase("submitting");
         const startRes = await fetch(`/api/transcripts/${transcriptId}/start`, {
@@ -125,7 +153,7 @@ export function Uploader(props: UseUploadOpts) {
         <>
           <p className="text-base font-medium">Drop a video or audio file</p>
           <p className="mt-1 text-sm text-ink/60">
-            MP4, MOV, WebM, MP3, WAV, M4A · up to 500&nbsp;MB · 30&nbsp;min on free
+            Video uploads up to 1&nbsp;GB · Free trial: 45&nbsp;min lifetime · max 500&nbsp;MB after audio extraction
           </p>
           <button
             type="button"
@@ -155,14 +183,21 @@ export function ProgressView({
   const label =
     phase === "preparing"
       ? "Preparing…"
+      : phase === "extracting"
+      ? `Extracting audio ${Math.round(progress * 100)}%`
       : phase === "uploading"
       ? `Uploading ${Math.round(progress * 100)}%`
       : phase === "submitting"
-      ? "Submitting to AssemblyAI…"
+      ? "Submitting For processing…"
       : phase === "polling"
       ? "Transcribing…"
       : "";
-  const bar = phase === "uploading" ? progress : phase === "polling" ? null : 1;
+  const bar =
+    phase === "uploading" || phase === "extracting"
+      ? progress
+      : phase === "polling"
+      ? null
+      : 1;
   return (
     <div className="space-y-3">
       {filename && <p className="text-sm text-ink/70">{filename}</p>}
@@ -201,7 +236,7 @@ async function readMediaDuration(file: File): Promise<number> {
 
 function uploadWithProgress(
   url: string,
-  file: File,
+  file: Blob,
   onProgress: (frac: number) => void
 ): Promise<void> {
   return new Promise((resolve, reject) => {

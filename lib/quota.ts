@@ -1,8 +1,9 @@
-// Quota reservation, reconcile, and lazy free-tier period reset.
-// All queries run against the D1 binding inside the Worker.
+// Quota reservation and reconcile. Free tier is a one-time lifetime trial;
+// paid tiers reset on Creem cycle events. All queries run against the D1
+// binding inside the Worker.
 
 import type { BillingCycle, Tier } from "./plans";
-import { quotaMinutesFor } from "./plans";
+import { isQuotaBypassed, quotaMinutesFor } from "./plans";
 
 export type UserQuotaRow = {
   id: string;
@@ -14,37 +15,12 @@ export type UserQuotaRow = {
 };
 
 /**
- * For free users, the period rolls forward one UTC day at a time on read.
- * `period_ends_at` is anchored to UTC midnight at signup, so each `+1 day`
- * advance stays aligned. Paid users reset on Creem cycle events (Phase 4) —
- * never lazy-reset paid. Race on concurrent reads at the boundary is
- * harmless: both writes converge.
+ * Free tier is a one-time lifetime trial — no resets. Paid users reset on
+ * Creem cycle events (Phase 4). This function is now a no-op kept in place
+ * so callers don't need to change.
  */
-export async function maybeResetFreePeriod(db: D1Database, user: UserQuotaRow): Promise<UserQuotaRow> {
-  if (user.tier !== "free") return user;
-  const now = new Date();
-  const ends = parseDbDate(user.period_ends_at);
-  if (now < ends) return user;
-
-  await db
-    .prepare(
-      `UPDATE users
-          SET minutes_used_this_period = 0,
-              period_started_at = period_ends_at,
-              period_ends_at    = datetime(period_ends_at, '+1 day')
-        WHERE id = ?1 AND tier = 'free'`
-    )
-    .bind(user.id)
-    .run();
-
-  const refreshed = await db
-    .prepare(
-      `SELECT id, tier, billing_cycle, minutes_used_this_period, period_started_at, period_ends_at
-         FROM users WHERE id = ?1`
-    )
-    .bind(user.id)
-    .first<UserQuotaRow>();
-  return refreshed ?? user;
+export async function maybeResetFreePeriod(_db: D1Database, user: UserQuotaRow): Promise<UserQuotaRow> {
+  return user;
 }
 
 /** Parses both D1's `YYYY-MM-DD HH:MM:SS` and ISO `YYYY-MM-DDTHH:MM:SS.sssZ`. */
@@ -84,7 +60,9 @@ export async function reserveQuota(
   if (!user) return { error: "user_not_found" };
 
   const fresh = await maybeResetFreePeriod(db, user);
-  const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle);
+  const cap = isQuotaBypassed()
+    ? Number.MAX_SAFE_INTEGER
+    : quotaMinutesFor(fresh.tier, fresh.billing_cycle);
   const remaining = Math.max(0, cap - fresh.minutes_used_this_period);
   if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
 
@@ -107,6 +85,44 @@ export async function reserveQuota(
 
   if (!result.meta?.changes) return { error: "no_quota", remainingMin: 0, capMin: cap };
   return { reservedMin, remainingMin: remaining - reservedMin, capMin: cap };
+}
+
+/**
+ * Read-only pre-flight: tells the caller whether reserveQuota *would* succeed
+ * for a given duration estimate. Used at /api/transcripts/init so we can
+ * reject over-quota uploads before extraction + R2 PUT. Race window vs. the
+ * atomic reserve at /start is acceptable — falls back to today's behavior.
+ */
+export async function checkQuota(
+  db: D1Database,
+  userId: string,
+  estimateMin: number
+): Promise<
+  | { ok: true; remainingMin: number; capMin: number }
+  | { error: "no_quota" | "insufficient_quota"; remainingMin: number; capMin: number }
+  | { error: "user_not_found" }
+> {
+  const user = await db
+    .prepare(
+      `SELECT id, tier, billing_cycle, minutes_used_this_period, period_started_at, period_ends_at
+         FROM users WHERE id = ?1 AND deleted_at IS NULL`
+    )
+    .bind(userId)
+    .first<UserQuotaRow>();
+  if (!user) return { error: "user_not_found" };
+
+  const fresh = await maybeResetFreePeriod(db, user);
+  const cap = isQuotaBypassed()
+    ? Number.MAX_SAFE_INTEGER
+    : quotaMinutesFor(fresh.tier, fresh.billing_cycle);
+  const remaining = Math.max(0, cap - fresh.minutes_used_this_period);
+  if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
+
+  const wantedMin = Math.max(1, Math.ceil(estimateMin));
+  if (remaining * 2 < wantedMin) {
+    return { error: "insufficient_quota", remainingMin: remaining, capMin: cap };
+  }
+  return { ok: true, remainingMin: remaining, capMin: cap };
 }
 
 /**

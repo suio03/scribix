@@ -36,3 +36,43 @@ export async function GET(_: Request, { params }: Params) {
     headers: { "content-type": "application/json" },
   });
 }
+
+export async function DELETE(_: Request, { params }: Params) {
+  const session = await auth();
+  if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
+  const { id: transcriptId } = await params;
+
+  const env = cf();
+  const row = await env.DB.prepare(
+    `SELECT user_id, audio_r2_key, transcript_r2_key
+       FROM transcripts
+      WHERE id = ?1 AND deleted_at IS NULL`
+  )
+    .bind(transcriptId)
+    .first<{
+      user_id: string;
+      audio_r2_key: string | null;
+      transcript_r2_key: string | null;
+    }>();
+  if (!row) return Response.json({ error: "not_found" }, { status: 404 });
+  if (row.user_id !== session.user.id) {
+    return Response.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  await env.DB.prepare(
+    `UPDATE transcripts SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?1`
+  )
+    .bind(transcriptId)
+    .run();
+
+  // Best-effort R2 cleanup. Soft-delete row stays as the source of truth;
+  // any failure here is swallowed since the user already sees the row gone.
+  await Promise.all([
+    row.audio_r2_key ? env.SCRIBIX_MEDIA.delete(row.audio_r2_key).catch(() => {}) : null,
+    row.transcript_r2_key
+      ? env.SCRIBIX_MEDIA.delete(row.transcript_r2_key).catch(() => {})
+      : null,
+  ]);
+
+  return Response.json({ ok: true });
+}

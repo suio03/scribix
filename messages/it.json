@@ -40,11 +40,11 @@
     "issueLabel": "Issue №01 · Video to Text",
     "h1Part1": "Converti il video in testo.",
     "h1Part2": "<accent>Trascrizione IA gratuita.</accent>",
-    "description": "Scribix trasforma qualsiasi video in testo accurato e etichettato per relatore in pochi secondi. Carica un file MP4, MOV, WebM o AVI — o incolla un link YouTube — e ottieni un transcript completo con timestamp a livello di parola in <stat>200+ lingue</stat>. <stat>Gratuito</stat>, nessuna iscrizione, nessun limite di durata.",
+    "description": "Scribix trasforma qualsiasi video in testo accurato e etichettato per relatore in pochi secondi. Carica un file MP4, MOV, WebM o AVI — o incolla un link YouTube — e ottieni un transcript completo con timestamp a livello di parola in <stat>200+ lingue</stat>. <stat>Gratuito</stat> con accesso Google, file fino a 1 GB.",
     "trust": [
       { "label": "Accuratezza 99,9%", "icon": "Target" },
       { "label": "200+ Lingue", "icon": "Globe" },
-      { "label": "File fino a 5 GB", "icon": "InfinityIcon" },
+      { "label": "File fino a 1 GB", "icon": "InfinityIcon" },
       { "label": "Riconoscimento Relatori", "icon": "Users" },
       { "label": "Privato e Sicuro", "icon": "ShieldCheck" }
     ],
@@ -55,7 +55,7 @@
     ],
     "upload": {
       "instruction": "Trascina un file video o audio, oppure clicca per cercare.",
-      "specs": "Max 5 GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
+      "specs": "Max 1 GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
       "button": "Carica File"
     },
     "youtube": {
@@ -124,7 +124,7 @@
     "label": "Funzionalità",
     "number": "01",
     "h2": "Realizzato per <accent>creatori video</accent> che si preoccupano della precisione.",
-    "intro": "Un convertitore video-to-text converte l'audio parlato dentro un video in testo scritto. I modelli di sintesi vocale IA moderna identificano le parole, separano i relatori e allegano timestamp — producendo un transcript modificabile in minuti anziché ore. Scribix esegue la stessa classe di modello di sintesi vocale che alimenta i servizi di trascrizione professionale, senza iscrizione, senza limite di durata, e output sufficientemente pulito da pubblicare.",
+    "intro": "Un convertitore video-to-text converte l'audio parlato dentro un video in testo scritto. I modelli di sintesi vocale IA moderna identificano le parole, separano i relatori e allegano timestamp — producendo un transcript modificabile in minuti anziché ore. Scribix esegue la stessa classe di modello di sintesi vocale che alimenta i servizi di trascrizione professionale — accedi con Google per iniziare e produrre output sufficientemente pulito da pubblicare.",
     "items": [
       {
         "icon": "Users",
@@ -170,8 +170,8 @@
         "n": "01",
         "icon": "CloudUpload",
         "title": "Carica il tuo video — o incolla un link.",
-        "body": "Trascina e rilascia un file MP4, MOV, AVI, MKV o WebM (fino a 5 GB), oppure incolla un URL YouTube, TikTok o Instagram. Nessuna conversione di formato — Scribix gestisce ogni container comune.",
-        "duration": "Fino a 5 GB · 6 ore"
+        "body": "Trascina e rilascia un file MP4, MOV, AVI, MKV o WebM (fino a 1 GB), oppure incolla un URL YouTube, TikTok o Instagram. Nessuna conversione di formato — Scribix gestisce ogni container comune.",
+        "duration": "Fino a 1 GB · 6 ore"
       },
       {
         "n": "02",
@@ -228,7 +228,7 @@
         "icon": "GraduationCap",
         "title": "Studenti",
         "audience": "Lezioni e studio",
-        "body": "Trasforma una lezione di 2 ore in note ricercabili. Segna un momento confuso, clicca sulla parola, ascolta di nuovo. Il piano gratuito copre la maggior parte degli studenti per un intero semestre.",
+        "body": "Trasforma una lezione di 2 ore in note ricercabili. Segna un momento confuso, clicca sulla parola, ascolta di nuovo. Provalo gratis, poi un singolo mese Basic copre un intero semestre di lezioni.",
         "workflow": ["Registrazione lezione", "Note ricercabili", "Riassunto IA"]
       },
       {
@@ -243,13 +243,13 @@
   "Comparison": {
     "label": "Confronto",
     "number": "04",
-    "h2": "Più veloce, più accurato, <accent>e illimitato nel piano gratuito.</accent>",
+    "h2": "Più veloce, più accurato, <accent>e una vera prova gratuita.</accent>",
     "intro": "Confrontiamo mensilmente con gli strumenti principali di video-to-text su un set di test di 200 ore che copre 12 lingue, 48 relatori e 4 ambienti audio — studio, telefono, conferenza e all'aperto.",
     "featureHeader": "Funzionalità",
     "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
     "rows": [
-      { "feature": "Piano gratuito", "cells": ["Unlimited", "300 / mo", "45 trial", "Unlimited"] },
-      { "feature": "Limite di dimensione file", "cells": ["5 GB", "1.5 GB", "2 GB", "Local"] },
+      { "feature": "Prova gratuita", "cells": ["45 min, unica volta", "300 / mo", "45 trial", "Unlimited"] },
+      { "feature": "Limite di dimensione file", "cells": ["1 GB", "1.1 GB", "2 GB", "Local"] },
       { "feature": "Lingue supportate", "cells": ["200+", "30+", "38", "99"] },
       { "feature": "Diarizzazione relatori", "cells": ["yes", "yes", "yes", "no"] },
       { "feature": "Timestamp a livello di parola", "cells": ["yes", "no", "yes", "yes"] },
@@ -288,7 +288,7 @@
     "label": "Prezzi",
     "number": "06",
     "h2": "Paga per i minuti, <accent>non per il marketing.</accent>",
-    "intro": "Un piano gratuito che è davvero utile. Due piani a pagamento senza tasse per sede o sorprese di sovraccarico. Cancella in qualsiasi momento, esporta tutto.",
+    "intro": "Una prova gratuita di 45 minuti per dimostrare la qualità. Due piani a pagamento senza tasse per sede o sorprese di sovraccarico. Cancella in qualsiasi momento, esporta tutto.",
     "mostLoved": "Più amato",
     "plans": [
       {
@@ -350,11 +350,11 @@
     "items": [
       {
         "q": "Scribix è davvero gratuito per video-to-text?",
-        "a": "Sì. Il piano gratuito non ha limite di minuti, nessuna iscrizione e nessuna carta di credito. Puoi trascrivere una registrazione di una conferenza di 6 ore per $0. I piani a pagamento sbloccano la coda prioritaria, le librerie di team e la conservazione più lunga dei file."
+        "a": "Sì. La prova gratuita richiede solo un accesso Google — nessuna carta di credito. Ottieni 45 minuti di trascrizione per provare la qualità prima di decidere. I piani a pagamento sbloccano file più lunghi, la coda prioritaria, le librerie di team e una conservazione più lunga dei file."
       },
       {
         "q": "Quali formati video supporta Scribix?",
-        "a": "MP4, MOV, AVI, MKV e WebM fino a 5 GB ciascuno. Sono supportati anche file di solo audio (MP3, WAV, M4A). Incolla qualsiasi URL YouTube, TikTok o Instagram per input basato su streaming — nessun download necessario da parte tua."
+        "a": "MP4, MOV, AVI, MKV e WebM fino a 1 GB ciascuno. Sono supportati anche file di solo audio (MP3, WAV, M4A). Incolla qualsiasi URL YouTube, TikTok o Instagram per input basato su streaming — nessun download necessario da parte tua."
       },
       {
         "q": "Quanto è accurato il video-to-text di Scribix?",
@@ -394,7 +394,7 @@
     "kicker": "Pronto quando lo sei tu",
     "h2Part1": "Rilascia un video.",
     "h2Part2": "<accent>Il resto lo faremo noi.</accent>",
-    "body": "Il piano gratuito è illimitato — nessuna iscrizione, nessuna carta di credito, nessun limite di minuti. Il tuo primo transcript appare prima di finire il caffè.",
+    "body": "Provalo gratis con un accesso Google — 45 minuti, nessuna carta di credito. Il tuo primo transcript appare prima di finire il caffè.",
     "primaryCta": "Carica un Video",
     "secondaryCta": "Incolla un Link YouTube",
     "stats": [

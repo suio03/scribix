@@ -9,9 +9,14 @@ export type BillingCycle = "monthly" | "yearly";
 
 export const PLANS = {
   free: {
-    minutesPerCycle: 30,
+    // One-time lifetime trial — never resets. Quota.maybeResetFreePeriod is a no-op for free.
+    minutesPerCycle: 45,
     maxFileSec: 30 * 60,
+    // maxFileBytes applies post-extraction (mp3); maxVideoUploadBytes caps the
+    // raw video upload before extraction, so a malicious client can't claim
+    // isVideo=true to PUT an unbounded blob to R2.
     maxFileBytes: 500 * 1024 * 1024,
+    maxVideoUploadBytes: 1 * 1024 * 1024 * 1024,
     speechModels: ["universal-2"] as const,
   },
   basic: {
@@ -19,6 +24,7 @@ export const PLANS = {
     yearly: { minutesPerCycle: 7200 },
     maxFileSec: 2 * 3600,
     maxFileBytes: 2 * 1024 * 1024 * 1024,
+    maxVideoUploadBytes: 2 * 1024 * 1024 * 1024,
     speechModels: ["universal-3-pro", "universal-2"] as const,
   },
   pro: {
@@ -26,6 +32,7 @@ export const PLANS = {
     yearly: { minutesPerCycle: 21600 },
     maxFileSec: 10 * 3600,
     maxFileBytes: 5 * 1024 * 1024 * 1024,
+    maxVideoUploadBytes: 5 * 1024 * 1024 * 1024,
     speechModels: ["universal-3-pro", "universal-2"] as const,
   },
 } as const;
@@ -38,6 +45,14 @@ export function quotaMinutesFor(tier: Tier, cycle: BillingCycle | null | undefin
   if (tier === "free") return PLANS.free.minutesPerCycle;
   const c: BillingCycle = cycle === "yearly" ? "yearly" : "monthly";
   return PLANS[tier][c].minutesPerCycle;
+}
+
+// Pre-launch testing escape hatch. Set QUOTA_BYPASS=1 in env to disable
+// daily-minute, per-file-duration, and per-file-size enforcement so we can
+// upload arbitrary files while iterating. MUST be unset before public launch.
+export function isQuotaBypassed(): boolean {
+  const v = process.env.QUOTA_BYPASS;
+  return v === "1" || v === "true";
 }
 
 // Display pricing — used by the marketing pricing page only.

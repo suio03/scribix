@@ -14,6 +14,14 @@ export type AaiSubmit = {
   webhook_auth_header_value?: string;
 };
 
+export type AaiSegment = {
+  text: string;
+  start: number;
+  end: number;
+  confidence?: number;
+  speaker?: string | null;
+};
+
 export type AaiTranscript = {
   id: string;
   status: "queued" | "processing" | "completed" | "error";
@@ -29,6 +37,9 @@ export type AaiTranscript = {
     end: number;
   }>;
   words?: Array<{ text: string; start: number; end: number; speaker?: string }>;
+  // Populated server-side at completion (not part of AAI's own response).
+  paragraphs?: AaiSegment[];
+  sentences?: AaiSegment[];
 };
 
 function key() {
@@ -56,4 +67,22 @@ export async function getTranscript(id: string): Promise<AaiTranscript> {
   });
   if (!res.ok) throw new Error(`AAI fetch failed: ${res.status} ${await res.text()}`);
   return res.json();
+}
+
+export async function getParagraphs(id: string): Promise<AaiSegment[]> {
+  const res = await fetch(`${AAI_BASE}/transcript/${id}/paragraphs`, {
+    headers: { authorization: key() },
+  });
+  if (!res.ok) throw new Error(`AAI paragraphs fetch failed: ${res.status}`);
+  const json = (await res.json()) as { paragraphs?: AaiSegment[] };
+  return json.paragraphs ?? [];
+}
+
+export async function getSentences(id: string): Promise<AaiSegment[]> {
+  const res = await fetch(`${AAI_BASE}/transcript/${id}/sentences`, {
+    headers: { authorization: key() },
+  });
+  if (!res.ok) throw new Error(`AAI sentences fetch failed: ${res.status}`);
+  const json = (await res.json()) as { sentences?: AaiSegment[] };
+  return json.sentences ?? [];
 }

@@ -1,11 +1,14 @@
 import { auth } from "@/auth";
 import { getTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
+import { discordAlert } from "@/lib/discord";
+import { reconcileQuota } from "@/lib/quota";
 import { applyAaiResult } from "@/app/api/webhook/assemblyai/route";
 
 type Params = { params: Promise<{ id: string }> };
 
 const STALE_AFTER_MIN = 15;
+const STRANDED_UPLOAD_MIN = 30;
 
 export async function GET(_: Request, { params }: Params) {
   const session = await auth();
@@ -34,6 +37,36 @@ export async function GET(_: Request, { params }: Params) {
   if (!row) return Response.json({ error: "not_found" }, { status: 404 });
   if (row.user_id !== session.user.id) {
     return Response.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  // Stranded-upload recovery: AAI accepted the job but the post-submit DB
+  // write never landed (worker died / D1 transient failure). Without this the
+  // row sits at 'uploading' forever, holding reserved quota. After 30 min we
+  // claim the row atomically — only the winner refunds, so concurrent pollers
+  // can't double-credit the user's minutes.
+  if (
+    row.status === "uploading" &&
+    !row.aai_transcript_id &&
+    isOlderThanMin(row.created_at, STRANDED_UPLOAD_MIN)
+  ) {
+    const claim = await env.DB.prepare(
+      `UPDATE transcripts SET status = 'error', error = ?1, reserved_minutes = 0
+        WHERE id = ?2 AND status = 'uploading' AND aai_transcript_id IS NULL`
+    )
+      .bind("upload_stranded", transcriptId)
+      .run();
+    if (claim.meta?.changes) {
+      if (row.reserved_minutes && row.reserved_minutes > 0) {
+        await reconcileQuota(env.DB, row.user_id, row.reserved_minutes, 0);
+      }
+      await discordAlert("transcription_failed", {
+        stage: "stranded_upload_recovery",
+        transcriptId,
+        userId: row.user_id,
+        reservedMin: row.reserved_minutes,
+      });
+    }
+    return Response.json(await readStatus(env, transcriptId));
   }
 
   // §9.3 inline reconcile. Only fire when the user is actually waiting
@@ -67,8 +100,12 @@ export async function GET(_: Request, { params }: Params) {
 }
 
 function isStale(createdAt: string): boolean {
+  return isOlderThanMin(createdAt, STALE_AFTER_MIN);
+}
+
+function isOlderThanMin(createdAt: string, min: number): boolean {
   const created = new Date(createdAt.replace(" ", "T") + "Z").getTime();
-  return Date.now() - created > STALE_AFTER_MIN * 60 * 1000;
+  return Date.now() - created > min * 60 * 1000;
 }
 
 async function readStatus(env: CloudflareEnv, id: string) {

@@ -83,7 +83,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const { env } = getCloudflareContext();
       await env.DB.prepare(
         `INSERT INTO users (id, email, full_name, avatar_url, period_ends_at)
-         VALUES (?1, ?2, ?3, ?4, datetime('now', 'start of day', '+1 day'))
+         VALUES (?1, ?2, ?3, ?4, '9999-12-31 00:00:00')
          ON CONFLICT(id) DO UPDATE SET
            email      = excluded.email,
            full_name  = excluded.full_name,

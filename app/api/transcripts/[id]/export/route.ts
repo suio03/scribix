@@ -1,12 +1,18 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
-import { toSrt, toVtt } from "@/lib/transcript-format";
+import {
+  compactCJKSpaces,
+  toCsv,
+  toDocx,
+  toSrt,
+  toVtt,
+} from "@/lib/transcript-format";
 
 type Params = { params: Promise<{ id: string }> };
-type Format = "txt" | "srt" | "vtt";
+type Format = "txt" | "srt" | "vtt" | "csv" | "docx";
 
-const FORMATS: ReadonlyArray<Format> = ["txt", "srt", "vtt"];
+const FORMATS: ReadonlyArray<Format> = ["txt", "srt", "vtt", "csv", "docx"];
 
 export async function GET(req: Request, { params }: Params) {
   const session = await auth();
@@ -43,7 +49,7 @@ export async function GET(req: Request, { params }: Params) {
   if (!obj) return Response.json({ error: "transcript_missing" }, { status: 410 });
   const aai = (await obj.json()) as AaiTranscript;
 
-  let body: string;
+  let body: string | Uint8Array;
   let contentType: string;
   switch (requested) {
     case "srt":
@@ -54,8 +60,17 @@ export async function GET(req: Request, { params }: Params) {
       body = toVtt(aai);
       contentType = "text/vtt; charset=utf-8";
       break;
+    case "csv":
+      body = toCsv(aai);
+      contentType = "text/csv; charset=utf-8";
+      break;
+    case "docx":
+      body = await toDocx(aai, row.title);
+      contentType =
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      break;
     default:
-      body = aai.text ?? "";
+      body = compactCJKSpaces(aai.text ?? "");
       contentType = "text/plain; charset=utf-8";
   }
 

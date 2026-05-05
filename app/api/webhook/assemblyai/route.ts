@@ -1,4 +1,4 @@
-import { getTranscript } from "@/lib/aai";
+import { getParagraphs, getSentences, getTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
 import { discordAlert } from "@/lib/discord";
 import { reconcileQuota } from "@/lib/quota";
@@ -73,10 +73,18 @@ export async function applyAaiResult(
     const transcriptKey = R2.transcriptKey(row.user_id, row.id);
     const settledModel = aai.speech_model ?? "universal-2";
 
+    // Best-effort enrichment: paragraphs + sentences power the viewer tabs.
+    // If AAI hiccups on these endpoints we still ship the core transcript.
+    const [paragraphs, sentences] = await Promise.all([
+      getParagraphs(aai.id).catch(() => []),
+      getSentences(aai.id).catch(() => []),
+    ]);
+    const enriched = { ...aai, paragraphs, sentences };
+
     // R2 write first — idempotent on retry (same key, AAI returns same payload).
     // If this throws, status stays non-terminal so AAI webhook retry / inline
     // reconcile will re-attempt instead of stranding a "completed" row with no JSON.
-    await env.SCRIBIX_MEDIA.put(transcriptKey, JSON.stringify(aai), {
+    await env.SCRIBIX_MEDIA.put(transcriptKey, JSON.stringify(enriched), {
       httpMetadata: { contentType: "application/json" },
     });
 

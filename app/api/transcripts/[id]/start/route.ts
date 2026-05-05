@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { submitTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
 import { discordAlert } from "@/lib/discord";
-import { PLANS, type Tier } from "@/lib/plans";
+import { isQuotaBypassed, PLANS, type Tier } from "@/lib/plans";
 import { presignGet } from "@/lib/r2";
 import { reconcileQuota, reserveQuota } from "@/lib/quota";
 
@@ -53,7 +53,7 @@ export async function POST(req: Request, { params }: Params) {
 
   const plan = PLANS[row.tier];
   const estimateMin = Math.ceil(estimate / 60);
-  if (estimate > plan.maxFileSec) {
+  if (!isQuotaBypassed() && estimate > plan.maxFileSec) {
     return Response.json(
       { error: "duration_exceeds_tier", maxSec: plan.maxFileSec, tier: row.tier },
       { status: 413 }
@@ -134,11 +134,37 @@ export async function POST(req: Request, { params }: Params) {
     return Response.json({ error: "aai_submit_failed" }, { status: 502 });
   }
 
-  await env.DB.prepare(
-    `UPDATE transcripts SET status = 'queued', aai_transcript_id = ?1 WHERE id = ?2`
-  )
-    .bind(aaiId, transcriptId)
-    .run();
+  // AAI accepted the job; we MUST persist aai_transcript_id or the row gets
+  // stranded in 'uploading' with no way for the webhook to find it. Retry on
+  // transient D1 failures; alert on hard failure so ops can recover by hand.
+  const persisted = await persistAaiId(env.DB, transcriptId, aaiId);
+  if (!persisted) {
+    await discordAlert("transcription_failed", {
+      stage: "post_submit_db_write",
+      transcriptId,
+      userId,
+      aaiId,
+      reservedMin,
+    });
+    return Response.json({ error: "persist_failed", aaiId }, { status: 500 });
+  }
 
   return Response.json({ ok: true, status: "queued" });
+}
+
+async function persistAaiId(db: D1Database, transcriptId: string, aaiId: string): Promise<boolean> {
+  const delays = [0, 200, 600];
+  for (const ms of delays) {
+    if (ms) await new Promise((r) => setTimeout(r, ms));
+    try {
+      const res = await db
+        .prepare(`UPDATE transcripts SET status = 'queued', aai_transcript_id = ?1 WHERE id = ?2`)
+        .bind(aaiId, transcriptId)
+        .run();
+      if (res.meta?.changes) return true;
+    } catch {
+      // fall through to next attempt
+    }
+  }
+  return false;
 }

@@ -1,7 +1,9 @@
 import { auth } from "@/auth";
 import { redirect } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
+import { AlertCircle, AudioLines, CheckCircle2, Clock, Loader2 } from "lucide-react";
 import { cf } from "@/lib/cf";
+import { TranscriptRowMenu } from "@/app/components/TranscriptRowMenu";
 
 type Row = {
   id: string;
@@ -9,7 +11,19 @@ type Row = {
   status: "pending" | "uploading" | "queued" | "processing" | "completed" | "error";
   created_at: string;
   duration_sec: number | null;
+  audio_r2_key: string | null;
 };
+
+const AUDIO_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+function audioStillAvailable(createdAt: string, audioKey: string | null): boolean {
+  if (!audioKey) return false;
+  const t = new Date(
+    createdAt.includes("T") ? createdAt : createdAt.replace(" ", "T") + "Z"
+  ).getTime();
+  if (Number.isNaN(t)) return true;
+  return Date.now() - t <= AUDIO_TTL_MS;
+}
 
 export default async function DashboardPage({
   params,
@@ -29,7 +43,7 @@ export default async function DashboardPage({
   const showCheckoutOk = sp.checkout === "ok";
 
   const { results } = await env.DB.prepare(
-    `SELECT id, title, status, created_at, duration_sec
+    `SELECT id, title, status, created_at, duration_sec, audio_r2_key
        FROM transcripts
       WHERE user_id = ?1 AND deleted_at IS NULL
       ORDER BY created_at DESC
@@ -47,20 +61,12 @@ export default async function DashboardPage({
             {results.length === 0 ? "Nothing yet." : `${results.length} item${results.length === 1 ? "" : "s"}`}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Link
-            href="/dashboard/account"
-            className="rounded-full border border-line px-3.5 py-1.5 text-[13px] font-medium hover:bg-ink/5"
-          >
-            Account
-          </Link>
-          <Link
-            href="/dashboard/new"
-            className="rounded-full bg-ink px-3.5 py-1.5 text-[13px] font-medium text-paper hover:bg-accent"
-          >
-            New transcript
-          </Link>
-        </div>
+        <Link
+          href="/dashboard/new"
+          className="rounded-full bg-ink px-3.5 py-1.5 text-[13px] font-medium text-paper hover:bg-accent"
+        >
+          New transcript
+        </Link>
       </div>
 
       {showCheckoutOk ? (
@@ -87,61 +93,108 @@ export default async function DashboardPage({
           </Link>
         </div>
       ) : (
-        <ul className="mt-8 divide-y divide-line rounded-2xl border border-line">
-          {results.map((r) => (
-            <li key={r.id} className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
-              <div className="min-w-0">
-                <Link
-                  href={`/dashboard/transcripts/${r.id}`}
-                  className="block truncate text-sm font-medium hover:text-accent"
-                >
-                  {r.title}
-                </Link>
-                <p className="mt-0.5 text-xs text-ink/50">
-                  {formatRelative(r.created_at)}
-                  {r.duration_sec ? ` · ${formatDuration(r.duration_sec)}` : ""}
-                </p>
-              </div>
-              <StatusBadge status={r.status} />
-            </li>
-          ))}
-        </ul>
+        <div className="mt-8 overflow-hidden rounded-2xl border border-line">
+          <table className="w-full text-sm">
+            <thead className="bg-ink/[0.03] text-left text-[12px] uppercase tracking-wide text-ink/60">
+              <tr>
+                <th className="px-4 py-3 font-medium sm:px-6">Name</th>
+                <th className="hidden px-4 py-3 font-medium sm:table-cell">Uploaded</th>
+                <th className="hidden px-4 py-3 font-medium sm:table-cell">Duration</th>
+                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 text-right font-medium sm:px-6">Operation</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-line">
+              {results.map((r) => (
+                <tr key={r.id} className="hover:bg-ink/[0.02]">
+                  <td className="min-w-0 max-w-[420px] px-4 py-3 sm:px-6">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                        <AudioLines size={18} />
+                      </div>
+                      <Link
+                        href={`/dashboard/transcripts/${r.id}`}
+                        className="block truncate text-[14px] font-medium text-ink hover:text-accent"
+                      >
+                        {r.title}
+                      </Link>
+                    </div>
+                  </td>
+                  <td className="hidden whitespace-nowrap px-4 py-3 text-[13px] text-ink/70 sm:table-cell">
+                    {formatDateTime(r.created_at)}
+                  </td>
+                  <td className="hidden whitespace-nowrap px-4 py-3 text-[13px] tabular-nums text-ink/70 sm:table-cell">
+                    {r.duration_sec ? formatDuration(r.duration_sec) : "—"}
+                  </td>
+                  <td className="px-4 py-3">
+                    <StatusIcon status={r.status} />
+                  </td>
+                  <td className="px-4 py-3 sm:px-6">
+                    <TranscriptRowMenu
+                      id={r.id}
+                      status={r.status}
+                      audioAvailable={audioStillAvailable(r.created_at, r.audio_r2_key)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </main>
   );
 }
 
-function StatusBadge({ status }: { status: Row["status"] }) {
-  const map: Record<Row["status"], { label: string; cls: string }> = {
-    pending: { label: "Pending", cls: "bg-ink/10 text-ink/70" },
-    uploading: { label: "Uploading", cls: "bg-ink/10 text-ink/70" },
-    queued: { label: "Queued", cls: "bg-amber-100 text-amber-800" },
-    processing: { label: "Transcribing", cls: "bg-amber-100 text-amber-800" },
-    completed: { label: "Ready", cls: "bg-emerald-100 text-emerald-800" },
-    error: { label: "Error", cls: "bg-red-100 text-red-800" },
-  };
-  const { label, cls } = map[status];
-  return (
-    <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${cls}`}>
-      {label}
-    </span>
-  );
+function StatusIcon({ status }: { status: Row["status"] }) {
+  switch (status) {
+    case "completed":
+      return (
+        <span title="Ready" className="inline-flex text-emerald-600">
+          <CheckCircle2 size={20} />
+        </span>
+      );
+    case "error":
+      return (
+        <span title="Error" className="inline-flex text-red-600">
+          <AlertCircle size={20} />
+        </span>
+      );
+    case "queued":
+    case "processing":
+      return (
+        <span title="Transcribing" className="inline-flex text-amber-600">
+          <Loader2 size={20} className="animate-spin" />
+        </span>
+      );
+    case "pending":
+    case "uploading":
+    default:
+      return (
+        <span title={status === "uploading" ? "Uploading" : "Pending"} className="inline-flex text-ink/40">
+          <Clock size={20} />
+        </span>
+      );
+  }
 }
 
 function formatDuration(sec: number): string {
-  const m = Math.floor(sec / 60);
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
   const s = Math.floor(sec % 60);
+  if (h > 0) {
+    return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  }
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-function formatRelative(s: string): string {
-  const d = new Date(s.replace(" ", "T") + "Z");
+function formatDateTime(s: string): string {
+  const d = new Date(s.includes("T") ? s : s.replace(" ", "T") + "Z");
   if (Number.isNaN(d.getTime())) return s;
-  const diff = Date.now() - d.getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins} min ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
 }

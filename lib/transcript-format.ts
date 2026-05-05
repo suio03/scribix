@@ -1,6 +1,7 @@
-// SRT / VTT serializers for AssemblyAI transcript JSON.
+// SRT / VTT / CSV / DOCX serializers for AssemblyAI transcript JSON.
 // Prefers utterances (speaker-segmented) and falls back to chunked words.
 
+import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
 import type { AaiTranscript } from "./aai";
 
 type Word = NonNullable<AaiTranscript["words"]>[number];
@@ -8,12 +9,22 @@ type Cue = { start: number; end: number; text: string; speaker?: string };
 
 const WORDS_PER_CUE = 8;
 
+// AAI tokenizes CJK output with whitespace between every token, which is correct
+// for word-level data but visually broken when rendered as a sentence. Strip
+// whitespace between adjacent CJK characters; leave Latin/digit spacing alone.
+const CJK_RANGE = "\\u3040-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uAC00-\\uD7AF\\uFF66-\\uFF9F";
+const CJK_SPACE_RE = new RegExp(`([${CJK_RANGE}])\\s+(?=[${CJK_RANGE}])`, "g");
+
+export function compactCJKSpaces(text: string): string {
+  return text.replace(CJK_SPACE_RE, "$1");
+}
+
 function cuesFromAai(aai: AaiTranscript): Cue[] {
   if (aai.utterances?.length) {
     return aai.utterances.map((u) => ({
       start: u.start,
       end: u.end,
-      text: u.text,
+      text: compactCJKSpaces(u.text),
       speaker: u.speaker,
     }));
   }
@@ -29,7 +40,7 @@ function chunkWords(words: Word[], n: number): Cue[] {
     out.push({
       start: chunk[0].start,
       end: chunk[chunk.length - 1].end,
-      text: chunk.map((w) => w.text).join(" "),
+      text: compactCJKSpaces(chunk.map((w) => w.text).join(" ")),
     });
   }
   return out;
@@ -67,4 +78,61 @@ export function toVtt(aai: AaiTranscript): string {
     })
     .join("\n");
   return `WEBVTT\n\n${body}`;
+}
+
+export function toCsv(aai: AaiTranscript): string {
+  const cues = cuesFromAai(aai);
+  const header = "start,end,speaker,text\n";
+  const rows = cues
+    .map(
+      (c) =>
+        `${timestamp(c.start, ".")},${timestamp(c.end, ".")},${csvField(
+          c.speaker ?? ""
+        )},${csvField(c.text)}`
+    )
+    .join("\n");
+  return header + rows + "\n";
+}
+
+function csvField(s: string): string {
+  if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+export async function toDocx(aai: AaiTranscript, title: string): Promise<Uint8Array> {
+  const cues = cuesFromAai(aai);
+  const children: Paragraph[] = [
+    new Paragraph({
+      heading: HeadingLevel.HEADING_1,
+      children: [new TextRun({ text: title, bold: true })],
+    }),
+  ];
+  if (cues.length === 0) {
+    children.push(
+      new Paragraph({
+        children: [new TextRun({ text: compactCJKSpaces(aai.text ?? "") })],
+      })
+    );
+  } else {
+    for (const c of cues) {
+      const stamp = timestamp(c.start, ".");
+      const speaker = c.speaker ? `Speaker ${c.speaker}` : "";
+      const meta = speaker ? `${stamp}  ${speaker}` : stamp;
+      children.push(
+        new Paragraph({
+          spacing: { before: 200, after: 60 },
+          children: [
+            new TextRun({ text: meta, bold: true, color: "888888", size: 18 }),
+          ],
+        })
+      );
+      children.push(
+        new Paragraph({
+          children: [new TextRun({ text: c.text })],
+        })
+      );
+    }
+  }
+  const doc = new Document({ sections: [{ children }] });
+  return await Packer.toBuffer(doc);
 }

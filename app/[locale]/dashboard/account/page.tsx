@@ -44,22 +44,19 @@ export default async function AccountPage() {
 
   return (
     <main className="mx-auto max-w-[720px] px-4 py-12 sm:px-8">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="font-display text-3xl font-semibold tracking-tight">Account</h1>
-        <Link
-          href="/dashboard"
-          className="rounded-full border border-line px-3.5 py-1.5 text-[13px] font-medium hover:bg-ink/5"
-        >
-          Back
-        </Link>
-      </div>
+      <h1 className="font-display text-3xl font-semibold tracking-tight">Account</h1>
 
       <dl className="mt-10 space-y-6 rounded-2xl border border-line p-6">
         <Field label="Email" value={row?.email ?? session?.user?.email ?? "—"} />
         <Field label="Name" value={row?.full_name ?? session?.user?.name ?? "—"} />
         <Field label="Plan" value={planLabel(tier, cycle, row?.subscription_status ?? null)} />
-        <Field label="Usage this period" value={`${usedMin} / ${quotaMin} min`} />
-        <Field label="Period resets" value={row ? formatDate(row.period_ends_at) : "—"} />
+        <Field
+          label={tier === "free" ? "Free trial usage" : "Usage this period"}
+          value={`${usedMin} / ${quotaMin} min`}
+        />
+        {tier !== "free" && (
+          <Field label="Period resets" value={row ? formatDate(row.period_ends_at) : "—"} />
+        )}
       </dl>
 
       <div className="mt-6 flex flex-wrap gap-3">

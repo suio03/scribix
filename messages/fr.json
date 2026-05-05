@@ -40,11 +40,11 @@
     "issueLabel": "Numéro 01 · Vidéo en texte",
     "h1Part1": "Convertissez une vidéo en texte.",
     "h1Part2": "<accent>Transcription IA gratuite.</accent>",
-    "description": "Scribix transforme n'importe quelle vidéo en un texte précis et étiqueté par locuteur en quelques secondes. Téléversez un fichier MP4, MOV, WebM ou AVI — ou collez un lien YouTube — et obtenez une transcription complète avec des horodatages précis au mot en <stat>200+ langues</stat>. <stat>Gratuit</stat>, sans inscription, sans limite de durée.",
+    "description": "Scribix transforme n'importe quelle vidéo en un texte précis et étiqueté par locuteur en quelques secondes. Téléversez un fichier MP4, MOV, WebM ou AVI — ou collez un lien YouTube — et obtenez une transcription complète avec des horodatages précis au mot en <stat>200+ langues</stat>. <stat>Gratuit</stat> avec connexion Google, fichiers jusqu'à 1 Go.",
     "trust": [
       { "label": "Précision à 99,9%", "icon": "Target" },
       { "label": "200+ langues", "icon": "Globe" },
-      { "label": "Fichiers jusqu'à 5 Go", "icon": "InfinityIcon" },
+      { "label": "Fichiers jusqu'à 1 Go", "icon": "InfinityIcon" },
       { "label": "Reconnaissance des locuteurs", "icon": "Users" },
       { "label": "Privé et sécurisé", "icon": "ShieldCheck" }
     ],
@@ -55,7 +55,7 @@
     ],
     "upload": {
       "instruction": "Déposez une vidéo ou un fichier audio, ou cliquez pour parcourir.",
-      "specs": "Max 5 Go · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
+      "specs": "Max 1 Go · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
       "button": "Téléverser un fichier"
     },
     "youtube": {
@@ -124,7 +124,7 @@
     "label": "Caractéristiques",
     "number": "01",
     "h2": "Conçu pour les <accent>créateurs vidéo</accent> qui se soucient de la précision.",
-    "intro": "Un convertisseur vidéo-texte transcrit l'audio parlé à l'intérieur d'une vidéo en texte écrit. Les modèles de parole IA modernes identifient les mots, séparent les locuteurs et ajoutent des horodatages — en produisant une transcription modifiable en minutes au lieu d'heures. Scribix utilise la même classe de modèle de parole que les suites de transcription professionnelles, sans inscription, sans limite de durée, et avec une sortie suffisamment propre pour être publiée.",
+    "intro": "Un convertisseur vidéo-texte transcrit l'audio parlé à l'intérieur d'une vidéo en texte écrit. Les modèles de parole IA modernes identifient les mots, séparent les locuteurs et ajoutent des horodatages — en produisant une transcription modifiable en minutes au lieu d'heures. Scribix utilise la même classe de modèle de parole que les suites de transcription professionnelles — connectez-vous avec Google pour commencer et produire une sortie suffisamment propre pour être publiée.",
     "items": [
       {
         "icon": "Users",
@@ -170,8 +170,8 @@
         "n": "01",
         "icon": "CloudUpload",
         "title": "Téléversez votre vidéo — ou collez un lien.",
-        "body": "Glissez et déposez un fichier MP4, MOV, AVI, MKV ou WebM (jusqu'à 5 Go), ou collez une URL YouTube, TikTok ou Instagram. Aucune conversion de format — Scribix gère tous les conteneurs courants.",
-        "duration": "Jusqu'à 5 Go · 6 heures"
+        "body": "Glissez et déposez un fichier MP4, MOV, AVI, MKV ou WebM (jusqu'à 1 Go), ou collez une URL YouTube, TikTok ou Instagram. Aucune conversion de format — Scribix gère tous les conteneurs courants.",
+        "duration": "Jusqu'à 1 Go · 6 heures"
       },
       {
         "n": "02",
@@ -228,7 +228,7 @@
         "icon": "GraduationCap",
         "title": "Étudiants",
         "audience": "Cours et études",
-        "body": "Transformez un cours de 2 heures en notes consultables. Marquez un moment confus, cliquez sur le mot, réécoutez. Le plan gratuit couvre la plupart des étudiants pendant tout un semestre.",
+        "body": "Transformez un cours de 2 heures en notes consultables. Marquez un moment confus, cliquez sur le mot, réécoutez. Essayez gratuitement, puis un seul mois Basic couvre tout un semestre de cours.",
         "workflow": ["Enregistrement de cours", "Notes consultables", "Résumé IA"]
       },
       {
@@ -243,13 +243,13 @@
   "Comparison": {
     "label": "Comparaison",
     "number": "04",
-    "h2": "Plus rapide, plus précis, <accent>et illimité sur le plan gratuit.</accent>",
+    "h2": "Plus rapide, plus précis, <accent>et un véritable essai gratuit.</accent>",
     "intro": "Nous effectuons des tests mensuels par rapport aux principaux outils vidéo-texte sur un ensemble de test de 200 heures couvrant 12 langues, 48 locuteurs et 4 environnements audio — studio, téléphone, conférence et extérieur.",
     "featureHeader": "Caractéristique",
     "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
     "rows": [
-      { "feature": "Plan gratuit", "cells": ["Unlimited", "300 / mo", "45 trial", "Unlimited"] },
-      { "feature": "Limite de taille de fichier", "cells": ["5 GB", "1.5 GB", "2 GB", "Local"] },
+      { "feature": "Essai gratuit", "cells": ["45 min unique", "300 / mo", "45 trial", "Unlimited"] },
+      { "feature": "Limite de taille de fichier", "cells": ["1 GB", "1.1 GB", "2 GB", "Local"] },
       { "feature": "Langues supportées", "cells": ["200+", "30+", "38", "99"] },
       { "feature": "Diarisation des locuteurs", "cells": ["yes", "yes", "yes", "no"] },
       { "feature": "Horodatages au mot", "cells": ["yes", "no", "yes", "yes"] },
@@ -288,7 +288,7 @@
     "label": "Tarification",
     "number": "06",
     "h2": "Payez pour les minutes, <accent>pas pour le marketing.</accent>",
-    "intro": "Un plan gratuit réellement utile. Deux plans payants sans taxes de siège ou dépassements surprises. Annulez à tout moment, exportez tout.",
+    "intro": "Un essai gratuit de 45 minutes pour prouver la qualité. Deux plans payants sans taxes de siège ou dépassements surprises. Annulez à tout moment, exportez tout.",
     "mostLoved": "Le plus aimé",
     "plans": [
       {
@@ -350,11 +350,11 @@
     "items": [
       {
         "q": "Scribix est-il vraiment gratuit pour convertir la vidéo en texte?",
-        "a": "Oui. Le plan gratuit n'a pas de limite de minutes, pas d'inscription et pas de carte de crédit. Vous pouvez transcrire un enregistrement de conférence de 6 heures pour $0. Les plans payants déverrouillent la file d'attente prioritaire, les bibliothèques d'équipe et la rétention de fichiers plus longue."
+        "a": "Oui. L'essai gratuit nécessite uniquement une connexion Google — pas de carte de crédit. Vous bénéficiez de 45 minutes de transcription pour tester la qualité avant de décider. Les plans payants déverrouillent des fichiers plus longs, la file d'attente prioritaire, les bibliothèques d'équipe et une rétention de fichiers plus longue."
       },
       {
         "q": "Quels formats vidéo Scribix supporte-t-il?",
-        "a": "MP4, MOV, AVI, MKV et WebM jusqu'à 5 Go chacun. Les fichiers audio seul (MP3, WAV, M4A) sont également supportés. Collez n'importe quelle URL YouTube, TikTok ou Instagram pour une entrée basée sur le flux — aucun téléchargement nécessaire de votre côté."
+        "a": "MP4, MOV, AVI, MKV et WebM jusqu'à 1 Go chacun. Les fichiers audio seul (MP3, WAV, M4A) sont également supportés. Collez n'importe quelle URL YouTube, TikTok ou Instagram pour une entrée basée sur le flux — aucun téléchargement nécessaire de votre côté."
       },
       {
         "q": "Quelle est la précision de la conversion vidéo-texte de Scribix?",
@@ -394,7 +394,7 @@
     "kicker": "Prêt à commencer",
     "h2Part1": "Déposez une vidéo.",
     "h2Part2": "<accent>On s'occupe du reste.</accent>",
-    "body": "Le plan gratuit est illimité — pas d'inscription, pas de carte de crédit, pas de limite de minutes. Votre première transcription apparaît avant que vous ayez terminé votre café.",
+    "body": "Essayez gratuitement avec une connexion Google — 45 minutes, pas de carte de crédit. Votre première transcription apparaît avant que vous ayez terminé votre café.",
     "primaryCta": "Téléverser une vidéo",
     "secondaryCta": "Coller un lien YouTube",
     "stats": [

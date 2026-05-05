@@ -66,18 +66,6 @@ export async function Header() {
               </button>
             </form>
           )}
-
-          <a
-            href="#generator"
-            className="group ml-1 inline-flex items-center gap-1 rounded-full bg-ink px-3.5 py-1.5 text-[13px] font-medium text-paper transition hover:bg-accent"
-          >
-            {t("tryFree")}
-            <ArrowUpRight
-              size={14}
-              strokeWidth={2}
-              className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            />
-          </a>
         </div>
       </div>
     </header>

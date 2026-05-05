@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Video to Text — Free AI Transcription | Scribix",
     description:
-      "Upload a video or paste a YouTube link. Get an accurate, speaker-labeled transcript in seconds. Free, no sign-up, 200+ languages.",
+      "Upload a video or paste a YouTube link. Get an accurate, speaker-labeled transcript in seconds. Free with Google sign-in, 200+ languages.",
     type: "website",
     siteName: "Scribix",
   },
@@ -93,11 +94,16 @@ export default async function LocaleLayout({
       className={`${fraunces.variable} ${geist.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        <script src="https://accounts.google.com/gsi/client" async defer />
-      </head>
       <body className="bg-paper text-ink antialiased">
+        <Script
+          id="scribix-theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+        />
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="afterInteractive"
+        />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>

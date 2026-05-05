@@ -20,16 +20,16 @@ const PLANS: PlanCard[] = [
   {
     id: "free",
     name: "Free",
-    blurb: "For occasional transcripts and tire-kickers.",
+    blurb: "Try it once, see if it fits.",
     features: {
       monthly: [
-        "30 minutes / month",
+        "45 minutes — one-time trial",
         "Up to 30 min per file · 500 MB",
         "Speaker labels + word-level timestamps",
         "TXT, SRT & VTT export",
       ],
       yearly: [
-        "30 minutes / month",
+        "45 minutes — one-time trial",
         "Up to 30 min per file · 500 MB",
         "Speaker labels + word-level timestamps",
         "TXT, SRT & VTT export",
@@ -66,14 +66,14 @@ const PLANS: PlanCard[] = [
     features: {
       monthly: [
         "30 hours / month",
-        "Up to 10 hr per file · 5 GB",
+        "Up to 10 hr per file · 1 GB",
         "Universal-3 Pro speech model",
         "Priority queue",
         "All export formats",
       ],
       yearly: [
         "360 hours / year, available immediately, refreshed at renewal",
-        "Up to 10 hr per file · 5 GB",
+        "Up to 10 hr per file · 1 GB",
         "Universal-3 Pro speech model",
         "Priority queue",
         "All export formats",
@@ -241,7 +241,7 @@ function CycleBtn({
 }
 
 function priceLine(id: PlanId, cycle: Cycle): { display: string; cadence: string } {
-  if (id === "free") return { display: "$0", cadence: "forever" };
+  if (id === "free") return { display: "$0", cadence: "one-time trial" };
   const p = PRICING_DISPLAY[id][cycle];
   if (cycle === "monthly") return { display: `$${p.amount}`, cadence: "per month" };
   const monthlyEquiv = (p.amount / 12).toFixed(2).replace(/\.00$/, "");

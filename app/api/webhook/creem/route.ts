@@ -225,15 +225,17 @@ export async function POST(req: Request) {
 
       case "subscription.expired": {
         if (!customerId) break;
+        // Drop to free, but consume the one-time trial so an ex-paid user
+        // can't farm a fresh 45-minute allowance every cancellation cycle.
         await env.DB.prepare(
           `UPDATE users
               SET tier = 'free',
                   billing_cycle = NULL,
                   product_id = NULL,
                   subscription_status = 'expired',
-                  minutes_used_this_period = 0,
+                  minutes_used_this_period = 45,
                   period_started_at = CURRENT_TIMESTAMP,
-                  period_ends_at = datetime('now', 'start of day', '+1 day')
+                  period_ends_at = '9999-12-31 00:00:00'
             WHERE customer_id = ?1 AND deleted_at IS NULL`
         )
           .bind(customerId)

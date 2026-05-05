@@ -33,7 +33,7 @@ This document is the source of truth for v1 scope. Updated after a full plan-cha
 | Quota — monthly plan | 30 min / day | 600 min (10 hr) | 1,800 min (30 hr) |
 | Quota — yearly plan | — | 7,200 min (120 hr) upfront | 21,600 min (360 hr) upfront |
 | Per-file duration cap | 30 min | 2 hr | 10 hr (AssemblyAI ceiling) |
-| Per-file size cap | 500 MB | 2 GB | 5 GB (AssemblyAI ceiling) |
+| Per-file size cap | 500 MB | 2 GB | 1 GB (AssemblyAI ceiling) |
 | Speech model | Universal-2 | Universal-3 Pro (+ U-2 fallback) | Universal-3 Pro (+ U-2 fallback) |
 | Speaker labels | ✅ | ✅ | ✅ |
 | Synced playback (7 days) + exports | ✅ | ✅ | ✅ |
@@ -52,7 +52,7 @@ Margins (worst case, max usage, including diarization, at AAI ~$0.23/hr):
 
 ## 2. AssemblyAI constraints we're designing around
 
-- `/v2/transcript` (URL-based, what we'll use): **5 GB**, **10 hours** max.
+- `/v2/transcript` (URL-based, what we'll use): **1 GB**, **10 hours** max.
 - `/v2/upload` is unused — R2 hosts the file, we pass AssemblyAI a signed R2 URL.
 - Concurrency: paid AssemblyAI account = 200+ simultaneous jobs. Not a v1 bottleneck.
 - AssemblyAI supports `webhook_url` on `POST /v2/transcript` with a custom auth header (`webhook_auth_header_name` / `webhook_auth_header_value`) — **we use webhook callbacks, not client polling against AssemblyAI**. Client polls our own DB instead.

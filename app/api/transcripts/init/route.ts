@@ -1,7 +1,8 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { newId, newWebhookToken } from "@/lib/ids";
-import { PLANS, type Tier } from "@/lib/plans";
+import { isQuotaBypassed, PLANS, type Tier } from "@/lib/plans";
+import { checkQuota } from "@/lib/quota";
 import { presignPut, R2 } from "@/lib/r2";
 
 export async function POST(req: Request) {
@@ -9,7 +10,14 @@ export async function POST(req: Request) {
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
   const userId = session.user.id;
 
-  let body: { filename?: string; bytes?: number; mime?: string; source?: string };
+  let body: {
+    filename?: string;
+    bytes?: number;
+    mime?: string;
+    durationSec?: number;
+    isVideo?: boolean;
+    source?: string;
+  };
   try {
     body = await req.json();
   } catch {
@@ -19,6 +27,11 @@ export async function POST(req: Request) {
   if (!filename || typeof bytes !== "number" || !mime) {
     return Response.json({ error: "missing_fields" }, { status: 400 });
   }
+  const durationSec = Number(body.durationSec);
+  if (!Number.isFinite(durationSec) || durationSec <= 0) {
+    return Response.json({ error: "invalid_duration" }, { status: 400 });
+  }
+  const isVideo = body.isVideo === true;
   const source: "upload" | "record" = body.source === "record" ? "record" : "upload";
 
   const env = cf();
@@ -30,18 +43,68 @@ export async function POST(req: Request) {
   if (!userRow) return Response.json({ error: "user_not_found" }, { status: 404 });
 
   const plan = PLANS[userRow.tier];
-  if (bytes > plan.maxFileBytes) {
+
+  // Per-file duration cap. Applies to both audio + video.
+  if (!isQuotaBypassed() && durationSec > plan.maxFileSec) {
     return Response.json(
-      { error: "file_too_large", maxBytes: plan.maxFileBytes },
+      { error: "duration_exceeds_tier", maxSec: plan.maxFileSec, tier: userRow.tier },
       { status: 413 }
     );
   }
 
+  // Per-file size cap. Audio uploads use maxFileBytes; video uploads use a
+  // larger maxVideoUploadBytes ceiling because video is extracted client-side
+  // to ~64 kbps mono MP3 before /start, but we still need a hard ceiling so a
+  // malicious client can't claim isVideo=true and PUT an unbounded blob to R2.
+  if (!isQuotaBypassed()) {
+    const sizeCap = isVideo ? plan.maxVideoUploadBytes : plan.maxFileBytes;
+    if (bytes > sizeCap) {
+      return Response.json(
+        { error: "file_too_large", maxBytes: sizeCap },
+        { status: 413 }
+      );
+    }
+  }
+
+  // Pre-flight quota check (read-only). Atomic reserve still happens at /start.
+  const estimateMin = Math.ceil(durationSec / 60);
+  const quotaCheck = await checkQuota(env.DB, userId, estimateMin);
+  if ("error" in quotaCheck) {
+    if (quotaCheck.error === "no_quota") {
+      return Response.json(
+        {
+          error: "no_quota",
+          remainingMin: quotaCheck.remainingMin,
+          capMin: quotaCheck.capMin,
+          tier: userRow.tier,
+        },
+        { status: 429 }
+      );
+    }
+    if (quotaCheck.error === "insufficient_quota") {
+      return Response.json(
+        {
+          error: "insufficient_quota",
+          remainingMin: quotaCheck.remainingMin,
+          capMin: quotaCheck.capMin,
+          neededMin: estimateMin,
+          tier: userRow.tier,
+        },
+        { status: 402 }
+      );
+    }
+    return Response.json({ error: quotaCheck.error }, { status: 400 });
+  }
+
   const transcriptId = newId();
-  const ext = (filename.split(".").pop() ?? "bin").toLowerCase().slice(0, 8);
+  // Video uploads always land in R2 as MP3 — force the key extension to match
+  // what gets PUT, so R2 keys don't lie about contents.
+  const sourceExt = (filename.split(".").pop() ?? "bin").toLowerCase().slice(0, 8);
+  const ext = isVideo ? "mp3" : sourceExt;
   const audioKey = R2.audioKey(userId, transcriptId, ext);
   const webhookToken = newWebhookToken();
   const title = filename.replace(/\.[^.]+$/, "").slice(0, 200) || "Untitled";
+  const storedMime = isVideo ? "audio/mpeg" : mime;
 
   await env.DB.prepare(
     `INSERT INTO transcripts
@@ -55,7 +118,7 @@ export async function POST(req: Request) {
       source,
       audioKey,
       filename,
-      mime,
+      storedMime,
       bytes,
       plan.speechModels[0],
       webhookToken

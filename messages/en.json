@@ -40,11 +40,11 @@
     "issueLabel": "Issue №01 · Video to Text",
     "h1Part1": "Convert video to text.",
     "h1Part2": "<accent>Free AI transcription.</accent>",
-    "description": "Scribix turns any video into accurate, speaker-labeled text in seconds. Upload an MP4, MOV, WebM, or AVI file — or paste a YouTube link — and get a full transcript with word-level timestamps in <stat>200+ languages</stat>. <stat>Free</stat>, no sign-up, no length limit.",
+    "description": "Scribix turns any video into accurate, speaker-labeled text in seconds. Upload an MP4, MOV, WebM, or AVI file — or paste a YouTube link — and get a full transcript with word-level timestamps in <stat>200+ languages</stat>. <stat>Free</stat> with Google sign-in, files up to 1 GB.",
     "trust": [
       { "label": "99.9% Accuracy", "icon": "Target" },
       { "label": "200+ Languages", "icon": "Globe" },
-      { "label": "Up to 5GB Files", "icon": "InfinityIcon" },
+      { "label": "Up to 1GB Files", "icon": "InfinityIcon" },
       { "label": "Speaker Recognition", "icon": "Users" },
       { "label": "Private & Secure", "icon": "ShieldCheck" }
     ],
@@ -55,7 +55,7 @@
     ],
     "upload": {
       "instruction": "Drop a video or audio file, or click to browse.",
-      "specs": "Max 5GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
+      "specs": "Max 1GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
       "button": "Upload File"
     },
     "youtube": {
@@ -124,7 +124,7 @@
     "label": "Features",
     "number": "01",
     "h2": "Built for <accent>video creators</accent> who care about accuracy.",
-    "intro": "A video-to-text converter transcribes the spoken audio inside a video into written text. Modern AI speech models identify words, separate speakers, and attach timestamps — producing an editable transcript in minutes instead of hours. Scribix runs the same class of speech model that powers professional transcription suites, with no sign-up, no length cap, and output clean enough to publish.",
+    "intro": "A video-to-text converter transcribes the spoken audio inside a video into written text. Modern AI speech models identify words, separate speakers, and attach timestamps — producing an editable transcript in minutes instead of hours. Scribix runs the same class of speech model that powers professional transcription suites — sign in with Google to get started and produce output clean enough to publish.",
     "items": [
       {
         "icon": "Users",
@@ -170,8 +170,8 @@
         "n": "01",
         "icon": "CloudUpload",
         "title": "Upload your video — or paste a link.",
-        "body": "Drag and drop an MP4, MOV, AVI, MKV, or WebM file (up to 5 GB), or paste a YouTube, TikTok, or Instagram URL. No format conversion — Scribix handles every common container.",
-        "duration": "Up to 5 GB · 6 hours"
+        "body": "Drag and drop an MP4, MOV, AVI, MKV, or WebM file (up to 1 GB), or paste a YouTube, TikTok, or Instagram URL. No format conversion — Scribix handles every common container.",
+        "duration": "Up to 1 GB · 6 hours"
       },
       {
         "n": "02",
@@ -228,7 +228,7 @@
         "icon": "GraduationCap",
         "title": "Students",
         "audience": "Lectures & study",
-        "body": "Turn a 2-hour lecture into searchable notes. Mark a confusing moment, click the word, hear it again. The free tier covers most students through an entire semester.",
+        "body": "Turn a 2-hour lecture into searchable notes. Mark a confusing moment, click the word, hear it again. Try it free, then a single Basic month covers an entire semester of lectures.",
         "workflow": ["Lecture recording", "Searchable notes", "AI summary"]
       },
       {
@@ -243,13 +243,13 @@
   "Comparison": {
     "label": "Compared",
     "number": "04",
-    "h2": "Faster, more accurate, <accent>and unlimited on the free tier.</accent>",
+    "h2": "Faster, more accurate, <accent>and a real free trial.</accent>",
     "intro": "We benchmark monthly against the leading video-to-text tools on a 200-hour test set spanning 12 languages, 48 speakers, and 4 audio environments — studio, phone, conference, and outdoor.",
     "featureHeader": "Feature",
     "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
     "rows": [
-      { "feature": "Free tier", "cells": ["Unlimited", "300 / mo", "45 trial", "Unlimited"] },
-      { "feature": "File size limit", "cells": ["5 GB", "1.5 GB", "2 GB", "Local"] },
+      { "feature": "Free trial", "cells": ["45 min one-time", "300 / mo", "45 min trial", "Unlimited"] },
+      { "feature": "File size limit", "cells": ["1 GB", "1.1 GB", "2 GB", "Local"] },
       { "feature": "Languages supported", "cells": ["200+", "30+", "38", "99"] },
       { "feature": "Speaker diarization", "cells": ["yes", "yes", "yes", "no"] },
       { "feature": "Word-level timestamps", "cells": ["yes", "no", "yes", "yes"] },
@@ -288,7 +288,7 @@
     "label": "Pricing",
     "number": "06",
     "h2": "Pay for the minutes, <accent>not the marketing.</accent>",
-    "intro": "One free tier that's actually useful. Two paid tiers without seat taxes or surprise overages. Cancel any time, export everything.",
+    "intro": "A 45-minute free trial to prove the quality. Two paid tiers without seat taxes or surprise overages. Cancel any time, export everything.",
     "mostLoved": "Most loved",
     "plans": [
       {
@@ -350,11 +350,11 @@
     "items": [
       {
         "q": "Is Scribix really free for video to text?",
-        "a": "Yes. The free tier has no minute cap, no sign-up, and no credit card. You can transcribe a 6-hour conference recording for $0. Paid plans unlock priority queue, team libraries, and longer file retention."
+        "a": "Yes. The free trial only needs a Google sign-in — no credit card. You get 45 minutes of transcription to try the quality before you decide. Paid plans unlock longer files, priority queue, team libraries, and longer file retention."
       },
       {
         "q": "What video formats does Scribix support?",
-        "a": "MP4, MOV, AVI, MKV, and WebM up to 5 GB each. Audio-only files (MP3, WAV, M4A) are also supported. Paste any YouTube, TikTok, or Instagram URL for stream-based input — no download needed on your end."
+        "a": "MP4, MOV, AVI, MKV, and WebM up to 1 GB each. Audio-only files (MP3, WAV, M4A) are also supported. Paste any YouTube, TikTok, or Instagram URL for stream-based input — no download needed on your end."
       },
       {
         "q": "How accurate is Scribix's video-to-text?",
@@ -394,7 +394,7 @@
     "kicker": "Ready when you are",
     "h2Part1": "Drop in a video.",
     "h2Part2": "<accent>We'll do the rest.</accent>",
-    "body": "Free tier is unlimited — no sign-up, no credit card, no minute cap. Your first transcript appears before you can finish your coffee.",
+    "body": "Try it free with a Google sign-in — 45 minutes, no credit card. Your first transcript appears before you can finish your coffee.",
     "primaryCta": "Upload a Video",
     "secondaryCta": "Paste a YouTube Link",
     "stats": [
