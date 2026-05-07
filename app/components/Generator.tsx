@@ -58,7 +58,8 @@ export function Generator({
   const [tab, setTab] = useState<TabId>("upload");
   const [recording, setRecording] = useState(false);
 
-  const tabs = t.raw("tabs") as Tab[];
+  // YouTube tab disabled until the backend supports it — re-enable by removing this filter.
+  const tabs = (t.raw("tabs") as Tab[]).filter((tabItem) => tabItem.id !== "youtube");
   const trust = t.raw("trust") as TrustItem[];
   const examples = t.raw("examples") as Example[];
 

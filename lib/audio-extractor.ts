@@ -6,6 +6,9 @@
 
 import type { FFmpeg } from "@ffmpeg/ffmpeg";
 
+const FFMPEG_CORE_VERSION = "0.12.10";
+const FFMPEG_CORE_BASE = `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${FFMPEG_CORE_VERSION}/dist/esm`;
+
 let _ff: FFmpeg | null = null;
 let _loading: Promise<FFmpeg> | null = null;
 
@@ -14,10 +17,11 @@ async function getFFmpeg(): Promise<FFmpeg> {
   if (_loading) return _loading;
   _loading = (async () => {
     const { FFmpeg } = await import("@ffmpeg/ffmpeg");
+    const { toBlobURL } = await import("@ffmpeg/util");
     const ff = new FFmpeg();
     await ff.load({
-      coreURL: "/ffmpeg/ffmpeg-core.js",
-      wasmURL: "/ffmpeg/ffmpeg-core.wasm",
+      coreURL: await toBlobURL(`${FFMPEG_CORE_BASE}/ffmpeg-core.js`, "text/javascript"),
+      wasmURL: await toBlobURL(`${FFMPEG_CORE_BASE}/ffmpeg-core.wasm`, "application/wasm"),
     });
     _ff = ff;
     _loading = null;
