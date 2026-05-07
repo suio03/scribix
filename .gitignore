@@ -16,7 +16,6 @@ coverage
 # cloudflare / opennext
 .wrangler/
 .open-next/
-cloudflare-env.d.ts
 
 # build / tooling
 *.tsbuildinfo
