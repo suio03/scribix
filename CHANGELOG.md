@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.1] - 2026-05-08
+
+### Changed
+- Added production Worker environment variables for Scribix deployment.
+- Ignored local Worker secret setup files so credentials stay out of Git.
+
 ## [0.1.0] - 2026-05-07
 
 ### Added

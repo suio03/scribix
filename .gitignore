@@ -12,6 +12,12 @@ coverage
 .env.local
 .env*.local
 .dev.vars
+*.secret
+*.secrets
+*.secrets.local
+secrets.local
+worker-secrets.env
+scripts/setup-worker-secrets.local.sh
 
 # cloudflare / opennext
 .wrangler/
