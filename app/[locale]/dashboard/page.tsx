@@ -3,6 +3,7 @@ import { redirect } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { AlertCircle, AudioLines, CheckCircle2, Clock, Loader2 } from "lucide-react";
 import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { TranscriptRowMenu } from "@/app/components/TranscriptRowMenu";
 
 type Row = {
@@ -34,11 +35,17 @@ export default async function DashboardPage({
 }) {
   const { locale } = await params;
   const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) {
+  if (!session?.user?.id) {
     redirect({ href: "/", locale });
+    return null;
   }
   const env = cf();
+  const user = await getOrCreateCurrentUser(env.DB, session);
+  if (!user) {
+    redirect({ href: "/", locale });
+    return null;
+  }
+  const userId = user.id;
   const sp = await searchParams;
   const showCheckoutOk = sp.checkout === "ok";
 

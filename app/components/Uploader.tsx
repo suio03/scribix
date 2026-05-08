@@ -43,6 +43,9 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
       setFilename(file.name);
       setPhase("preparing");
       setProgress(0);
+      let transcriptId: string | null = null;
+      let keepTranscript = false;
+      let step = "preparing";
 
       try {
         const isVideo = file.type.startsWith("video/");
@@ -57,47 +60,64 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
             ? durationSecOverride
             : await readMediaDuration(file);
 
-        // Pre-flight: server validates duration cap + quota BEFORE we spend
-        // time on extraction or upload bandwidth.
+        let uploadBody: Blob = file;
+        let uploadFilename = file.name;
+        let uploadMime = file.type || "application/octet-stream";
+        let uploadDurationSec = durationSec;
+        let initIsVideo = false;
+
+        if (isVideo) {
+          step = "extracting audio";
+          setPhase("extracting");
+          setProgress(0);
+          const { extractAudioFromVideo } = await import("@/lib/audio-extractor");
+          const { blob, durationSec: extractedDurationSec } = await extractAudioFromVideo(
+            file,
+            (p) => setProgress(p)
+          );
+          const ext = blob.type === "audio/wav" ? "wav" : "mp3";
+          uploadBody = blob;
+          uploadFilename = `${file.name.replace(/\.[^.]+$/, "")}.${ext}`;
+          uploadMime = blob.type || (ext === "wav" ? "audio/wav" : "audio/mpeg");
+          uploadDurationSec = extractedDurationSec || durationSec;
+        }
+
+        // Pre-flight: server validates duration cap + quota before upload.
         const initRes = await fetch("/api/transcripts/init", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
-            filename: file.name,
-            bytes: file.size,
-            mime: file.type || "application/octet-stream",
-            durationSec,
-            isVideo,
+            filename: uploadFilename,
+            bytes: uploadBody.size,
+            mime: uploadMime,
+            durationSec: uploadDurationSec,
+            isVideo: initIsVideo,
             source,
           }),
         });
         if (!initRes.ok) throw new Error(await readError(initRes));
-        const { transcriptId, uploadUrl } = (await initRes.json()) as {
+        const init = (await initRes.json()) as {
           transcriptId: string;
           uploadUrl: string;
         };
+        transcriptId = init.transcriptId;
 
-        let uploadBody: Blob = file;
-        if (isVideo) {
-          setPhase("extracting");
-          setProgress(0);
-          const { extractAudioFromVideo } = await import("@/lib/audio-extractor");
-          const { blob } = await extractAudioFromVideo(file, (p) => setProgress(p));
-          uploadBody = blob;
-        }
-
+        step = "uploading audio";
         setPhase("uploading");
-        await uploadWithProgress(uploadUrl, uploadBody, (p) => setProgress(p));
+        await uploadWithProgress(init.uploadUrl, uploadBody, (p) => setProgress(p));
 
+        step = "submitting transcript";
         setPhase("submitting");
         const startRes = await fetch(`/api/transcripts/${transcriptId}/start`, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ durationSecEstimate: durationSec }),
+          body: JSON.stringify({ durationSecEstimate: uploadDurationSec }),
         });
         if (!startRes.ok) throw new Error(await readError(startRes));
 
+        step = "polling transcript";
         setPhase("polling");
+        keepTranscript = true;
         const finalStatus = await pollStatus(transcriptId);
         if (finalStatus === "completed") {
           router.push(`/dashboard/transcripts/${transcriptId}`);
@@ -105,8 +125,16 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
           throw new Error(`Transcription ${finalStatus}.`);
         }
       } catch (err) {
+        console.error("Upload failed", { step, transcriptId, error: err });
+        const message = uploadErrorMessage(err, step);
+        if (message === "persist_failed") {
+          keepTranscript = true;
+        }
+        if (transcriptId && !keepTranscript) {
+          await cleanupTranscript(transcriptId);
+        }
         setPhase("error");
-        setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
+        setErrorMsg(message);
       }
     },
     [router, signedIn, postSignInPath]
@@ -264,6 +292,21 @@ async function pollStatus(id: string): Promise<"completed" | "error"> {
     if (status === "completed") return "completed";
     if (status === "error") throw new Error(error ?? "Transcription error.");
   }
+}
+
+async function cleanupTranscript(id: string): Promise<void> {
+  try {
+    await fetch(`/api/transcripts/${id}`, { method: "DELETE" });
+  } catch {
+    // Best-effort cleanup only; preserve the original upload error for the user.
+  }
+}
+
+function uploadErrorMessage(err: unknown, step: string): string {
+  if (err instanceof Error && err.message) return err.message;
+  if (err instanceof DOMException && err.message) return err.message;
+  if (typeof err === "string" && err) return err;
+  return `Upload failed while ${step}. Check the browser console for details.`;
 }
 
 async function readError(res: Response): Promise<string> {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { DownloadMenu } from "./DownloadMenu";
@@ -14,18 +15,47 @@ type Props = {
 export function TranscriptRowMenu({ id, status, audioAvailable }: Props) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<{ right: number; top: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const completed = status === "completed";
+
+  const updateMenuPosition = () => {
+    const button = buttonRef.current;
+    if (!button) return;
+    const rect = button.getBoundingClientRect();
+    const menuHeight = 44;
+    const gap = 6;
+    const opensUp = rect.bottom + gap + menuHeight > window.innerHeight;
+    setMenuPosition({
+      right: window.innerWidth - rect.right,
+      top: opensUp ? rect.top - gap - menuHeight : rect.bottom + gap,
+    });
+  };
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
-      if (!ref.current) return;
-      if (!ref.current.contains(e.target as Node)) setMenuOpen(false);
+      const target = e.target as Node;
+      if (ref.current?.contains(target)) return;
+      if (menuRef.current?.contains(target)) return;
+      setMenuOpen(false);
     }
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    updateMenuPosition();
+    window.addEventListener("resize", updateMenuPosition);
+    window.addEventListener("scroll", updateMenuPosition, true);
+    return () => {
+      window.removeEventListener("resize", updateMenuPosition);
+      window.removeEventListener("scroll", updateMenuPosition, true);
+    };
+  }, [menuOpen]);
 
   const onDelete = async () => {
     if (busy) return;
@@ -50,15 +80,23 @@ export function TranscriptRowMenu({ id, status, audioAvailable }: Props) {
         <span className="inline-block w-7" />
       )}
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setMenuOpen((v) => !v)}
+        onClick={() => {
+          updateMenuPosition();
+          setMenuOpen((v) => !v);
+        }}
         aria-label="More actions"
         className="rounded-md p-1.5 text-ink/60 transition hover:bg-ink/5 hover:text-ink"
       >
         <MoreHorizontal size={16} />
       </button>
-      {menuOpen && (
-        <div className="absolute right-0 top-full z-10 mt-1 w-32 overflow-hidden rounded-lg border border-line bg-paper shadow-lg">
+      {menuOpen && menuPosition && createPortal(
+        <div
+          ref={menuRef}
+          className="fixed z-50 w-32 overflow-hidden rounded-lg border border-line bg-paper shadow-lg"
+          style={{ right: menuPosition.right, top: menuPosition.top }}
+        >
           <button
             type="button"
             onClick={() => {
@@ -70,7 +108,8 @@ export function TranscriptRowMenu({ id, status, audioAvailable }: Props) {
           >
             {busy ? "Deleting…" : "Delete"}
           </button>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

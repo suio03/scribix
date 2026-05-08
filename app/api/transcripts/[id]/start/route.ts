@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { submitTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { discordAlert } from "@/lib/discord";
 import { PLANS, type Tier } from "@/lib/plans";
 import { presignGet } from "@/lib/r2";
@@ -11,7 +12,6 @@ type Params = { params: Promise<{ id: string }> };
 export async function POST(req: Request, { params }: Params) {
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
-  const userId = session.user.id;
   const { id: transcriptId } = await params;
 
   let body: { durationSecEstimate?: number };
@@ -26,6 +26,9 @@ export async function POST(req: Request, { params }: Params) {
   }
 
   const env = cf();
+  const user = await getOrCreateCurrentUser(env.DB, session);
+  if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  const userId = user.id;
 
   const row = await env.DB.prepare(
     `SELECT t.id, t.user_id, t.status, t.audio_r2_key, t.webhook_token, u.tier

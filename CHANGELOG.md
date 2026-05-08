@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.3] - 2026-05-08
+
+### Changed
+- Switched local preview and D1 bindings to use the remote Cloudflare database.
+- Renamed Cloudflare account environment usage from `CF_ACCOUNT_ID` to `CLOUDFLARE_ACCOUNT_ID`.
+- Resolve authenticated users through the database before applying app state and transcript ownership checks.
+- Extract video audio before creating transcript rows and add browser-native audio extraction fallback.
+
+### Fixed
+- Prevent failed pre-submit uploads from leaving orphan transcript rows.
+- Fixed dashboard transcript action menus being clipped by the table container.
+
 ## [0.1.2] - 2026-05-08
 
 ### Removed

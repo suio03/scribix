@@ -7,14 +7,17 @@
 
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { discordAlert } from "@/lib/discord";
 
 export async function DELETE() {
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
-  const userId = session.user.id;
 
   const env = cf();
+  const user = await getOrCreateCurrentUser(env.DB, session);
+  if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  const userId = user.id;
 
   const { results } = await env.DB.prepare(
     `SELECT audio_r2_key, transcript_r2_key

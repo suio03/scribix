@@ -95,7 +95,7 @@ Drop into `.env.local` and `.dev.vars`:
 ```
 R2_ACCESS_KEY_ID=...
 R2_SECRET_ACCESS_KEY=...
-CF_ACCOUNT_ID=...                # from `wrangler whoami`
+CLOUDFLARE_ACCOUNT_ID=...        # from `wrangler whoami`
 ```
 
 ---
@@ -272,7 +272,7 @@ Public/non-secret vars go in `wrangler.jsonc` under `vars`:
   "NEXTAUTH_URL": "https://scribix.io",
   "NEXT_PUBLIC_CREEM_ENV": "live",
   "ADMIN_EMAILS": "you@example.com",
-  "CF_ACCOUNT_ID": "abc...",
+  "CLOUDFLARE_ACCOUNT_ID": "abc...",
   "ASSEMBLYAI_WEBHOOK_URL": "https://scribix.io/api/webhook/assemblyai"
 }
 ```
@@ -302,7 +302,7 @@ ASSEMBLYAI_WEBHOOK_URL=http://localhost:3000/api/webhook/assemblyai
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 # R2 presign (Phase 2)
-CF_ACCOUNT_ID=
+CLOUDFLARE_ACCOUNT_ID=
 R2_ACCESS_KEY_ID=
 R2_SECRET_ACCESS_KEY=
 

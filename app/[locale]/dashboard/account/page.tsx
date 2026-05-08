@@ -3,38 +3,21 @@ import { getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { redirect } from "@/i18n/navigation";
 import { auth, signOut } from "@/auth";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { quotaMinutesFor, type BillingCycle, type Tier } from "@/lib/plans";
 import { BillingPortalButton } from "@/app/components/BillingPortalButton";
 import { DeleteAccountButton } from "@/app/components/DeleteAccountButton";
 
-type UserRow = {
-  email: string;
-  full_name: string | null;
-  tier: Tier;
-  billing_cycle: BillingCycle | null;
-  subscription_status: string | null;
-  customer_id: string | null;
-  minutes_used_this_period: number;
-  period_ends_at: string;
-};
-
 export default async function AccountPage() {
   const locale = await getLocale();
   const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) {
+  if (!session?.user?.id) {
     redirect({ href: "/", locale });
+    return null;
   }
 
   const { env } = getCloudflareContext();
-  const row = await env.DB.prepare(
-    `SELECT email, full_name, tier, billing_cycle, subscription_status,
-            customer_id, minutes_used_this_period, period_ends_at
-       FROM users
-      WHERE id = ?1`
-  )
-    .bind(userId)
-    .first<UserRow>();
+  const row = await getOrCreateCurrentUser(env.DB, session);
 
   const tier: Tier = row?.tier ?? "free";
   const cycle = row?.billing_cycle ?? null;

@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { presignGet } from "@/lib/r2";
 
 type Params = { params: Promise<{ id: string }> };
@@ -12,6 +13,8 @@ export async function GET(_: Request, { params }: Params) {
   const { id: transcriptId } = await params;
 
   const env = cf();
+  const user = await getOrCreateCurrentUser(env.DB, session);
+  if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(
     `SELECT user_id, audio_r2_key, created_at
        FROM transcripts
@@ -24,7 +27,7 @@ export async function GET(_: Request, { params }: Params) {
       created_at: string;
     }>();
   if (!row) return Response.json({ error: "not_found" }, { status: 404 });
-  if (row.user_id !== session.user.id) {
+  if (row.user_id !== user.id) {
     return Response.json({ error: "forbidden" }, { status: 403 });
   }
   if (!row.audio_r2_key) {

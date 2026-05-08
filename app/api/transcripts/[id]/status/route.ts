@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { getTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { discordAlert } from "@/lib/discord";
 import { reconcileQuota } from "@/lib/quota";
 import { applyAaiResult } from "@/app/api/webhook/assemblyai/route";
@@ -16,6 +17,8 @@ export async function GET(_: Request, { params }: Params) {
   const { id: transcriptId } = await params;
 
   const env = cf();
+  const user = await getOrCreateCurrentUser(env.DB, session);
+  if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(
     `SELECT id, user_id, webhook_token, reserved_minutes, status, error,
             aai_transcript_id, created_at, completed_at
@@ -35,7 +38,7 @@ export async function GET(_: Request, { params }: Params) {
       completed_at: string | null;
     }>();
   if (!row) return Response.json({ error: "not_found" }, { status: 404 });
-  if (row.user_id !== session.user.id) {
+  if (row.user_id !== user.id) {
     return Response.json({ error: "forbidden" }, { status: 403 });
   }
 

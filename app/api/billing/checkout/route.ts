@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { createCheckout } from "@/lib/creem";
 import { productIdFor, type PaidTier } from "@/lib/creem-plans";
 import type { BillingCycle, Tier } from "@/lib/plans";
@@ -10,7 +11,6 @@ const CYCLES: ReadonlyArray<BillingCycle> = ["monthly", "yearly"];
 export async function POST(req: Request) {
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
-  const userId = session.user.id;
 
   let body: { tier?: string; cycle?: string; successPath?: string };
   try {
@@ -30,18 +30,9 @@ export async function POST(req: Request) {
   }
 
   const env = cf();
-  const user = await env.DB.prepare(
-    `SELECT email, customer_id, tier, subscription_status
-       FROM users WHERE id = ?1 AND deleted_at IS NULL`
-  )
-    .bind(userId)
-    .first<{
-      email: string;
-      customer_id: string | null;
-      tier: Tier;
-      subscription_status: string | null;
-    }>();
+  const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  const userId = user.id;
 
   if (user.tier !== "free" && user.subscription_status === "active") {
     return Response.json(

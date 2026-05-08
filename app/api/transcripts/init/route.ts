@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { newId, newWebhookToken } from "@/lib/ids";
 import { PLANS, type Tier } from "@/lib/plans";
 import { checkQuota } from "@/lib/quota";
@@ -8,7 +9,6 @@ import { presignPut, R2 } from "@/lib/r2";
 export async function POST(req: Request) {
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
-  const userId = session.user.id;
 
   let body: {
     filename?: string;
@@ -35,12 +35,9 @@ export async function POST(req: Request) {
   const source: "upload" | "record" = body.source === "record" ? "record" : "upload";
 
   const env = cf();
-  const userRow = await env.DB.prepare(
-    `SELECT tier FROM users WHERE id = ?1 AND deleted_at IS NULL`
-  )
-    .bind(userId)
-    .first<{ tier: Tier }>();
+  const userRow = await getOrCreateCurrentUser(env.DB, session);
   if (!userRow) return Response.json({ error: "user_not_found" }, { status: 404 });
+  const userId = userRow.id;
 
   const plan = PLANS[userRow.tier];
 

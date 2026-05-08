@@ -1,19 +1,15 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { createPortalLink } from "@/lib/creem";
 
 export async function POST(req: Request) {
   void req;
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
-  const userId = session.user.id;
 
   const env = cf();
-  const user = await env.DB.prepare(
-    `SELECT customer_id FROM users WHERE id = ?1 AND deleted_at IS NULL`
-  )
-    .bind(userId)
-    .first<{ customer_id: string | null }>();
+  const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user?.customer_id) {
     return Response.json(
       { error: "no_customer", message: "Subscribe first to access billing." },

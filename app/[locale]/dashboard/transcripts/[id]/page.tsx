@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { redirect } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { presignGet } from "@/lib/r2";
 import { TranscriptViewer } from "@/app/components/TranscriptViewer";
 import { DownloadMenu } from "@/app/components/DownloadMenu";
@@ -14,11 +15,14 @@ type Params = { params: Promise<{ locale: string; id: string }> };
 export default async function TranscriptViewerPage({ params }: Params) {
   const { locale, id } = await params;
   const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) {
+  if (!session?.user?.id) {
     redirect({ href: "/", locale });
+    return null;
   }
   const env = cf();
+  const user = await getOrCreateCurrentUser(env.DB, session);
+  if (!user) notFound();
+  const userId = user.id;
 
   const row = await env.DB.prepare(
     `SELECT id, user_id, title, status, error, duration_sec, language,

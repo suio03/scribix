@@ -24,7 +24,6 @@
     "NEXT_PUBLIC_APP_URL": "https://scribix.io",
     "NEXTAUTH_URL": "https://scribix.io",
     "ASSEMBLYAI_WEBHOOK_URL": "https://scribix.io/api/webhook/assemblyai",
-    "CF_ACCOUNT_ID": "9955b1e01b98cb8e830f0543c4c002f2",
     "CLOUDFLARE_ACCOUNT_ID": "9955b1e01b98cb8e830f0543c4c002f2",
     "NEXT_PUBLIC_CREEM_ENV": "live",
     "ADMIN_EMAILS": "laughinglyl90@gmail.com"
@@ -35,6 +34,7 @@
       "binding": "DB",
       "database_name": "scribix-db",
       "database_id": "c031ef5c-899a-426a-897a-279e011be78d",
+      "remote": true,
       "migrations_dir": "migrations"
     }
   ],

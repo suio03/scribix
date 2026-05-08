@@ -6,7 +6,9 @@
 
 import type { FFmpeg } from "@ffmpeg/ffmpeg";
 
+const FFMPEG_VERSION = "0.12.15";
 const FFMPEG_CORE_VERSION = "0.12.10";
+const FFMPEG_BASE = `https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@${FFMPEG_VERSION}/dist/esm`;
 const FFMPEG_CORE_BASE = `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${FFMPEG_CORE_VERSION}/dist/esm`;
 
 let _ff: FFmpeg | null = null;
@@ -20,8 +22,9 @@ async function getFFmpeg(): Promise<FFmpeg> {
     const { toBlobURL } = await import("@ffmpeg/util");
     const ff = new FFmpeg();
     await ff.load({
-      coreURL: await toBlobURL(`${FFMPEG_CORE_BASE}/ffmpeg-core.js`, "text/javascript"),
-      wasmURL: await toBlobURL(`${FFMPEG_CORE_BASE}/ffmpeg-core.wasm`, "application/wasm"),
+      classWorkerURL: await toBlobURL(`${FFMPEG_BASE}/worker.js`, "text/javascript"),
+      coreURL: `${FFMPEG_CORE_BASE}/ffmpeg-core.js`,
+      wasmURL: `${FFMPEG_CORE_BASE}/ffmpeg-core.wasm`,
     });
     _ff = ff;
     _loading = null;
@@ -38,6 +41,30 @@ export type ExtractedAudio = {
 };
 
 export async function extractAudioFromVideo(
+  file: File,
+  onProgress?: ExtractProgress
+): Promise<ExtractedAudio> {
+  try {
+    return await withTimeout(
+      extractWithWebAudio(file, onProgress),
+      2 * 60 * 1000,
+      () => {}
+    );
+  } catch (err) {
+    console.warn("Web Audio extraction failed, trying ffmpeg fallback", err);
+    return withTimeout(
+      extractWithFfmpeg(file, onProgress),
+      3 * 60 * 1000,
+      () => {
+        _ff?.terminate();
+        _ff = null;
+        _loading = null;
+      }
+    );
+  }
+}
+
+async function extractWithFfmpeg(
   file: File,
   onProgress?: ExtractProgress
 ): Promise<ExtractedAudio> {
@@ -88,4 +115,102 @@ export async function extractAudioFromVideo(
     try { await ff.deleteFile(inputName); } catch {}
     try { await ff.deleteFile(outputName); } catch {}
   }
+}
+
+async function extractWithWebAudio(
+  file: File,
+  onProgress?: ExtractProgress
+): Promise<ExtractedAudio> {
+  onProgress?.(0.1);
+  const arrayBuffer = await file.arrayBuffer();
+  onProgress?.(0.2);
+
+  const AudioCtx =
+    window.AudioContext ||
+    (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!AudioCtx) {
+    throw new Error("Browser audio decoding is not available.");
+  }
+  const audioCtx = new AudioCtx();
+  try {
+    const decoded = await audioCtx.decodeAudioData(arrayBuffer.slice(0));
+    onProgress?.(0.45);
+
+    const sampleRate = 16000;
+    const frameCount = Math.ceil(decoded.duration * sampleRate);
+    const offline = new OfflineAudioContext(1, frameCount, sampleRate);
+    const source = offline.createBufferSource();
+    source.buffer = decoded;
+    source.connect(offline.destination);
+    source.start(0);
+
+    const rendered = await offline.startRendering();
+    onProgress?.(0.8);
+    const wav = encodeMonoWav(rendered.getChannelData(0), sampleRate);
+    onProgress?.(1);
+    return {
+      blob: new Blob([wav], { type: "audio/wav" }),
+      durationSec: decoded.duration,
+    };
+  } finally {
+    await audioCtx.close().catch(() => {});
+  }
+}
+
+function encodeMonoWav(samples: Float32Array, sampleRate: number): ArrayBuffer {
+  const bytesPerSample = 2;
+  const dataSize = samples.length * bytesPerSample;
+  const buffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buffer);
+
+  writeAscii(view, 0, "RIFF");
+  view.setUint32(4, 36 + dataSize, true);
+  writeAscii(view, 8, "WAVE");
+  writeAscii(view, 12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * bytesPerSample, true);
+  view.setUint16(32, bytesPerSample, true);
+  view.setUint16(34, 8 * bytesPerSample, true);
+  writeAscii(view, 36, "data");
+  view.setUint32(40, dataSize, true);
+
+  let offset = 44;
+  for (const sample of samples) {
+    const s = Math.max(-1, Math.min(1, sample));
+    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+    offset += 2;
+  }
+  return buffer;
+}
+
+function writeAscii(view: DataView, offset: number, text: string) {
+  for (let i = 0; i < text.length; i++) {
+    view.setUint8(offset + i, text.charCodeAt(i));
+  }
+}
+
+function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  onTimeout: () => void
+): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      onTimeout();
+      reject(new Error("Audio extraction timed out. Trying browser fallback."));
+    }, ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (err) => {
+        clearTimeout(timer);
+        reject(err);
+      }
+    );
+  });
 }

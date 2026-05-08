@@ -2,7 +2,7 @@
 // for direct-from-browser uploads and for handing AssemblyAI a fetchable URL,
 // we sign against R2's S3-compatible endpoint with a separate API token.
 //
-// Required env: CF_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY.
+// Required env: CLOUDFLARE_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY.
 
 import { AwsClient } from "aws4fetch";
 
@@ -22,7 +22,7 @@ function client() {
 }
 
 function endpoint(key: string) {
-  return `https://${process.env.CF_ACCOUNT_ID}.r2.cloudflarestorage.com/${BUCKET}/${encodeKey(key)}`;
+  return `https://${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com/${BUCKET}/${encodeKey(key)}`;
 }
 
 function encodeKey(key: string) {

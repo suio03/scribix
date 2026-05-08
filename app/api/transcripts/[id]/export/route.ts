@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import {
   compactCJKSpaces,
   toCsv,
@@ -25,6 +26,8 @@ export async function GET(req: Request, { params }: Params) {
   }
 
   const env = cf();
+  const user = await getOrCreateCurrentUser(env.DB, session);
+  if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(
     `SELECT user_id, status, title, transcript_r2_key
        FROM transcripts
@@ -38,7 +41,7 @@ export async function GET(req: Request, { params }: Params) {
       transcript_r2_key: string | null;
     }>();
   if (!row) return Response.json({ error: "not_found" }, { status: 404 });
-  if (row.user_id !== session.user.id) {
+  if (row.user_id !== user.id) {
     return Response.json({ error: "forbidden" }, { status: 403 });
   }
   if (row.status !== "completed" || !row.transcript_r2_key) {
