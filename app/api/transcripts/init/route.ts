@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { newId, newWebhookToken } from "@/lib/ids";
-import { isQuotaBypassed, PLANS, type Tier } from "@/lib/plans";
+import { PLANS, type Tier } from "@/lib/plans";
 import { checkQuota } from "@/lib/quota";
 import { presignPut, R2 } from "@/lib/r2";
 
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
   const plan = PLANS[userRow.tier];
 
   // Per-file duration cap. Applies to both audio + video.
-  if (!isQuotaBypassed() && durationSec > plan.maxFileSec) {
+  if (durationSec > plan.maxFileSec) {
     return Response.json(
       { error: "duration_exceeds_tier", maxSec: plan.maxFileSec, tier: userRow.tier },
       { status: 413 }
@@ -56,14 +56,12 @@ export async function POST(req: Request) {
   // larger maxVideoUploadBytes ceiling because video is extracted client-side
   // to ~64 kbps mono MP3 before /start, but we still need a hard ceiling so a
   // malicious client can't claim isVideo=true and PUT an unbounded blob to R2.
-  if (!isQuotaBypassed()) {
-    const sizeCap = isVideo ? plan.maxVideoUploadBytes : plan.maxFileBytes;
-    if (bytes > sizeCap) {
-      return Response.json(
-        { error: "file_too_large", maxBytes: sizeCap },
-        { status: 413 }
-      );
-    }
+  const sizeCap = isVideo ? plan.maxVideoUploadBytes : plan.maxFileBytes;
+  if (bytes > sizeCap) {
+    return Response.json(
+      { error: "file_too_large", maxBytes: sizeCap },
+      { status: 413 }
+    );
   }
 
   // Pre-flight quota check (read-only). Atomic reserve still happens at /start.

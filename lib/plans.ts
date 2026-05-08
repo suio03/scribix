@@ -47,14 +47,6 @@ export function quotaMinutesFor(tier: Tier, cycle: BillingCycle | null | undefin
   return PLANS[tier][c].minutesPerCycle;
 }
 
-// Pre-launch testing escape hatch. Set QUOTA_BYPASS=1 in env to disable
-// daily-minute, per-file-duration, and per-file-size enforcement so we can
-// upload arbitrary files while iterating. MUST be unset before public launch.
-export function isQuotaBypassed(): boolean {
-  const v = process.env.QUOTA_BYPASS;
-  return v === "1" || v === "true";
-}
-
 // Display pricing — used by the marketing pricing page only.
 // Spec §1: monthly $9/$19, yearly 40% off ($64.80/yr, $136.80/yr).
 export const PRICING_DISPLAY = {

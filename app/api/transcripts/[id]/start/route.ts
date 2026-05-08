@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { submitTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
 import { discordAlert } from "@/lib/discord";
-import { isQuotaBypassed, PLANS, type Tier } from "@/lib/plans";
+import { PLANS, type Tier } from "@/lib/plans";
 import { presignGet } from "@/lib/r2";
 import { reconcileQuota, reserveQuota } from "@/lib/quota";
 
@@ -53,7 +53,7 @@ export async function POST(req: Request, { params }: Params) {
 
   const plan = PLANS[row.tier];
   const estimateMin = Math.ceil(estimate / 60);
-  if (!isQuotaBypassed() && estimate > plan.maxFileSec) {
+  if (estimate > plan.maxFileSec) {
     return Response.json(
       { error: "duration_exceeds_tier", maxSec: plan.maxFileSec, tier: row.tier },
       { status: 413 }

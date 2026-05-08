@@ -3,7 +3,7 @@
 // binding inside the Worker.
 
 import type { BillingCycle, Tier } from "./plans";
-import { isQuotaBypassed, quotaMinutesFor } from "./plans";
+import { quotaMinutesFor } from "./plans";
 
 export type UserQuotaRow = {
   id: string;
@@ -60,9 +60,7 @@ export async function reserveQuota(
   if (!user) return { error: "user_not_found" };
 
   const fresh = await maybeResetFreePeriod(db, user);
-  const cap = isQuotaBypassed()
-    ? Number.MAX_SAFE_INTEGER
-    : quotaMinutesFor(fresh.tier, fresh.billing_cycle);
+  const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle);
   const remaining = Math.max(0, cap - fresh.minutes_used_this_period);
   if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
 
@@ -112,9 +110,7 @@ export async function checkQuota(
   if (!user) return { error: "user_not_found" };
 
   const fresh = await maybeResetFreePeriod(db, user);
-  const cap = isQuotaBypassed()
-    ? Number.MAX_SAFE_INTEGER
-    : quotaMinutesFor(fresh.tier, fresh.billing_cycle);
+  const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle);
   const remaining = Math.max(0, cap - fresh.minutes_used_this_period);
   if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
 
