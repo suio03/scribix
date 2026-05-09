@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function BillingPortalButton() {
+  const t = useTranslations("Dashboard.billingPortal");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -19,7 +21,7 @@ export function BillingPortalButton() {
       window.location.href = url;
     } catch (e) {
       setBusy(false);
-      setErr(e instanceof Error ? e.message : "Something went wrong.");
+      setErr(e instanceof Error ? e.message : t("genericError"));
     }
   }
 
@@ -31,7 +33,7 @@ export function BillingPortalButton() {
         disabled={busy}
         className="rounded-full border border-line px-4 py-2 text-[13px] font-medium hover:bg-ink/5 disabled:opacity-50"
       >
-        {busy ? "Opening…" : "Manage billing"}
+        {busy ? t("opening") : t("manage")}
       </button>
       {err && <p className="text-[12px] text-red-600">{err}</p>}
     </div>

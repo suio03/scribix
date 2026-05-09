@@ -3,6 +3,9 @@
 import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
+
+type UploaderT = ReturnType<typeof useTranslations<"Dashboard.uploader">>;
 
 const ACCEPT = "audio/*,video/*";
 const MAX_BROWSER_VIDEO_BYTES = 1024 * 1024 * 1024;
@@ -23,6 +26,7 @@ export type UseUploadOpts = {
 };
 
 export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUploadOpts) {
+  const t = useTranslations("Dashboard.uploader");
   const router = useRouter();
   const [phase, setPhase] = useState<UploadPhase>("idle");
   const [progress, setProgress] = useState(0);
@@ -50,9 +54,7 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
       try {
         const isVideo = file.type.startsWith("video/");
         if (isVideo && file.size > MAX_BROWSER_VIDEO_BYTES) {
-          throw new Error(
-            "Video uploads are currently limited to 1 GB in the browser. For larger files, please convert to audio first."
-          );
+          throw new Error(t("videoTooBig"));
         }
 
         const durationSec =
@@ -95,7 +97,7 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
             source,
           }),
         });
-        if (!initRes.ok) throw new Error(await readError(initRes));
+        if (!initRes.ok) throw new Error(await readError(initRes, t));
         const init = (await initRes.json()) as {
           transcriptId: string;
           uploadUrl: string;
@@ -104,7 +106,7 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
 
         step = "uploading audio";
         setPhase("uploading");
-        await uploadWithProgress(init.uploadUrl, uploadBody, (p) => setProgress(p));
+        await uploadWithProgress(init.uploadUrl, uploadBody, (p) => setProgress(p), t);
 
         step = "submitting transcript";
         setPhase("submitting");
@@ -113,20 +115,20 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ durationSecEstimate: uploadDurationSec }),
         });
-        if (!startRes.ok) throw new Error(await readError(startRes));
+        if (!startRes.ok) throw new Error(await readError(startRes, t));
 
         step = "polling transcript";
         setPhase("polling");
         keepTranscript = true;
-        const finalStatus = await pollStatus(transcriptId);
+        const finalStatus = await pollStatus(transcriptId, t);
         if (finalStatus === "completed") {
           router.push(`/dashboard/transcripts/${transcriptId}`);
         } else {
-          throw new Error(`Transcription ${finalStatus}.`);
+          throw new Error(t("transcriptionGeneric", { status: finalStatus }));
         }
       } catch (err) {
         console.error("Upload failed", { step, transcriptId, error: err });
-        const message = uploadErrorMessage(err, step);
+        const message = uploadErrorMessage(err, step, t);
         if (message === "persist_failed") {
           keepTranscript = true;
         }
@@ -137,7 +139,7 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
         setErrorMsg(message);
       }
     },
-    [router, signedIn, postSignInPath]
+    [router, signedIn, postSignInPath, t]
   );
 
   return { phase, progress, errorMsg, filename, onPick };
@@ -145,6 +147,7 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
 
 /** Plain, dashboard-styled drag/drop uploader. */
 export function Uploader(props: UseUploadOpts) {
+  const t = useTranslations("Dashboard.uploader");
   const { phase, progress, errorMsg, filename, onPick } = useUpload(props);
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -179,16 +182,14 @@ export function Uploader(props: UseUploadOpts) {
 
       {phase === "idle" || phase === "error" ? (
         <>
-          <p className="text-base font-medium">Drop a video or audio file</p>
-          <p className="mt-1 text-sm text-ink/60">
-            Video uploads up to 1&nbsp;GB · Free trial: 45&nbsp;min lifetime · max 500&nbsp;MB after audio extraction
-          </p>
+          <p className="text-base font-medium">{t("dropPrompt")}</p>
+          <p className="mt-1 text-sm text-ink/60">{t("limits")}</p>
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
             className="mt-6 rounded-full bg-ink px-5 py-2 text-[13px] font-medium text-paper hover:bg-accent"
           >
-            Choose file
+            {t("choose")}
           </button>
           {errorMsg && <p className="mt-4 text-sm text-red-600">{errorMsg}</p>}
         </>
@@ -208,17 +209,18 @@ export function ProgressView({
   progress: number;
   filename: string | null;
 }) {
+  const t = useTranslations("Dashboard.uploader");
   const label =
     phase === "preparing"
-      ? "Preparing…"
+      ? t("phasePreparing")
       : phase === "extracting"
-      ? `Extracting audio ${Math.round(progress * 100)}%`
+      ? t("phaseExtracting", { percent: Math.round(progress * 100) })
       : phase === "uploading"
-      ? `Uploading ${Math.round(progress * 100)}%`
+      ? t("phaseUploading", { percent: Math.round(progress * 100) })
       : phase === "submitting"
-      ? "Submitting For processing…"
+      ? t("phaseSubmitting")
       : phase === "polling"
-      ? "Transcribing…"
+      ? t("phaseTranscribing")
       : "";
   const bar =
     phase === "uploading" || phase === "extracting"
@@ -252,7 +254,7 @@ async function readMediaDuration(file: File): Promise<number> {
   try {
     await new Promise<void>((resolve, reject) => {
       el.addEventListener("loadedmetadata", () => resolve(), { once: true });
-      el.addEventListener("error", () => reject(new Error("Cannot read media metadata.")), {
+      el.addEventListener("error", () => reject(new Error("cannot_read_metadata")), {
         once: true,
       });
     });
@@ -265,7 +267,8 @@ async function readMediaDuration(file: File): Promise<number> {
 function uploadWithProgress(
   url: string,
   file: Blob,
-  onProgress: (frac: number) => void
+  onProgress: (frac: number) => void,
+  t: UploaderT
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -278,19 +281,19 @@ function uploadWithProgress(
         ? resolve()
         : reject(new Error(`Upload failed: ${xhr.status} ${xhr.responseText.slice(0, 200)}`))
     );
-    xhr.addEventListener("error", () => reject(new Error("Upload network error.")));
+    xhr.addEventListener("error", () => reject(new Error(t("uploadNetworkError"))));
     xhr.send(file);
   });
 }
 
-async function pollStatus(id: string): Promise<"completed" | "error"> {
+async function pollStatus(id: string, t: UploaderT): Promise<"completed" | "error"> {
   while (true) {
     await new Promise((r) => setTimeout(r, 3000));
     const res = await fetch(`/api/transcripts/${id}/status`);
-    if (!res.ok) throw new Error(await readError(res));
+    if (!res.ok) throw new Error(await readError(res, t));
     const { status, error } = (await res.json()) as { status: string; error: string | null };
     if (status === "completed") return "completed";
-    if (status === "error") throw new Error(error ?? "Transcription error.");
+    if (status === "error") throw new Error(error ?? t("transcriptionFailed"));
   }
 }
 
@@ -302,14 +305,15 @@ async function cleanupTranscript(id: string): Promise<void> {
   }
 }
 
-function uploadErrorMessage(err: unknown, step: string): string {
+function uploadErrorMessage(err: unknown, step: string, t: UploaderT): string {
+  if (err instanceof Error && err.message === "cannot_read_metadata") return t("cannotReadMetadata");
   if (err instanceof Error && err.message) return err.message;
   if (err instanceof DOMException && err.message) return err.message;
   if (typeof err === "string" && err) return err;
-  return `Upload failed while ${step}. Check the browser console for details.`;
+  return t("uploadFallback", { step });
 }
 
-async function readError(res: Response): Promise<string> {
+async function readError(res: Response, t: UploaderT): Promise<string> {
   try {
     const j = (await res.json()) as {
       error?: string;
@@ -323,27 +327,30 @@ async function readError(res: Response): Promise<string> {
       case "file_too_large": {
         const mb = j.maxBytes ? Math.floor(j.maxBytes / (1024 * 1024)) : null;
         return mb
-          ? `That file is larger than your tier allows (max ${mb} MB). Upgrade for higher limits.`
-          : "That file is larger than your tier allows. Upgrade for higher limits.";
+          ? t("fileTooLargeWithCap", { mb })
+          : t("fileTooLarge");
       }
       case "duration_exceeds_tier": {
         const min = j.maxSec ? Math.floor(j.maxSec / 60) : null;
         return min
-          ? `That file is longer than your tier allows (max ${min} min per file). Upgrade for longer files.`
-          : "That file is longer than your tier allows. Upgrade for longer files.";
+          ? t("durationExceedsTierWithCap", { min })
+          : t("durationExceedsTier");
       }
       case "no_quota":
         return j.capMin
-          ? `You've used all ${j.capMin} minutes for this period. Upgrade or wait for the next cycle.`
-          : "You're out of minutes for this period. Upgrade or wait for the next cycle.";
+          ? t("noQuotaWithCap", { capMin: j.capMin })
+          : t("noQuota");
       case "insufficient_quota":
-        return `This file needs ~${j.neededMin ?? "?"} min but you only have ${j.remainingMin ?? 0} min left this period. Upgrade or wait for the next cycle.`;
+        return t("insufficientQuota", {
+          neededMin: j.neededMin ?? "?",
+          remainingMin: j.remainingMin ?? 0,
+        });
       case "aai_submit_failed":
-        return "Transcription service is unavailable. Please try again in a moment.";
+        return t("aaiSubmitFailed");
       default:
-        return j.error ?? `Request failed (${res.status}).`;
+        return j.error ?? t("requestFailed", { status: res.status });
     }
   } catch {
-    return `Request failed (${res.status}).`;
+    return t("requestFailed", { status: res.status });
   }
 }

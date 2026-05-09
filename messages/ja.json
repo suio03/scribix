@@ -411,5 +411,148 @@
       { "label": "利用規約", "href": "/terms" },
       { "label": "プライバシーポリシー", "href": "/privacy" }
     ]
+  },
+  "Dashboard": {
+    "layout": {
+      "account": "アカウント",
+      "signOut": "サインアウト"
+    },
+    "list": {
+      "title": "あなたの文字起こし",
+      "empty": "まだありません。",
+      "itemCount": "{count, plural, =1 {# 件のアイテム} other {# 件のアイテム}}",
+      "newTranscript": "新規文字起こし",
+      "checkoutOkTitle": "サブスクリプションがアクティブです—ようこそ。",
+      "checkoutOkBody": "新しいプランが利用可能になりました。<link>アカウント</link>ページで使用量を確認できます。",
+      "emptyBody": "文字起こしがまだありません。",
+      "emptyCta": "最初のファイルをアップロード →",
+      "tableName": "名前",
+      "tableUploaded": "アップロード日時",
+      "tableDuration": "期間",
+      "tableStatus": "ステータス",
+      "tableOperation": "操作",
+      "statusReady": "準備完了",
+      "statusError": "エラー",
+      "statusTranscribing": "文字起こし中",
+      "statusUploading": "アップロード中",
+      "statusPending": "保留中"
+    },
+    "new": {
+      "title": "新規文字起こし",
+      "back": "戻る"
+    },
+    "account": {
+      "title": "アカウント",
+      "email": "メール",
+      "name": "名前",
+      "plan": "プラン",
+      "freeTrialUsage": "無料トライアル使用量",
+      "usageThisPeriod": "今期の使用量",
+      "usageValue": "{used} / {quota} 分",
+      "periodResets": "周期がリセット",
+      "noValue": "—",
+      "upgradePlan": "プランをアップグレード",
+      "signOut": "サインアウト",
+      "dangerZone": "危険ゾーン",
+      "deleteWarning": "アカウント、文字起こし、音声を永久削除します。これは取り消せません。",
+      "tierFree": "フリー",
+      "tierBasic": "ベーシック",
+      "tierPro": "プロ",
+      "cycleMonthly": "月額",
+      "cycleYearly": "年額",
+      "statusCanceled": "（キャンセル—周期終了まで利用可能）",
+      "statusExpired": "（期限切れ）"
+    },
+    "viewer": {
+      "back": "← すべての文字起こし",
+      "audioExpiredLabel": "音声が期限切れです。",
+      "audioExpiredBody": "ソースファイルは 7 日間保持されます。文字起こしはずっと保持されます。",
+      "missing": "ストレージから文字起こしファイルが見つかりません。",
+      "transcribingHint": "音声を文字起こし中です。通常、入力 1 時間あたり約 1 分かかります。",
+      "workingHint": "文字起こしを処理中です...",
+      "failedTitle": "文字起こしに失敗しました。",
+      "metaCompleted": "完了",
+      "metaPending": "保留中",
+      "metaUploading": "アップロード中",
+      "metaQueued": "キュー待ち",
+      "metaProcessing": "処理中",
+      "metaError": "エラー",
+      "tabTranscript": "文字起こし",
+      "tabSubtitles": "字幕",
+      "play": "再生",
+      "pause": "一時停止",
+      "mute": "ミュート",
+      "unmute": "ミュート解除",
+      "playbackSpeed": "再生速度"
+    },
+    "rowMenu": {
+      "more": "他のアクション",
+      "delete": "削除",
+      "deleting": "削除中…",
+      "deleteFailed": "削除に失敗しました",
+      "confirmTitle": "文字起こしを削除しますか？",
+      "confirmBody": "この文字起こしと音声ファイルはライブラリから削除されます。これは取り消せません。",
+      "confirmClose": "削除確認を閉じる",
+      "confirmCancel": "キャンセル",
+      "confirmDelete": "文字起こしを削除",
+      "confirmDeleting": "削除中..."
+    },
+    "billingPortal": {
+      "manage": "請求を管理",
+      "opening": "開いています…",
+      "genericError": "何か問題が発生しました。"
+    },
+    "deleteAccount": {
+      "confirm": "アカウントを削除しますか？文字起こしと音声が削除されます。これは取り消せません。",
+      "delete": "アカウントを削除",
+      "deleting": "削除中…",
+      "genericError": "何か問題が発生しました。"
+    },
+    "download": {
+      "label": "ダウンロード",
+      "audio": "音声"
+    },
+    "copy": {
+      "copy": "コピー",
+      "copying": "コピー中…",
+      "copied": "コピーしました",
+      "failed": "失敗しました"
+    },
+    "uploadOrRecord": {
+      "upload": "アップロード",
+      "record": "録音"
+    },
+    "uploader": {
+      "dropPrompt": "動画または音声ファイルをドロップ",
+      "limits": "動画アップロード最大 1 GB · 無料トライアル：45 分（生涯） · 音声抽出後最大 500 MB",
+      "choose": "ファイルを選択",
+      "phasePreparing": "準備中…",
+      "phaseExtracting": "音声を抽出中 {percent}%",
+      "phaseUploading": "アップロード中 {percent}%",
+      "phaseSubmitting": "処理に提出中…",
+      "phaseTranscribing": "文字起こし中…",
+      "videoTooBig": "ブラウザでの動画アップロードは現在 1 GB に制限されています。より大きなファイルは、最初に音声に変換してください。",
+      "fileTooLargeWithCap": "そのファイルはティアで許可される以上のサイズです（最大 {mb} MB）。より高い制限でアップグレードしてください。",
+      "fileTooLarge": "そのファイルはティアで許可される以上のサイズです。より高い制限でアップグレードしてください。",
+      "durationExceedsTierWithCap": "そのファイルはティアで許可される以上の長さです（1 ファイルあたり最大 {min} 分）。より長いファイルでアップグレードしてください。",
+      "durationExceedsTier": "そのファイルはティアで許可される以上の長さです。より長いファイルでアップグレードしてください。",
+      "noQuotaWithCap": "この期間の {capMin} 分をすべて使用しました。アップグレードするか、次の周期を待ってください。",
+      "noQuota": "この期間の分数がなくなりました。アップグレードするか、次の周期を待ってください。",
+      "insufficientQuota": "このファイルは ~{neededMin} 分必要ですが、この期間は {remainingMin} 分しか残っていません。アップグレードするか、次の周期を待ってください。",
+      "aaiSubmitFailed": "文字起こしサービスが利用できません。もう一度お試しください。",
+      "requestFailed": "リクエストに失敗しました（{status}）。",
+      "uploadNetworkError": "アップロードネットワークエラー。",
+      "cannotReadMetadata": "メディアメタデータを読み取ることができません。",
+      "transcriptionFailed": "文字起こしエラー。",
+      "transcriptionGeneric": "文字起こし {status}。",
+      "uploadFallback": "{step} 中にアップロードに失敗しました。詳細はブラウザコンソールで確認してください。"
+    },
+    "recorder": {
+      "start": "録音を開始",
+      "stop": "録音を停止",
+      "tapToRecord": "タップして録音 · 最大 {min} 分",
+      "recording": "録音中 — {min} 分で自動停止",
+      "micDenied": "マイクアクセスが拒否されました。"
+    }
   }
 }

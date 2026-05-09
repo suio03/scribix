@@ -31,6 +31,38 @@ declare global {
   }
 }
 
+function loadGoogleIdentityScript(): Promise<void> {
+  if (window.google?.accounts?.id) return Promise.resolve();
+
+  const existing = document.getElementById("google-identity-services") as HTMLScriptElement | null;
+  if (existing) {
+    if (existing.dataset.loaded === "true") return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      existing.addEventListener("load", () => {
+        existing.dataset.loaded = "true";
+        resolve();
+      }, { once: true });
+      existing.addEventListener("error", () => reject(new Error("Google identity script failed")), {
+        once: true,
+      });
+    });
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.id = "google-identity-services";
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      script.dataset.loaded = "true";
+      resolve();
+    };
+    script.onerror = () => reject(new Error("Google identity script failed"));
+    document.head.appendChild(script);
+  });
+}
+
 function getCooldownUntil(): number {
   if (typeof window === "undefined") return 0;
   const raw = window.localStorage.getItem(ONE_TAP_COOLDOWN_KEY);
@@ -54,6 +86,8 @@ export function GoogleOneTap({ clientId }: { clientId: string }) {
     if (!clientId) return;
     if (Date.now() < getCooldownUntil()) return;
     let cancelled = false;
+
+    loadGoogleIdentityScript().catch(() => {});
 
     const tick = setInterval(() => {
       if (cancelled) return;

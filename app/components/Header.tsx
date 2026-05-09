@@ -12,7 +12,7 @@ export async function Header() {
   const t = await getTranslations("Header");
   const session = await auth();
   const locale = await getLocale();
-  const dashboardHref = getPathname({ href: "/dashboard", locale });
+  const dashboardRedirect = getPathname({ href: "/dashboard", locale });
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-paper/85 backdrop-blur">
@@ -33,7 +33,7 @@ export async function Header() {
 
           {session ? (
             <Link
-              href={dashboardHref}
+              href="/dashboard"
               className="ml-1 inline-flex items-center gap-2 rounded-full border border-line px-2 py-1 text-[13px] font-medium hover:bg-ink/5"
             >
               {session.user.image ? (
@@ -55,7 +55,7 @@ export async function Header() {
             <form
               action={async () => {
                 "use server";
-                await signIn("google", { redirectTo: dashboardHref });
+                await signIn("google", { redirectTo: dashboardRedirect });
               }}
             >
               <button

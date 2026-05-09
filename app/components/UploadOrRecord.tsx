@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Upload, Mic, type LucideIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Uploader } from "./Uploader";
 import { Recorder } from "./Recorder";
 
@@ -14,6 +15,7 @@ export function UploadOrRecord({
   signedIn: boolean;
   postSignInPath: string;
 }) {
+  const t = useTranslations("Dashboard.uploadOrRecord");
   const [tab, setTab] = useState<Tab>("upload");
   return (
     <div>
@@ -22,13 +24,13 @@ export function UploadOrRecord({
           active={tab === "upload"}
           onClick={() => setTab("upload")}
           icon={Upload}
-          label="Upload"
+          label={t("upload")}
         />
         <TabBtn
           active={tab === "record"}
           onClick={() => setTab("record")}
           icon={Mic}
-          label="Record"
+          label={t("record")}
         />
       </div>
       {tab === "upload" ? (

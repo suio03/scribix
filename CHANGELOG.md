@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.4] - 2026-05-09
+
+### Changed
+- Localized dashboard, upload, transcript viewer, billing, and account actions across supported languages.
+- Reworked transcript row actions with translated labels and a custom delete confirmation flow.
+
+### Fixed
+- Improved dashboard action menu positioning and localized upload/record error messages.
+
 ## [0.1.3] - 2026-05-08
 
 ### Changed

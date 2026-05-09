@@ -1,5 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { redirect } from "@/i18n/navigation";
 import { auth, signOut } from "@/auth";
@@ -18,6 +18,7 @@ export default async function AccountPage() {
 
   const { env } = getCloudflareContext();
   const row = await getOrCreateCurrentUser(env.DB, session);
+  const t = await getTranslations("Dashboard.account");
 
   const tier: Tier = row?.tier ?? "free";
   const cycle = row?.billing_cycle ?? null;
@@ -27,18 +28,18 @@ export default async function AccountPage() {
 
   return (
     <main className="mx-auto max-w-[720px] px-4 py-12 sm:px-8">
-      <h1 className="font-display text-3xl font-semibold tracking-tight">Account</h1>
+      <h1 className="font-display text-3xl font-semibold tracking-tight">{t("title")}</h1>
 
       <dl className="mt-10 space-y-6 rounded-2xl border border-line p-6">
-        <Field label="Email" value={row?.email ?? session?.user?.email ?? "—"} />
-        <Field label="Name" value={row?.full_name ?? session?.user?.name ?? "—"} />
-        <Field label="Plan" value={planLabel(tier, cycle, row?.subscription_status ?? null)} />
+        <Field label={t("email")} value={row?.email ?? session?.user?.email ?? t("noValue")} />
+        <Field label={t("name")} value={row?.full_name ?? session?.user?.name ?? t("noValue")} />
+        <Field label={t("plan")} value={planLabel(t, tier, cycle, row?.subscription_status ?? null)} />
         <Field
-          label={tier === "free" ? "Free trial usage" : "Usage this period"}
-          value={`${usedMin} / ${quotaMin} min`}
+          label={tier === "free" ? t("freeTrialUsage") : t("usageThisPeriod")}
+          value={t("usageValue", { used: usedMin, quota: quotaMin })}
         />
         {tier !== "free" && (
-          <Field label="Period resets" value={row ? formatDate(row.period_ends_at) : "—"} />
+          <Field label={t("periodResets")} value={row ? formatDate(row.period_ends_at, locale) : t("noValue")} />
         )}
       </dl>
 
@@ -48,7 +49,7 @@ export default async function AccountPage() {
             href="/#pricing"
             className="rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper hover:bg-accent"
           >
-            Upgrade plan
+            {t("upgradePlan")}
           </Link>
         ) : null}
         {hasBilling ? <BillingPortalButton /> : null}
@@ -65,15 +66,13 @@ export default async function AccountPage() {
           type="submit"
           className="rounded-full border border-line px-4 py-2 text-[13px] font-medium hover:bg-ink/5"
         >
-          Sign out
+          {t("signOut")}
         </button>
       </form>
 
       <div className="mt-12 rounded-2xl border border-red-200 p-6">
-        <h2 className="text-sm font-semibold text-red-700">Danger zone</h2>
-        <p className="mt-1 text-sm text-ink/60">
-          Permanently delete your account, transcripts, and audio. This cannot be undone.
-        </p>
+        <h2 className="text-sm font-semibold text-red-700">{t("dangerZone")}</h2>
+        <p className="mt-1 text-sm text-ink/60">{t("deleteWarning")}</p>
         <div className="mt-4">
           <DeleteAccountButton />
         </div>
@@ -91,19 +90,25 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
-function planLabel(tier: Tier, cycle: BillingCycle | null, status: string | null): string {
-  const name = tier.charAt(0).toUpperCase() + tier.slice(1);
+function planLabel(
+  t: (key: string) => string,
+  tier: Tier,
+  cycle: BillingCycle | null,
+  status: string | null
+): string {
+  const tierKey = tier === "free" ? "tierFree" : tier === "basic" ? "tierBasic" : "tierPro";
+  const name = t(tierKey);
   if (tier === "free") return name;
   const parts: string[] = [name];
-  if (cycle) parts.push(cycle);
-  if (status === "canceled") parts.push("(canceled — access until period end)");
-  if (status === "expired") parts.push("(expired)");
+  if (cycle) parts.push(t(cycle === "yearly" ? "cycleYearly" : "cycleMonthly"));
+  if (status === "canceled") parts.push(t("statusCanceled"));
+  if (status === "expired") parts.push(t("statusExpired"));
   return parts.join(" · ");
 }
 
-function formatDate(s: string) {
+function formatDate(s: string, locale: string) {
   const d = new Date(s.includes("T") ? s : s.replace(" ", "T") + "Z");
   return Number.isNaN(d.getTime())
     ? s
-    : d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    : d.toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
 }

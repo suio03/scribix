@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Mic, Square } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ProgressView, useUpload, type UseUploadOpts } from "./Uploader";
 
 const MAX_RECORDING_SEC = 30 * 60;
@@ -9,6 +10,7 @@ const MAX_RECORDING_SEC = 30 * 60;
 type RecState = "idle" | "recording";
 
 export function Recorder(props: UseUploadOpts) {
+  const t = useTranslations("Dashboard.recorder");
   const { phase, progress, errorMsg, filename, onPick } = useUpload(props);
   const [recState, setRecState] = useState<RecState>("idle");
   const [seconds, setSeconds] = useState(0);
@@ -66,7 +68,7 @@ export function Recorder(props: UseUploadOpts) {
         });
       }, 1000);
     } catch (err) {
-      setRecError(err instanceof Error ? err.message : "Microphone access denied.");
+      setRecError(err instanceof Error ? err.message : t("micDenied"));
       stopAll();
       setRecState("idle");
     }
@@ -91,7 +93,7 @@ export function Recorder(props: UseUploadOpts) {
       <button
         type="button"
         onClick={recording ? stop : start}
-        aria-label={recording ? "Stop recording" : "Start recording"}
+        aria-label={recording ? t("stop") : t("start")}
         className={`relative inline-grid size-24 place-items-center rounded-full border-4 transition ${
           recording
             ? "border-rec/30 bg-rec text-paper"
@@ -111,7 +113,9 @@ export function Recorder(props: UseUploadOpts) {
         {formatTime(seconds)}
       </p>
       <p className="mt-1 text-sm text-ink/60">
-        {recording ? `Recording — auto-stops at ${MAX_RECORDING_SEC / 60} min` : `Tap to record · up to ${MAX_RECORDING_SEC / 60} min`}
+        {recording
+          ? t("recording", { min: MAX_RECORDING_SEC / 60 })
+          : t("tapToRecord", { min: MAX_RECORDING_SEC / 60 })}
       </p>
       {(recError || errorMsg) && (
         <p className="mt-4 text-sm text-red-600">{recError ?? errorMsg}</p>

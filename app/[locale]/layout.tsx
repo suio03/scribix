@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "../../i18n/routing";
 import "./globals.css";
+
+// Runs before paint to avoid theme flash. Reads localStorage first (primary
+// store), falls back to the cookie that older clients may still have.
+const themeInitScript = `(function(){try{var t=localStorage.getItem("scribix-theme");if(t!=="dark"&&t!=="light"){var m=document.cookie.match(/scribix-theme=(dark|light)/);t=m?m[1]:null;}if(t==="dark")document.documentElement.classList.add("dark");}catch(e){}})();`;
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -64,17 +67,6 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-const themeInitScript = `
-(function() {
-  try {
-    var saved = localStorage.getItem('scribix-theme');
-    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    var theme = saved || 'light';
-    if (theme === 'dark') document.documentElement.classList.add('dark');
-  } catch (_) {}
-})();
-`;
-
 export default async function LocaleLayout({
   children,
   params,
@@ -94,16 +86,10 @@ export default async function LocaleLayout({
       className={`${fraunces.variable} ${geist.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="bg-paper text-ink antialiased">
-        <Script
-          id="scribix-theme-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
-        />
-        <Script
-          src="https://accounts.google.com/gsi/client"
-          strategy="afterInteractive"
-        />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>

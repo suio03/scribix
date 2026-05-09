@@ -411,5 +411,148 @@
       { "label": "Servicebedingungen", "href": "/terms" },
       { "label": "Datenschutzrichtlinie", "href": "/privacy" }
     ]
+  },
+  "Dashboard": {
+    "layout": {
+      "account": "Konto",
+      "signOut": "Abmelden"
+    },
+    "list": {
+      "title": "Ihre Transkriptionen",
+      "empty": "Noch nichts.",
+      "itemCount": "{count, plural, =1 {# Element} other {# Elemente}}",
+      "newTranscript": "Neue Transkription",
+      "checkoutOkTitle": "Abonnement aktiv – willkommen an Bord.",
+      "checkoutOkBody": "Ihr neuer Plan ist jetzt aktiv. Besuchen Sie <link>Konto</link>, um Ihre Nutzung zu sehen.",
+      "emptyBody": "Noch keine Transkriptionen.",
+      "emptyCta": "Laden Sie Ihre erste Datei hoch →",
+      "tableName": "Name",
+      "tableUploaded": "Hochgeladen",
+      "tableDuration": "Dauer",
+      "tableStatus": "Status",
+      "tableOperation": "Aktion",
+      "statusReady": "Bereit",
+      "statusError": "Fehler",
+      "statusTranscribing": "Wird transkribiert",
+      "statusUploading": "Wird hochgeladen",
+      "statusPending": "Ausstehend"
+    },
+    "new": {
+      "title": "Neue Transkription",
+      "back": "Zurück"
+    },
+    "account": {
+      "title": "Konto",
+      "email": "E-Mail",
+      "name": "Name",
+      "plan": "Plan",
+      "freeTrialUsage": "Kostenlose Test-Nutzung",
+      "usageThisPeriod": "Nutzung in dieser Periode",
+      "usageValue": "{used} / {quota} Min",
+      "periodResets": "Periode setzt zurück",
+      "noValue": "—",
+      "upgradePlan": "Plan upgraden",
+      "signOut": "Abmelden",
+      "dangerZone": "Gefahrenzone",
+      "deleteWarning": "Löschen Sie dauerhaft Ihr Konto, Ihre Transkriptionen und Audio. Dies kann nicht rückgängig gemacht werden.",
+      "tierFree": "Kostenlos",
+      "tierBasic": "Basic",
+      "tierPro": "Pro",
+      "cycleMonthly": "monatlich",
+      "cycleYearly": "jährlich",
+      "statusCanceled": "(gekündigt – Zugriff bis Periodenende)",
+      "statusExpired": "(abgelaufen)"
+    },
+    "viewer": {
+      "back": "← Alle Transkriptionen",
+      "audioExpiredLabel": "Audio abgelaufen.",
+      "audioExpiredBody": "Quelldateien werden 7 Tage lang aufbewahrt; das Transkript bleibt so lange, wie Sie möchten.",
+      "missing": "Transkriptionsdatei fehlt im Speicher.",
+      "transcribingHint": "Ihre Audio wird transkribiert. Dies dauert normalerweise etwa eine Minute pro Stunde Eingabe.",
+      "workingHint": "Arbeitet an Ihrer Transkription…",
+      "failedTitle": "Transkription fehlgeschlagen.",
+      "metaCompleted": "Abgeschlossen",
+      "metaPending": "Ausstehend",
+      "metaUploading": "Wird hochgeladen",
+      "metaQueued": "In der Warteschlange",
+      "metaProcessing": "Wird verarbeitet",
+      "metaError": "Fehler",
+      "tabTranscript": "Transkript",
+      "tabSubtitles": "Untertitel",
+      "play": "Wiedergabe",
+      "pause": "Pause",
+      "mute": "Stummschalten",
+      "unmute": "Lautstärke einschalten",
+      "playbackSpeed": "Wiedergabegeschwindigkeit"
+    },
+    "rowMenu": {
+      "more": "Weitere Aktionen",
+      "delete": "Löschen",
+      "deleting": "Wird gelöscht…",
+      "deleteFailed": "Löschen fehlgeschlagen",
+      "confirmTitle": "Transkription löschen?",
+      "confirmBody": "Diese Transkription und ihre Audiodatei werden aus Ihrer Bibliothek entfernt. Dies kann nicht rückgängig gemacht werden.",
+      "confirmClose": "Löschbestätigung schließen",
+      "confirmCancel": "Abbrechen",
+      "confirmDelete": "Transkription löschen",
+      "confirmDeleting": "Wird gelöscht…"
+    },
+    "billingPortal": {
+      "manage": "Abrechnung verwalten",
+      "opening": "Wird geöffnet…",
+      "genericError": "Etwas ist schief gelaufen."
+    },
+    "deleteAccount": {
+      "confirm": "Konto löschen? Ihre Transkriptionen und Audio werden entfernt. Dies kann nicht rückgängig gemacht werden.",
+      "delete": "Konto löschen",
+      "deleting": "Wird gelöscht…",
+      "genericError": "Etwas ist schief gelaufen."
+    },
+    "download": {
+      "label": "Herunterladen",
+      "audio": "Audio"
+    },
+    "copy": {
+      "copy": "Kopieren",
+      "copying": "Wird kopiert…",
+      "copied": "Kopiert",
+      "failed": "Fehlgeschlagen"
+    },
+    "uploadOrRecord": {
+      "upload": "Hochladen",
+      "record": "Aufnahme"
+    },
+    "uploader": {
+      "dropPrompt": "Ziehen Sie eine Video- oder Audiodatei ein",
+      "limits": "Video-Uploads bis zu 1 GB · Kostenlose Test: 45 Min. Lebenszeit · max. 500 MB nach Audio-Extraktion",
+      "choose": "Datei wählen",
+      "phasePreparing": "Wird vorbereitet…",
+      "phaseExtracting": "Audio wird extrahiert {percent}%",
+      "phaseUploading": "Wird hochgeladen {percent}%",
+      "phaseSubmitting": "Wird zur Verarbeitung eingereicht…",
+      "phaseTranscribing": "Wird transkribiert…",
+      "videoTooBig": "Video-Uploads sind derzeit im Browser auf 1 GB begrenzt. Für größere Dateien konvertieren Sie diese bitte zuerst in Audio.",
+      "fileTooLargeWithCap": "Diese Datei ist größer als Ihr Plan zulässt (max. {mb} MB). Upgraden Sie für höhere Limits.",
+      "fileTooLarge": "Diese Datei ist größer als Ihr Plan zulässt. Upgraden Sie für höhere Limits.",
+      "durationExceedsTierWithCap": "Diese Datei ist länger als Ihr Plan zulässt (max. {min} Min. pro Datei). Upgraden Sie für längere Dateien.",
+      "durationExceedsTier": "Diese Datei ist länger als Ihr Plan zulässt. Upgraden Sie für längere Dateien.",
+      "noQuotaWithCap": "Sie haben Ihr Limit von {capMin} Minuten für diese Periode aufgebraucht. Upgraden Sie oder warten Sie auf den nächsten Zyklus.",
+      "noQuota": "Sie haben keine Minuten mehr für diese Periode. Upgraden Sie oder warten Sie auf den nächsten Zyklus.",
+      "insufficientQuota": "Diese Datei benötigt etwa {neededMin} Min., aber Sie haben nur {remainingMin} Min. übrig in dieser Periode. Upgraden Sie oder warten Sie auf den nächsten Zyklus.",
+      "aaiSubmitFailed": "Transkriptionsdienst nicht verfügbar. Bitte versuchen Sie es in einem Moment erneut.",
+      "requestFailed": "Anfrage fehlgeschlagen ({status}).",
+      "uploadNetworkError": "Fehler beim Upload-Netzwerk.",
+      "cannotReadMetadata": "Mediametadaten können nicht gelesen werden.",
+      "transcriptionFailed": "Transkriptionsfehler.",
+      "transcriptionGeneric": "Transkription {status}.",
+      "uploadFallback": "Upload fehlgeschlagen während {step}. Überprüfen Sie die Browser-Konsole für Details."
+    },
+    "recorder": {
+      "start": "Aufnahme starten",
+      "stop": "Aufnahme beenden",
+      "tapToRecord": "Zum Aufnehmen tippen · bis zu {min} Min.",
+      "recording": "Aufnahme läuft – stoppt automatisch bei {min} Min.",
+      "micDenied": "Mikrofonzugriff verweigert."
+    }
   }
 }

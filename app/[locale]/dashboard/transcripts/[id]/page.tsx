@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
 import { Link } from "@/i18n/navigation";
 import { redirect } from "@/i18n/navigation";
@@ -23,6 +24,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) notFound();
   const userId = user.id;
+  const t = await getTranslations("Dashboard.viewer");
 
   const row = await env.DB.prepare(
     `SELECT id, user_id, title, status, error, duration_sec, language,
@@ -66,7 +68,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
           href="/dashboard"
           className="text-[13px] text-ink/60 hover:text-ink"
         >
-          ← All transcripts
+          {t("back")}
         </Link>
         {row.status === "completed" && (
           <div className="flex items-center gap-2">
@@ -82,19 +84,18 @@ export default async function TranscriptViewerPage({ params }: Params) {
 
       <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">{row.title}</h1>
       <p className="mt-1 text-sm text-ink/60">
-        {metaLine(row)}
+        {metaLine(row, t)}
       </p>
 
       {row.status === "completed" && expired ? (
         <div className="mt-6 rounded-2xl border border-line bg-card/60 px-4 py-3 text-[13px] text-ink/70">
-          <span className="font-medium text-ink">Audio expired.</span> Source files are kept
-          for 7 days; the transcript stays as long as you want.
+          <span className="font-medium text-ink">{t("audioExpiredLabel")}</span> {t("audioExpiredBody")}
         </div>
       ) : null}
 
       <div className="mt-10">
         {row.status !== "completed" ? (
-          <StatusPanel status={row.status} error={row.error} />
+          <StatusPanel status={row.status} error={row.error} t={t} />
         ) : aai ? (
           <TranscriptViewer
             audioUrl={audioUrl}
@@ -103,7 +104,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
             fallbackText={aai.text ?? ""}
           />
         ) : (
-          <p className="text-sm text-ink/60">Transcript file is missing from storage.</p>
+          <p className="text-sm text-ink/60">{t("missing")}</p>
         )}
       </div>
     </main>
@@ -118,19 +119,49 @@ function audioExpired(createdAt: string): boolean {
   return Date.now() - t > AUDIO_TTL_MS;
 }
 
-function metaLine(row: { duration_sec: number | null; language: string | null; status: string }) {
+function statusMetaLabel(t: (key: string) => string, status: string): string {
+  switch (status) {
+    case "completed":
+      return t("metaCompleted");
+    case "pending":
+      return t("metaPending");
+    case "uploading":
+      return t("metaUploading");
+    case "queued":
+      return t("metaQueued");
+    case "processing":
+      return t("metaProcessing");
+    case "error":
+      return t("metaError");
+    default:
+      return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+}
+
+function metaLine(
+  row: { duration_sec: number | null; language: string | null; status: string },
+  t: (key: string) => string
+) {
   const parts: string[] = [];
   if (row.duration_sec) parts.push(formatDuration(row.duration_sec));
   if (row.language) parts.push(row.language.toUpperCase());
-  parts.push(row.status === "completed" ? "Completed" : capitalize(row.status));
+  parts.push(statusMetaLabel(t, row.status));
   return parts.join(" · ");
 }
 
-function StatusPanel({ status, error }: { status: string; error: string | null }) {
+function StatusPanel({
+  status,
+  error,
+  t,
+}: {
+  status: string;
+  error: string | null;
+  t: (key: string) => string;
+}) {
   if (status === "error") {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-        <p className="font-medium">Transcription failed.</p>
+        <p className="font-medium">{t("failedTitle")}</p>
         {error && <p className="mt-1 text-red-700/80">{error}</p>}
       </div>
     );
@@ -139,8 +170,8 @@ function StatusPanel({ status, error }: { status: string; error: string | null }
     <div className="rounded-2xl border border-dashed border-line p-12 text-center">
       <p className="text-sm text-ink/60">
         {status === "queued" || status === "processing"
-          ? "Transcribing your audio. This usually takes about a minute per hour of input."
-          : "Working on your transcript…"}
+          ? t("transcribingHint")
+          : t("workingHint")}
       </p>
     </div>
   );
@@ -152,8 +183,4 @@ function formatDuration(sec: number) {
   const s = Math.floor(sec % 60);
   if (h > 0) return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   return `${m}:${s.toString().padStart(2, "0")}`;
-}
-
-function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }

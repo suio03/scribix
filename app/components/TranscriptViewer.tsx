@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { AaiSegment } from "@/lib/aai";
 import { compactCJKSpaces } from "@/lib/transcript-format";
 
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export function TranscriptViewer({ audioUrl, paragraphs, sentences, fallbackText }: Props) {
+  const t = useTranslations("Dashboard.viewer");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [tab, setTab] = useState<Tab>("transcript");
   const [currentMs, setCurrentMs] = useState(0);
@@ -39,10 +41,10 @@ export function TranscriptViewer({ audioUrl, paragraphs, sentences, fallbackText
 
       <div className="flex items-center gap-1 rounded-full bg-ink/5 p-1 w-fit">
         <TabButton active={tab === "transcript"} onClick={() => setTab("transcript")}>
-          Transcript
+          {t("tabTranscript")}
         </TabButton>
         <TabButton active={tab === "subtitles"} onClick={() => setTab("subtitles")}>
-          Subtitles
+          {t("tabSubtitles")}
         </TabButton>
       </div>
 
@@ -141,6 +143,7 @@ type AudioPlayerProps = {
 };
 
 function AudioPlayer({ ref, url, onTimeUpdate }: AudioPlayerProps) {
+  const t = useTranslations("Dashboard.viewer");
   const [playing, setPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [current, setCurrent] = useState(0);
@@ -215,7 +218,7 @@ function AudioPlayer({ ref, url, onTimeUpdate }: AudioPlayerProps) {
       <button
         type="button"
         onClick={togglePlay}
-        aria-label={playing ? "Pause" : "Play"}
+        aria-label={playing ? t("pause") : t("play")}
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink/70 text-paper transition hover:bg-ink"
       >
         {playing ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" className="ml-0.5" />}
@@ -240,7 +243,7 @@ function AudioPlayer({ ref, url, onTimeUpdate }: AudioPlayerProps) {
       <button
         type="button"
         onClick={toggleMute}
-        aria-label={muted ? "Unmute" : "Mute"}
+        aria-label={muted ? t("unmute") : t("mute")}
         className="text-ink/60 transition hover:text-ink"
       >
         {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
@@ -249,7 +252,7 @@ function AudioPlayer({ ref, url, onTimeUpdate }: AudioPlayerProps) {
       <button
         type="button"
         onClick={cycleSpeed}
-        aria-label="Playback speed"
+        aria-label={t("playbackSpeed")}
         className="w-12 text-sm font-medium tabular-nums text-ink/70 transition hover:text-ink"
       >
         {SPEEDS[rateIdx]}x

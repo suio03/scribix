@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Download } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type Props = {
   id: string;
@@ -18,6 +19,7 @@ const FORMATS = [
 ] as const;
 
 export function DownloadMenu({ id, audioAvailable, variant = "icon" }: Props) {
+  const t = useTranslations("Dashboard.download");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -35,7 +37,7 @@ export function DownloadMenu({ id, audioAvailable, variant = "icon" }: Props) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label="Download"
+        aria-label={t("label")}
         className="rounded-md p-1.5 text-ink/60 transition hover:bg-ink/5 hover:text-ink"
       >
         <Download size={16} />
@@ -47,7 +49,7 @@ export function DownloadMenu({ id, audioAvailable, variant = "icon" }: Props) {
         className="inline-flex items-center gap-1.5 rounded-full border border-line px-3.5 py-1.5 text-[13px] font-medium hover:bg-ink/5"
       >
         <Download size={14} />
-        Download
+        {t("label")}
       </button>
     );
 
@@ -72,7 +74,7 @@ export function DownloadMenu({ id, audioAvailable, variant = "icon" }: Props) {
               onClick={() => setOpen(false)}
               className="block border-t border-line px-3 py-2 text-[13px] hover:bg-ink/5"
             >
-              Audio
+              {t("audio")}
             </a>
           )}
         </div>

@@ -411,5 +411,148 @@
       { "label": "Termini di Servizio", "href": "/terms" },
       { "label": "Politica sulla Privacy", "href": "/privacy" }
     ]
+  },
+  "Dashboard": {
+    "layout": {
+      "account": "Account",
+      "signOut": "Esci"
+    },
+    "list": {
+      "title": "I tuoi transcript",
+      "empty": "Nulla ancora.",
+      "itemCount": "{count, plural, =1 {# elemento} other {# elementi}}",
+      "newTranscript": "Nuovo transcript",
+      "checkoutOkTitle": "Abbonamento attivo — benvenuto a bordo.",
+      "checkoutOkBody": "Il tuo nuovo piano è attivo. Visita <link>account</link> per vedere il tuo utilizzo.",
+      "emptyBody": "Nessun transcript ancora.",
+      "emptyCta": "Carica il tuo primo file →",
+      "tableName": "Nome",
+      "tableUploaded": "Caricato",
+      "tableDuration": "Durata",
+      "tableStatus": "Stato",
+      "tableOperation": "Operazione",
+      "statusReady": "Pronto",
+      "statusError": "Errore",
+      "statusTranscribing": "In fase di trascrizione",
+      "statusUploading": "In fase di caricamento",
+      "statusPending": "In sospeso"
+    },
+    "new": {
+      "title": "Nuovo transcript",
+      "back": "Indietro"
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email",
+      "name": "Nome",
+      "plan": "Piano",
+      "freeTrialUsage": "Utilizzo prova gratuita",
+      "usageThisPeriod": "Utilizzo in questo periodo",
+      "usageValue": "{used} / {quota} min",
+      "periodResets": "Periodo si ripristina",
+      "noValue": "—",
+      "upgradePlan": "Upgrade piano",
+      "signOut": "Esci",
+      "dangerZone": "Area pericolosa",
+      "deleteWarning": "Elimina permanentemente il tuo account, i tuoi transcript e l'audio. Non è possibile annullare questa azione.",
+      "tierFree": "Gratuito",
+      "tierBasic": "Basic",
+      "tierPro": "Pro",
+      "cycleMonthly": "mensile",
+      "cycleYearly": "annuale",
+      "statusCanceled": "(annullato — accesso fino alla fine del periodo)",
+      "statusExpired": "(scaduto)"
+    },
+    "viewer": {
+      "back": "← Tutti i transcript",
+      "audioExpiredLabel": "Audio scaduto.",
+      "audioExpiredBody": "I file di origine vengono conservati per 7 giorni; il transcript rimane finché lo desideri.",
+      "missing": "Il file del transcript è mancante dalla memoria.",
+      "transcribingHint": "Trascrizione del tuo audio. Questo di solito richiede circa un minuto per ora di input.",
+      "workingHint": "Lavoro in corso sul tuo transcript…",
+      "failedTitle": "Trascrizione non riuscita.",
+      "metaCompleted": "Completato",
+      "metaPending": "In sospeso",
+      "metaUploading": "In fase di caricamento",
+      "metaQueued": "In coda",
+      "metaProcessing": "In fase di elaborazione",
+      "metaError": "Errore",
+      "tabTranscript": "Transcript",
+      "tabSubtitles": "Sottotitoli",
+      "play": "Riproduci",
+      "pause": "Pausa",
+      "mute": "Muto",
+      "unmute": "Attiva audio",
+      "playbackSpeed": "Velocità di riproduzione"
+    },
+    "rowMenu": {
+      "more": "Altre azioni",
+      "delete": "Elimina",
+      "deleting": "Eliminazione in corso…",
+      "deleteFailed": "Eliminazione non riuscita",
+      "confirmTitle": "Eliminare il transcript?",
+      "confirmBody": "Questo transcript e il suo file audio verranno rimossi dalla tua libreria. Non è possibile annullare questa azione.",
+      "confirmClose": "Chiudi conferma eliminazione",
+      "confirmCancel": "Annulla",
+      "confirmDelete": "Elimina transcript",
+      "confirmDeleting": "Eliminazione in corso..."
+    },
+    "billingPortal": {
+      "manage": "Gestisci fatturazione",
+      "opening": "Apertura…",
+      "genericError": "Qualcosa è andato storto."
+    },
+    "deleteAccount": {
+      "confirm": "Eliminare il tuo account? I tuoi transcript e l'audio verranno rimossi. Non è possibile annullare questa azione.",
+      "delete": "Elimina account",
+      "deleting": "Eliminazione in corso…",
+      "genericError": "Qualcosa è andato storto."
+    },
+    "download": {
+      "label": "Scarica",
+      "audio": "Audio"
+    },
+    "copy": {
+      "copy": "Copia",
+      "copying": "Copia in corso…",
+      "copied": "Copiato",
+      "failed": "Non riuscito"
+    },
+    "uploadOrRecord": {
+      "upload": "Carica",
+      "record": "Registra"
+    },
+    "uploader": {
+      "dropPrompt": "Trascina un file video o audio",
+      "limits": "Caricamenti video fino a 1 GB · Prova gratuita: 45 min per tutta la vita · max 500 MB dopo l'estrazione dell'audio",
+      "choose": "Scegli file",
+      "phasePreparing": "Preparazione…",
+      "phaseExtracting": "Estrazione audio {percent}%",
+      "phaseUploading": "Caricamento {percent}%",
+      "phaseSubmitting": "Invio per l'elaborazione…",
+      "phaseTranscribing": "Trascrizione in corso…",
+      "videoTooBig": "I caricamenti video sono attualmente limitati a 1 GB nel browser. Per file più grandi, converti prima in audio.",
+      "fileTooLargeWithCap": "Quel file è più grande di quanto il tuo piano consente (max {mb} MB). Upgrade per i limiti più alti.",
+      "fileTooLarge": "Quel file è più grande di quanto il tuo piano consente. Upgrade per i limiti più alti.",
+      "durationExceedsTierWithCap": "Quel file è più lungo di quanto il tuo piano consente (max {min} min per file). Upgrade per file più lunghi.",
+      "durationExceedsTier": "Quel file è più lungo di quanto il tuo piano consente. Upgrade per file più lunghi.",
+      "noQuotaWithCap": "Hai usato tutti i {capMin} minuti per questo periodo. Upgrade o attendi il ciclo successivo.",
+      "noQuota": "Hai esaurito i minuti per questo periodo. Upgrade o attendi il ciclo successivo.",
+      "insufficientQuota": "Questo file richiede ~{neededMin} min ma hai solo {remainingMin} min rimasti in questo periodo. Upgrade o attendi il ciclo successivo.",
+      "aaiSubmitFailed": "Il servizio di trascrizione non è disponibile. Per favore riprova tra un momento.",
+      "requestFailed": "Richiesta non riuscita ({status}).",
+      "uploadNetworkError": "Errore di rete nel caricamento.",
+      "cannotReadMetadata": "Impossibile leggere i metadati multimediali.",
+      "transcriptionFailed": "Errore di trascrizione.",
+      "transcriptionGeneric": "Trascrizione {status}.",
+      "uploadFallback": "Caricamento non riuscito durante {step}. Controlla la console del browser per i dettagli."
+    },
+    "recorder": {
+      "start": "Avvia registrazione",
+      "stop": "Arresta registrazione",
+      "tapToRecord": "Tocca per registrare · fino a {min} min",
+      "recording": "Registrazione — arresto automatico a {min} min",
+      "micDenied": "Accesso al microfono negato."
+    }
   }
 }

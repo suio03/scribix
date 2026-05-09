@@ -411,5 +411,148 @@
       { "label": "Términos de servicio", "href": "/terms" },
       { "label": "Política de privacidad", "href": "/privacy" }
     ]
+  },
+  "Dashboard": {
+    "layout": {
+      "account": "Cuenta",
+      "signOut": "Cerrar sesión"
+    },
+    "list": {
+      "title": "Tus transcripts",
+      "empty": "Nada aún.",
+      "itemCount": "{count, plural, =1 {# elemento} other {# elementos}}",
+      "newTranscript": "Nuevo transcript",
+      "checkoutOkTitle": "Suscripción activa — bienvenido.",
+      "checkoutOkBody": "Tu nuevo plan está activo. Visita <link>cuenta</link> para ver tu uso.",
+      "emptyBody": "No hay transcripts aún.",
+      "emptyCta": "Sube tu primer archivo →",
+      "tableName": "Nombre",
+      "tableUploaded": "Subido",
+      "tableDuration": "Duración",
+      "tableStatus": "Estado",
+      "tableOperation": "Acción",
+      "statusReady": "Listo",
+      "statusError": "Error",
+      "statusTranscribing": "Transcribiendo",
+      "statusUploading": "Subiendo",
+      "statusPending": "Pendiente"
+    },
+    "new": {
+      "title": "Nuevo transcript",
+      "back": "Atrás"
+    },
+    "account": {
+      "title": "Cuenta",
+      "email": "Correo electrónico",
+      "name": "Nombre",
+      "plan": "Plan",
+      "freeTrialUsage": "Uso de prueba gratuita",
+      "usageThisPeriod": "Uso en este período",
+      "usageValue": "{used} / {quota} min",
+      "periodResets": "El período se reinicia",
+      "noValue": "—",
+      "upgradePlan": "Actualizar plan",
+      "signOut": "Cerrar sesión",
+      "dangerZone": "Zona de peligro",
+      "deleteWarning": "Elimina permanentemente tu cuenta, transcripts y audio. Esto no se puede deshacer.",
+      "tierFree": "Gratuito",
+      "tierBasic": "Básico",
+      "tierPro": "Pro",
+      "cycleMonthly": "mensual",
+      "cycleYearly": "anual",
+      "statusCanceled": "(cancelado — acceso hasta el final del período)",
+      "statusExpired": "(expirado)"
+    },
+    "viewer": {
+      "back": "← Todos los transcripts",
+      "audioExpiredLabel": "Audio expirado.",
+      "audioExpiredBody": "Los archivos fuente se conservan durante 7 días; el transcript permanece tanto como desees.",
+      "missing": "El archivo del transcript falta en el almacenamiento.",
+      "transcribingHint": "Transcribiendo tu audio. Esto normalmente toma aproximadamente un minuto por hora de entrada.",
+      "workingHint": "Trabajando en tu transcript…",
+      "failedTitle": "Falló la transcripción.",
+      "metaCompleted": "Completado",
+      "metaPending": "Pendiente",
+      "metaUploading": "Subiendo",
+      "metaQueued": "En cola",
+      "metaProcessing": "Procesando",
+      "metaError": "Error",
+      "tabTranscript": "Transcript",
+      "tabSubtitles": "Subtítulos",
+      "play": "Reproducir",
+      "pause": "Pausar",
+      "mute": "Silenciar",
+      "unmute": "Activar sonido",
+      "playbackSpeed": "Velocidad de reproducción"
+    },
+    "rowMenu": {
+      "more": "Más acciones",
+      "delete": "Eliminar",
+      "deleting": "Eliminando…",
+      "deleteFailed": "Falló la eliminación",
+      "confirmTitle": "¿Eliminar transcript?",
+      "confirmBody": "Este transcript y su archivo de audio se quitarán de tu biblioteca. Esto no se puede deshacer.",
+      "confirmClose": "Cerrar confirmación de eliminación",
+      "confirmCancel": "Cancelar",
+      "confirmDelete": "Eliminar transcript",
+      "confirmDeleting": "Eliminando…"
+    },
+    "billingPortal": {
+      "manage": "Gestionar facturación",
+      "opening": "Abriendo…",
+      "genericError": "Algo salió mal."
+    },
+    "deleteAccount": {
+      "confirm": "¿Eliminar tu cuenta? Tus transcripts y audio se quitarán. Esto no se puede deshacer.",
+      "delete": "Eliminar cuenta",
+      "deleting": "Eliminando…",
+      "genericError": "Algo salió mal."
+    },
+    "download": {
+      "label": "Descargar",
+      "audio": "Audio"
+    },
+    "copy": {
+      "copy": "Copiar",
+      "copying": "Copiando…",
+      "copied": "Copiado",
+      "failed": "Falló"
+    },
+    "uploadOrRecord": {
+      "upload": "Subir",
+      "record": "Grabar"
+    },
+    "uploader": {
+      "dropPrompt": "Suelta un archivo de vídeo o audio",
+      "limits": "Subidas de vídeo hasta 1 GB · Prueba gratuita: 45 min de por vida · máx 500 MB después de extracción de audio",
+      "choose": "Elegir archivo",
+      "phasePreparing": "Preparando…",
+      "phaseExtracting": "Extrayendo audio {percent}%",
+      "phaseUploading": "Subiendo {percent}%",
+      "phaseSubmitting": "Enviando para procesamiento…",
+      "phaseTranscribing": "Transcribiendo…",
+      "videoTooBig": "Las subidas de vídeo están actualmente limitadas a 1 GB en el navegador. Para archivos más grandes, convierte a audio primero.",
+      "fileTooLargeWithCap": "Ese archivo es más grande de lo que permite tu nivel (máx {mb} MB). Actualiza para límites mayores.",
+      "fileTooLarge": "Ese archivo es más grande de lo que permite tu nivel. Actualiza para límites mayores.",
+      "durationExceedsTierWithCap": "Ese archivo es más largo de lo que permite tu nivel (máx {min} min por archivo). Actualiza para archivos más largos.",
+      "durationExceedsTier": "Ese archivo es más largo de lo que permite tu nivel. Actualiza para archivos más largos.",
+      "noQuotaWithCap": "Has usado todos los {capMin} minutos para este período. Actualiza o espera al próximo ciclo.",
+      "noQuota": "Se te acabaron los minutos para este período. Actualiza o espera al próximo ciclo.",
+      "insufficientQuota": "Este archivo necesita ~{neededMin} min pero solo te quedan {remainingMin} min en este período. Actualiza o espera al próximo ciclo.",
+      "aaiSubmitFailed": "El servicio de transcripción no está disponible. Por favor, intenta de nuevo en un momento.",
+      "requestFailed": "Solicitud fallida ({status}).",
+      "uploadNetworkError": "Error de red en la subida.",
+      "cannotReadMetadata": "No se pueden leer los metadatos del medio.",
+      "transcriptionFailed": "Error de transcripción.",
+      "transcriptionGeneric": "Transcripción {status}.",
+      "uploadFallback": "La subida falló mientras {step}. Revisa la consola del navegador para más detalles."
+    },
+    "recorder": {
+      "start": "Comenzar grabación",
+      "stop": "Detener grabación",
+      "tapToRecord": "Toca para grabar · hasta {min} min",
+      "recording": "Grabando — se detiene automáticamente en {min} min",
+      "micDenied": "Acceso al micrófono denegado."
+    }
   }
 }

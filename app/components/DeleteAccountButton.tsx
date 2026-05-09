@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 export function DeleteAccountButton() {
+  const t = useTranslations("Dashboard.deleteAccount");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   async function onClick() {
-    const ok = window.confirm(
-      "Delete your account? Your transcripts and audio will be removed. This cannot be undone."
-    );
+    const ok = window.confirm(t("confirm"));
     if (!ok) return;
     setErr(null);
     setBusy(true);
@@ -23,7 +23,7 @@ export function DeleteAccountButton() {
       await signOut({ redirectTo: "/" });
     } catch (e) {
       setBusy(false);
-      setErr(e instanceof Error ? e.message : "Something went wrong.");
+      setErr(e instanceof Error ? e.message : t("genericError"));
     }
   }
 
@@ -35,7 +35,7 @@ export function DeleteAccountButton() {
         disabled={busy}
         className="rounded-full border border-red-300 px-4 py-2 text-[13px] font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
       >
-        {busy ? "Deleting…" : "Delete account"}
+        {busy ? t("deleting") : t("delete")}
       </button>
       {err && <p className="text-[12px] text-red-600">{err}</p>}
     </div>

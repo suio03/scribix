@@ -7,13 +7,21 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    setIsDark(document.documentElement.classList.contains("dark"));
+    let next = document.documentElement.classList.contains("dark");
+    try {
+      const saved = localStorage.getItem("scribix-theme");
+      if (saved === "dark" || saved === "light") next = saved === "dark";
+    } catch {}
+    document.documentElement.classList.toggle("dark", next);
+    document.cookie = `scribix-theme=${next ? "dark" : "light"}; path=/; max-age=31536000; samesite=lax`;
+    setIsDark(next);
   }, []);
 
   const toggle = () => {
     const next = !isDark;
     setIsDark(next);
     document.documentElement.classList.toggle("dark", next);
+    document.cookie = `scribix-theme=${next ? "dark" : "light"}; path=/; max-age=31536000; samesite=lax`;
     try {
       localStorage.setItem("scribix-theme", next ? "dark" : "light");
     } catch {}

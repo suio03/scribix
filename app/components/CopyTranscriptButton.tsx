@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type Props = { id: string };
 
 export function CopyTranscriptButton({ id }: Props) {
+  const t = useTranslations("Dashboard.copy");
   const [state, setState] = useState<"idle" | "busy" | "ok" | "err">("idle");
 
   const onClick = async () => {
@@ -25,7 +27,7 @@ export function CopyTranscriptButton({ id }: Props) {
   };
 
   const label =
-    state === "ok" ? "Copied" : state === "err" ? "Failed" : state === "busy" ? "Copying…" : "Copy";
+    state === "ok" ? t("copied") : state === "err" ? t("failed") : state === "busy" ? t("copying") : t("copy");
 
   return (
     <button

@@ -15,6 +15,15 @@ const LABELS: Record<(typeof routing.locales)[number], string> = {
   de: "Deutsch",
 };
 
+function withoutLocalePrefix(pathname: string): string {
+  const parts = pathname.split("/");
+  if (routing.locales.includes(parts[1] as (typeof routing.locales)[number])) {
+    const path = `/${parts.slice(2).join("/")}`;
+    return path === "/" ? "/" : path.replace(/\/$/, "");
+  }
+  return pathname;
+}
+
 export function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
@@ -68,7 +77,7 @@ export function LanguageSwitcher() {
                     aria-checked={active}
                     onClick={() => {
                       setOpen(false);
-                      router.replace(pathname, { locale: loc });
+                      router.replace(withoutLocalePrefix(pathname), { locale: loc });
                     }}
                     className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-[13px] transition ${
                       active

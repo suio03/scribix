@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { AlertCircle, AudioLines, CheckCircle2, Clock, Loader2 } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { TranscriptRowMenu } from "@/app/components/TranscriptRowMenu";
@@ -48,6 +49,7 @@ export default async function DashboardPage({
   const userId = user.id;
   const sp = await searchParams;
   const showCheckoutOk = sp.checkout === "ok";
+  const t = await getTranslations("Dashboard.list");
 
   const { results } = await env.DB.prepare(
     `SELECT id, title, status, created_at, duration_sec, audio_r2_key
@@ -63,40 +65,42 @@ export default async function DashboardPage({
     <main className="mx-auto max-w-[1180px] px-4 py-12 sm:px-8">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">Your transcripts</h1>
+          <h1 className="font-display text-3xl font-semibold tracking-tight">{t("title")}</h1>
           <p className="mt-1 text-sm text-ink/60">
-            {results.length === 0 ? "Nothing yet." : `${results.length} item${results.length === 1 ? "" : "s"}`}
+            {results.length === 0 ? t("empty") : t("itemCount", { count: results.length })}
           </p>
         </div>
         <Link
           href="/dashboard/new"
           className="rounded-full bg-ink px-3.5 py-1.5 text-[13px] font-medium text-paper hover:bg-accent"
         >
-          New transcript
+          {t("newTranscript")}
         </Link>
       </div>
 
       {showCheckoutOk ? (
         <div className="mt-8 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
-          <p className="font-medium">Subscription active — welcome aboard.</p>
+          <p className="font-medium">{t("checkoutOkTitle")}</p>
           <p className="mt-0.5 text-emerald-800/80">
-            Your new plan is live. Visit{" "}
-            <Link href="/dashboard/account" className="underline underline-offset-2">
-              account
-            </Link>{" "}
-            to see your usage.
+            {t.rich("checkoutOkBody", {
+              link: (chunks) => (
+                <Link href="/dashboard/account" className="underline underline-offset-2">
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </div>
       ) : null}
 
       {results.length === 0 ? (
         <div className="mt-10 rounded-2xl border border-dashed border-line p-12 text-center">
-          <p className="text-sm text-ink/60">No transcripts yet.</p>
+          <p className="text-sm text-ink/60">{t("emptyBody")}</p>
           <Link
             href="/dashboard/new"
             className="mt-4 inline-block text-sm font-medium text-accent underline-offset-4 hover:underline"
           >
-            Upload your first file →
+            {t("emptyCta")}
           </Link>
         </div>
       ) : (
@@ -104,11 +108,11 @@ export default async function DashboardPage({
           <table className="w-full text-sm">
             <thead className="bg-ink/[0.03] text-left text-[12px] uppercase tracking-wide text-ink/60">
               <tr>
-                <th className="px-4 py-3 font-medium sm:px-6">Name</th>
-                <th className="hidden px-4 py-3 font-medium sm:table-cell">Uploaded</th>
-                <th className="hidden px-4 py-3 font-medium sm:table-cell">Duration</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 text-right font-medium sm:px-6">Operation</th>
+                <th className="px-4 py-3 font-medium sm:px-6">{t("tableName")}</th>
+                <th className="hidden px-4 py-3 font-medium sm:table-cell">{t("tableUploaded")}</th>
+                <th className="hidden px-4 py-3 font-medium sm:table-cell">{t("tableDuration")}</th>
+                <th className="px-4 py-3 font-medium">{t("tableStatus")}</th>
+                <th className="px-4 py-3 text-right font-medium sm:px-6">{t("tableOperation")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -134,7 +138,16 @@ export default async function DashboardPage({
                     {r.duration_sec ? formatDuration(r.duration_sec) : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <StatusIcon status={r.status} />
+                    <StatusIcon
+                      status={r.status}
+                      labels={{
+                        ready: t("statusReady"),
+                        error: t("statusError"),
+                        transcribing: t("statusTranscribing"),
+                        uploading: t("statusUploading"),
+                        pending: t("statusPending"),
+                      }}
+                    />
                   </td>
                   <td className="px-4 py-3 sm:px-6">
                     <TranscriptRowMenu
@@ -153,24 +166,32 @@ export default async function DashboardPage({
   );
 }
 
-function StatusIcon({ status }: { status: Row["status"] }) {
+type StatusLabels = {
+  ready: string;
+  error: string;
+  transcribing: string;
+  uploading: string;
+  pending: string;
+};
+
+function StatusIcon({ status, labels }: { status: Row["status"]; labels: StatusLabels }) {
   switch (status) {
     case "completed":
       return (
-        <span title="Ready" className="inline-flex text-emerald-600">
+        <span title={labels.ready} className="inline-flex text-emerald-600">
           <CheckCircle2 size={20} />
         </span>
       );
     case "error":
       return (
-        <span title="Error" className="inline-flex text-red-600">
+        <span title={labels.error} className="inline-flex text-red-600">
           <AlertCircle size={20} />
         </span>
       );
     case "queued":
     case "processing":
       return (
-        <span title="Transcribing" className="inline-flex text-amber-600">
+        <span title={labels.transcribing} className="inline-flex text-amber-600">
           <Loader2 size={20} className="animate-spin" />
         </span>
       );
@@ -178,7 +199,7 @@ function StatusIcon({ status }: { status: Row["status"] }) {
     case "uploading":
     default:
       return (
-        <span title={status === "uploading" ? "Uploading" : "Pending"} className="inline-flex text-ink/40">
+        <span title={status === "uploading" ? labels.uploading : labels.pending} className="inline-flex text-ink/40">
           <Clock size={20} />
         </span>
       );

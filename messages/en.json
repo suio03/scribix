@@ -412,5 +412,148 @@
       { "label": "Privacy Policy", "href": "/privacy" },
       { "label": "Refund Policy", "href": "/refunds" }
     ]
+  },
+  "Dashboard": {
+    "layout": {
+      "account": "Account",
+      "signOut": "Sign out"
+    },
+    "list": {
+      "title": "Your transcripts",
+      "empty": "Nothing yet.",
+      "itemCount": "{count, plural, =1 {# item} other {# items}}",
+      "newTranscript": "New transcript",
+      "checkoutOkTitle": "Subscription active — welcome aboard.",
+      "checkoutOkBody": "Your new plan is live. Visit <link>account</link> to see your usage.",
+      "emptyBody": "No transcripts yet.",
+      "emptyCta": "Upload your first file →",
+      "tableName": "Name",
+      "tableUploaded": "Uploaded",
+      "tableDuration": "Duration",
+      "tableStatus": "Status",
+      "tableOperation": "Operation",
+      "statusReady": "Ready",
+      "statusError": "Error",
+      "statusTranscribing": "Transcribing",
+      "statusUploading": "Uploading",
+      "statusPending": "Pending"
+    },
+    "new": {
+      "title": "New transcript",
+      "back": "Back"
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email",
+      "name": "Name",
+      "plan": "Plan",
+      "freeTrialUsage": "Free trial usage",
+      "usageThisPeriod": "Usage this period",
+      "usageValue": "{used} / {quota} min",
+      "periodResets": "Period resets",
+      "noValue": "—",
+      "upgradePlan": "Upgrade plan",
+      "signOut": "Sign out",
+      "dangerZone": "Danger zone",
+      "deleteWarning": "Permanently delete your account, transcripts, and audio. This cannot be undone.",
+      "tierFree": "Free",
+      "tierBasic": "Basic",
+      "tierPro": "Pro",
+      "cycleMonthly": "monthly",
+      "cycleYearly": "yearly",
+      "statusCanceled": "(canceled — access until period end)",
+      "statusExpired": "(expired)"
+    },
+    "viewer": {
+      "back": "← All transcripts",
+      "audioExpiredLabel": "Audio expired.",
+      "audioExpiredBody": "Source files are kept for 7 days; the transcript stays as long as you want.",
+      "missing": "Transcript file is missing from storage.",
+      "transcribingHint": "Transcribing your audio. This usually takes about a minute per hour of input.",
+      "workingHint": "Working on your transcript…",
+      "failedTitle": "Transcription failed.",
+      "metaCompleted": "Completed",
+      "metaPending": "Pending",
+      "metaUploading": "Uploading",
+      "metaQueued": "Queued",
+      "metaProcessing": "Processing",
+      "metaError": "Error",
+      "tabTranscript": "Transcript",
+      "tabSubtitles": "Subtitles",
+      "play": "Play",
+      "pause": "Pause",
+      "mute": "Mute",
+      "unmute": "Unmute",
+      "playbackSpeed": "Playback speed"
+    },
+    "rowMenu": {
+      "more": "More actions",
+      "delete": "Delete",
+      "deleting": "Deleting…",
+      "deleteFailed": "Delete failed",
+      "confirmTitle": "Delete transcript?",
+      "confirmBody": "This transcript and its audio file will be removed from your library. This cannot be undone.",
+      "confirmClose": "Close delete confirmation",
+      "confirmCancel": "Cancel",
+      "confirmDelete": "Delete transcript",
+      "confirmDeleting": "Deleting..."
+    },
+    "billingPortal": {
+      "manage": "Manage billing",
+      "opening": "Opening…",
+      "genericError": "Something went wrong."
+    },
+    "deleteAccount": {
+      "confirm": "Delete your account? Your transcripts and audio will be removed. This cannot be undone.",
+      "delete": "Delete account",
+      "deleting": "Deleting…",
+      "genericError": "Something went wrong."
+    },
+    "download": {
+      "label": "Download",
+      "audio": "Audio"
+    },
+    "copy": {
+      "copy": "Copy",
+      "copying": "Copying…",
+      "copied": "Copied",
+      "failed": "Failed"
+    },
+    "uploadOrRecord": {
+      "upload": "Upload",
+      "record": "Record"
+    },
+    "uploader": {
+      "dropPrompt": "Drop a video or audio file",
+      "limits": "Video uploads up to 1 GB · Free trial: 45 min lifetime · max 500 MB after audio extraction",
+      "choose": "Choose file",
+      "phasePreparing": "Preparing…",
+      "phaseExtracting": "Extracting audio {percent}%",
+      "phaseUploading": "Uploading {percent}%",
+      "phaseSubmitting": "Submitting for processing…",
+      "phaseTranscribing": "Transcribing…",
+      "videoTooBig": "Video uploads are currently limited to 1 GB in the browser. For larger files, please convert to audio first.",
+      "fileTooLargeWithCap": "That file is larger than your tier allows (max {mb} MB). Upgrade for higher limits.",
+      "fileTooLarge": "That file is larger than your tier allows. Upgrade for higher limits.",
+      "durationExceedsTierWithCap": "That file is longer than your tier allows (max {min} min per file). Upgrade for longer files.",
+      "durationExceedsTier": "That file is longer than your tier allows. Upgrade for longer files.",
+      "noQuotaWithCap": "You've used all {capMin} minutes for this period. Upgrade or wait for the next cycle.",
+      "noQuota": "You're out of minutes for this period. Upgrade or wait for the next cycle.",
+      "insufficientQuota": "This file needs ~{neededMin} min but you only have {remainingMin} min left this period. Upgrade or wait for the next cycle.",
+      "aaiSubmitFailed": "Transcription service is unavailable. Please try again in a moment.",
+      "requestFailed": "Request failed ({status}).",
+      "uploadNetworkError": "Upload network error.",
+      "cannotReadMetadata": "Cannot read media metadata.",
+      "transcriptionFailed": "Transcription error.",
+      "transcriptionGeneric": "Transcription {status}.",
+      "uploadFallback": "Upload failed while {step}. Check the browser console for details."
+    },
+    "recorder": {
+      "start": "Start recording",
+      "stop": "Stop recording",
+      "tapToRecord": "Tap to record · up to {min} min",
+      "recording": "Recording — auto-stops at {min} min",
+      "micDenied": "Microphone access denied."
+    }
   }
 }

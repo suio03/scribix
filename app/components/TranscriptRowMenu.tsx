@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { MoreHorizontal } from "lucide-react";
+import { AlertTriangle, MoreHorizontal, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { DownloadMenu } from "./DownloadMenu";
 
 type Props = {
@@ -13,10 +14,13 @@ type Props = {
 };
 
 export function TranscriptRowMenu({ id, status, audioAvailable }: Props) {
+  const t = useTranslations("Dashboard.rowMenu");
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState<{ right: number; top: number } | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -57,16 +61,26 @@ export function TranscriptRowMenu({ id, status, audioAvailable }: Props) {
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+    if (!confirmOpen) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && !busy) setConfirmOpen(false);
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [busy, confirmOpen]);
+
   const onDelete = async () => {
     if (busy) return;
-    if (!confirm("Delete this transcript? This cannot be undone.")) return;
+    setErr(null);
     setBusy(true);
     try {
       const res = await fetch(`/api/transcripts/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error(`Delete failed (${res.status})`);
+      setConfirmOpen(false);
       router.refresh();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Delete failed");
+      setErr(err instanceof Error ? err.message : t("deleteFailed"));
     } finally {
       setBusy(false);
     }
@@ -86,7 +100,7 @@ export function TranscriptRowMenu({ id, status, audioAvailable }: Props) {
           updateMenuPosition();
           setMenuOpen((v) => !v);
         }}
-        aria-label="More actions"
+        aria-label={t("more")}
         className="rounded-md p-1.5 text-ink/60 transition hover:bg-ink/5 hover:text-ink"
       >
         <MoreHorizontal size={16} />
@@ -101,13 +115,81 @@ export function TranscriptRowMenu({ id, status, audioAvailable }: Props) {
             type="button"
             onClick={() => {
               setMenuOpen(false);
-              onDelete();
+              setErr(null);
+              setConfirmOpen(true);
             }}
             disabled={busy}
             className="block w-full px-3 py-2 text-left text-[13px] text-red-600 hover:bg-red-50 disabled:opacity-50"
           >
-            {busy ? "Deleting…" : "Delete"}
+            {busy ? t("deleting") : t("delete")}
           </button>
+        </div>,
+        document.body
+      )}
+      {confirmOpen && createPortal(
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
+          role="presentation"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget && !busy) setConfirmOpen(false);
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-transcript-title"
+            aria-describedby="delete-transcript-description"
+            className="w-full max-w-[420px] overflow-hidden rounded-xl border border-line bg-card shadow-2xl shadow-ink/20"
+          >
+            <div className="flex items-start gap-3 border-b border-line bg-paper/70 px-5 py-4">
+              <span className="mt-0.5 inline-grid size-9 shrink-0 place-items-center rounded-full bg-red-500/10 text-red-600">
+                <AlertTriangle size={18} strokeWidth={1.8} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 id="delete-transcript-title" className="text-[15px] font-semibold text-ink">
+                  {t("confirmTitle")}
+                </h2>
+                <p id="delete-transcript-description" className="mt-1 text-[13px] leading-5 text-muted">
+                  {t("confirmBody")}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setConfirmOpen(false)}
+                disabled={busy}
+                aria-label={t("confirmClose")}
+                className="inline-grid size-8 shrink-0 place-items-center rounded-lg text-muted transition hover:bg-ink/5 hover:text-ink disabled:opacity-50"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="px-5 py-4">
+              {err && (
+                <p className="mb-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[13px] text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200">
+                  {err}
+                </p>
+              )}
+              <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setConfirmOpen(false)}
+                  disabled={busy}
+                  className="rounded-full border border-line px-4 py-2 text-[13px] font-medium text-ink transition hover:bg-ink/5 disabled:opacity-50"
+                >
+                  {t("confirmCancel")}
+                </button>
+                <button
+                  type="button"
+                  onClick={onDelete}
+                  disabled={busy}
+                  className="rounded-full bg-red-600 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+                >
+                  {busy ? t("confirmDeleting") : t("confirmDelete")}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>,
         document.body
       )}

@@ -411,5 +411,148 @@
       { "label": "Conditions de service", "href": "/terms" },
       { "label": "Politique de confidentialité", "href": "/privacy" }
     ]
+  },
+  "Dashboard": {
+    "layout": {
+      "account": "Compte",
+      "signOut": "Se déconnecter"
+    },
+    "list": {
+      "title": "Vos transcriptions",
+      "empty": "Rien pour le moment.",
+      "itemCount": "{count, plural, =1 {# élément} other {# éléments}}",
+      "newTranscript": "Nouvelle transcription",
+      "checkoutOkTitle": "Abonnement actif — bienvenue à bord.",
+      "checkoutOkBody": "Votre nouveau plan est en direct. Visitez <link>compte</link> pour voir votre utilisation.",
+      "emptyBody": "Aucune transcription pour le moment.",
+      "emptyCta": "Téléversez votre premier fichier →",
+      "tableName": "Nom",
+      "tableUploaded": "Téléversé",
+      "tableDuration": "Durée",
+      "tableStatus": "Statut",
+      "tableOperation": "Action",
+      "statusReady": "Prêt",
+      "statusError": "Erreur",
+      "statusTranscribing": "Transcription en cours",
+      "statusUploading": "Téléversement en cours",
+      "statusPending": "En attente"
+    },
+    "new": {
+      "title": "Nouvelle transcription",
+      "back": "Retour"
+    },
+    "account": {
+      "title": "Compte",
+      "email": "E-mail",
+      "name": "Nom",
+      "plan": "Plan",
+      "freeTrialUsage": "Utilisation de l'essai gratuit",
+      "usageThisPeriod": "Utilisation de cette période",
+      "usageValue": "{used} / {quota} min",
+      "periodResets": "La période réinitialise",
+      "noValue": "—",
+      "upgradePlan": "Passer à un plan supérieur",
+      "signOut": "Se déconnecter",
+      "dangerZone": "Zone dangereuse",
+      "deleteWarning": "Supprimer définitivement votre compte, vos transcriptions et votre audio. Cette action ne peut pas être annulée.",
+      "tierFree": "Gratuit",
+      "tierBasic": "Basic",
+      "tierPro": "Pro",
+      "cycleMonthly": "mensuel",
+      "cycleYearly": "annuel",
+      "statusCanceled": "(annulé — accès jusqu'à la fin de la période)",
+      "statusExpired": "(expiré)"
+    },
+    "viewer": {
+      "back": "← Toutes les transcriptions",
+      "audioExpiredLabel": "Audio expiré.",
+      "audioExpiredBody": "Les fichiers source sont conservés pendant 7 jours ; la transcription reste aussi longtemps que vous le souhaitez.",
+      "missing": "Le fichier de transcription est manquant du stockage.",
+      "transcribingHint": "Transcription de votre audio en cours. Cela prend généralement environ une minute par heure d'entrée.",
+      "workingHint": "Travail sur votre transcription en cours…",
+      "failedTitle": "La transcription a échoué.",
+      "metaCompleted": "Terminé",
+      "metaPending": "En attente",
+      "metaUploading": "Téléversement",
+      "metaQueued": "En file d'attente",
+      "metaProcessing": "Traitement",
+      "metaError": "Erreur",
+      "tabTranscript": "Transcription",
+      "tabSubtitles": "Sous-titres",
+      "play": "Lire",
+      "pause": "Pause",
+      "mute": "Couper le son",
+      "unmute": "Activer le son",
+      "playbackSpeed": "Vitesse de lecture"
+    },
+    "rowMenu": {
+      "more": "Plus d'actions",
+      "delete": "Supprimer",
+      "deleting": "Suppression en cours…",
+      "deleteFailed": "La suppression a échoué",
+      "confirmTitle": "Supprimer la transcription?",
+      "confirmBody": "Cette transcription et son fichier audio seront supprimés de votre bibliothèque. Cette action ne peut pas être annulée.",
+      "confirmClose": "Fermer la confirmation de suppression",
+      "confirmCancel": "Annuler",
+      "confirmDelete": "Supprimer la transcription",
+      "confirmDeleting": "Suppression en cours..."
+    },
+    "billingPortal": {
+      "manage": "Gérer la facturation",
+      "opening": "Ouverture…",
+      "genericError": "Une erreur s'est produite."
+    },
+    "deleteAccount": {
+      "confirm": "Supprimer votre compte? Vos transcriptions et votre audio seront supprimés. Cette action ne peut pas être annulée.",
+      "delete": "Supprimer le compte",
+      "deleting": "Suppression en cours…",
+      "genericError": "Une erreur s'est produite."
+    },
+    "download": {
+      "label": "Télécharger",
+      "audio": "Audio"
+    },
+    "copy": {
+      "copy": "Copier",
+      "copying": "Copie en cours…",
+      "copied": "Copié",
+      "failed": "Échec"
+    },
+    "uploadOrRecord": {
+      "upload": "Téléverser",
+      "record": "Enregistrer"
+    },
+    "uploader": {
+      "dropPrompt": "Déposez une vidéo ou un fichier audio",
+      "limits": "Téléversements vidéo jusqu'à 1 Go · Essai gratuit : 45 min au total · max 500 Mo après extraction audio",
+      "choose": "Choisir un fichier",
+      "phasePreparing": "Préparation…",
+      "phaseExtracting": "Extraction audio {percent}%",
+      "phaseUploading": "Téléversement {percent}%",
+      "phaseSubmitting": "Soumission au traitement…",
+      "phaseTranscribing": "Transcription en cours…",
+      "videoTooBig": "Les téléversements vidéo sont actuellement limités à 1 Go dans le navigateur. Pour les fichiers plus volumineux, veuillez d'abord convertir en audio.",
+      "fileTooLargeWithCap": "Ce fichier est plus volumineux que ce que votre plan autorise (max {mb} Mo). Passez à un plan supérieur pour des limites plus élevées.",
+      "fileTooLarge": "Ce fichier est plus volumineux que ce que votre plan autorise. Passez à un plan supérieur pour des limites plus élevées.",
+      "durationExceedsTierWithCap": "Ce fichier est plus long que ce que votre plan autorise (max {min} min par fichier). Passez à un plan supérieur pour les fichiers plus longs.",
+      "durationExceedsTier": "Ce fichier est plus long que ce que votre plan autorise. Passez à un plan supérieur pour les fichiers plus longs.",
+      "noQuotaWithCap": "Vous avez utilisé tous les {capMin} minutes de cette période. Passez à un plan supérieur ou attendez le prochain cycle.",
+      "noQuota": "Vous avez épuisé vos minutes pour cette période. Passez à un plan supérieur ou attendez le prochain cycle.",
+      "insufficientQuota": "Ce fichier nécessite ~{neededMin} min mais vous n'en avez que {remainingMin} min restant cette période. Passez à un plan supérieur ou attendez le prochain cycle.",
+      "aaiSubmitFailed": "Le service de transcription est indisponible. Veuillez réessayer dans un moment.",
+      "requestFailed": "Requête échouée ({status}).",
+      "uploadNetworkError": "Erreur de réseau lors du téléversement.",
+      "cannotReadMetadata": "Impossible de lire les métadonnées du média.",
+      "transcriptionFailed": "Erreur de transcription.",
+      "transcriptionGeneric": "Transcription {status}.",
+      "uploadFallback": "Le téléversement a échoué lors de {step}. Vérifiez la console du navigateur pour plus de détails."
+    },
+    "recorder": {
+      "start": "Commencer l'enregistrement",
+      "stop": "Arrêter l'enregistrement",
+      "tapToRecord": "Appuyez pour enregistrer · jusqu'à {min} min",
+      "recording": "Enregistrement — arrêt automatique à {min} min",
+      "micDenied": "Accès au microphone refusé."
+    }
   }
 }
