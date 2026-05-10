@@ -30,42 +30,73 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://scribix.io"),
-  title: {
-    default: "Video to Text — Free AI Transcription Online | Scribix",
-    template: "%s · Scribix",
-  },
-  description:
-    "Convert any video to text free online. Upload MP4, MOV, or WebM — or paste a YouTube link — and get accurate, speaker-labeled transcripts in 200+ languages.",
-  keywords: [
-    "video to text",
-    "video to text converter",
-    "convert video to text",
-    "video transcription",
-    "youtube to text",
-    "mp4 to text",
-    "audio to text",
-    "ai transcription",
-    "speaker recognition",
-  ],
-  openGraph: {
-    title: "Video to Text — Free AI Transcription | Scribix",
+const SITE = "https://scribix.io";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const canonical = urlFor(locale, "");
+
+  return {
+    metadataBase: new URL(SITE),
+    title: {
+      default: "Video to Text — Free AI Transcription Online | Scribix",
+      template: "%s · Scribix",
+    },
     description:
-      "Upload a video or paste a YouTube link. Get an accurate, speaker-labeled transcript in seconds. Free with Google sign-in, 200+ languages.",
-    type: "website",
-    siteName: "Scribix",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Video to Text — Free AI Transcription | Scribix",
-    description:
-      "Convert any video to text free online. Speaker labels, word-level timestamps, 200+ languages.",
-  },
-};
+      "Convert any video to text free online. Upload MP4, MOV, or WebM — or paste a YouTube link — and get accurate, speaker-labeled transcripts in 200+ languages.",
+    keywords: [
+      "video to text",
+      "video to text converter",
+      "convert video to text",
+      "video transcription",
+      "youtube to text",
+      "mp4 to text",
+      "audio to text",
+      "ai transcription",
+      "speaker recognition",
+    ],
+    alternates: {
+      canonical,
+      languages: homeLanguages(),
+    },
+    openGraph: {
+      title: "Video to Text — Free AI Transcription | Scribix",
+      description:
+        "Upload a video or paste a YouTube link. Get an accurate, speaker-labeled transcript in seconds. Free with Google sign-in, 200+ languages.",
+      type: "website",
+      siteName: "Scribix",
+      url: canonical,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Video to Text — Free AI Transcription | Scribix",
+      description:
+        "Convert any video to text free online. Speaker labels, word-level timestamps, 200+ languages.",
+    },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+function homeLanguages(): Record<string, string> {
+  const languages: Record<string, string> = {
+    "x-default": urlFor(routing.defaultLocale, ""),
+  };
+  for (const locale of routing.locales) {
+    languages[locale] = urlFor(locale, "");
+  }
+  return languages;
+}
+
+function urlFor(locale: string, path: string): string {
+  const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
+  return `${SITE}${prefix}${path}`;
 }
 
 export default async function LocaleLayout({

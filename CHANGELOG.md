@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.6] - 2026-05-10
+
+### Fixed
+- Added canonical metadata and hreflang alternates for localized home pages.
+- Removed localized legal-page alternates from the sitemap and pointed legal metadata to English canonical URLs.
+
 ## [0.1.5] - 2026-05-10
 
 ### Changed

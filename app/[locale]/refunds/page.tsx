@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Refund Policy",
   description:
     "Scribix refund policy — eligibility window, usage cap, and how to request a refund for a subscription.",
+  alternates: {
+    canonical: "https://scribix.io/refunds",
+  },
 };
 
 export default async function RefundsPage({

@@ -7,6 +7,9 @@ import { routing } from "@/i18n/routing";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How Scribix collects, uses, and protects your data.",
+  alternates: {
+    canonical: "https://scribix.io/privacy",
+  },
 };
 
 export default async function PrivacyPage({

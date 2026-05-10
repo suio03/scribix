@@ -8,6 +8,9 @@ import { routing } from "@/i18n/routing";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "Terms of service for using Scribix transcription.",
+  alternates: {
+    canonical: "https://scribix.io/terms",
+  },
 };
 
 export default async function TermsPage({
