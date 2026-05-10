@@ -8,7 +8,7 @@ import { SidebarToggle } from "./SidebarToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { ThemeToggle } from "./ThemeToggle";
 
-export async function Header() {
+export async function Header({ showLanguageSwitcher = true }: { showLanguageSwitcher?: boolean } = {}) {
   const t = await getTranslations("Header");
   const session = await auth();
   const locale = await getLocale();
@@ -28,7 +28,7 @@ export async function Header() {
         </div>
 
         <div className="flex items-center gap-1.5">
-          <LanguageSwitcher />
+          {showLanguageSwitcher && <LanguageSwitcher />}
           <ThemeToggle />
 
           {session ? (

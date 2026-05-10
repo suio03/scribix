@@ -404,9 +404,7 @@
     ]
   },
   "Footer": {
-    "tagline": "Studio-Qualität Video-zu-Text für Menschen, die aufgezeichnete Gespräche in Geschichten verwandeln. Gebaut in San Francisco & Singapur.",
-    "copyright": "© {year} Scribix Audio Lab, Inc. Alle Rechte vorbehalten.",
-    "credit": "Gesetzt in Fraunces & Geist · Handwerklich gefertigt",
+    "tagline": "Studio-Qualität Video-zu-Text für Menschen, die aufgezeichnete Gespräche in Geschichten verwandeln.",
     "legal": [
       { "label": "Servicebedingungen", "href": "/terms" },
       { "label": "Datenschutzrichtlinie", "href": "/privacy" }

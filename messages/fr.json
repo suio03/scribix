@@ -404,9 +404,7 @@
     ]
   },
   "Footer": {
-    "tagline": "Transcription vidéo-texte de qualité studio pour les gens qui transforment les conversations enregistrées en histoires. Conçu à San Francisco et Singapour.",
-    "copyright": "© {year} Scribix Audio Lab, Inc. Tous droits réservés.",
-    "credit": "Typographie Fraunces & Geist · Réalisé avec soin",
+    "tagline": "Transcription vidéo-texte de qualité studio pour les gens qui transforment les conversations enregistrées en histoires.",
     "legal": [
       { "label": "Conditions de service", "href": "/terms" },
       { "label": "Politique de confidentialité", "href": "/privacy" }

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { LegalShell } from "@/app/components/LegalShell";
-import { Link } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -14,6 +15,9 @@ export default async function PrivacyPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (locale !== routing.defaultLocale) {
+    redirect({ href: "/privacy", locale: routing.defaultLocale });
+  }
   setRequestLocale(locale);
 
   return (
@@ -25,15 +29,13 @@ export default async function PrivacyPage({
 
       <H2>The Short Version</H2>
       <ul className="ml-5 list-disc space-y-2">
-        <li>We collect your Google email and name to create your account.</li>
+        <li>We collect your email and name to create your account.</li>
         <li>
           We store the audio/video you upload and the transcript we make from it. Audio is
           deleted after 7 days; transcripts stay until you delete them.
         </li>
         <li>
-          We send your audio to our speech-recognition provider (AssemblyAI) so they can
-          transcribe it. They process it on your behalf and don&apos;t use it to train
-          models.
+          We process your audio only to generate and deliver transcripts for your account.
         </li>
         <li>We don&apos;t sell your data and we don&apos;t run advertising trackers.</li>
         <li>
@@ -49,16 +51,15 @@ export default async function PrivacyPage({
       <H2>What We Collect</H2>
       <ul className="ml-5 list-disc space-y-2">
         <li>
-          <strong>Account:</strong> email, name, avatar, and Google subject ID, provided by
-          Google when you sign in.
+          <strong>Account:</strong> email, name, avatar, and account identifier used for sign-in.
         </li>
         <li>
           <strong>Content:</strong> audio and video files you upload or record, and the
           transcripts produced from them.
         </li>
         <li>
-          <strong>Subscription:</strong> Creem customer ID, billing cycle, and current plan.
-          We never see your card number — Creem handles payment.
+          <strong>Subscription:</strong> billing status, billing cycle, and current plan.
+          We never see or store your full card number.
         </li>
         <li>
           <strong>Usage:</strong> minutes consumed in the current billing period, file size,
@@ -73,25 +74,6 @@ export default async function PrivacyPage({
         <li>To debug, monitor for abuse, and improve reliability.</li>
         <li>To contact you about your account when needed (e.g. failed payment).</li>
       </ul>
-
-      <H2>Subprocessors</H2>
-      <ul className="ml-5 list-disc space-y-2">
-        <li>
-          <strong>Cloudflare</strong> — application hosting, file storage (R2), and database
-          (D1).
-        </li>
-        <li>
-          <strong>AssemblyAI</strong> — speech-recognition. We send the signed audio URL;
-          they transcribe and return the text.
-        </li>
-        <li>
-          <strong>Creem</strong> — subscription billing and payment processing.
-        </li>
-        <li>
-          <strong>Google</strong> — sign-in via OAuth.
-        </li>
-      </ul>
-
       <H2>Retention</H2>
       <ul className="ml-5 list-disc space-y-2">
         <li>
@@ -102,8 +84,8 @@ export default async function PrivacyPage({
         </li>
         <li>
           <strong>Account record:</strong> kept while your account is open. Soft-deleted
-          immediately on account deletion; copies held by our speech-recognition provider
-          are purged on a regular cadence as part of standard operations.
+          immediately on account deletion; operational copies are purged on a regular cadence
+          as part of standard operations.
         </li>
       </ul>
 
@@ -121,7 +103,7 @@ export default async function PrivacyPage({
       <H2>Security</H2>
       <p>
         Files are private by default and only accessible via short-lived signed URLs.
-        Transport is encrypted (HTTPS). We don&apos;t see or store your Google password.
+        Transport is encrypted (HTTPS). We don&apos;t see or store your sign-in password.
       </p>
 
       <H2>Children</H2>

@@ -404,9 +404,7 @@
     ]
   },
   "Footer": {
-    "tagline": "記録された会話をストーリーに変えるプロたちのためのスタジオグレード動画から文字。サンフランシスコとシンガポールで構築。",
-    "copyright": "© {year} Scribix Audio Lab, Inc. All rights reserved.",
-    "credit": "Fraunces & Geist でセット · 愛を込めて制作",
+    "tagline": "記録された会話をストーリーに変えるプロたちのためのスタジオグレード動画から文字。",
     "legal": [
       { "label": "利用規約", "href": "/terms" },
       { "label": "プライバシーポリシー", "href": "/privacy" }

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { LegalShell } from "@/app/components/LegalShell";
-import { Link } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: "Refund Policy",
@@ -15,6 +16,9 @@ export default async function RefundsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (locale !== routing.defaultLocale) {
+    redirect({ href: "/refunds", locale: routing.defaultLocale });
+  }
   setRequestLocale(locale);
 
   return (
@@ -66,8 +70,8 @@ export default async function RefundsPage({
       </p>
       <p>
         Refund amounts may be reduced by a payment processing fee not exceeding{" "}
-        <strong>six percent (6%)</strong> of the original charge to cover what our payment
-        provider does not return to us on a reversal.
+        <strong>six percent (6%)</strong> of the original charge to cover non-refundable
+        transaction costs on a reversal.
       </p>
 
       <H2>What Is Not Refundable</H2>

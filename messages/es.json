@@ -404,9 +404,7 @@
     ]
   },
   "Footer": {
-    "tagline": "Vídeo a texto a nivel de estudio para la gente que convierte la conversación grabada en historias. Construido en San Francisco y Singapur.",
-    "copyright": "© {year} Scribix Audio Lab, Inc. Todos los derechos reservados.",
-    "credit": "Tipografía en Fraunces & Geist · Hecho con cuidado",
+    "tagline": "Vídeo a texto a nivel de estudio para la gente que convierte la conversación grabada en historias.",
     "legal": [
       { "label": "Términos de servicio", "href": "/terms" },
       { "label": "Política de privacidad", "href": "/privacy" }

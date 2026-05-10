@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import NextLink from "next/link";
 import { setRequestLocale } from "next-intl/server";
 import { LegalShell } from "@/app/components/LegalShell";
-import { Link } from "@/i18n/navigation";
+import { redirect } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -14,6 +16,9 @@ export default async function TermsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (locale !== routing.defaultLocale) {
+    redirect({ href: "/terms", locale: routing.defaultLocale });
+  }
   setRequestLocale(locale);
 
   return (
@@ -30,22 +35,21 @@ export default async function TermsPage({
       <H2>The Service</H2>
       <p>
         Scribix converts audio and video files you upload (or record in-browser) into
-        text transcripts using third-party speech-recognition models. Output quality depends
-        on input quality and is not guaranteed.
+        text transcripts. Output quality depends on input quality and is not guaranteed.
       </p>
 
       <H2>Your Account</H2>
       <p>
-        You sign in with Google. You are responsible for activity on your account and for
-        keeping your Google credentials safe.
+        You are responsible for activity on your account and for keeping your sign-in
+        credentials safe.
       </p>
 
       <H2>Your Content</H2>
       <p>
         You retain ownership of the audio, video, and transcripts associated with your
         account. You grant Scribix a limited license to process, transmit, and store this
-        content solely to operate the service for you (uploading to storage, sending to our
-        speech-recognition provider, and serving the resulting transcript back to you).
+        content solely to operate the service for you, including upload, transcription,
+        storage, and serving the resulting transcript back to you.
       </p>
       <p>
         You are responsible for the rights to upload any content you submit. Don&apos;t upload
@@ -68,9 +72,9 @@ export default async function TermsPage({
       </p>
       <p>
         Refunds are governed by our{" "}
-        <Link className="underline underline-offset-4 hover:text-accent" href="/refunds">
+        <NextLink className="underline underline-offset-4 hover:text-accent" href="/refunds">
           Refund Policy
-        </Link>
+        </NextLink>
         .
       </p>
 
@@ -78,8 +82,8 @@ export default async function TermsPage({
       <p>
         Audio and video files are deleted automatically 7 days after upload. Transcripts are
         retained until you delete them or close your account. Deleting a transcript or your
-        account removes our copies; the source-of-truth speech-recognition data held by our
-        provider is purged on a regular cadence as part of standard operations.
+        account removes our copies; operational processing records are purged on a regular
+        cadence as part of standard operations.
       </p>
 
       <H2>Disclaimers</H2>

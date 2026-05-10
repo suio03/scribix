@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.5] - 2026-05-10
+
+### Changed
+- Made legal pages canonical English-only pages and removed provider-specific legal copy.
+- Hardcoded the footer copyright line and removed duplicate footer copyright/credit translations.
+
+### Fixed
+- Prevented localized legal-page redirect loops when a non-English locale cookie is active.
+- Replaced the raw theme initialization script with Next.js script handling.
+
 ## [0.1.4] - 2026-05-09
 
 ### Changed
