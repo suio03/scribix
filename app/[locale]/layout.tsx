@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "../../i18n/routing";
 import "./globals.css";
-
-// Runs before paint to avoid theme flash. Reads localStorage first (primary
-// store), falls back to the cookie that older clients may still have.
-const themeInitScript = `(function(){try{var t=localStorage.getItem("scribix-theme");if(t!=="dark"&&t!=="light"){var m=document.cookie.match(/scribix-theme=(dark|light)/);t=m?m[1]:null;}if(t==="dark")document.documentElement.classList.add("dark");}catch(e){}})();`;
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -38,7 +33,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const canonical = urlFor(locale, "");
+  const canonical = metadataUrlFor(locale, "");
 
   return {
     metadataBase: new URL(SITE),
@@ -84,19 +79,22 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-function homeLanguages(): Record<string, string> {
-  const languages: Record<string, string> = {
-    "x-default": urlFor(routing.defaultLocale, ""),
+function homeLanguages(): Record<string, URL> {
+  const languages: Record<string, URL> = {
+    "x-default": metadataUrlFor(routing.defaultLocale, ""),
   };
   for (const locale of routing.locales) {
-    languages[locale] = urlFor(locale, "");
+    languages[locale] = metadataUrlFor(locale, "");
   }
   return languages;
 }
 
-function urlFor(locale: string, path: string): string {
+function metadataUrlFor(locale: string, path: string): URL {
   const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
-  return `${SITE}${prefix}${path}`;
+  if (path === "" && prefix === "") {
+    return new URL("/", SITE);
+  }
+  return new URL(`${prefix}${path}`, SITE);
 }
 
 export default async function LocaleLayout({
@@ -118,13 +116,6 @@ export default async function LocaleLayout({
       className={`${fraunces.variable} ${geist.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
-      <head>
-        <Script
-          id="scribix-theme-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
-        />
-      </head>
       <body className="bg-paper text-ink antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>

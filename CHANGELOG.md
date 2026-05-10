@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.7] - 2026-05-10
+
+### Fixed
+- Removed the root layout theme script that triggered React client-render warnings.
+- Normalized the default home canonical and sitemap URL to the slash root.
+
 ## [0.1.6] - 2026-05-10
 
 ### Fixed

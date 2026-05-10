@@ -39,5 +39,8 @@ function homeLanguages(): Record<string, string> {
 
 function urlFor(locale: string, path: string): string {
   const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
+  if (path === "" && prefix === "") {
+    return `${SITE}/`;
+  }
   return `${SITE}${prefix}${path}`;
 }
