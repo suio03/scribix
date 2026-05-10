@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "../../i18n/routing";
+import Analytics from "../components/Analytics";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -116,6 +117,7 @@ export default async function LocaleLayout({
       className={`${fraunces.variable} ${geist.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
+      <Analytics />
       <body className="bg-paper text-ink antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>

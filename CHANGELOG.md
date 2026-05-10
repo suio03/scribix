@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.8] - 2026-05-10
+
+### Added
+- Added Google Analytics and Plausible tracking scripts to the root layout.
+
 ## [0.1.7] - 2026-05-10
 
 ### Fixed
