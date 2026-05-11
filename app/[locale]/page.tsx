@@ -16,6 +16,7 @@ import { FAQ } from "../components/FAQ";
 import { FinalCTA } from "../components/FinalCTA";
 import { Footer } from "../components/Footer";
 import { GoogleOneTap } from "../components/GoogleOneTap";
+import { TrackToolVisit } from "../components/Track";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -73,6 +74,7 @@ export default async function HomePage({
       {!session && process.env.GOOGLE_ID ? (
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
+      <TrackToolVisit slug="home" />
       <Header />
       <main>
         <Generator signedIn={!!session} postSignInPath={postSignInPath} />

@@ -4,6 +4,10 @@ import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import { trackEvent } from "@/lib/analytics";
+import { markSignInPending } from "./Track";
+
+const TOOL_SLUG = "transcribe";
 
 type UploaderT = ReturnType<typeof useTranslations<"Dashboard.uploader">>;
 
@@ -40,6 +44,7 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
       durationSecOverride?: number
     ) => {
       if (!signedIn) {
+        markSignInPending();
         await signIn("google", { redirectTo: postSignInPath });
         return;
       }
@@ -122,12 +127,17 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
         keepTranscript = true;
         const finalStatus = await pollStatus(transcriptId, t);
         if (finalStatus === "completed") {
+          trackEvent("transcribe_success", {
+            tool_slug: TOOL_SLUG,
+            duration_sec: uploadDurationSec || undefined,
+          });
           router.push(`/dashboard/transcripts/${transcriptId}`);
         } else {
           throw new Error(t("transcriptionGeneric", { status: finalStatus }));
         }
       } catch (err) {
         console.error("Upload failed", { step, transcriptId, error: err });
+        trackEvent("transcribe_fail", { tool_slug: TOOL_SLUG, error_code: step });
         const message = uploadErrorMessage(err, step, t);
         if (message === "persist_failed") {
           keepTranscript = true;

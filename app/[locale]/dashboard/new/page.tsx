@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { UploadOrRecord } from "@/app/components/UploadOrRecord";
+import { TrackToolVisit } from "@/app/components/Track";
 import { getPathname, Link } from "@/i18n/navigation";
 
 export default async function NewTranscriptPage() {
@@ -9,6 +10,7 @@ export default async function NewTranscriptPage() {
 
   return (
     <main className="mx-auto max-w-[720px] px-4 py-12 sm:px-8">
+      <TrackToolVisit slug="dashboard-transcribe" />
       <div className="flex items-center justify-between gap-4">
         <h1 className="font-display text-3xl font-semibold tracking-tight">{t("title")}</h1>
         <Link

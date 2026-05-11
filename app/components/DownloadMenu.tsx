@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Download } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { trackEvent } from "@/lib/analytics";
 
 type Props = {
   id: string;
@@ -62,7 +63,10 @@ export function DownloadMenu({ id, audioAvailable, variant = "icon" }: Props) {
             <a
               key={f.format}
               href={`/api/transcripts/${id}/export?format=${f.format}`}
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                trackEvent("download_click", { format: f.format });
+                setOpen(false);
+              }}
               className="block px-3 py-2 text-[13px] hover:bg-ink/5"
             >
               {f.label}
@@ -71,7 +75,10 @@ export function DownloadMenu({ id, audioAvailable, variant = "icon" }: Props) {
           {audioAvailable && (
             <a
               href={`/api/transcripts/${id}/audio`}
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                trackEvent("download_click", { format: "audio" });
+                setOpen(false);
+              }}
               className="block border-t border-line px-3 py-2 text-[13px] hover:bg-ink/5"
             >
               {t("audio")}

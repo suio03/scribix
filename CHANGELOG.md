@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.9] - 2026-05-11
+
+### Added
+- Added Plausible custom events for tool visits, sign-in success, transcription outcomes, and downloads.
+- Added a migration for YouTube transcript sources and more granular transcript processing statuses.
+
 ## [0.1.8] - 2026-05-10
 
 ### Added

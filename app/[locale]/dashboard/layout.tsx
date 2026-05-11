@@ -4,6 +4,7 @@ import { Link, redirect } from "@/i18n/navigation";
 import { Logo } from "@/app/components/Logo";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
+import { TrackSignInSuccess } from "@/app/components/Track";
 
 export default async function DashboardLayout({
   children,
@@ -23,6 +24,7 @@ export default async function DashboardLayout({
 
   return (
     <>
+      <TrackSignInSuccess />
       <header className="sticky top-0 z-30 border-b border-line bg-paper/85 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-[1180px] items-center justify-between gap-4 px-4 sm:px-8">
           <Link href="/" className="flex items-center gap-2.5">
