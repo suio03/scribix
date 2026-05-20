@@ -16,6 +16,7 @@ import { FAQ } from "../components/FAQ";
 import { FinalCTA } from "../components/FinalCTA";
 import { Footer } from "../components/Footer";
 import { GoogleOneTap } from "../components/GoogleOneTap";
+import { Partners } from "../components/Partners";
 import { TrackToolVisit } from "../components/Track";
 
 const jsonLd = {
@@ -89,6 +90,7 @@ export default async function HomePage({
         <FinalCTA />
       </main>
       <Footer />
+      <Partners />
     </Shell>
   );
 }

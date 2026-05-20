@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.10] - 2026-05-20
+
+### Added
+- Added the Dang.ai partner badge to the homepage.
+
+### Fixed
+- Added stalled-upload timeout handling, one retry, and structured upload error logging for direct R2 uploads.
+
 ## [0.1.9] - 2026-05-11
 
 ### Added

@@ -136,7 +136,7 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
           throw new Error(t("transcriptionGeneric", { status: finalStatus }));
         }
       } catch (err) {
-        console.error("Upload failed", { step, transcriptId, error: err });
+        console.error("Upload failed", { step, transcriptId, error: serializeError(err) });
         trackEvent("transcribe_fail", { tool_slug: TOOL_SLUG, error_code: step });
         const message = uploadErrorMessage(err, step, t);
         if (message === "persist_failed") {
@@ -274,26 +274,61 @@ async function readMediaDuration(file: File): Promise<number> {
   }
 }
 
+const UPLOAD_STALL_MS = 90_000;
+const UPLOAD_MAX_ATTEMPTS = 2;
+
 function uploadWithProgress(
   url: string,
   file: Blob,
   onProgress: (frac: number) => void,
   t: UploaderT
 ): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("PUT", url);
-    xhr.upload.addEventListener("progress", (e) => {
-      if (e.lengthComputable) onProgress(e.loaded / e.total);
+  const attempt = (n: number): Promise<void> =>
+    new Promise<void>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      let lastTick = Date.now();
+      let lastLoaded = 0;
+      const stallTimer = setInterval(() => {
+        if (Date.now() - lastTick > UPLOAD_STALL_MS) {
+          clearInterval(stallTimer);
+          xhr.abort();
+          reject(new Error("upload_stalled"));
+        }
+      }, 5_000);
+      const done = () => clearInterval(stallTimer);
+
+      xhr.open("PUT", url);
+      xhr.upload.addEventListener("progress", (e) => {
+        if (!e.lengthComputable) return;
+        if (e.loaded !== lastLoaded) {
+          lastLoaded = e.loaded;
+          lastTick = Date.now();
+        }
+        onProgress(e.loaded / e.total);
+      });
+      xhr.addEventListener("load", () => {
+        done();
+        if (xhr.status >= 200 && xhr.status < 300) resolve();
+        else reject(new Error(`Upload failed: ${xhr.status} ${xhr.responseText.slice(0, 200)}`));
+      });
+      xhr.addEventListener("error", () => {
+        done();
+        reject(new Error(t("uploadNetworkError")));
+      });
+      xhr.addEventListener("abort", () => done());
+      xhr.send(file);
+    }).catch((err) => {
+      const retryable =
+        err instanceof Error &&
+        (err.message === "upload_stalled" || err.message === t("uploadNetworkError"));
+      if (retryable && n < UPLOAD_MAX_ATTEMPTS) {
+        onProgress(0);
+        return attempt(n + 1);
+      }
+      throw err;
     });
-    xhr.addEventListener("load", () =>
-      xhr.status >= 200 && xhr.status < 300
-        ? resolve()
-        : reject(new Error(`Upload failed: ${xhr.status} ${xhr.responseText.slice(0, 200)}`))
-    );
-    xhr.addEventListener("error", () => reject(new Error(t("uploadNetworkError"))));
-    xhr.send(file);
-  });
+
+  return attempt(1);
 }
 
 async function pollStatus(id: string, t: UploaderT): Promise<"completed" | "error"> {
@@ -313,6 +348,23 @@ async function cleanupTranscript(id: string): Promise<void> {
   } catch {
     // Best-effort cleanup only; preserve the original upload error for the user.
   }
+}
+
+function serializeError(err: unknown): Record<string, unknown> {
+  if (err instanceof Error) {
+    const out: Record<string, unknown> = {
+      name: err.name,
+      message: err.message,
+      stack: err.stack,
+    };
+    if (err.cause !== undefined) out.cause = serializeError(err.cause);
+    for (const key of Object.keys(err)) {
+      out[key] = (err as unknown as Record<string, unknown>)[key];
+    }
+    return out;
+  }
+  if (typeof err === "object" && err !== null) return { ...err };
+  return { value: String(err) };
 }
 
 function uploadErrorMessage(err: unknown, step: string, t: UploaderT): string {
