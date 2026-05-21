@@ -1,11 +1,13 @@
 // Scheduled cleanup worker for Scribix.
 //
 // Runs hourly and:
-//   1. Hard-deletes `pending` / `uploading` rows that have been stuck for >1h
-//      (these never reached AssemblyAI; nothing to clean up in R2).
-//   2. Soft-deletes `error` / `failed` rows older than 7 days and best-effort
-//      removes any R2 audio source they uploaded before failing.
-//   3. For `completed` rows older than 14 days, deletes the R2 audio object
+//   1. Hard-deletes `pending` / `uploading` rows older than 1h after
+//      best-effort R2 cleanup.
+//   2. Hard-deletes in-flight non-completed rows older than 24h after
+//      best-effort R2 cleanup.
+//   3. Hard-deletes `error` / `failed` rows older than 7d after
+//      best-effort R2 cleanup.
+//   4. For `completed` rows older than 14d, deletes the R2 audio object
 //      and NULLs `audio_r2_key`. Transcript JSON is preserved forever.
 //
 // Deployed separately from the Next app via `wrangler.cleanup.jsonc`. Shares
@@ -17,8 +19,19 @@ interface Env {
 }
 
 const PENDING_TTL_MS = 60 * 60 * 1000;           // 1h
+const IN_FLIGHT_TTL_MS = 24 * 60 * 60 * 1000;    // 24h
 const FAILED_TTL_MS = 7 * 24 * 60 * 60 * 1000;   // 7d
 const AUDIO_TTL_MS = 14 * 24 * 60 * 60 * 1000;   // 14d
+
+const PRE_SUBMIT_STATUSES = ["pending", "uploading"];
+const IN_FLIGHT_STATUSES = [
+  "queued",
+  "processing",
+  "extracting_audio",
+  "uploading_audio",
+  "transcribing",
+];
+const FAILED_STATUSES = ["error", "failed"];
 
 type CleanupRow = {
   id: string;
@@ -36,24 +49,16 @@ async function deleteR2Best(bucket: R2Bucket, key: string | null): Promise<void>
   }
 }
 
-async function sweepStuck(env: Env, cutoffIso: string): Promise<number> {
-  const res = await env.DB.prepare(
-    `DELETE FROM transcripts
-      WHERE status IN ('pending', 'uploading')
-        AND deleted_at IS NULL
-        AND created_at < ?1`
-  ).bind(cutoffIso).run();
-  return res.meta?.changes ?? 0;
-}
-
-async function sweepFailed(env: Env, cutoffIso: string): Promise<number> {
+async function sweepExpiredRows(env: Env, statuses: string[], cutoffIso: string): Promise<number> {
+  const statusPlaceholders = statuses.map((_, i) => `?${i + 1}`).join(",");
+  const cutoffParam = `?${statuses.length + 1}`;
   const rows = await env.DB.prepare(
     `SELECT id, status, audio_r2_key, transcript_r2_key
        FROM transcripts
-      WHERE status IN ('error', 'failed')
+      WHERE status IN (${statusPlaceholders})
         AND deleted_at IS NULL
-        AND created_at < ?1`
-  ).bind(cutoffIso).all<CleanupRow>();
+        AND created_at < ${cutoffParam}`
+  ).bind(...statuses, cutoffIso).all<CleanupRow>();
 
   const ids: string[] = [];
   for (const r of rows.results ?? []) {
@@ -65,7 +70,7 @@ async function sweepFailed(env: Env, cutoffIso: string): Promise<number> {
 
   const placeholders = ids.map((_, i) => `?${i + 1}`).join(",");
   await env.DB.prepare(
-    `UPDATE transcripts SET deleted_at = CURRENT_TIMESTAMP WHERE id IN (${placeholders})`
+    `DELETE FROM transcripts WHERE id IN (${placeholders})`
   ).bind(...ids).run();
   return ids.length;
 }
@@ -99,10 +104,13 @@ function isoCutoff(msAgo: number): string {
 }
 
 async function runCleanup(env: Env): Promise<void> {
-  const stuck = await sweepStuck(env, isoCutoff(PENDING_TTL_MS));
-  const failed = await sweepFailed(env, isoCutoff(FAILED_TTL_MS));
+  const preSubmit = await sweepExpiredRows(env, PRE_SUBMIT_STATUSES, isoCutoff(PENDING_TTL_MS));
+  const inFlight = await sweepExpiredRows(env, IN_FLIGHT_STATUSES, isoCutoff(IN_FLIGHT_TTL_MS));
+  const failed = await sweepExpiredRows(env, FAILED_STATUSES, isoCutoff(FAILED_TTL_MS));
   const expired = await sweepExpiredAudio(env, isoCutoff(AUDIO_TTL_MS));
-  console.log(`cleanup: stuck=${stuck} failed=${failed} audio_expired=${expired}`);
+  console.log(
+    `cleanup: pre_submit=${preSubmit} in_flight=${inFlight} failed=${failed} audio_expired=${expired}`
+  );
 }
 
 export default {

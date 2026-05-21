@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.1] - 2026-05-21
+
+### Changed
+- Updated cleanup retention so expired non-completed transcripts are hard-deleted after their TTL, while completed transcripts remain retained.
+
 ## [0.2.0] - 2026-05-21
 
 ### Added
