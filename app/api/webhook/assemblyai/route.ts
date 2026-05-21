@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const aaiId = payload.transcript_id;
   if (!aaiId) return Response.json({ error: "missing_id" }, { status: 400 });
 
-  const env = cf();
+  const env = await cf();
 
   const row = await env.DB.prepare(
     `SELECT id, user_id, webhook_token, reserved_minutes, status

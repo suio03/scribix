@@ -34,7 +34,7 @@ export async function POST(req: Request) {
   const isVideo = body.isVideo === true;
   const source: "upload" | "record" = body.source === "record" ? "record" : "upload";
 
-  const env = cf();
+  const env = await cf();
   const userRow = await getOrCreateCurrentUser(env.DB, session);
   if (!userRow) return Response.json({ error: "user_not_found" }, { status: 404 });
   const userId = userRow.id;

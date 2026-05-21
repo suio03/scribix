@@ -42,7 +42,8 @@
   "r2_buckets": [
     {
       "binding": "SCRIBIX_MEDIA",
-      "bucket_name": "scribix-media"
+      "bucket_name": "scribix-media",
+      "remote": true
     }
   ]
 }

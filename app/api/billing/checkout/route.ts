@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "product_not_configured" }, { status: 503 });
   }
 
-  const env = cf();
+  const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const userId = user.id;

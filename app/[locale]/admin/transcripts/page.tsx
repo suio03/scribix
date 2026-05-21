@@ -33,7 +33,7 @@ export default async function AdminTranscriptsPage({
   const pageNum = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
   const offset = (pageNum - 1) * PAGE_SIZE;
 
-  const env = cf();
+  const env = await cf();
   const where: string[] = [];
   const binds: (string | number)[] = [];
   if (show !== "all") where.push("t.deleted_at IS NULL");

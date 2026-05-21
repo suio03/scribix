@@ -25,7 +25,7 @@ export async function GET(req: Request, { params }: Params) {
     return Response.json({ error: "unsupported_format" }, { status: 400 });
   }
 
-  const env = cf();
+  const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(

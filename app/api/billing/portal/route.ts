@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
 
-  const env = cf();
+  const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user?.customer_id) {
     return Response.json(

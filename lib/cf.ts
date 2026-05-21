@@ -1,5 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-export function cf() {
-  return getCloudflareContext().env;
+export async function cf() {
+  return (await getCloudflareContext({ async: true })).env;
 }

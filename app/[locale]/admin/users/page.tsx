@@ -28,7 +28,7 @@ export default async function AdminUsersPage({
   const offset = (pageNum - 1) * PAGE_SIZE;
   const includeDeleted = show === "all";
 
-  const env = cf();
+  const env = await cf();
   const where: string[] = [];
   const binds: (string | number)[] = [];
   if (!includeDeleted) where.push("deleted_at IS NULL");

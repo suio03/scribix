@@ -49,8 +49,8 @@ export async function presignGet(key: string, expiresSec = 60 * 60 * 24): Promis
 
 export const R2 = {
   audioKey: (userId: string, transcriptId: string, ext: string) =>
-    `audio/${userId}/${transcriptId}/source.${ext.replace(/^\./, "")}`,
+    `users/${userId}/${transcriptId}/source.${ext.replace(/^\./, "")}`,
   transcriptKey: (userId: string, transcriptId: string) =>
-    `transcripts/${userId}/${transcriptId}.json`,
+    `users/${userId}/${transcriptId}/transcript.json`,
   bucket: BUCKET,
 };

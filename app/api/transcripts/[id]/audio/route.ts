@@ -5,14 +5,14 @@ import { presignGet } from "@/lib/r2";
 
 type Params = { params: Promise<{ id: string }> };
 
-const AUDIO_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const AUDIO_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
 export async function GET(_: Request, { params }: Params) {
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
   const { id: transcriptId } = await params;
 
-  const env = cf();
+  const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(

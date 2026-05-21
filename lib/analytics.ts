@@ -1,7 +1,7 @@
 export type PlausibleEvents = {
   tool_visit: { tool_slug: string };
   transcribe_success: { tool_slug: string; duration_sec?: number };
-  transcribe_fail: { tool_slug: string; error_code: string };
+  transcribe_fail: { tool_slug: string; error_code: string; error_message?: string };
   signin_success: { method?: string };
   download_click: { format: string };
 };

@@ -16,7 +16,7 @@ export async function GET(_: Request, { params }: Params) {
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
   const { id: transcriptId } = await params;
 
-  const env = cf();
+  const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(

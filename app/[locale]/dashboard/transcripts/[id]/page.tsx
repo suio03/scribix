@@ -20,7 +20,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
     redirect({ href: "/", locale });
     return null;
   }
-  const env = cf();
+  const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) notFound();
   const userId = user.id;
@@ -111,7 +111,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
   );
 }
 
-const AUDIO_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const AUDIO_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
 function audioExpired(createdAt: string): boolean {
   const t = new Date(createdAt.includes("T") ? createdAt : createdAt.replace(" ", "T") + "Z").getTime();

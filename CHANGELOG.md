@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.0] - 2026-05-21
+
+### Added
+- Added a scheduled Cloudflare cleanup Worker for stale pending jobs, failed transcripts, and expired audio.
+- Added an R2 layout migration script for moving transcript assets to user-first object keys.
+
+### Changed
+- Extended audio retention from 7 days to 14 days across the app and cleanup policy.
+- Switched R2 audio and transcript keys to the `users/{userId}/{transcriptId}` layout.
+- Updated Cloudflare context access to use the async OpenNext runtime API.
+
+### Fixed
+- Added scrubbed failure summaries to transcription failure analytics.
+
 ## [0.1.10] - 2026-05-20
 
 ### Added

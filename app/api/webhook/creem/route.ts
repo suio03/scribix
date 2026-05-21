@@ -35,7 +35,7 @@ type CreemEvent = {
 };
 
 export async function POST(req: Request) {
-  const env = cf();
+  const env = await cf();
   const raw = await req.text();
   const signature = req.headers.get("creem-signature") ?? "";
 

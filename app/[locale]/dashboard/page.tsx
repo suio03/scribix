@@ -16,7 +16,7 @@ type Row = {
   audio_r2_key: string | null;
 };
 
-const AUDIO_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const AUDIO_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
 function audioStillAvailable(createdAt: string, audioKey: string | null): boolean {
   if (!audioKey) return false;
@@ -40,7 +40,7 @@ export default async function DashboardPage({
     redirect({ href: "/", locale });
     return null;
   }
-  const env = cf();
+  const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) {
     redirect({ href: "/", locale });

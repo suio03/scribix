@@ -137,7 +137,11 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
         }
       } catch (err) {
         console.error("Upload failed", { step, transcriptId, error: serializeError(err) });
-        trackEvent("transcribe_fail", { tool_slug: TOOL_SLUG, error_code: step });
+        trackEvent("transcribe_fail", {
+          tool_slug: TOOL_SLUG,
+          error_code: step,
+          error_message: errorSummary(err),
+        });
         const message = uploadErrorMessage(err, step, t);
         if (message === "persist_failed") {
           keepTranscript = true;
@@ -348,6 +352,21 @@ async function cleanupTranscript(id: string): Promise<void> {
   } catch {
     // Best-effort cleanup only; preserve the original upload error for the user.
   }
+}
+
+function errorSummary(err: unknown): string {
+  const raw =
+    err instanceof Error ? err.message :
+    typeof err === "string" ? err :
+    err == null ? "unknown" :
+    String(err);
+  return raw
+    .replace(/https?:\/\/\S+/gi, "<url>")
+    .replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, "<uuid>")
+    .replace(/\b[A-Za-z0-9_-]{32,}\b/g, "<token>")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 120);
 }
 
 function serializeError(err: unknown): Record<string, unknown> {
