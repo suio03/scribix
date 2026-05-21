@@ -7,7 +7,9 @@
 //      best-effort R2 cleanup.
 //   3. Hard-deletes `error` / `failed` rows older than 7d after
 //      best-effort R2 cleanup.
-//   4. For `completed` rows older than 14d, deletes the R2 audio object
+//   4. Purges legacy soft-deleted non-completed rows after best-effort R2
+//      cleanup.
+//   5. For `completed` rows older than 14d, deletes the R2 audio object
 //      and NULLs `audio_r2_key`. Transcript JSON is preserved forever.
 //
 // Deployed separately from the Next app via `wrangler.cleanup.jsonc`. Shares
@@ -75,6 +77,29 @@ async function sweepExpiredRows(env: Env, statuses: string[], cutoffIso: string)
   return ids.length;
 }
 
+async function sweepLegacySoftDeleted(env: Env): Promise<number> {
+  const rows = await env.DB.prepare(
+    `SELECT id, status, audio_r2_key, transcript_r2_key
+       FROM transcripts
+      WHERE deleted_at IS NOT NULL
+        AND status != 'completed'`
+  ).all<CleanupRow>();
+
+  const ids: string[] = [];
+  for (const r of rows.results ?? []) {
+    await deleteR2Best(env.SCRIBIX_MEDIA, r.audio_r2_key);
+    await deleteR2Best(env.SCRIBIX_MEDIA, r.transcript_r2_key);
+    ids.push(r.id);
+  }
+  if (!ids.length) return 0;
+
+  const placeholders = ids.map((_, i) => `?${i + 1}`).join(",");
+  await env.DB.prepare(
+    `DELETE FROM transcripts WHERE id IN (${placeholders})`
+  ).bind(...ids).run();
+  return ids.length;
+}
+
 async function sweepExpiredAudio(env: Env, cutoffIso: string): Promise<number> {
   const rows = await env.DB.prepare(
     `SELECT id, status, audio_r2_key, transcript_r2_key
@@ -107,9 +132,10 @@ async function runCleanup(env: Env): Promise<void> {
   const preSubmit = await sweepExpiredRows(env, PRE_SUBMIT_STATUSES, isoCutoff(PENDING_TTL_MS));
   const inFlight = await sweepExpiredRows(env, IN_FLIGHT_STATUSES, isoCutoff(IN_FLIGHT_TTL_MS));
   const failed = await sweepExpiredRows(env, FAILED_STATUSES, isoCutoff(FAILED_TTL_MS));
+  const legacyDeleted = await sweepLegacySoftDeleted(env);
   const expired = await sweepExpiredAudio(env, isoCutoff(AUDIO_TTL_MS));
   console.log(
-    `cleanup: pre_submit=${preSubmit} in_flight=${inFlight} failed=${failed} audio_expired=${expired}`
+    `cleanup: pre_submit=${preSubmit} in_flight=${inFlight} failed=${failed} legacy_deleted=${legacyDeleted} audio_expired=${expired}`
   );
 }
 

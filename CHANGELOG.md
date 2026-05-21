@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.2] - 2026-05-21
+
+### Changed
+- Purge legacy soft-deleted non-completed transcript rows from D1 during cleanup.
+
 ## [0.2.1] - 2026-05-21
 
 ### Changed
