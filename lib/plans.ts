@@ -24,7 +24,10 @@ export const PLANS = {
     yearly: { minutesPerCycle: 7200 },
     maxFileSec: 2 * 3600,
     maxFileBytes: 2 * 1024 * 1024 * 1024,
-    maxVideoUploadBytes: 2 * 1024 * 1024 * 1024,
+    // Capped at 1 GB across tiers: browser-side ffmpeg.wasm / Web Audio
+    // extraction is unreliable beyond this. Users with larger videos are
+    // guided to extract audio locally and upload the audio file instead.
+    maxVideoUploadBytes: 1 * 1024 * 1024 * 1024,
     speechModels: ["universal-3-pro", "universal-2"] as const,
   },
   pro: {
@@ -32,7 +35,7 @@ export const PLANS = {
     yearly: { minutesPerCycle: 21600 },
     maxFileSec: 10 * 3600,
     maxFileBytes: 5 * 1024 * 1024 * 1024,
-    maxVideoUploadBytes: 5 * 1024 * 1024 * 1024,
+    maxVideoUploadBytes: 1 * 1024 * 1024 * 1024,
     speechModels: ["universal-3-pro", "universal-2"] as const,
   },
 } as const;
