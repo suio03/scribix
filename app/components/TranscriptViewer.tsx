@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { Languages, MoreVertical, Pause, Play, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { AaiSegment } from "@/lib/aai";
 import { compactCJKSpaces } from "@/lib/transcript-format";
@@ -39,13 +39,44 @@ export function TranscriptViewer({ audioUrl, paragraphs, sentences, fallbackText
         <AudioPlayer ref={audioRef} url={audioUrl} onTimeUpdate={setCurrentMs} />
       )}
 
-      <div className="flex items-center gap-1 rounded-full bg-ink/5 p-1 w-fit">
-        <TabButton active={tab === "transcript"} onClick={() => setTab("transcript")}>
-          {t("tabTranscript")}
-        </TabButton>
-        <TabButton active={tab === "subtitles"} onClick={() => setTab("subtitles")}>
-          {t("tabSubtitles")}
-        </TabButton>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-1 rounded-full bg-ink/5 p-1 w-fit">
+          <TabButton active={tab === "transcript"} onClick={() => setTab("transcript")}>
+            {t("tabTranscript")}
+          </TabButton>
+          <TabButton active={tab === "subtitles"} onClick={() => setTab("subtitles")}>
+            {t("tabSubtitles")}
+          </TabButton>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            disabled
+            title={t("translateSoon")}
+            aria-label={t("translate")}
+            className="rounded-md p-1.5 text-ink/40 opacity-70 cursor-not-allowed"
+          >
+            <Languages size={16} />
+          </button>
+          <button
+            type="button"
+            disabled
+            title={t("summarySoon")}
+            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium text-ink/40 opacity-70 cursor-not-allowed"
+          >
+            <Sparkles size={14} />
+            {t("summary")}
+          </button>
+          <button
+            type="button"
+            disabled
+            title={t("moreSoon")}
+            aria-label={t("more")}
+            className="rounded-md p-1.5 text-ink/40 opacity-70 cursor-not-allowed"
+          >
+            <MoreVertical size={16} />
+          </button>
+        </div>
       </div>
 
       {hasSegments ? (

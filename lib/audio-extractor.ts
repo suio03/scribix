@@ -48,6 +48,7 @@ export async function extractAudioFromVideo(
     return await withTimeout(
       extractWithWebAudio(file, onProgress),
       2 * 60 * 1000,
+      "webaudio_timeout",
       () => {}
     );
   } catch (err) {
@@ -55,6 +56,7 @@ export async function extractAudioFromVideo(
     return withTimeout(
       extractWithFfmpeg(file, onProgress),
       3 * 60 * 1000,
+      "extraction_timeout",
       () => {
         _ff?.terminate();
         _ff = null;
@@ -195,12 +197,13 @@ function writeAscii(view: DataView, offset: number, text: string) {
 function withTimeout<T>(
   promise: Promise<T>,
   ms: number,
+  timeoutCode: string,
   onTimeout: () => void
 ): Promise<T> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       onTimeout();
-      reject(new Error("Audio extraction timed out. Trying browser fallback."));
+      reject(new Error(timeoutCode));
     }, ms);
     promise.then(
       (value) => {

@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0] - 2026-05-25
+
+### Added
+- Added a transcript export panel with TXT, DOCX, SRT, VTT, CSV, audio download, copy, and timestamp controls.
+- Added transcript viewer action placeholders and localized message keys for supported locales.
+
+### Changed
+- Reworked the transcript detail page into a wider viewer/export layout.
+- Added timestamp-aware TXT and DOCX export formatting.
+
+### Fixed
+- Show a clearer timeout message when browser audio extraction takes too long.
+- Preserve timestamped DOCX downloads from the dashboard row menu.
+
+### Removed
+- Removed the self-serve account deletion button from the account page.
+
 ## [0.2.2] - 2026-05-21
 
 ### Changed

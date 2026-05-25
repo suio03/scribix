@@ -16,17 +16,51 @@
     "docs": "Docs",
     "help": "Hilfe",
     "nav": [
-      { "label": "Startseite", "href": "#top", "icon": "Home", "active": true },
-      { "label": "Audio zu Text", "href": "#generator", "icon": "AudioLines" },
-      { "label": "Video zu Text", "href": "#generator", "icon": "Clapperboard" },
-      { "label": "YouTube-Transkript", "href": "#generator", "icon": "PlaySquare" },
-      { "label": "TikTok-Transkript", "href": "#generator", "icon": "Music2" },
-      { "label": "Instagram-Transkript", "href": "#generator", "icon": "Camera" }
+      {
+        "label": "Startseite",
+        "href": "#top",
+        "icon": "Home",
+        "active": true
+      },
+      {
+        "label": "Audio zu Text",
+        "href": "#generator",
+        "icon": "AudioLines"
+      },
+      {
+        "label": "Video zu Text",
+        "href": "#generator",
+        "icon": "Clapperboard"
+      },
+      {
+        "label": "YouTube-Transkript",
+        "href": "#generator",
+        "icon": "PlaySquare"
+      },
+      {
+        "label": "TikTok-Transkript",
+        "href": "#generator",
+        "icon": "Music2"
+      },
+      {
+        "label": "Instagram-Transkript",
+        "href": "#generator",
+        "icon": "Camera"
+      }
     ],
     "tools": [
-      { "label": "Zusammenfassen", "href": "#features" },
-      { "label": "Übersetzen", "href": "#features" },
-      { "label": "Untertitel (SRT/VTT)", "href": "#features" }
+      {
+        "label": "Zusammenfassen",
+        "href": "#features"
+      },
+      {
+        "label": "Übersetzen",
+        "href": "#features"
+      },
+      {
+        "label": "Untertitel (SRT/VTT)",
+        "href": "#features"
+      }
     ]
   },
   "Header": {
@@ -42,16 +76,46 @@
     "h1Part2": "<accent>Kostenlose KI-Transkription.</accent>",
     "description": "Scribix wandelt jedes Video in sekundenschnelle präzise, sprecheretikettierte Text um. Laden Sie eine MP4-, MOV-, WebM- oder AVI-Datei hoch – oder fügen Sie einen YouTube-Link ein – und erhalten Sie ein vollständiges Transkript mit Zeitstempel auf Wortebene in <stat>200+ Sprachen</stat>. <stat>Kostenlos</stat> mit Google-Anmeldung, Dateien bis zu 1 GB.",
     "trust": [
-      { "label": "99,9% Genauigkeit", "icon": "Target" },
-      { "label": "200+ Sprachen", "icon": "Globe" },
-      { "label": "Bis zu 1GB Dateien", "icon": "InfinityIcon" },
-      { "label": "Sprechererkennung", "icon": "Users" },
-      { "label": "Privat & sicher", "icon": "ShieldCheck" }
+      {
+        "label": "99,9% Genauigkeit",
+        "icon": "Target"
+      },
+      {
+        "label": "200+ Sprachen",
+        "icon": "Globe"
+      },
+      {
+        "label": "Bis zu 1GB Dateien",
+        "icon": "InfinityIcon"
+      },
+      {
+        "label": "Sprechererkennung",
+        "icon": "Users"
+      },
+      {
+        "label": "Privat & sicher",
+        "icon": "ShieldCheck"
+      }
     ],
     "tabs": [
-      { "id": "upload", "label": "Datei hochladen", "hint": "Video · Audio", "icon": "Upload" },
-      { "id": "youtube", "label": "YouTube-Link", "hint": "URL einfügen", "icon": "PlaySquare" },
-      { "id": "record", "label": "Aufnahme", "hint": "Live-Audio", "icon": "Mic" }
+      {
+        "id": "upload",
+        "label": "Datei hochladen",
+        "hint": "Video · Audio",
+        "icon": "Upload"
+      },
+      {
+        "id": "youtube",
+        "label": "YouTube-Link",
+        "hint": "URL einfügen",
+        "icon": "PlaySquare"
+      },
+      {
+        "id": "record",
+        "label": "Aufnahme",
+        "hint": "Live-Audio",
+        "icon": "Mic"
+      }
     ],
     "upload": {
       "instruction": "Ziehen Sie eine Video- oder Audiodatei herein, oder klicken Sie zum Durchsuchen.",
@@ -114,10 +178,22 @@
       "MIT Sloan Review"
     ],
     "stats": [
-      { "value": "10M+", "label": "Transkribierte Minuten" },
-      { "value": "100K+", "label": "Aktive Kreative" },
-      { "value": "200+", "label": "Unterstützte Sprachen" },
-      { "value": "99,9%", "label": "Genauigkeit auf Wortebene" }
+      {
+        "value": "10M+",
+        "label": "Transkribierte Minuten"
+      },
+      {
+        "value": "100K+",
+        "label": "Aktive Kreative"
+      },
+      {
+        "value": "200+",
+        "label": "Unterstützte Sprachen"
+      },
+      {
+        "value": "99,9%",
+        "label": "Genauigkeit auf Wortebene"
+      }
     ]
   },
   "Features": {
@@ -201,42 +277,66 @@
         "title": "YouTube-Kreative",
         "audience": "Langform zu Kurzform",
         "body": "Generieren Sie Untertitel für Barrierefreiheit, formen Sie lange Videos in Blog-Beiträge um, erstellen Sie durchsuchbare Episode-Archive. Zeitstempel auf Wortebene machen es trivial, virale Clips mit [12:04 – 12:38]-Genauigkeit zu extrahieren.",
-        "workflow": ["Langes Video", "Präzise Untertitel", "Clips & Shorts"]
+        "workflow": [
+          "Langes Video",
+          "Präzise Untertitel",
+          "Clips & Shorts"
+        ]
       },
       {
         "icon": "Mic",
         "title": "Podcaster & Produzenten",
         "audience": "Audio + Video Shows",
         "body": "Konvertieren Sie jede Episode in Show Notes, Blog-Inhalte und SEO-indizierte Transkripte – der Unterschied zwischen gefunden werden in Google und nicht. Sprecherbeschriftungen werden veröffentlichungsbereit geliefert.",
-        "workflow": ["Episode-Aufnahme", "Sprecherbeschriftetes Transkript", "Show Notes + Clips"]
+        "workflow": [
+          "Episode-Aufnahme",
+          "Sprecherbeschriftetes Transkript",
+          "Show Notes + Clips"
+        ]
       },
       {
         "icon": "Newspaper",
         "title": "Journalisten & Interviewer",
         "audience": "Investigativer Journalismus",
         "body": "Transkribieren Sie ein 90-Minuten-Interview, während Sie zur nächsten gehen. Sprecherbeschriftungen bedeuten, dass Sie Quellen genau zitieren können, ohne erneut zuzuhören – zitierfertige Text in einem Bruchteil der Zeit.",
-        "workflow": ["Quellen-Interview", "Wörtliches Transkript", "Pull-Angebote"]
+        "workflow": [
+          "Quellen-Interview",
+          "Wörtliches Transkript",
+          "Pull-Angebote"
+        ]
       },
       {
         "icon": "FlaskConical",
         "title": "Forscher & UX",
         "audience": "Fokusgruppen, Feldarbeit",
         "body": "Führen Sie qualitative Codierung für Fokusgruppen, Vorlesungen und Feldaufnahmen durch, ohne $1.50/min für menschliche Transkription zu bezahlen. Tag-Themen, durchsuchen Sie jedes Wort, exportieren Sie zu Dovetail oder Notion.",
-        "workflow": ["Benutzer-Interview", "Markierte Themen", "Synthesebereit"]
+        "workflow": [
+          "Benutzer-Interview",
+          "Markierte Themen",
+          "Synthesebereit"
+        ]
       },
       {
         "icon": "GraduationCap",
         "title": "Studenten",
         "audience": "Vorlesungen & Studium",
         "body": "Wandeln Sie eine 2-Stunden-Vorlesung in durchsuchbare Notizen um. Markieren Sie einen verwirrenden Moment, klicken Sie auf das Wort, hören Sie es erneut. Testen Sie kostenlos, dann deckt ein einziger Basic-Monat ein ganzes Semester an Vorlesungen ab.",
-        "workflow": ["Vorlesungsaufnahme", "Durchsuchbare Notizen", "KI-Zusammenfassung"]
+        "workflow": [
+          "Vorlesungsaufnahme",
+          "Durchsuchbare Notizen",
+          "KI-Zusammenfassung"
+        ]
       },
       {
         "icon": "Scale",
         "title": "Legal & Compliance",
         "audience": "Aussagen, Anhörungen",
         "body": "Erste Transkripte von Aussagen, Vorstandssitzungen und Compliance-Interviews – dann lassen Sie einen Menschen die Teile überprüfen, die wichtig sind. Zeitcodierte Transkripte und eine nachvollziehbare Verarbeitungskette. SOC 2-konform.",
-        "workflow": ["Anhörungs-Aufnahme", "Zeitcodiertes Transkript", "Audit-Spur"]
+        "workflow": [
+          "Anhörungs-Aufnahme",
+          "Zeitcodiertes Transkript",
+          "Audit-Spur"
+        ]
       }
     ]
   },
@@ -246,17 +346,94 @@
     "h2": "Schneller, präziser, <accent>und eine echte kostenlose Testversion.</accent>",
     "intro": "Wir benchmarken monatlich gegen die führenden Video-zu-Text-Tools anhand eines 200-Stunden-Test-Sets mit 12 Sprachen, 48 Sprechern und 4 Audioumgebungen – Studio, Telefon, Konferenz und Außenbereich.",
     "featureHeader": "Funktion",
-    "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
+    "cols": [
+      "Scribix",
+      "Otter",
+      "Rev",
+      "Whisper.cpp"
+    ],
     "rows": [
-      { "feature": "Kostenlose Testversion", "cells": ["45 Min einmalig", "300 / mo", "45 trial", "Unlimited"] },
-      { "feature": "Dateigröße-Limit", "cells": ["1 GB", "1.1 GB", "2 GB", "Local"] },
-      { "feature": "Unterstützte Sprachen", "cells": ["200+", "30+", "38", "99"] },
-      { "feature": "Sprechertrennung", "cells": ["yes", "yes", "yes", "no"] },
-      { "feature": "Zeitstempel auf Wortebene", "cells": ["yes", "no", "yes", "yes"] },
-      { "feature": "YouTube URL-Unterstützung", "cells": ["yes", "no", "no", "no"] },
-      { "feature": "Exportformate", "cells": ["7", "4", "5", "1"] },
-      { "feature": "Dateien gelöscht nach", "cells": ["24 hr", "30 days+", "30 days+", "Self-host"] },
-      { "feature": "Preisgestaltung – 100 Stunden", "cells": ["$12", "$30", "$150", "Compute only"] }
+      {
+        "feature": "Kostenlose Testversion",
+        "cells": [
+          "45 Min einmalig",
+          "300 / mo",
+          "45 trial",
+          "Unlimited"
+        ]
+      },
+      {
+        "feature": "Dateigröße-Limit",
+        "cells": [
+          "1 GB",
+          "1.1 GB",
+          "2 GB",
+          "Local"
+        ]
+      },
+      {
+        "feature": "Unterstützte Sprachen",
+        "cells": [
+          "200+",
+          "30+",
+          "38",
+          "99"
+        ]
+      },
+      {
+        "feature": "Sprechertrennung",
+        "cells": [
+          "yes",
+          "yes",
+          "yes",
+          "no"
+        ]
+      },
+      {
+        "feature": "Zeitstempel auf Wortebene",
+        "cells": [
+          "yes",
+          "no",
+          "yes",
+          "yes"
+        ]
+      },
+      {
+        "feature": "YouTube URL-Unterstützung",
+        "cells": [
+          "yes",
+          "no",
+          "no",
+          "no"
+        ]
+      },
+      {
+        "feature": "Exportformate",
+        "cells": [
+          "7",
+          "4",
+          "5",
+          "1"
+        ]
+      },
+      {
+        "feature": "Dateien gelöscht nach",
+        "cells": [
+          "24 hr",
+          "30 days+",
+          "30 days+",
+          "Self-host"
+        ]
+      },
+      {
+        "feature": "Preisgestaltung – 100 Stunden",
+        "cells": [
+          "$12",
+          "$30",
+          "$150",
+          "Compute only"
+        ]
+      }
     ]
   },
   "Testimonials": {
@@ -398,16 +575,31 @@
     "primaryCta": "Video hochladen",
     "secondaryCta": "YouTube-Link einfügen",
     "stats": [
-      { "value": "99,9%", "label": "Genauigkeit" },
-      { "value": "5×", "label": "Echtzeit" },
-      { "value": "24h", "label": "Auto-Delete" }
+      {
+        "value": "99,9%",
+        "label": "Genauigkeit"
+      },
+      {
+        "value": "5×",
+        "label": "Echtzeit"
+      },
+      {
+        "value": "24h",
+        "label": "Auto-Delete"
+      }
     ]
   },
   "Footer": {
     "tagline": "Studio-Qualität Video-zu-Text für Menschen, die aufgezeichnete Gespräche in Geschichten verwandeln.",
     "legal": [
-      { "label": "Servicebedingungen", "href": "/terms" },
-      { "label": "Datenschutzrichtlinie", "href": "/privacy" }
+      {
+        "label": "Servicebedingungen",
+        "href": "/terms"
+      },
+      {
+        "label": "Datenschutzrichtlinie",
+        "href": "/privacy"
+      }
     ]
   },
   "Dashboard": {
@@ -481,7 +673,13 @@
       "pause": "Pause",
       "mute": "Stummschalten",
       "unmute": "Lautstärke einschalten",
-      "playbackSpeed": "Wiedergabegeschwindigkeit"
+      "playbackSpeed": "Wiedergabegeschwindigkeit",
+      "moreSoon": "More options — coming soon",
+      "more": "More",
+      "summarySoon": "Summary — coming soon",
+      "summary": "Summary",
+      "translateSoon": "Translation — coming soon",
+      "translate": "Translate"
     },
     "rowMenu": {
       "more": "Weitere Aktionen",
@@ -509,6 +707,28 @@
     "download": {
       "label": "Herunterladen",
       "audio": "Audio"
+    },
+    "exportPanel": {
+      "tabExport": "Export",
+      "tabSummary": "Summary",
+      "tabChat": "AI Chat",
+      "tabMindmap": "MindMap",
+      "downloadTitle": "Download",
+      "withTimestamps": "With timestamps",
+      "downloadFormat": "Download {format}",
+      "audio": "Audio",
+      "audioUnavailable": "Audio file is no longer available.",
+      "actionsTitle": "Actions",
+      "copy": "Copy",
+      "copying": "Copying…",
+      "copied": "Copied",
+      "copyFailed": "Copy failed",
+      "share": "Share",
+      "shareSoon": "Share — coming soon",
+      "comingSummary": "Summary — coming soon",
+      "comingChat": "AI Chat — coming soon",
+      "comingMindmap": "MindMap — coming soon",
+      "comingBody": "We're building this. Check back shortly."
     },
     "copy": {
       "copy": "Kopieren",
@@ -538,6 +758,7 @@
       "noQuota": "Sie haben keine Minuten mehr für diese Periode. Upgraden Sie oder warten Sie auf den nächsten Zyklus.",
       "insufficientQuota": "Diese Datei benötigt etwa {neededMin} Min., aber Sie haben nur {remainingMin} Min. übrig in dieser Periode. Upgraden Sie oder warten Sie auf den nächsten Zyklus.",
       "aaiSubmitFailed": "Transkriptionsdienst nicht verfügbar. Bitte versuchen Sie es in einem Moment erneut.",
+      "extractionTimeout": "Audio extraction took too long. Try a shorter clip, or convert the video to MP3 first and upload that.",
       "requestFailed": "Anfrage fehlgeschlagen ({status}).",
       "uploadNetworkError": "Fehler beim Upload-Netzwerk.",
       "cannotReadMetadata": "Mediametadaten können nicht gelesen werden.",

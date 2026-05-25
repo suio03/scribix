@@ -6,7 +6,6 @@ import { auth, signOut } from "@/auth";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { quotaMinutesFor, type BillingCycle, type Tier } from "@/lib/plans";
 import { BillingPortalButton } from "@/app/components/BillingPortalButton";
-import { DeleteAccountButton } from "@/app/components/DeleteAccountButton";
 
 export default async function AccountPage() {
   const locale = await getLocale();
@@ -69,14 +68,6 @@ export default async function AccountPage() {
           {t("signOut")}
         </button>
       </form>
-
-      <div className="mt-12 rounded-2xl border border-red-200 p-6">
-        <h2 className="text-sm font-semibold text-red-700">{t("dangerZone")}</h2>
-        <p className="mt-1 text-sm text-ink/60">{t("deleteWarning")}</p>
-        <div className="mt-4">
-          <DeleteAccountButton />
-        </div>
-      </div>
     </main>
   );
 }

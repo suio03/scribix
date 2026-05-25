@@ -16,17 +16,51 @@
     "docs": "ドキュメント",
     "help": "ヘルプ",
     "nav": [
-      { "label": "ホーム", "href": "#top", "icon": "Home", "active": true },
-      { "label": "音声を文字に", "href": "#generator", "icon": "AudioLines" },
-      { "label": "動画を文字に", "href": "#generator", "icon": "Clapperboard" },
-      { "label": "YouTube 文字起こし", "href": "#generator", "icon": "PlaySquare" },
-      { "label": "TikTok 文字起こし", "href": "#generator", "icon": "Music2" },
-      { "label": "Instagram 文字起こし", "href": "#generator", "icon": "Camera" }
+      {
+        "label": "ホーム",
+        "href": "#top",
+        "icon": "Home",
+        "active": true
+      },
+      {
+        "label": "音声を文字に",
+        "href": "#generator",
+        "icon": "AudioLines"
+      },
+      {
+        "label": "動画を文字に",
+        "href": "#generator",
+        "icon": "Clapperboard"
+      },
+      {
+        "label": "YouTube 文字起こし",
+        "href": "#generator",
+        "icon": "PlaySquare"
+      },
+      {
+        "label": "TikTok 文字起こし",
+        "href": "#generator",
+        "icon": "Music2"
+      },
+      {
+        "label": "Instagram 文字起こし",
+        "href": "#generator",
+        "icon": "Camera"
+      }
     ],
     "tools": [
-      { "label": "要約", "href": "#features" },
-      { "label": "翻訳", "href": "#features" },
-      { "label": "字幕（SRT/VTT）", "href": "#features" }
+      {
+        "label": "要約",
+        "href": "#features"
+      },
+      {
+        "label": "翻訳",
+        "href": "#features"
+      },
+      {
+        "label": "字幕（SRT/VTT）",
+        "href": "#features"
+      }
     ]
   },
   "Header": {
@@ -42,16 +76,46 @@
     "h1Part2": "<accent>無料の AI 文字起こし。</accent>",
     "description": "Scribix は任意の動画を、話者ラベル付きの正確なテキストに秒単位で変換します。MP4、MOV、WebM、AVI ファイルをアップロード、または YouTube リンクを貼り付けるだけで、<stat>200以上の言語</stat>での完全な文字起こしが、単語レベルのタイムスタンプ付きで得られます。<stat>無料</stat>、Google サインインで利用可能、ファイルは最大 1GB まで。",
     "trust": [
-      { "label": "99.9% 精度", "icon": "Target" },
-      { "label": "200以上の言語", "icon": "Globe" },
-      { "label": "最大 1GB ファイル", "icon": "InfinityIcon" },
-      { "label": "話者識別", "icon": "Users" },
-      { "label": "プライベート＆セキュア", "icon": "ShieldCheck" }
+      {
+        "label": "99.9% 精度",
+        "icon": "Target"
+      },
+      {
+        "label": "200以上の言語",
+        "icon": "Globe"
+      },
+      {
+        "label": "最大 1GB ファイル",
+        "icon": "InfinityIcon"
+      },
+      {
+        "label": "話者識別",
+        "icon": "Users"
+      },
+      {
+        "label": "プライベート＆セキュア",
+        "icon": "ShieldCheck"
+      }
     ],
     "tabs": [
-      { "id": "upload", "label": "ファイルアップロード", "hint": "動画 · 音声", "icon": "Upload" },
-      { "id": "youtube", "label": "YouTube リンク", "hint": "URL を貼り付け", "icon": "PlaySquare" },
-      { "id": "record", "label": "録音", "hint": "ライブ音声", "icon": "Mic" }
+      {
+        "id": "upload",
+        "label": "ファイルアップロード",
+        "hint": "動画 · 音声",
+        "icon": "Upload"
+      },
+      {
+        "id": "youtube",
+        "label": "YouTube リンク",
+        "hint": "URL を貼り付け",
+        "icon": "PlaySquare"
+      },
+      {
+        "id": "record",
+        "label": "録音",
+        "hint": "ライブ音声",
+        "icon": "Mic"
+      }
     ],
     "upload": {
       "instruction": "動画または音声ファイルをドラッグ＆ドロップ、またはクリックして参照してください。",
@@ -114,10 +178,22 @@
       "MIT Sloan Review"
     ],
     "stats": [
-      { "value": "10M+", "label": "文字起こし分数" },
-      { "value": "100K+", "label": "アクティブクリエイター" },
-      { "value": "200+", "label": "対応言語" },
-      { "value": "99.9%", "label": "単語レベル精度" }
+      {
+        "value": "10M+",
+        "label": "文字起こし分数"
+      },
+      {
+        "value": "100K+",
+        "label": "アクティブクリエイター"
+      },
+      {
+        "value": "200+",
+        "label": "対応言語"
+      },
+      {
+        "value": "99.9%",
+        "label": "単語レベル精度"
+      }
     ]
   },
   "Features": {
@@ -201,42 +277,66 @@
         "title": "YouTube クリエイター",
         "audience": "ロングフォーム→ショートフォーム",
         "body": "アクセシビリティのため字幕を生成、ロング動画をブログに転用、エピソードアーカイブを検索可能に。単語レベルのタイムスタンプにより、[12:04 – 12:38] の精度でバイラルクリップ抽出が簡単。",
-        "workflow": ["ロング動画", "正確な字幕", "クリップ＆ショート"]
+        "workflow": [
+          "ロング動画",
+          "正確な字幕",
+          "クリップ＆ショート"
+        ]
       },
       {
         "icon": "Mic",
         "title": "ポッドキャスター＆プロデューサー",
         "audience": "音声＋動画番組",
         "body": "各エピソードをショーノート、ブログコンテンツ、SEO インデックス対象の文字起こしに変換—Google で見つかるかどうかの分岐点。話者ラベルは発行可能な状態で到着。",
-        "workflow": ["エピソード録音", "話者ラベル付き文字起こし", "ショーノート＋クリップ"]
+        "workflow": [
+          "エピソード録音",
+          "話者ラベル付き文字起こし",
+          "ショーノート＋クリップ"
+        ]
       },
       {
         "icon": "Newspaper",
         "title": "ジャーナリスト＆インタビュアー",
         "audience": "調査報道",
         "body": "90 分インタビューを次の取材に向かう途中で文字起こし。話者ラベルはソースを再リスニングなしで正確に引用可能—引用可能なテキストが時間の分の一で。",
-        "workflow": ["ソースインタビュー", "逐語的文字起こし", "引用を抽出"]
+        "workflow": [
+          "ソースインタビュー",
+          "逐語的文字起こし",
+          "引用を抽出"
+        ]
       },
       {
         "icon": "FlaskConical",
         "title": "研究者＆UX",
         "audience": "フォーカスグループ、フィールドワーク",
         "body": "人間による文字起こしに $1.50/分 を払うことなく、フォーカスグループ、講義、フィールド録音の定性コーディングを実行。テーマをタグ付け、あらゆる単語を検索、Dovetail や Notion にエクスポート。",
-        "workflow": ["ユーザーインタビュー", "タグ付きテーマ", "合成対応"]
+        "workflow": [
+          "ユーザーインタビュー",
+          "タグ付きテーマ",
+          "合成対応"
+        ]
       },
       {
         "icon": "GraduationCap",
         "title": "学生",
         "audience": "講義＆学習",
         "body": "2 時間の講義を検索可能なノートに変換。混乱した瞬間をマーク、単語をクリック、再度聞く。無料で試してから、Basic プラン 1 ヶ月分でセメスター全体の講義をカバーできます。",
-        "workflow": ["講義録画", "検索可能なノート", "AI 要約"]
+        "workflow": [
+          "講義録画",
+          "検索可能なノート",
+          "AI 要約"
+        ]
       },
       {
         "icon": "Scale",
         "title": "法務＆コンプライアンス",
         "audience": "証言、聴聞会",
         "body": "証言、役員会議、コンプライアンスインタビューの一次文字起こし—重要な部分を人間に検証させます。タイムコード付き文字起こしと監査可能な処理チェーン。SOC 2 準拠。",
-        "workflow": ["聴聞録音", "タイムコード付き文字起こし", "監査証跡"]
+        "workflow": [
+          "聴聞録音",
+          "タイムコード付き文字起こし",
+          "監査証跡"
+        ]
       }
     ]
   },
@@ -246,17 +346,94 @@
     "h2": "より高速で、より正確、<accent>そして本物の無料トライアル。</accent>",
     "intro": "毎月、12 言語、48 話者、4 つのオーディオ環境（スタジオ、電話、会議、屋外）にまたがる 200 時間のテストセットで、主要な動画から文字起こしツールに対してベンチマークを実施します。",
     "featureHeader": "機能",
-    "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
+    "cols": [
+      "Scribix",
+      "Otter",
+      "Rev",
+      "Whisper.cpp"
+    ],
     "rows": [
-      { "feature": "無料トライアル", "cells": ["45分（1回のみ）", "300 / 月", "45 トライアル", "Unlimited"] },
-      { "feature": "ファイルサイズ上限", "cells": ["1 GB", "1.1 GB", "2 GB", "Local"] },
-      { "feature": "対応言語", "cells": ["200+", "30+", "38", "99"] },
-      { "feature": "話者分離", "cells": ["yes", "yes", "yes", "no"] },
-      { "feature": "単語レベルタイムスタンプ", "cells": ["yes", "no", "yes", "yes"] },
-      { "feature": "YouTube URL サポート", "cells": ["yes", "no", "no", "no"] },
-      { "feature": "エクスポート形式", "cells": ["7", "4", "5", "1"] },
-      { "feature": "ファイル削除期間", "cells": ["24 hr", "30 days+", "30 days+", "Self-host"] },
-      { "feature": "料金 — 100 時間", "cells": ["$12", "$30", "$150", "Compute only"] }
+      {
+        "feature": "無料トライアル",
+        "cells": [
+          "45分（1回のみ）",
+          "300 / 月",
+          "45 トライアル",
+          "Unlimited"
+        ]
+      },
+      {
+        "feature": "ファイルサイズ上限",
+        "cells": [
+          "1 GB",
+          "1.1 GB",
+          "2 GB",
+          "Local"
+        ]
+      },
+      {
+        "feature": "対応言語",
+        "cells": [
+          "200+",
+          "30+",
+          "38",
+          "99"
+        ]
+      },
+      {
+        "feature": "話者分離",
+        "cells": [
+          "yes",
+          "yes",
+          "yes",
+          "no"
+        ]
+      },
+      {
+        "feature": "単語レベルタイムスタンプ",
+        "cells": [
+          "yes",
+          "no",
+          "yes",
+          "yes"
+        ]
+      },
+      {
+        "feature": "YouTube URL サポート",
+        "cells": [
+          "yes",
+          "no",
+          "no",
+          "no"
+        ]
+      },
+      {
+        "feature": "エクスポート形式",
+        "cells": [
+          "7",
+          "4",
+          "5",
+          "1"
+        ]
+      },
+      {
+        "feature": "ファイル削除期間",
+        "cells": [
+          "24 hr",
+          "30 days+",
+          "30 days+",
+          "Self-host"
+        ]
+      },
+      {
+        "feature": "料金 — 100 時間",
+        "cells": [
+          "$12",
+          "$30",
+          "$150",
+          "Compute only"
+        ]
+      }
     ]
   },
   "Testimonials": {
@@ -398,16 +575,31 @@
     "primaryCta": "動画をアップロード",
     "secondaryCta": "YouTube リンクを貼り付け",
     "stats": [
-      { "value": "99.9%", "label": "精度" },
-      { "value": "5×", "label": "リアルタイム" },
-      { "value": "24h", "label": "自動削除" }
+      {
+        "value": "99.9%",
+        "label": "精度"
+      },
+      {
+        "value": "5×",
+        "label": "リアルタイム"
+      },
+      {
+        "value": "24h",
+        "label": "自動削除"
+      }
     ]
   },
   "Footer": {
     "tagline": "記録された会話をストーリーに変えるプロたちのためのスタジオグレード動画から文字。",
     "legal": [
-      { "label": "利用規約", "href": "/terms" },
-      { "label": "プライバシーポリシー", "href": "/privacy" }
+      {
+        "label": "利用規約",
+        "href": "/terms"
+      },
+      {
+        "label": "プライバシーポリシー",
+        "href": "/privacy"
+      }
     ]
   },
   "Dashboard": {
@@ -481,7 +673,13 @@
       "pause": "一時停止",
       "mute": "ミュート",
       "unmute": "ミュート解除",
-      "playbackSpeed": "再生速度"
+      "playbackSpeed": "再生速度",
+      "moreSoon": "More options — coming soon",
+      "more": "More",
+      "summarySoon": "Summary — coming soon",
+      "summary": "Summary",
+      "translateSoon": "Translation — coming soon",
+      "translate": "Translate"
     },
     "rowMenu": {
       "more": "他のアクション",
@@ -509,6 +707,28 @@
     "download": {
       "label": "ダウンロード",
       "audio": "音声"
+    },
+    "exportPanel": {
+      "tabExport": "Export",
+      "tabSummary": "Summary",
+      "tabChat": "AI Chat",
+      "tabMindmap": "MindMap",
+      "downloadTitle": "Download",
+      "withTimestamps": "With timestamps",
+      "downloadFormat": "Download {format}",
+      "audio": "Audio",
+      "audioUnavailable": "Audio file is no longer available.",
+      "actionsTitle": "Actions",
+      "copy": "Copy",
+      "copying": "Copying…",
+      "copied": "Copied",
+      "copyFailed": "Copy failed",
+      "share": "Share",
+      "shareSoon": "Share — coming soon",
+      "comingSummary": "Summary — coming soon",
+      "comingChat": "AI Chat — coming soon",
+      "comingMindmap": "MindMap — coming soon",
+      "comingBody": "We're building this. Check back shortly."
     },
     "copy": {
       "copy": "コピー",
@@ -538,6 +758,7 @@
       "noQuota": "この期間の分数がなくなりました。アップグレードするか、次の周期を待ってください。",
       "insufficientQuota": "このファイルは ~{neededMin} 分必要ですが、この期間は {remainingMin} 分しか残っていません。アップグレードするか、次の周期を待ってください。",
       "aaiSubmitFailed": "文字起こしサービスが利用できません。もう一度お試しください。",
+      "extractionTimeout": "Audio extraction took too long. Try a shorter clip, or convert the video to MP3 first and upload that.",
       "requestFailed": "リクエストに失敗しました（{status}）。",
       "uploadNetworkError": "アップロードネットワークエラー。",
       "cannotReadMetadata": "メディアメタデータを読み取ることができません。",

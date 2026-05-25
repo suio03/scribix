@@ -59,6 +59,27 @@ function timestamp(ms: number, sep: "," | "."): string {
   return `${pad(h, 2)}:${pad(m, 2)}:${pad(s, 2)}${sep}${pad(r, 3)}`;
 }
 
+function shortStamp(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  if (h > 0) return `${h}:${pad(m, 2)}:${pad(s, 2)}`;
+  return `${pad(m, 2)}:${pad(s, 2)}`;
+}
+
+export function toTxt(aai: AaiTranscript, withTimestamps = false): string {
+  if (!withTimestamps) return compactCJKSpaces(aai.text ?? "");
+  const cues = cuesFromAai(aai);
+  if (cues.length === 0) return compactCJKSpaces(aai.text ?? "");
+  return cues
+    .map((c) => {
+      const head = c.speaker ? `[${shortStamp(c.start)}] Speaker ${c.speaker}` : `[${shortStamp(c.start)}]`;
+      return `${head}\n${c.text}`;
+    })
+    .join("\n\n") + "\n";
+}
+
 export function toSrt(aai: AaiTranscript): string {
   const cues = cuesFromAai(aai);
   return cues
@@ -99,7 +120,11 @@ function csvField(s: string): string {
   return s;
 }
 
-export async function toDocx(aai: AaiTranscript, title: string): Promise<Uint8Array> {
+export async function toDocx(
+  aai: AaiTranscript,
+  title: string,
+  withTimestamps = true
+): Promise<Uint8Array> {
   const cues = cuesFromAai(aai);
   const children: Paragraph[] = [
     new Paragraph({
@@ -115,19 +140,31 @@ export async function toDocx(aai: AaiTranscript, title: string): Promise<Uint8Ar
     );
   } else {
     for (const c of cues) {
-      const stamp = timestamp(c.start, ".");
-      const speaker = c.speaker ? `Speaker ${c.speaker}` : "";
-      const meta = speaker ? `${stamp}  ${speaker}` : stamp;
+      if (withTimestamps) {
+        const stamp = timestamp(c.start, ".");
+        const speaker = c.speaker ? `Speaker ${c.speaker}` : "";
+        const meta = speaker ? `${stamp}  ${speaker}` : stamp;
+        children.push(
+          new Paragraph({
+            spacing: { before: 200, after: 60 },
+            children: [
+              new TextRun({ text: meta, bold: true, color: "888888", size: 18 }),
+            ],
+          })
+        );
+      } else if (c.speaker) {
+        children.push(
+          new Paragraph({
+            spacing: { before: 200, after: 60 },
+            children: [
+              new TextRun({ text: `Speaker ${c.speaker}`, bold: true, color: "888888", size: 18 }),
+            ],
+          })
+        );
+      }
       children.push(
         new Paragraph({
-          spacing: { before: 200, after: 60 },
-          children: [
-            new TextRun({ text: meta, bold: true, color: "888888", size: 18 }),
-          ],
-        })
-      );
-      children.push(
-        new Paragraph({
+          spacing: withTimestamps ? undefined : { before: c.speaker ? 0 : 200, after: 60 },
           children: [new TextRun({ text: c.text })],
         })
       );

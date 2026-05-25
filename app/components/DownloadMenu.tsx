@@ -62,7 +62,7 @@ export function DownloadMenu({ id, audioAvailable, variant = "icon" }: Props) {
           {FORMATS.map((f) => (
             <a
               key={f.format}
-              href={`/api/transcripts/${id}/export?format=${f.format}`}
+              href={`/api/transcripts/${id}/export?format=${f.format}${f.format === "docx" ? "&timestamps=1" : ""}`}
               onClick={() => {
                 trackEvent("download_click", { format: f.format });
                 setOpen(false);

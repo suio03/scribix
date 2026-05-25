@@ -388,6 +388,7 @@ function serializeError(err: unknown): Record<string, unknown> {
 
 function uploadErrorMessage(err: unknown, step: string, t: UploaderT): string {
   if (err instanceof Error && err.message === "cannot_read_metadata") return t("cannotReadMetadata");
+  if (err instanceof Error && err.message === "extraction_timeout") return t("extractionTimeout");
   if (err instanceof Error && err.message) return err.message;
   if (err instanceof DOMException && err.message) return err.message;
   if (typeof err === "string" && err) return err;

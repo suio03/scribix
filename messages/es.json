@@ -16,17 +16,51 @@
     "docs": "Documentación",
     "help": "Ayuda",
     "nav": [
-      { "label": "Inicio", "href": "#top", "icon": "Home", "active": true },
-      { "label": "Audio a texto", "href": "#generator", "icon": "AudioLines" },
-      { "label": "Vídeo a texto", "href": "#generator", "icon": "Clapperboard" },
-      { "label": "Transcript de YouTube", "href": "#generator", "icon": "PlaySquare" },
-      { "label": "Transcript de TikTok", "href": "#generator", "icon": "Music2" },
-      { "label": "Transcript de Instagram", "href": "#generator", "icon": "Camera" }
+      {
+        "label": "Inicio",
+        "href": "#top",
+        "icon": "Home",
+        "active": true
+      },
+      {
+        "label": "Audio a texto",
+        "href": "#generator",
+        "icon": "AudioLines"
+      },
+      {
+        "label": "Vídeo a texto",
+        "href": "#generator",
+        "icon": "Clapperboard"
+      },
+      {
+        "label": "Transcript de YouTube",
+        "href": "#generator",
+        "icon": "PlaySquare"
+      },
+      {
+        "label": "Transcript de TikTok",
+        "href": "#generator",
+        "icon": "Music2"
+      },
+      {
+        "label": "Transcript de Instagram",
+        "href": "#generator",
+        "icon": "Camera"
+      }
     ],
     "tools": [
-      { "label": "Resumir", "href": "#features" },
-      { "label": "Traducir", "href": "#features" },
-      { "label": "Subtítulos (SRT/VTT)", "href": "#features" }
+      {
+        "label": "Resumir",
+        "href": "#features"
+      },
+      {
+        "label": "Traducir",
+        "href": "#features"
+      },
+      {
+        "label": "Subtítulos (SRT/VTT)",
+        "href": "#features"
+      }
     ]
   },
   "Header": {
@@ -42,16 +76,46 @@
     "h1Part2": "<accent>Transcripción IA gratis.</accent>",
     "description": "Scribix convierte cualquier vídeo en texto preciso con etiquetas de locutor en segundos. Sube un archivo MP4, MOV, WebM o AVI, o pega un enlace de YouTube, y obtén un transcript completo con marcas de tiempo a nivel de palabra en <stat>200+ idiomas</stat>. <stat>Gratis</stat> con inicio de sesión de Google, archivos hasta 1 GB.",
     "trust": [
-      { "label": "99,9% de precisión", "icon": "Target" },
-      { "label": "200+ idiomas", "icon": "Globe" },
-      { "label": "Archivos hasta 1GB", "icon": "InfinityIcon" },
-      { "label": "Reconocimiento de locutor", "icon": "Users" },
-      { "label": "Privado y seguro", "icon": "ShieldCheck" }
+      {
+        "label": "99,9% de precisión",
+        "icon": "Target"
+      },
+      {
+        "label": "200+ idiomas",
+        "icon": "Globe"
+      },
+      {
+        "label": "Archivos hasta 1GB",
+        "icon": "InfinityIcon"
+      },
+      {
+        "label": "Reconocimiento de locutor",
+        "icon": "Users"
+      },
+      {
+        "label": "Privado y seguro",
+        "icon": "ShieldCheck"
+      }
     ],
     "tabs": [
-      { "id": "upload", "label": "Subir archivo", "hint": "Vídeo · Audio", "icon": "Upload" },
-      { "id": "youtube", "label": "Enlace de YouTube", "hint": "Pegar URL", "icon": "PlaySquare" },
-      { "id": "record", "label": "Grabar", "hint": "Audio en vivo", "icon": "Mic" }
+      {
+        "id": "upload",
+        "label": "Subir archivo",
+        "hint": "Vídeo · Audio",
+        "icon": "Upload"
+      },
+      {
+        "id": "youtube",
+        "label": "Enlace de YouTube",
+        "hint": "Pegar URL",
+        "icon": "PlaySquare"
+      },
+      {
+        "id": "record",
+        "label": "Grabar",
+        "hint": "Audio en vivo",
+        "icon": "Mic"
+      }
     ],
     "upload": {
       "instruction": "Arrastra un archivo de vídeo o audio, o haz clic para explorar.",
@@ -114,10 +178,22 @@
       "MIT Sloan Review"
     ],
     "stats": [
-      { "value": "10M+", "label": "Minutos transcritos" },
-      { "value": "100K+", "label": "Creadores activos" },
-      { "value": "200+", "label": "Idiomas compatibles" },
-      { "value": "99,9%", "label": "Precisión a nivel de palabra" }
+      {
+        "value": "10M+",
+        "label": "Minutos transcritos"
+      },
+      {
+        "value": "100K+",
+        "label": "Creadores activos"
+      },
+      {
+        "value": "200+",
+        "label": "Idiomas compatibles"
+      },
+      {
+        "value": "99,9%",
+        "label": "Precisión a nivel de palabra"
+      }
     ]
   },
   "Features": {
@@ -201,42 +277,66 @@
         "title": "Creadores de YouTube",
         "audience": "De formato largo a corto",
         "body": "Genera subtítulos para accesibilidad, reutiliza vídeos largos en publicaciones de blog, construye archivos de episodios buscables. Las marcas de tiempo a nivel de palabra hacen trivial extraer clips virales con precisión [12:04 – 12:38].",
-        "workflow": ["Vídeo largo", "Subtítulos precisos", "Clips y shorts"]
+        "workflow": [
+          "Vídeo largo",
+          "Subtítulos precisos",
+          "Clips y shorts"
+        ]
       },
       {
         "icon": "Mic",
         "title": "Podcasters y productores",
         "audience": "Programas de audio y vídeo",
         "body": "Convierte cada episodio en notas del programa, contenido de blog y transcripts indexados por SEO: la diferencia entre ser encontrado en Google y no serlo. Las etiquetas de locutor llegan listas para publicar.",
-        "workflow": ["Grabación del episodio", "Transcript con etiqueta de locutor", "Notas del programa + clips"]
+        "workflow": [
+          "Grabación del episodio",
+          "Transcript con etiqueta de locutor",
+          "Notas del programa + clips"
+        ]
       },
       {
         "icon": "Newspaper",
         "title": "Periodistas y entrevistadores",
         "audience": "Reportaje investigativo",
         "body": "Transcribe una entrevista de 90 minutos mientras caminas hacia la siguiente. Las etiquetas de locutor significan que puedes citar fuentes con precisión sin re-escuchar: texto listo para citas en una fracción del tiempo.",
-        "workflow": ["Entrevista de fuente", "Transcript textual", "Citas destacadas"]
+        "workflow": [
+          "Entrevista de fuente",
+          "Transcript textual",
+          "Citas destacadas"
+        ]
       },
       {
         "icon": "FlaskConical",
         "title": "Investigadores y UX",
         "audience": "Grupos focales, trabajo de campo",
         "body": "Ejecuta codificación cualitativa en grupos focales, conferencias y grabaciones de campo sin pagar $1.50/min por transcripción humana. Etiqueta temas, busca en cada palabra, exporta a Dovetail o Notion.",
-        "workflow": ["Entrevista de usuario", "Temas etiquetados", "Listo para síntesis"]
+        "workflow": [
+          "Entrevista de usuario",
+          "Temas etiquetados",
+          "Listo para síntesis"
+        ]
       },
       {
         "icon": "GraduationCap",
         "title": "Estudiantes",
         "audience": "Conferencias y estudio",
         "body": "Convierte una conferencia de 2 horas en notas buscables. Marca un momento confuso, haz clic en la palabra, escúchalo de nuevo. Pruébalo gratis y luego un solo mes Basic cubre todo un semestre de conferencias.",
-        "workflow": ["Grabación de conferencia", "Notas buscables", "Resumen IA"]
+        "workflow": [
+          "Grabación de conferencia",
+          "Notas buscables",
+          "Resumen IA"
+        ]
       },
       {
         "icon": "Scale",
         "title": "Legal y cumplimiento",
         "audience": "Declaraciones, audiencias",
         "body": "Transcripts de primer paso de declaraciones, juntas directivas y entrevistas de cumplimiento, luego que una persona verifique las partes que importan. Transcripts codificados por tiempo y una cadena de procesamiento auditable. Alineado con SOC 2.",
-        "workflow": ["Grabación de audiencia", "Transcript codificado por tiempo", "Pista de auditoría"]
+        "workflow": [
+          "Grabación de audiencia",
+          "Transcript codificado por tiempo",
+          "Pista de auditoría"
+        ]
       }
     ]
   },
@@ -246,17 +346,94 @@
     "h2": "Más rápido, más preciso, <accent>y una prueba gratuita real.</accent>",
     "intro": "Hacemos benchmark mensualmente contra las herramientas principales de vídeo a texto en un conjunto de pruebas de 200 horas que abarca 12 idiomas, 48 locutores y 4 ambientes de audio: estudio, teléfono, conferencia y al aire libre.",
     "featureHeader": "Característica",
-    "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
+    "cols": [
+      "Scribix",
+      "Otter",
+      "Rev",
+      "Whisper.cpp"
+    ],
     "rows": [
-      { "feature": "Prueba gratuita", "cells": ["45 min única vez", "300 / mes", "45 trial", "Unlimited"] },
-      { "feature": "Límite de tamaño de archivo", "cells": ["1 GB", "1.1 GB", "2 GB", "Local"] },
-      { "feature": "Idiomas compatibles", "cells": ["200+", "30+", "38", "99"] },
-      { "feature": "Diarización de locutor", "cells": ["yes", "yes", "yes", "no"] },
-      { "feature": "Marcas de tiempo a nivel de palabra", "cells": ["yes", "no", "yes", "yes"] },
-      { "feature": "Soporte de URL de YouTube", "cells": ["yes", "no", "no", "no"] },
-      { "feature": "Formatos de exportación", "cells": ["7", "4", "5", "1"] },
-      { "feature": "Archivos eliminados después de", "cells": ["24 hr", "30 days+", "30 days+", "Self-host"] },
-      { "feature": "Precio — 100 hrs", "cells": ["$12", "$30", "$150", "Compute only"] }
+      {
+        "feature": "Prueba gratuita",
+        "cells": [
+          "45 min única vez",
+          "300 / mes",
+          "45 trial",
+          "Unlimited"
+        ]
+      },
+      {
+        "feature": "Límite de tamaño de archivo",
+        "cells": [
+          "1 GB",
+          "1.1 GB",
+          "2 GB",
+          "Local"
+        ]
+      },
+      {
+        "feature": "Idiomas compatibles",
+        "cells": [
+          "200+",
+          "30+",
+          "38",
+          "99"
+        ]
+      },
+      {
+        "feature": "Diarización de locutor",
+        "cells": [
+          "yes",
+          "yes",
+          "yes",
+          "no"
+        ]
+      },
+      {
+        "feature": "Marcas de tiempo a nivel de palabra",
+        "cells": [
+          "yes",
+          "no",
+          "yes",
+          "yes"
+        ]
+      },
+      {
+        "feature": "Soporte de URL de YouTube",
+        "cells": [
+          "yes",
+          "no",
+          "no",
+          "no"
+        ]
+      },
+      {
+        "feature": "Formatos de exportación",
+        "cells": [
+          "7",
+          "4",
+          "5",
+          "1"
+        ]
+      },
+      {
+        "feature": "Archivos eliminados después de",
+        "cells": [
+          "24 hr",
+          "30 days+",
+          "30 days+",
+          "Self-host"
+        ]
+      },
+      {
+        "feature": "Precio — 100 hrs",
+        "cells": [
+          "$12",
+          "$30",
+          "$150",
+          "Compute only"
+        ]
+      }
     ]
   },
   "Testimonials": {
@@ -398,16 +575,31 @@
     "primaryCta": "Subir un vídeo",
     "secondaryCta": "Pegar un enlace de YouTube",
     "stats": [
-      { "value": "99,9%", "label": "Precisión" },
-      { "value": "5×", "label": "En tiempo real" },
-      { "value": "24h", "label": "Auto-eliminar" }
+      {
+        "value": "99,9%",
+        "label": "Precisión"
+      },
+      {
+        "value": "5×",
+        "label": "En tiempo real"
+      },
+      {
+        "value": "24h",
+        "label": "Auto-eliminar"
+      }
     ]
   },
   "Footer": {
     "tagline": "Vídeo a texto a nivel de estudio para la gente que convierte la conversación grabada en historias.",
     "legal": [
-      { "label": "Términos de servicio", "href": "/terms" },
-      { "label": "Política de privacidad", "href": "/privacy" }
+      {
+        "label": "Términos de servicio",
+        "href": "/terms"
+      },
+      {
+        "label": "Política de privacidad",
+        "href": "/privacy"
+      }
     ]
   },
   "Dashboard": {
@@ -481,7 +673,13 @@
       "pause": "Pausar",
       "mute": "Silenciar",
       "unmute": "Activar sonido",
-      "playbackSpeed": "Velocidad de reproducción"
+      "playbackSpeed": "Velocidad de reproducción",
+      "moreSoon": "More options — coming soon",
+      "more": "More",
+      "summarySoon": "Summary — coming soon",
+      "summary": "Summary",
+      "translateSoon": "Translation — coming soon",
+      "translate": "Translate"
     },
     "rowMenu": {
       "more": "Más acciones",
@@ -509,6 +707,28 @@
     "download": {
       "label": "Descargar",
       "audio": "Audio"
+    },
+    "exportPanel": {
+      "tabExport": "Export",
+      "tabSummary": "Summary",
+      "tabChat": "AI Chat",
+      "tabMindmap": "MindMap",
+      "downloadTitle": "Download",
+      "withTimestamps": "With timestamps",
+      "downloadFormat": "Download {format}",
+      "audio": "Audio",
+      "audioUnavailable": "Audio file is no longer available.",
+      "actionsTitle": "Actions",
+      "copy": "Copy",
+      "copying": "Copying…",
+      "copied": "Copied",
+      "copyFailed": "Copy failed",
+      "share": "Share",
+      "shareSoon": "Share — coming soon",
+      "comingSummary": "Summary — coming soon",
+      "comingChat": "AI Chat — coming soon",
+      "comingMindmap": "MindMap — coming soon",
+      "comingBody": "We're building this. Check back shortly."
     },
     "copy": {
       "copy": "Copiar",
@@ -538,6 +758,7 @@
       "noQuota": "Se te acabaron los minutos para este período. Actualiza o espera al próximo ciclo.",
       "insufficientQuota": "Este archivo necesita ~{neededMin} min pero solo te quedan {remainingMin} min en este período. Actualiza o espera al próximo ciclo.",
       "aaiSubmitFailed": "El servicio de transcripción no está disponible. Por favor, intenta de nuevo en un momento.",
+      "extractionTimeout": "Audio extraction took too long. Try a shorter clip, or convert the video to MP3 first and upload that.",
       "requestFailed": "Solicitud fallida ({status}).",
       "uploadNetworkError": "Error de red en la subida.",
       "cannotReadMetadata": "No se pueden leer los metadatos del medio.",

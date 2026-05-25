@@ -482,7 +482,13 @@
       "pause": "Pause",
       "mute": "Mute",
       "unmute": "Unmute",
-      "playbackSpeed": "Playback speed"
+      "playbackSpeed": "Playback speed",
+      "translate": "Translate",
+      "translateSoon": "Translation — coming soon",
+      "summary": "Summary",
+      "summarySoon": "Summary — coming soon",
+      "more": "More",
+      "moreSoon": "More options — coming soon"
     },
     "rowMenu": {
       "more": "More actions",
@@ -510,6 +516,28 @@
     "download": {
       "label": "Download",
       "audio": "Audio"
+    },
+    "exportPanel": {
+      "tabExport": "Export",
+      "tabSummary": "Summary",
+      "tabChat": "AI Chat",
+      "tabMindmap": "MindMap",
+      "downloadTitle": "Download",
+      "withTimestamps": "With timestamps",
+      "downloadFormat": "Download {format}",
+      "audio": "Audio",
+      "audioUnavailable": "Audio file is no longer available.",
+      "actionsTitle": "Actions",
+      "copy": "Copy",
+      "copying": "Copying…",
+      "copied": "Copied",
+      "copyFailed": "Copy failed",
+      "share": "Share",
+      "shareSoon": "Share — coming soon",
+      "comingSummary": "Summary — coming soon",
+      "comingChat": "AI Chat — coming soon",
+      "comingMindmap": "MindMap — coming soon",
+      "comingBody": "We're building this. Check back shortly."
     },
     "copy": {
       "copy": "Copy",
@@ -539,6 +567,7 @@
       "noQuota": "You're out of minutes for this period. Upgrade or wait for the next cycle.",
       "insufficientQuota": "This file needs ~{neededMin} min but you only have {remainingMin} min left this period. Upgrade or wait for the next cycle.",
       "aaiSubmitFailed": "Transcription service is unavailable. Please try again in a moment.",
+      "extractionTimeout": "Audio extraction took too long. Try a shorter clip, or convert the video to MP3 first and upload that.",
       "requestFailed": "Request failed ({status}).",
       "uploadNetworkError": "Upload network error.",
       "cannotReadMetadata": "Cannot read media metadata.",

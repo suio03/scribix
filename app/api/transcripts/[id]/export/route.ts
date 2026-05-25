@@ -3,10 +3,10 @@ import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import {
-  compactCJKSpaces,
   toCsv,
   toDocx,
   toSrt,
+  toTxt,
   toVtt,
 } from "@/lib/transcript-format";
 
@@ -24,6 +24,7 @@ export async function GET(req: Request, { params }: Params) {
   if (!FORMATS.includes(requested)) {
     return Response.json({ error: "unsupported_format" }, { status: 400 });
   }
+  const withTimestamps = url.searchParams.get("timestamps") === "1";
 
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
@@ -68,12 +69,12 @@ export async function GET(req: Request, { params }: Params) {
       contentType = "text/csv; charset=utf-8";
       break;
     case "docx":
-      body = await toDocx(aai, row.title);
+      body = await toDocx(aai, row.title, withTimestamps);
       contentType =
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
       break;
     default:
-      body = compactCJKSpaces(aai.text ?? "");
+      body = toTxt(aai, withTimestamps);
       contentType = "text/plain; charset=utf-8";
   }
 

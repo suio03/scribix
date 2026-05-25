@@ -8,8 +8,7 @@ import type { AaiTranscript } from "@/lib/aai";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { presignGet } from "@/lib/r2";
 import { TranscriptViewer } from "@/app/components/TranscriptViewer";
-import { DownloadMenu } from "@/app/components/DownloadMenu";
-import { CopyTranscriptButton } from "@/app/components/CopyTranscriptButton";
+import { ExportPanel } from "@/app/components/ExportPanel";
 
 type Params = { params: Promise<{ locale: string; id: string }> };
 
@@ -61,51 +60,53 @@ export default async function TranscriptViewerPage({ params }: Params) {
       ? await presignGet(row.audio_r2_key, 60 * 60)
       : null;
 
-  return (
-    <main className="mx-auto max-w-[820px] px-4 py-12 sm:px-8">
-      <div className="flex items-center justify-between gap-4">
-        <Link
-          href="/dashboard"
-          className="text-[13px] text-ink/60 hover:text-ink"
-        >
-          {t("back")}
-        </Link>
-        {row.status === "completed" && (
-          <div className="flex items-center gap-2">
-            <CopyTranscriptButton id={row.id} />
-            <DownloadMenu
-              id={row.id}
-              audioAvailable={Boolean(row.audio_r2_key) && !expired}
-              variant="button"
-            />
-          </div>
-        )}
-      </div>
+  const audioAvailable = Boolean(row.audio_r2_key) && !expired;
 
-      <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight">{row.title}</h1>
-      <p className="mt-1 text-sm text-ink/60">
-        {metaLine(row, t)}
-      </p>
+  return (
+    <main className="mx-auto max-w-[1400px] px-4 py-10 sm:px-8">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <Link
+            href="/dashboard"
+            className="text-[13px] text-ink/60 hover:text-ink"
+          >
+            {t("back")}
+          </Link>
+          <h1 className="mt-3 truncate font-display text-3xl font-semibold tracking-tight">
+            {row.title}
+          </h1>
+          <p className="mt-1 text-sm text-ink/60">{metaLine(row, t)}</p>
+        </div>
+      </div>
 
       {row.status === "completed" && expired ? (
         <div className="mt-6 rounded-2xl border border-line bg-card/60 px-4 py-3 text-[13px] text-ink/70">
-          <span className="font-medium text-ink">{t("audioExpiredLabel")}</span> {t("audioExpiredBody")}
+          <span className="font-medium text-ink">{t("audioExpiredLabel")}</span>{" "}
+          {t("audioExpiredBody")}
         </div>
       ) : null}
 
-      <div className="mt-10">
-        {row.status !== "completed" ? (
-          <StatusPanel status={row.status} error={row.error} t={t} />
-        ) : aai ? (
-          <TranscriptViewer
-            audioUrl={audioUrl}
-            paragraphs={aai.paragraphs ?? []}
-            sentences={aai.sentences ?? []}
-            fallbackText={aai.text ?? ""}
-          />
-        ) : (
-          <p className="text-sm text-ink/60">{t("missing")}</p>
-        )}
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
+        <section className="min-w-0">
+          {row.status !== "completed" ? (
+            <StatusPanel status={row.status} error={row.error} t={t} />
+          ) : aai ? (
+            <TranscriptViewer
+              audioUrl={audioUrl}
+              paragraphs={aai.paragraphs ?? []}
+              sentences={aai.sentences ?? []}
+              fallbackText={aai.text ?? ""}
+            />
+          ) : (
+            <p className="text-sm text-ink/60">{t("missing")}</p>
+          )}
+        </section>
+
+        {row.status === "completed" && aai ? (
+          <aside className="lg:sticky lg:top-6 lg:self-start">
+            <ExportPanel id={row.id} audioAvailable={audioAvailable} />
+          </aside>
+        ) : null}
       </div>
     </main>
   );
