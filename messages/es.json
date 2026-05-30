@@ -475,7 +475,7 @@
         "blurb": "Para transcripts ocasionales, estudiantes y curiosos.",
         "features": [
           "Transcripts de vídeo ilimitados",
-          "Hasta 30 min por archivo",
+          "Hasta 45 min por archivo",
           "Etiquetas de locutor (hasta 4)",
           "Exportación de SRT, VTT y DOCX"
         ],
@@ -750,6 +750,7 @@
       "phaseSubmitting": "Enviando para procesamiento…",
       "phaseTranscribing": "Transcribiendo…",
       "videoTooBig": "Las subidas de vídeo están actualmente limitadas a 1 GB en el navegador. Para archivos más grandes, convierte a audio primero.",
+      "audioOnly": "Elige un archivo de audio.",
       "fileTooLargeWithCap": "Ese archivo es más grande de lo que permite tu nivel (máx {mb} MB). Actualiza para límites mayores.",
       "fileTooLarge": "Ese archivo es más grande de lo que permite tu nivel. Actualiza para límites mayores.",
       "durationExceedsTierWithCap": "Ese archivo es más largo de lo que permite tu nivel (máx {min} min por archivo). Actualiza para archivos más largos.",
@@ -773,5 +774,359 @@
       "recording": "Grabando — se detiene automáticamente en {min} min",
       "micDenied": "Acceso al micrófono denegado."
     }
+  },
+  "AudioToText": {
+    "metadata": {
+      "title": "Audio a texto | Transcripción IA online",
+      "description": "Convierte audio a texto online con Scribix. Inicia sesión con Google, sube MP3, WAV o M4A y obtén transcripciones con hablantes para copiar o exportar.",
+      "openGraphTitle": "Audio a texto | Transcripción IA online | Scribix",
+      "openGraphDescription": "Inicia sesión con Google, sube audio y obtén una transcripción con hablantes, marcas de tiempo y exportaciones.",
+      "twitterTitle": "Audio a texto | Scribix",
+      "twitterDescription": "Sube audio y obtén transcripciones buscables con hablantes, marcas de tiempo y exportaciones."
+    },
+    "hero": {
+      "issue": "REC · 00:00:00",
+      "issueLabel": "Edición №02 · Audio a texto",
+      "title": "Convierte audio a texto.",
+      "accentTitle": "Transcripción IA.",
+      "descriptionStart": "Scribix convierte archivos de audio en texto preciso, con hablantes, que puedes revisar, copiar y exportar. Inicia sesión con Google, sube un archivo de audio y obtén una transcripción con marcas de tiempo en",
+      "stat": "más de 200 idiomas",
+      "descriptionEnd": ".",
+      "primaryCta": "Iniciar sesión para subir audio",
+      "signedInPrimaryCta": "Subir audio",
+      "secondaryCta": "¿Necesitas video a texto?",
+      "secondaryHref": "/",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "45 min gratis"
+        },
+        {
+          "icon": "Globe",
+          "label": "200+ idiomas"
+        },
+        {
+          "icon": "Users",
+          "label": "Etiquetas de hablantes"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "Sin tarjeta"
+        }
+      ]
+    },
+    "upload": {
+      "uploadTab": "Subir archivo",
+      "uploadHint": "Audio",
+      "instruction": "Suelta un archivo de audio o haz clic para buscar.",
+      "specs": "Prueba gratis: 45 min · MP3 · WAV · M4A · sin tarjeta",
+      "button": "Iniciar sesión para subir audio",
+      "signedInButton": "Subir audio"
+    },
+    "quickAnswer": {
+      "kicker": "Respuesta rápida",
+      "title": "Sube audio. Obtén texto editable.",
+      "body": "Scribix es una herramienta online de audio a texto para convertir grabaciones en texto buscable. Es ideal para entrevistas, reuniones, clases, podcasts, notas de voz e investigación. Sube un archivo de audio, espera la transcripción IA, revisa el resultado y expórtalo como TXT, DOCX, SRT, VTT o CSV."
+    },
+    "overview": {
+      "number": "01",
+      "label": "Resumen",
+      "rows": [
+        {
+          "item": "Ideal para",
+          "detail": "Entrevistas, reuniones, clases, podcasts, notas de voz y audio de investigación"
+        },
+        {
+          "item": "No ideal para",
+          "detail": "Transcripciones certificadas o grabaciones ruidosas que no puedan revisarse"
+        },
+        {
+          "item": "Entrada",
+          "detail": "Archivos de audio como MP3, WAV y M4A"
+        },
+        {
+          "item": "Salida",
+          "detail": "Transcripción con hablantes, marcas de tiempo, copia y opciones de exportación"
+        },
+        {
+          "item": "Flujo",
+          "detail": "Iniciar sesión, subir audio, transcribir, revisar, exportar"
+        },
+        {
+          "item": "Prueba gratis",
+          "detail": "45 minutos con Google, sin tarjeta de crédito"
+        },
+        {
+          "item": "Privacidad",
+          "detail": "El audio se elimina tras 7 días; las transcripciones quedan hasta que las borres"
+        }
+      ],
+      "bestFor": {
+        "title": "Ideal para",
+        "items": [
+          "Periodistas y entrevistadores que extraen citas buscables de conversaciones grabadas.",
+          "Podcasters y creadores que preparan transcripciones, subtítulos y contenido escrito reutilizable.",
+          "Estudiantes e investigadores que convierten clases y grabaciones de campo en notas revisables.",
+          "Equipos que conservan un registro escrito de llamadas, entrevistas con clientes y reuniones."
+        ]
+      },
+      "notBestFor": {
+        "title": "No ideal para",
+        "items": [
+          "Transcripciones legales o judiciales certificadas que requieren un transcriptor humano cualificado.",
+          "Grabaciones con mucho ruido, solapamientos o audio faltante que no se pueda comprobar después.",
+          "Flujos que requieren subida anónima sin cuenta."
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "Cómo funciona",
+      "title": "Tres pasos.",
+      "accentTitle": "Audio a texto.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Inicia sesión con Google.",
+          "body": "Tu prueba gratis empieza con 45 minutos de transcripción y sin tarjeta de crédito.",
+          "meta": "Sin tarjeta"
+        },
+        {
+          "n": "02",
+          "icon": "FileAudio",
+          "title": "Sube audio.",
+          "body": "Elige un archivo de audio como MP3, WAV o M4A.",
+          "meta": "Subida de audio"
+        },
+        {
+          "n": "03",
+          "icon": "Download",
+          "title": "Revisa y exporta.",
+          "body": "Comprueba hablantes y marcas de tiempo, luego copia o descarga TXT, DOCX, SRT, VTT o CSV.",
+          "meta": "5 formatos"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "Casos de uso",
+      "title": "Creado para audio grabado que debe convertirse en",
+      "accentTitle": "texto útil.",
+      "items": [
+        {
+          "icon": "Users",
+          "title": "Transcripción de entrevistas",
+          "who": "Periodistas, reclutadores, investigadores",
+          "output": "Transcripción Q&A con marcas de tiempo y hablantes"
+        },
+        {
+          "icon": "Mic",
+          "title": "Notas de reunión",
+          "who": "Fundadores, ventas, operaciones",
+          "output": "Registro buscable de qué se dijo y quién lo dijo"
+        },
+        {
+          "icon": "Search",
+          "title": "Repaso de clases",
+          "who": "Estudiantes y educadores",
+          "output": "Notas de estudio que se pueden buscar y citar"
+        },
+        {
+          "icon": "Captions",
+          "title": "Preparar subtítulos",
+          "who": "Editores de video y creadores",
+          "output": "Subtítulos SRT o VTT generados desde la pista de audio"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "Ejemplo",
+      "title": "Una transcripción que puedes revisar, citar y exportar.",
+      "body": "Entrada de ejemplo: una entrevista de cliente de dos personas grabada como customer-interview.m4a.",
+      "filename": "customer-interview.m4a",
+      "transcript": "[00:00] Hablante A\nGracias por venir. ¿Puedes describir qué pasó cuando intentaste subir el archivo?\n\n[00:07] Hablante B\nEsperaba que terminara en uno o dos minutos, pero no sabía si la subida seguía activa.\n\n[00:15] Hablante A\nEntonces el problema principal era la información durante el procesamiento, no el resultado de la transcripción?\n\n[00:21] Hablante B\nExacto. Cuando apareció la transcripción, fue fácil buscar y compartirla con el equipo."
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "Capacidades",
+      "title": "Transcripción enfocada,",
+      "accentTitle": "sin funciones no lanzadas.",
+      "intro": "Esta página es para transcribir: sube audio, obtén texto con marcas de tiempo y hablantes, luego copia o exporta. Resúmenes, traducción, chat y mapas mentales no forman parte de este flujo.",
+      "items": [
+        {
+          "icon": "Globe",
+          "title": "200+ idiomas",
+          "body": "La detección automática simplifica la subida cuando tus grabaciones incluyen varios hablantes o regiones."
+        },
+        {
+          "icon": "Users",
+          "title": "Hablantes",
+          "body": "Las conversaciones son más fáciles de revisar cuando cada intervención está separada por hablante."
+        },
+        {
+          "icon": "Clock3",
+          "title": "Marcas de tiempo",
+          "body": "El texto con tiempos ayuda a rastrear citas, preparar subtítulos y revisar momentos importantes."
+        },
+        {
+          "icon": "Download",
+          "title": "Cinco formatos",
+          "body": "Descarga TXT, DOCX, SRT, VTT o CSV, o copia la transcripción directamente."
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "¿Qué tan precisa es la transcripción de audio a texto?",
+          "body": [
+            "Scribix puede alcanzar 99,9% de precisión con audio claro. Los resultados reales dependen de la calidad de grabación, distancia al micrófono, ruido, acentos, vocabulario especializado y voces solapadas.",
+            "Para trabajo legal, médico, académico, financiero o publicado, trata la transcripción como un primer borrador sólido y revísala antes de compartirla."
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "¿Tu audio es privado?",
+          "body": [
+            "Scribix usa el audio subido solo para generar y entregar transcripciones en tu cuenta. Los archivos de audio y video se eliminan automáticamente después de 7 días.",
+            "Las transcripciones permanecen en tu cuenta hasta que las borres o cierres la cuenta. Lee la"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "política de privacidad",
+            "suffix": "."
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "Comparado",
+      "title": "Scribix frente a otras formas de convertir audio a texto.",
+      "headers": [
+        "Enfoque",
+        "Ideal para",
+        "Límite"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix",
+          "bestFor": "Transcripción online rápida con historial y exportaciones",
+          "tradeoff": "Requiere iniciar sesión con Google antes de subir"
+        },
+        {
+          "approach": "Transcripción manual",
+          "bestFor": "Trabajo certificado o muy sensible",
+          "tradeoff": "Lenta y cara para grabaciones largas"
+        },
+        {
+          "approach": "Chat IA genérico",
+          "bestFor": "Fragmentos cortos ya transcritos",
+          "tradeoff": "La mayoría no gestiona un flujo completo de transcripción"
+        },
+        {
+          "approach": "Speech-to-text local",
+          "bestFor": "Usuarios que necesitan procesamiento solo local",
+          "tradeoff": "Requiere configuración, cómputo y manejo de exportaciones"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "Preguntas,",
+      "accentTitle": "respondidas con claridad.",
+      "intro": "Precisión, privacidad, exportaciones e inicio de sesión se explican antes de subir audio.",
+      "items": [
+        {
+          "q": "¿Cómo convierto audio a texto con Scribix?",
+          "a": "Inicia sesión con Google, sube un archivo de audio y Scribix lo transcribe. Cuando esté listo, revísalo en el panel y copia o exporta el resultado."
+        },
+        {
+          "q": "¿La herramienta es gratis para probar?",
+          "a": "Sí. Scribix ofrece una prueba gratis de 45 minutos con Google y sin tarjeta de crédito."
+        },
+        {
+          "q": "¿Qué formatos acepta Scribix?",
+          "a": "El cargador acepta audio compatible con el navegador, incluidos MP3, WAV y M4A. Si el archivo se rechaza o excede tu plan, la app mostrará un error."
+        },
+        {
+          "q": "¿Puede Scribix identificar hablantes?",
+          "a": "Sí. Scribix solicita etiquetas de hablante durante la transcripción para separar conversaciones cuando la calidad de audio lo permite."
+        },
+        {
+          "q": "¿Puedo exportar la transcripción?",
+          "a": "Sí. Puedes exportar transcripciones terminadas como TXT, DOCX, SRT, VTT o CSV, y también copiar el texto."
+        },
+        {
+          "q": "¿Cuántos idiomas admite Scribix?",
+          "a": "Scribix admite transcripción en más de 200 idiomas con detección automática."
+        },
+        {
+          "q": "¿Qué tan preciso es Scribix?",
+          "a": "Puede alcanzar 99,9% en audio claro, pero los resultados dependen de calidad, acentos, ruido, solapamientos y vocabulario. Revisa transcripciones importantes antes de publicarlas o usarlas."
+        },
+        {
+          "q": "¿Mi audio se guarda para siempre?",
+          "a": "No. La política de privacidad de Scribix indica que los archivos subidos se eliminan automáticamente después de 7 días. Las transcripciones quedan en tu cuenta hasta que las borres o cierres la cuenta."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Listo cuando tú lo estés",
+      "title": "Convierte audio en texto.",
+      "body": "Inicia sesión con Google, sube tu primer audio y obtén una transcripción buscable para revisar, copiar y exportar.",
+      "primaryCta": "Iniciar sesión para subir audio",
+      "signedInPrimaryCta": "Subir audio",
+      "stats": [
+        {
+          "value": "45 min",
+          "label": "Prueba"
+        },
+        {
+          "value": "200+",
+          "label": "Idiomas"
+        },
+        {
+          "value": "7 días",
+          "label": "Eliminación"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix Audio a texto",
+      "appDescription": "Herramienta online para convertir audio subido en transcripciones con hablantes, marcas de tiempo y exportaciones.",
+      "offerDescription": "Prueba gratis de 45 minutos con Google y sin tarjeta de crédito.",
+      "featureList": [
+        "Subida de audio",
+        "Detección automática de idioma",
+        "200+ idiomas",
+        "Hablantes",
+        "Transcripciones con tiempo",
+        "Exportar TXT",
+        "Exportar DOCX",
+        "Exportar SRT",
+        "Exportar VTT",
+        "Exportar CSV",
+        "Copiar transcripción"
+      ],
+      "howToName": "Cómo convertir audio a texto con Scribix",
+      "howToDescription": "Inicia sesión, sube audio, transcríbelo, revisa la transcripción y exporta el resultado.",
+      "howToSteps": [
+        "Iniciar sesión con Google",
+        "Subir audio",
+        "Transcribir el audio",
+        "Revisar la transcripción",
+        "Copiar o exportar"
+      ]
+    }
+  },
+  "HomeAudioToTextLink": {
+    "prefix": "¿Trabajas con grabaciones solo de audio?",
+    "link": "Abre la página dedicada de audio a texto",
+    "suffix": "."
   }
 }

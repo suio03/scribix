@@ -4,6 +4,13 @@ import { redirect } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { isAdmin } from "@/lib/admin";
 
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 export default async function AdminLayout({
   children,
   params,

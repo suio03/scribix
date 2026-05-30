@@ -475,7 +475,7 @@
         "blurb": "Für gelegentliche Transkriptionen, Studenten und Neugierige.",
         "features": [
           "Unbegrenzte Video-Transkriptionen",
-          "Bis zu 30 Min pro Datei",
+          "Bis zu 45 Min pro Datei",
           "Sprecherbeschriftungen (bis zu 4)",
           "SRT, VTT & DOCX Export"
         ],
@@ -750,6 +750,7 @@
       "phaseSubmitting": "Wird zur Verarbeitung eingereicht…",
       "phaseTranscribing": "Wird transkribiert…",
       "videoTooBig": "Video-Uploads sind derzeit im Browser auf 1 GB begrenzt. Für größere Dateien konvertieren Sie diese bitte zuerst in Audio.",
+      "audioOnly": "Bitte wähle eine Audiodatei aus.",
       "fileTooLargeWithCap": "Diese Datei ist größer als Ihr Plan zulässt (max. {mb} MB). Upgraden Sie für höhere Limits.",
       "fileTooLarge": "Diese Datei ist größer als Ihr Plan zulässt. Upgraden Sie für höhere Limits.",
       "durationExceedsTierWithCap": "Diese Datei ist länger als Ihr Plan zulässt (max. {min} Min. pro Datei). Upgraden Sie für längere Dateien.",
@@ -773,5 +774,359 @@
       "recording": "Aufnahme läuft – stoppt automatisch bei {min} Min.",
       "micDenied": "Mikrofonzugriff verweigert."
     }
+  },
+  "AudioToText": {
+    "metadata": {
+      "title": "Audio zu Text | KI-Transkription online",
+      "description": "Wandle Audio online mit Scribix in Text um. Mit Google anmelden, MP3, WAV oder M4A hochladen und Sprecher-Transkripte kopieren oder exportieren.",
+      "openGraphTitle": "Audio zu Text | KI-Transkription online | Scribix",
+      "openGraphDescription": "Mit Google anmelden, Audio hochladen und ein Transkript mit Sprechern, Zeitstempeln und Exporten erhalten.",
+      "twitterTitle": "Audio zu Text | Scribix",
+      "twitterDescription": "Audio hochladen und durchsuchbare Transkripte mit Sprechern, Zeitstempeln und Exporten erhalten."
+    },
+    "hero": {
+      "issue": "REC · 00:00:00",
+      "issueLabel": "Ausgabe №02 · Audio zu Text",
+      "title": "Audio in Text umwandeln.",
+      "accentTitle": "KI-Transkription.",
+      "descriptionStart": "Scribix wandelt Audiodateien in präzisen Text mit Sprecherlabels um, den du prüfen, kopieren und exportieren kannst. Melde dich mit Google an, lade eine Audiodatei hoch und erhalte ein Transkript mit Zeitstempeln in",
+      "stat": "über 200 Sprachen",
+      "descriptionEnd": ".",
+      "primaryCta": "Anmelden, um Audio hochzuladen",
+      "signedInPrimaryCta": "Audio hochladen",
+      "secondaryCta": "Brauchst du Video zu Text?",
+      "secondaryHref": "/",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "45 Min. kostenlos"
+        },
+        {
+          "icon": "Globe",
+          "label": "200+ Sprachen"
+        },
+        {
+          "icon": "Users",
+          "label": "Sprecherlabels"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "Keine Kreditkarte"
+        }
+      ]
+    },
+    "upload": {
+      "uploadTab": "Datei hochladen",
+      "uploadHint": "Audio",
+      "instruction": "Audiodatei ablegen oder zum Auswählen klicken.",
+      "specs": "Kostenlose Probe: 45 Min. · MP3 · WAV · M4A · keine Kreditkarte",
+      "button": "Anmelden, um Audio hochzuladen",
+      "signedInButton": "Audio hochladen"
+    },
+    "quickAnswer": {
+      "kicker": "Kurzantwort",
+      "title": "Audio hochladen. Bearbeitbaren Text erhalten.",
+      "body": "Scribix ist ein Online-Tool, das Aufnahmen in durchsuchbaren Text umwandelt. Es eignet sich für Interviews, Meetings, Vorlesungen, Podcasts, Sprachnotizen und Forschungsaufnahmen. Lade eine Audiodatei hoch, warte auf die KI-Transkription, prüfe das Transkript und exportiere es als TXT, DOCX, SRT, VTT oder CSV."
+    },
+    "overview": {
+      "number": "01",
+      "label": "Überblick",
+      "rows": [
+        {
+          "item": "Ideal für",
+          "detail": "Interviews, Meetings, Vorlesungen, Podcasts, Sprachnotizen und Forschungsaudio"
+        },
+        {
+          "item": "Nicht ideal für",
+          "detail": "Beglaubigte Transkripte oder verrauschte Aufnahmen, die nicht überprüft werden können"
+        },
+        {
+          "item": "Eingabe",
+          "detail": "Audiodateien wie MP3, WAV und M4A"
+        },
+        {
+          "item": "Ausgabe",
+          "detail": "Transkript mit Sprecherlabels, Zeitstempeln, Kopie und Exportoptionen"
+        },
+        {
+          "item": "Ablauf",
+          "detail": "Anmelden, Audio hochladen, transkribieren, prüfen, exportieren"
+        },
+        {
+          "item": "Kostenlose Probe",
+          "detail": "45 Minuten mit Google-Anmeldung, keine Kreditkarte"
+        },
+        {
+          "item": "Datenschutz",
+          "detail": "Audio wird nach 7 Tagen gelöscht; Transkripte bleiben, bis du sie löschst"
+        }
+      ],
+      "bestFor": {
+        "title": "Ideal für",
+        "items": [
+          "Interviewende und Journalisten, die durchsuchbare Zitate aus aufgezeichneten Gesprächen ziehen.",
+          "Podcaster und Creator, die Transkripte, Untertitel und wiederverwendbare Inhalte vorbereiten.",
+          "Studierende und Forschende, die Vorlesungen und Feldaufnahmen in prüfbare Notizen umwandeln.",
+          "Teams, die Anrufe, Kundeninterviews und Meetings schriftlich festhalten."
+        ]
+      },
+      "notBestFor": {
+        "title": "Nicht ideal für",
+        "items": [
+          "Beglaubigte juristische oder gerichtliche Transkripte, die qualifizierte menschliche Transkription erfordern.",
+          "Aufnahmen mit starkem Rauschen, Übersprechen oder fehlendem Audio, die später nicht geprüft werden können.",
+          "Workflows, die anonymes Hochladen ohne Konto verlangen."
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "So funktioniert es",
+      "title": "Drei Schritte.",
+      "accentTitle": "Audio zu Text.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Mit Google anmelden.",
+          "body": "Deine kostenlose Probe startet mit 45 Transkriptionsminuten und ohne Kreditkarte.",
+          "meta": "Keine Kreditkarte"
+        },
+        {
+          "n": "02",
+          "icon": "FileAudio",
+          "title": "Audio hochladen.",
+          "body": "Wähle eine Audiodatei wie MP3, WAV oder M4A aus.",
+          "meta": "Audio-Upload"
+        },
+        {
+          "n": "03",
+          "icon": "Download",
+          "title": "Prüfen und exportieren.",
+          "body": "Kontrolliere Sprecherlabels und Zeitstempel, dann kopiere oder lade TXT, DOCX, SRT, VTT oder CSV herunter.",
+          "meta": "5 Formate"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "Anwendungsfälle",
+      "title": "Gebaut für aufgenommenes Audio, das zu",
+      "accentTitle": "nutzbarem Text werden muss.",
+      "items": [
+        {
+          "icon": "Users",
+          "title": "Interview-Transkription",
+          "who": "Journalisten, Recruiter, Forschende",
+          "output": "Zeitgestempeltes Q&A-Transkript mit Sprecherlabels"
+        },
+        {
+          "icon": "Mic",
+          "title": "Meeting-Notizen",
+          "who": "Gründer, Sales, Operations",
+          "output": "Durchsuchbarer Verlauf, was gesagt wurde und von wem"
+        },
+        {
+          "icon": "Search",
+          "title": "Vorlesungen prüfen",
+          "who": "Studierende und Lehrende",
+          "output": "Studiennotizen, die gesucht und zitiert werden können"
+        },
+        {
+          "icon": "Captions",
+          "title": "Untertitel vorbereiten",
+          "who": "Videoeditoren und Creator",
+          "output": "SRT- oder VTT-Untertitel aus der Audiospur"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "Beispiel",
+      "title": "Ein Transkript, das du prüfen, zitieren und exportieren kannst.",
+      "body": "Beispieleingabe: ein Kundeninterview mit zwei Personen als customer-interview.m4a.",
+      "filename": "customer-interview.m4a",
+      "transcript": "[00:00] Sprecher A\nDanke, dass Sie dabei sind. Können Sie beschreiben, was beim Hochladen der Datei passiert ist?\n\n[00:07] Sprecher B\nIch dachte, es wäre nach ein oder zwei Minuten fertig, war aber nicht sicher, ob der Upload noch läuft.\n\n[00:15] Sprecher A\nDas Hauptproblem war also das Feedback während der Verarbeitung, nicht das Transkriptionsergebnis?\n\n[00:21] Sprecher B\nGenau. Sobald das Transkript erschien, konnte man es leicht durchsuchen und mit dem Team teilen."
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "Funktionen",
+      "title": "Fokussierte Transkription,",
+      "accentTitle": "ohne unveröffentlichte Extras.",
+      "intro": "Diese Seite ist für Transkription gedacht: Audio hochladen, Text mit Zeitstempeln und Sprecherlabels erhalten, dann kopieren oder exportieren. Zusammenfassungen, Übersetzung, Chat und Mindmaps gehören nicht zu diesem Workflow.",
+      "items": [
+        {
+          "icon": "Globe",
+          "title": "200+ Sprachen",
+          "body": "Automatische Spracherkennung hält den Upload einfach, wenn Aufnahmen mehrere Sprecher oder Regionen enthalten."
+        },
+        {
+          "icon": "Users",
+          "title": "Sprecherlabels",
+          "body": "Gesprächstranskripte sind leichter zu lesen, wenn jeder Beitrag nach Sprecher getrennt ist."
+        },
+        {
+          "icon": "Clock3",
+          "title": "Zeitstempel",
+          "body": "Zeitgestempelter Text hilft, Zitate zu finden, Untertitel vorzubereiten und wichtige Momente zu prüfen."
+        },
+        {
+          "icon": "Download",
+          "title": "Fünf Exportformate",
+          "body": "TXT, DOCX, SRT, VTT oder CSV herunterladen oder das Transkript direkt kopieren."
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "Wie genau ist Audio-zu-Text-Transkription?",
+          "body": [
+            "Scribix kann bei klarem Audio 99,9% Genauigkeit erreichen. Reale Ergebnisse hängen von Aufnahmequalität, Mikrofonabstand, Hintergrundgeräuschen, Akzenten, Fachvokabular und überlappenden Stimmen ab.",
+            "Für juristische, medizinische, akademische, finanzielle oder veröffentlichte Arbeit sollte das Transkript als starker erster Entwurf geprüft werden."
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "Ist dein Audio privat?",
+          "body": [
+            "Scribix verwendet hochgeladenes Audio nur, um Transkripte für dein Konto zu erstellen und bereitzustellen. Audio- und Videodateien werden automatisch nach 7 Tagen gelöscht.",
+            "Transkripte bleiben in deinem Konto, bis du sie löschst oder das Konto schließt. Lies die"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "Datenschutzerklärung",
+            "suffix": "."
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "Vergleich",
+      "title": "Scribix im Vergleich zu anderen Wegen, Audio in Text umzuwandeln.",
+      "headers": [
+        "Ansatz",
+        "Ideal für",
+        "Nachteil"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix",
+          "bestFor": "Schnelle Online-Transkription mit Verlauf und Exporten",
+          "tradeoff": "Google-Anmeldung vor dem Upload erforderlich"
+        },
+        {
+          "approach": "Manuelle Transkription",
+          "bestFor": "Beglaubigte oder sehr sensible Arbeit",
+          "tradeoff": "Langsam und teuer bei langen Aufnahmen"
+        },
+        {
+          "approach": "Allgemeiner KI-Chat",
+          "bestFor": "Kurze eingefügte Ausschnitte nach vorhandener Transkription",
+          "tradeoff": "Die meisten Chats unterstützen keinen kompletten Transkriptionsworkflow"
+        },
+        {
+          "approach": "Lokales Speech-to-Text",
+          "bestFor": "Nutzer, die nur lokale Verarbeitung benötigen",
+          "tradeoff": "Erfordert Einrichtung, Rechenleistung und Exportverwaltung"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "Fragen,",
+      "accentTitle": "klar beantwortet.",
+      "intro": "Genauigkeit, Datenschutz, Exporte und Anmeldung werden verständlich erklärt, bevor Audio hochgeladen wird.",
+      "items": [
+        {
+          "q": "Wie wandle ich Audio mit Scribix in Text um?",
+          "a": "Melde dich mit Google an, lade eine Audiodatei hoch und Scribix transkribiert sie. Wenn das Transkript fertig ist, prüfe es im Dashboard und kopiere oder exportiere das Ergebnis."
+        },
+        {
+          "q": "Kann ich das Audio-zu-Text-Tool kostenlos testen?",
+          "a": "Ja. Scribix bietet eine kostenlose Probe mit 45 Minuten, Google-Anmeldung und ohne Kreditkarte."
+        },
+        {
+          "q": "Welche Audioformate unterstützt Scribix?",
+          "a": "Der Uploader akzeptiert browserunterstützte Audiodateien, darunter MP3, WAV und M4A. Wenn eine Datei abgelehnt wird oder dein Planlimit überschreitet, zeigt die App einen Fehler."
+        },
+        {
+          "q": "Kann Scribix unterschiedliche Sprecher erkennen?",
+          "a": "Ja. Scribix fordert Sprecherlabels während der Transkription an, sodass Gespräche bei ausreichender Audioqualität getrennt werden können."
+        },
+        {
+          "q": "Kann ich das Transkript exportieren?",
+          "a": "Ja. Fertige Transkripte können als TXT, DOCX, SRT, VTT oder CSV exportiert werden. Du kannst den Text auch kopieren."
+        },
+        {
+          "q": "Wie viele Sprachen unterstützt Scribix?",
+          "a": "Scribix unterstützt Transkription in über 200 Sprachen mit automatischer Erkennung."
+        },
+        {
+          "q": "Wie genau ist Scribix?",
+          "a": "Scribix kann bei klarem Audio 99,9% erreichen, aber Ergebnisse hängen von Audioqualität, Akzenten, Rauschen, Übersprechen und Fachvokabular ab. Prüfe wichtige Transkripte vor Veröffentlichung oder Nutzung."
+        },
+        {
+          "q": "Wird mein Audio für immer gespeichert?",
+          "a": "Nein. Laut Datenschutzerklärung werden hochgeladene Audio- und Videodateien automatisch nach 7 Tagen gelöscht. Transkripte bleiben in deinem Konto, bis du sie löschst oder das Konto schließt."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Bereit, wenn du es bist",
+      "title": "Audio in Text verwandeln.",
+      "body": "Melde dich mit Google an, lade deine erste Audiodatei hoch und erhalte ein durchsuchbares Transkript zum Prüfen, Kopieren und Exportieren.",
+      "primaryCta": "Anmelden, um Audio hochzuladen",
+      "signedInPrimaryCta": "Audio hochladen",
+      "stats": [
+        {
+          "value": "45 Min.",
+          "label": "Probe"
+        },
+        {
+          "value": "200+",
+          "label": "Sprachen"
+        },
+        {
+          "value": "7 Tage",
+          "label": "Auto-Löschung"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix Audio zu Text",
+      "appDescription": "Online-Tool zur Umwandlung hochgeladener Audiodateien in Transkripte mit Sprecherlabels, Zeitstempeln und Exportformaten.",
+      "offerDescription": "45-minütige kostenlose Probe mit Google-Anmeldung und ohne Kreditkarte.",
+      "featureList": [
+        "Audiodatei hochladen",
+        "Automatische Spracherkennung",
+        "200+ Sprachen",
+        "Sprecherlabels",
+        "Zeitgestempelte Transkripte",
+        "TXT-Export",
+        "DOCX-Export",
+        "SRT-Export",
+        "VTT-Export",
+        "CSV-Export",
+        "Transkript kopieren"
+      ],
+      "howToName": "So wandelst du Audio mit Scribix in Text um",
+      "howToDescription": "Anmelden, Audio hochladen, transkribieren, Transkript prüfen und Ergebnis exportieren.",
+      "howToSteps": [
+        "Mit Google anmelden",
+        "Audio hochladen",
+        "Audio transkribieren",
+        "Transkript prüfen",
+        "Kopieren oder exportieren"
+      ]
+    }
+  },
+  "HomeAudioToTextLink": {
+    "prefix": "Arbeitest du mit reinen Audioaufnahmen?",
+    "link": "Die eigene Audio-zu-Text-Seite öffnen",
+    "suffix": "."
   }
 }

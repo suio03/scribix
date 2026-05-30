@@ -1,6 +1,6 @@
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/auth";
-import { getPathname } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
 import { Shell } from "../components/Shell";
 import { Sidebar } from "../components/Sidebar";
 import { Header } from "../components/Header";
@@ -65,12 +65,13 @@ export default async function HomePage({
 
   const session = await auth();
   const postSignInPath = getPathname({ href: "/dashboard/new", locale });
+  const audioLinkT = await getTranslations("HomeAudioToTextLink");
 
   return (
     <Shell /* sidebar={<Sidebar />} */>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
       {!session && process.env.GOOGLE_ID ? (
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
@@ -79,6 +80,20 @@ export default async function HomePage({
       <Header />
       <main>
         <Generator signedIn={!!session} postSignInPath={postSignInPath} />
+        <section className="px-4 pb-8 sm:px-8">
+          <div className="mx-auto max-w-[1100px] border-t border-line pt-5">
+            <p className="text-[14px] leading-[1.6] text-muted">
+              {audioLinkT("prefix")}{" "}
+              <Link
+                href="/audio-to-text"
+                className="font-medium text-ink underline decoration-accent decoration-2 underline-offset-4"
+              >
+                {audioLinkT("link")}
+              </Link>
+              {audioLinkT("suffix")}
+            </p>
+          </div>
+        </section>
         <TrustStrip />
         <Features />
         <HowItWorks />

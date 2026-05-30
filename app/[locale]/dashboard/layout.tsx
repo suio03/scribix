@@ -6,6 +6,13 @@ import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
 import { TrackSignInSuccess } from "@/app/components/Track";
 
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 export default async function DashboardLayout({
   children,
   params,

@@ -44,12 +44,6 @@ export async function FinalCTA() {
                     className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                   />
                 </a>
-                <a
-                  href="#pricing"
-                  className="inline-flex items-center gap-2 rounded-full border border-paper/30 px-6 py-3.5 text-[14px] font-medium text-paper transition hover:bg-paper/10"
-                >
-                  {t("secondaryCta")}
-                </a>
               </div>
             </div>
 

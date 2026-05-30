@@ -16,17 +16,51 @@
     "docs": "Docs",
     "help": "Help",
     "nav": [
-      { "label": "Home", "href": "#top", "icon": "Home", "active": true },
-      { "label": "Audio to Text", "href": "#generator", "icon": "AudioLines" },
-      { "label": "Video to Text", "href": "#generator", "icon": "Clapperboard" },
-      { "label": "YouTube Transcript", "href": "#generator", "icon": "PlaySquare" },
-      { "label": "TikTok Transcript", "href": "#generator", "icon": "Music2" },
-      { "label": "Instagram Transcript", "href": "#generator", "icon": "Camera" }
+      {
+        "label": "Home",
+        "href": "#top",
+        "icon": "Home",
+        "active": true
+      },
+      {
+        "label": "Audio to Text",
+        "href": "#generator",
+        "icon": "AudioLines"
+      },
+      {
+        "label": "Video to Text",
+        "href": "#generator",
+        "icon": "Clapperboard"
+      },
+      {
+        "label": "YouTube Transcript",
+        "href": "#generator",
+        "icon": "PlaySquare"
+      },
+      {
+        "label": "TikTok Transcript",
+        "href": "#generator",
+        "icon": "Music2"
+      },
+      {
+        "label": "Instagram Transcript",
+        "href": "#generator",
+        "icon": "Camera"
+      }
     ],
     "tools": [
-      { "label": "Summarize", "href": "#features" },
-      { "label": "Translate", "href": "#features" },
-      { "label": "Subtitles (SRT/VTT)", "href": "#features" }
+      {
+        "label": "Summarize",
+        "href": "#features"
+      },
+      {
+        "label": "Translate",
+        "href": "#features"
+      },
+      {
+        "label": "Subtitles (SRT/VTT)",
+        "href": "#features"
+      }
     ]
   },
   "Header": {
@@ -42,16 +76,46 @@
     "h1Part2": "<accent>Free AI transcription.</accent>",
     "description": "Scribix turns any video into accurate, speaker-labeled text in seconds. Upload an MP4, MOV, WebM, or AVI file — or paste a YouTube link — and get a full transcript with word-level timestamps in <stat>200+ languages</stat>. <stat>Free</stat> with Google sign-in, files up to 1 GB.",
     "trust": [
-      { "label": "99.9% Accuracy", "icon": "Target" },
-      { "label": "200+ Languages", "icon": "Globe" },
-      { "label": "Up to 1GB Files", "icon": "InfinityIcon" },
-      { "label": "Speaker Recognition", "icon": "Users" },
-      { "label": "Private & Secure", "icon": "ShieldCheck" }
+      {
+        "label": "99.9% Accuracy",
+        "icon": "Target"
+      },
+      {
+        "label": "200+ Languages",
+        "icon": "Globe"
+      },
+      {
+        "label": "Up to 1GB Files",
+        "icon": "InfinityIcon"
+      },
+      {
+        "label": "Speaker Recognition",
+        "icon": "Users"
+      },
+      {
+        "label": "Private & Secure",
+        "icon": "ShieldCheck"
+      }
     ],
     "tabs": [
-      { "id": "upload", "label": "Upload File", "hint": "Video · Audio", "icon": "Upload" },
-      { "id": "youtube", "label": "YouTube Link", "hint": "Paste URL", "icon": "PlaySquare" },
-      { "id": "record", "label": "Record", "hint": "Live audio", "icon": "Mic" }
+      {
+        "id": "upload",
+        "label": "Upload File",
+        "hint": "Video · Audio",
+        "icon": "Upload"
+      },
+      {
+        "id": "youtube",
+        "label": "YouTube Link",
+        "hint": "Paste URL",
+        "icon": "PlaySquare"
+      },
+      {
+        "id": "record",
+        "label": "Record",
+        "hint": "Live audio",
+        "icon": "Mic"
+      }
     ],
     "upload": {
       "instruction": "Drop a video or audio file, or click to browse.",
@@ -114,10 +178,22 @@
       "MIT Sloan Review"
     ],
     "stats": [
-      { "value": "10M+", "label": "Minutes transcribed" },
-      { "value": "100K+", "label": "Active creators" },
-      { "value": "200+", "label": "Languages supported" },
-      { "value": "99.9%", "label": "Word-level accuracy" }
+      {
+        "value": "10M+",
+        "label": "Minutes transcribed"
+      },
+      {
+        "value": "100K+",
+        "label": "Active creators"
+      },
+      {
+        "value": "200+",
+        "label": "Languages supported"
+      },
+      {
+        "value": "99.9%",
+        "label": "Word-level accuracy"
+      }
     ]
   },
   "Features": {
@@ -201,42 +277,66 @@
         "title": "YouTube creators",
         "audience": "Long-form to short-form",
         "body": "Generate captions for accessibility, repurpose long videos into blog posts, build searchable episode archives. Word-level timestamps make it trivial to extract viral clips with [12:04 – 12:38] precision.",
-        "workflow": ["Long video", "Accurate captions", "Clips & shorts"]
+        "workflow": [
+          "Long video",
+          "Accurate captions",
+          "Clips & shorts"
+        ]
       },
       {
         "icon": "Mic",
         "title": "Podcasters & Producers",
         "audience": "Audio + video shows",
         "body": "Convert each episode into show notes, blog content, and SEO-indexed transcripts — the difference between getting found on Google and not. Speaker labels arrive ready to publish.",
-        "workflow": ["Episode recording", "Speaker-labeled transcript", "Show notes + clips"]
+        "workflow": [
+          "Episode recording",
+          "Speaker-labeled transcript",
+          "Show notes + clips"
+        ]
       },
       {
         "icon": "Newspaper",
         "title": "Journalists & Interviewers",
         "audience": "Investigative reporting",
         "body": "Transcribe a 90-minute interview while you walk to the next one. Speaker labels mean you can quote sources accurately without re-listening — quote-ready text in a fraction of the time.",
-        "workflow": ["Source interview", "Verbatim transcript", "Pull quotes"]
+        "workflow": [
+          "Source interview",
+          "Verbatim transcript",
+          "Pull quotes"
+        ]
       },
       {
         "icon": "FlaskConical",
         "title": "Researchers & UX",
         "audience": "Focus groups, fieldwork",
         "body": "Run qualitative coding on focus groups, lectures, and field recordings without paying $1.50/min for human transcription. Tag themes, search every word, export to Dovetail or Notion.",
-        "workflow": ["User interview", "Tagged themes", "Synthesis-ready"]
+        "workflow": [
+          "User interview",
+          "Tagged themes",
+          "Synthesis-ready"
+        ]
       },
       {
         "icon": "GraduationCap",
         "title": "Students",
         "audience": "Lectures & study",
         "body": "Turn a 2-hour lecture into searchable notes. Mark a confusing moment, click the word, hear it again. Try it free, then a single Basic month covers an entire semester of lectures.",
-        "workflow": ["Lecture recording", "Searchable notes", "AI summary"]
+        "workflow": [
+          "Lecture recording",
+          "Searchable notes",
+          "AI summary"
+        ]
       },
       {
         "icon": "Scale",
         "title": "Legal & Compliance",
         "audience": "Depositions, hearings",
         "body": "First-pass transcripts of depositions, board meetings, and compliance interviews — then have a human verify the parts that matter. Time-coded transcripts and an auditable processing chain. SOC 2-aligned.",
-        "workflow": ["Hearing recording", "Time-coded transcript", "Audit trail"]
+        "workflow": [
+          "Hearing recording",
+          "Time-coded transcript",
+          "Audit trail"
+        ]
       }
     ]
   },
@@ -246,17 +346,94 @@
     "h2": "Faster, more accurate, <accent>and a real free trial.</accent>",
     "intro": "We benchmark monthly against the leading video-to-text tools on a 200-hour test set spanning 12 languages, 48 speakers, and 4 audio environments — studio, phone, conference, and outdoor.",
     "featureHeader": "Feature",
-    "cols": ["Scribix", "Otter", "Rev", "Whisper.cpp"],
+    "cols": [
+      "Scribix",
+      "Otter",
+      "Rev",
+      "Whisper.cpp"
+    ],
     "rows": [
-      { "feature": "Free trial", "cells": ["45 min one-time", "300 / mo", "45 min trial", "Unlimited"] },
-      { "feature": "File size limit", "cells": ["1 GB", "1.1 GB", "2 GB", "Local"] },
-      { "feature": "Languages supported", "cells": ["200+", "30+", "38", "99"] },
-      { "feature": "Speaker diarization", "cells": ["yes", "yes", "yes", "no"] },
-      { "feature": "Word-level timestamps", "cells": ["yes", "no", "yes", "yes"] },
-      { "feature": "YouTube URL support", "cells": ["yes", "no", "no", "no"] },
-      { "feature": "Export formats", "cells": ["7", "4", "5", "1"] },
-      { "feature": "Files deleted after", "cells": ["24 hr", "30 days+", "30 days+", "Self-host"] },
-      { "feature": "Pricing — 100 hrs", "cells": ["$12", "$30", "$150", "Compute only"] }
+      {
+        "feature": "Free trial",
+        "cells": [
+          "45 min one-time",
+          "300 / mo",
+          "45 min trial",
+          "Unlimited"
+        ]
+      },
+      {
+        "feature": "File size limit",
+        "cells": [
+          "1 GB",
+          "1.1 GB",
+          "2 GB",
+          "Local"
+        ]
+      },
+      {
+        "feature": "Languages supported",
+        "cells": [
+          "200+",
+          "30+",
+          "38",
+          "99"
+        ]
+      },
+      {
+        "feature": "Speaker diarization",
+        "cells": [
+          "yes",
+          "yes",
+          "yes",
+          "no"
+        ]
+      },
+      {
+        "feature": "Word-level timestamps",
+        "cells": [
+          "yes",
+          "no",
+          "yes",
+          "yes"
+        ]
+      },
+      {
+        "feature": "YouTube URL support",
+        "cells": [
+          "yes",
+          "no",
+          "no",
+          "no"
+        ]
+      },
+      {
+        "feature": "Export formats",
+        "cells": [
+          "7",
+          "4",
+          "5",
+          "1"
+        ]
+      },
+      {
+        "feature": "Files deleted after",
+        "cells": [
+          "24 hr",
+          "30 days+",
+          "30 days+",
+          "Self-host"
+        ]
+      },
+      {
+        "feature": "Pricing — 100 hrs",
+        "cells": [
+          "$12",
+          "$30",
+          "$150",
+          "Compute only"
+        ]
+      }
     ]
   },
   "Testimonials": {
@@ -298,7 +475,7 @@
         "blurb": "For occasional transcripts, students, and tire-kickers.",
         "features": [
           "Unlimited video transcripts",
-          "Up to 30 min per file",
+          "Up to 45 min per file",
           "Speaker labels (up to 4)",
           "SRT, VTT & DOCX export"
         ],
@@ -398,17 +575,35 @@
     "primaryCta": "Upload a Video",
     "secondaryCta": "Paste a YouTube Link",
     "stats": [
-      { "value": "99.9%", "label": "Accuracy" },
-      { "value": "5×", "label": "Real-time" },
-      { "value": "24h", "label": "Auto-delete" }
+      {
+        "value": "99.9%",
+        "label": "Accuracy"
+      },
+      {
+        "value": "5×",
+        "label": "Real-time"
+      },
+      {
+        "value": "24h",
+        "label": "Auto-delete"
+      }
     ]
   },
   "Footer": {
     "tagline": "Studio-grade video-to-text for the people who turn recorded conversation into stories.",
     "legal": [
-      { "label": "Terms of Service", "href": "/terms" },
-      { "label": "Privacy Policy", "href": "/privacy" },
-      { "label": "Refund Policy", "href": "/refunds" }
+      {
+        "label": "Terms of Service",
+        "href": "/terms"
+      },
+      {
+        "label": "Privacy Policy",
+        "href": "/privacy"
+      },
+      {
+        "label": "Refund Policy",
+        "href": "/refunds"
+      }
     ]
   },
   "Dashboard": {
@@ -559,6 +754,7 @@
       "phaseSubmitting": "Submitting for processing…",
       "phaseTranscribing": "Transcribing…",
       "videoTooBig": "Video uploads are currently limited to 1 GB in the browser. For larger files, please convert to audio first.",
+      "audioOnly": "Please choose an audio file.",
       "fileTooLargeWithCap": "That file is larger than your tier allows (max {mb} MB). Upgrade for higher limits.",
       "fileTooLarge": "That file is larger than your tier allows. Upgrade for higher limits.",
       "durationExceedsTierWithCap": "That file is longer than your tier allows (max {min} min per file). Upgrade for longer files.",
@@ -582,5 +778,359 @@
       "recording": "Recording — auto-stops at {min} min",
       "micDenied": "Microphone access denied."
     }
+  },
+  "AudioToText": {
+    "metadata": {
+      "title": "Audio to Text | AI Transcription Online",
+      "description": "Convert audio to text online with Scribix. Sign in with Google, upload MP3, WAV, or M4A audio, and get speaker-labeled transcripts to copy or export.",
+      "openGraphTitle": "Audio to Text | AI Transcription Online | Scribix",
+      "openGraphDescription": "Sign in with Google, upload audio, and get a speaker-labeled transcript with timestamps and exports.",
+      "twitterTitle": "Audio to Text | Scribix",
+      "twitterDescription": "Upload audio and get searchable transcripts with speaker labels, timestamps, and exports."
+    },
+    "hero": {
+      "issue": "REC · 00:00:00",
+      "issueLabel": "Issue №02 · Audio to Text",
+      "title": "Convert audio to text.",
+      "accentTitle": "AI transcription.",
+      "descriptionStart": "Scribix converts audio files into accurate, speaker-labeled text you can review, copy, and export. Sign in with Google, upload an audio file, and get a transcript with timestamps in",
+      "stat": "200+ languages",
+      "descriptionEnd": ".",
+      "primaryCta": "Sign in to Upload Audio",
+      "signedInPrimaryCta": "Upload Audio",
+      "secondaryCta": "Need video to text?",
+      "secondaryHref": "/",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "45 min free trial"
+        },
+        {
+          "icon": "Globe",
+          "label": "200+ languages"
+        },
+        {
+          "icon": "Users",
+          "label": "Speaker labels"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "No credit card"
+        }
+      ]
+    },
+    "upload": {
+      "uploadTab": "Upload File",
+      "uploadHint": "Audio",
+      "instruction": "Drop an audio file, or click to browse.",
+      "specs": "Free trial: 45 min · MP3 · WAV · M4A · No credit card",
+      "button": "Sign in to Upload Audio",
+      "signedInButton": "Upload Audio"
+    },
+    "quickAnswer": {
+      "kicker": "Quick answer",
+      "title": "Upload audio. Get editable text.",
+      "body": "Scribix is an online audio-to-text transcription tool for turning recordings into searchable text. It is best for interviews, meetings, lectures, podcasts, voice notes, and research recordings. Upload an audio file, wait for AI transcription, then review the transcript and export it as TXT, DOCX, SRT, VTT, or CSV."
+    },
+    "overview": {
+      "number": "01",
+      "label": "Overview",
+      "rows": [
+        {
+          "item": "Best for",
+          "detail": "Interviews, meetings, lectures, podcasts, voice notes, and research audio"
+        },
+        {
+          "item": "Not best for",
+          "detail": "Certified transcripts or noisy recordings that cannot be reviewed"
+        },
+        {
+          "item": "Input",
+          "detail": "Audio files such as MP3, WAV, and M4A"
+        },
+        {
+          "item": "Output",
+          "detail": "Speaker-labeled transcript with timestamps, copy, and export options"
+        },
+        {
+          "item": "Workflow",
+          "detail": "Sign in, upload audio, transcribe, review, export"
+        },
+        {
+          "item": "Free trial",
+          "detail": "45 minutes with Google sign-in, no credit card"
+        },
+        {
+          "item": "Privacy",
+          "detail": "Audio is deleted after 7 days; transcripts stay until you delete them"
+        }
+      ],
+      "bestFor": {
+        "title": "Best for",
+        "items": [
+          "Interviewers and journalists pulling searchable quotes from recorded conversations.",
+          "Podcasters and creators preparing transcripts, captions, and reusable written content.",
+          "Students and researchers turning lectures and field recordings into reviewable notes.",
+          "Business teams keeping a written record of calls, customer interviews, and meetings."
+        ]
+      },
+      "notBestFor": {
+        "title": "Not best for",
+        "items": [
+          "Certified legal or court transcripts that require a qualified human transcriptionist.",
+          "Recordings with heavy noise, crosstalk, or missing audio that cannot be checked later.",
+          "Workflows that require anonymous upload without an account."
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "How it works",
+      "title": "Three steps.",
+      "accentTitle": "Audio to text.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Sign in with Google.",
+          "body": "Your free trial starts with 45 transcription minutes and no credit card.",
+          "meta": "No credit card"
+        },
+        {
+          "n": "02",
+          "icon": "FileAudio",
+          "title": "Upload audio.",
+          "body": "Choose an audio file such as MP3, WAV, or M4A.",
+          "meta": "Audio upload"
+        },
+        {
+          "n": "03",
+          "icon": "Download",
+          "title": "Review and export.",
+          "body": "Check speaker labels and timestamps, then copy or download TXT, DOCX, SRT, VTT, or CSV.",
+          "meta": "5 formats"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "Use cases",
+      "title": "Built for recorded audio that needs to become",
+      "accentTitle": "usable text.",
+      "items": [
+        {
+          "icon": "Users",
+          "title": "Interview transcription",
+          "who": "Journalists, recruiters, researchers",
+          "output": "Timestamped Q&A transcript with speaker labels"
+        },
+        {
+          "icon": "Mic",
+          "title": "Meeting notes",
+          "who": "Founders, sales teams, operators",
+          "output": "Searchable record of what was said and who said it"
+        },
+        {
+          "icon": "Search",
+          "title": "Lecture review",
+          "who": "Students and educators",
+          "output": "Study notes that can be searched and quoted"
+        },
+        {
+          "icon": "Captions",
+          "title": "Subtitle prep",
+          "who": "Video editors and creators",
+          "output": "SRT or VTT captions generated from the audio track"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "Example",
+      "title": "A transcript you can inspect, quote, and export.",
+      "body": "Example input: a 2-person customer interview recorded as customer-interview.m4a.",
+      "filename": "customer-interview.m4a",
+      "transcript": "[00:00] Speaker A\nThanks for joining. Can you describe what happened when you tried to upload the file?\n\n[00:07] Speaker B\nI expected it to finish in a minute or two, but I was not sure whether the upload was still running.\n\n[00:15] Speaker A\nSo the main issue was feedback during processing, not the transcription result itself?\n\n[00:21] Speaker B\nExactly. Once the transcript appeared, it was easy to search and share with the team."
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "Capabilities",
+      "title": "Focused transcription,",
+      "accentTitle": "without unreleased add-ons.",
+      "intro": "This page is for transcription: upload audio, get text with timestamps and speaker labels, then copy or export it. Summaries, translation, chat, and mind maps are not part of this workflow.",
+      "items": [
+        {
+          "icon": "Globe",
+          "title": "200+ languages",
+          "body": "Automatic language detection keeps the upload flow simple when your recordings span different speakers or regions."
+        },
+        {
+          "icon": "Users",
+          "title": "Speaker labels",
+          "body": "Conversation transcripts are easier to scan when each turn is separated by speaker."
+        },
+        {
+          "icon": "Clock3",
+          "title": "Timestamps",
+          "body": "Timestamped text helps you trace quotes, prepare captions, and review important moments."
+        },
+        {
+          "icon": "Download",
+          "title": "Five export formats",
+          "body": "Download TXT, DOCX, SRT, VTT, or CSV, or copy the transcript directly from the app."
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "How accurate is audio-to-text transcription?",
+          "body": [
+            "Scribix can reach 99.9% accuracy on clear audio. Real-world accuracy depends on recording quality, microphone distance, background noise, accents, specialized vocabulary, and overlapping speakers.",
+            "For legal, medical, academic, financial, or published work, treat the transcript as a strong first draft and review it before sharing."
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "Is your audio private?",
+          "body": [
+            "Scribix uses your uploaded audio only to generate and deliver transcripts for your account. Audio and video files are deleted automatically after 7 days.",
+            "Transcripts stay in your account until you delete them or close your account. Read the"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "privacy policy",
+            "suffix": "."
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "Compared",
+      "title": "Scribix vs other ways to convert audio to text.",
+      "headers": [
+        "Approach",
+        "Best for",
+        "Tradeoff"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix",
+          "bestFor": "Fast online transcription with saved transcript history and exports",
+          "tradeoff": "Requires Google sign-in before upload"
+        },
+        {
+          "approach": "Manual transcription",
+          "bestFor": "Certified or extremely sensitive work",
+          "tradeoff": "Slow and expensive for long recordings"
+        },
+        {
+          "approach": "Generic AI chat",
+          "bestFor": "Short pasted snippets after transcription already exists",
+          "tradeoff": "Most chat tools do not handle a full transcription workflow"
+        },
+        {
+          "approach": "Local speech-to-text",
+          "bestFor": "Users who need local-only processing",
+          "tradeoff": "Requires setup, compute, and export handling"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "Questions,",
+      "accentTitle": "answered carefully.",
+      "intro": "Accuracy, privacy, exports, and sign-in are explained plainly so visitors know what happens before they upload audio.",
+      "items": [
+        {
+          "q": "How do I convert audio to text with Scribix?",
+          "a": "Sign in with Google, upload an audio file, and Scribix will transcribe it into text. When the transcript is ready, review it in the dashboard and copy or export the result."
+        },
+        {
+          "q": "Is the audio-to-text tool free to try?",
+          "a": "Yes. Scribix offers a 45-minute free trial with Google sign-in and no credit card."
+        },
+        {
+          "q": "What audio formats does Scribix support?",
+          "a": "The uploader accepts browser-supported audio files, including common formats such as MP3, WAV, and M4A. If a file is rejected by the browser or exceeds your plan limit, the app will show an upload error."
+        },
+        {
+          "q": "Can Scribix identify different speakers?",
+          "a": "Yes. Scribix requests speaker labels during transcription, so conversations can be separated by speaker when the audio quality supports it."
+        },
+        {
+          "q": "Can I export the transcript?",
+          "a": "Yes. Scribix can export completed transcripts as TXT, DOCX, SRT, VTT, or CSV. You can also copy the transcript text from the app."
+        },
+        {
+          "q": "How many languages does Scribix support?",
+          "a": "Scribix supports transcription in 200+ languages with automatic language detection."
+        },
+        {
+          "q": "How accurate is Scribix?",
+          "a": "Scribix can reach 99.9% accuracy on clear audio, but real-world results depend on audio quality, accents, noise, speaker overlap, and specialized vocabulary. Review important transcripts before publishing or relying on them."
+        },
+        {
+          "q": "Is my audio stored forever?",
+          "a": "No. Scribix's privacy policy says uploaded audio and video files are deleted automatically after 7 days. Transcripts stay in your account until you delete them or close your account."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Ready when you are",
+      "title": "Turn audio into text.",
+      "body": "Sign in with Google, upload your first audio file, and get a searchable transcript you can review, copy, and export.",
+      "primaryCta": "Sign in to Upload Audio",
+      "signedInPrimaryCta": "Upload Audio",
+      "stats": [
+        {
+          "value": "45 min",
+          "label": "Trial"
+        },
+        {
+          "value": "200+",
+          "label": "Languages"
+        },
+        {
+          "value": "7 days",
+          "label": "Auto-delete"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix Audio to Text",
+      "appDescription": "Online audio-to-text transcription tool for converting uploaded audio into speaker-labeled transcripts with timestamps and export formats.",
+      "offerDescription": "45-minute free trial with Google sign-in and no credit card.",
+      "featureList": [
+        "Audio file upload",
+        "Automatic language detection",
+        "200+ languages",
+        "Speaker labels",
+        "Timestamped transcripts",
+        "TXT export",
+        "DOCX export",
+        "SRT export",
+        "VTT export",
+        "CSV export",
+        "Copy transcript"
+      ],
+      "howToName": "How to convert audio to text with Scribix",
+      "howToDescription": "Sign in, upload audio, transcribe it, review the transcript, and export the result.",
+      "howToSteps": [
+        "Sign in with Google",
+        "Upload audio",
+        "Transcribe the audio",
+        "Review the transcript",
+        "Copy or export"
+      ]
+    }
+  },
+  "HomeAudioToTextLink": {
+    "prefix": "Working with audio-only recordings?",
+    "link": "Open the dedicated audio-to-text page",
+    "suffix": "."
   }
 }

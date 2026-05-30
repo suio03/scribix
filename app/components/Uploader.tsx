@@ -27,9 +27,15 @@ export type UseUploadOpts = {
   signedIn: boolean;
   /** Where to send the user back to after Google sign-in (locale-prefixed path). */
   postSignInPath?: string;
+  /** Restrict uploads to audio files and skip the video extraction path. */
+  audioOnly?: boolean;
 };
 
-export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUploadOpts) {
+export function useUpload({
+  signedIn,
+  postSignInPath = "/dashboard/new",
+  audioOnly = false,
+}: UseUploadOpts) {
   const t = useTranslations("Dashboard.uploader");
   const router = useRouter();
   const [phase, setPhase] = useState<UploadPhase>("idle");
@@ -43,6 +49,12 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
       source: "upload" | "record" = "upload",
       durationSecOverride?: number
     ) => {
+      if (audioOnly && !isLikelyAudioFile(file)) {
+        setFilename(file.name);
+        setPhase("error");
+        setErrorMsg(t("audioOnly"));
+        return;
+      }
       if (!signedIn) {
         markSignInPending();
         await signIn("google", { redirectTo: postSignInPath });
@@ -153,7 +165,7 @@ export function useUpload({ signedIn, postSignInPath = "/dashboard/new" }: UseUp
         setErrorMsg(message);
       }
     },
-    [router, signedIn, postSignInPath, t]
+    [router, signedIn, postSignInPath, audioOnly, t]
   );
 
   return { phase, progress, errorMsg, filename, onPick };
@@ -258,6 +270,28 @@ export function ProgressView({
 }
 
 export const UPLOAD_ACCEPT = ACCEPT;
+
+const AUDIO_EXTENSIONS = new Set([
+  "aac",
+  "aif",
+  "aiff",
+  "flac",
+  "m4a",
+  "mp3",
+  "oga",
+  "ogg",
+  "opus",
+  "wav",
+  "webm",
+]);
+
+function isLikelyAudioFile(file: File): boolean {
+  if (file.type.startsWith("audio/")) return true;
+  if (file.type.startsWith("video/")) return false;
+
+  const ext = file.name.split(".").pop()?.toLowerCase();
+  return ext ? AUDIO_EXTENSIONS.has(ext) : false;
+}
 
 async function readMediaDuration(file: File): Promise<number> {
   const url = URL.createObjectURL(file);

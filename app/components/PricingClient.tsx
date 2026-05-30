@@ -24,13 +24,13 @@ const PLANS: PlanCard[] = [
     features: {
       monthly: [
         "45 minutes — one-time trial",
-        "Up to 30 min per file · 500 MB",
+        "Up to 45 min per file · 500 MB",
         "Speaker labels + word-level timestamps",
         "TXT, SRT & VTT export",
       ],
       yearly: [
         "45 minutes — one-time trial",
-        "Up to 30 min per file · 500 MB",
+        "Up to 45 min per file · 500 MB",
         "Speaker labels + word-level timestamps",
         "TXT, SRT & VTT export",
       ],

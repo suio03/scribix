@@ -11,7 +11,7 @@ export const PLANS = {
   free: {
     // One-time lifetime trial — never resets. Quota.maybeResetFreePeriod is a no-op for free.
     minutesPerCycle: 45,
-    maxFileSec: 30 * 60,
+    maxFileSec: 45 * 60,
     // maxFileBytes applies post-extraction (mp3); maxVideoUploadBytes caps the
     // raw video upload before extraction, so a malicious client can't claim
     // isVideo=true to PUT an unbounded blob to R2.

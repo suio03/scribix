@@ -475,7 +475,7 @@
         "blurb": "Per transcript occasionali, studenti e curiosi.",
         "features": [
           "Transcript video illimitati",
-          "Fino a 30 min per file",
+          "Fino a 45 min per file",
           "Etichette di relatore (fino a 4)",
           "Esportazione SRT, VTT e DOCX"
         ],
@@ -750,6 +750,7 @@
       "phaseSubmitting": "Invio per l'elaborazione…",
       "phaseTranscribing": "Trascrizione in corso…",
       "videoTooBig": "I caricamenti video sono attualmente limitati a 1 GB nel browser. Per file più grandi, converti prima in audio.",
+      "audioOnly": "Scegli un file audio.",
       "fileTooLargeWithCap": "Quel file è più grande di quanto il tuo piano consente (max {mb} MB). Upgrade per i limiti più alti.",
       "fileTooLarge": "Quel file è più grande di quanto il tuo piano consente. Upgrade per i limiti più alti.",
       "durationExceedsTierWithCap": "Quel file è più lungo di quanto il tuo piano consente (max {min} min per file). Upgrade per file più lunghi.",
@@ -773,5 +774,359 @@
       "recording": "Registrazione — arresto automatico a {min} min",
       "micDenied": "Accesso al microfono negato."
     }
+  },
+  "AudioToText": {
+    "metadata": {
+      "title": "Audio in testo | Trascrizione IA online",
+      "description": "Converti audio in testo online con Scribix. Accedi con Google, carica MP3, WAV o M4A e ottieni trascrizioni con speaker da copiare o esportare.",
+      "openGraphTitle": "Audio in testo | Trascrizione IA online | Scribix",
+      "openGraphDescription": "Accedi con Google, carica audio e ottieni una trascrizione con speaker, timestamp ed esportazioni.",
+      "twitterTitle": "Audio in testo | Scribix",
+      "twitterDescription": "Carica audio e ottieni trascrizioni ricercabili con speaker, timestamp ed esportazioni."
+    },
+    "hero": {
+      "issue": "REC · 00:00:00",
+      "issueLabel": "Numero №02 · Audio in testo",
+      "title": "Converti audio in testo.",
+      "accentTitle": "Trascrizione IA.",
+      "descriptionStart": "Scribix converte file audio in testo accurato, con speaker, che puoi rivedere, copiare ed esportare. Accedi con Google, carica un file audio e ottieni una trascrizione con timestamp in",
+      "stat": "oltre 200 lingue",
+      "descriptionEnd": ".",
+      "primaryCta": "Accedi per caricare audio",
+      "signedInPrimaryCta": "Carica audio",
+      "secondaryCta": "Ti serve video in testo?",
+      "secondaryHref": "/",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "45 min gratis"
+        },
+        {
+          "icon": "Globe",
+          "label": "200+ lingue"
+        },
+        {
+          "icon": "Users",
+          "label": "Etichette speaker"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "Nessuna carta"
+        }
+      ]
+    },
+    "upload": {
+      "uploadTab": "Carica file",
+      "uploadHint": "Audio",
+      "instruction": "Trascina un file audio o clicca per cercare.",
+      "specs": "Prova gratuita: 45 min · MP3 · WAV · M4A · nessuna carta",
+      "button": "Accedi per caricare audio",
+      "signedInButton": "Carica audio"
+    },
+    "quickAnswer": {
+      "kicker": "Risposta rapida",
+      "title": "Carica audio. Ottieni testo modificabile.",
+      "body": "Scribix è uno strumento online per trasformare registrazioni audio in testo ricercabile. È ideale per interviste, riunioni, lezioni, podcast, note vocali e ricerca. Carica un file audio, attendi la trascrizione IA, poi rivedi il testo ed esportalo in TXT, DOCX, SRT, VTT o CSV."
+    },
+    "overview": {
+      "number": "01",
+      "label": "Panoramica",
+      "rows": [
+        {
+          "item": "Ideale per",
+          "detail": "Interviste, riunioni, lezioni, podcast, note vocali e audio di ricerca"
+        },
+        {
+          "item": "Non ideale per",
+          "detail": "Trascrizioni certificate o registrazioni rumorose non verificabili"
+        },
+        {
+          "item": "Input",
+          "detail": "File audio come MP3, WAV e M4A"
+        },
+        {
+          "item": "Output",
+          "detail": "Trascrizione con speaker, timestamp, copia ed esportazione"
+        },
+        {
+          "item": "Flusso",
+          "detail": "Accesso, caricamento audio, trascrizione, revisione, esportazione"
+        },
+        {
+          "item": "Prova gratuita",
+          "detail": "45 minuti con accesso Google, senza carta di credito"
+        },
+        {
+          "item": "Privacy",
+          "detail": "L’audio viene eliminato dopo 7 giorni; le trascrizioni restano finché non le elimini"
+        }
+      ],
+      "bestFor": {
+        "title": "Ideale per",
+        "items": [
+          "Giornalisti e intervistatori che estraggono citazioni ricercabili da conversazioni registrate.",
+          "Podcaster e creator che preparano trascrizioni, sottotitoli e contenuti scritti riutilizzabili.",
+          "Studenti e ricercatori che trasformano lezioni e registrazioni sul campo in note revisionabili.",
+          "Team aziendali che conservano un registro scritto di call, interviste clienti e riunioni."
+        ]
+      },
+      "notBestFor": {
+        "title": "Non ideale per",
+        "items": [
+          "Trascrizioni legali o giudiziarie certificate che richiedono un trascrittore umano qualificato.",
+          "Registrazioni con rumore intenso, voci sovrapposte o audio mancante non verificabile.",
+          "Flussi che richiedono caricamento anonimo senza account."
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "Come funziona",
+      "title": "Tre passaggi.",
+      "accentTitle": "Da audio a testo.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Accedi con Google.",
+          "body": "La prova gratuita parte con 45 minuti di trascrizione e nessuna carta di credito.",
+          "meta": "Nessuna carta"
+        },
+        {
+          "n": "02",
+          "icon": "FileAudio",
+          "title": "Carica audio.",
+          "body": "Scegli un file audio come MP3, WAV o M4A.",
+          "meta": "Caricamento audio"
+        },
+        {
+          "n": "03",
+          "icon": "Download",
+          "title": "Rivedi ed esporta.",
+          "body": "Controlla speaker e timestamp, poi copia o scarica TXT, DOCX, SRT, VTT o CSV.",
+          "meta": "5 formati"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "Casi d’uso",
+      "title": "Creato per audio registrato che deve diventare",
+      "accentTitle": "testo utilizzabile.",
+      "items": [
+        {
+          "icon": "Users",
+          "title": "Trascrizione interviste",
+          "who": "Giornalisti, recruiter, ricercatori",
+          "output": "Trascrizione Q&A con timestamp e speaker"
+        },
+        {
+          "icon": "Mic",
+          "title": "Note riunione",
+          "who": "Founder, vendite, operations",
+          "output": "Registro ricercabile di cosa è stato detto e da chi"
+        },
+        {
+          "icon": "Search",
+          "title": "Ripasso lezioni",
+          "who": "Studenti e docenti",
+          "output": "Note di studio ricercabili e citabili"
+        },
+        {
+          "icon": "Captions",
+          "title": "Preparazione sottotitoli",
+          "who": "Video editor e creator",
+          "output": "Sottotitoli SRT o VTT generati dalla traccia audio"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "Esempio",
+      "title": "Una trascrizione da controllare, citare ed esportare.",
+      "body": "Input di esempio: un’intervista cliente a due persone registrata come customer-interview.m4a.",
+      "filename": "customer-interview.m4a",
+      "transcript": "[00:00] Speaker A\nGrazie per essere qui. Puoi descrivere cosa è successo quando hai provato a caricare il file?\n\n[00:07] Speaker B\nPensavo finisse in uno o due minuti, ma non capivo se il caricamento fosse ancora in corso.\n\n[00:15] Speaker A\nQuindi il problema principale era il feedback durante l’elaborazione, non il risultato della trascrizione?\n\n[00:21] Speaker B\nEsatto. Una volta apparsa la trascrizione, era facile cercarla e condividerla con il team."
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "Funzionalità",
+      "title": "Trascrizione mirata,",
+      "accentTitle": "senza componenti non rilasciati.",
+      "intro": "Questa pagina è per la trascrizione: carica audio, ottieni testo con timestamp e speaker, poi copia o esporta. Riassunti, traduzione, chat e mappe mentali non fanno parte di questo workflow.",
+      "items": [
+        {
+          "icon": "Globe",
+          "title": "200+ lingue",
+          "body": "Il rilevamento automatico semplifica il caricamento quando le registrazioni coprono speaker o regioni diverse."
+        },
+        {
+          "icon": "Users",
+          "title": "Speaker",
+          "body": "Le conversazioni sono più facili da leggere quando ogni intervento è separato per speaker."
+        },
+        {
+          "icon": "Clock3",
+          "title": "Timestamp",
+          "body": "Il testo con timestamp aiuta a ritrovare citazioni, preparare sottotitoli e rivedere momenti importanti."
+        },
+        {
+          "icon": "Download",
+          "title": "Cinque export",
+          "body": "Scarica TXT, DOCX, SRT, VTT o CSV, oppure copia la trascrizione direttamente."
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "Quanto è accurata la trascrizione audio in testo?",
+          "body": [
+            "Scribix può raggiungere il 99,9% di accuratezza su audio chiaro. I risultati reali dipendono da qualità della registrazione, distanza dal microfono, rumore, accenti, vocabolario specialistico e sovrapposizioni.",
+            "Per lavori legali, medici, accademici, finanziari o pubblicati, considera la trascrizione una prima bozza solida e rivedila prima di condividerla."
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "Il tuo audio è privato?",
+          "body": [
+            "Scribix usa l’audio caricato solo per generare e consegnare trascrizioni nel tuo account. I file audio e video vengono eliminati automaticamente dopo 7 giorni.",
+            "Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account. Leggi la"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "privacy policy",
+            "suffix": "."
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "Confronto",
+      "title": "Scribix rispetto ad altri modi per convertire audio in testo.",
+      "headers": [
+        "Approccio",
+        "Ideale per",
+        "Limite"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix",
+          "bestFor": "Trascrizione online rapida con storico ed export",
+          "tradeoff": "Richiede accesso Google prima del caricamento"
+        },
+        {
+          "approach": "Trascrizione manuale",
+          "bestFor": "Lavori certificati o molto sensibili",
+          "tradeoff": "Lenta e costosa per registrazioni lunghe"
+        },
+        {
+          "approach": "Chat IA generica",
+          "bestFor": "Brevi estratti già trascritti",
+          "tradeoff": "La maggior parte non gestisce un flusso completo di trascrizione"
+        },
+        {
+          "approach": "Speech-to-text locale",
+          "bestFor": "Utenti che vogliono elaborazione solo locale",
+          "tradeoff": "Richiede configurazione, calcolo e gestione export"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "Domande,",
+      "accentTitle": "risposte chiare.",
+      "intro": "Accuratezza, privacy, export e accesso sono spiegati prima del caricamento.",
+      "items": [
+        {
+          "q": "Come converto audio in testo con Scribix?",
+          "a": "Accedi con Google, carica un file audio e Scribix lo trascrive. Quando è pronto, rivedilo nella dashboard e copia o esporta il risultato."
+        },
+        {
+          "q": "Lo strumento è gratis da provare?",
+          "a": "Sì. Scribix offre una prova gratuita di 45 minuti con accesso Google e senza carta di credito."
+        },
+        {
+          "q": "Quali formati supporta Scribix?",
+          "a": "Il caricatore accetta file audio supportati dal browser, inclusi MP3, WAV e M4A. Se un file viene rifiutato o supera il limite del piano, l’app mostra un errore."
+        },
+        {
+          "q": "Scribix identifica speaker diversi?",
+          "a": "Sì. Scribix richiede etichette speaker durante la trascrizione per separare le conversazioni quando la qualità audio lo consente."
+        },
+        {
+          "q": "Posso esportare la trascrizione?",
+          "a": "Sì. Puoi esportare in TXT, DOCX, SRT, VTT o CSV, oppure copiare il testo dall’app."
+        },
+        {
+          "q": "Quante lingue supporta Scribix?",
+          "a": "Scribix supporta oltre 200 lingue con rilevamento automatico."
+        },
+        {
+          "q": "Quanto è preciso Scribix?",
+          "a": "Può raggiungere il 99,9% su audio chiaro, ma i risultati dipendono da qualità, accenti, rumore, sovrapposizioni e vocabolario. Rivedi le trascrizioni importanti prima di pubblicarle o usarle."
+        },
+        {
+          "q": "Il mio audio viene conservato per sempre?",
+          "a": "No. La privacy policy di Scribix indica che i file audio e video vengono eliminati automaticamente dopo 7 giorni. Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Pronto quando vuoi",
+      "title": "Trasforma audio in testo.",
+      "body": "Accedi con Google, carica il tuo primo audio e ottieni una trascrizione ricercabile da rivedere, copiare ed esportare.",
+      "primaryCta": "Accedi per caricare audio",
+      "signedInPrimaryCta": "Carica audio",
+      "stats": [
+        {
+          "value": "45 min",
+          "label": "Prova"
+        },
+        {
+          "value": "200+",
+          "label": "Lingue"
+        },
+        {
+          "value": "7 giorni",
+          "label": "Auto-elimina"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix Audio in testo",
+      "appDescription": "Strumento online per convertire audio caricato in trascrizioni con speaker, timestamp ed export.",
+      "offerDescription": "Prova gratuita di 45 minuti con accesso Google e senza carta di credito.",
+      "featureList": [
+        "Caricamento audio",
+        "Rilevamento automatico lingua",
+        "200+ lingue",
+        "Speaker",
+        "Trascrizioni con timestamp",
+        "Export TXT",
+        "Export DOCX",
+        "Export SRT",
+        "Export VTT",
+        "Export CSV",
+        "Copia trascrizione"
+      ],
+      "howToName": "Come convertire audio in testo con Scribix",
+      "howToDescription": "Accedi, carica audio, trascrivilo, rivedi la trascrizione ed esporta il risultato.",
+      "howToSteps": [
+        "Accedi con Google",
+        "Carica audio",
+        "Trascrivi l’audio",
+        "Rivedi la trascrizione",
+        "Copia o esporta"
+      ]
+    }
+  },
+  "HomeAudioToTextLink": {
+    "prefix": "Lavori con registrazioni solo audio?",
+    "link": "Apri la pagina dedicata da audio a testo",
+    "suffix": "."
   }
 }

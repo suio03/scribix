@@ -13,6 +13,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
       alternates: { languages: homeLanguages() },
     },
+    {
+      url: urlFor(routing.defaultLocale, "/audio-to-text"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+      alternates: { languages: pathLanguages("/audio-to-text") },
+    },
   ];
 
   for (const path of ["/terms", "/privacy", "/refunds"] as const) {
@@ -28,11 +35,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
 }
 
 function homeLanguages(): Record<string, string> {
+  return pathLanguages("");
+}
+
+function pathLanguages(path: string): Record<string, string> {
   const languages: Record<string, string> = {
-    "x-default": urlFor(routing.defaultLocale, ""),
+    "x-default": urlFor(routing.defaultLocale, path),
   };
   for (const locale of routing.locales) {
-    languages[locale] = urlFor(locale, "");
+    languages[locale] = urlFor(locale, path);
   }
   return languages;
 }

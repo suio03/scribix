@@ -26,6 +26,7 @@ scripts/setup-worker-secrets.local.sh
 # build / tooling
 *.tsbuildinfo
 .claude/
+.agent/
 
 # R2 CORS config (per docs/manual-setup.md §0.4)
 r2-cors.json
