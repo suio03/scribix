@@ -24,7 +24,13 @@ function withoutLocalePrefix(pathname: string): string {
   return pathname;
 }
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({
+  menuPlacement = "bottom",
+  menuAlign = "right",
+}: {
+  menuPlacement?: "bottom" | "top";
+  menuAlign?: "left" | "right";
+} = {}) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -64,7 +70,9 @@ export function LanguageSwitcher() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-2 w-[160px] overflow-hidden rounded-lg border border-line bg-card shadow-lg"
+          className={`absolute z-40 w-[160px] overflow-hidden rounded-lg border border-line bg-card shadow-lg ${
+            menuPlacement === "top" ? "bottom-full mb-2" : "top-full mt-2"
+          } ${menuAlign === "left" ? "left-0" : "right-0"}`}
         >
           <ul className="py-1">
             {routing.locales.map((loc) => {

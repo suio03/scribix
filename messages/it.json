@@ -2,50 +2,42 @@
   "Sidebar": {
     "openNav": "Apri navigazione",
     "closeNav": "Chiudi navigazione",
+    "expandSidebar": "Espandi sidebar",
+    "collapseSidebar": "Comprimi sidebar",
     "newTranscript": "Nuovo Transcript",
     "aiTools": "AI Tools",
     "browserExtension": "Estensione Browser",
-    "myLibrary": "La Mia Libreria",
+    "myLibrary": "Dashboard",
     "pricing": "Prezzi",
     "pricingBadge": "50% di sconto",
     "freePlan": "Piano Gratuito",
     "freePlanQuota": "4 / giorno",
+    "usageTitle": "Minuti rimanenti",
+    "usageRemaining": "{remaining} min rimasti",
+    "usageMeter": "{used} / {quota} min usati",
     "upgradePlan": "Upgrade Piano",
     "signIn": "Accedi",
+    "signOut": "Esci",
+    "account": "Account",
+    "accountMenu": "Menu account",
     "language": "Lingua",
     "docs": "Documentazione",
     "help": "Aiuto",
     "nav": [
       {
         "label": "Home",
-        "href": "#top",
-        "icon": "Home",
-        "active": true
+        "href": "/",
+        "icon": "Home"
       },
       {
         "label": "Audio to Text",
-        "href": "#generator",
+        "href": "/audio-to-text",
         "icon": "AudioLines"
       },
       {
         "label": "Video to Text",
-        "href": "#generator",
+        "href": "/#generator",
         "icon": "Clapperboard"
-      },
-      {
-        "label": "YouTube Transcript",
-        "href": "#generator",
-        "icon": "PlaySquare"
-      },
-      {
-        "label": "TikTok Transcript",
-        "href": "#generator",
-        "icon": "Music2"
-      },
-      {
-        "label": "Instagram Transcript",
-        "href": "#generator",
-        "icon": "Camera"
       }
     ],
     "tools": [

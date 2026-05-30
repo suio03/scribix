@@ -2,50 +2,42 @@
   "Sidebar": {
     "openNav": "Abrir navegación",
     "closeNav": "Cerrar navegación",
+    "expandSidebar": "Expandir barra lateral",
+    "collapseSidebar": "Contraer barra lateral",
     "newTranscript": "Nuevo Transcript",
     "aiTools": "Herramientas IA",
     "browserExtension": "Extensión de navegador",
-    "myLibrary": "Mi biblioteca",
+    "myLibrary": "Dashboard",
     "pricing": "Precios",
     "pricingBadge": "50% de descuento",
     "freePlan": "Plan gratuito",
     "freePlanQuota": "4 / día",
+    "usageTitle": "Minutos restantes",
+    "usageRemaining": "{remaining} min restantes",
+    "usageMeter": "{used} / {quota} min usados",
     "upgradePlan": "Actualizar plan",
     "signIn": "Inicia sesión",
+    "signOut": "Cerrar sesión",
+    "account": "Cuenta",
+    "accountMenu": "Menú de cuenta",
     "language": "Idioma",
     "docs": "Documentación",
     "help": "Ayuda",
     "nav": [
       {
         "label": "Inicio",
-        "href": "#top",
-        "icon": "Home",
-        "active": true
+        "href": "/",
+        "icon": "Home"
       },
       {
         "label": "Audio a texto",
-        "href": "#generator",
+        "href": "/audio-to-text",
         "icon": "AudioLines"
       },
       {
         "label": "Vídeo a texto",
-        "href": "#generator",
+        "href": "/#generator",
         "icon": "Clapperboard"
-      },
-      {
-        "label": "Transcript de YouTube",
-        "href": "#generator",
-        "icon": "PlaySquare"
-      },
-      {
-        "label": "Transcript de TikTok",
-        "href": "#generator",
-        "icon": "Music2"
-      },
-      {
-        "label": "Transcript de Instagram",
-        "href": "#generator",
-        "icon": "Camera"
       }
     ],
     "tools": [

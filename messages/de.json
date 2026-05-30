@@ -2,50 +2,42 @@
   "Sidebar": {
     "openNav": "Navigation öffnen",
     "closeNav": "Navigation schließen",
+    "expandSidebar": "Seitenleiste erweitern",
+    "collapseSidebar": "Seitenleiste einklappen",
     "newTranscript": "Neue Transkription",
     "aiTools": "KI-Tools",
     "browserExtension": "Browser-Erweiterung",
-    "myLibrary": "Meine Bibliothek",
+    "myLibrary": "Dashboard",
     "pricing": "Preisgestaltung",
     "pricingBadge": "50 % Rabatt",
     "freePlan": "Kostenloser Plan",
     "freePlanQuota": "4 / Tag",
+    "usageTitle": "Minuten übrig",
+    "usageRemaining": "{remaining} Min. übrig",
+    "usageMeter": "{used} / {quota} Min. genutzt",
     "upgradePlan": "Plan upgraden",
     "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "account": "Konto",
+    "accountMenu": "Kontomenü",
     "language": "Sprache",
     "docs": "Docs",
     "help": "Hilfe",
     "nav": [
       {
         "label": "Startseite",
-        "href": "#top",
-        "icon": "Home",
-        "active": true
+        "href": "/",
+        "icon": "Home"
       },
       {
         "label": "Audio zu Text",
-        "href": "#generator",
+        "href": "/audio-to-text",
         "icon": "AudioLines"
       },
       {
         "label": "Video zu Text",
-        "href": "#generator",
+        "href": "/#generator",
         "icon": "Clapperboard"
-      },
-      {
-        "label": "YouTube-Transkript",
-        "href": "#generator",
-        "icon": "PlaySquare"
-      },
-      {
-        "label": "TikTok-Transkript",
-        "href": "#generator",
-        "icon": "Music2"
-      },
-      {
-        "label": "Instagram-Transkript",
-        "href": "#generator",
-        "icon": "Camera"
       }
     ],
     "tools": [

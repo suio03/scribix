@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.0] - 2026-05-31
+
+### Added
+- Added a persistent SaaS-style sidebar for the main and audio-to-text landing pages with quick switching between tools and the dashboard.
+- Added a collapsible desktop icon rail, mobile drawer behavior, account avatar menu, language/theme controls, and signed-in usage display in the sidebar.
+
+### Changed
+- Moved landing-page navigation, account, language, and theme controls out of the header and into the sidebar shell.
+- Renamed the sidebar library entry to Dashboard and removed unavailable social transcript and pricing links from the visible sidebar.
+
+### Fixed
+- Fixed mobile drawer close behavior with explicit pointer and keyboard handling plus ghost-click reopen suppression.
+- Hid the usage meter for signed-out visitors to avoid implying account quota before sign-in.
+
 ## [0.3.0] - 2026-05-25
 
 ### Added

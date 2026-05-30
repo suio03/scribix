@@ -2,50 +2,42 @@
   "Sidebar": {
     "openNav": "ナビゲーションを開く",
     "closeNav": "ナビゲーションを閉じる",
+    "expandSidebar": "サイドバーを展開",
+    "collapseSidebar": "サイドバーを折りたたむ",
     "newTranscript": "新規文字起こし",
     "aiTools": "AIツール",
     "browserExtension": "ブラウザ拡張機能",
-    "myLibrary": "マイライブラリ",
+    "myLibrary": "Dashboard",
     "pricing": "料金",
     "pricingBadge": "50% OFF",
     "freePlan": "フリープラン",
     "freePlanQuota": "4 / 日",
+    "usageTitle": "残り時間",
+    "usageRemaining": "残り {remaining} 分",
+    "usageMeter": "{used} / {quota} 分使用済み",
     "upgradePlan": "プランをアップグレード",
     "signIn": "サインイン",
+    "signOut": "サインアウト",
+    "account": "アカウント",
+    "accountMenu": "アカウントメニュー",
     "language": "言語",
     "docs": "ドキュメント",
     "help": "ヘルプ",
     "nav": [
       {
         "label": "ホーム",
-        "href": "#top",
-        "icon": "Home",
-        "active": true
+        "href": "/",
+        "icon": "Home"
       },
       {
         "label": "音声を文字に",
-        "href": "#generator",
+        "href": "/audio-to-text",
         "icon": "AudioLines"
       },
       {
         "label": "動画を文字に",
-        "href": "#generator",
+        "href": "/#generator",
         "icon": "Clapperboard"
-      },
-      {
-        "label": "YouTube 文字起こし",
-        "href": "#generator",
-        "icon": "PlaySquare"
-      },
-      {
-        "label": "TikTok 文字起こし",
-        "href": "#generator",
-        "icon": "Music2"
-      },
-      {
-        "label": "Instagram 文字起こし",
-        "href": "#generator",
-        "icon": "Camera"
       }
     ],
     "tools": [

@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { getPathname, Link } from "@/i18n/navigation";
 import { Shell } from "../components/Shell";
 import { Sidebar } from "../components/Sidebar";
+import { getSidebarUsage } from "../components/sidebarUsage";
 import { Header } from "../components/Header";
 import { Generator } from "../components/Generator";
 import { TrustStrip } from "../components/TrustStrip";
@@ -11,7 +12,6 @@ import { HowItWorks } from "../components/HowItWorks";
 import { UseCases } from "../components/UseCases";
 import { Comparison } from "../components/Comparison";
 import { Testimonials } from "../components/Testimonials";
-import { Pricing } from "../components/Pricing";
 import { FAQ } from "../components/FAQ";
 import { FinalCTA } from "../components/FinalCTA";
 import { Footer } from "../components/Footer";
@@ -65,10 +65,24 @@ export default async function HomePage({
 
   const session = await auth();
   const postSignInPath = getPathname({ href: "/dashboard/new", locale });
+  const homePath = getPathname({ href: "/", locale });
+  const dashboardPath = getPathname({ href: "/dashboard", locale });
   const audioLinkT = await getTranslations("HomeAudioToTextLink");
+  const sidebarUsage = await getSidebarUsage(session);
 
   return (
-    <Shell /* sidebar={<Sidebar />} */>
+    <Shell
+      sidebar={
+        <Sidebar
+          usage={sidebarUsage}
+          signedIn={!!session}
+          signInRedirect={dashboardPath}
+          signOutRedirect={homePath}
+          userImage={session?.user?.image ?? null}
+          userLabel={session?.user?.name ?? session?.user?.email ?? null}
+        />
+      }
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
@@ -77,7 +91,7 @@ export default async function HomePage({
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="home" />
-      <Header />
+      <Header showSidebarToggle />
       <main>
         <Generator signedIn={!!session} postSignInPath={postSignInPath} />
         <section className="px-4 pb-8 sm:px-8">
@@ -100,7 +114,6 @@ export default async function HomePage({
         <UseCases />
         <Comparison />
         <Testimonials />
-        {/* <Pricing /> */}
         <FAQ />
         <FinalCTA />
       </main>

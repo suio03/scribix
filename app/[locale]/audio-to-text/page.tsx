@@ -33,6 +33,8 @@ import {
 } from "@/app/components/upload/AudioUploadCard";
 import { Partners } from "@/app/components/Partners";
 import { Shell } from "@/app/components/Shell";
+import { Sidebar } from "@/app/components/Sidebar";
+import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { TrackToolVisit } from "@/app/components/Track";
 
 const SITE = "https://scribix.io";
@@ -174,6 +176,9 @@ export default async function AudioToTextPage({
 
   const session = await auth();
   const postSignInPath = getPathname({ href: "/dashboard/new", locale });
+  const homePath = getPathname({ href: "/", locale });
+  const dashboardPath = getPathname({ href: "/dashboard", locale });
+  const sidebarUsage = await getSidebarUsage(session);
   const t = await getTranslations("AudioToText");
   const copy = {
     hero: t.raw("hero"),
@@ -192,13 +197,24 @@ export default async function AudioToTextPage({
   } as AudioToTextCopy;
 
   return (
-    <Shell>
+    <Shell
+      sidebar={
+        <Sidebar
+          usage={sidebarUsage}
+          signedIn={!!session}
+          signInRedirect={dashboardPath}
+          signOutRedirect={homePath}
+          userImage={session?.user?.image ?? null}
+          userLabel={session?.user?.name ?? session?.user?.email ?? null}
+        />
+      }
+    >
       <JsonLd copy={copy} locale={locale} />
       {!session && process.env.GOOGLE_ID ? (
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="audio-to-text" />
-      <Header />
+      <Header showSidebarToggle />
       <main>
         <ToolHero
           {...copy.hero}
