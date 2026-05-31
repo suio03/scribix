@@ -30,6 +30,7 @@ export function AudioUploadCard({
     signedIn,
     postSignInPath,
     audioOnly: true,
+    toolSlug: "audio-to-text",
   });
 
   return (

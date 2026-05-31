@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import { markSignInPending } from "./Track";
 
-const TOOL_SLUG = "transcribe";
+const DEFAULT_TOOL_SLUG = "transcribe";
 
 type UploaderT = ReturnType<typeof useTranslations<"Dashboard.uploader">>;
 
@@ -29,12 +29,15 @@ export type UseUploadOpts = {
   postSignInPath?: string;
   /** Restrict uploads to audio files and skip the video extraction path. */
   audioOnly?: boolean;
+  /** Analytics tool identifier for attribution across shared upload surfaces. */
+  toolSlug?: string;
 };
 
 export function useUpload({
   signedIn,
   postSignInPath = "/dashboard/new",
   audioOnly = false,
+  toolSlug = DEFAULT_TOOL_SLUG,
 }: UseUploadOpts) {
   const t = useTranslations("Dashboard.uploader");
   const router = useRouter();
@@ -49,10 +52,19 @@ export function useUpload({
       source: "upload" | "record" = "upload",
       durationSecOverride?: number
     ) => {
-      if (audioOnly && !isLikelyAudioFile(file)) {
+      const inputType = getUploadInputType(file);
+
+      if (audioOnly && inputType !== "audio") {
         setFilename(file.name);
         setPhase("error");
         setErrorMsg(t("audioOnly"));
+        trackEvent("transcribe_fail", {
+          tool_slug: toolSlug,
+          source,
+          input_type: inputType,
+          error_code: "audio_only_file_type",
+          error_message: t("audioOnly"),
+        });
         return;
       }
       if (!signedIn) {
@@ -140,7 +152,9 @@ export function useUpload({
         const finalStatus = await pollStatus(transcriptId, t);
         if (finalStatus === "completed") {
           trackEvent("transcribe_success", {
-            tool_slug: TOOL_SLUG,
+            tool_slug: toolSlug,
+            source,
+            input_type: inputType,
             duration_sec: uploadDurationSec || undefined,
           });
           router.push(`/dashboard/transcripts/${transcriptId}`);
@@ -150,7 +164,9 @@ export function useUpload({
       } catch (err) {
         console.error("Upload failed", { step, transcriptId, error: serializeError(err) });
         trackEvent("transcribe_fail", {
-          tool_slug: TOOL_SLUG,
+          tool_slug: toolSlug,
+          source,
+          input_type: inputType,
           error_code: step,
           error_message: errorSummary(err),
         });
@@ -165,7 +181,7 @@ export function useUpload({
         setErrorMsg(message);
       }
     },
-    [router, signedIn, postSignInPath, audioOnly, t]
+    [router, signedIn, postSignInPath, audioOnly, toolSlug, t]
   );
 
   return { phase, progress, errorMsg, filename, onPick };
@@ -291,6 +307,12 @@ function isLikelyAudioFile(file: File): boolean {
 
   const ext = file.name.split(".").pop()?.toLowerCase();
   return ext ? AUDIO_EXTENSIONS.has(ext) : false;
+}
+
+function getUploadInputType(file: File): "audio" | "video" | "unknown" {
+  if (isLikelyAudioFile(file)) return "audio";
+  if (file.type.startsWith("video/")) return "video";
+  return "unknown";
 }
 
 async function readMediaDuration(file: File): Promise<number> {

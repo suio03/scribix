@@ -216,6 +216,7 @@ function UploadPane({
   const { phase, progress, errorMsg, filename, onPick } = useUpload({
     signedIn,
     postSignInPath,
+    toolSlug: "home",
   });
 
   return (

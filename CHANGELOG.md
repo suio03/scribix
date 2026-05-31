@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.0] - 2026-05-31
+
+### Added
+- Added Microsoft Clarity analytics tracking alongside existing Google Analytics and Plausible scripts.
+- Added Clarity forwarding for custom analytics events and properties.
+- Added tool-level transcription attribution for audio-to-text, homepage, and dashboard upload flows.
+
+### Changed
+- Extended transcription success and failure events with source and input type metadata.
+
 ## [0.4.0] - 2026-05-31
 
 ### Added
