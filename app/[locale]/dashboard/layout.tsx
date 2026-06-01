@@ -5,6 +5,7 @@ import { Logo } from "@/app/components/Logo";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
 import { TrackSignInSuccess } from "@/app/components/Track";
+import { FeedbackWidget } from "@/app/components/FeedbackWidget";
 
 export const metadata = {
   robots: {
@@ -66,6 +67,7 @@ export default async function DashboardLayout({
         </div>
       </header>
       {children}
+      <FeedbackWidget />
     </>
   );
 }

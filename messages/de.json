@@ -1116,6 +1116,20 @@
       ]
     }
   },
+  "Feedback": {
+    "launcher": "Feedback",
+    "dialogLabel": "Feedback",
+    "helper": "Sagen Sie uns, was wir verbessern, beheben oder hinzufügen sollen.",
+    "textareaLabel": "Feedback-Nachricht",
+    "placeholder": "Schreiben Sie Ihr Feedback...",
+    "send": "Senden",
+    "sending": "Wird gesendet",
+    "success": "Danke, wir haben Ihr Feedback erhalten.",
+    "error": "Feedback konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+    "cooldown": "Danke. Sie können in etwa 10 Minuten eine weitere Nachricht senden.",
+    "close": "Feedback schließen",
+    "dismiss": "Feedback ausblenden"
+  },
   "HomeAudioToTextLink": {
     "prefix": "Arbeitest du mit reinen Audioaufnahmen?",
     "link": "Die eigene Audio-zu-Text-Seite öffnen",

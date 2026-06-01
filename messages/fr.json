@@ -1116,6 +1116,20 @@
       ]
     }
   },
+  "Feedback": {
+    "launcher": "Feedback",
+    "dialogLabel": "Feedback",
+    "helper": "Dites-nous quoi améliorer, corriger ou ajouter.",
+    "textareaLabel": "Message de feedback",
+    "placeholder": "Écrivez votre feedback...",
+    "send": "Envoyer",
+    "sending": "Envoi",
+    "success": "Merci, nous avons reçu votre feedback.",
+    "error": "Impossible d'envoyer le feedback. Réessayez.",
+    "cooldown": "Merci. Vous pourrez envoyer un autre message dans environ 10 minutes.",
+    "close": "Fermer le feedback",
+    "dismiss": "Masquer le feedback"
+  },
   "HomeAudioToTextLink": {
     "prefix": "Vous travaillez avec des enregistrements audio uniquement ?",
     "link": "Ouvrir la page audio vers texte dédiée",

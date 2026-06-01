@@ -1120,6 +1120,20 @@
       ]
     }
   },
+  "Feedback": {
+    "launcher": "Feedback",
+    "dialogLabel": "Feedback",
+    "helper": "Tell us what to improve, fix, or add.",
+    "textareaLabel": "Feedback message",
+    "placeholder": "Write your feedback...",
+    "send": "Send",
+    "sending": "Sending",
+    "success": "Thanks, we received your feedback.",
+    "error": "Could not send feedback. Please try again.",
+    "cooldown": "Thanks. You can send another message in about 10 minutes.",
+    "close": "Close feedback",
+    "dismiss": "Dismiss feedback"
+  },
   "HomeAudioToTextLink": {
     "prefix": "Working with audio-only recordings?",
     "link": "Open the dedicated audio-to-text page",

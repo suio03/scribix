@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0] - 2026-06-02
+
+### Added
+- Added a logged-in dashboard feedback widget that sends private user feedback to a dedicated Discord webhook.
+- Added `/api/feedback` with authentication, message validation, link limits, cooldown protection, and Discord mention suppression.
+- Added localized feedback widget copy across supported locales and setup documentation for `DISCORD_FEEDBACK_WEBHOOK_URL`.
+
 ## [0.5.0] - 2026-05-31
 
 ### Added

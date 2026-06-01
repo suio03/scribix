@@ -223,7 +223,19 @@ ADMIN_EMAILS=you@example.com,teammate@example.com
    DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
    ```
 
-### 6.3 Monthly AAI bulk-delete cron
+### 6.3 Discord feedback alerts (optional but recommended)
+
+Create a separate private Discord channel such as `scribix-feedback`, then:
+
+1. Channel settings → **Integrations** → **Webhooks** → **New Webhook**.
+2. Name it `Scribix Feedback`.
+3. Copy the webhook URL.
+4. Set:
+   ```
+   DISCORD_FEEDBACK_WEBHOOK_URL=https://discord.com/api/webhooks/...
+   ```
+
+### 6.4 Monthly AAI bulk-delete cron
 
 Documented as a runbook (not code). Runs once a month:
 
