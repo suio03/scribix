@@ -596,6 +596,7 @@
   },
   "Dashboard": {
     "layout": {
+      "dashboard": "Dashboard",
       "account": "Cuenta",
       "signOut": "Cerrar sesión"
     },

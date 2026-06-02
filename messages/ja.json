@@ -596,6 +596,7 @@
   },
   "Dashboard": {
     "layout": {
+      "dashboard": "Dashboard",
       "account": "アカウント",
       "signOut": "サインアウト"
     },

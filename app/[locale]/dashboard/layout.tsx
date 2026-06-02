@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
 import { TrackSignInSuccess } from "@/app/components/Track";
 import { FeedbackWidget } from "@/app/components/FeedbackWidget";
+import { DashboardHeaderLink } from "@/app/components/DashboardHeaderLink";
 
 export const metadata = {
   robots: {
@@ -44,12 +45,7 @@ export default async function DashboardLayout({
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeToggle />
-            <Link
-              href="/dashboard/account"
-              className="rounded-full border border-line px-3.5 py-1.5 text-[13px] font-medium hover:bg-ink/5"
-            >
-              {t("account")}
-            </Link>
+            <DashboardHeaderLink />
             <form
               action={async () => {
                 "use server";
