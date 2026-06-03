@@ -25,7 +25,10 @@ const DOWNLOADS = [
   { format: "csv", label: "CSV", icon: FileSpreadsheet, timestamped: false },
 ] as const;
 
-export function ExportPanel({ id, audioAvailable }: Props) {
+export function ExportPanel({
+  id,
+  audioAvailable,
+}: Props) {
   const t = useTranslations("Dashboard.exportPanel");
   const [withTimestamps, setWithTimestamps] = useState(true);
   const [copyState, setCopyState] = useState<"idle" | "busy" | "ok" | "err">("idle");
@@ -155,4 +158,3 @@ function Toggle({
     </button>
   );
 }
-

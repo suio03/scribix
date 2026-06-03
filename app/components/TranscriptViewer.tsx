@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Languages, MoreVertical, Pause, Play, Sparkles, Volume2, VolumeX } from "lucide-react";
+import { Languages, MoreVertical, Pause, Play, Sparkles, Users, Volume2, VolumeX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { AaiSegment } from "@/lib/aai";
 import { compactCJKSpaces } from "@/lib/transcript-format";
+import { displaySpeakerName, speakerToneFor, type SpeakerNames } from "./speakerDisplay";
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2] as const;
 
@@ -12,12 +13,25 @@ type Tab = "transcript" | "subtitles";
 
 type Props = {
   audioUrl: string | null;
+  utterances: AaiSegment[];
   paragraphs: AaiSegment[];
   sentences: AaiSegment[];
   fallbackText: string;
+  speakerNames: SpeakerNames;
+  speakers: string[];
+  onOpenSpeakerEditor: (speaker?: string) => void;
 };
 
-export function TranscriptViewer({ audioUrl, paragraphs, sentences, fallbackText }: Props) {
+export function TranscriptViewer({
+  audioUrl,
+  utterances,
+  paragraphs,
+  sentences,
+  fallbackText,
+  speakerNames,
+  speakers,
+  onOpenSpeakerEditor,
+}: Props) {
   const t = useTranslations("Dashboard.viewer");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [tab, setTab] = useState<Tab>("transcript");
@@ -30,8 +44,11 @@ export function TranscriptViewer({ audioUrl, paragraphs, sentences, fallbackText
     a.play().catch(() => {});
   };
 
-  const segments = tab === "transcript" ? paragraphs : sentences;
+  const transcriptSegments = utterances.length > 0 ? utterances : paragraphs;
+  const segments = tab === "transcript" ? transcriptSegments : sentences;
   const hasSegments = segments.length > 0;
+  const speakerLabel = (speaker: string) =>
+    displaySpeakerName(speaker, speakerNames, (id) => t("speakerLabel", { speaker: id }));
 
   return (
     <div className="space-y-6">
@@ -49,6 +66,17 @@ export function TranscriptViewer({ audioUrl, paragraphs, sentences, fallbackText
           </TabButton>
         </div>
         <div className="flex items-center gap-1">
+          {speakers.length > 0 ? (
+            <button
+              type="button"
+              onClick={() => onOpenSpeakerEditor()}
+              title={t("editSpeakersTitle")}
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium text-ink/65 transition hover:bg-ink/5 hover:text-ink"
+            >
+              <Users size={14} />
+              {t("speakersCount", { count: speakers.length })}
+            </button>
+          ) : null}
           <button
             type="button"
             disabled
@@ -85,6 +113,8 @@ export function TranscriptViewer({ audioUrl, paragraphs, sentences, fallbackText
           currentMs={currentMs}
           onSeek={seekTo}
           dense={tab === "subtitles"}
+          speakerLabel={speakerLabel}
+          onOpenSpeakerEditor={onOpenSpeakerEditor}
         />
       ) : (
         <p className="whitespace-pre-wrap text-base leading-relaxed">
@@ -122,13 +152,26 @@ type SegmentListProps = {
   currentMs: number;
   onSeek: (ms: number) => void;
   dense: boolean;
+  speakerLabel: (speaker: string) => string;
+  onOpenSpeakerEditor: (speaker: string) => void;
 };
 
-function SegmentList({ segments, currentMs, onSeek, dense }: SegmentListProps) {
+function SegmentList({
+  segments,
+  currentMs,
+  onSeek,
+  dense,
+  speakerLabel,
+  onOpenSpeakerEditor,
+}: SegmentListProps) {
   return (
     <div className={dense ? "space-y-1.5" : "space-y-6"}>
       {segments.map((seg, i) => {
         const isActive = currentMs >= seg.start && currentMs < seg.end;
+        const speaker = typeof seg.speaker === "string" && seg.speaker.trim()
+          ? seg.speaker.trim()
+          : null;
+        const speakerTone = speaker ? speakerToneFor(speaker) : "";
         return dense ? (
           <button
             key={i}
@@ -137,22 +180,54 @@ function SegmentList({ segments, currentMs, onSeek, dense }: SegmentListProps) {
               isActive ? "bg-accent-soft text-ink" : "hover:bg-ink/5 text-ink/85"
             }`}
           >
-            <span className="mr-3 inline-block w-12 text-[12px] tabular-nums text-ink/50">
-              {fmtTime(seg.start)}
+            <span className="mr-3 inline-flex items-center gap-2 align-baseline">
+              <span className="inline-block w-12 text-[12px] tabular-nums text-ink/50">
+                {fmtTime(seg.start)}
+              </span>
+              {speaker ? (
+                <span
+                  role="button"
+                  tabIndex={0}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onOpenSpeakerEditor(speaker);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onOpenSpeakerEditor(speaker);
+                  }}
+                  className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${speakerTone}`}
+                >
+                  {speakerLabel(speaker)}
+                </span>
+              ) : null}
             </span>
             {compactCJKSpaces(seg.text)}
           </button>
         ) : (
           <div key={i}>
-            <button
-              type="button"
-              onClick={() => onSeek(seg.start)}
-              className={`text-[13px] tabular-nums font-medium transition ${
-                isActive ? "text-accent" : "text-accent/70 hover:text-accent"
-              }`}
-            >
-              {fmtTime(seg.start)}
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onSeek(seg.start)}
+                className={`text-[13px] tabular-nums font-medium transition ${
+                  isActive ? "text-accent" : "text-accent/70 hover:text-accent"
+                }`}
+              >
+                {fmtTime(seg.start)}
+              </button>
+              {speaker ? (
+                <button
+                  type="button"
+                  onClick={() => onOpenSpeakerEditor(speaker)}
+                  className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium tracking-[0.04em] transition hover:brightness-95 ${speakerTone}`}
+                >
+                  {speakerLabel(speaker)}
+                </button>
+              ) : null}
+            </div>
             <p
               className={`mt-1 text-base leading-relaxed transition ${
                 isActive ? "text-ink" : "text-ink/85"

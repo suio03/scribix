@@ -7,8 +7,8 @@ import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { presignGet } from "@/lib/r2";
-import { TranscriptViewer } from "@/app/components/TranscriptViewer";
-import { ExportPanel } from "@/app/components/ExportPanel";
+import { parseSpeakerNames } from "@/lib/speaker-names";
+import { TranscriptWorkspace } from "@/app/components/TranscriptWorkspace";
 
 type Params = { params: Promise<{ locale: string; id: string }> };
 
@@ -27,7 +27,8 @@ export default async function TranscriptViewerPage({ params }: Params) {
 
   const row = await env.DB.prepare(
     `SELECT id, user_id, title, status, error, duration_sec, language,
-            created_at, completed_at, transcript_r2_key, audio_r2_key
+            created_at, completed_at, transcript_r2_key, audio_r2_key,
+            speaker_names_json
        FROM transcripts
       WHERE id = ?1 AND deleted_at IS NULL`
   )
@@ -44,6 +45,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
       completed_at: string | null;
       transcript_r2_key: string | null;
       audio_r2_key: string | null;
+      speaker_names_json: string | null;
     }>();
   if (!row) notFound();
   if (row.user_id !== userId) notFound();
@@ -86,28 +88,24 @@ export default async function TranscriptViewerPage({ params }: Params) {
         </div>
       ) : null}
 
-      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
-        <section className="min-w-0">
-          {row.status !== "completed" ? (
-            <StatusPanel status={row.status} error={row.error} t={t} />
-          ) : aai ? (
-            <TranscriptViewer
-              audioUrl={audioUrl}
-              paragraphs={aai.paragraphs ?? []}
-              sentences={aai.sentences ?? []}
-              fallbackText={aai.text ?? ""}
-            />
-          ) : (
-            <p className="text-sm text-ink/60">{t("missing")}</p>
-          )}
+      {row.status !== "completed" ? (
+        <section className="mt-8 min-w-0">
+          <StatusPanel status={row.status} error={row.error} t={t} />
         </section>
-
-        {row.status === "completed" && aai ? (
-          <aside className="lg:sticky lg:top-6 lg:self-start">
-            <ExportPanel id={row.id} audioAvailable={audioAvailable} />
-          </aside>
-        ) : null}
-      </div>
+      ) : aai ? (
+        <TranscriptWorkspace
+          id={row.id}
+          audioUrl={audioUrl}
+          audioAvailable={audioAvailable}
+          utterances={aai.utterances ?? []}
+          paragraphs={aai.paragraphs ?? []}
+          sentences={aai.sentences ?? []}
+          fallbackText={aai.text ?? ""}
+          initialSpeakerNames={parseSpeakerNames(row.speaker_names_json)}
+        />
+      ) : (
+        <p className="mt-8 text-sm text-ink/60">{t("missing")}</p>
+      )}
     </main>
   );
 }

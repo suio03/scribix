@@ -3,6 +3,7 @@
 
 import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
 import type { AaiTranscript } from "./aai";
+import { speakerNameOrDefault, type SpeakerNames } from "./speaker-names";
 
 type Word = NonNullable<AaiTranscript["words"]>[number];
 type Cue = { start: number; end: number; text: string; speaker?: string };
@@ -68,47 +69,54 @@ function shortStamp(ms: number): string {
   return `${pad(m, 2)}:${pad(s, 2)}`;
 }
 
-export function toTxt(aai: AaiTranscript, withTimestamps = false): string {
+export function toTxt(
+  aai: AaiTranscript,
+  withTimestamps = false,
+  speakerNames: SpeakerNames = {}
+): string {
   if (!withTimestamps) return compactCJKSpaces(aai.text ?? "");
   const cues = cuesFromAai(aai);
   if (cues.length === 0) return compactCJKSpaces(aai.text ?? "");
   return cues
     .map((c) => {
-      const head = c.speaker ? `[${shortStamp(c.start)}] Speaker ${c.speaker}` : `[${shortStamp(c.start)}]`;
+      const speaker = speakerNameOrDefault(c.speaker, speakerNames);
+      const head = speaker ? `[${shortStamp(c.start)}] ${speaker}` : `[${shortStamp(c.start)}]`;
       return `${head}\n${c.text}`;
     })
     .join("\n\n") + "\n";
 }
 
-export function toSrt(aai: AaiTranscript): string {
+export function toSrt(aai: AaiTranscript, speakerNames: SpeakerNames = {}): string {
   const cues = cuesFromAai(aai);
   return cues
     .map((c, i) => {
-      const text = c.speaker ? `[Speaker ${c.speaker}] ${c.text}` : c.text;
+      const speaker = speakerNameOrDefault(c.speaker, speakerNames);
+      const text = speaker ? `[${speaker}] ${c.text}` : c.text;
       return `${i + 1}\n${timestamp(c.start, ",")} --> ${timestamp(c.end, ",")}\n${text}\n`;
     })
     .join("\n");
 }
 
-export function toVtt(aai: AaiTranscript): string {
+export function toVtt(aai: AaiTranscript, speakerNames: SpeakerNames = {}): string {
   const cues = cuesFromAai(aai);
   const body = cues
     .map((c) => {
-      const text = c.speaker ? `<v Speaker ${c.speaker}>${c.text}` : c.text;
+      const speaker = speakerNameOrDefault(c.speaker, speakerNames);
+      const text = speaker ? `<v ${speaker}>${c.text}` : c.text;
       return `${timestamp(c.start, ".")} --> ${timestamp(c.end, ".")}\n${text}\n`;
     })
     .join("\n");
   return `WEBVTT\n\n${body}`;
 }
 
-export function toCsv(aai: AaiTranscript): string {
+export function toCsv(aai: AaiTranscript, speakerNames: SpeakerNames = {}): string {
   const cues = cuesFromAai(aai);
   const header = "start,end,speaker,text\n";
   const rows = cues
     .map(
       (c) =>
         `${timestamp(c.start, ".")},${timestamp(c.end, ".")},${csvField(
-          c.speaker ?? ""
+          speakerNameOrDefault(c.speaker, speakerNames) ?? ""
         )},${csvField(c.text)}`
     )
     .join("\n");
@@ -123,7 +131,8 @@ function csvField(s: string): string {
 export async function toDocx(
   aai: AaiTranscript,
   title: string,
-  withTimestamps = true
+  withTimestamps = true,
+  speakerNames: SpeakerNames = {}
 ): Promise<Uint8Array> {
   const cues = cuesFromAai(aai);
   const children: Paragraph[] = [
@@ -140,9 +149,9 @@ export async function toDocx(
     );
   } else {
     for (const c of cues) {
+      const speaker = speakerNameOrDefault(c.speaker, speakerNames);
       if (withTimestamps) {
         const stamp = timestamp(c.start, ".");
-        const speaker = c.speaker ? `Speaker ${c.speaker}` : "";
         const meta = speaker ? `${stamp}  ${speaker}` : stamp;
         children.push(
           new Paragraph({
@@ -152,12 +161,12 @@ export async function toDocx(
             ],
           })
         );
-      } else if (c.speaker) {
+      } else if (speaker) {
         children.push(
           new Paragraph({
             spacing: { before: 200, after: 60 },
             children: [
-              new TextRun({ text: `Speaker ${c.speaker}`, bold: true, color: "888888", size: 18 }),
+              new TextRun({ text: speaker, bold: true, color: "888888", size: 18 }),
             ],
           })
         );

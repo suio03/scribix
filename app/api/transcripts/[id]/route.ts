@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { sanitizeSpeakerNames } from "@/lib/speaker-names";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -80,4 +81,43 @@ export async function DELETE(_: Request, { params }: Params) {
   ]);
 
   return Response.json({ ok: true });
+}
+
+export async function PATCH(req: Request, { params }: Params) {
+  const session = await auth();
+  if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
+  const { id: transcriptId } = await params;
+
+  let body: { speakerNames?: unknown };
+  try {
+    const parsed = await req.json();
+    body = parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return Response.json({ error: "invalid_json" }, { status: 400 });
+  }
+
+  const speakerNames = sanitizeSpeakerNames(body.speakerNames);
+  const env = await cf();
+  const user = await getOrCreateCurrentUser(env.DB, session);
+  if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+
+  const row = await env.DB.prepare(
+    `SELECT user_id
+       FROM transcripts
+      WHERE id = ?1 AND deleted_at IS NULL`
+  )
+    .bind(transcriptId)
+    .first<{ user_id: string }>();
+  if (!row) return Response.json({ error: "not_found" }, { status: 404 });
+  if (row.user_id !== user.id) {
+    return Response.json({ error: "forbidden" }, { status: 403 });
+  }
+
+  await env.DB.prepare(
+    `UPDATE transcripts SET speaker_names_json = ?1 WHERE id = ?2`
+  )
+    .bind(JSON.stringify(speakerNames), transcriptId)
+    .run();
+
+  return Response.json({ ok: true, speakerNames });
 }

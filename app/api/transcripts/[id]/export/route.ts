@@ -9,6 +9,7 @@ import {
   toTxt,
   toVtt,
 } from "@/lib/transcript-format";
+import { parseSpeakerNames } from "@/lib/speaker-names";
 
 type Params = { params: Promise<{ id: string }> };
 type Format = "txt" | "srt" | "vtt" | "csv" | "docx";
@@ -30,7 +31,7 @@ export async function GET(req: Request, { params }: Params) {
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(
-    `SELECT user_id, status, title, transcript_r2_key
+    `SELECT user_id, status, title, transcript_r2_key, speaker_names_json
        FROM transcripts
       WHERE id = ?1 AND deleted_at IS NULL`
   )
@@ -40,6 +41,7 @@ export async function GET(req: Request, { params }: Params) {
       status: string;
       title: string;
       transcript_r2_key: string | null;
+      speaker_names_json: string | null;
     }>();
   if (!row) return Response.json({ error: "not_found" }, { status: 404 });
   if (row.user_id !== user.id) {
@@ -52,29 +54,30 @@ export async function GET(req: Request, { params }: Params) {
   const obj = await env.SCRIBIX_MEDIA.get(row.transcript_r2_key);
   if (!obj) return Response.json({ error: "transcript_missing" }, { status: 410 });
   const aai = (await obj.json()) as AaiTranscript;
+  const speakerNames = parseSpeakerNames(row.speaker_names_json);
 
   let body: string | Uint8Array;
   let contentType: string;
   switch (requested) {
     case "srt":
-      body = toSrt(aai);
+      body = toSrt(aai, speakerNames);
       contentType = "application/x-subrip; charset=utf-8";
       break;
     case "vtt":
-      body = toVtt(aai);
+      body = toVtt(aai, speakerNames);
       contentType = "text/vtt; charset=utf-8";
       break;
     case "csv":
-      body = toCsv(aai);
+      body = toCsv(aai, speakerNames);
       contentType = "text/csv; charset=utf-8";
       break;
     case "docx":
-      body = await toDocx(aai, row.title, withTimestamps);
+      body = await toDocx(aai, row.title, withTimestamps, speakerNames);
       contentType =
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
       break;
     default:
-      body = toTxt(aai, withTimestamps);
+      body = toTxt(aai, withTimestamps, speakerNames);
       contentType = "text/plain; charset=utf-8";
   }
 
