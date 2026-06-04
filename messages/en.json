@@ -312,7 +312,7 @@
         "icon": "GraduationCap",
         "title": "Students",
         "audience": "Lectures & study",
-        "body": "Turn a 2-hour lecture into searchable notes. Mark a confusing moment, click the word, hear it again. Try it free, then a single Basic month covers an entire semester of lectures.",
+        "body": "Turn a 2-hour lecture into searchable notes. Mark a confusing moment, click the word, hear it again. Try it free, then a single Starter month covers an entire semester of lectures.",
         "workflow": [
           "Lecture recording",
           "Searchable notes",
@@ -453,58 +453,92 @@
       }
     ]
   },
-  "Pricing": {
-    "label": "Pricing",
-    "number": "06",
-    "h2": "Pay for the minutes, <accent>not the marketing.</accent>",
-    "intro": "A 45-minute free trial to prove the quality. Two paid tiers without seat taxes or surprise overages. Cancel any time, export everything.",
-    "mostLoved": "Most loved",
+  "PricingPage": {
+    "metadata": {
+      "title": "Pricing",
+      "description": "Simple Scribix pricing: start free, upgrade to Starter for 600 minutes per month, or choose Pro for 1,800 minutes and priority AI outputs.",
+      "ogTitle": "Scribix Pricing",
+      "ogDescription": "Free trial, Starter, and Pro plans for video and audio transcription."
+    },
+    "h1": "Simple pricing for serious transcription.",
+    "bestValue": "Best value",
+    "annualPrefix": "Annual",
+    "noCreditCard": "No credit card required",
+    "chooseLabel": "Choose {plan}",
+    "soonLabel": "Soon",
+    "buttonTitle": "Checkout will be added in the next phase",
+    "faqTitle": "Pricing FAQ",
+    "specLabels": {
+      "minutes": "Minutes",
+      "unitValue": "Unit value",
+      "fileLimit": "File limit",
+      "queue": "Queue",
+      "aiOutputs": "AI outputs"
+    },
     "plans": [
       {
+        "id": "free",
         "name": "Free",
         "price": "$0",
-        "cadence": "forever",
-        "blurb": "For occasional transcripts, students, and tire-kickers.",
-        "features": [
-          "Unlimited video transcripts",
-          "Up to 45 min per file",
-          "Speaker labels (up to 4)",
-          "SRT, VTT & DOCX export"
-        ],
-        "cta": "Start free",
-        "primary": false
+        "cadence": "one-time",
+        "minutes": "45 lifetime minutes",
+        "unitValue": "Trial only",
+        "summary": "Try Scribix once and check transcript quality before paying.",
+        "fileLimit": "45-minute max file",
+        "queue": "Normal queue",
+        "aiOutputs": "Transcript exports"
       },
       {
-        "name": "Studio",
+        "id": "starter",
+        "name": "Starter",
         "price": "$12",
         "cadence": "per month",
-        "blurb": "Most-loved by YouTubers, podcasters, and small teams.",
-        "features": [
-          "Unlimited transcripts, any length",
-          "Up to 6 hours per file",
-          "Speaker labels (up to 8)",
-          "AI summary, chapters, action items",
-          "Priority queue (5× real-time)",
-          "Auto-delete or self-host options"
-        ],
-        "cta": "Try 7 days free",
-        "primary": true
+        "minutes": "600 min/mo",
+        "unitValue": "$1.20/hr",
+        "summary": "For steady personal usage where the minute limit still feels real.",
+        "fileLimit": "1-hour max file",
+        "queue": "Normal queue",
+        "aiOutputs": "Transcript exports",
+        "annual": "$99/year"
       },
       {
-        "name": "Newsroom",
-        "price": "$48",
-        "cadence": "per seat / month",
-        "blurb": "For teams that turn video into stories every day.",
-        "features": [
-          "Everything in Studio",
-          "Shared workspaces & roles",
-          "SOC 2 Type II + audit logs",
-          "Custom vocabulary & glossary",
-          "API access (1M minutes / month)",
-          "Dedicated success manager"
-        ],
-        "cta": "Talk to sales",
-        "primary": false
+        "id": "pro",
+        "name": "Pro",
+        "price": "$19",
+        "cadence": "per month",
+        "minutes": "1,800 min/mo",
+        "unitValue": "$0.63/hr",
+        "summary": "The default choice for long files, frequent work, and AI outputs.",
+        "fileLimit": "10-hour max file",
+        "queue": "Priority queue",
+        "aiOutputs": "Summaries, chapters, action items",
+        "annual": "$149/year"
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Can I start for free?",
+        "answer": "Yes. Free includes 45 lifetime minutes so you can test transcript quality before choosing a paid plan."
+      },
+      {
+        "question": "What counts as transcription minutes?",
+        "answer": "Minutes are based on the length of the audio or video you transcribe. A 30-minute file uses 30 transcription minutes."
+      },
+      {
+        "question": "Do unused minutes roll over?",
+        "answer": "Monthly plan minutes reset each billing cycle. Annual plans are intended to provide the full annual allowance upfront at renewal."
+      },
+      {
+        "question": "What is the max file length?",
+        "answer": "Free supports files up to 45 minutes, Starter supports files up to 1 hour, and Pro supports files up to 10 hours."
+      },
+      {
+        "question": "Can I change plans later?",
+        "answer": "Yes. The plan structure is designed so you can start on Starter and move to Pro when longer files, priority queue, or AI outputs become important."
+      },
+      {
+        "question": "Is there a free trial on paid plans?",
+        "answer": "Yes. Starter and Pro both include 14 days free, and you can cancel anytime before the trial ends."
       }
     ]
   },
@@ -643,7 +677,7 @@
       "dangerZone": "Danger zone",
       "deleteWarning": "Permanently delete your account, transcripts, and audio. This cannot be undone.",
       "tierFree": "Free",
-      "tierBasic": "Basic",
+      "tierBasic": "Starter",
       "tierPro": "Pro",
       "cycleMonthly": "monthly",
       "cycleYearly": "yearly",

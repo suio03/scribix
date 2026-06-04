@@ -11,6 +11,7 @@ import {
 import {
   Home,
   AudioLines,
+  BadgeDollarSign,
   Clapperboard,
   ChevronLeft,
   ChevronRight,
@@ -249,6 +250,27 @@ export function Sidebar({
                 />
                 <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
                   {t("myLibrary")}
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/pricing"
+                onClick={closeAfterNavigate}
+                title={t("pricing")}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
+                  pathname === "/pricing"
+                    ? "bg-accent-soft text-ink"
+                    : "text-muted hover:bg-paper hover:text-ink"
+                } ${isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""}`}
+              >
+                <BadgeDollarSign
+                  size={17}
+                  strokeWidth={1.6}
+                  className={pathname === "/pricing" ? "text-accent" : ""}
+                />
+                <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
+                  {t("pricing")}
                 </span>
               </Link>
             </li>

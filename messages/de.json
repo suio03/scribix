@@ -312,7 +312,7 @@
         "icon": "GraduationCap",
         "title": "Studenten",
         "audience": "Vorlesungen & Studium",
-        "body": "Wandeln Sie eine 2-Stunden-Vorlesung in durchsuchbare Notizen um. Markieren Sie einen verwirrenden Moment, klicken Sie auf das Wort, hören Sie es erneut. Testen Sie kostenlos, dann deckt ein einziger Basic-Monat ein ganzes Semester an Vorlesungen ab.",
+        "body": "Wandeln Sie eine 2-Stunden-Vorlesung in durchsuchbare Notizen um. Markieren Sie einen verwirrenden Moment, klicken Sie auf das Wort, hören Sie es erneut. Testen Sie kostenlos, dann deckt ein einziger Starter-Monat ein ganzes Semester an Vorlesungen ab.",
         "workflow": [
           "Vorlesungsaufnahme",
           "Durchsuchbare Notizen",
@@ -453,58 +453,92 @@
       }
     ]
   },
-  "Pricing": {
-    "label": "Preisgestaltung",
-    "number": "06",
-    "h2": "Zahlen Sie für die Minuten, <accent>nicht das Marketing.</accent>",
-    "intro": "Eine 45-minütige kostenlose Testversion, um die Qualität zu beweisen. Zwei bezahlte Pläne ohne Platzbeschränkungen oder versteckte Gebühren. Kündigen Sie jederzeit, exportieren Sie alles.",
-    "mostLoved": "Am meisten geliebt",
+  "PricingPage": {
+    "metadata": {
+      "title": "Preise",
+      "description": "Einfache Scribix-Preise: kostenlos starten, mit Starter 600 Minuten pro Monat nutzen oder Pro mit 1.800 Minuten und priorisierten KI-Ausgaben wählen.",
+      "ogTitle": "Scribix Preise",
+      "ogDescription": "Kostenlose Testphase sowie Starter- und Pro-Pläne für Audio- und Video-Transkription."
+    },
+    "h1": "Einfache Preise für ernsthafte Transkription.",
+    "bestValue": "Bester Wert",
+    "annualPrefix": "Jährlich",
+    "noCreditCard": "Keine Kreditkarte erforderlich",
+    "chooseLabel": "{plan} wählen",
+    "soonLabel": "Bald",
+    "buttonTitle": "Checkout wird in der nächsten Phase hinzugefügt",
+    "faqTitle": "Preis-FAQ",
+    "specLabels": {
+      "minutes": "Minuten",
+      "unitValue": "Stundenwert",
+      "fileLimit": "Dateilimit",
+      "queue": "Warteschlange",
+      "aiOutputs": "KI-Ausgaben"
+    },
     "plans": [
       {
+        "id": "free",
         "name": "Kostenlos",
         "price": "$0",
-        "cadence": "forever",
-        "blurb": "Für gelegentliche Transkriptionen, Studenten und Neugierige.",
-        "features": [
-          "Unbegrenzte Video-Transkriptionen",
-          "Bis zu 45 Min pro Datei",
-          "Sprecherbeschriftungen (bis zu 4)",
-          "SRT, VTT & DOCX Export"
-        ],
-        "cta": "Kostenlos starten",
-        "primary": false
+        "cadence": "einmalig",
+        "minutes": "45 Minuten lebenslang",
+        "unitValue": "Nur Test",
+        "summary": "Teste Scribix einmal und prüfe die Transkriptionsqualität, bevor du bezahlst.",
+        "fileLimit": "Max. 45 Minuten pro Datei",
+        "queue": "Normale Warteschlange",
+        "aiOutputs": "Transkript-Exporte"
       },
       {
-        "name": "Studio",
+        "id": "starter",
+        "name": "Starter",
         "price": "$12",
-        "cadence": "per month",
-        "blurb": "Am meisten geliebt von YouTubern, Podcastern und kleinen Teams.",
-        "features": [
-          "Unbegrenzte Transkriptionen, beliebige Länge",
-          "Bis zu 6 Stunden pro Datei",
-          "Sprecherbeschriftungen (bis zu 8)",
-          "KI-Zusammenfassung, Kapitel, Action Items",
-          "Prioritätswarteschlange (5× Echtzeit)",
-          "Auto-Delete- oder Self-Host-Optionen"
-        ],
-        "cta": "7 Tage kostenlos testen",
-        "primary": true
+        "cadence": "pro Monat",
+        "minutes": "600 Min./Monat",
+        "unitValue": "$1.20/Std.",
+        "summary": "Für regelmäßige persönliche Nutzung, bei der das Minutenlimit noch spürbar bleibt.",
+        "fileLimit": "Max. 1 Stunde pro Datei",
+        "queue": "Normale Warteschlange",
+        "aiOutputs": "Transkript-Exporte",
+        "annual": "$99/Jahr"
       },
       {
-        "name": "Newsroom",
-        "price": "$48",
-        "cadence": "per seat / month",
-        "blurb": "Für Teams, die jeden Tag Video in Geschichten umwandeln.",
-        "features": [
-          "Alles aus Studio",
-          "Gemeinsame Arbeitsbereiche & Rollen",
-          "SOC 2 Typ II + Audit-Protokolle",
-          "Benutzerdefiniertes Vokabular & Glossar",
-          "API-Zugriff (1M Minuten / Monat)",
-          "Dedizierter Success Manager"
-        ],
-        "cta": "Sprechen Sie mit Vertrieb",
-        "primary": false
+        "id": "pro",
+        "name": "Pro",
+        "price": "$19",
+        "cadence": "pro Monat",
+        "minutes": "1.800 Min./Monat",
+        "unitValue": "$0.63/Std.",
+        "summary": "Die Standardwahl für lange Dateien, häufige Nutzung und KI-Ausgaben.",
+        "fileLimit": "Max. 10 Stunden pro Datei",
+        "queue": "Priorisierte Warteschlange",
+        "aiOutputs": "Zusammenfassungen, Kapitel, Aufgaben",
+        "annual": "$149/Jahr"
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Kann ich kostenlos starten?",
+        "answer": "Ja. Kostenlos enthält 45 Minuten lebenslang, damit du die Transkriptionsqualität testen kannst, bevor du einen kostenpflichtigen Plan wählst."
+      },
+      {
+        "question": "Was zählt als Transkriptionsminuten?",
+        "answer": "Minuten basieren auf der Länge der Audio- oder Videodatei, die du transkribierst. Eine 30-minütige Datei nutzt 30 Transkriptionsminuten."
+      },
+      {
+        "question": "Werden ungenutzte Minuten übertragen?",
+        "answer": "Minuten in Monatsplänen werden mit jedem Abrechnungszyklus zurückgesetzt. Jahrespläne sind dafür vorgesehen, das gesamte Jahreskontingent bei Verlängerung bereitzustellen."
+      },
+      {
+        "question": "Wie lang darf eine Datei maximal sein?",
+        "answer": "Kostenlos unterstützt Dateien bis 45 Minuten, Starter bis 1 Stunde und Pro bis 10 Stunden."
+      },
+      {
+        "question": "Kann ich später den Plan wechseln?",
+        "answer": "Ja. Die Planstruktur ist so gedacht, dass du mit Starter beginnen und zu Pro wechseln kannst, wenn längere Dateien, priorisierte Warteschlange oder KI-Ausgaben wichtig werden."
+      },
+      {
+        "question": "Gibt es eine kostenlose Testphase für kostenpflichtige Pläne?",
+        "answer": "Ja. Starter und Pro enthalten beide 14 Tage kostenlos, und du kannst jederzeit vor Ende der Testphase kündigen."
       }
     ]
   },
@@ -639,7 +673,7 @@
       "dangerZone": "Gefahrenzone",
       "deleteWarning": "Löschen Sie dauerhaft Ihr Konto, Ihre Transkriptionen und Audio. Dies kann nicht rückgängig gemacht werden.",
       "tierFree": "Kostenlos",
-      "tierBasic": "Basic",
+      "tierBasic": "Starter",
       "tierPro": "Pro",
       "cycleMonthly": "monatlich",
       "cycleYearly": "jährlich",

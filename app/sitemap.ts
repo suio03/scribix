@@ -20,6 +20,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
       alternates: { languages: pathLanguages("/audio-to-text") },
     },
+    {
+      url: urlFor(routing.defaultLocale, "/pricing"),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+      alternates: { languages: pathLanguages("/pricing") },
+    },
   ];
 
   for (const path of ["/terms", "/privacy", "/refunds"] as const) {

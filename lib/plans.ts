@@ -22,7 +22,7 @@ export const PLANS = {
   basic: {
     monthly: { minutesPerCycle: 600 },
     yearly: { minutesPerCycle: 7200 },
-    maxFileSec: 2 * 3600,
+    maxFileSec: 1 * 3600,
     maxFileBytes: 2 * 1024 * 1024 * 1024,
     // Capped at 1 GB across tiers: browser-side ffmpeg.wasm / Web Audio
     // extraction is unreliable beyond this. Users with larger videos are
@@ -50,15 +50,14 @@ export function quotaMinutesFor(tier: Tier, cycle: BillingCycle | null | undefin
   return PLANS[tier][c].minutesPerCycle;
 }
 
-// Display pricing — used by the marketing pricing page only.
-// Spec §1: monthly $9/$19, yearly 40% off ($64.80/yr, $136.80/yr).
+// Display pricing — keep in sync with the public Starter/Pro pricing model.
 export const PRICING_DISPLAY = {
   basic: {
-    monthly: { amount: 9, currency: "USD" },
-    yearly: { amount: 64.8, currency: "USD" },
+    monthly: { amount: 12, currency: "USD" },
+    yearly: { amount: 99, currency: "USD" },
   },
   pro: {
     monthly: { amount: 19, currency: "USD" },
-    yearly: { amount: 136.8, currency: "USD" },
+    yearly: { amount: 149, currency: "USD" },
   },
 } as const;

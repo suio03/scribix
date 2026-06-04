@@ -312,7 +312,7 @@
         "icon": "GraduationCap",
         "title": "Estudiantes",
         "audience": "Conferencias y estudio",
-        "body": "Convierte una conferencia de 2 horas en notas buscables. Marca un momento confuso, haz clic en la palabra, escúchalo de nuevo. Pruébalo gratis y luego un solo mes Basic cubre todo un semestre de conferencias.",
+        "body": "Convierte una conferencia de 2 horas en notas buscables. Marca un momento confuso, haz clic en la palabra, escúchalo de nuevo. Pruébalo gratis y luego un solo mes Starter cubre todo un semestre de conferencias.",
         "workflow": [
           "Grabación de conferencia",
           "Notas buscables",
@@ -453,58 +453,92 @@
       }
     ]
   },
-  "Pricing": {
-    "label": "Precios",
-    "number": "06",
-    "h2": "Paga por los minutos, <accent>no por el marketing.</accent>",
-    "intro": "Una prueba gratuita de 45 minutos para demostrar la calidad. Dos niveles pagos sin impuestos de asiento ni sobrecargos sorpresa. Cancela en cualquier momento, exporta todo.",
-    "mostLoved": "Más amado",
+  "PricingPage": {
+    "metadata": {
+      "title": "Precios",
+      "description": "Precios simples de Scribix: empieza gratis, sube a Starter con 600 minutos al mes o elige Pro con 1.800 minutos y salidas de IA prioritarias.",
+      "ogTitle": "Precios de Scribix",
+      "ogDescription": "Prueba gratuita y planes Starter y Pro para transcripción de audio y video."
+    },
+    "h1": "Precios simples para transcripción seria.",
+    "bestValue": "Mejor valor",
+    "annualPrefix": "Anual",
+    "noCreditCard": "No requiere tarjeta",
+    "chooseLabel": "Elegir {plan}",
+    "soonLabel": "Pronto",
+    "buttonTitle": "El checkout se añadirá en la siguiente fase",
+    "faqTitle": "Preguntas sobre precios",
+    "specLabels": {
+      "minutes": "Minutos",
+      "unitValue": "Valor por hora",
+      "fileLimit": "Límite de archivo",
+      "queue": "Cola",
+      "aiOutputs": "Salidas de IA"
+    },
     "plans": [
       {
-        "name": "Gratuito",
+        "id": "free",
+        "name": "Gratis",
         "price": "$0",
-        "cadence": "siempre",
-        "blurb": "Para transcripts ocasionales, estudiantes y curiosos.",
-        "features": [
-          "Transcripts de vídeo ilimitados",
-          "Hasta 45 min por archivo",
-          "Etiquetas de locutor (hasta 4)",
-          "Exportación de SRT, VTT y DOCX"
-        ],
-        "cta": "Empezar gratis",
-        "primary": false
+        "cadence": "una vez",
+        "minutes": "45 minutos de por vida",
+        "unitValue": "Solo prueba",
+        "summary": "Prueba Scribix una vez y comprueba la calidad de la transcripción antes de pagar.",
+        "fileLimit": "Archivo máximo de 45 minutos",
+        "queue": "Cola normal",
+        "aiOutputs": "Exportaciones de transcripción"
       },
       {
-        "name": "Studio",
+        "id": "starter",
+        "name": "Starter",
         "price": "$12",
-        "cadence": "por mes",
-        "blurb": "Lo más amado por creadores de YouTube, podcasters y pequeños equipos.",
-        "features": [
-          "Transcripts ilimitados, cualquier duración",
-          "Hasta 6 horas por archivo",
-          "Etiquetas de locutor (hasta 8)",
-          "Resumen IA, capítulos, elementos de acción",
-          "Cola de prioridad (5× en tiempo real)",
-          "Auto-eliminar u opciones de auto-alojamiento"
-        ],
-        "cta": "Prueba 7 días gratis",
-        "primary": true
+        "cadence": "al mes",
+        "minutes": "600 min/mes",
+        "unitValue": "$1.20/h",
+        "summary": "Para uso personal constante donde el límite de minutos todavía se siente real.",
+        "fileLimit": "Archivo máximo de 1 hora",
+        "queue": "Cola normal",
+        "aiOutputs": "Exportaciones de transcripción",
+        "annual": "$99/año"
       },
       {
-        "name": "Newsroom",
-        "price": "$48",
-        "cadence": "por puesto / mes",
-        "blurb": "Para equipos que convierten vídeo en historias cada día.",
-        "features": [
-          "Todo en Studio",
-          "Espacios de trabajo compartidos y roles",
-          "SOC 2 Type II + registros de auditoría",
-          "Vocabulario personalizado y glosario",
-          "Acceso a API (1M minutos / mes)",
-          "Gerente de éxito dedicado"
-        ],
-        "cta": "Habla con ventas",
-        "primary": false
+        "id": "pro",
+        "name": "Pro",
+        "price": "$19",
+        "cadence": "al mes",
+        "minutes": "1.800 min/mes",
+        "unitValue": "$0.63/h",
+        "summary": "La opción predeterminada para archivos largos, uso frecuente y salidas de IA.",
+        "fileLimit": "Archivo máximo de 10 horas",
+        "queue": "Cola prioritaria",
+        "aiOutputs": "Resúmenes, capítulos, tareas de acción",
+        "annual": "$149/año"
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿Puedo empezar gratis?",
+        "answer": "Sí. Gratis incluye 45 minutos de por vida para probar la calidad de la transcripción antes de elegir un plan de pago."
+      },
+      {
+        "question": "¿Qué cuenta como minutos de transcripción?",
+        "answer": "Los minutos se basan en la duración del audio o video que transcribes. Un archivo de 30 minutos usa 30 minutos de transcripción."
+      },
+      {
+        "question": "¿Los minutos no usados se acumulan?",
+        "answer": "Los minutos de los planes mensuales se reinician en cada ciclo de facturación. Los planes anuales están pensados para entregar toda la asignación anual al renovar."
+      },
+      {
+        "question": "¿Cuál es la duración máxima de archivo?",
+        "answer": "Gratis admite archivos de hasta 45 minutos, Starter de hasta 1 hora y Pro de hasta 10 horas."
+      },
+      {
+        "question": "¿Puedo cambiar de plan más tarde?",
+        "answer": "Sí. La estructura de planes está diseñada para que puedas empezar con Starter y pasar a Pro cuando los archivos más largos, la cola prioritaria o las salidas de IA sean importantes."
+      },
+      {
+        "question": "¿Hay prueba gratis en los planes de pago?",
+        "answer": "Sí. Starter y Pro incluyen 14 días gratis, y puedes cancelar en cualquier momento antes de que termine la prueba."
       }
     ]
   },
@@ -639,7 +673,7 @@
       "dangerZone": "Zona de peligro",
       "deleteWarning": "Elimina permanentemente tu cuenta, transcripts y audio. Esto no se puede deshacer.",
       "tierFree": "Gratuito",
-      "tierBasic": "Básico",
+      "tierBasic": "Starter",
       "tierPro": "Pro",
       "cycleMonthly": "mensual",
       "cycleYearly": "anual",

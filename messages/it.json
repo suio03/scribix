@@ -312,7 +312,7 @@
         "icon": "GraduationCap",
         "title": "Studenti",
         "audience": "Lezioni e studio",
-        "body": "Trasforma una lezione di 2 ore in note ricercabili. Segna un momento confuso, clicca sulla parola, ascolta di nuovo. Provalo gratis, poi un singolo mese Basic copre un intero semestre di lezioni.",
+        "body": "Trasforma una lezione di 2 ore in note ricercabili. Segna un momento confuso, clicca sulla parola, ascolta di nuovo. Provalo gratis, poi un singolo mese Starter copre un intero semestre di lezioni.",
         "workflow": [
           "Registrazione lezione",
           "Note ricercabili",
@@ -453,58 +453,92 @@
       }
     ]
   },
-  "Pricing": {
-    "label": "Prezzi",
-    "number": "06",
-    "h2": "Paga per i minuti, <accent>non per il marketing.</accent>",
-    "intro": "Una prova gratuita di 45 minuti per dimostrare la qualità. Due piani a pagamento senza tasse per sede o sorprese di sovraccarico. Cancella in qualsiasi momento, esporta tutto.",
-    "mostLoved": "Più amato",
+  "PricingPage": {
+    "metadata": {
+      "title": "Prezzi",
+      "description": "Prezzi semplici di Scribix: inizia gratis, passa a Starter con 600 minuti al mese oppure scegli Pro con 1.800 minuti e output IA prioritari.",
+      "ogTitle": "Prezzi Scribix",
+      "ogDescription": "Prova gratuita e piani Starter e Pro per la trascrizione audio e video."
+    },
+    "h1": "Prezzi semplici per trascrizioni serie.",
+    "bestValue": "Miglior valore",
+    "annualPrefix": "Annuale",
+    "noCreditCard": "Carta non richiesta",
+    "chooseLabel": "Scegli {plan}",
+    "soonLabel": "Presto",
+    "buttonTitle": "Il checkout sarà aggiunto nella prossima fase",
+    "faqTitle": "FAQ sui prezzi",
+    "specLabels": {
+      "minutes": "Minuti",
+      "unitValue": "Valore orario",
+      "fileLimit": "Limite file",
+      "queue": "Coda",
+      "aiOutputs": "Output IA"
+    },
     "plans": [
       {
-        "name": "Free",
+        "id": "free",
+        "name": "Gratis",
         "price": "$0",
-        "cadence": "per sempre",
-        "blurb": "Per transcript occasionali, studenti e curiosi.",
-        "features": [
-          "Transcript video illimitati",
-          "Fino a 45 min per file",
-          "Etichette di relatore (fino a 4)",
-          "Esportazione SRT, VTT e DOCX"
-        ],
-        "cta": "Inizia gratis",
-        "primary": false
+        "cadence": "una tantum",
+        "minutes": "45 minuti a vita",
+        "unitValue": "Solo prova",
+        "summary": "Prova Scribix una volta e verifica la qualità della trascrizione prima di pagare.",
+        "fileLimit": "File fino a 45 minuti",
+        "queue": "Coda normale",
+        "aiOutputs": "Esportazioni della trascrizione"
       },
       {
-        "name": "Studio",
+        "id": "starter",
+        "name": "Starter",
         "price": "$12",
         "cadence": "al mese",
-        "blurb": "Più amato da YouTuber, podcaster e piccoli team.",
-        "features": [
-          "Transcript illimitati, qualsiasi lunghezza",
-          "Fino a 6 ore per file",
-          "Etichette di relatore (fino a 8)",
-          "Riassunto IA, capitoli, elementi di azione",
-          "Coda prioritaria (5× tempo reale)",
-          "Opzioni di auto-eliminazione o self-host"
-        ],
-        "cta": "Prova 7 giorni gratis",
-        "primary": true
+        "minutes": "600 min/mese",
+        "unitValue": "$1.20/h",
+        "summary": "Per un uso personale costante in cui il limite di minuti resta concreto.",
+        "fileLimit": "File fino a 1 ora",
+        "queue": "Coda normale",
+        "aiOutputs": "Esportazioni della trascrizione",
+        "annual": "$99/anno"
       },
       {
-        "name": "Newsroom",
-        "price": "$48",
-        "cadence": "per sede / mese",
-        "blurb": "Per team che trasformano video in storie ogni giorno.",
-        "features": [
-          "Tutto in Studio",
-          "Spazi di lavoro condivisi e ruoli",
-          "SOC 2 Type II + log di audit",
-          "Vocabolario personalizzato e glossario",
-          "Accesso API (1M minuti / mese)",
-          "Manager di successo dedicato"
-        ],
-        "cta": "Parla con le vendite",
-        "primary": false
+        "id": "pro",
+        "name": "Pro",
+        "price": "$19",
+        "cadence": "al mese",
+        "minutes": "1.800 min/mese",
+        "unitValue": "$0.63/h",
+        "summary": "La scelta predefinita per file lunghi, uso frequente e output IA.",
+        "fileLimit": "File fino a 10 ore",
+        "queue": "Coda prioritaria",
+        "aiOutputs": "Riepiloghi, capitoli, attività",
+        "annual": "$149/anno"
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Posso iniziare gratis?",
+        "answer": "Sì. Il piano Gratis include 45 minuti a vita per testare la qualità della trascrizione prima di scegliere un piano a pagamento."
+      },
+      {
+        "question": "Cosa conta come minuti di trascrizione?",
+        "answer": "I minuti si basano sulla durata dell'audio o del video che trascrivi. Un file di 30 minuti usa 30 minuti di trascrizione."
+      },
+      {
+        "question": "I minuti inutilizzati vengono trasferiti?",
+        "answer": "I minuti dei piani mensili si azzerano a ogni ciclo di fatturazione. I piani annuali sono pensati per fornire l'intera quota annuale al rinnovo."
+      },
+      {
+        "question": "Qual è la durata massima di un file?",
+        "answer": "Gratis supporta file fino a 45 minuti, Starter fino a 1 ora e Pro fino a 10 ore."
+      },
+      {
+        "question": "Posso cambiare piano più tardi?",
+        "answer": "Sì. La struttura dei piani è pensata per iniziare con Starter e passare a Pro quando file più lunghi, coda prioritaria o output IA diventano importanti."
+      },
+      {
+        "question": "C'è una prova gratuita sui piani a pagamento?",
+        "answer": "Sì. Starter e Pro includono entrambi 14 giorni gratis e puoi annullare in qualsiasi momento prima della fine della prova."
       }
     ]
   },
@@ -639,7 +673,7 @@
       "dangerZone": "Area pericolosa",
       "deleteWarning": "Elimina permanentemente il tuo account, i tuoi transcript e l'audio. Non è possibile annullare questa azione.",
       "tierFree": "Gratuito",
-      "tierBasic": "Basic",
+      "tierBasic": "Starter",
       "tierPro": "Pro",
       "cycleMonthly": "mensile",
       "cycleYearly": "annuale",
