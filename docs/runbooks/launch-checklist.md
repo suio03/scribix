@@ -46,8 +46,8 @@ Phase 7 — this file is the "everything else" pre-flight.
 
 ## §16 open items (resolve before announcing)
 
-- [ ] **Refund policy** — written at `/refunds`. Adjust the 60-min cap or
-  3-day window if you want different terms before any paid traffic lands.
+- [ ] **Refund policy** — written at `/refunds` with Paddle-aligned 14-day
+  refund request wording and no usage-based qualifiers.
 - [ ] **Free-tier recording max length** — confirm 30 min cap matches the
   Free quota in `Recorder.tsx` and `lib/plans.ts`.
 - [ ] **AAI bulk-delete cadence** — schedule the first run on the 1st Monday

@@ -7,7 +7,7 @@ import { routing } from "@/i18n/routing";
 export const metadata: Metadata = {
   title: "Refund Policy",
   description:
-    "Scribix refund policy — eligibility window, usage cap, and how to request a refund for a subscription.",
+    "Scribix refund policy — 14-day refund request window and how to request a refund for a subscription.",
   alternates: {
     canonical: "https://scribix.io/refunds",
   },
@@ -25,7 +25,7 @@ export default async function RefundsPage({
   setRequestLocale(locale);
 
   return (
-    <LegalShell title="Refund Policy" updated="May 1, 2026">
+    <LegalShell title="Refund Policy" updated="June 7, 2026">
       <p>
         Scribix is a product operated by CENDRO LABS PTY LTD. We want you to feel confident
         about your purchase. We understand that circumstances change, and you may
@@ -36,17 +36,11 @@ export default async function RefundsPage({
       <H2>Refund Eligibility</H2>
       <p>
         Refund requests apply only to <strong>subscription purchases</strong> (Starter or Pro,
-        monthly or yearly) and must be submitted within <strong>3 days of the purchase date</strong>.
+        monthly or yearly) and must be submitted within <strong>14 days of the purchase date</strong>.
       </p>
       <p>
-        If you have used <strong>more than 60 minutes</strong> of transcription on a paid plan
-        since the purchase, you are no longer eligible for a refund, regardless of the time
-        elapsed since the charge.
-      </p>
-      <p>
-        Renewals are treated like new purchases: a yearly or monthly renewal is eligible for
-        a refund within 3 days of the renewal date, subject to the same 60-minute usage cap
-        measured from the renewal date.
+        Renewals are treated like new purchases: a yearly or monthly renewal is eligible for a
+        refund request within 14 days of the renewal date.
       </p>
 
       <H2>How to Request a Refund</H2>
@@ -71,27 +65,15 @@ export default async function RefundsPage({
           or invoice ID, the date of purchase, and a brief reason for the request.
         </li>
         <li>
-          <strong>Submit within 3 days</strong> of the original purchase or renewal.
+          <strong>Submit within 14 days</strong> of the original purchase or renewal.
         </li>
       </ol>
 
       <H2>Processing</H2>
       <p>
-        Once we receive your request we&apos;ll review it and respond by email, usually within
-        two business days. Approved refunds are returned to the original payment method.
+        Refund requests are processed under Paddle&apos;s refund policy and applicable law.
+        Approved refunds are returned to the original payment method.
       </p>
-      <p>
-        Refund amounts may be reduced by a payment processing fee not exceeding{" "}
-        <strong>six percent (6%)</strong> of the original charge to cover non-refundable
-        transaction costs on a reversal.
-      </p>
-
-      <H2>What Is Not Refundable</H2>
-      <ul className="ml-5 list-disc space-y-2">
-        <li>Charges older than 3 days, including renewal charges older than 3 days.</li>
-        <li>Subscriptions on which more than 60 minutes have already been transcribed.</li>
-        <li>The Free plan (no charge to refund).</li>
-      </ul>
 
       <H2>Cancel Anytime</H2>
       <p>
@@ -106,8 +88,7 @@ export default async function RefundsPage({
       <H2>Changes to This Policy</H2>
       <p>
         We may update this policy from time to time. Material changes will be reflected on
-        this page with a new &quot;Last updated&quot; date. Refund requests are evaluated against
-        the policy that was in effect on your purchase date.
+        this page with a new &quot;Last updated&quot; date.
       </p>
 
       <H2>Questions</H2>

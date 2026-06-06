@@ -555,7 +555,7 @@ Each phase ends in something demonstrable.
 ### Phase 7 — polish + launch prep (1–2 days) — ✅ done
 - [x] Empty states, loading states, error states — viewer shows "Audio expired" panel for completed rows older than 7 days; dashboard shows checkout-success banner on `?checkout=ok`. Existing list/processing/error states already in place from earlier phases.
 - [x] Pricing page copy — yearly bullets now read "available immediately, refreshed at renewal" matching §1 marketing copy note.
-- [x] Refund policy page (`/refunds`) — 3-day window, 60-min usage cap, 6% processing fee. Terms (`/terms`) and Privacy (`/privacy`) stubbed alongside; footer links updated.
+- [x] Refund policy page (`/refunds`) — Paddle-aligned 14-day refund request window with no usage-based qualifiers. Terms (`/terms`) and Privacy (`/privacy`) stubbed alongside; footer links updated.
 - [x] Marketing site SEO — fixed `metadataBase` (`scribix.app` → `scribix.io`); added `app/robots.ts`, `app/sitemap.ts` (locale-alternate aware), and JSON-LD (Organization + WebSite + SoftwareApplication) on the home page.
 - [x] Production deployment — `docs/runbooks/launch-checklist.md` ties together prod webhook flip (Creem dashboard), §16 open items, and day-1 monitoring. Manual-setup §7 already covers Worker secrets + custom domain.
 
@@ -607,7 +607,7 @@ No `WORKER_URL`, no `API_SECRET` — single service.
 
 These don't block the architecture but block coding / launch:
 
-1. **Refund policy.** Yearly user uses 360 hr in week 1 then asks for a refund — what's the answer? Standard options: (a) no refunds after first 14 days; (b) prorate by remaining months; (c) prorate by unused minutes. Pick one and write it on a static page.
+1. **Refund policy.** Paddle requires a 14-day refund request window without usage-based qualifiers; keep `/refunds` aligned with Paddle's current refund policy.
 2. **Creem portal config.** Confirm plan-switching is disabled (only "cancel" + "billing details" exposed) so the Pro → Basic block is enforced at the source.
 3. **Cloudflare account.** New project under the Scribix account.
 4. **AAI bulk-delete cadence.** Monthly is recommended. Document it as a runbook.

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.1] - 2026-06-07
+
+### Fixed
+- Updated the refund policy to match Paddle's 14-day refund request requirement without usage-based qualifiers or fee deductions.
+
 ## [0.7.0] - 2026-06-07
 
 ### Added
