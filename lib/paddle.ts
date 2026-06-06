@@ -44,6 +44,7 @@ export class PaddleApiError extends Error {
 export async function createPaddleTransaction(
   input: CreatePaddleTransactionInput
 ): Promise<{ transactionId: string; url: string | null }> {
+  const hasReusableCustomer = input.customerId?.startsWith("ctm_");
   const payload: Record<string, unknown> = {
     items: [{ price_id: input.priceId, quantity: 1 }],
     collection_mode: "automatic",
@@ -53,11 +54,35 @@ export async function createPaddleTransaction(
       cycle: input.cycle,
     },
   };
-  if (input.customerId?.startsWith("ctm_")) {
+  if (hasReusableCustomer) {
     payload.customer_id = input.customerId;
   }
 
-  const json = await paddleRequest<PaddleTransactionResponse>(
+  let json: PaddleTransactionResponse;
+  try {
+    json = await createTransactionRequest(input, payload);
+  } catch (error) {
+    if (hasReusableCustomer && error instanceof PaddleApiError && error.status === 404) {
+      const retryPayload = { ...payload };
+      delete retryPayload.customer_id;
+      json = await createTransactionRequest(input, retryPayload);
+    } else {
+      throw error;
+    }
+  }
+
+  const transactionId = json.data?.id;
+  if (!transactionId) {
+    throw new PaddleApiError("Paddle transaction response was missing an id.", 502, "");
+  }
+  return { transactionId, url: json.data?.checkout?.url ?? null };
+}
+
+function createTransactionRequest(
+  input: CreatePaddleTransactionInput,
+  payload: Record<string, unknown>
+) {
+  return paddleRequest<PaddleTransactionResponse>(
     input.environment,
     input.apiKey,
     "/transactions",
@@ -66,12 +91,6 @@ export async function createPaddleTransaction(
       body: JSON.stringify(payload),
     }
   );
-
-  const transactionId = json.data?.id;
-  if (!transactionId) {
-    throw new PaddleApiError("Paddle transaction response was missing an id.", 502, "");
-  }
-  return { transactionId, url: json.data?.checkout?.url ?? null };
 }
 
 export async function createPaddlePortalSession({

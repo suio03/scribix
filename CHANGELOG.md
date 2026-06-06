@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.3] - 2026-06-07
+
+### Fixed
+- Retried Paddle checkout creation without a reused customer ID when production Paddle cannot find an older customer.
+- Ensured production deploys build Paddle.js with the public production Paddle environment from `.dev.vars`.
+
 ## [0.7.2] - 2026-06-07
 
 ### Changed
