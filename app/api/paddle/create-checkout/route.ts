@@ -59,8 +59,13 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("create-checkout failed:", error);
     if (error instanceof PaddleApiError) {
+      console.error("paddle api details:", error.status, error.details);
       return Response.json(
-        { error: "paddle_api_error" },
+        {
+          error: "paddle_api_error",
+          paddleStatus: error.status,
+          paddleDetails: error.details,
+        },
         { status: error.status >= 400 && error.status < 500 ? 400 : 502 }
       );
     }
