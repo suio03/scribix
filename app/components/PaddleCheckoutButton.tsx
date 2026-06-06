@@ -76,7 +76,7 @@ export function PaddleCheckoutButton({
     <button
       type="button"
       onClick={startCheckout}
-      disabled={pending || (signedIn && !initialized)}
+      disabled={pending}
       aria-busy={pending}
       className={`${className} ${pending ? "cursor-wait opacity-70" : ""} ${
         failed ? "ring-2 ring-red-500/70 ring-offset-2 ring-offset-paper" : ""

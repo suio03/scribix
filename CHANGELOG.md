@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.7] - 2026-06-07
+
+### Fixed
+- Kept Paddle pricing buttons clickable while Paddle.js finishes initializing, without restoring hosted checkout redirects.
+
 ## [0.7.6] - 2026-06-07
 
 ### Fixed
