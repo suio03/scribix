@@ -84,7 +84,9 @@ export function PaddleCheckoutButton({
       // pass ONLY the transactionId. Presentation settings come from
       // initializePaddle(); the return URL is the transaction's checkout.url.
       try {
+        console.info("[paddle] opening checkout", { transactionId: json.transactionId });
         readyPaddle.Checkout.open({ transactionId: json.transactionId });
+        console.info("[paddle] checkout open requested", { transactionId: json.transactionId });
       } catch (error) {
         console.error("Paddle overlay open failed:", error);
         if (json.url) {

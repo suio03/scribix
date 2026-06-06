@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.14] - 2026-06-07
+
+### Changed
+- Added temporary Paddle checkout client diagnostics for production overlay failures.
+
 ## [0.7.13] - 2026-06-07
 
 ### Fixed
