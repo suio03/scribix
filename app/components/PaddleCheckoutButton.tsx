@@ -25,7 +25,7 @@ export function PaddleCheckoutButton({
   children: React.ReactNode;
   className: string;
 }) {
-  const { paddle } = usePaddle();
+  const paddle = usePaddle();
   const paddleRef = useRef(paddle);
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -71,27 +71,19 @@ export function PaddleCheckoutButton({
       const readyPaddle = await getReadyPaddle();
       if (!readyPaddle) {
         console.warn("Paddle checkout could not open because Paddle.js is not initialized.");
-        if (json.url) {
-          window.location.href = json.url;
-          return;
-        }
         setFailed(true);
         return;
       }
 
-      // Opening from a pre-created transaction: Paddle.js takes the checkout
-      // config (presentation + return URL) from the transaction itself, so we
-      // pass ONLY the transactionId. Presentation settings come from
-      // initializePaddle(); the return URL is the transaction's checkout.url.
+      // Paddle's hosted URL is only a last-resort artifact from the transaction
+      // API. The production pricing CTA should follow the ai-music path and
+      // open the pre-created transaction directly in the overlay.
+      await pause(500);
       try {
         readyPaddle.Checkout.open({ transactionId: json.transactionId });
       } catch (error) {
         console.error("Paddle overlay open failed:", error);
-        if (json.url) {
-          window.location.href = json.url;
-          return;
-        }
-        throw error;
+        setFailed(true);
       }
     } catch (error) {
       console.error("Paddle checkout failed:", error);
@@ -105,13 +97,17 @@ export function PaddleCheckoutButton({
     const existing = paddleRef.current;
     if (existing) return existing;
 
-    const deadline = Date.now() + 3000;
+    const deadline = Date.now() + 8000;
     while (Date.now() < deadline) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await pause(100);
       if (paddleRef.current) return paddleRef.current;
     }
 
     return null;
+  }
+
+  function pause(milliseconds: number) {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
   }
 
   return (

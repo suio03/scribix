@@ -4,21 +4,12 @@ import {
   createContext,
   useContext,
   useEffect,
-  useMemo,
   useState,
   type ReactNode,
 } from "react";
 import { initializePaddle, type Paddle } from "@paddle/paddle-js";
 
-type PaddleContextValue = {
-  paddle: Paddle | null;
-  initialized: boolean;
-};
-
-const PaddleContext = createContext<PaddleContextValue>({
-  paddle: null,
-  initialized: false,
-});
+const PaddleContext = createContext<Paddle | null>(null);
 
 export function PaddleProvider({ children }: { children: ReactNode }) {
   const [paddle, setPaddle] = useState<Paddle | null>(null);
@@ -33,9 +24,6 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
     initializePaddle({
       token,
       environment,
-      // Keep this callback registered. In production, Paddle's transaction
-      // checkout consistently emits/opens when an event callback is present.
-      eventCallback() {},
       checkout: {
         settings: {
           displayMode: "overlay",
@@ -56,12 +44,7 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
     };
   }, [environment, token]);
 
-  const value = useMemo(
-    () => ({ paddle, initialized: Boolean(paddle) }),
-    [paddle]
-  );
-
-  return <PaddleContext.Provider value={value}>{children}</PaddleContext.Provider>;
+  return <PaddleContext.Provider value={paddle}>{children}</PaddleContext.Provider>;
 }
 
 export function usePaddle() {

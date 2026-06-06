@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.15] - 2026-06-07
+
+### Fixed
+- Restored the Paddle pricing CTA to the same direct-overlay path as `ai-music`: wait for Paddle.js, briefly allow the new transaction to become available, then call `Checkout.open({ transactionId })` without redirecting production clicks to the `_ptxn` fallback URL.
+
 ## [0.7.14] - 2026-06-07
 
 ### Fixed
