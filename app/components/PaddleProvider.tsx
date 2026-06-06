@@ -33,6 +33,9 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
     initializePaddle({
       token,
       environment,
+      // Keep this callback registered. In production, Paddle's transaction
+      // checkout consistently emits/opens when an event callback is present.
+      eventCallback() {},
       checkout: {
         settings: {
           displayMode: "overlay",

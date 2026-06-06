@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.14] - 2026-06-07
+
+### Fixed
+- Kept a Paddle checkout event callback registered during initialization so production transaction overlays continue opening reliably without temporary client diagnostics.
+
 ## [0.7.13] - 2026-06-07
 
 ### Fixed
