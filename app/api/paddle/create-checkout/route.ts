@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
   const env = await cf();
   const appUrl = env.NEXT_PUBLIC_APP_URL?.trim() || "https://scribix.io";
-  const successUrl = new URL(successPath, appUrl).toString();
+  const checkoutUrl = new URL("/pricing", appUrl).toString();
   const plan = getPaddlePlan(env, tier, cycle);
   if (!plan) {
     return Response.json({ error: "paddle_price_not_configured" }, { status: 503 });
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       apiKey,
       environment: paddleEnvironment(env.NEXT_PUBLIC_PADDLE_ENV),
       priceId: plan.priceId,
-      successUrl,
+      checkoutUrl,
       customerId: user.customer_id?.startsWith("ctm_") ? user.customer_id : null,
       userId: user.id,
       tier: plan.tier,

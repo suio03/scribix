@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.5] - 2026-06-07
+
+### Fixed
+- Corrected Paddle transaction fallback URLs to use the Scribix pricing page instead of the post-checkout dashboard path.
+
 ## [0.7.4] - 2026-06-07
 
 ### Fixed
