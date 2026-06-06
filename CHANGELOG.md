@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.8] - 2026-06-07
+
+### Fixed
+- Fixed Paddle overlay failing to open: the checkout button now opens a pre-created transaction with only its `transactionId`, dropping the `settings`/`successUrl` override that Paddle.js rejects in transaction mode.
+- Set each Paddle transaction's `checkout.url` to the actual post-checkout success URL (built from `successPath`) instead of the pricing page, making the transaction the single source of truth for the return URL.
+
 ## [0.7.7] - 2026-06-07
 
 ### Fixed

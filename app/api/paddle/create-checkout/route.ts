@@ -28,7 +28,9 @@ export async function POST(req: Request) {
 
   const env = await cf();
   const appUrl = env.NEXT_PUBLIC_APP_URL?.trim() || "https://scribix.io";
-  const checkoutUrl = new URL("/pricing", appUrl).toString();
+  // The transaction's checkout.url is where Paddle returns the user after a
+  // successful payment, and what Paddle.js uses as the overlay's success URL.
+  const checkoutUrl = new URL(successPath, appUrl).toString();
   const plan = getPaddlePlan(env, tier, cycle);
   if (!plan) {
     return Response.json({ error: "paddle_price_not_configured" }, { status: 503 });

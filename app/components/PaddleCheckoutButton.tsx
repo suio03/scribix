@@ -54,16 +54,11 @@ export function PaddleCheckoutButton({
         throw new Error(json.error ?? "checkout_failed");
       }
 
-      const successUrl = new URL(successPath, window.location.origin).toString();
-      paddle.Checkout.open({
-        transactionId: json.transactionId,
-        settings: {
-          displayMode: "overlay",
-          theme: "dark",
-          variant: "one-page",
-          successUrl,
-        },
-      });
+      // Opening from a pre-created transaction: Paddle.js takes the checkout
+      // config (presentation + return URL) from the transaction itself, so we
+      // pass ONLY the transactionId. Presentation settings come from
+      // initializePaddle(); the return URL is the transaction's checkout.url.
+      paddle.Checkout.open({ transactionId: json.transactionId });
     } catch (error) {
       console.error("Paddle checkout failed:", error);
       setFailed(true);
