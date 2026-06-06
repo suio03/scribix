@@ -1,9 +1,15 @@
 # Changelog
 
+## [0.7.10] - 2026-06-07
+
+### Fixed
+- Fixed paid pricing buttons silently doing nothing when Paddle.js has not finished initializing; checkout now creates the transaction first, waits briefly for Paddle.js, and then opens the overlay.
+- Prevented local Paddle API failures from becoming a Next.js dev overlay by handling non-OK checkout responses without throwing from the click handler.
+
 ## [0.7.9] - 2026-06-07
 
 ### Changed
-- The Paddle create-checkout route now surfaces Paddle's real API error (`paddleStatus`/`paddleDetails`) instead of a bare `paddle_api_error`, so checkout failures (e.g. a price ID that doesn't exist in the active Paddle environment) are diagnosable from the response.
+- The Paddle create-checkout route now surfaces Paddle's real API error (`paddleStatus`/`paddleCode`/`paddleDetail`) instead of a bare `paddle_api_error`, so checkout failures (e.g. a price ID that doesn't exist in the active Paddle environment) are diagnosable from the response.
 
 ## [0.7.8] - 2026-06-07
 

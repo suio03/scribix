@@ -57,22 +57,45 @@ export async function POST(req: Request) {
     });
     return Response.json(checkout);
   } catch (error) {
-    console.error("create-checkout failed:", error);
     if (error instanceof PaddleApiError) {
-      console.error("paddle api details:", error.status, error.details);
+      const details = paddleErrorDetails(error);
+      console.error("create-checkout Paddle API error:", {
+        status: error.status,
+        code: details.code,
+        detail: details.detail,
+      });
       return Response.json(
         {
           error: "paddle_api_error",
           paddleStatus: error.status,
-          paddleDetails: error.details,
+          paddleCode: details.code,
+          paddleDetail: details.detail,
         },
         { status: error.status >= 400 && error.status < 500 ? 400 : 502 }
       );
     }
+    console.error("create-checkout failed:", error);
     return Response.json({ error: "checkout_failed" }, { status: 502 });
   }
 }
 
 function isSafePath(value: string): boolean {
   return value.startsWith("/") && !value.startsWith("//") && !value.includes("://");
+}
+
+function paddleErrorDetails(error: PaddleApiError): {
+  code: string | null;
+  detail: string | null;
+} {
+  try {
+    const parsed = JSON.parse(error.details) as {
+      error?: { code?: string; detail?: string };
+    };
+    return {
+      code: parsed.error?.code ?? null,
+      detail: parsed.error?.detail ?? null,
+    };
+  } catch {
+    return { code: null, detail: null };
+  }
 }

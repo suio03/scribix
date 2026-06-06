@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "@/i18n/navigation";
 import { usePaddle } from "@/app/components/PaddleProvider";
@@ -27,18 +27,19 @@ export function PaddleCheckoutButton({
   children: React.ReactNode;
   className: string;
 }) {
-  const { paddle, initialized } = usePaddle();
+  const { paddle } = usePaddle();
+  const paddleRef = useRef(paddle);
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    paddleRef.current = paddle;
+  }, [paddle]);
 
   async function startCheckout() {
     setFailed(false);
     if (!signedIn) {
       await signIn(undefined, { callbackUrl: window.location.href });
-      return;
-    }
-    if (!initialized || !paddle) {
-      setFailed(true);
       return;
     }
 
@@ -51,20 +52,45 @@ export function PaddleCheckoutButton({
       });
       const json = (await response.json().catch(() => ({}))) as CheckoutResponse;
       if (!response.ok || !json.transactionId) {
-        throw new Error(json.error ?? "checkout_failed");
+        console.warn("Paddle checkout request failed:", {
+          status: response.status,
+          error: json.error ?? "checkout_failed",
+        });
+        setFailed(true);
+        return;
+      }
+
+      const readyPaddle = await getReadyPaddle();
+      if (!readyPaddle) {
+        console.warn("Paddle checkout could not open because Paddle.js is not initialized.");
+        setFailed(true);
+        return;
       }
 
       // Opening from a pre-created transaction: Paddle.js takes the checkout
       // config (presentation + return URL) from the transaction itself, so we
       // pass ONLY the transactionId. Presentation settings come from
       // initializePaddle(); the return URL is the transaction's checkout.url.
-      paddle.Checkout.open({ transactionId: json.transactionId });
+      readyPaddle.Checkout.open({ transactionId: json.transactionId });
     } catch (error) {
       console.error("Paddle checkout failed:", error);
       setFailed(true);
     } finally {
       setPending(false);
     }
+  }
+
+  async function getReadyPaddle() {
+    const existing = paddleRef.current;
+    if (existing) return existing;
+
+    const deadline = Date.now() + 3000;
+    while (Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      if (paddleRef.current) return paddleRef.current;
+    }
+
+    return null;
   }
 
   return (
