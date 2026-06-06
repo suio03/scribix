@@ -145,6 +145,7 @@ function PlanCard({
 }) {
   const primary = plan.id === "pro";
   const display = planDisplay(plan, cycle);
+  const secondaryBilling = plan.id !== "free" && display.note?.trim();
 
   return (
     <article
@@ -187,11 +188,13 @@ function PlanCard({
           </span>
         </div>
         <p
-          className={`mt-2 min-h-4 font-mono text-[11px] uppercase tracking-[0.16em] ${
+          className={`mt-2 min-h-4 ${
+            secondaryBilling ? "text-[14px]" : "font-mono text-[11px] uppercase tracking-[0.16em]"
+          } ${
             primary ? "text-paper/45" : "text-muted"
           }`}
         >
-          {plan.id === "free" ? noCreditCard : "\u00a0"}
+          {secondaryBilling || (plan.id === "free" ? noCreditCard : "\u00a0")}
         </p>
       </div>
 
@@ -294,16 +297,20 @@ function planDisplay(plan: PlanCopy, cycle: BillingCycle) {
       cadence: plan.cadence,
       minutes: plan.minutes,
       unitValue: plan.unitValue,
+      note: plan.id === "free" ? undefined : "\u00a0",
     };
   }
 
   const fallback = splitAnnual(plan.annual);
+  const annualPrice = plan.annualPrice ?? fallback.price ?? plan.price;
+  const annualCadence = plan.annualCadence ?? fallback.cadence ?? plan.cadence;
 
   return {
-    price: plan.annualPrice ?? fallback.price ?? plan.price,
-    cadence: plan.annualCadence ?? fallback.cadence ?? plan.cadence,
+    price: monthlyEquivalentPrice(annualPrice) ?? annualPrice,
+    cadence: plan.cadence,
     minutes: plan.annualMinutes ?? plan.minutes,
     unitValue: plan.annualUnitValue ?? plan.unitValue,
+    note: `${annualPrice} ${annualCadence}`,
   };
 }
 
@@ -314,4 +321,19 @@ function splitAnnual(value: string | undefined) {
     price,
     cadence: cadenceParts.length > 0 ? cadenceParts.join("/") : undefined,
   };
+}
+
+function monthlyEquivalentPrice(annualPrice: string) {
+  const match = annualPrice.trim().match(/^([^0-9-]*)([0-9]+(?:\.[0-9]+)?)(.*)$/);
+  if (!match) return null;
+
+  const [, prefix, amount, suffix] = match;
+  const monthly = Number(amount) / 12;
+  if (!Number.isFinite(monthly)) return null;
+
+  return `${prefix}${formatMoney(monthly)}${suffix}`;
+}
+
+function formatMoney(amount: number) {
+  return amount.toFixed(2).replace(/\.00$/, "").replace(/0$/, "");
 }

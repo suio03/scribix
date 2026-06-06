@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.2] - 2026-06-07
+
+### Changed
+- Added production Paddle client and price configuration to the Worker config.
+- Updated annual pricing display to show the monthly equivalent with the annual total as secondary billing text.
+
 ## [0.7.1] - 2026-06-07
 
 ### Fixed
