@@ -1,41 +1,51 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
 
-export function BillingPortalButton() {
-  const t = useTranslations("Dashboard.billingPortal");
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+export function BillingPortalButton({
+  label,
+  openingLabel,
+  errorLabel,
+}: {
+  label: string;
+  openingLabel: string;
+  errorLabel: string;
+}) {
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  async function onClick() {
-    setErr(null);
-    setBusy(true);
+  async function openPortal() {
+    setPending(true);
+    setError(null);
     try {
-      const res = await fetch("/api/billing/portal", { method: "POST" });
-      if (!res.ok) {
-        const j = (await res.json().catch(() => ({}))) as { error?: string; message?: string };
-        throw new Error(j.message ?? j.error ?? `Failed (${res.status}).`);
+      const response = await fetch("/api/paddle/create-portal", { method: "POST" });
+      const json = (await response.json().catch(() => ({}))) as {
+        url?: string;
+        error?: string;
+      };
+      if (!response.ok || !json.url) {
+        throw new Error(json.error ?? "portal_failed");
       }
-      const { url } = (await res.json()) as { url: string };
-      window.location.href = url;
+      window.location.assign(json.url);
     } catch (e) {
-      setBusy(false);
-      setErr(e instanceof Error ? e.message : t("genericError"));
+      console.error("Paddle portal failed:", e);
+      setError(errorLabel);
+    } finally {
+      setPending(false);
     }
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <button
         type="button"
-        onClick={onClick}
-        disabled={busy}
-        className="rounded-full border border-line px-4 py-2 text-[13px] font-medium hover:bg-ink/5 disabled:opacity-50"
+        onClick={openPortal}
+        disabled={pending}
+        className="rounded-full border border-line px-4 py-2 text-[13px] font-medium hover:bg-ink/5 disabled:cursor-wait disabled:opacity-60"
       >
-        {busy ? t("opening") : t("manage")}
+        {pending ? openingLabel : label}
       </button>
-      {err && <p className="text-[12px] text-red-600">{err}</p>}
+      {error ? <p className="text-[12px] text-red-600">{error}</p> : null}
     </div>
   );
 }

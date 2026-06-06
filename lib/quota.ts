@@ -1,6 +1,5 @@
-// Quota reservation and reconcile. Free tier is a one-time lifetime trial;
-// paid tiers reset on Creem cycle events. All queries run against the D1
-// binding inside the Worker.
+// Quota reservation and reconcile. Free tier is a one-time lifetime trial.
+// All queries run against the D1 binding inside the Worker.
 
 import type { BillingCycle, Tier } from "./plans";
 import { quotaMinutesFor } from "./plans";
@@ -15,9 +14,8 @@ export type UserQuotaRow = {
 };
 
 /**
- * Free tier is a one-time lifetime trial — no resets. Paid users reset on
- * Creem cycle events (Phase 4). This function is now a no-op kept in place
- * so callers don't need to change.
+ * Free tier is a one-time lifetime trial — no resets. This function is a
+ * no-op kept in place so callers don't need to change.
  */
 export async function maybeResetFreePeriod(_db: D1Database, user: UserQuotaRow): Promise<UserQuotaRow> {
   return user;

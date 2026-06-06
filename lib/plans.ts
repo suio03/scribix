@@ -1,4 +1,4 @@
-// Tier config. Source of truth for caps, quotas, and Creem pricing display.
+// Tier config. Source of truth for caps, quotas, and pricing display.
 //
 // `speechModels` is an array passed to AssemblyAI's `speech_models` field —
 // AAI auto-routes within the array based on language support, falling back

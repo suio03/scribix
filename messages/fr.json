@@ -411,7 +411,7 @@
       {
         "feature": "Fichiers supprimés après",
         "cells": [
-          "24 hr",
+          "7 days",
           "30 days+",
           "30 days+",
           "Self-host"
@@ -463,6 +463,10 @@
     "h1": "Des tarifs simples pour une transcription sérieuse.",
     "bestValue": "Meilleur choix",
     "annualPrefix": "Annuel",
+    "billingToggleLabel": "Intervalle de facturation",
+    "billingMonthly": "Mensuel",
+    "billingYearly": "Annuel",
+    "billingYearlyBadge": "Économisez jusqu'à 35 %",
     "noCreditCard": "Aucune carte bancaire requise",
     "chooseLabel": "Choisir {plan}",
     "soonLabel": "Bientôt",
@@ -499,7 +503,11 @@
         "fileLimit": "Fichier de 1 heure max.",
         "queue": "File normale",
         "aiOutputs": "Exports de transcription",
-        "annual": "$99/an"
+        "annual": "$99/an",
+        "annualPrice": "$99",
+        "annualCadence": "par an",
+        "annualMinutes": "7 200 min/an",
+        "annualUnitValue": "$0.83/h"
       },
       {
         "id": "pro",
@@ -512,7 +520,11 @@
         "fileLimit": "Fichier de 10 heures max.",
         "queue": "File prioritaire",
         "aiOutputs": "Résumés, chapitres, actions à suivre",
-        "annual": "$149/an"
+        "annual": "$149/an",
+        "annualPrice": "$149",
+        "annualCadence": "par an",
+        "annualMinutes": "21 600 min/an",
+        "annualUnitValue": "$0.41/h"
       }
     ],
     "faqs": [
@@ -610,7 +622,7 @@
         "label": "Temps réel"
       },
       {
-        "value": "24h",
+        "value": "7d",
         "label": "Suppression automatique"
       }
     ]

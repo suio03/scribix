@@ -411,7 +411,7 @@
       {
         "feature": "Dateien gelöscht nach",
         "cells": [
-          "24 hr",
+          "7 days",
           "30 days+",
           "30 days+",
           "Self-host"
@@ -463,6 +463,10 @@
     "h1": "Einfache Preise für ernsthafte Transkription.",
     "bestValue": "Bester Wert",
     "annualPrefix": "Jährlich",
+    "billingToggleLabel": "Abrechnungsintervall",
+    "billingMonthly": "Monatlich",
+    "billingYearly": "Jährlich",
+    "billingYearlyBadge": "Bis zu 35 % sparen",
     "noCreditCard": "Keine Kreditkarte erforderlich",
     "chooseLabel": "{plan} wählen",
     "soonLabel": "Bald",
@@ -499,7 +503,11 @@
         "fileLimit": "Max. 1 Stunde pro Datei",
         "queue": "Normale Warteschlange",
         "aiOutputs": "Transkript-Exporte",
-        "annual": "$99/Jahr"
+        "annual": "$99/Jahr",
+        "annualPrice": "$99",
+        "annualCadence": "pro Jahr",
+        "annualMinutes": "7.200 Min./Jahr",
+        "annualUnitValue": "$0.83/Std."
       },
       {
         "id": "pro",
@@ -512,7 +520,11 @@
         "fileLimit": "Max. 10 Stunden pro Datei",
         "queue": "Priorisierte Warteschlange",
         "aiOutputs": "Zusammenfassungen, Kapitel, Aufgaben",
-        "annual": "$149/Jahr"
+        "annual": "$149/Jahr",
+        "annualPrice": "$149",
+        "annualCadence": "pro Jahr",
+        "annualMinutes": "21.600 Min./Jahr",
+        "annualUnitValue": "$0.41/Std."
       }
     ],
     "faqs": [
@@ -610,7 +622,7 @@
         "label": "Echtzeit"
       },
       {
-        "value": "24h",
+        "value": "7d",
         "label": "Auto-Delete"
       }
     ]

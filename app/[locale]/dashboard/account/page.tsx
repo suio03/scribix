@@ -3,9 +3,9 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { redirect } from "@/i18n/navigation";
 import { auth, signOut } from "@/auth";
+import { BillingPortalButton } from "@/app/components/BillingPortalButton";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { quotaMinutesFor, type BillingCycle, type Tier } from "@/lib/plans";
-import { BillingPortalButton } from "@/app/components/BillingPortalButton";
 
 export default async function AccountPage() {
   const locale = await getLocale();
@@ -18,12 +18,12 @@ export default async function AccountPage() {
   const { env } = getCloudflareContext();
   const row = await getOrCreateCurrentUser(env.DB, session);
   const t = await getTranslations("Dashboard.account");
+  const billingPortalT = await getTranslations("Dashboard.billingPortal");
 
   const tier: Tier = row?.tier ?? "free";
   const cycle = row?.billing_cycle ?? null;
   const usedMin = row?.minutes_used_this_period ?? 0;
   const quotaMin = quotaMinutesFor(tier, cycle);
-  const hasBilling = Boolean(row?.customer_id);
 
   return (
     <main className="mx-auto max-w-[720px] px-4 py-12 sm:px-8">
@@ -42,17 +42,26 @@ export default async function AccountPage() {
         )}
       </dl>
 
-      <div className="mt-6 flex flex-wrap gap-3">
-        {tier === "free" ? (
+      {tier === "free" ? (
+        <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/pricing"
             className="rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper hover:bg-accent"
           >
             {t("upgradePlan")}
           </Link>
-        ) : null}
-        {hasBilling ? <BillingPortalButton /> : null}
-      </div>
+        </div>
+      ) : null}
+
+      {row?.customer_id?.startsWith("ctm_") ? (
+        <div className="mt-6 flex flex-wrap gap-3">
+          <BillingPortalButton
+            label={billingPortalT("manage")}
+            openingLabel={billingPortalT("opening")}
+            errorLabel={billingPortalT("genericError")}
+          />
+        </div>
+      ) : null}
 
       <form
         action={async () => {

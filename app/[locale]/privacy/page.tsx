@@ -26,8 +26,9 @@ export default async function PrivacyPage({
   return (
     <LegalShell title="Privacy Policy" updated="May 1, 2026">
       <p>
-        This policy describes what data Scribix collects, how we use it, and the choices you
-        have. Plain-English summary first; details below.
+        This policy describes what data CENDRO LABS PTY LTD collects when operating
+        Scribix, how we use it, and the choices you have. Plain-English summary first;
+        details below.
       </p>
 
       <H2>The Short Version</H2>
@@ -40,7 +41,7 @@ export default async function PrivacyPage({
         <li>
           We process your audio only to generate and deliver transcripts for your account.
         </li>
-        <li>We don&apos;t sell your data and we don&apos;t run advertising trackers.</li>
+        <li>We don&apos;t sell your data.</li>
         <li>
           You can delete any transcript at any time. You can delete your whole account from
           the{" "}
@@ -62,7 +63,7 @@ export default async function PrivacyPage({
         </li>
         <li>
           <strong>Subscription:</strong> billing status, billing cycle, and current plan.
-          We never see or store your full card number.
+          Payments are handled by Paddle, and we never see or store your full card number.
         </li>
         <li>
           <strong>Usage:</strong> minutes consumed in the current billing period, file size,
@@ -77,6 +78,16 @@ export default async function PrivacyPage({
         <li>To debug, monitor for abuse, and improve reliability.</li>
         <li>To contact you about your account when needed (e.g. failed payment).</li>
       </ul>
+
+      <H2>Processors</H2>
+      <p>
+        We use service providers to run Scribix: Cloudflare for hosting, D1 database, and
+        R2 file storage; AssemblyAI for transcription processing; Google and NextAuth for
+        sign-in; Paddle for subscription checkout, billing, tax, invoices, and payment
+        management; Google Analytics, Microsoft Clarity, and Plausible-compatible analytics
+        served from actone.app for product analytics and reliability monitoring.
+      </p>
+
       <H2>Retention</H2>
       <ul className="ml-5 list-disc space-y-2">
         <li>

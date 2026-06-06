@@ -27,14 +27,15 @@ export default async function RefundsPage({
   return (
     <LegalShell title="Refund Policy" updated="May 1, 2026">
       <p>
-        At Scribix, we want you to feel confident about your purchase. We understand that
-        circumstances change, and you may occasionally need to request a refund. Please read
-        this policy carefully before subscribing.
+        Scribix is a product operated by CENDRO LABS PTY LTD. We want you to feel confident
+        about your purchase. We understand that circumstances change, and you may
+        occasionally need to request a refund. Please read this policy carefully before
+        subscribing.
       </p>
 
       <H2>Refund Eligibility</H2>
       <p>
-        Refund requests apply only to <strong>subscription purchases</strong> (Basic or Pro,
+        Refund requests apply only to <strong>subscription purchases</strong> (Starter or Pro,
         monthly or yearly) and must be submitted within <strong>3 days of the purchase date</strong>.
       </p>
       <p>
@@ -49,6 +50,14 @@ export default async function RefundsPage({
       </p>
 
       <H2>How to Request a Refund</H2>
+      <p>
+        Subscription payments are processed by Paddle. You may request a refund from us at{" "}
+        <a className="underline underline-offset-4 hover:text-accent" href="mailto:hello@scribix.io">
+          hello@scribix.io
+        </a>{" "}
+        or through the support and subscription links provided by Paddle on your receipt or
+        customer portal.
+      </p>
       <ol className="ml-5 list-decimal space-y-2">
         <li>
           <strong>Contact us</strong> at{" "}

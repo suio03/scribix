@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What Scribix is
 
-A Next.js (App Router, React 19) audio/video transcription SaaS deployed to **Cloudflare Workers via OpenNext** (`@opennextjs/cloudflare`), not Vercel. Users upload audio/video (or record / paste a YouTube URL), it's transcribed by **AssemblyAI**, and results are stored and exported. Persistence is **Cloudflare D1** (SQLite); media lives in **Cloudflare R2**; billing is **Creem**; auth is **next-auth (Google)**.
+A Next.js (App Router, React 19) audio/video transcription SaaS deployed to **Cloudflare Workers via OpenNext** (`@opennextjs/cloudflare`), not Vercel. Users upload audio/video (or record / paste a YouTube URL), it's transcribed by **AssemblyAI**, and results are stored and exported. Persistence is **Cloudflare D1** (SQLite); media lives in **Cloudflare R2**; billing is not currently wired to a payment provider; auth is **next-auth (Google)**.
 
 Because it targets the Workers runtime, all server code must be edge-compatible: use `fetch` (no Node networking), and reach Cloudflare bindings through `await cf()` (`lib/cf.ts`), never assume Node globals.
 
@@ -32,11 +32,11 @@ This is the central architecture and spans several files — read these together
 3. **`POST /api/webhook/assemblyai`** — AAI calls back on completion; verified via the `X-Scribix-Token` header matching the row's `webhook_token`. Fetches the result, writes transcript JSON to R2, reconciles quota against actual `audio_duration`, sets `completed`.
 4. **Status statuses** progress through `pending → uploading → queued → processing → extracting_audio → uploading_audio → transcribing → completed | error | failed` (see `migrations/0002`).
 
-Quota model (`lib/quota.ts` + `lib/plans.ts`): a **single `minutes_used_this_period` counter** on `users`, no credit ledger. Free tier is a one-time lifetime trial (never resets); paid tiers reset on Creem cycle webhook events. Reservations are atomic and reconciled against actual duration after completion.
+Quota model (`lib/quota.ts` + `lib/plans.ts`): a **single `minutes_used_this_period` counter** on `users`, no credit ledger. Free tier is a one-time lifetime trial (never resets). Reservations are atomic and reconciled against actual duration after completion.
 
-## Billing (Creem)
+## Billing
 
-`POST /api/webhook/creem` verifies the HMAC signature **before any side effect**, runs side effects, then writes a dedup row only on success (so a transient failure still retries). Handlers are idempotent (absolute UPDATEs). Cycle events reset the quota counter; mid-cycle plan changes keep the counter; downgrades are blocked. Plan↔Creem-product mapping lives in `lib/creem-plans.ts`; tier caps/pricing in `lib/plans.ts`.
+Payment-provider checkout, portal, and webhook routes are currently absent. Tier caps and pricing display live in `lib/plans.ts`; user subscription state remains on the `users` table for the next provider integration.
 
 ## Auth
 

@@ -27,7 +27,7 @@ export async function Footer() {
 
         <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-line pt-6 text-[12.5px] text-muted sm:flex-row sm:items-center">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <p>© {year} Scribix Audio Lab, Inc. All rights reserved.</p>
+            <p>© {year} CENDRO LABS PTY LTD. Scribix is a product of CENDRO LABS PTY LTD.</p>
             <span className="hidden text-line sm:inline" aria-hidden>
               ·
             </span>

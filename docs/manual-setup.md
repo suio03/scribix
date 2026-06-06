@@ -174,34 +174,71 @@ npx wrangler secret put ASSEMBLYAI_API_KEY
 
 ---
 
-## Phase 4 — payments (Creem)
+## Phase 4 — Paddle payments
 
-> **v1.0 soft-launch note:** this entire phase is **deferred to v1.1**. The soft launch ships auth + Free tier only — `/api/billing/checkout` + `/api/billing/portal` return 404, the Pricing component is hidden from the homepage, and the Creem webhook handler stays mounted but dormant. Skip the rest of this section until you're ready to flip paid tiers on. See `progress.md` §14 Phase 8 for the soft-launch checklist.
+Scribix uses Paddle Billing for paid Starter and Pro subscriptions. The app
+opens Paddle overlay checkout through Paddle.js and falls back to Paddle's
+hosted checkout URL if Paddle.js is not initialized.
 
-### 4.1 Creem dashboard setup (blocking — Phase 4 onwards)
+### 4.1 Products and prices
 
-1. https://dashboard.creem.io → create products for each tier:
-   - Basic monthly ($9), Basic yearly ($64.80)
-   - Pro monthly ($19), Pro yearly ($136.80)
-2. Copy each `product_id` — you'll paste them into `lib/plans.ts`.
-3. **Customer portal config:** disable plan-switching (only allow cancel + billing details). Pixfy → Pro downgrade is blocked at the portal level per plan §1.
-4. **Webhook endpoint:**
-   - Local: `https://<ngrok>/api/webhook/creem`
-   - Prod: `https://scribix.io/api/webhook/creem`
-5. Copy the **webhook signing secret** and the **API key**.
+Create recurring Paddle prices for:
 
-Drop into `.env.local` / `.dev.vars`:
-```
-CREEM_API_KEY=...
-CREEM_WEBHOOK_SECRET=...
-NEXT_PUBLIC_CREEM_ENV=test       # or 'live' in prod
-```
+- Starter monthly → `PADDLE_BASIC_MONTHLY_PRICE_ID`
+- Starter yearly → `PADDLE_BASIC_YEARLY_PRICE_ID`
+- Pro monthly → `PADDLE_PRO_MONTHLY_PRICE_ID`
+- Pro yearly → `PADDLE_PRO_YEARLY_PRICE_ID`
 
-Push to Worker:
+Use Paddle price IDs (`pri_...`), not product IDs. Keep the public "Starter"
+name in Paddle/dashboard copy; the app maps it to internal tier `basic`.
+
+### 4.2 Local env
+
+Set in `.env.local` and `.dev.vars`:
+
 ```sh
-npx wrangler secret put CREEM_API_KEY
-npx wrangler secret put CREEM_WEBHOOK_SECRET
+PADDLE_API_KEY=...
+PADDLE_WEBHOOK_SECRET=...
+NEXT_PUBLIC_PADDLE_ENV=sandbox
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=...
+PADDLE_BASIC_MONTHLY_PRICE_ID=pri_...
+PADDLE_BASIC_YEARLY_PRICE_ID=pri_...
+PADDLE_PRO_MONTHLY_PRICE_ID=pri_...
+PADDLE_PRO_YEARLY_PRICE_ID=pri_...
 ```
+
+### 4.3 Webhook destination
+
+Create a Paddle notification destination:
+
+- Local with ngrok: `https://abc123.ngrok.io/api/webhook/paddle`
+- Production: `https://scribix.io/api/webhook/paddle`
+
+Subscribe at minimum to:
+
+- `transaction.completed`
+- `subscription.activated`
+- `subscription.updated`
+- `subscription.canceled`
+- `subscription.paused`
+- `subscription.past_due`
+
+Copy the notification destination secret to `PADDLE_WEBHOOK_SECRET`.
+
+### 4.4 Production secrets and vars
+
+Set production secrets:
+
+```sh
+npx wrangler secret put PADDLE_API_KEY
+npx wrangler secret put PADDLE_WEBHOOK_SECRET
+```
+
+Set the public token and price IDs in `wrangler.jsonc` or Cloudflare dashboard
+vars. Keep `NEXT_PUBLIC_PADDLE_ENV=production` for live Paddle credentials.
+
+Configure Paddle Customer Portal to avoid unsupported self-service downgrades
+until Scribix implements downgrade semantics in-app.
 
 ---
 
@@ -270,8 +307,6 @@ npx wrangler secret put AUTH_SECRET
 npx wrangler secret put GOOGLE_ID
 npx wrangler secret put GOOGLE_SECRET
 npx wrangler secret put ASSEMBLYAI_API_KEY
-npx wrangler secret put CREEM_API_KEY
-npx wrangler secret put CREEM_WEBHOOK_SECRET
 npx wrangler secret put R2_ACCESS_KEY_ID
 npx wrangler secret put R2_SECRET_ACCESS_KEY
 npx wrangler secret put DISCORD_WEBHOOK_URL
@@ -282,7 +317,6 @@ Public/non-secret vars go in `wrangler.jsonc` under `vars`:
 "vars": {
   "NEXT_PUBLIC_APP_URL": "https://scribix.io",
   "NEXTAUTH_URL": "https://scribix.io",
-  "NEXT_PUBLIC_CREEM_ENV": "live",
   "ADMIN_EMAILS": "you@example.com",
   "CLOUDFLARE_ACCOUNT_ID": "abc...",
   "ASSEMBLYAI_WEBHOOK_URL": "https://scribix.io/api/webhook/assemblyai"
@@ -317,11 +351,6 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 CLOUDFLARE_ACCOUNT_ID=
 R2_ACCESS_KEY_ID=
 R2_SECRET_ACCESS_KEY=
-
-# Creem (Phase 4)
-CREEM_API_KEY=
-CREEM_WEBHOOK_SECRET=
-NEXT_PUBLIC_CREEM_ENV=test
 
 # Admin / ops (Phase 6)
 ADMIN_EMAILS=

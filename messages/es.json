@@ -411,7 +411,7 @@
       {
         "feature": "Archivos eliminados después de",
         "cells": [
-          "24 hr",
+          "7 days",
           "30 days+",
           "30 days+",
           "Self-host"
@@ -463,6 +463,10 @@
     "h1": "Precios simples para transcripción seria.",
     "bestValue": "Mejor valor",
     "annualPrefix": "Anual",
+    "billingToggleLabel": "Intervalo de facturación",
+    "billingMonthly": "Mensual",
+    "billingYearly": "Anual",
+    "billingYearlyBadge": "Ahorra hasta un 35%",
     "noCreditCard": "No requiere tarjeta",
     "chooseLabel": "Elegir {plan}",
     "soonLabel": "Pronto",
@@ -499,7 +503,11 @@
         "fileLimit": "Archivo máximo de 1 hora",
         "queue": "Cola normal",
         "aiOutputs": "Exportaciones de transcripción",
-        "annual": "$99/año"
+        "annual": "$99/año",
+        "annualPrice": "$99",
+        "annualCadence": "al año",
+        "annualMinutes": "7.200 min/año",
+        "annualUnitValue": "$0.83/h"
       },
       {
         "id": "pro",
@@ -512,7 +520,11 @@
         "fileLimit": "Archivo máximo de 10 horas",
         "queue": "Cola prioritaria",
         "aiOutputs": "Resúmenes, capítulos, tareas de acción",
-        "annual": "$149/año"
+        "annual": "$149/año",
+        "annualPrice": "$149",
+        "annualCadence": "al año",
+        "annualMinutes": "21.600 min/año",
+        "annualUnitValue": "$0.41/h"
       }
     ],
     "faqs": [
@@ -610,7 +622,7 @@
         "label": "En tiempo real"
       },
       {
-        "value": "24h",
+        "value": "7d",
         "label": "Auto-eliminar"
       }
     ]

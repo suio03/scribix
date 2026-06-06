@@ -411,7 +411,7 @@
       {
         "feature": "ファイル削除期間",
         "cells": [
-          "24 hr",
+          "7 days",
           "30 days+",
           "30 days+",
           "Self-host"
@@ -463,6 +463,10 @@
     "h1": "本格的な文字起こしのためのシンプルな料金。",
     "bestValue": "おすすめ",
     "annualPrefix": "年額",
+    "billingToggleLabel": "請求間隔",
+    "billingMonthly": "月額",
+    "billingYearly": "年額",
+    "billingYearlyBadge": "最大35%お得",
     "noCreditCard": "クレジットカード不要",
     "chooseLabel": "{plan}を選択",
     "soonLabel": "準備中",
@@ -499,7 +503,11 @@
         "fileLimit": "最大1時間のファイル",
         "queue": "通常キュー",
         "aiOutputs": "文字起こしのエクスポート",
-        "annual": "$99/年"
+        "annual": "$99/年",
+        "annualPrice": "$99",
+        "annualCadence": "年額",
+        "annualMinutes": "7,200分/年",
+        "annualUnitValue": "$0.83/時"
       },
       {
         "id": "pro",
@@ -512,7 +520,11 @@
         "fileLimit": "最大10時間のファイル",
         "queue": "優先キュー",
         "aiOutputs": "要約、チャプター、アクション項目",
-        "annual": "$149/年"
+        "annual": "$149/年",
+        "annualPrice": "$149",
+        "annualCadence": "年額",
+        "annualMinutes": "21,600分/年",
+        "annualUnitValue": "$0.41/時"
       }
     ],
     "faqs": [
@@ -610,7 +622,7 @@
         "label": "リアルタイム"
       },
       {
-        "value": "24h",
+        "value": "7d",
         "label": "自動削除"
       }
     ]

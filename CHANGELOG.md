@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.7.0] - 2026-06-07
+
+### Added
+- Added Paddle Billing checkout, portal, and webhook handling for Starter and Pro subscriptions.
+- Added Paddle plan configuration, client-side Paddle initialization, and D1 webhook event deduplication.
+- Added Paddle setup documentation, launch checklist items, and required environment variable references.
+
+### Changed
+- Replaced the Creem billing flow with Paddle-backed pricing, account billing, and subscription state updates.
+- Updated legal pages and footer to identify CENDRO LABS PTY LTD as the operator of Scribix and disclose Paddle billing.
+- Aligned public retention copy with the 7-day audio and video deletion policy.
+
+### Removed
+- Removed legacy Creem checkout, portal, webhook, and plan helpers.
+
 ## [0.6.0] - 2026-06-02
 
 ### Added

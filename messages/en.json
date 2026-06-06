@@ -411,7 +411,7 @@
       {
         "feature": "Files deleted after",
         "cells": [
-          "24 hr",
+          "7 days",
           "30 days+",
           "30 days+",
           "Self-host"
@@ -463,6 +463,10 @@
     "h1": "Simple pricing for serious transcription.",
     "bestValue": "Best value",
     "annualPrefix": "Annual",
+    "billingToggleLabel": "Billing interval",
+    "billingMonthly": "Monthly",
+    "billingYearly": "Yearly",
+    "billingYearlyBadge": "Save up to 35%",
     "noCreditCard": "No credit card required",
     "chooseLabel": "Choose {plan}",
     "soonLabel": "Soon",
@@ -499,7 +503,11 @@
         "fileLimit": "1-hour max file",
         "queue": "Normal queue",
         "aiOutputs": "Transcript exports",
-        "annual": "$99/year"
+        "annual": "$99/year",
+        "annualPrice": "$99",
+        "annualCadence": "per year",
+        "annualMinutes": "7,200 min/year",
+        "annualUnitValue": "$0.83/hr"
       },
       {
         "id": "pro",
@@ -512,7 +520,11 @@
         "fileLimit": "10-hour max file",
         "queue": "Priority queue",
         "aiOutputs": "Summaries, chapters, action items",
-        "annual": "$149/year"
+        "annual": "$149/year",
+        "annualPrice": "$149",
+        "annualCadence": "per year",
+        "annualMinutes": "21,600 min/year",
+        "annualUnitValue": "$0.41/hr"
       }
     ],
     "faqs": [
@@ -610,7 +622,7 @@
         "label": "Real-time"
       },
       {
-        "value": "24h",
+        "value": "7d",
         "label": "Auto-delete"
       }
     ]

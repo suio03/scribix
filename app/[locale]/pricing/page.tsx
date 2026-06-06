@@ -7,28 +7,13 @@ import { routing } from "@/i18n/routing";
 import { Footer } from "@/app/components/Footer";
 import { Header } from "@/app/components/Header";
 import { Partners } from "@/app/components/Partners";
+import { PricingPlans, type PlanCopy, type PlanId } from "@/app/components/PricingPlans";
 import { Shell } from "@/app/components/Shell";
 import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 
 const SITE = "https://scribix.io";
 const PATH = "/pricing";
-
-type PlanId = "free" | "starter" | "pro";
-
-type PlanCopy = {
-  id: PlanId;
-  name: string;
-  price: string;
-  cadence: string;
-  minutes: string;
-  unitValue: string;
-  summary: string;
-  fileLimit: string;
-  queue: string;
-  aiOutputs: string;
-  annual?: string;
-};
 
 type FaqCopy = {
   question: string;
@@ -72,10 +57,18 @@ export default async function PricingPage({
   const session = await auth();
   const homePath = getPathname({ href: "/", locale });
   const dashboardPath = getPathname({ href: "/dashboard", locale });
+  const dashboardNewPath = getPathname({ href: "/dashboard/new", locale });
+  const checkoutSuccessPath = getPathname({
+    href: { pathname: "/dashboard", query: { checkout: "ok" } },
+    locale,
+  });
   const sidebarUsage = await getSidebarUsage(session);
   const t = await getTranslations("PricingPage");
   const plans = t.raw("plans") as PlanCopy[];
   const faqs = t.raw("faqs") as FaqCopy[];
+  const chooseLabels = Object.fromEntries(
+    plans.map((plan) => [plan.id, t("chooseLabel", { plan: plan.name })])
+  ) as Record<PlanId, string>;
 
   return (
     <Shell
@@ -102,27 +95,28 @@ export default async function PricingPage({
 
         <section className="px-4 py-10 sm:px-8 sm:py-14">
           <div className="mx-auto max-w-[1100px]">
-            <div className="grid gap-4 lg:grid-cols-3">
-              {plans.map((plan) => (
-                <PlanCard
-                  key={plan.id}
-                  annualPrefix={t("annualPrefix")}
-                  bestValue={t("bestValue")}
-                  buttonTitle={t("buttonTitle")}
-                  chooseLabel={t("chooseLabel", { plan: plan.name })}
-                  noCreditCard={t("noCreditCard")}
-                  plan={plan}
-                  soonLabel={t("soonLabel")}
-                  specLabels={{
-                    minutes: t("specLabels.minutes"),
-                    unitValue: t("specLabels.unitValue"),
-                    fileLimit: t("specLabels.fileLimit"),
-                    queue: t("specLabels.queue"),
-                    aiOutputs: t("specLabels.aiOutputs"),
-                  }}
-                />
-              ))}
-            </div>
+            <PricingPlans
+              billingLabels={{
+                label: t("billingToggleLabel"),
+                monthly: t("billingMonthly"),
+                yearly: t("billingYearly"),
+                yearlyBadge: t("billingYearlyBadge"),
+              }}
+              bestValue={t("bestValue")}
+              checkoutSuccessPath={checkoutSuccessPath}
+              chooseLabels={chooseLabels}
+              dashboardNewPath={dashboardNewPath}
+              noCreditCard={t("noCreditCard")}
+              plans={plans}
+              signedIn={!!session}
+              specLabels={{
+                minutes: t("specLabels.minutes"),
+                unitValue: t("specLabels.unitValue"),
+                fileLimit: t("specLabels.fileLimit"),
+                queue: t("specLabels.queue"),
+                aiOutputs: t("specLabels.aiOutputs"),
+              }}
+            />
           </div>
         </section>
 
@@ -154,132 +148,6 @@ export default async function PricingPage({
       <Footer />
       <Partners />
     </Shell>
-  );
-}
-
-function PlanCard({
-  annualPrefix,
-  bestValue,
-  buttonTitle,
-  chooseLabel,
-  noCreditCard,
-  plan,
-  soonLabel,
-  specLabels,
-}: {
-  annualPrefix: string;
-  bestValue: string;
-  buttonTitle: string;
-  chooseLabel: string;
-  noCreditCard: string;
-  plan: PlanCopy;
-  soonLabel: string;
-  specLabels: Record<"minutes" | "unitValue" | "fileLimit" | "queue" | "aiOutputs", string>;
-}) {
-  const primary = plan.id === "pro";
-
-  return (
-    <article
-      className={`relative flex min-h-[560px] flex-col border p-6 transition ${
-        primary
-          ? "border-ink bg-ink text-paper shadow-[8px_8px_0_0_var(--accent)]"
-          : "border-line bg-card hover:border-ink/35"
-      }`}
-    >
-      {primary ? (
-        <div className="absolute right-5 top-5 inline-flex items-center gap-1.5 bg-accent px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-paper">
-          {bestValue}
-        </div>
-      ) : null}
-
-      <div className="mt-7">
-        <h2 className="font-display text-[31px] font-medium tracking-tight">
-          {plan.name}
-        </h2>
-        <p
-          className={`mt-2 min-h-[54px] text-[14.5px] leading-[1.65] ${
-            primary ? "text-paper/68" : "text-muted"
-          }`}
-        >
-          {plan.summary}
-        </p>
-      </div>
-
-      <div className="mt-8">
-        <div className="flex items-end gap-2">
-          <span className="font-display text-[56px] font-medium leading-none tracking-tight tabular">
-            {plan.price}
-          </span>
-          <span
-            className={`pb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] ${
-              primary ? "text-paper/55" : "text-muted"
-            }`}
-          >
-            {plan.cadence}
-          </span>
-        </div>
-        {plan.annual ? (
-          <p
-            className={`mt-2 font-mono text-[11px] uppercase tracking-[0.16em] ${
-              primary ? "text-rec" : "text-accent"
-            }`}
-          >
-            {annualPrefix} {plan.annual}
-          </p>
-        ) : (
-          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
-            {noCreditCard}
-          </p>
-        )}
-      </div>
-
-      <dl className="mt-8 grid gap-3 border-t border-current/15 pt-6">
-        <Spec label={specLabels.minutes} value={plan.minutes} primary={primary} />
-        <Spec label={specLabels.unitValue} value={plan.unitValue} primary={primary} />
-        <Spec label={specLabels.fileLimit} value={plan.fileLimit} primary={primary} />
-        <Spec label={specLabels.queue} value={plan.queue} primary={primary} />
-        <Spec label={specLabels.aiOutputs} value={plan.aiOutputs} primary={primary} />
-      </dl>
-
-      <button
-        type="button"
-        aria-disabled="true"
-        title={buttonTitle}
-        className={`mt-auto inline-flex h-12 items-center justify-center gap-2 border px-4 text-[14px] font-medium transition ${
-          primary
-            ? "border-paper bg-paper text-ink"
-            : "border-ink bg-ink text-paper"
-        }`}
-      >
-        {chooseLabel}
-        <span className="font-mono text-[10px] uppercase tracking-[0.16em] opacity-60">
-          {soonLabel}
-        </span>
-      </button>
-    </article>
-  );
-}
-
-function Spec({
-  label,
-  value,
-  primary = false,
-}: {
-  label: string;
-  value: string;
-  primary?: boolean;
-}) {
-  return (
-    <div className="grid grid-cols-[94px_minmax(0,1fr)] gap-3 text-[14px]">
-      <dt
-        className={`font-mono text-[10px] uppercase tracking-[0.16em] ${
-          primary ? "text-paper/45" : "text-muted"
-        }`}
-      >
-        {label}
-      </dt>
-      <dd className={primary ? "text-paper/88" : "text-ink/88"}>{value}</dd>
-    </div>
   );
 }
 

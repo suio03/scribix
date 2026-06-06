@@ -27,8 +27,9 @@ export default async function TermsPage({
   return (
     <LegalShell title="Terms of Service" updated="May 1, 2026">
       <p>
-        These terms govern your use of Scribix (&quot;we&quot;, &quot;us&quot;,
-        &quot;Scribix&quot;) and the transcription service available at{" "}
+        These terms govern your use of Scribix, a transcription product operated by
+        CENDRO LABS PTY LTD (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), and
+        the transcription service available at{" "}
         <a className="underline underline-offset-4 hover:text-accent" href="https://scribix.io">
           scribix.io
         </a>
@@ -72,6 +73,10 @@ export default async function TermsPage({
         allowance resets at each renewal. Yearly plans receive their full annual allowance
         upfront. Cancellation is self-service from the account page and takes effect at the
         end of the current period.
+      </p>
+      <p>
+        Subscription payments are processed by Paddle. Paddle may appear on your checkout,
+        receipt, billing statement, or subscription management page.
       </p>
       <p>
         Refunds are governed by our{" "}

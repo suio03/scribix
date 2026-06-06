@@ -5,6 +5,7 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "../../i18n/routing";
 import Analytics from "../components/Analytics";
+import { PaddleProvider } from "../components/PaddleProvider";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -119,7 +120,9 @@ export default async function LocaleLayout({
     >
       <Analytics />
       <body className="bg-paper text-ink antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <PaddleProvider>{children}</PaddleProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

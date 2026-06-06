@@ -411,7 +411,7 @@
       {
         "feature": "File eliminati dopo",
         "cells": [
-          "24 hr",
+          "7 days",
           "30 days+",
           "30 days+",
           "Self-host"
@@ -463,6 +463,10 @@
     "h1": "Prezzi semplici per trascrizioni serie.",
     "bestValue": "Miglior valore",
     "annualPrefix": "Annuale",
+    "billingToggleLabel": "Intervallo di fatturazione",
+    "billingMonthly": "Mensile",
+    "billingYearly": "Annuale",
+    "billingYearlyBadge": "Risparmia fino al 35%",
     "noCreditCard": "Carta non richiesta",
     "chooseLabel": "Scegli {plan}",
     "soonLabel": "Presto",
@@ -499,7 +503,11 @@
         "fileLimit": "File fino a 1 ora",
         "queue": "Coda normale",
         "aiOutputs": "Esportazioni della trascrizione",
-        "annual": "$99/anno"
+        "annual": "$99/anno",
+        "annualPrice": "$99",
+        "annualCadence": "all'anno",
+        "annualMinutes": "7.200 min/anno",
+        "annualUnitValue": "$0.83/h"
       },
       {
         "id": "pro",
@@ -512,7 +520,11 @@
         "fileLimit": "File fino a 10 ore",
         "queue": "Coda prioritaria",
         "aiOutputs": "Riepiloghi, capitoli, attività",
-        "annual": "$149/anno"
+        "annual": "$149/anno",
+        "annualPrice": "$149",
+        "annualCadence": "all'anno",
+        "annualMinutes": "21.600 min/anno",
+        "annualUnitValue": "$0.41/h"
       }
     ],
     "faqs": [
@@ -610,7 +622,7 @@
         "label": "Tempo reale"
       },
       {
-        "value": "24h",
+        "value": "7d",
         "label": "Auto-eliminazione"
       }
     ]

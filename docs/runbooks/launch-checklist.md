@@ -10,7 +10,7 @@ Phase 7 — this file is the "everything else" pre-flight.
 - [ ] `npm run deploy` succeeds at least once to a `*.workers.dev` URL.
 - [ ] Custom domain `scribix.io` attached in Cloudflare Workers.
 - [ ] Worker secrets set via `wrangler secret put` (see manual-setup §7.3).
-- [ ] `wrangler.jsonc` `vars` block has prod URLs and `NEXT_PUBLIC_CREEM_ENV=live`.
+- [ ] `wrangler.jsonc` `vars` block has prod URLs.
 - [ ] `db:migrate:remote` applied.
 
 ## Webhook URLs
@@ -18,13 +18,9 @@ Phase 7 — this file is the "everything else" pre-flight.
 - [ ] **AssemblyAI** — no dashboard step. Webhook URL is per-job, set inline
   on each `POST /v2/transcript`. Confirmed working when a real upload completes
   end-to-end on prod and the row flips to `completed`.
-- [ ] **Creem** — flip the webhook URL in the Creem dashboard from test
-  (`http://localhost:3000/api/webhook/creem` or ngrok URL) to
-  `https://scribix.io/api/webhook/creem`. Set the same `CREEM_WEBHOOK_SECRET`
-  on both sides.
-- [ ] **Creem portal config** — confirm plan-switching is disabled (only
-  "cancel" + "billing details" exposed). This is what blocks Pro → Basic
-  downgrades at the source (§8.3).
+- [ ] **Paddle** — notification destination points to
+  `https://scribix.io/api/webhook/paddle` and subscribes to transaction and
+  subscription lifecycle events.
 
 ## R2
 
@@ -35,15 +31,15 @@ Phase 7 — this file is the "everything else" pre-flight.
 ## Smoke tests on prod
 
 - [ ] Sign in with Google → user row appears in D1.
+- [ ] Paid checkout from `/pricing` opens Paddle overlay for Starter monthly.
+- [ ] Completed Paddle checkout returns to `/dashboard?checkout=ok`, webhook
+  activates the tier, and duplicate webhook delivery is ignored.
+- [ ] `/dashboard/account` opens Paddle Customer Portal for a `ctm_*` customer.
+- [ ] Paddle cancellation marks the subscription canceled without removing
+  access before the period end.
 - [ ] Upload a 30 s audio file → row reaches `completed` → transcript renders.
 - [ ] Hit `/refunds`, `/terms`, `/privacy` — all 200 OK.
 - [ ] Hit `https://scribix.io/sitemap.xml` and `/robots.txt` — both serve.
-- [ ] Run a Creem test checkout (live keys, real card, $9 / $19 plan):
-  - [ ] Webhook fires → user tier flips, `period_ends_at` set.
-  - [ ] `/dashboard?checkout=ok` shows the success banner.
-  - [ ] Customer portal opens; plan-switching is hidden.
-  - [ ] Cancel from portal → `subscription_status='canceled'`, access until
-    `period_ends_at`.
 - [ ] Soft-delete a transcript → audio + JSON disappear from R2; row hidden.
 - [ ] Soft-delete an account from `/dashboard/account` → user signed out;
   D1 row marked `deleted_at`.
@@ -68,11 +64,10 @@ Phase 7 — this file is the "everything else" pre-flight.
   served from `app/[locale]/opengraph-image.tsx`).
 - [ ] Pricing page yearly bullets read "available immediately, refreshed at
   renewal" (§1 marketing copy note).
+- [ ] Paddle Customer Portal plan switching is restricted so unsupported
+  self-service downgrades are not exposed.
 
 ## Day-1 monitoring
 
 - [ ] Watch the Discord ops channel for the first hour after announcing.
 - [ ] First failed transcription should fire a `transcription_failed` alert.
-- [ ] First paid checkout should fire a `checkout_success` alert.
-- [ ] If nothing fires for several hours, the webhook integration is silently
-  broken — investigate before the next day.
