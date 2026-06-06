@@ -456,9 +456,9 @@
   "PricingPage": {
     "metadata": {
       "title": "Pricing",
-      "description": "Simple Scribix pricing: start free, upgrade to Starter for 600 minutes per month, or choose Pro for 1,800 minutes and priority AI outputs.",
+      "description": "Simple Scribix pricing: start free, upgrade to Starter for 600 minutes per month, or choose Pro Unlimited for 2,400 priority minutes and fair-use processing.",
       "ogTitle": "Scribix Pricing",
-      "ogDescription": "Free trial, Starter, and Pro plans for video and audio transcription."
+      "ogDescription": "Free trial, Starter, and Pro Unlimited plans for video and audio transcription."
     },
     "h1": "Simple pricing for serious transcription.",
     "bestValue": "Best value",
@@ -472,59 +472,107 @@
     "soonLabel": "Soon",
     "buttonTitle": "Checkout will be added in the next phase",
     "faqTitle": "Pricing FAQ",
-    "specLabels": {
-      "minutes": "Minutes",
-      "unitValue": "Unit value",
-      "fileLimit": "File limit",
-      "queue": "Queue",
-      "aiOutputs": "AI outputs"
-    },
+    "featureRows": [
+      {
+        "label": "Transcript files",
+        "values": {
+          "free": "Limited by 45 min total",
+          "starter": "Unlimited files within 600 min",
+          "pro": "Unlimited files"
+        }
+      },
+      {
+        "label": "Monthly minutes",
+        "values": {
+          "free": "45 lifetime",
+          "starter": "600 min/month",
+          "pro": "2,400 priority min/month"
+        }
+      },
+      {
+        "label": "Max file length",
+        "values": {
+          "free": "45 min",
+          "starter": "1 hour",
+          "pro": "10 hours"
+        }
+      },
+      {
+        "label": "Max file size",
+        "values": {
+          "free": "1 GB",
+          "starter": "1 GB",
+          "pro": "1 GB"
+        }
+      },
+      {
+        "label": "Processing queue",
+        "values": {
+          "free": "Free queue",
+          "starter": "Standard queue",
+          "pro": "Priority queue"
+        }
+      },
+      {
+        "label": "Accuracy model",
+        "values": {
+          "free": "Standard",
+          "starter": "Best accuracy",
+          "pro": "Best accuracy"
+        }
+      },
+      {
+        "label": "Speaker labels",
+        "values": {
+          "free": "Yes",
+          "starter": "Yes",
+          "pro": "Yes"
+        }
+      },
+      {
+        "label": "Exports",
+        "values": {
+          "free": "TXT, DOCX, PDF, SRT",
+          "starter": "Unlimited exports",
+          "pro": "Unlimited exports"
+        }
+      },
+      {
+        "label": "AI summaries",
+        "values": {
+          "free": "No",
+          "starter": "Yes",
+          "pro": "Yes"
+        }
+      }
+    ],
     "plans": [
       {
         "id": "free",
         "name": "Free",
         "price": "$0",
         "cadence": "one-time",
-        "minutes": "45 lifetime minutes",
-        "unitValue": "Trial only",
-        "summary": "Try Scribix once and check transcript quality before paying.",
-        "fileLimit": "45-minute max file",
-        "queue": "Normal queue",
-        "aiOutputs": "Transcript exports"
+        "summary": "Try Scribix once and check transcript quality before paying."
       },
       {
         "id": "starter",
         "name": "Starter",
         "price": "$12",
         "cadence": "per month",
-        "minutes": "600 min/mo",
-        "unitValue": "$1.20/hr",
         "summary": "For steady personal usage where the minute limit still feels real.",
-        "fileLimit": "1-hour max file",
-        "queue": "Normal queue",
-        "aiOutputs": "Transcript exports",
         "annual": "$99/year",
         "annualPrice": "$99",
-        "annualCadence": "per year",
-        "annualMinutes": "7,200 min/year",
-        "annualUnitValue": "$0.83/hr"
+        "annualCadence": "per year"
       },
       {
         "id": "pro",
-        "name": "Pro",
+        "name": "Pro Unlimited",
         "price": "$19",
         "cadence": "per month",
-        "minutes": "1,800 min/mo",
-        "unitValue": "$0.63/hr",
-        "summary": "The default choice for long files, frequent work, and AI outputs.",
-        "fileLimit": "10-hour max file",
-        "queue": "Priority queue",
-        "aiOutputs": "Summaries, chapters, action items",
-        "annual": "$149/year",
-        "annualPrice": "$149",
-        "annualCadence": "per year",
-        "annualMinutes": "21,600 min/year",
-        "annualUnitValue": "$0.41/hr"
+        "summary": "Best value for serious transcription.",
+        "annual": "$179/year",
+        "annualPrice": "$179",
+        "annualCadence": "per year"
       }
     ],
     "faqs": [
@@ -550,7 +598,7 @@
       },
       {
         "question": "Is there a free trial on paid plans?",
-        "answer": "Yes. Starter and Pro both include 14 days free, and you can cancel anytime before the trial ends."
+        "answer": "Yes. Starter and Pro Unlimited both include 14 days free, and you can cancel anytime before the trial ends."
       }
     ]
   },
@@ -690,7 +738,7 @@
       "deleteWarning": "Permanently delete your account, transcripts, and audio. This cannot be undone.",
       "tierFree": "Free",
       "tierBasic": "Starter",
-      "tierPro": "Pro",
+      "tierPro": "Pro Unlimited",
       "cycleMonthly": "monthly",
       "cycleYearly": "yearly",
       "statusCanceled": "(canceled — access until period end)",
@@ -796,7 +844,7 @@
     },
     "uploader": {
       "dropPrompt": "Drop a video or audio file",
-      "limits": "Video uploads up to 1 GB · Free trial: 45 min lifetime · max 500 MB after audio extraction",
+      "limits": "Uploads up to 1 GB · Free trial: 45 min lifetime",
       "choose": "Choose file",
       "phasePreparing": "Preparing…",
       "phaseExtracting": "Extracting audio {percent}%",

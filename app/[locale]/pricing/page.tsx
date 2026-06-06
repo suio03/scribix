@@ -7,7 +7,12 @@ import { routing } from "@/i18n/routing";
 import { Footer } from "@/app/components/Footer";
 import { Header } from "@/app/components/Header";
 import { Partners } from "@/app/components/Partners";
-import { PricingPlans, type PlanCopy, type PlanId } from "@/app/components/PricingPlans";
+import {
+  PricingPlans,
+  type PlanCopy,
+  type PlanFeatureCopy,
+  type PlanId,
+} from "@/app/components/PricingPlans";
 import { Shell } from "@/app/components/Shell";
 import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
@@ -65,6 +70,7 @@ export default async function PricingPage({
   const sidebarUsage = await getSidebarUsage(session);
   const t = await getTranslations("PricingPage");
   const plans = t.raw("plans") as PlanCopy[];
+  const featureRows = t.raw("featureRows") as PlanFeatureCopy[];
   const faqs = t.raw("faqs") as FaqCopy[];
   const chooseLabels = Object.fromEntries(
     plans.map((plan) => [plan.id, t("chooseLabel", { plan: plan.name })])
@@ -106,16 +112,10 @@ export default async function PricingPage({
               checkoutSuccessPath={checkoutSuccessPath}
               chooseLabels={chooseLabels}
               dashboardNewPath={dashboardNewPath}
+              featureRows={featureRows}
               noCreditCard={t("noCreditCard")}
               plans={plans}
               signedIn={!!session}
-              specLabels={{
-                minutes: t("specLabels.minutes"),
-                unitValue: t("specLabels.unitValue"),
-                fileLimit: t("specLabels.fileLimit"),
-                queue: t("specLabels.queue"),
-                aiOutputs: t("specLabels.aiOutputs"),
-              }}
             />
           </div>
         </section>

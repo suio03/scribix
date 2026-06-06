@@ -12,10 +12,8 @@ export const PLANS = {
     // One-time lifetime trial — never resets. Quota.maybeResetFreePeriod is a no-op for free.
     minutesPerCycle: 45,
     maxFileSec: 45 * 60,
-    // maxFileBytes applies post-extraction (mp3); maxVideoUploadBytes caps the
-    // raw video upload before extraction, so a malicious client can't claim
-    // isVideo=true to PUT an unbounded blob to R2.
-    maxFileBytes: 500 * 1024 * 1024,
+    // Keep public upload size simple and conservative across audio + video.
+    maxFileBytes: 1 * 1024 * 1024 * 1024,
     maxVideoUploadBytes: 1 * 1024 * 1024 * 1024,
     speechModels: ["universal-2"] as const,
   },
@@ -23,7 +21,7 @@ export const PLANS = {
     monthly: { minutesPerCycle: 600 },
     yearly: { minutesPerCycle: 7200 },
     maxFileSec: 1 * 3600,
-    maxFileBytes: 2 * 1024 * 1024 * 1024,
+    maxFileBytes: 1 * 1024 * 1024 * 1024,
     // Capped at 1 GB across tiers: browser-side ffmpeg.wasm / Web Audio
     // extraction is unreliable beyond this. Users with larger videos are
     // guided to extract audio locally and upload the audio file instead.
@@ -31,10 +29,10 @@ export const PLANS = {
     speechModels: ["universal-3-pro", "universal-2"] as const,
   },
   pro: {
-    monthly: { minutesPerCycle: 1800 },
-    yearly: { minutesPerCycle: 21600 },
+    monthly: { minutesPerCycle: 2400 },
+    yearly: { minutesPerCycle: 28800 },
     maxFileSec: 10 * 3600,
-    maxFileBytes: 5 * 1024 * 1024 * 1024,
+    maxFileBytes: 1 * 1024 * 1024 * 1024,
     maxVideoUploadBytes: 1 * 1024 * 1024 * 1024,
     speechModels: ["universal-3-pro", "universal-2"] as const,
   },
@@ -58,6 +56,6 @@ export const PRICING_DISPLAY = {
   },
   pro: {
     monthly: { amount: 19, currency: "USD" },
-    yearly: { amount: 149, currency: "USD" },
+    yearly: { amount: 179, currency: "USD" },
   },
 } as const;

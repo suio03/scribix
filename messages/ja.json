@@ -456,9 +456,9 @@
   "PricingPage": {
     "metadata": {
       "title": "料金",
-      "description": "Scribixのシンプルな料金体系。無料で始めて、月600分のStarterへアップグレードするか、1,800分と優先AI出力を使えるProを選べます。",
+      "description": "Scribixのシンプルな料金体系。無料で始めて、月600分のStarterへアップグレードするか、2,400分の優先処理とフェアユース処理を使えるPro Unlimitedを選べます。",
       "ogTitle": "Scribixの料金",
-      "ogDescription": "音声と動画の文字起こし向けの無料トライアル、Starter、Proプラン。"
+      "ogDescription": "音声と動画の文字起こし向けの無料トライアル、Starter、Pro Unlimitedプラン。"
     },
     "h1": "本格的な文字起こしのためのシンプルな料金。",
     "bestValue": "おすすめ",
@@ -472,59 +472,107 @@
     "soonLabel": "準備中",
     "buttonTitle": "チェックアウトは次のフェーズで追加されます",
     "faqTitle": "料金FAQ",
-    "specLabels": {
-      "minutes": "分数",
-      "unitValue": "時間単価",
-      "fileLimit": "ファイル上限",
-      "queue": "キュー",
-      "aiOutputs": "AI出力"
-    },
+    "featureRows": [
+      {
+        "label": "文字起こしファイル",
+        "values": {
+          "free": "合計45分まで",
+          "starter": "600分以内ならファイル数無制限",
+          "pro": "ファイル数無制限"
+        }
+      },
+      {
+        "label": "月間分数",
+        "values": {
+          "free": "生涯45分",
+          "starter": "600分/月",
+          "pro": "2,400優先分/月"
+        }
+      },
+      {
+        "label": "最大ファイル長",
+        "values": {
+          "free": "45分",
+          "starter": "1時間",
+          "pro": "10時間"
+        }
+      },
+      {
+        "label": "最大ファイルサイズ",
+        "values": {
+          "free": "1 GB",
+          "starter": "1 GB",
+          "pro": "1 GB"
+        }
+      },
+      {
+        "label": "処理キュー",
+        "values": {
+          "free": "無料キュー",
+          "starter": "標準キュー",
+          "pro": "優先キュー"
+        }
+      },
+      {
+        "label": "精度モデル",
+        "values": {
+          "free": "標準",
+          "starter": "最高精度",
+          "pro": "最高精度"
+        }
+      },
+      {
+        "label": "話者ラベル",
+        "values": {
+          "free": "はい",
+          "starter": "はい",
+          "pro": "はい"
+        }
+      },
+      {
+        "label": "エクスポート",
+        "values": {
+          "free": "TXT, DOCX, PDF, SRT",
+          "starter": "エクスポート無制限",
+          "pro": "エクスポート無制限"
+        }
+      },
+      {
+        "label": "AI要約",
+        "values": {
+          "free": "いいえ",
+          "starter": "はい",
+          "pro": "はい"
+        }
+      }
+    ],
     "plans": [
       {
         "id": "free",
         "name": "無料",
         "price": "$0",
         "cadence": "1回限り",
-        "minutes": "生涯45分",
-        "unitValue": "お試しのみ",
-        "summary": "支払う前に、Scribixを一度試して文字起こし品質を確認できます。",
-        "fileLimit": "最大45分のファイル",
-        "queue": "通常キュー",
-        "aiOutputs": "文字起こしのエクスポート"
+        "summary": "支払う前に、Scribixを一度試して文字起こし品質を確認できます。"
       },
       {
         "id": "starter",
         "name": "Starter",
         "price": "$12",
         "cadence": "月額",
-        "minutes": "600分/月",
-        "unitValue": "$1.20/時",
         "summary": "分数上限を意識しながら、個人で継続的に使う方向け。",
-        "fileLimit": "最大1時間のファイル",
-        "queue": "通常キュー",
-        "aiOutputs": "文字起こしのエクスポート",
         "annual": "$99/年",
         "annualPrice": "$99",
-        "annualCadence": "年額",
-        "annualMinutes": "7,200分/年",
-        "annualUnitValue": "$0.83/時"
+        "annualCadence": "年額"
       },
       {
         "id": "pro",
-        "name": "Pro",
+        "name": "Pro Unlimited",
         "price": "$19",
         "cadence": "月額",
-        "minutes": "1,800分/月",
-        "unitValue": "$0.63/時",
-        "summary": "長時間ファイル、頻繁な利用、AI出力が必要な場合の標準プラン。",
-        "fileLimit": "最大10時間のファイル",
-        "queue": "優先キュー",
-        "aiOutputs": "要約、チャプター、アクション項目",
-        "annual": "$149/年",
-        "annualPrice": "$149",
-        "annualCadence": "年額",
-        "annualMinutes": "21,600分/年",
-        "annualUnitValue": "$0.41/時"
+        "summary": "本格的な文字起こしに最も価値のあるプラン。",
+        "annual": "$179/年",
+        "annualPrice": "$179",
+        "annualCadence": "年額"
       }
     ],
     "faqs": [
@@ -686,7 +734,7 @@
       "deleteWarning": "アカウント、文字起こし、音声を永久削除します。これは取り消せません。",
       "tierFree": "フリー",
       "tierBasic": "Starter",
-      "tierPro": "プロ",
+      "tierPro": "Pro Unlimited",
       "cycleMonthly": "月額",
       "cycleYearly": "年額",
       "statusCanceled": "（キャンセル—周期終了まで利用可能）",
@@ -792,7 +840,7 @@
     },
     "uploader": {
       "dropPrompt": "動画または音声ファイルをドロップ",
-      "limits": "動画アップロード最大 1 GB · 無料トライアル：45 分（生涯） · 音声抽出後最大 500 MB",
+      "limits": "アップロード最大 1 GB · 無料トライアル：45 分（生涯）",
       "choose": "ファイルを選択",
       "phasePreparing": "準備中…",
       "phaseExtracting": "音声を抽出中 {percent}%",

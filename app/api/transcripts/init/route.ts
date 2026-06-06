@@ -49,10 +49,8 @@ export async function POST(req: Request) {
     );
   }
 
-  // Per-file size cap. Audio uploads use maxFileBytes; video uploads use a
-  // larger maxVideoUploadBytes ceiling because video is extracted client-side
-  // to ~64 kbps mono MP3 before /start, but we still need a hard ceiling so a
-  // malicious client can't claim isVideo=true and PUT an unbounded blob to R2.
+  // Per-file size cap. Keep audio and browser-side video extraction under the
+  // same public 1 GB ceiling.
   const sizeCap = isVideo ? plan.maxVideoUploadBytes : plan.maxFileBytes;
   if (bytes > sizeCap) {
     return Response.json(

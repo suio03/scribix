@@ -176,7 +176,7 @@ npx wrangler secret put ASSEMBLYAI_API_KEY
 
 ## Phase 4 — Paddle payments
 
-Scribix uses Paddle Billing for paid Starter and Pro subscriptions. The app
+Scribix uses Paddle Billing for paid Starter and Pro Unlimited subscriptions. The app
 opens Paddle overlay checkout through Paddle.js and falls back to Paddle's
 hosted checkout URL if Paddle.js is not initialized.
 

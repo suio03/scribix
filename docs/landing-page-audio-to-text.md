@@ -378,7 +378,7 @@ Sign in with Google, upload your first audio file, and get a searchable transcri
 - Do not include summaries, translation, chat, or mind maps - source: user confirmation.
 - Upload requires sign-in before transcription - source: `app/components/Uploader.tsx`.
 - Upload accepts audio and video files; UI lists MP3, WAV, M4A for audio - source: `app/components/Uploader.tsx`, `messages/en.json`.
-- Free tier duration cap is 45 minutes and free audio/file cap is 500 MB - source: `lib/plans.ts`.
+- Free tier duration cap is 45 minutes and free audio/file cap is 1 GB - source: `lib/plans.ts`.
 - Speaker labels and language detection are requested for transcription jobs - source: `app/api/transcripts/[id]/start/route.ts`.
 - Exports supported: TXT, DOCX, SRT, VTT, CSV - source: `app/api/transcripts/[id]/export/route.ts`.
 - Audio and video are deleted after 7 days; transcripts remain until deleted - source: `app/[locale]/privacy/page.tsx`.

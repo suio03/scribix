@@ -26,14 +26,14 @@ This document is the source of truth for v1 scope. Updated after a full plan-cha
 
 ### Tier table
 
-|  | Free | Basic | Pro |
+|  | Free | Basic | Pro Unlimited |
 |---|---|---|---|
 | Monthly price | $0 | $9 / mo | $19 / mo |
-| Yearly price (40% off) | — | $64.80 / yr (~$5.40/mo) | $136.80 / yr (~$11.40/mo) |
-| Quota — monthly plan | 30 min / day | 600 min (10 hr) | 1,800 min (30 hr) |
-| Quota — yearly plan | — | 7,200 min (120 hr) upfront | 21,600 min (360 hr) upfront |
+| Yearly price | — | $99 / yr (~$8.25/mo) | $179 / yr (~$14.92/mo) |
+| Quota — monthly plan | 30 min / day | 600 min (10 hr) | 2,400 priority min (40 hr) + fair use |
+| Quota — yearly plan | — | 7,200 min (120 hr) upfront | 28,800 priority min (480 hr) upfront + fair use |
 | Per-file duration cap | 30 min | 2 hr | 10 hr (AssemblyAI ceiling) |
-| Per-file size cap | 500 MB | 2 GB | 1 GB (AssemblyAI ceiling) |
+| Per-file size cap | 1 GB | 1 GB | 1 GB |
 | Speech model | Universal-2 | Universal-3 Pro (+ U-2 fallback) | Universal-3 Pro (+ U-2 fallback) |
 | Speaker labels | ✅ | ✅ | ✅ |
 | Synced playback (7 days) + exports | ✅ | ✅ | ✅ |
@@ -42,11 +42,11 @@ This document is the source of truth for v1 scope. Updated after a full plan-cha
 Margins (worst case, max usage, including diarization, at AAI ~$0.23/hr):
 - Free **$0.085 / day** worst case per active user (30 min × $0.17/hr Universal-2 + diarization).
 - Basic monthly: $2.30 vs $9 (3.9×).
-- Pro monthly: $6.90 vs $19 (2.75×).
-- Basic yearly: $27.60 cost vs $64.80 (2.35×, $37 profit).
-- Pro yearly: $82.80 cost vs $136.80 (**1.65×**, $54 profit). Tightest tier — once Creem fees (~4%) and R2 egress are subtracted, real margin is closer to $40–45. Acceptable as a conversion lever; worth tracking yearly Pro usage closely once we have data.
+- Pro monthly: $9.20 vs $19 (2.07×).
+- Basic yearly: $27.60 cost vs $99 (3.59×, $71 profit).
+- Pro yearly: $110.40 cost vs $179 (1.62×, $69 profit). Once Creem fees (~4%) and R2 egress are subtracted, real margin is closer to $55–60 before fair-use overage. Worth tracking yearly Pro usage closely once we have data.
 
-**Marketing copy note:** for yearly tiers, do not say "minutes/month." Say "360 hr/year, available immediately, refreshed at renewal."
+**Marketing copy note:** for yearly tiers, do not say "minutes/month." Say "480 hr/year, available immediately, refreshed at renewal."
 
 ---
 
@@ -237,20 +237,20 @@ Admin gating: env var `ADMIN_EMAILS=a@x.com,b@x.com`. `auth()` helper enriches s
 
 ```ts
 export const PLANS = {
-  free:  { tier: 'free',  minutesPerCycle: 30,    maxFileSec: 30 * 60,    maxFileBytes: 500 * 1024 * 1024 },
+  free:  { tier: 'free',  minutesPerCycle: 30,    maxFileSec: 30 * 60,    maxFileBytes: 1 * 1024 * 1024 * 1024 },
   basic: {
     tier: 'basic',
     monthly: { minutesPerCycle: 600,  creem: 'prod_xxx_basic_monthly' },
     yearly:  { minutesPerCycle: 7200, creem: 'prod_xxx_basic_yearly'  },
     maxFileSec: 2 * 3600,
-    maxFileBytes: 2 * 1024 * 1024 * 1024,
+    maxFileBytes: 1 * 1024 * 1024 * 1024,
   },
   pro: {
     tier: 'pro',
-    monthly: { minutesPerCycle: 1800,  creem: 'prod_xxx_pro_monthly' },
-    yearly:  { minutesPerCycle: 21600, creem: 'prod_xxx_pro_yearly'  },
+    monthly: { minutesPerCycle: 2400,  creem: 'prod_xxx_pro_monthly' },
+    yearly:  { minutesPerCycle: 28800, creem: 'prod_xxx_pro_yearly'  },
     maxFileSec: 10 * 3600,
-    maxFileBytes: 5 * 1024 * 1024 * 1024,
+    maxFileBytes: 1 * 1024 * 1024 * 1024,
   },
 } as const;
 ```
@@ -619,7 +619,7 @@ Resolved / no longer questions:
 - Free tier email verification: Google OAuth is sufficient
 - Creem account: new account; product IDs as placeholders during dev
 - Yearly billing in v1: yes, both monthly and yearly
-- Yearly discount: 40% off monthly equivalent (Basic $64.80/yr, Pro $136.80/yr)
+- Yearly price: Basic $99/yr, Pro $179/yr
 - Concurrent sessions: no limit in v1
 
 ---

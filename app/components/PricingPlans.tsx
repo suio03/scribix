@@ -11,17 +11,15 @@ export type PlanCopy = {
   name: string;
   price: string;
   cadence: string;
-  minutes: string;
-  unitValue: string;
   summary: string;
-  fileLimit: string;
-  queue: string;
-  aiOutputs: string;
   annual?: string;
   annualPrice?: string;
   annualCadence?: string;
-  annualMinutes?: string;
-  annualUnitValue?: string;
+};
+
+export type PlanFeatureCopy = {
+  label: string;
+  values: Record<PlanId, string>;
 };
 
 type PricingPlansProps = {
@@ -35,10 +33,10 @@ type PricingPlansProps = {
   checkoutSuccessPath: string;
   chooseLabels: Record<PlanId, string>;
   dashboardNewPath: string;
+  featureRows: PlanFeatureCopy[];
   noCreditCard: string;
   plans: PlanCopy[];
   signedIn: boolean;
-  specLabels: Record<"minutes" | "unitValue" | "fileLimit" | "queue" | "aiOutputs", string>;
 };
 
 export function PricingPlans({
@@ -47,10 +45,10 @@ export function PricingPlans({
   checkoutSuccessPath,
   chooseLabels,
   dashboardNewPath,
+  featureRows,
   noCreditCard,
   plans,
   signedIn,
-  specLabels,
 }: PricingPlansProps) {
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
 
@@ -87,10 +85,10 @@ export function PricingPlans({
             chooseLabel={chooseLabels[plan.id]}
             cycle={cycle}
             dashboardNewPath={dashboardNewPath}
+            featureRows={featureRows}
             noCreditCard={noCreditCard}
             plan={plan}
             signedIn={signedIn}
-            specLabels={specLabels}
           />
         ))}
       </div>
@@ -128,20 +126,20 @@ function PlanCard({
   chooseLabel,
   cycle,
   dashboardNewPath,
+  featureRows,
   noCreditCard,
   plan,
   signedIn,
-  specLabels,
 }: {
   bestValue: string;
   checkoutSuccessPath: string;
   chooseLabel: string;
   cycle: BillingCycle;
   dashboardNewPath: string;
+  featureRows: PlanFeatureCopy[];
   noCreditCard: string;
   plan: PlanCopy;
   signedIn: boolean;
-  specLabels: Record<"minutes" | "unitValue" | "fileLimit" | "queue" | "aiOutputs", string>;
 }) {
   const primary = plan.id === "pro";
   const display = planDisplay(plan, cycle);
@@ -198,12 +196,15 @@ function PlanCard({
         </p>
       </div>
 
-      <dl className="mt-8 grid gap-3 border-t border-current/15 pt-6">
-        <Spec label={specLabels.minutes} value={display.minutes} primary={primary} />
-        <Spec label={specLabels.unitValue} value={display.unitValue} primary={primary} />
-        <Spec label={specLabels.fileLimit} value={plan.fileLimit} primary={primary} />
-        <Spec label={specLabels.queue} value={plan.queue} primary={primary} />
-        <Spec label={specLabels.aiOutputs} value={plan.aiOutputs} primary={primary} />
+      <dl className="mt-8 grid gap-0 border-t border-current/15">
+        {featureRows.map((row) => (
+          <Spec
+            key={row.label}
+            label={row.label}
+            value={row.values[plan.id]}
+            primary={primary}
+          />
+        ))}
       </dl>
 
       <PlanAction
@@ -276,15 +277,17 @@ function Spec({
   primary?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-[94px_minmax(0,1fr)] gap-3 text-[14px]">
+    <div className="grid min-h-[54px] grid-cols-[minmax(0,112px)_minmax(0,1fr)] gap-3 border-b border-current/10 py-3 text-[14px]">
       <dt
-        className={`font-mono text-[10px] uppercase tracking-[0.16em] ${
+        className={`font-mono text-[10px] uppercase leading-[1.35] tracking-[0.12em] ${
           primary ? "text-paper/45" : "text-muted"
         }`}
       >
         {label}
       </dt>
-      <dd className={primary ? "text-paper/88" : "text-ink/88"}>{value}</dd>
+      <dd className={`leading-[1.45] ${primary ? "text-paper/88" : "text-ink/88"}`}>
+        {value}
+      </dd>
     </div>
   );
 }
@@ -294,8 +297,6 @@ function planDisplay(plan: PlanCopy, cycle: BillingCycle) {
     return {
       price: plan.price,
       cadence: plan.cadence,
-      minutes: plan.minutes,
-      unitValue: plan.unitValue,
       note: plan.id === "free" ? undefined : "\u00a0",
     };
   }
@@ -307,8 +308,6 @@ function planDisplay(plan: PlanCopy, cycle: BillingCycle) {
   return {
     price: monthlyEquivalentPrice(annualPrice) ?? annualPrice,
     cadence: plan.cadence,
-    minutes: plan.annualMinutes ?? plan.minutes,
-    unitValue: plan.annualUnitValue ?? plan.unitValue,
     note: `${annualPrice} ${annualCadence}`,
   };
 }
@@ -334,5 +333,5 @@ function monthlyEquivalentPrice(annualPrice: string) {
 }
 
 function formatMoney(amount: number) {
-  return amount.toFixed(2).replace(/\.00$/, "").replace(/0$/, "");
+  return String(Math.ceil(amount));
 }

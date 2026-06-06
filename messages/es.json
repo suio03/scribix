@@ -456,9 +456,9 @@
   "PricingPage": {
     "metadata": {
       "title": "Precios",
-      "description": "Precios simples de Scribix: empieza gratis, sube a Starter con 600 minutos al mes o elige Pro con 1.800 minutos y salidas de IA prioritarias.",
+      "description": "Precios simples de Scribix: empieza gratis, sube a Starter con 600 minutos al mes o elige Pro Unlimited con 2.400 minutos prioritarios y procesamiento de uso justo.",
       "ogTitle": "Precios de Scribix",
-      "ogDescription": "Prueba gratuita y planes Starter y Pro para transcripción de audio y video."
+      "ogDescription": "Prueba gratuita y planes Starter y Pro Unlimited para transcripción de audio y video."
     },
     "h1": "Precios simples para transcripción seria.",
     "bestValue": "Mejor valor",
@@ -472,59 +472,107 @@
     "soonLabel": "Pronto",
     "buttonTitle": "El checkout se añadirá en la siguiente fase",
     "faqTitle": "Preguntas sobre precios",
-    "specLabels": {
-      "minutes": "Minutos",
-      "unitValue": "Valor por hora",
-      "fileLimit": "Límite de archivo",
-      "queue": "Cola",
-      "aiOutputs": "Salidas de IA"
-    },
+    "featureRows": [
+      {
+        "label": "Archivos de transcripción",
+        "values": {
+          "free": "Limitado a 45 min en total",
+          "starter": "Archivos ilimitados dentro de 600 min",
+          "pro": "Archivos ilimitados"
+        }
+      },
+      {
+        "label": "Minutos mensuales",
+        "values": {
+          "free": "45 de por vida",
+          "starter": "600 min/mes",
+          "pro": "2.400 min prioritarios/mes"
+        }
+      },
+      {
+        "label": "Duración máxima de archivo",
+        "values": {
+          "free": "45 min",
+          "starter": "1 hora",
+          "pro": "10 horas"
+        }
+      },
+      {
+        "label": "Tamaño máximo de archivo",
+        "values": {
+          "free": "1 GB",
+          "starter": "1 GB",
+          "pro": "1 GB"
+        }
+      },
+      {
+        "label": "Cola de procesamiento",
+        "values": {
+          "free": "Cola gratuita",
+          "starter": "Cola estándar",
+          "pro": "Cola prioritaria"
+        }
+      },
+      {
+        "label": "Modelo de precisión",
+        "values": {
+          "free": "Estándar",
+          "starter": "Máxima precisión",
+          "pro": "Máxima precisión"
+        }
+      },
+      {
+        "label": "Etiquetas de hablante",
+        "values": {
+          "free": "Sí",
+          "starter": "Sí",
+          "pro": "Sí"
+        }
+      },
+      {
+        "label": "Exportaciones",
+        "values": {
+          "free": "TXT, DOCX, PDF, SRT",
+          "starter": "Exportaciones ilimitadas",
+          "pro": "Exportaciones ilimitadas"
+        }
+      },
+      {
+        "label": "Resúmenes IA",
+        "values": {
+          "free": "No",
+          "starter": "Sí",
+          "pro": "Sí"
+        }
+      }
+    ],
     "plans": [
       {
         "id": "free",
         "name": "Gratis",
         "price": "$0",
         "cadence": "una vez",
-        "minutes": "45 minutos de por vida",
-        "unitValue": "Solo prueba",
-        "summary": "Prueba Scribix una vez y comprueba la calidad de la transcripción antes de pagar.",
-        "fileLimit": "Archivo máximo de 45 minutos",
-        "queue": "Cola normal",
-        "aiOutputs": "Exportaciones de transcripción"
+        "summary": "Prueba Scribix una vez y comprueba la calidad de la transcripción antes de pagar."
       },
       {
         "id": "starter",
         "name": "Starter",
         "price": "$12",
         "cadence": "al mes",
-        "minutes": "600 min/mes",
-        "unitValue": "$1.20/h",
         "summary": "Para uso personal constante donde el límite de minutos todavía se siente real.",
-        "fileLimit": "Archivo máximo de 1 hora",
-        "queue": "Cola normal",
-        "aiOutputs": "Exportaciones de transcripción",
         "annual": "$99/año",
         "annualPrice": "$99",
-        "annualCadence": "al año",
-        "annualMinutes": "7.200 min/año",
-        "annualUnitValue": "$0.83/h"
+        "annualCadence": "al año"
       },
       {
         "id": "pro",
-        "name": "Pro",
+        "name": "Pro Unlimited",
         "price": "$19",
         "cadence": "al mes",
-        "minutes": "1.800 min/mes",
-        "unitValue": "$0.63/h",
-        "summary": "La opción predeterminada para archivos largos, uso frecuente y salidas de IA.",
-        "fileLimit": "Archivo máximo de 10 horas",
-        "queue": "Cola prioritaria",
-        "aiOutputs": "Resúmenes, capítulos, tareas de acción",
-        "annual": "$149/año",
-        "annualPrice": "$149",
-        "annualCadence": "al año",
-        "annualMinutes": "21.600 min/año",
-        "annualUnitValue": "$0.41/h"
+        "summary": "La mejor opción para transcripción seria.",
+        "annual": "$179/año",
+        "annualPrice": "$179",
+        "annualCadence": "al año"
       }
     ],
     "faqs": [
@@ -550,7 +598,7 @@
       },
       {
         "question": "¿Hay prueba gratis en los planes de pago?",
-        "answer": "Sí. Starter y Pro incluyen 14 días gratis, y puedes cancelar en cualquier momento antes de que termine la prueba."
+        "answer": "Sí. Starter y Pro Unlimited incluyen 14 días gratis, y puedes cancelar en cualquier momento antes de que termine la prueba."
       }
     ]
   },
@@ -686,7 +734,7 @@
       "deleteWarning": "Elimina permanentemente tu cuenta, transcripts y audio. Esto no se puede deshacer.",
       "tierFree": "Gratuito",
       "tierBasic": "Starter",
-      "tierPro": "Pro",
+      "tierPro": "Pro Unlimited",
       "cycleMonthly": "mensual",
       "cycleYearly": "anual",
       "statusCanceled": "(cancelado — acceso hasta el final del período)",
@@ -792,7 +840,7 @@
     },
     "uploader": {
       "dropPrompt": "Suelta un archivo de vídeo o audio",
-      "limits": "Subidas de vídeo hasta 1 GB · Prueba gratuita: 45 min de por vida · máx 500 MB después de extracción de audio",
+      "limits": "Subidas de hasta 1 GB · Prueba gratuita: 45 min de por vida",
       "choose": "Elegir archivo",
       "phasePreparing": "Preparando…",
       "phaseExtracting": "Extrayendo audio {percent}%",

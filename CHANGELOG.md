@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.7.16] - 2026-06-07
+
+### Changed
+- Updated public pricing to present Pro Unlimited at $179/year with 2,400 monthly priority minutes and localized feature rows across all supported languages.
+- Reworked pricing plan cards to render localized feature rows from message files and round annual monthly-equivalent pricing up to whole dollars.
+- Aligned all plan upload size enforcement and upload copy around a conservative 1 GB file limit.
+
+### Removed
+- Removed unused pricing translation fields that duplicated feature-table data.
+
 ## [0.7.15] - 2026-06-07
 
 ### Fixed

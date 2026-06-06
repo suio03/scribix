@@ -456,9 +456,9 @@
   "PricingPage": {
     "metadata": {
       "title": "Prezzi",
-      "description": "Prezzi semplici di Scribix: inizia gratis, passa a Starter con 600 minuti al mese oppure scegli Pro con 1.800 minuti e output IA prioritari.",
+      "description": "Prezzi semplici di Scribix: inizia gratis, passa a Starter con 600 minuti al mese oppure scegli Pro Unlimited con 2.400 minuti prioritari e uso corretto.",
       "ogTitle": "Prezzi Scribix",
-      "ogDescription": "Prova gratuita e piani Starter e Pro per la trascrizione audio e video."
+      "ogDescription": "Prova gratuita e piani Starter e Pro Unlimited per la trascrizione audio e video."
     },
     "h1": "Prezzi semplici per trascrizioni serie.",
     "bestValue": "Miglior valore",
@@ -472,59 +472,107 @@
     "soonLabel": "Presto",
     "buttonTitle": "Il checkout sarà aggiunto nella prossima fase",
     "faqTitle": "FAQ sui prezzi",
-    "specLabels": {
-      "minutes": "Minuti",
-      "unitValue": "Valore orario",
-      "fileLimit": "Limite file",
-      "queue": "Coda",
-      "aiOutputs": "Output IA"
-    },
+    "featureRows": [
+      {
+        "label": "File di trascrizione",
+        "values": {
+          "free": "Limitati a 45 min totali",
+          "starter": "File illimitati entro 600 min",
+          "pro": "File illimitati"
+        }
+      },
+      {
+        "label": "Minuti mensili",
+        "values": {
+          "free": "45 a vita",
+          "starter": "600 min/mese",
+          "pro": "2.400 min prioritari/mese"
+        }
+      },
+      {
+        "label": "Durata max file",
+        "values": {
+          "free": "45 min",
+          "starter": "1 ora",
+          "pro": "10 ore"
+        }
+      },
+      {
+        "label": "Dimensione max file",
+        "values": {
+          "free": "1 GB",
+          "starter": "1 GB",
+          "pro": "1 GB"
+        }
+      },
+      {
+        "label": "Coda di elaborazione",
+        "values": {
+          "free": "Coda gratuita",
+          "starter": "Coda standard",
+          "pro": "Coda prioritaria"
+        }
+      },
+      {
+        "label": "Modello di accuratezza",
+        "values": {
+          "free": "Standard",
+          "starter": "Massima accuratezza",
+          "pro": "Massima accuratezza"
+        }
+      },
+      {
+        "label": "Etichette speaker",
+        "values": {
+          "free": "Sì",
+          "starter": "Sì",
+          "pro": "Sì"
+        }
+      },
+      {
+        "label": "Esportazioni",
+        "values": {
+          "free": "TXT, DOCX, PDF, SRT",
+          "starter": "Esportazioni illimitate",
+          "pro": "Esportazioni illimitate"
+        }
+      },
+      {
+        "label": "Riassunti IA",
+        "values": {
+          "free": "No",
+          "starter": "Sì",
+          "pro": "Sì"
+        }
+      }
+    ],
     "plans": [
       {
         "id": "free",
         "name": "Gratis",
         "price": "$0",
         "cadence": "una tantum",
-        "minutes": "45 minuti a vita",
-        "unitValue": "Solo prova",
-        "summary": "Prova Scribix una volta e verifica la qualità della trascrizione prima di pagare.",
-        "fileLimit": "File fino a 45 minuti",
-        "queue": "Coda normale",
-        "aiOutputs": "Esportazioni della trascrizione"
+        "summary": "Prova Scribix una volta e verifica la qualità della trascrizione prima di pagare."
       },
       {
         "id": "starter",
         "name": "Starter",
         "price": "$12",
         "cadence": "al mese",
-        "minutes": "600 min/mese",
-        "unitValue": "$1.20/h",
         "summary": "Per un uso personale costante in cui il limite di minuti resta concreto.",
-        "fileLimit": "File fino a 1 ora",
-        "queue": "Coda normale",
-        "aiOutputs": "Esportazioni della trascrizione",
         "annual": "$99/anno",
         "annualPrice": "$99",
-        "annualCadence": "all'anno",
-        "annualMinutes": "7.200 min/anno",
-        "annualUnitValue": "$0.83/h"
+        "annualCadence": "all'anno"
       },
       {
         "id": "pro",
-        "name": "Pro",
+        "name": "Pro Unlimited",
         "price": "$19",
         "cadence": "al mese",
-        "minutes": "1.800 min/mese",
-        "unitValue": "$0.63/h",
-        "summary": "La scelta predefinita per file lunghi, uso frequente e output IA.",
-        "fileLimit": "File fino a 10 ore",
-        "queue": "Coda prioritaria",
-        "aiOutputs": "Riepiloghi, capitoli, attività",
-        "annual": "$149/anno",
-        "annualPrice": "$149",
-        "annualCadence": "all'anno",
-        "annualMinutes": "21.600 min/anno",
-        "annualUnitValue": "$0.41/h"
+        "summary": "Il miglior valore per trascrizioni serie.",
+        "annual": "$179/anno",
+        "annualPrice": "$179",
+        "annualCadence": "all'anno"
       }
     ],
     "faqs": [
@@ -686,7 +734,7 @@
       "deleteWarning": "Elimina permanentemente il tuo account, i tuoi transcript e l'audio. Non è possibile annullare questa azione.",
       "tierFree": "Gratuito",
       "tierBasic": "Starter",
-      "tierPro": "Pro",
+      "tierPro": "Pro Unlimited",
       "cycleMonthly": "mensile",
       "cycleYearly": "annuale",
       "statusCanceled": "(annullato — accesso fino alla fine del periodo)",
@@ -792,7 +840,7 @@
     },
     "uploader": {
       "dropPrompt": "Trascina un file video o audio",
-      "limits": "Caricamenti video fino a 1 GB · Prova gratuita: 45 min per tutta la vita · max 500 MB dopo l'estrazione dell'audio",
+      "limits": "Caricamenti fino a 1 GB · Prova gratuita: 45 min per tutta la vita",
       "choose": "Scegli file",
       "phasePreparing": "Preparazione…",
       "phaseExtracting": "Estrazione audio {percent}%",

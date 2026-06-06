@@ -456,9 +456,9 @@
   "PricingPage": {
     "metadata": {
       "title": "Preise",
-      "description": "Einfache Scribix-Preise: kostenlos starten, mit Starter 600 Minuten pro Monat nutzen oder Pro mit 1.800 Minuten und priorisierten KI-Ausgaben wählen.",
+      "description": "Einfache Scribix-Preise: kostenlos starten, mit Starter 600 Minuten pro Monat nutzen oder Pro Unlimited mit 2.400 priorisierten Minuten und Fair-Use-Verarbeitung wählen.",
       "ogTitle": "Scribix Preise",
-      "ogDescription": "Kostenlose Testphase sowie Starter- und Pro-Pläne für Audio- und Video-Transkription."
+      "ogDescription": "Kostenlose Testphase sowie Starter- und Pro Unlimited-Pläne für Audio- und Video-Transkription."
     },
     "h1": "Einfache Preise für ernsthafte Transkription.",
     "bestValue": "Bester Wert",
@@ -472,59 +472,107 @@
     "soonLabel": "Bald",
     "buttonTitle": "Checkout wird in der nächsten Phase hinzugefügt",
     "faqTitle": "Preis-FAQ",
-    "specLabels": {
-      "minutes": "Minuten",
-      "unitValue": "Stundenwert",
-      "fileLimit": "Dateilimit",
-      "queue": "Warteschlange",
-      "aiOutputs": "KI-Ausgaben"
-    },
+    "featureRows": [
+      {
+        "label": "Transkriptdateien",
+        "values": {
+          "free": "Auf 45 Min. gesamt begrenzt",
+          "starter": "Unbegrenzte Dateien innerhalb von 600 Min.",
+          "pro": "Unbegrenzte Dateien"
+        }
+      },
+      {
+        "label": "Monatliche Minuten",
+        "values": {
+          "free": "45 lebenslang",
+          "starter": "600 Min./Monat",
+          "pro": "2.400 priorisierte Min./Monat"
+        }
+      },
+      {
+        "label": "Max. Dateilänge",
+        "values": {
+          "free": "45 Min.",
+          "starter": "1 Stunde",
+          "pro": "10 Stunden"
+        }
+      },
+      {
+        "label": "Max. Dateigröße",
+        "values": {
+          "free": "1 GB",
+          "starter": "1 GB",
+          "pro": "1 GB"
+        }
+      },
+      {
+        "label": "Verarbeitungswarteschlange",
+        "values": {
+          "free": "Kostenlose Warteschlange",
+          "starter": "Standardwarteschlange",
+          "pro": "Priorisierte Warteschlange"
+        }
+      },
+      {
+        "label": "Genauigkeitsmodell",
+        "values": {
+          "free": "Standard",
+          "starter": "Beste Genauigkeit",
+          "pro": "Beste Genauigkeit"
+        }
+      },
+      {
+        "label": "Sprecherlabels",
+        "values": {
+          "free": "Ja",
+          "starter": "Ja",
+          "pro": "Ja"
+        }
+      },
+      {
+        "label": "Exporte",
+        "values": {
+          "free": "TXT, DOCX, PDF, SRT",
+          "starter": "Unbegrenzte Exporte",
+          "pro": "Unbegrenzte Exporte"
+        }
+      },
+      {
+        "label": "KI-Zusammenfassungen",
+        "values": {
+          "free": "Nein",
+          "starter": "Ja",
+          "pro": "Ja"
+        }
+      }
+    ],
     "plans": [
       {
         "id": "free",
         "name": "Kostenlos",
         "price": "$0",
         "cadence": "einmalig",
-        "minutes": "45 Minuten lebenslang",
-        "unitValue": "Nur Test",
-        "summary": "Teste Scribix einmal und prüfe die Transkriptionsqualität, bevor du bezahlst.",
-        "fileLimit": "Max. 45 Minuten pro Datei",
-        "queue": "Normale Warteschlange",
-        "aiOutputs": "Transkript-Exporte"
+        "summary": "Teste Scribix einmal und prüfe die Transkriptionsqualität, bevor du bezahlst."
       },
       {
         "id": "starter",
         "name": "Starter",
         "price": "$12",
         "cadence": "pro Monat",
-        "minutes": "600 Min./Monat",
-        "unitValue": "$1.20/Std.",
         "summary": "Für regelmäßige persönliche Nutzung, bei der das Minutenlimit noch spürbar bleibt.",
-        "fileLimit": "Max. 1 Stunde pro Datei",
-        "queue": "Normale Warteschlange",
-        "aiOutputs": "Transkript-Exporte",
         "annual": "$99/Jahr",
         "annualPrice": "$99",
-        "annualCadence": "pro Jahr",
-        "annualMinutes": "7.200 Min./Jahr",
-        "annualUnitValue": "$0.83/Std."
+        "annualCadence": "pro Jahr"
       },
       {
         "id": "pro",
-        "name": "Pro",
+        "name": "Pro Unlimited",
         "price": "$19",
         "cadence": "pro Monat",
-        "minutes": "1.800 Min./Monat",
-        "unitValue": "$0.63/Std.",
-        "summary": "Die Standardwahl für lange Dateien, häufige Nutzung und KI-Ausgaben.",
-        "fileLimit": "Max. 10 Stunden pro Datei",
-        "queue": "Priorisierte Warteschlange",
-        "aiOutputs": "Zusammenfassungen, Kapitel, Aufgaben",
-        "annual": "$149/Jahr",
-        "annualPrice": "$149",
-        "annualCadence": "pro Jahr",
-        "annualMinutes": "21.600 Min./Jahr",
-        "annualUnitValue": "$0.41/Std."
+        "summary": "Der beste Wert für ernsthafte Transkription.",
+        "annual": "$179/Jahr",
+        "annualPrice": "$179",
+        "annualCadence": "pro Jahr"
       }
     ],
     "faqs": [
@@ -550,7 +598,7 @@
       },
       {
         "question": "Gibt es eine kostenlose Testphase für kostenpflichtige Pläne?",
-        "answer": "Ja. Starter und Pro enthalten beide 14 Tage kostenlos, und du kannst jederzeit vor Ende der Testphase kündigen."
+        "answer": "Ja. Starter und Pro Unlimited enthalten beide 14 Tage kostenlos, und du kannst jederzeit vor Ende der Testphase kündigen."
       }
     ]
   },
@@ -686,7 +734,7 @@
       "deleteWarning": "Löschen Sie dauerhaft Ihr Konto, Ihre Transkriptionen und Audio. Dies kann nicht rückgängig gemacht werden.",
       "tierFree": "Kostenlos",
       "tierBasic": "Starter",
-      "tierPro": "Pro",
+      "tierPro": "Pro Unlimited",
       "cycleMonthly": "monatlich",
       "cycleYearly": "jährlich",
       "statusCanceled": "(gekündigt – Zugriff bis Periodenende)",
@@ -792,7 +840,7 @@
     },
     "uploader": {
       "dropPrompt": "Ziehen Sie eine Video- oder Audiodatei ein",
-      "limits": "Video-Uploads bis zu 1 GB · Kostenlose Test: 45 Min. Lebenszeit · max. 500 MB nach Audio-Extraktion",
+      "limits": "Uploads bis zu 1 GB · Kostenlose Test: 45 Min. Lebenszeit",
       "choose": "Datei wählen",
       "phasePreparing": "Wird vorbereitet…",
       "phaseExtracting": "Audio wird extrahiert {percent}%",

@@ -456,9 +456,9 @@
   "PricingPage": {
     "metadata": {
       "title": "Tarification",
-      "description": "Tarification simple de Scribix : commencez gratuitement, passez à Starter pour 600 minutes par mois, ou choisissez Pro pour 1 800 minutes et les sorties IA prioritaires.",
+      "description": "Tarification simple de Scribix : commencez gratuitement, passez à Starter pour 600 minutes par mois, ou choisissez Pro Unlimited avec 2 400 minutes prioritaires et un traitement en usage équitable.",
       "ogTitle": "Tarification Scribix",
-      "ogDescription": "Essai gratuit, offres Starter et Pro pour la transcription audio et vidéo."
+      "ogDescription": "Essai gratuit, offres Starter et Pro Unlimited pour la transcription audio et vidéo."
     },
     "h1": "Des tarifs simples pour une transcription sérieuse.",
     "bestValue": "Meilleur choix",
@@ -472,59 +472,107 @@
     "soonLabel": "Bientôt",
     "buttonTitle": "Le paiement sera ajouté lors de la prochaine phase",
     "faqTitle": "FAQ tarification",
-    "specLabels": {
-      "minutes": "Minutes",
-      "unitValue": "Valeur horaire",
-      "fileLimit": "Limite de fichier",
-      "queue": "File d'attente",
-      "aiOutputs": "Sorties IA"
-    },
+    "featureRows": [
+      {
+        "label": "Fichiers de transcription",
+        "values": {
+          "free": "Limité à 45 min au total",
+          "starter": "Fichiers illimités dans 600 min",
+          "pro": "Fichiers illimités"
+        }
+      },
+      {
+        "label": "Minutes mensuelles",
+        "values": {
+          "free": "45 à vie",
+          "starter": "600 min/mois",
+          "pro": "2 400 min prioritaires/mois"
+        }
+      },
+      {
+        "label": "Durée max. du fichier",
+        "values": {
+          "free": "45 min",
+          "starter": "1 heure",
+          "pro": "10 heures"
+        }
+      },
+      {
+        "label": "Taille max. du fichier",
+        "values": {
+          "free": "1 GB",
+          "starter": "1 GB",
+          "pro": "1 GB"
+        }
+      },
+      {
+        "label": "File de traitement",
+        "values": {
+          "free": "File gratuite",
+          "starter": "File standard",
+          "pro": "File prioritaire"
+        }
+      },
+      {
+        "label": "Modèle de précision",
+        "values": {
+          "free": "Standard",
+          "starter": "Meilleure précision",
+          "pro": "Meilleure précision"
+        }
+      },
+      {
+        "label": "Étiquettes de locuteurs",
+        "values": {
+          "free": "Oui",
+          "starter": "Oui",
+          "pro": "Oui"
+        }
+      },
+      {
+        "label": "Exports",
+        "values": {
+          "free": "TXT, DOCX, PDF, SRT",
+          "starter": "Exports illimités",
+          "pro": "Exports illimités"
+        }
+      },
+      {
+        "label": "Résumés IA",
+        "values": {
+          "free": "Non",
+          "starter": "Oui",
+          "pro": "Oui"
+        }
+      }
+    ],
     "plans": [
       {
         "id": "free",
         "name": "Gratuit",
         "price": "$0",
         "cadence": "une fois",
-        "minutes": "45 minutes à vie",
-        "unitValue": "Essai uniquement",
-        "summary": "Essayez Scribix une fois et vérifiez la qualité des transcriptions avant de payer.",
-        "fileLimit": "Fichier de 45 minutes max.",
-        "queue": "File normale",
-        "aiOutputs": "Exports de transcription"
+        "summary": "Essayez Scribix une fois et vérifiez la qualité des transcriptions avant de payer."
       },
       {
         "id": "starter",
         "name": "Starter",
         "price": "$12",
         "cadence": "par mois",
-        "minutes": "600 min/mois",
-        "unitValue": "$1.20/h",
         "summary": "Pour un usage personnel régulier où la limite de minutes reste tangible.",
-        "fileLimit": "Fichier de 1 heure max.",
-        "queue": "File normale",
-        "aiOutputs": "Exports de transcription",
         "annual": "$99/an",
         "annualPrice": "$99",
-        "annualCadence": "par an",
-        "annualMinutes": "7 200 min/an",
-        "annualUnitValue": "$0.83/h"
+        "annualCadence": "par an"
       },
       {
         "id": "pro",
-        "name": "Pro",
+        "name": "Pro Unlimited",
         "price": "$19",
         "cadence": "par mois",
-        "minutes": "1 800 min/mois",
-        "unitValue": "$0.63/h",
-        "summary": "Le choix par défaut pour les longs fichiers, l'usage fréquent et les sorties IA.",
-        "fileLimit": "Fichier de 10 heures max.",
-        "queue": "File prioritaire",
-        "aiOutputs": "Résumés, chapitres, actions à suivre",
-        "annual": "$149/an",
-        "annualPrice": "$149",
-        "annualCadence": "par an",
-        "annualMinutes": "21 600 min/an",
-        "annualUnitValue": "$0.41/h"
+        "summary": "Le meilleur rapport qualité-prix pour la transcription sérieuse.",
+        "annual": "$179/an",
+        "annualPrice": "$179",
+        "annualCadence": "par an"
       }
     ],
     "faqs": [
@@ -550,7 +598,7 @@
       },
       {
         "question": "Y a-t-il un essai gratuit sur les offres payantes ?",
-        "answer": "Oui. Starter et Pro incluent tous deux 14 jours gratuits, et vous pouvez annuler à tout moment avant la fin de l'essai."
+        "answer": "Oui. Starter et Pro Unlimited incluent tous deux 14 jours gratuits, et vous pouvez annuler à tout moment avant la fin de l'essai."
       }
     ]
   },
@@ -686,7 +734,7 @@
       "deleteWarning": "Supprimer définitivement votre compte, vos transcriptions et votre audio. Cette action ne peut pas être annulée.",
       "tierFree": "Gratuit",
       "tierBasic": "Starter",
-      "tierPro": "Pro",
+      "tierPro": "Pro Unlimited",
       "cycleMonthly": "mensuel",
       "cycleYearly": "annuel",
       "statusCanceled": "(annulé — accès jusqu'à la fin de la période)",
@@ -792,7 +840,7 @@
     },
     "uploader": {
       "dropPrompt": "Déposez une vidéo ou un fichier audio",
-      "limits": "Téléversements vidéo jusqu'à 1 Go · Essai gratuit : 45 min au total · max 500 Mo après extraction audio",
+      "limits": "Téléversements jusqu'à 1 Go · Essai gratuit : 45 min au total",
       "choose": "Choisir un fichier",
       "phasePreparing": "Préparation…",
       "phaseExtracting": "Extraction audio {percent}%",
