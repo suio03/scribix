@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
 
-  let body: { tier?: string; cycle?: string; successPath?: string };
+  let body: { tier?: string; cycle?: string; successUrl?: string; successPath?: string };
   try {
     body = await req.json();
   } catch {
@@ -21,16 +21,17 @@ export async function POST(req: Request) {
     return Response.json({ error: "invalid_plan" }, { status: 400 });
   }
 
-  const successPath = body.successPath ?? "/dashboard?checkout=ok";
-  if (!isSafePath(successPath)) {
-    return Response.json({ error: "invalid_success_path" }, { status: 400 });
-  }
-
   const env = await cf();
   const appUrl = env.NEXT_PUBLIC_APP_URL?.trim() || "https://scribix.io";
-  // The transaction's checkout.url is where Paddle returns the user after a
-  // successful payment, and what Paddle.js uses as the overlay's success URL.
-  const checkoutUrl = new URL(successPath, appUrl).toString();
+  const checkoutUrl = resolveCheckoutUrl({
+    appUrl,
+    environment: env.NEXT_PUBLIC_PADDLE_ENV,
+    successUrl: body.successUrl,
+    successPath: body.successPath,
+  });
+  if (!checkoutUrl) {
+    return Response.json({ error: "invalid_success_url" }, { status: 400 });
+  }
   const plan = getPaddlePlan(env, tier, cycle);
   if (!plan) {
     return Response.json({ error: "paddle_price_not_configured" }, { status: 503 });
@@ -81,6 +82,45 @@ export async function POST(req: Request) {
 
 function isSafePath(value: string): boolean {
   return value.startsWith("/") && !value.startsWith("//") && !value.includes("://");
+}
+
+function resolveCheckoutUrl({
+  appUrl,
+  environment,
+  successUrl,
+  successPath,
+}: {
+  appUrl: string;
+  environment: string | undefined;
+  successUrl?: string;
+  successPath?: string;
+}): string | null {
+  if (successUrl) {
+    return isAllowedCheckoutUrl(successUrl, appUrl, environment) ? successUrl : null;
+  }
+
+  const fallbackPath = successPath ?? "/pricing?checkout=ok";
+  if (!isSafePath(fallbackPath)) return null;
+  return new URL(fallbackPath, appUrl).toString();
+}
+
+function isAllowedCheckoutUrl(
+  raw: string,
+  appUrl: string,
+  environment: string | undefined
+): boolean {
+  try {
+    const url = new URL(raw);
+    const app = new URL(appUrl);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return false;
+    if (url.host === app.host) return true;
+    if (environment !== "production") {
+      return url.hostname === "localhost" || url.hostname === "127.0.0.1";
+    }
+    return false;
+  } catch {
+    return false;
+  }
 }
 
 function paddleErrorDetails(error: PaddleApiError): {

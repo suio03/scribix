@@ -16,14 +16,12 @@ export function PaddleCheckoutButton({
   tier,
   cycle,
   signedIn,
-  successPath,
   children,
   className,
 }: {
   tier: Exclude<Tier, "free">;
   cycle: BillingCycle;
   signedIn: boolean;
-  successPath: string;
   children: React.ReactNode;
   className: string;
 }) {
@@ -45,10 +43,16 @@ export function PaddleCheckoutButton({
 
     setPending(true);
     try {
+      const checkoutUrl = new URL(window.location.href);
+      checkoutUrl.searchParams.delete("_ptxn");
+      checkoutUrl.searchParams.set("checkout", "ok");
+      checkoutUrl.searchParams.set("tier", tier);
+      checkoutUrl.searchParams.set("cycle", cycle);
+
       const response = await fetch("/api/paddle/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier, cycle, successPath }),
+        body: JSON.stringify({ tier, cycle, successUrl: checkoutUrl.toString() }),
       });
       const json = (await response.json().catch(() => ({}))) as CheckoutResponse;
       if (!response.ok || !json.transactionId) {

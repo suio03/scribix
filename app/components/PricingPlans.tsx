@@ -259,7 +259,6 @@ function PlanAction({
       tier={tier}
       cycle={cycle}
       signedIn={signedIn}
-      successPath={checkoutSuccessPath}
       className={baseClass}
     >
       {chooseLabel}

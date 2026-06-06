@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.11] - 2026-06-07
+
+### Fixed
+- Matched the working Paddle overlay flow from `ai-music` by creating checkout transactions with the current pricing-page URL instead of `/dashboard`, so Paddle receives a page where Paddle.js is already mounted.
+
 ## [0.7.10] - 2026-06-07
 
 ### Fixed
