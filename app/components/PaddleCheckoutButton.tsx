@@ -43,16 +43,20 @@ export function PaddleCheckoutButton({
 
     setPending(true);
     try {
-      const checkoutUrl = new URL(window.location.href);
-      checkoutUrl.searchParams.delete("_ptxn");
-      checkoutUrl.searchParams.set("checkout", "ok");
-      checkoutUrl.searchParams.set("tier", tier);
-      checkoutUrl.searchParams.set("cycle", cycle);
+      const checkoutPath = new URL(window.location.href);
+      checkoutPath.searchParams.delete("_ptxn");
+      checkoutPath.searchParams.set("checkout", "ok");
+      checkoutPath.searchParams.set("tier", tier);
+      checkoutPath.searchParams.set("cycle", cycle);
 
       const response = await fetch("/api/paddle/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier, cycle, successUrl: checkoutUrl.toString() }),
+        body: JSON.stringify({
+          tier,
+          cycle,
+          successPath: `${checkoutPath.pathname}${checkoutPath.search}`,
+        }),
       });
       const json = (await response.json().catch(() => ({}))) as CheckoutResponse;
       if (!response.ok || !json.transactionId) {

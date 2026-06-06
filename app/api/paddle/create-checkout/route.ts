@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "invalid_plan" }, { status: 400 });
   }
 
-  const env = await cf();
+  const env = withLocalPaddleEnv(await cf());
   const appUrl = env.NEXT_PUBLIC_APP_URL?.trim() || "https://scribix.io";
   const checkoutUrl = resolveCheckoutUrl({
     appUrl,
@@ -82,6 +82,35 @@ export async function POST(req: Request) {
 
 function isSafePath(value: string): boolean {
   return value.startsWith("/") && !value.startsWith("//") && !value.includes("://");
+}
+
+function withLocalPaddleEnv(env: CloudflareEnv): CloudflareEnv {
+  if (process.env.NODE_ENV !== "development") return env;
+
+  return {
+    ...env,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_PADDLE_ENV: localPaddleEnvironment() ?? env.NEXT_PUBLIC_PADDLE_ENV,
+    PADDLE_API_KEY: process.env.PADDLE_API_KEY ?? env.PADDLE_API_KEY,
+    PADDLE_BASIC_MONTHLY_PRICE_ID:
+      process.env.PADDLE_BASIC_MONTHLY_PRICE_ID ?? env.PADDLE_BASIC_MONTHLY_PRICE_ID,
+    PADDLE_BASIC_YEARLY_PRICE_ID:
+      process.env.PADDLE_BASIC_YEARLY_PRICE_ID ?? env.PADDLE_BASIC_YEARLY_PRICE_ID,
+    PADDLE_PRO_MONTHLY_PRICE_ID:
+      process.env.PADDLE_PRO_MONTHLY_PRICE_ID ?? env.PADDLE_PRO_MONTHLY_PRICE_ID,
+    PADDLE_PRO_YEARLY_PRICE_ID:
+      process.env.PADDLE_PRO_YEARLY_PRICE_ID ?? env.PADDLE_PRO_YEARLY_PRICE_ID,
+  };
+}
+
+function localPaddleEnvironment(): CloudflareEnv["NEXT_PUBLIC_PADDLE_ENV"] | null {
+  if (
+    process.env.NEXT_PUBLIC_PADDLE_ENV === "sandbox" ||
+    process.env.NEXT_PUBLIC_PADDLE_ENV === "production"
+  ) {
+    return process.env.NEXT_PUBLIC_PADDLE_ENV;
+  }
+  return null;
 }
 
 function resolveCheckoutUrl({

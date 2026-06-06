@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.12] - 2026-06-07
+
+### Fixed
+- Fixed local Paddle checkout testing by letting the create-checkout API use `.env.local` Paddle settings in development while keeping production on Worker environment variables.
+- Sent Paddle checkout return data as a relative pricing-page path so local testing no longer passes `localhost` as the Paddle checkout domain.
+
 ## [0.7.11] - 2026-06-07
 
 ### Fixed
