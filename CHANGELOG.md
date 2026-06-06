@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.6] - 2026-06-07
+
+### Fixed
+- Removed Paddle hosted checkout redirects from pricing buttons so paid checkout opens only through the overlay.
+
 ## [0.7.5] - 2026-06-07
 
 ### Fixed

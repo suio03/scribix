@@ -37,6 +37,10 @@ export function PaddleCheckoutButton({
       await signIn(undefined, { callbackUrl: window.location.href });
       return;
     }
+    if (!initialized || !paddle) {
+      setFailed(true);
+      return;
+    }
 
     setPending(true);
     try {
@@ -50,26 +54,16 @@ export function PaddleCheckoutButton({
         throw new Error(json.error ?? "checkout_failed");
       }
 
-      if (initialized && paddle) {
-        const successUrl = new URL(successPath, window.location.origin).toString();
-        paddle.Checkout.open({
-          transactionId: json.transactionId,
-          settings: {
-            displayMode: "overlay",
-            theme: "dark",
-            variant: "one-page",
-            successUrl,
-          },
-        });
-        return;
-      }
-
-      if (json.url) {
-        window.location.assign(json.url);
-        return;
-      }
-
-      throw new Error("missing_checkout_url");
+      const successUrl = new URL(successPath, window.location.origin).toString();
+      paddle.Checkout.open({
+        transactionId: json.transactionId,
+        settings: {
+          displayMode: "overlay",
+          theme: "dark",
+          variant: "one-page",
+          successUrl,
+        },
+      });
     } catch (error) {
       console.error("Paddle checkout failed:", error);
       setFailed(true);
@@ -82,7 +76,7 @@ export function PaddleCheckoutButton({
     <button
       type="button"
       onClick={startCheckout}
-      disabled={pending}
+      disabled={pending || (signedIn && !initialized)}
       aria-busy={pending}
       className={`${className} ${pending ? "cursor-wait opacity-70" : ""} ${
         failed ? "ring-2 ring-red-500/70 ring-offset-2 ring-offset-paper" : ""
