@@ -6,6 +6,7 @@ export type CreatePaddleTransactionInput = {
   apiKey: string;
   environment: PaddleEnvironment;
   priceId: string;
+  successUrl: string;
   customerId?: string | null;
   userId: string;
   tier: Exclude<Tier, "free">;
@@ -48,6 +49,7 @@ export async function createPaddleTransaction(
   const payload: Record<string, unknown> = {
     items: [{ price_id: input.priceId, quantity: 1 }],
     collection_mode: "automatic",
+    checkout: { url: input.successUrl },
     custom_data: {
       userId: input.userId,
       tier: input.tier,

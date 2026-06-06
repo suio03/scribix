@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.4] - 2026-06-07
+
+### Fixed
+- Set Scribix-specific Paddle checkout URLs on transactions so fallback checkout stays on `scribix.io`.
+
 ## [0.7.3] - 2026-06-07
 
 ### Fixed
