@@ -33,17 +33,6 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
     initializePaddle({
       token,
       environment,
-      eventCallback(event) {
-        const eventName = String(event.name ?? "");
-        if (
-          eventName === "checkout.error" ||
-          eventName === "checkout.warning" ||
-          eventName === "checkout.failed" ||
-          eventName === "checkout.loaded"
-        ) {
-          console.info("[paddle]", eventName, event);
-        }
-      },
       checkout: {
         settings: {
           displayMode: "overlay",
