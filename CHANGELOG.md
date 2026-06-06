@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.13] - 2026-06-07
+
+### Fixed
+- Matched `ai-music` Paddle checkout behavior by redirecting to Paddle's returned transaction URL if the overlay SDK is unavailable or fails to open.
+
 ## [0.7.12] - 2026-06-07
 
 ### Fixed

@@ -71,6 +71,10 @@ export function PaddleCheckoutButton({
       const readyPaddle = await getReadyPaddle();
       if (!readyPaddle) {
         console.warn("Paddle checkout could not open because Paddle.js is not initialized.");
+        if (json.url) {
+          window.location.href = json.url;
+          return;
+        }
         setFailed(true);
         return;
       }
@@ -79,7 +83,16 @@ export function PaddleCheckoutButton({
       // config (presentation + return URL) from the transaction itself, so we
       // pass ONLY the transactionId. Presentation settings come from
       // initializePaddle(); the return URL is the transaction's checkout.url.
-      readyPaddle.Checkout.open({ transactionId: json.transactionId });
+      try {
+        readyPaddle.Checkout.open({ transactionId: json.transactionId });
+      } catch (error) {
+        console.error("Paddle overlay open failed:", error);
+        if (json.url) {
+          window.location.href = json.url;
+          return;
+        }
+        throw error;
+      }
     } catch (error) {
       console.error("Paddle checkout failed:", error);
       setFailed(true);
