@@ -7,7 +7,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { initializePaddle, type Paddle } from "@paddle/paddle-js";
+import { initializePaddle, type Paddle, type PaddleEventData } from "@paddle/paddle-js";
+import { trackEvent } from "@/lib/analytics";
 
 const PaddleContext = createContext<Paddle | null>(null);
 
@@ -24,6 +25,7 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
     initializePaddle({
       token,
       environment,
+      eventCallback: trackPaddleCheckoutEvent,
       checkout: {
         settings: {
           displayMode: "overlay",
@@ -37,6 +39,11 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
       })
       .catch((error) => {
         console.error("Paddle initialization failed:", error);
+        trackEvent("checkout_fail", {
+          stage: "paddle_init",
+          error_code: "paddle_initialization_failed",
+          error_message: error instanceof Error ? error.message : undefined,
+        });
       });
 
     return () => {
@@ -49,4 +56,58 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
 
 export function usePaddle() {
   return useContext(PaddleContext);
+}
+
+function trackPaddleCheckoutEvent(event: PaddleEventData) {
+  const data = event.data;
+  const customData = checkoutCustomData(data?.custom_data);
+  const common = {
+    tier: customData.tier,
+    cycle: customData.cycle,
+    transaction_id: data?.transaction_id,
+    checkout_id: data?.id,
+  };
+
+  if (event.name === "checkout.completed") {
+    trackEvent("checkout_completed", {
+      ...common,
+      currency_code: data?.currency_code,
+      total: data?.totals?.total,
+      payment_method: data?.payment?.method_details?.type,
+    });
+    return;
+  }
+
+  if (event.name === "checkout.closed") {
+    trackEvent("checkout_closed", common);
+    return;
+  }
+
+  if (
+    event.name === "checkout.error" ||
+    event.name === "checkout.payment.error" ||
+    event.name === "checkout.payment.failed"
+  ) {
+    trackEvent("checkout_fail", {
+      tier: customData.tier,
+      cycle: customData.cycle,
+      transaction_id: data?.transaction_id,
+      stage: "checkout",
+      error_code: event.code ?? event.name,
+      error_message: event.detail,
+    });
+  }
+}
+
+function checkoutCustomData(value: object | null | undefined): {
+  tier?: "basic" | "pro";
+  cycle?: "monthly" | "yearly";
+} {
+  if (!value) return {};
+
+  const data = value as Record<string, unknown>;
+  return {
+    tier: data.tier === "basic" || data.tier === "pro" ? data.tier : undefined,
+    cycle: data.cycle === "monthly" || data.cycle === "yearly" ? data.cycle : undefined,
+  };
 }

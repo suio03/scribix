@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.8.0] - 2026-06-08
+
+### Added
+- Added a localized `/mp3-to-text` landing page with MP3-focused upload, metadata, JSON-LD, sitemap coverage, and sidebar navigation.
+- Added MP3-to-text landing page copy and reference documentation, with translations across French, Spanish, Italian, Japanese, and German.
+- Added checkout analytics events for Paddle checkout clicks, transaction creation, overlay opens, completions, closures, and failures.
+
+### Changed
+- Made the audio upload card accept route-specific file picker hints and analytics attribution.
+- Aligned video landing documentation and progress notes with the currently supported transcript export formats.
+
 ## [0.7.16] - 2026-06-07
 
 ### Changed

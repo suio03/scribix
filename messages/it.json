@@ -35,6 +35,11 @@
         "icon": "AudioLines"
       },
       {
+        "label": "MP3 in testo",
+        "href": "/mp3-to-text",
+        "icon": "FileAudio"
+      },
+      {
         "label": "Video to Text",
         "href": "/#generator",
         "icon": "Clapperboard"
@@ -212,8 +217,8 @@
       },
       {
         "icon": "FileDown",
-        "title": "Sette formati di esportazione",
-        "body": "TXT, DOCX, PDF, SRT, VTT, JSON e HTML — copre editor di blog, lettori video, strumenti di accessibilità e pipeline di sviluppo senza conversione aggiuntiva.",
+        "title": "Cinque formati di esportazione",
+        "body": "TXT, DOCX, SRT, VTT e CSV — copre documenti, sottotitoli, fogli di calcolo e flussi di revisione senza conversione aggiuntiva.",
         "span": "lg:col-span-2"
       },
       {
@@ -252,8 +257,8 @@
         "n": "03",
         "icon": "Download",
         "title": "Modifica, copia o esporta.",
-        "body": "Clicca su qualsiasi parola per riprodurre quel momento esatto. Modifica inline, quindi scarica come TXT, DOCX, PDF, SRT, VTT, JSON o HTML — oppure copia l'intero transcript nel tuo editor.",
-        "duration": "7 formati di esportazione"
+        "body": "Clicca su qualsiasi parola per riprodurre quel momento esatto. Modifica inline, quindi scarica come TXT, DOCX, SRT, VTT o CSV — oppure copia l'intero transcript nel tuo editor.",
+        "duration": "5 formati di esportazione"
       }
     ]
   },
@@ -532,7 +537,7 @@
       {
         "label": "Esportazioni",
         "values": {
-          "free": "TXT, DOCX, PDF, SRT",
+          "free": "TXT, DOCX, SRT, VTT, CSV",
           "starter": "Esportazioni illimitate",
           "pro": "Esportazioni illimitate"
         }
@@ -645,7 +650,7 @@
       },
       {
         "q": "In quali formati posso esportare il transcript?",
-        "a": "Sette formati: TXT (semplice), DOCX (Word), PDF, SRT (sottotitoli), VTT (sottotitoli web), JSON (amichevole per sviluppatori) e HTML (formattato). Fai clic per modificare inline prima di esportare."
+        "a": "Cinque formati: TXT (semplice), DOCX (Word), SRT (sottotitoli), VTT (sottotitoli web) e CSV (adatto ai fogli di calcolo). Fai clic per modificare inline prima di esportare."
       },
       {
         "q": "Scribix funziona per podcast e file di solo audio?",
@@ -1240,5 +1245,359 @@
     "prefix": "Lavori con registrazioni solo audio?",
     "link": "Apri la pagina dedicata da audio a testo",
     "suffix": "."
+  },
+  "Mp3ToText": {
+    "metadata": {
+      "title": "MP3 in testo | Trascrizione IA online",
+      "description": "Converti MP3 in testo con Scribix. Carica un MP3, ottieni una trascrizione con parlanti e timestamp, ed esporta in TXT, DOCX, SRT, VTT o CSV.",
+      "openGraphTitle": "MP3 in testo | Trascrizione IA online | Scribix",
+      "openGraphDescription": "Carica un MP3 e ottieni una trascrizione con parlanti, timestamp ed esportazioni.",
+      "twitterTitle": "MP3 in testo | Scribix",
+      "twitterDescription": "Converti audio MP3 in trascrizioni ricercabili con parlanti, timestamp ed esportazioni."
+    },
+    "hero": {
+      "issue": "REC · MP3",
+      "issueLabel": "Issue n. 03 · MP3 in testo",
+      "title": "Converti MP3 in testo.",
+      "accentTitle": "Trascrizione IA.",
+      "descriptionStart": "Scribix converte audio MP3 in testo accurato con etichette dei parlanti, pronto da rivedere, copiare ed esportare. Accedi con Google, carica il tuo MP3 e ottieni una trascrizione con timestamp in",
+      "stat": "oltre 200 lingue",
+      "descriptionEnd": ".",
+      "primaryCta": "Converti MP3 in testo",
+      "signedInPrimaryCta": "Carica MP3",
+      "secondaryCta": "Hai bisogno di altri formati audio?",
+      "secondaryHref": "/audio-to-text",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "Prova gratuita di 45 min"
+        },
+        {
+          "icon": "Globe",
+          "label": "Oltre 200 lingue"
+        },
+        {
+          "icon": "Users",
+          "label": "Etichette parlanti"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "Nessuna carta di credito"
+        }
+      ]
+    },
+    "upload": {
+      "uploadTab": "Carica file",
+      "uploadHint": "MP3",
+      "instruction": "Trascina un file MP3 o clicca per sceglierlo.",
+      "specs": "Prova gratuita: 45 min · MP3 · Nessuna carta",
+      "button": "Converti MP3 in testo",
+      "signedInButton": "Carica MP3"
+    },
+    "quickAnswer": {
+      "kicker": "Risposta rapida",
+      "title": "Carica MP3. Ottieni testo modificabile.",
+      "body": "Scribix è un convertitore online da MP3 a testo che trasforma l’audio parlato in testo ricercabile. È ideale per podcast, interviste, lezioni, riunioni, note vocali e registrazioni di ricerca salvate come MP3. Carica il file, attendi la trascrizione IA, poi rivedi il testo con parlanti e timestamp prima di copiarlo o esportarlo come TXT, DOCX, SRT, VTT o CSV."
+    },
+    "overview": {
+      "number": "01",
+      "label": "Panoramica",
+      "rows": [
+        {
+          "item": "Ideale per",
+          "detail": "Podcast, interviste, lezioni, riunioni, note vocali e audio di ricerca"
+        },
+        {
+          "item": "Non ideale per",
+          "detail": "Trascrizioni certificate, testi di canzoni o registrazioni rumorose non revisionabili"
+        },
+        {
+          "item": "Input",
+          "detail": "File audio MP3"
+        },
+        {
+          "item": "Output",
+          "detail": "Trascrizione con parlanti, timestamp, copia e opzioni di esportazione"
+        },
+        {
+          "item": "Flusso",
+          "detail": "Accesso, caricamento MP3, trascrizione, revisione, esportazione"
+        },
+        {
+          "item": "Prova gratuita",
+          "detail": "45 minuti con accesso Google, senza carta di credito"
+        },
+        {
+          "item": "Privacy",
+          "detail": "L’audio viene eliminato dopo 7 giorni; le trascrizioni restano finché non le elimini"
+        }
+      ],
+      "bestFor": {
+        "title": "Ideale per",
+        "items": [
+          "Podcaster e creator che trasformano episodi MP3 in trascrizioni, sottotitoli, note e contenuti ricercabili.",
+          "Giornalisti e intervistatori che estraggono citazioni senza riascoltare più volte la stessa sezione.",
+          "Studenti e docenti che convertono lezioni registrate in appunti consultabili e citabili.",
+          "Ricercatori e team operativi che trasformano interviste, focus group, chiamate clienti e note vocali in testo strutturato."
+        ]
+      },
+      "notBestFor": {
+        "title": "Non ideale per",
+        "items": [
+          "Trascrizioni legali o giudiziarie certificate che richiedono un trascrittore umano qualificato.",
+          "Canzoni o testi cantati, dove voci cantate e musica intensa riducono la qualità del riconoscimento vocale.",
+          "Registrazioni con forte sovrapposizione, audio mancante o rumore di fondo non verificabile dopo.",
+          "Flussi che richiedono caricamento anonimo senza account."
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "Come funziona",
+      "title": "Tre passaggi.",
+      "accentTitle": "MP3 in testo.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Accedi con Google.",
+          "body": "La prova gratuita include 45 minuti di trascrizione e nessuna carta di credito.",
+          "meta": "Nessuna carta"
+        },
+        {
+          "n": "02",
+          "icon": "FileAudio",
+          "title": "Carica il tuo MP3.",
+          "body": "Scegli la registrazione MP3 da convertire in testo.",
+          "meta": "Upload MP3"
+        },
+        {
+          "n": "03",
+          "icon": "Download",
+          "title": "Rivedi ed esporta.",
+          "body": "Controlla parlanti e timestamp, poi copia o scarica in TXT, DOCX, SRT, VTT o CSV.",
+          "meta": "5 formati"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "Casi d’uso",
+      "title": "Pensato per registrazioni MP3 che devono diventare",
+      "accentTitle": "testo utilizzabile.",
+      "items": [
+        {
+          "icon": "Mic",
+          "title": "Trascrizioni podcast",
+          "who": "Podcaster, producer, creator",
+          "output": "Trascrizione episodio per accessibilità, ricerca e riuso"
+        },
+        {
+          "icon": "Users",
+          "title": "Citazioni da interviste",
+          "who": "Giornalisti, recruiter, ricercatori",
+          "output": "Trascrizione Q&A con timestamp e parlanti"
+        },
+        {
+          "icon": "Search",
+          "title": "Ripasso lezioni",
+          "who": "Studenti, docenti, team didattici",
+          "output": "Appunti ricercabili da lezioni registrate"
+        },
+        {
+          "icon": "Captions",
+          "title": "Preparazione sottotitoli",
+          "who": "Editor, marketer, team accessibilità",
+          "output": "Sottotitoli SRT o VTT generati da una traccia MP3"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "Esempio",
+      "title": "Una trascrizione da controllare, citare ed esportare.",
+      "body": "Input di esempio: un’intervista podcast caricata come founder-interview.mp3.",
+      "filename": "founder-interview.mp3",
+      "transcript": "[00:00] Parlante A\nBentornati. Oggi parliamo di come i piccoli team decidono cosa costruire dopo.\n\n[00:07] Parlante B\nLa parte più difficile non è raccogliere idee. È decidere quali idee sono abbastanza importanti da interrompere la roadmap.\n\n[00:16] Parlante A\nQuindi la trascrizione diventa un modo per confrontare ciò che i clienti hanno detto davvero?\n\n[00:21] Parlante B\nEsatto. Quando la registrazione è ricercabile, i pattern più forti sono molto più facili da trovare."
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "Funzionalità",
+      "title": "Trascrizione MP3 focalizzata,",
+      "accentTitle": "con esportazioni pratiche.",
+      "intro": "Questa pagina è dedicata alla trascrizione MP3: carica un MP3, ottieni testo con timestamp e parlanti, poi copialo o esportalo. È volutamente centrata sul flusso di trascrizione, non su editing, traduzione o riassunti.",
+      "items": [
+        {
+          "icon": "Globe",
+          "title": "Oltre 200 lingue",
+          "body": "Il rilevamento automatico della lingua semplifica il caricamento quando le registrazioni includono regioni o parlanti diversi."
+        },
+        {
+          "icon": "Users",
+          "title": "Etichette parlanti",
+          "body": "Le trascrizioni di conversazioni sono più facili da scorrere quando ogni intervento è separato per parlante."
+        },
+        {
+          "icon": "Clock3",
+          "title": "Timestamp",
+          "body": "Il testo con timestamp aiuta a ritrovare citazioni, preparare sottotitoli e rivedere momenti importanti."
+        },
+        {
+          "icon": "Download",
+          "title": "Cinque formati di export",
+          "body": "Scarica TXT, DOCX, SRT, VTT o CSV, oppure copia la trascrizione direttamente dall’app."
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "Quanto è accurata la trascrizione da MP3 a testo?",
+          "body": [
+            "Scribix può raggiungere il 99,9% di accuratezza con audio chiaro. I risultati reali dipendono da microfono, distanza, rumore, accenti, sovrapposizioni, vocabolario specialistico e qualità del MP3.",
+            "Per usi legali, medici, accademici, finanziari o pubblici, considera la trascrizione una prima bozza solida e rivedila prima di condividerla."
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "Il tuo MP3 è privato?",
+          "body": [
+            "Scribix usa il MP3 caricato solo per generare e consegnare trascrizioni nel tuo account. I file audio e video vengono eliminati automaticamente dopo 7 giorni.",
+            "Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account. Leggi la"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "privacy policy",
+            "suffix": "."
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "Confronto",
+      "title": "Scribix rispetto ad altri modi per convertire MP3 in testo.",
+      "headers": [
+        "Approccio",
+        "Ideale per",
+        "Limite"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix",
+          "bestFor": "Trascrizione MP3 online rapida con parlanti, timestamp, storico ed export",
+          "tradeoff": "Richiede accesso Google prima del caricamento"
+        },
+        {
+          "approach": "Trascrizione manuale",
+          "bestFor": "Lavori certificati o registrazioni in cui ogni parola va verificata",
+          "tradeoff": "Lenta e costosa per MP3 lunghi"
+        },
+        {
+          "approach": "Chat IA generica",
+          "bestFor": "Brevi porzioni di testo dopo aver già ottenuto una trascrizione",
+          "tradeoff": "La maggior parte non copre il flusso completo di upload MP3, revisione ed export"
+        },
+        {
+          "approach": "Speech-to-text locale",
+          "bestFor": "Utenti che richiedono elaborazione solo locale",
+          "tradeoff": "Richiede configurazione, risorse, gestione modelli ed export"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "Domande,",
+      "accentTitle": "risposte chiare.",
+      "intro": "Accuratezza, privacy, export e accesso spiegati chiaramente prima di caricare un MP3.",
+      "items": [
+        {
+          "q": "Come converto un MP3 in testo con Scribix?",
+          "a": "Accedi con Google, carica il file MP3 e Scribix trascriverà l’audio parlato in testo. Quando la trascrizione è pronta, rivedila nella dashboard e copiala o esportala."
+        },
+        {
+          "q": "Lo strumento MP3 in testo è gratis da provare?",
+          "a": "Sì. Scribix offre una prova gratuita di 45 minuti con accesso Google e senza carta di credito."
+        },
+        {
+          "q": "In quali formati posso esportare la trascrizione MP3?",
+          "a": "Scribix può esportare trascrizioni completate in TXT, DOCX, SRT, VTT o CSV. Puoi anche copiare il testo direttamente dall’app."
+        },
+        {
+          "q": "Scribix può identificare parlanti diversi in un MP3?",
+          "a": "Sì. Scribix richiede le etichette dei parlanti durante la trascrizione, così le conversazioni possono essere separate quando la qualità lo consente."
+        },
+        {
+          "q": "Quante lingue supporta Scribix?",
+          "a": "Scribix supporta la trascrizione in oltre 200 lingue con rilevamento automatico."
+        },
+        {
+          "q": "Quanto è accurata la trascrizione MP3?",
+          "a": "Scribix può raggiungere il 99,9% di accuratezza con audio chiaro, ma dipende da qualità audio, accenti, rumore, sovrapposizioni e vocabolario specialistico. Rivedi le trascrizioni importanti prima di pubblicarle o usarle."
+        },
+        {
+          "q": "La compressione MP3 influisce sulla qualità?",
+          "a": "Può succedere. Gli MP3 parlati e chiari di solito si trascrivono bene, ma bitrate molto basso, rumore forte, musica o voci ovattate possono ridurre l’accuratezza."
+        },
+        {
+          "q": "Il mio MP3 viene conservato per sempre?",
+          "a": "No. La privacy policy di Scribix indica che i file audio e video caricati vengono eliminati automaticamente dopo 7 giorni. Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account."
+        },
+        {
+          "q": "Serve un account per convertire MP3 in testo?",
+          "a": "Sì. Scribix richiede l’accesso con Google prima del caricamento, così le trascrizioni vengono salvate nella libreria e gestite dalla dashboard."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Quando vuoi",
+      "title": "Converti MP3 in testo.",
+      "body": "Accedi con Google, carica il tuo primo MP3 e ottieni una trascrizione ricercabile da rivedere, copiare ed esportare.",
+      "primaryCta": "Converti MP3 in testo",
+      "signedInPrimaryCta": "Carica MP3",
+      "stats": [
+        {
+          "value": "45 min",
+          "label": "Prova"
+        },
+        {
+          "value": "200+",
+          "label": "Lingue"
+        },
+        {
+          "value": "7 giorni",
+          "label": "Eliminazione auto"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix MP3 in testo",
+      "appDescription": "Strumento online di trascrizione MP3 in testo per convertire audio MP3 caricato in trascrizioni con parlanti, timestamp ed esportazioni.",
+      "offerDescription": "Prova gratuita di 45 minuti con accesso Google e senza carta di credito.",
+      "featureList": [
+        "Upload file MP3",
+        "Rilevamento automatico lingua",
+        "Oltre 200 lingue",
+        "Etichette parlanti",
+        "Trascrizioni con timestamp",
+        "Export TXT",
+        "Export DOCX",
+        "Export SRT",
+        "Export VTT",
+        "Export CSV",
+        "Copia trascrizione"
+      ],
+      "howToName": "Come convertire MP3 in testo con Scribix",
+      "howToDescription": "Accedi, carica un file MP3, trascrivilo, rivedi la trascrizione ed esporta il risultato.",
+      "howToSteps": [
+        "Accedi con Google",
+        "Carica il tuo MP3",
+        "Trascrivi l’audio",
+        "Rivedi la trascrizione",
+        "Copia o esporta"
+      ]
+    }
   }
 }

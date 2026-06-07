@@ -51,7 +51,7 @@ Drag and drop an `MP4`, `MOV`, `AVI`, `MKV`, or `WebM` file (up to **1 GB**), or
 Our model auto-detects the language (200+ supported), separates speakers, attaches timestamps to every word, and returns the full transcript in **under a minute for most one-hour videos**. Background noise, accents, and overlapping speech are handled by the same engine used in professional dictation tools.
 
 ### 3. Edit, copy, or export
-Click any word to play that exact moment. Edit inline, then download as `TXT`, `DOCX`, `PDF`, `SRT`, `VTT`, `JSON`, or `HTML`. Or copy the full transcript and paste into your editor.
+Click any word to play that exact moment. Edit inline, then download as `TXT`, `DOCX`, `SRT`, `VTT`, or `CSV`. Or copy the full transcript and paste into your editor.
 
 ---
 
@@ -64,7 +64,7 @@ Click any word to play that exact moment. Edit inline, then download as `TXT`, `
 | **Speaker recognition** | Identifies up to 8 distinct voices and labels every line. No manual tagging. |
 | **Word-level timestamps** | Click any word to play that moment — make corrections fast. |
 | **1 GB file support** | The largest free-tier limit in the category. Most competitors cap at 100 MB–2 GB. |
-| **7 export formats** | TXT · DOCX · PDF · SRT · VTT · JSON · HTML — covers blog editors, video players, accessibility tools, and dev pipelines. |
+| **5 export formats** | TXT · DOCX · SRT · VTT · CSV — covers documents, captions, spreadsheets, and review workflows. |
 | **No sign-up** | Free tier requires zero account, zero credit card. |
 | **Private by default** | Files are processed in-memory and deleted within 24 hours. SOC 2-aligned infrastructure. No model training on your audio. |
 
@@ -143,7 +143,7 @@ Get a first-pass transcript of depositions, board meetings, and compliance inter
 | Languages | **200+** | 30+ | 38 | 120+ | 99 |
 | Speaker recognition | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Word-level timestamps | ✅ | Sentence-level | ✅ | ✅ | ✅ |
-| Export formats | **7** | 4 | 5 | 6 | 1 (raw) |
+| Export formats | **5** | 4 | 5 | 6 | 1 (raw) |
 | YouTube URL support | ✅ | ❌ | ❌ | ✅ | ❌ |
 | Privacy: files deleted | 24 hr | 30 days+ | 30 days+ | 30 days | local only |
 
@@ -199,7 +199,7 @@ Around 1 minute of compute time per hour of video for clear-audio MP4s. A 30-min
 Files are uploaded over TLS 1.3, processed in encrypted memory, and deleted within 24 hours. We do not train models on user audio. SOC 2 alignment, GDPR-compliant data handling, and EU + US regional processing options.
 
 ### What can I export the transcript as?
-Seven formats: TXT (plain), DOCX (Word), PDF, SRT (subtitles), VTT (web subtitles), JSON (developer-friendly), HTML (formatted). Click-to-edit inline before exporting.
+Five formats: TXT (plain), DOCX (Word), SRT (subtitles), VTT (web subtitles), and CSV (spreadsheet-friendly). Click-to-edit inline before exporting.
 
 ### Does Scribix work for podcasts and audio-only files?
 Yes — but for an audio-first workflow, our [audio-to-text tool](/audio-to-text) is purpose-built for that intent. Same engine, same accuracy, audio-tuned UI.
@@ -248,7 +248,7 @@ Place inside `<head>`:
         "Speaker recognition (up to 8 voices)",
         "Word-level timestamps",
         "1 GB file size limit",
-        "7 export formats: TXT, DOCX, PDF, SRT, VTT, JSON, HTML",
+        "5 export formats: TXT, DOCX, SRT, VTT, CSV",
         "YouTube, TikTok, Instagram URL support",
         "No sign-up required",
         "Files deleted within 24 hours"
@@ -275,7 +275,7 @@ Place inside `<head>`:
           "@type": "HowToStep",
           "position": 3,
           "name": "Edit, copy, or export",
-          "text": "Click any word to play that moment. Edit inline, then download as TXT, DOCX, PDF, SRT, VTT, JSON, or HTML."
+          "text": "Click any word to play that moment. Edit inline, then download as TXT, DOCX, SRT, VTT, or CSV."
         }
       ]
     },
@@ -351,7 +351,7 @@ Place inside `<head>`:
           "name": "What can I export the transcript as?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Seven formats: TXT, DOCX, PDF, SRT, VTT, JSON, HTML. Click-to-edit inline before exporting."
+            "text": "Five formats: TXT, DOCX, SRT, VTT, CSV. Click-to-edit inline before exporting."
           }
         },
         {

@@ -15,6 +15,50 @@ export type PlausibleEvents = {
   };
   signin_success: { method?: string };
   download_click: { format: string };
+  checkout_click: {
+    tier: "basic" | "pro";
+    cycle: "monthly" | "yearly";
+    signed_in: boolean;
+  };
+  checkout_created: {
+    tier: "basic" | "pro";
+    cycle: "monthly" | "yearly";
+    transaction_id?: string;
+  };
+  checkout_opened: {
+    tier: "basic" | "pro";
+    cycle: "monthly" | "yearly";
+    transaction_id?: string;
+  };
+  checkout_completed: {
+    tier?: "basic" | "pro";
+    cycle?: "monthly" | "yearly";
+    transaction_id?: string;
+    checkout_id?: string;
+    currency_code?: string;
+    total?: number;
+    payment_method?: string;
+  };
+  checkout_closed: {
+    tier?: "basic" | "pro";
+    cycle?: "monthly" | "yearly";
+    transaction_id?: string;
+    checkout_id?: string;
+  };
+  checkout_fail: {
+    tier?: "basic" | "pro";
+    cycle?: "monthly" | "yearly";
+    transaction_id?: string;
+    stage:
+      | "create_checkout"
+      | "paddle_init"
+      | "paddle_ready"
+      | "open_overlay"
+      | "checkout";
+    error_code: string;
+    error_message?: string;
+    paddle_status?: number;
+  };
 };
 
 declare global {

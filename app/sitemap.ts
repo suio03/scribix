@@ -21,6 +21,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       alternates: { languages: pathLanguages("/audio-to-text") },
     },
     {
+      url: urlFor(routing.defaultLocale, "/mp3-to-text"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+      alternates: { languages: pathLanguages("/mp3-to-text") },
+    },
+    {
       url: urlFor(routing.defaultLocale, "/pricing"),
       lastModified: now,
       changeFrequency: "monthly",

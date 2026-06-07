@@ -19,10 +19,14 @@ export function AudioUploadCard({
   signedIn,
   postSignInPath,
   copy,
+  accept = AUDIO_ACCEPT,
+  toolSlug = "audio-to-text",
 }: {
   signedIn: boolean;
   postSignInPath: string;
   copy: AudioUploadCardCopy;
+  accept?: string;
+  toolSlug?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -30,7 +34,7 @@ export function AudioUploadCard({
     signedIn,
     postSignInPath,
     audioOnly: true,
-    toolSlug: "audio-to-text",
+    toolSlug,
   });
 
   return (
@@ -69,7 +73,7 @@ export function AudioUploadCard({
             <input
               ref={inputRef}
               type="file"
-              accept={AUDIO_ACCEPT}
+              accept={accept}
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];

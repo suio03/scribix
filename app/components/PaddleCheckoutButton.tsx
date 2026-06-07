@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "@/i18n/navigation";
 import { usePaddle } from "@/app/components/PaddleProvider";
+import { trackEvent } from "@/lib/analytics";
 import type { BillingCycle, Tier } from "@/lib/plans";
 
 type CheckoutResponse = {
@@ -36,6 +37,7 @@ export function PaddleCheckoutButton({
 
   async function startCheckout() {
     setFailed(false);
+    trackEvent("checkout_click", { tier, cycle, signed_in: signedIn });
     if (!signedIn) {
       await signIn(undefined, { callbackUrl: window.location.href });
       return;
@@ -64,13 +66,32 @@ export function PaddleCheckoutButton({
           status: response.status,
           error: json.error ?? "checkout_failed",
         });
+        trackEvent("checkout_fail", {
+          tier,
+          cycle,
+          stage: "create_checkout",
+          error_code: json.error ?? "checkout_failed",
+          paddle_status: response.status,
+        });
         setFailed(true);
         return;
       }
+      trackEvent("checkout_created", {
+        tier,
+        cycle,
+        transaction_id: json.transactionId,
+      });
 
       const readyPaddle = await getReadyPaddle();
       if (!readyPaddle) {
         console.warn("Paddle checkout could not open because Paddle.js is not initialized.");
+        trackEvent("checkout_fail", {
+          tier,
+          cycle,
+          transaction_id: json.transactionId,
+          stage: "paddle_ready",
+          error_code: "paddle_not_initialized",
+        });
         setFailed(true);
         return;
       }
@@ -81,12 +102,32 @@ export function PaddleCheckoutButton({
       await pause(500);
       try {
         readyPaddle.Checkout.open({ transactionId: json.transactionId });
+        trackEvent("checkout_opened", {
+          tier,
+          cycle,
+          transaction_id: json.transactionId,
+        });
       } catch (error) {
         console.error("Paddle overlay open failed:", error);
+        trackEvent("checkout_fail", {
+          tier,
+          cycle,
+          transaction_id: json.transactionId,
+          stage: "open_overlay",
+          error_code: "paddle_overlay_open_failed",
+          error_message: error instanceof Error ? error.message : undefined,
+        });
         setFailed(true);
       }
     } catch (error) {
       console.error("Paddle checkout failed:", error);
+      trackEvent("checkout_fail", {
+        tier,
+        cycle,
+        stage: "checkout",
+        error_code: "checkout_failed",
+        error_message: error instanceof Error ? error.message : undefined,
+      });
       setFailed(true);
     } finally {
       setPending(false);

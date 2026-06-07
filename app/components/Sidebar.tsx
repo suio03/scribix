@@ -15,6 +15,7 @@ import {
   Clapperboard,
   ChevronLeft,
   ChevronRight,
+  FileAudio,
   LayoutDashboard,
   LogIn,
   Plus,
@@ -41,6 +42,7 @@ const navIcons = {
   Home,
   AudioLines,
   Clapperboard,
+  FileAudio,
 } satisfies Record<string, LucideIcon>;
 
 function activePath(href: string) {

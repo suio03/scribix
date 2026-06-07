@@ -491,7 +491,7 @@ All routes run on Cloudflare Workers (edge) by default — no per-route runtime 
 | Email notifications (job complete, billing reminders) | No email infra in v1; users see status via dashboard |
 | YouTube link transcription | yt-dlp doesn't run on Pages; needs external extractor |
 | In-browser transcript editing | Days of frontend scope (autosave, undo, conflict) |
-| DOCX / PDF export | TXT/SRT/VTT covers 95% of users |
+| Additional rich export formats | TXT/SRT/VTT covers 95% of users |
 | Public share links | Adds permission model + abuse vector |
 | Summarization / chapters / sentiment (LeMUR) | Upsell features for v2 |
 | Translation of transcripts | Upsell feature for v2 |
