@@ -1,12 +1,24 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { UploadOrRecord } from "@/app/components/UploadOrRecord";
 import { TrackToolVisit } from "@/app/components/Track";
+import { auth } from "@/auth";
+import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getPathname, Link } from "@/i18n/navigation";
+import type { Tier } from "@/lib/plans";
 
 export default async function NewTranscriptPage() {
   const locale = await getLocale();
   const t = await getTranslations("Dashboard.new");
   const newHref = getPathname({ href: "/dashboard/new", locale });
+  const session = await auth();
+  let tier: Tier = "free";
+
+  if (session) {
+    const env = await cf();
+    const user = await getOrCreateCurrentUser(env.DB, session);
+    tier = user?.tier ?? "free";
+  }
 
   return (
     <main className="mx-auto max-w-[720px] px-4 py-12 sm:px-8">
@@ -22,7 +34,7 @@ export default async function NewTranscriptPage() {
       </div>
 
       <div className="mt-8">
-        <UploadOrRecord signedIn={true} postSignInPath={newHref} />
+        <UploadOrRecord signedIn={true} postSignInPath={newHref} tier={tier} />
       </div>
     </main>
   );

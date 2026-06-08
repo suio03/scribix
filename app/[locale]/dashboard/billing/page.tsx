@@ -120,11 +120,16 @@ export default async function BillingPage({
           bestValue={pricingT("bestValue")}
           checkoutSuccessPath={checkoutSuccessPath}
           chooseLabels={chooseLabels}
+          currentCycle={cycle}
+          currentPlanLabel={pricingT("currentPlanLabel")}
+          currentTier={tier}
           dashboardNewPath={dashboardNewPath}
           featureRows={featureRows}
           noCreditCard={pricingT("noCreditCard")}
           plans={upgradePlans}
           signedIn={true}
+          supportUpgradeLabel={pricingT("supportUpgradeLabel")}
+          unavailableLabel={pricingT("unavailableLabel")}
         />
       </section>
     </main>

@@ -16,6 +16,9 @@ import {
 import { Shell } from "@/app/components/Shell";
 import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
+import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
+import type { BillingCycle, Tier } from "@/lib/plans";
 
 const SITE = "https://scribix.io";
 const PATH = "/pricing";
@@ -60,6 +63,14 @@ export default async function PricingPage({
   setRequestLocale(locale);
 
   const session = await auth();
+  let currentTier: Tier = "free";
+  let currentCycle: BillingCycle | null = null;
+  if (session) {
+    const env = await cf();
+    const user = await getOrCreateCurrentUser(env.DB, session);
+    currentTier = user?.tier ?? "free";
+    currentCycle = user?.billing_cycle ?? null;
+  }
   const homePath = getPathname({ href: "/", locale });
   const dashboardPath = getPathname({ href: "/dashboard", locale });
   const dashboardNewPath = getPathname({ href: "/dashboard/new", locale });
@@ -83,6 +94,7 @@ export default async function PricingPage({
           usage={sidebarUsage}
           signedIn={!!session}
           signInRedirect={dashboardPath}
+          newTranscriptRedirect={dashboardNewPath}
           signOutRedirect={homePath}
           userImage={session?.user?.image ?? null}
           userLabel={session?.user?.name ?? session?.user?.email ?? null}
@@ -111,11 +123,16 @@ export default async function PricingPage({
               bestValue={t("bestValue")}
               checkoutSuccessPath={checkoutSuccessPath}
               chooseLabels={chooseLabels}
+              currentCycle={currentCycle}
+              currentPlanLabel={t("currentPlanLabel")}
+              currentTier={currentTier}
               dashboardNewPath={dashboardNewPath}
               featureRows={featureRows}
               noCreditCard={t("noCreditCard")}
               plans={plans}
               signedIn={!!session}
+              supportUpgradeLabel={t("supportUpgradeLabel")}
+              unavailableLabel={t("unavailableLabel")}
             />
           </div>
         </section>

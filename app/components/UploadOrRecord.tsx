@@ -5,15 +5,18 @@ import { Upload, Mic, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Uploader } from "./Uploader";
 import { Recorder } from "./Recorder";
+import type { Tier } from "@/lib/plans";
 
 type Tab = "upload" | "record";
 
 export function UploadOrRecord({
   signedIn,
   postSignInPath,
+  tier = "free",
 }: {
   signedIn: boolean;
   postSignInPath: string;
+  tier?: Tier;
 }) {
   const t = useTranslations("Dashboard.uploadOrRecord");
   const [tab, setTab] = useState<Tab>("upload");
@@ -34,9 +37,9 @@ export function UploadOrRecord({
         />
       </div>
       {tab === "upload" ? (
-        <Uploader signedIn={signedIn} postSignInPath={postSignInPath} />
+        <Uploader signedIn={signedIn} postSignInPath={postSignInPath} tier={tier} />
       ) : (
-        <Recorder signedIn={signedIn} postSignInPath={postSignInPath} />
+        <Recorder signedIn={signedIn} postSignInPath={postSignInPath} tier={tier} />
       )}
     </div>
   );

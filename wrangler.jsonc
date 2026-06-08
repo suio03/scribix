@@ -39,7 +39,6 @@
       "binding": "DB",
       "database_name": "scribix-db",
       "database_id": "c031ef5c-899a-426a-897a-279e011be78d",
-      "remote": true,
       "migrations_dir": "migrations"
     }
   ],

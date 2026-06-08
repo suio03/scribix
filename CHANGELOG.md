@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.9.0] - 2026-06-08
+
+### Added
+- Added Paddle subscription ID storage in D1 so billing records can track the active subscription.
+- Added plan-aware upload limit copy for free, Starter, and Pro accounts on the new transcript dashboard.
+
+### Changed
+- Kept the sidebar New Transcript action visible for signed-out users and routes them through Google sign-in before upload.
+- Updated billing and pricing plan actions so paid users keep the current plan, avoid duplicate checkout, and contact support for upgrades.
+- Switched local D1 development back to local bindings by default instead of remote D1.
+
+### Fixed
+- Fixed Paddle checkout success returns to land back on the intended billing/pricing success URL.
+- Fixed sidebar usage loading to create or refresh the current user row before displaying quota.
+
 ## [0.8.0] - 2026-06-08
 
 ### Added

@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { FreePlanButton, PaddleCheckoutButton } from "@/app/components/PaddleCheckoutButton";
+import {
+  FreePlanButton,
+  PaddleCheckoutButton,
+} from "@/app/components/PaddleCheckoutButton";
 import type { BillingCycle, Tier } from "@/lib/plans";
 
 export type PlanId = "free" | "starter" | "pro";
@@ -32,11 +35,16 @@ type PricingPlansProps = {
   bestValue: string;
   checkoutSuccessPath: string;
   chooseLabels: Record<PlanId, string>;
+  currentPlanLabel: string;
+  currentCycle?: BillingCycle | null;
+  currentTier?: Tier;
   dashboardNewPath: string;
   featureRows: PlanFeatureCopy[];
   noCreditCard: string;
   plans: PlanCopy[];
   signedIn: boolean;
+  supportUpgradeLabel: string;
+  unavailableLabel: string;
 };
 
 export function PricingPlans({
@@ -44,13 +52,18 @@ export function PricingPlans({
   bestValue,
   checkoutSuccessPath,
   chooseLabels,
+  currentPlanLabel,
+  currentCycle = null,
+  currentTier = "free",
   dashboardNewPath,
   featureRows,
   noCreditCard,
   plans,
   signedIn,
+  supportUpgradeLabel,
+  unavailableLabel,
 }: PricingPlansProps) {
-  const [cycle, setCycle] = useState<BillingCycle>("monthly");
+  const [cycle, setCycle] = useState<BillingCycle>(currentCycle ?? "monthly");
   const planGridClass = plans.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-3";
 
   return (
@@ -85,11 +98,16 @@ export function PricingPlans({
             checkoutSuccessPath={checkoutSuccessPath}
             chooseLabel={chooseLabels[plan.id]}
             cycle={cycle}
+            currentCycle={currentCycle}
+            currentPlanLabel={currentPlanLabel}
+            currentTier={currentTier}
             dashboardNewPath={dashboardNewPath}
             featureRows={featureRows}
             noCreditCard={noCreditCard}
             plan={plan}
             signedIn={signedIn}
+            supportUpgradeLabel={supportUpgradeLabel}
+            unavailableLabel={unavailableLabel}
           />
         ))}
       </div>
@@ -126,21 +144,31 @@ function PlanCard({
   checkoutSuccessPath,
   chooseLabel,
   cycle,
+  currentCycle,
+  currentPlanLabel,
+  currentTier,
   dashboardNewPath,
   featureRows,
   noCreditCard,
   plan,
   signedIn,
+  supportUpgradeLabel,
+  unavailableLabel,
 }: {
   bestValue: string;
   checkoutSuccessPath: string;
   chooseLabel: string;
   cycle: BillingCycle;
+  currentCycle: BillingCycle | null;
+  currentPlanLabel: string;
+  currentTier: Tier;
   dashboardNewPath: string;
   featureRows: PlanFeatureCopy[];
   noCreditCard: string;
   plan: PlanCopy;
   signedIn: boolean;
+  supportUpgradeLabel: string;
+  unavailableLabel: string;
 }) {
   const primary = plan.id === "pro";
   const display = planDisplay(plan, cycle);
@@ -212,10 +240,15 @@ function PlanCard({
         checkoutSuccessPath={checkoutSuccessPath}
         chooseLabel={chooseLabel}
         cycle={cycle}
+        currentCycle={currentCycle}
+        currentPlanLabel={currentPlanLabel}
+        currentTier={currentTier}
         dashboardNewPath={dashboardNewPath}
         plan={plan}
         primary={primary}
         signedIn={signedIn}
+        supportUpgradeLabel={supportUpgradeLabel}
+        unavailableLabel={unavailableLabel}
       />
     </article>
   );
@@ -225,22 +258,52 @@ function PlanAction({
   checkoutSuccessPath,
   chooseLabel,
   cycle,
+  currentCycle,
+  currentPlanLabel,
+  currentTier,
   dashboardNewPath,
   plan,
   primary,
   signedIn,
+  supportUpgradeLabel,
+  unavailableLabel,
 }: {
   checkoutSuccessPath: string;
   chooseLabel: string;
   cycle: BillingCycle;
+  currentCycle: BillingCycle | null;
+  currentPlanLabel: string;
+  currentTier: Tier;
   dashboardNewPath: string;
   plan: PlanCopy;
   primary: boolean;
   signedIn: boolean;
+  supportUpgradeLabel: string;
+  unavailableLabel: string;
 }) {
   const baseClass = `mt-auto inline-flex h-12 items-center justify-center gap-2 border px-4 text-[14px] font-medium transition ${
     primary ? "border-paper bg-paper text-ink" : "border-ink bg-ink text-paper"
   }`;
+  const planTier = tierForPlan(plan.id);
+  const hasPaidPlan = signedIn && currentTier !== "free";
+  const selectedCycleMatchesCurrent = currentCycle === null || cycle === currentCycle;
+
+  if (signedIn && planTier === currentTier && selectedCycleMatchesCurrent) {
+    return <DisabledPlanButton className={baseClass}>{currentPlanLabel}</DisabledPlanButton>;
+  }
+
+  if (
+    signedIn &&
+    currentTier === "basic" &&
+    planTier === "pro" &&
+    selectedCycleMatchesCurrent
+  ) {
+    return <DisabledPlanButton className={baseClass}>{supportUpgradeLabel}</DisabledPlanButton>;
+  }
+
+  if (hasPaidPlan) {
+    return <DisabledPlanButton className={baseClass}>{unavailableLabel}</DisabledPlanButton>;
+  }
 
   if (plan.id === "free") {
     return (
@@ -267,6 +330,30 @@ function PlanAction({
       {chooseLabel}
     </PaddleCheckoutButton>
   );
+}
+
+function DisabledPlanButton({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className: string;
+}) {
+  return (
+    <button
+      type="button"
+      disabled
+      className={`${className} cursor-not-allowed opacity-60`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function tierForPlan(planId: PlanId): Tier {
+  if (planId === "starter") return "basic";
+  if (planId === "pro") return "pro";
+  return "free";
 }
 
 function Spec({

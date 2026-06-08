@@ -203,6 +203,7 @@ export default async function Mp3ToTextPage({
           usage={sidebarUsage}
           signedIn={!!session}
           signInRedirect={dashboardPath}
+          newTranscriptRedirect={postSignInPath}
           signOutRedirect={homePath}
           userImage={session?.user?.image ?? null}
           userLabel={session?.user?.name ?? session?.user?.email ?? null}

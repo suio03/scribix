@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
+import type { Tier } from "@/lib/plans";
 import { markSignInPending } from "./Track";
 
 const DEFAULT_TOOL_SLUG = "transcribe";
@@ -25,6 +26,8 @@ export type UploadPhase =
 
 export type UseUploadOpts = {
   signedIn: boolean;
+  /** Current account tier, used only for display copy in shared upload surfaces. */
+  tier?: Tier;
   /** Where to send the user back to after Google sign-in (locale-prefixed path). */
   postSignInPath?: string;
   /** Restrict uploads to audio files and skip the video extraction path. */
@@ -193,6 +196,8 @@ export function Uploader(props: UseUploadOpts) {
   const { phase, progress, errorMsg, filename, onPick } = useUpload(props);
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const limitCopyKey =
+    props.tier === "pro" ? "limitsPro" : props.tier === "basic" ? "limitsBasic" : "limitsFree";
 
   return (
     <div
@@ -225,7 +230,7 @@ export function Uploader(props: UseUploadOpts) {
       {phase === "idle" || phase === "error" ? (
         <>
           <p className="text-base font-medium">{t("dropPrompt")}</p>
-          <p className="mt-1 text-sm text-ink/60">{t("limits")}</p>
+          <p className="mt-1 text-sm text-ink/60">{t(limitCopyKey)}</p>
           <button
             type="button"
             onClick={() => inputRef.current?.click()}

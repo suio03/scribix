@@ -17,12 +17,14 @@ export function PaddleCheckoutButton({
   tier,
   cycle,
   signedIn,
+  checkoutSuccessPath,
   children,
   className,
 }: {
   tier: Exclude<Tier, "free">;
   cycle: BillingCycle;
   signedIn: boolean;
+  checkoutSuccessPath: string;
   children: React.ReactNode;
   className: string;
 }) {
@@ -45,11 +47,12 @@ export function PaddleCheckoutButton({
 
     setPending(true);
     try {
-      const checkoutPath = new URL(window.location.href);
+      const checkoutPath = new URL(checkoutSuccessPath, window.location.origin);
       checkoutPath.searchParams.delete("_ptxn");
       checkoutPath.searchParams.set("checkout", "ok");
       checkoutPath.searchParams.set("tier", tier);
       checkoutPath.searchParams.set("cycle", cycle);
+      const checkoutSuccessUrl = checkoutPath.toString();
 
       const response = await fetch("/api/paddle/create-checkout", {
         method: "POST",
@@ -101,7 +104,10 @@ export function PaddleCheckoutButton({
       // open the pre-created transaction directly in the overlay.
       await pause(500);
       try {
-        readyPaddle.Checkout.open({ transactionId: json.transactionId });
+        readyPaddle.Checkout.open({
+          transactionId: json.transactionId,
+          settings: { successUrl: checkoutSuccessUrl },
+        });
         trackEvent("checkout_opened", {
           tier,
           cycle,

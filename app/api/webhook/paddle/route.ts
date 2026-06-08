@@ -59,6 +59,7 @@ type UserBillingRow = {
   tier: Tier;
   billing_cycle: BillingCycle | null;
   customer_id: string | null;
+  subscription_id: string | null;
   period_started_at: string;
   period_ends_at: string;
 };
@@ -163,6 +164,7 @@ async function handleTransactionCompleted(
   if (!userId) throw new Error("missing_custom_user_id");
   const customerId = transaction.customer_id;
   if (!customerId?.startsWith("ctm_")) throw new Error("missing_customer_id");
+  const subscriptionId = transaction.subscription_id;
 
   const period = periodFromTransaction(transaction, plan.cycle, occurredAt);
   await env.DB.prepare(
@@ -171,14 +173,24 @@ async function handleTransactionCompleted(
             billing_cycle = ?2,
             customer_id = ?3,
             product_id = ?4,
+            subscription_id = COALESCE(?5, subscription_id),
             subscription_status = 'active',
             minutes_used_this_period = 0,
-            period_started_at = ?5,
-            period_ends_at = ?6
-      WHERE id = ?7
+            period_started_at = ?6,
+            period_ends_at = ?7
+      WHERE id = ?8
         AND deleted_at IS NULL`
   )
-    .bind(plan.tier, plan.cycle, customerId, plan.priceId, period.startsAt, period.endsAt, userId)
+    .bind(
+      plan.tier,
+      plan.cycle,
+      customerId,
+      plan.priceId,
+      subscriptionId,
+      period.startsAt,
+      period.endsAt,
+      userId
+    )
     .run();
 
   await discordAlert("checkout_success", {
@@ -220,11 +232,12 @@ async function handleSubscriptionActive(
             billing_cycle = ?2,
             customer_id = ?3,
             product_id = ?4,
+            subscription_id = COALESCE(?5, subscription_id),
             subscription_status = 'active',
-            minutes_used_this_period = CASE WHEN ?5 THEN 0 ELSE minutes_used_this_period END,
-            period_started_at = CASE WHEN ?5 THEN ?6 ELSE period_started_at END,
-            period_ends_at = ?7
-      WHERE id = ?8
+            minutes_used_this_period = CASE WHEN ?6 THEN 0 ELSE minutes_used_this_period END,
+            period_started_at = CASE WHEN ?6 THEN ?7 ELSE period_started_at END,
+            period_ends_at = ?8
+      WHERE id = ?9
         AND deleted_at IS NULL`
   )
     .bind(
@@ -232,6 +245,7 @@ async function handleSubscriptionActive(
       plan.cycle,
       subscription.customer_id ?? user.customer_id,
       plan.priceId,
+      subscription.id,
       periodAdvanced ? 1 : 0,
       period.startsAt,
       period.endsAt,
@@ -303,7 +317,7 @@ async function findBillingUser(
   if (userId) {
     const byId = await db
       .prepare(
-        `SELECT id, tier, billing_cycle, customer_id, period_started_at, period_ends_at
+        `SELECT id, tier, billing_cycle, customer_id, subscription_id, period_started_at, period_ends_at
            FROM users
           WHERE id = ?1 AND deleted_at IS NULL`
       )
@@ -314,7 +328,7 @@ async function findBillingUser(
   if (customerId?.startsWith("ctm_")) {
     return db
       .prepare(
-        `SELECT id, tier, billing_cycle, customer_id, period_started_at, period_ends_at
+        `SELECT id, tier, billing_cycle, customer_id, subscription_id, period_started_at, period_ends_at
            FROM users
           WHERE customer_id = ?1 AND deleted_at IS NULL`
       )
@@ -336,6 +350,7 @@ async function expireSubscription(
               billing_cycle = NULL,
               customer_id = COALESCE(?1, customer_id),
               product_id = NULL,
+              subscription_id = NULL,
               subscription_status = 'expired',
               minutes_used_this_period = ?2,
               period_started_at = CURRENT_TIMESTAMP,

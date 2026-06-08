@@ -59,6 +59,7 @@ export function Sidebar({
   usage,
   signedIn = false,
   signInRedirect = "/dashboard",
+  newTranscriptRedirect = "/dashboard/new",
   signOutRedirect = "/",
   userImage,
   userLabel,
@@ -67,6 +68,7 @@ export function Sidebar({
   usage?: SidebarUsage;
   signedIn?: boolean;
   signInRedirect?: string;
+  newTranscriptRedirect?: string;
   signOutRedirect?: string;
   userImage?: string | null;
   userLabel?: string | null;
@@ -201,19 +203,38 @@ export function Sidebar({
             isCollapsed ? "lg:px-3" : ""
           }`}
         >
-          <Link
-            href="/dashboard/new"
-            onClick={closeAfterNavigate}
-            title={t("newTranscript")}
-            className={`flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-paper transition hover:opacity-90 ${
-              isCollapsed ? "lg:size-10 lg:px-0 lg:py-0" : ""
-            }`}
-          >
-            <Plus size={16} strokeWidth={2} />
-            <span className={isCollapsed ? "lg:hidden" : ""}>
-              {t("newTranscript")}
-            </span>
-          </Link>
+          {signedIn ? (
+            <Link
+              href="/dashboard/new"
+              onClick={closeAfterNavigate}
+              title={t("newTranscript")}
+              className={`flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-paper transition hover:opacity-90 ${
+                isCollapsed ? "lg:size-10 lg:px-0 lg:py-0" : ""
+              }`}
+            >
+              <Plus size={16} strokeWidth={2} />
+              <span className={isCollapsed ? "lg:hidden" : ""}>
+                {t("newTranscript")}
+              </span>
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                closeAfterNavigate();
+                signIn("google", { redirectTo: newTranscriptRedirect });
+              }}
+              title={t("newTranscript")}
+              className={`flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-paper transition hover:opacity-90 ${
+                isCollapsed ? "lg:size-10 lg:px-0 lg:py-0" : ""
+              }`}
+            >
+              <Plus size={16} strokeWidth={2} />
+              <span className={isCollapsed ? "lg:hidden" : ""}>
+                {t("newTranscript")}
+              </span>
+            </button>
+          )}
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 py-3">

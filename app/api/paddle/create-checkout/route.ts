@@ -44,6 +44,12 @@ export async function POST(req: Request) {
 
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  if (user.tier !== "free") {
+    return Response.json(
+      { error: "active_subscription", currentTier: user.tier },
+      { status: 409 }
+    );
+  }
 
   try {
     const checkout = await createPaddleTransaction({
