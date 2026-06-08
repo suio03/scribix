@@ -28,20 +28,15 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
   const token = config.clientToken;
   const environment = config.environment === "production" ? "production" : "sandbox";
 
-  // [paddle-diag] temporary: confirm whether the client token was inlined at build time.
-  console.log("[paddle-diag] build-inlined token present:", Boolean(process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN), "env:", process.env.NEXT_PUBLIC_PADDLE_ENV);
-
   useEffect(() => {
     if (token) return;
     let canceled = false;
 
-    console.log("[paddle-diag] no build-time token, fetching /api/paddle/config…");
     fetch("/api/paddle/config")
       .then(async (response): Promise<PaddlePublicConfig | null> =>
         response.ok ? ((await response.json()) as PaddlePublicConfig) : null
       )
       .then((nextConfig) => {
-        console.log("[paddle-diag] /api/paddle/config returned token present:", Boolean(nextConfig?.clientToken), "env:", nextConfig?.environment);
         if (canceled || !nextConfig?.clientToken) return;
         setConfig({
           clientToken: nextConfig.clientToken,
@@ -66,7 +61,6 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
     if (!token) return;
     let canceled = false;
 
-    console.log("[paddle-diag] initializing Paddle with token present:", Boolean(token), "environment:", environment);
     initializePaddle({
       token,
       environment,
@@ -80,7 +74,6 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
       },
     })
       .then((instance) => {
-        console.log("[paddle-diag] initializePaddle resolved, instance present:", Boolean(instance));
         if (!canceled && instance) setPaddle(instance);
       })
       .catch((error) => {
