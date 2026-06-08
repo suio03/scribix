@@ -51,6 +51,7 @@ export type PlausibleEvents = {
     transaction_id?: string;
     stage:
       | "create_checkout"
+      | "paddle_config"
       | "paddle_init"
       | "paddle_ready"
       | "open_overlay"

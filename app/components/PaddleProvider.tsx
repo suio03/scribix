@@ -12,16 +12,61 @@ import { trackEvent } from "@/lib/analytics";
 
 const PaddleContext = createContext<Paddle | null>(null);
 
+type PaddlePublicConfig = {
+  clientToken?: string;
+  environment?: "sandbox" | "production";
+};
+
 export function PaddleProvider({ children }: { children: ReactNode }) {
   const [paddle, setPaddle] = useState<Paddle | null>(null);
-  const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
-  const environment =
-    process.env.NEXT_PUBLIC_PADDLE_ENV === "production" ? "production" : "sandbox";
+  const [config, setConfig] = useState<PaddlePublicConfig>(() => ({
+    clientToken: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
+    environment:
+      process.env.NEXT_PUBLIC_PADDLE_ENV === "production" ? "production" : "sandbox",
+  }));
+
+  const token = config.clientToken;
+  const environment = config.environment === "production" ? "production" : "sandbox";
+
+  // [paddle-diag] temporary: confirm whether the client token was inlined at build time.
+  console.log("[paddle-diag] build-inlined token present:", Boolean(process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN), "env:", process.env.NEXT_PUBLIC_PADDLE_ENV);
+
+  useEffect(() => {
+    if (token) return;
+    let canceled = false;
+
+    console.log("[paddle-diag] no build-time token, fetching /api/paddle/config…");
+    fetch("/api/paddle/config")
+      .then(async (response): Promise<PaddlePublicConfig | null> =>
+        response.ok ? ((await response.json()) as PaddlePublicConfig) : null
+      )
+      .then((nextConfig) => {
+        console.log("[paddle-diag] /api/paddle/config returned token present:", Boolean(nextConfig?.clientToken), "env:", nextConfig?.environment);
+        if (canceled || !nextConfig?.clientToken) return;
+        setConfig({
+          clientToken: nextConfig.clientToken,
+          environment: nextConfig.environment === "production" ? "production" : "sandbox",
+        });
+      })
+      .catch((error) => {
+        console.error("Paddle config load failed:", error);
+        trackEvent("checkout_fail", {
+          stage: "paddle_config",
+          error_code: "paddle_config_load_failed",
+          error_message: error instanceof Error ? error.message : undefined,
+        });
+      });
+
+    return () => {
+      canceled = true;
+    };
+  }, [token]);
 
   useEffect(() => {
     if (!token) return;
     let canceled = false;
 
+    console.log("[paddle-diag] initializing Paddle with token present:", Boolean(token), "environment:", environment);
     initializePaddle({
       token,
       environment,
@@ -35,6 +80,7 @@ export function PaddleProvider({ children }: { children: ReactNode }) {
       },
     })
       .then((instance) => {
+        console.log("[paddle-diag] initializePaddle resolved, instance present:", Boolean(instance));
         if (!canceled && instance) setPaddle(instance);
       })
       .catch((error) => {
