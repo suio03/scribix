@@ -45,7 +45,7 @@ export default async function AccountPage() {
       {tier === "free" ? (
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
-            href="/pricing"
+            href="/dashboard/billing"
             className="rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper hover:bg-accent"
           >
             {t("upgradePlan")}

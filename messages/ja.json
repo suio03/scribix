@@ -9,6 +9,7 @@
     "browserExtension": "ブラウザ拡張機能",
     "myLibrary": "Dashboard",
     "pricing": "料金",
+    "billing": "請求",
     "pricingBadge": "50% OFF",
     "freePlan": "フリープラン",
     "freePlanQuota": "4 / 日",
@@ -705,7 +706,7 @@
       "itemCount": "{count, plural, =1 {# 件のアイテム} other {# 件のアイテム}}",
       "newTranscript": "新規文字起こし",
       "checkoutOkTitle": "サブスクリプションがアクティブです—ようこそ。",
-      "checkoutOkBody": "新しいプランが利用可能になりました。<link>アカウント</link>ページで使用量を確認できます。",
+      "checkoutOkBody": "新しいプランが利用可能になりました。<link>請求</link>ページで使用量を確認できます。",
       "emptyBody": "文字起こしがまだありません。",
       "emptyCta": "最初のファイルをアップロード →",
       "tableName": "名前",
@@ -744,6 +745,15 @@
       "cycleYearly": "年額",
       "statusCanceled": "（キャンセル—周期終了まで利用可能）",
       "statusExpired": "（期限切れ）"
+    },
+    "billing": {
+      "title": "請求",
+      "description": "現在のプランを確認し、制限を比較して、Dashboard 内でアップグレードできます。",
+      "currentPlan": "現在のプラン",
+      "choosePlanTitle": "適切なプランを選択",
+      "choosePlanDescription": "Starter は継続的な個人利用に適しています。長いファイル、優先処理、または月間利用が多い場合は Pro が適しています。",
+      "checkoutOkTitle": "サブスクリプションがアクティブです—ようこそ。",
+      "checkoutOkBody": "新しいプランが有効になりました。使用量とサブスクリプション管理は下に表示されます。"
     },
     "viewer": {
       "back": "← すべての文字起こし",

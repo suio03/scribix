@@ -1,12 +1,12 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { auth, signOut } from "@/auth";
-import { Link, redirect } from "@/i18n/navigation";
-import { Logo } from "@/app/components/Logo";
-import { ThemeToggle } from "@/app/components/ThemeToggle";
-import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
+import { setRequestLocale } from "next-intl/server";
+import { auth } from "@/auth";
+import { getPathname, redirect } from "@/i18n/navigation";
 import { TrackSignInSuccess } from "@/app/components/Track";
 import { FeedbackWidget } from "@/app/components/FeedbackWidget";
-import { DashboardHeaderLink } from "@/app/components/DashboardHeaderLink";
+import { Header } from "@/app/components/Header";
+import { Shell } from "@/app/components/Shell";
+import { Sidebar } from "@/app/components/Sidebar";
+import { getSidebarUsage } from "@/app/components/sidebarUsage";
 
 export const metadata = {
   robots: {
@@ -24,46 +24,34 @@ export default async function DashboardLayout({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("Dashboard.layout");
-
   const session = await auth();
   if (!session) {
     redirect({ href: "/", locale });
   }
+  const homePath = getPathname({ href: "/", locale });
+  const dashboardPath = getPathname({ href: "/dashboard", locale });
+  const sidebarUsage = await getSidebarUsage(session);
 
   return (
     <>
       <TrackSignInSuccess />
-      <header className="sticky top-0 z-30 border-b border-line bg-paper/85 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-[1180px] items-center justify-between gap-4 px-4 sm:px-8">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Logo size={26} />
-            <span className="font-display text-[18px] font-semibold tracking-tight">
-              Scribix
-            </span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <LanguageSwitcher />
-            <ThemeToggle />
-            <DashboardHeaderLink />
-            <form
-              action={async () => {
-                "use server";
-                await signOut({ redirectTo: "/" });
-              }}
-            >
-              <button
-                type="submit"
-                className="rounded-full border border-line px-3.5 py-1.5 text-[13px] font-medium hover:bg-ink/5"
-              >
-                {t("signOut")}
-              </button>
-            </form>
-          </div>
-        </div>
-      </header>
-      {children}
-      <FeedbackWidget />
+      <Shell
+        sidebar={
+          <Sidebar
+            variant="dashboard"
+            usage={sidebarUsage}
+            signedIn={true}
+            signInRedirect={dashboardPath}
+            signOutRedirect={homePath}
+            userImage={session?.user?.image ?? null}
+            userLabel={session?.user?.name ?? session?.user?.email ?? null}
+          />
+        }
+      >
+        <Header showSidebarToggle />
+        {children}
+        <FeedbackWidget />
+      </Shell>
     </>
   );
 }

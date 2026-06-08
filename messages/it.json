@@ -9,6 +9,7 @@
     "browserExtension": "Estensione Browser",
     "myLibrary": "Dashboard",
     "pricing": "Prezzi",
+    "billing": "Fatturazione",
     "pricingBadge": "50% di sconto",
     "freePlan": "Piano Gratuito",
     "freePlanQuota": "4 / giorno",
@@ -705,7 +706,7 @@
       "itemCount": "{count, plural, =1 {# elemento} other {# elementi}}",
       "newTranscript": "Nuovo transcript",
       "checkoutOkTitle": "Abbonamento attivo — benvenuto a bordo.",
-      "checkoutOkBody": "Il tuo nuovo piano è attivo. Visita <link>account</link> per vedere il tuo utilizzo.",
+      "checkoutOkBody": "Il tuo nuovo piano è attivo. Visita <link>fatturazione</link> per vedere il tuo utilizzo.",
       "emptyBody": "Nessun transcript ancora.",
       "emptyCta": "Carica il tuo primo file →",
       "tableName": "Nome",
@@ -744,6 +745,15 @@
       "cycleYearly": "annuale",
       "statusCanceled": "(annullato — accesso fino alla fine del periodo)",
       "statusExpired": "(scaduto)"
+    },
+    "billing": {
+      "title": "Fatturazione",
+      "description": "Controlla il piano attuale, confronta i limiti e fai upgrade senza lasciare la dashboard.",
+      "currentPlan": "Piano attuale",
+      "choosePlanTitle": "Scegli il piano giusto",
+      "choosePlanDescription": "Starter va bene per trascrizioni personali costanti. Pro è migliore per file più lunghi, elaborazione prioritaria o maggiore utilizzo mensile.",
+      "checkoutOkTitle": "Abbonamento attivo — benvenuto.",
+      "checkoutOkBody": "Il tuo nuovo piano è attivo. Utilizzo e controlli dell'abbonamento sono mostrati sotto."
     },
     "viewer": {
       "back": "← Tutti i transcript",

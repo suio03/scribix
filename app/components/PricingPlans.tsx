@@ -51,6 +51,7 @@ export function PricingPlans({
   signedIn,
 }: PricingPlansProps) {
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
+  const planGridClass = plans.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-3";
 
   return (
     <div>
@@ -76,7 +77,7 @@ export function PricingPlans({
         </p>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className={`grid gap-4 ${planGridClass}`}>
         {plans.map((plan) => (
           <PlanCard
             key={plan.id}
@@ -260,6 +261,7 @@ function PlanAction({
       tier={tier}
       cycle={cycle}
       signedIn={signedIn}
+      checkoutSuccessPath={checkoutSuccessPath}
       className={baseClass}
     >
       {chooseLabel}

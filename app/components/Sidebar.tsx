@@ -19,6 +19,7 @@ import {
   LayoutDashboard,
   LogIn,
   Plus,
+  UserRound,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -41,8 +42,11 @@ type NavItem = {
 const navIcons = {
   Home,
   AudioLines,
+  BadgeDollarSign,
   Clapperboard,
   FileAudio,
+  LayoutDashboard,
+  UserRound,
 } satisfies Record<string, LucideIcon>;
 
 function activePath(href: string) {
@@ -51,6 +55,7 @@ function activePath(href: string) {
 }
 
 export function Sidebar({
+  variant = "site",
   usage,
   signedIn = false,
   signInRedirect = "/dashboard",
@@ -58,6 +63,7 @@ export function Sidebar({
   userImage,
   userLabel,
 }: {
+  variant?: "site" | "dashboard";
   usage?: SidebarUsage;
   signedIn?: boolean;
   signInRedirect?: string;
@@ -97,6 +103,18 @@ export function Sidebar({
     if (window.matchMedia("(max-width: 1023px)").matches) {
       closeMobileSidebar();
     }
+  };
+  const dashboardNav: NavItem[] = [
+    { label: t("myLibrary"), href: "/dashboard", icon: "LayoutDashboard" },
+    { label: t("billing"), href: "/dashboard/billing", icon: "BadgeDollarSign" },
+    { label: t("account"), href: "/dashboard/account", icon: "UserRound" },
+  ];
+  const productNav = variant === "dashboard" ? dashboardNav : nav;
+  const isDashboardPathActive = (href: string) => {
+    if (href === "/dashboard") {
+      return pathname === "/dashboard" || pathname.startsWith("/dashboard/transcripts");
+    }
+    return pathname === href;
   };
 
   useEffect(() => {
@@ -200,9 +218,12 @@ export function Sidebar({
 
         <nav className="flex-1 overflow-y-auto px-3 py-3">
           <ul className="space-y-0.5">
-            {nav.map((item, i) => {
+            {productNav.map((item) => {
               const Icon = item.icon ? navIcons[item.icon] : undefined;
-              const active = !item.href.includes("#") && pathname === activePath(item.href);
+              const active =
+                variant === "dashboard"
+                  ? isDashboardPathActive(item.href)
+                  : !item.href.includes("#") && pathname === activePath(item.href);
               return (
                 <li key={item.label}>
                   <Link
@@ -231,52 +252,56 @@ export function Sidebar({
             })}
           </ul>
 
-          <div className="my-3 h-px bg-line" />
+          {variant === "site" ? (
+            <>
+              <div className="my-3 h-px bg-line" />
 
-          <ul className="space-y-0.5">
-            <li>
-              <Link
-                href="/dashboard"
-                onClick={closeAfterNavigate}
-                title={t("myLibrary")}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
-                  pathname.startsWith("/dashboard")
-                    ? "bg-accent-soft text-ink"
-                    : "text-muted hover:bg-paper hover:text-ink"
-                } ${isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""}`}
-              >
-                <LayoutDashboard
-                  size={17}
-                  strokeWidth={1.6}
-                  className={pathname.startsWith("/dashboard") ? "text-accent" : ""}
-                />
-                <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
-                  {t("myLibrary")}
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/pricing"
-                onClick={closeAfterNavigate}
-                title={t("pricing")}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
-                  pathname === "/pricing"
-                    ? "bg-accent-soft text-ink"
-                    : "text-muted hover:bg-paper hover:text-ink"
-                } ${isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""}`}
-              >
-                <BadgeDollarSign
-                  size={17}
-                  strokeWidth={1.6}
-                  className={pathname === "/pricing" ? "text-accent" : ""}
-                />
-                <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
-                  {t("pricing")}
-                </span>
-              </Link>
-            </li>
-          </ul>
+              <ul className="space-y-0.5">
+                <li>
+                  <Link
+                    href="/dashboard"
+                    onClick={closeAfterNavigate}
+                    title={t("myLibrary")}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
+                      pathname.startsWith("/dashboard")
+                        ? "bg-accent-soft text-ink"
+                        : "text-muted hover:bg-paper hover:text-ink"
+                    } ${isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""}`}
+                  >
+                    <LayoutDashboard
+                      size={17}
+                      strokeWidth={1.6}
+                      className={pathname.startsWith("/dashboard") ? "text-accent" : ""}
+                    />
+                    <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
+                      {t("myLibrary")}
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/pricing"
+                    onClick={closeAfterNavigate}
+                    title={t("pricing")}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
+                      pathname === "/pricing"
+                        ? "bg-accent-soft text-ink"
+                        : "text-muted hover:bg-paper hover:text-ink"
+                    } ${isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""}`}
+                  >
+                    <BadgeDollarSign
+                      size={17}
+                      strokeWidth={1.6}
+                      className={pathname === "/pricing" ? "text-accent" : ""}
+                    />
+                    <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
+                      {t("pricing")}
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            </>
+          ) : null}
         </nav>
 
         <div
@@ -375,6 +400,16 @@ export function Sidebar({
                       className="block px-3 py-2 text-[13px] font-medium text-muted transition hover:bg-paper hover:text-ink"
                     >
                       {t("myLibrary")}
+                    </Link>
+                    <Link
+                      href="/dashboard/billing"
+                      onClick={() => {
+                        setAccountOpen(false);
+                        closeAfterNavigate();
+                      }}
+                      className="block px-3 py-2 text-[13px] font-medium text-muted transition hover:bg-paper hover:text-ink"
+                    >
+                      {t("billing")}
                     </Link>
                     <button
                       type="button"

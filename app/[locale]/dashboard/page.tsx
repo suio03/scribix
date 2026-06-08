@@ -84,7 +84,7 @@ export default async function DashboardPage({
           <p className="mt-0.5 text-emerald-800/80">
             {t.rich("checkoutOkBody", {
               link: (chunks) => (
-                <Link href="/dashboard/account" className="underline underline-offset-2">
+                <Link href="/dashboard/billing" className="underline underline-offset-2">
                   {chunks}
                 </Link>
               ),

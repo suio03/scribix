@@ -9,6 +9,7 @@
     "browserExtension": "Browser Extension",
     "myLibrary": "Dashboard",
     "pricing": "Pricing",
+    "billing": "Billing",
     "pricingBadge": "50% off",
     "freePlan": "Free Plan",
     "freePlanQuota": "4 / day",
@@ -709,7 +710,7 @@
       "itemCount": "{count, plural, =1 {# item} other {# items}}",
       "newTranscript": "New transcript",
       "checkoutOkTitle": "Subscription active — welcome aboard.",
-      "checkoutOkBody": "Your new plan is live. Visit <link>account</link> to see your usage.",
+      "checkoutOkBody": "Your new plan is live. Visit <link>billing</link> to see your usage.",
       "emptyBody": "No transcripts yet.",
       "emptyCta": "Upload your first file →",
       "tableName": "Name",
@@ -748,6 +749,15 @@
       "cycleYearly": "yearly",
       "statusCanceled": "(canceled — access until period end)",
       "statusExpired": "(expired)"
+    },
+    "billing": {
+      "title": "Billing",
+      "description": "Review your current plan, compare limits, and upgrade without leaving the dashboard.",
+      "currentPlan": "Current plan",
+      "choosePlanTitle": "Choose the right plan",
+      "choosePlanDescription": "Starter works for steady personal transcription. Pro is better when longer files, priority processing, or heavier monthly usage matter.",
+      "checkoutOkTitle": "Subscription active — welcome aboard.",
+      "checkoutOkBody": "Your new plan is live. Usage and subscription controls are shown below."
     },
     "viewer": {
       "back": "← All transcripts",

@@ -9,6 +9,7 @@
     "browserExtension": "Browser-Erweiterung",
     "myLibrary": "Dashboard",
     "pricing": "Preisgestaltung",
+    "billing": "Abrechnung",
     "pricingBadge": "50 % Rabatt",
     "freePlan": "Kostenloser Plan",
     "freePlanQuota": "4 / Tag",
@@ -705,7 +706,7 @@
       "itemCount": "{count, plural, =1 {# Element} other {# Elemente}}",
       "newTranscript": "Neue Transkription",
       "checkoutOkTitle": "Abonnement aktiv – willkommen an Bord.",
-      "checkoutOkBody": "Ihr neuer Plan ist jetzt aktiv. Besuchen Sie <link>Konto</link>, um Ihre Nutzung zu sehen.",
+      "checkoutOkBody": "Ihr neuer Plan ist jetzt aktiv. Besuchen Sie <link>Abrechnung</link>, um Ihre Nutzung zu sehen.",
       "emptyBody": "Noch keine Transkriptionen.",
       "emptyCta": "Laden Sie Ihre erste Datei hoch →",
       "tableName": "Name",
@@ -744,6 +745,15 @@
       "cycleYearly": "jährlich",
       "statusCanceled": "(gekündigt – Zugriff bis Periodenende)",
       "statusExpired": "(abgelaufen)"
+    },
+    "billing": {
+      "title": "Abrechnung",
+      "description": "Prüfen Sie Ihren aktuellen Plan, vergleichen Sie Limits und upgraden Sie direkt im Dashboard.",
+      "currentPlan": "Aktueller Plan",
+      "choosePlanTitle": "Wählen Sie den passenden Plan",
+      "choosePlanDescription": "Starter passt für regelmäßige persönliche Transkription. Pro ist besser für längere Dateien, Prioritätsverarbeitung oder höhere monatliche Nutzung.",
+      "checkoutOkTitle": "Abonnement aktiv – willkommen.",
+      "checkoutOkBody": "Ihr neuer Plan ist aktiv. Nutzung und Abo-Verwaltung werden unten angezeigt."
     },
     "viewer": {
       "back": "← Alle Transkriptionen",
