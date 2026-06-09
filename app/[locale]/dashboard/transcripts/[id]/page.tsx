@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
-import { Link } from "@/i18n/navigation";
+import { getPathname, Link } from "@/i18n/navigation";
 import { redirect } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
@@ -63,6 +63,10 @@ export default async function TranscriptViewerPage({ params }: Params) {
       : null;
 
   const audioAvailable = Boolean(row.audio_r2_key) && !expired;
+  const checkoutSuccessPath = getPathname({
+    href: { pathname: "/dashboard", query: { checkout: "ok" } },
+    locale,
+  });
 
   return (
     <main className="mx-auto max-w-[1400px] px-4 py-10 sm:px-8">
@@ -101,7 +105,10 @@ export default async function TranscriptViewerPage({ params }: Params) {
           paragraphs={aai.paragraphs ?? []}
           sentences={aai.sentences ?? []}
           fallbackText={aai.text ?? ""}
+          sourceLanguage={row.language ?? aai.language_code ?? null}
           initialSpeakerNames={parseSpeakerNames(row.speaker_names_json)}
+          isPaid={user.tier !== "free"}
+          checkoutSuccessPath={checkoutSuccessPath}
         />
       ) : (
         <p className="mt-8 text-sm text-ink/60">{t("missing")}</p>

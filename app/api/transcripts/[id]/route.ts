@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { R2 } from "@/lib/r2";
 import { sanitizeSpeakerNames } from "@/lib/speaker-names";
 
 type Params = { params: Promise<{ id: string }> };
@@ -78,6 +79,16 @@ export async function DELETE(_: Request, { params }: Params) {
     row.transcript_r2_key
       ? env.SCRIBIX_MEDIA.delete(row.transcript_r2_key).catch(() => {})
       : null,
+    deleteTranslationObjects(env, user.id, transcriptId).catch(() => {}),
+    env.SCRIBIX_MEDIA.delete(R2.summaryKey(user.id, transcriptId)).catch(() => {}),
+    env.DB.prepare(`DELETE FROM transcript_translations WHERE transcript_id = ?1`)
+      .bind(transcriptId)
+      .run()
+      .catch(() => {}),
+    env.DB.prepare(`DELETE FROM transcript_summaries WHERE transcript_id = ?1`)
+      .bind(transcriptId)
+      .run()
+      .catch(() => {}),
   ]);
 
   return Response.json({ ok: true });
@@ -120,4 +131,20 @@ export async function PATCH(req: Request, { params }: Params) {
     .run();
 
   return Response.json({ ok: true, speakerNames });
+}
+
+async function deleteTranslationObjects(
+  env: CloudflareEnv,
+  userId: string,
+  transcriptId: string
+): Promise<void> {
+  let cursor: string | undefined;
+  do {
+    const listed = await env.SCRIBIX_MEDIA.list({
+      prefix: R2.translationPrefix(userId, transcriptId),
+      cursor,
+    });
+    await Promise.all(listed.objects.map((object) => env.SCRIBIX_MEDIA.delete(object.key)));
+    cursor = listed.truncated ? listed.cursor : undefined;
+  } while (cursor);
 }

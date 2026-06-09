@@ -2,6 +2,7 @@
 // Submit URL-based transcripts and fetch results.
 
 const AAI_BASE = "https://api.assemblyai.com/v2";
+const AAI_UNDERSTANDING_BASE = "https://llm-gateway.assemblyai.com/v1";
 
 export type AaiSubmit = {
   audio_url: string;
@@ -41,6 +42,48 @@ export type AaiTranscript = {
   paragraphs?: AaiSegment[];
   sentences?: AaiSegment[];
 };
+
+export type AaiTranslatedUtterance = {
+  speaker?: string | null;
+  text: string;
+  start: number;
+  end: number;
+  translated_texts?: Record<string, string>;
+};
+
+export type AaiTranslation = {
+  id?: string;
+  status?: string;
+  text?: string;
+  translated_texts?: Record<string, string>;
+  utterances?: AaiTranslatedUtterance[];
+  speech_understanding?: {
+    response?: {
+      translation?: {
+        status?: string;
+      };
+    };
+  };
+};
+
+type AaiChatCompletion = {
+  choices?: Array<{
+    message?: {
+      content?: string;
+    };
+  }>;
+};
+
+export class AaiApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly details: string
+  ) {
+    super(message);
+    this.name = "AaiApiError";
+  }
+}
 
 function key() {
   const k = process.env.ASSEMBLYAI_API_KEY;
@@ -85,4 +128,68 @@ export async function getSentences(id: string): Promise<AaiSegment[]> {
   if (!res.ok) throw new Error(`AAI sentences fetch failed: ${res.status}`);
   const json = (await res.json()) as { sentences?: AaiSegment[] };
   return json.sentences ?? [];
+}
+
+export async function translateTranscript(
+  transcriptId: string,
+  targetLanguage: string
+): Promise<AaiTranslation> {
+  const res = await fetch(`${AAI_UNDERSTANDING_BASE}/understanding`, {
+    method: "POST",
+    headers: {
+      authorization: key(),
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      transcript_id: transcriptId,
+      speech_understanding: {
+        request: {
+          translation: {
+            target_languages: [targetLanguage],
+            formal: false,
+            match_original_utterance: true,
+          },
+        },
+      },
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`AAI translation failed: ${res.status} ${await res.text()}`);
+  }
+  return res.json();
+}
+
+export async function summarizeTranscriptById(transcriptId: string): Promise<string> {
+  const prompt = [
+    "Summarize this transcript for a busy professional.",
+    "Use this exact structure:",
+    "Overview: one concise paragraph.",
+    "Key points: 3-6 bullets.",
+    "Action items: bullets only if concrete action items are mentioned.",
+    "Keep the summary factual and do not invent names, decisions, or tasks.",
+    "",
+    "Transcript:",
+    "{{ transcript }}",
+  ].join("\n");
+
+  const res = await fetch(`${AAI_UNDERSTANDING_BASE}/chat/completions`, {
+    method: "POST",
+    headers: {
+      authorization: key(),
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      prompt,
+      transcript_id: transcriptId,
+      max_tokens: 900,
+    }),
+  });
+  if (!res.ok) {
+    throw new AaiApiError("AAI summary failed", res.status, await res.text());
+  }
+  const json = (await res.json()) as AaiChatCompletion;
+  const summary = json.choices?.[0]?.message?.content?.trim();
+  if (!summary) throw new Error("AAI summary response was empty");
+  return summary;
 }

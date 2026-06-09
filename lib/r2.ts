@@ -52,5 +52,11 @@ export const R2 = {
     `users/${userId}/${transcriptId}/source.${ext.replace(/^\./, "")}`,
   transcriptKey: (userId: string, transcriptId: string) =>
     `users/${userId}/${transcriptId}/transcript.json`,
+  translationKey: (userId: string, transcriptId: string, lang: string) =>
+    `users/${userId}/${transcriptId}/translations/${lang}.json`,
+  translationPrefix: (userId: string, transcriptId: string) =>
+    `users/${userId}/${transcriptId}/translations/`,
+  summaryKey: (userId: string, transcriptId: string) =>
+    `users/${userId}/${transcriptId}/summary.json`,
   bucket: BUCKET,
 };

@@ -17,7 +17,10 @@ type Props = {
   paragraphs: AaiSegment[];
   sentences: AaiSegment[];
   fallbackText: string;
+  sourceLanguage: string | null;
   initialSpeakerNames: SpeakerNames;
+  isPaid: boolean;
+  checkoutSuccessPath: string;
 };
 
 export function TranscriptWorkspace({
@@ -28,7 +31,10 @@ export function TranscriptWorkspace({
   paragraphs,
   sentences,
   fallbackText,
+  sourceLanguage,
   initialSpeakerNames,
+  isPaid,
+  checkoutSuccessPath,
 }: Props) {
   const [speakerNames, setSpeakerNames] = useState<SpeakerNames>(initialSpeakerNames);
   const [speakerModal, setSpeakerModal] = useState<{
@@ -44,13 +50,17 @@ export function TranscriptWorkspace({
     <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
       <section className="min-w-0">
         <TranscriptViewer
+          id={id}
           audioUrl={audioUrl}
           utterances={utterances}
           paragraphs={paragraphs}
           sentences={sentences}
           fallbackText={fallbackText}
+          sourceLanguage={sourceLanguage}
           speakerNames={speakerNames}
           speakers={speakers}
+          isPaid={isPaid}
+          checkoutSuccessPath={checkoutSuccessPath}
           onOpenSpeakerEditor={(speaker) => setSpeakerModal({ open: true, focusSpeaker: speaker })}
         />
       </section>
