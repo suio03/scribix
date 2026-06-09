@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Waveform } from "./Waveform";
-import { ProgressView, UPLOAD_ACCEPT, useUpload } from "./Uploader";
+import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
 
 type TabId = "upload" | "youtube" | "record";
 type Tab = { id: TabId; label: string; hint: string };
@@ -213,7 +213,7 @@ function UploadPane({
   const t = useTranslations("Generator.upload");
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
-  const { phase, progress, errorMsg, filename, onPick } = useUpload({
+  const { phase, progress, uploadError, filename, onPick, retry } = useUpload({
     signedIn,
     postSignInPath,
     toolSlug: "home",
@@ -274,9 +274,11 @@ function UploadPane({
               />
               {t("button")}
             </button>
-            {errorMsg && (
-              <p className="mt-4 text-[13px] text-red-600">{errorMsg}</p>
-            )}
+            <UploadErrorHelp
+              error={uploadError}
+              onRetry={retry}
+              onChooseFile={() => inputRef.current?.click()}
+            />
           </>
         ) : (
           <ProgressView phase={phase} progress={progress} filename={filename} />

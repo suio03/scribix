@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.0] - 2026-06-09
+
+### Added
+- Added paid AI translation and AI summary support for completed transcript detail pages.
+- Added translation and summary storage metadata, R2 cleanup coverage, and localized pricing feature rows.
+- Added clearer upload failure handling with extraction guidance for oversized video/audio cases.
+
+### Changed
+- Reworked paid feature upgrade prompts into a compact plan selector with localized plan copy and plan-derived prices and limits.
+- Localized non-English sidebar dashboard labels and paid feature upgrade modal copy.
+
+### Fixed
+- Prevented raw upload service error codes from being shown to users while preserving machine-readable error codes for analytics and cleanup logic.
+- Prevented empty translation responses from being cached as completed translations.
+
 ## [0.9.0] - 2026-06-08
 
 ### Added

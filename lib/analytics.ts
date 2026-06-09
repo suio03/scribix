@@ -10,6 +10,7 @@ export type PlausibleEvents = {
     tool_slug: string;
     source?: "upload" | "record";
     input_type?: "audio" | "video" | "unknown";
+    error_type?: "technical" | "product_limit" | "quota" | "auth";
     error_code: string;
     error_message?: string;
   };
