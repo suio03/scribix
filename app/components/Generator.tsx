@@ -142,7 +142,11 @@ export function Generator({
 
             <div className="p-6 sm:p-10">
               {tab === "upload" && (
-                <UploadPane signedIn={signedIn} postSignInPath={postSignInPath} />
+                <UploadPane
+                  signedIn={signedIn}
+                  postSignInPath={postSignInPath}
+                  checkoutSuccessPath={postSignInPath}
+                />
               )}
               {tab === "youtube" && <YouTubePane />}
               {tab === "record" && (
@@ -206,9 +210,11 @@ export function Generator({
 function UploadPane({
   signedIn,
   postSignInPath,
+  checkoutSuccessPath,
 }: {
   signedIn: boolean;
   postSignInPath: string;
+  checkoutSuccessPath: string;
 }) {
   const t = useTranslations("Generator.upload");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -216,6 +222,7 @@ function UploadPane({
   const { phase, progress, uploadError, filename, onPick, retry } = useUpload({
     signedIn,
     postSignInPath,
+    checkoutSuccessPath,
     toolSlug: "home",
   });
 
@@ -278,6 +285,7 @@ function UploadPane({
               error={uploadError}
               onRetry={retry}
               onChooseFile={() => inputRef.current?.click()}
+              checkoutSuccessPath={checkoutSuccessPath}
             />
           </>
         ) : (

@@ -31,6 +31,18 @@ export type PlausibleEvents = {
     cycle: "monthly" | "yearly";
     transaction_id?: string;
   };
+  paddle_load_fail: {
+    tier?: "basic" | "pro";
+    cycle?: "monthly" | "yearly";
+    transaction_id?: string;
+    error_code:
+      | "paddle_config_load_failed"
+      | "paddle_config_missing"
+      | "paddle_initialization_failed"
+      | "paddle_not_initialized"
+      | "paddle_overlay_open_failed";
+    error_message?: string;
+  };
   checkout_completed: {
     tier?: "basic" | "pro";
     cycle?: "monthly" | "yearly";
@@ -52,8 +64,6 @@ export type PlausibleEvents = {
     transaction_id?: string;
     stage:
       | "create_checkout"
-      | "paddle_config"
-      | "paddle_init"
       | "paddle_ready"
       | "open_overlay"
       | "checkout";

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { CloudUpload, FileAudio } from "lucide-react";
-import { ProgressView, useUpload } from "@/app/components/Uploader";
+import { ProgressView, UploadErrorHelp, useUpload } from "@/app/components/Uploader";
 
 export type AudioUploadCardCopy = {
   uploadTab: string;
@@ -30,9 +30,10 @@ export function AudioUploadCard({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
-  const { phase, progress, errorMsg, filename, onPick } = useUpload({
+  const { phase, progress, uploadError, errorMsg, filename, onPick, retry } = useUpload({
     signedIn,
     postSignInPath,
+    checkoutSuccessPath: postSignInPath,
     audioOnly: true,
     toolSlug,
   });
@@ -104,9 +105,15 @@ export function AudioUploadCard({
                   />
                   {signedIn ? copy.signedInButton : copy.button}
                 </button>
-                {errorMsg ? (
+                {errorMsg && !uploadError ? (
                   <p className="mt-4 text-[13px] text-red-600">{errorMsg}</p>
                 ) : null}
+                <UploadErrorHelp
+                  error={uploadError}
+                  onRetry={retry}
+                  onChooseFile={() => inputRef.current?.click()}
+                  checkoutSuccessPath={postSignInPath}
+                />
               </>
             ) : (
               <ProgressView phase={phase} progress={progress} filename={filename} />

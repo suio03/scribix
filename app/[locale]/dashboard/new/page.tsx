@@ -11,6 +11,7 @@ export default async function NewTranscriptPage() {
   const locale = await getLocale();
   const t = await getTranslations("Dashboard.new");
   const newHref = getPathname({ href: "/dashboard/new", locale });
+  const checkoutSuccessPath = newHref;
   const session = await auth();
   let tier: Tier = "free";
 
@@ -34,7 +35,12 @@ export default async function NewTranscriptPage() {
       </div>
 
       <div className="mt-8">
-        <UploadOrRecord signedIn={true} postSignInPath={newHref} tier={tier} />
+        <UploadOrRecord
+          signedIn={true}
+          postSignInPath={newHref}
+          checkoutSuccessPath={checkoutSuccessPath}
+          tier={tier}
+        />
       </div>
     </main>
   );

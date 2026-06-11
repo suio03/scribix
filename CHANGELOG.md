@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.11.0] - 2026-06-11
+
+### Added
+- Added a reusable upgrade plan modal for transcript AI tools and upload quota errors.
+- Added quota upgrade prompts across upload, recording, home upload, and audio-only upload surfaces.
+- Added separate `paddle_load_fail` analytics for Paddle SDK and overlay loading issues.
+
+### Changed
+- Lazy-load Paddle only after signed-in checkout intent instead of initializing Paddle for every page visitor.
+- Reused shared upload error handling across recorder and audio upload cards.
+
+### Fixed
+- Prevented passive Paddle.js preload failures from being counted as checkout failures.
+- Allowed Paddle config and initialization to retry after recoverable soft failures during the same page session.
+
+### Removed
+- Removed the global Paddle provider and its page-load checkout failure tracking.
+
 ## [0.10.0] - 2026-06-09
 
 ### Added

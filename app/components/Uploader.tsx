@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import type { Tier } from "@/lib/plans";
+import { UpgradePlanModal } from "./UpgradePlanModal";
 import { markSignInPending } from "./Track";
 
 const DEFAULT_TOOL_SLUG = "transcribe";
@@ -64,6 +65,8 @@ export type UseUploadOpts = {
   tier?: Tier;
   /** Where to send the user back to after Google sign-in (locale-prefixed path). */
   postSignInPath?: string;
+  /** Where to return after Paddle checkout. Defaults to postSignInPath for upload surfaces. */
+  checkoutSuccessPath?: string;
   /** Restrict uploads to audio files and skip the video extraction path. */
   audioOnly?: boolean;
   /** Analytics tool identifier for attribution across shared upload surfaces. */
@@ -337,6 +340,7 @@ export function Uploader(props: UseUploadOpts) {
             error={uploadError}
             onRetry={retry}
             onChooseFile={() => inputRef.current?.click()}
+            checkoutSuccessPath={props.checkoutSuccessPath ?? props.postSignInPath ?? "/dashboard/new"}
           />
         </>
       ) : (
@@ -350,26 +354,55 @@ export function UploadErrorHelp({
   error,
   onRetry,
   onChooseFile,
+  checkoutSuccessPath,
 }: {
   error: UploadErrorDetail | null;
   onRetry?: () => void;
   onChooseFile?: () => void;
+  checkoutSuccessPath?: string;
 }) {
   const t = useTranslations("Dashboard.uploader");
   const [guideOpen, setGuideOpen] = useState(false);
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
   const showExtractGuide = error?.help === "extract_audio";
+  const showQuotaUpgrade =
+    checkoutSuccessPath !== undefined &&
+    (error?.code === "no_quota" || error?.code === "insufficient_quota");
 
   useEffect(() => {
     if (showExtractGuide) setGuideOpen(true);
   }, [showExtractGuide, error?.code, error?.message]);
 
+  useEffect(() => {
+    if (showQuotaUpgrade) setUpgradeOpen(true);
+  }, [showQuotaUpgrade, error?.code, error?.message]);
+
   if (!error) return null;
 
   if (!showExtractGuide) {
     return (
-      <div className="mt-4 text-sm text-red-600">
-        <p>{error.message}</p>
-      </div>
+      <>
+        <div className="mt-4 text-sm text-red-600">
+          <p>{error.message}</p>
+          {showQuotaUpgrade ? (
+            <button
+              type="button"
+              onClick={() => setUpgradeOpen(true)}
+              className="mt-3 rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper transition hover:bg-accent"
+            >
+              {t("upgradePlan")}
+            </button>
+          ) : null}
+        </div>
+        {showQuotaUpgrade ? (
+          <UpgradePlanModal
+            reason="quota"
+            open={upgradeOpen}
+            checkoutSuccessPath={checkoutSuccessPath}
+            onClose={() => setUpgradeOpen(false)}
+          />
+        ) : null}
+      </>
     );
   }
 

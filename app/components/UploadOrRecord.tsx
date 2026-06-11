@@ -12,10 +12,12 @@ type Tab = "upload" | "record";
 export function UploadOrRecord({
   signedIn,
   postSignInPath,
+  checkoutSuccessPath,
   tier = "free",
 }: {
   signedIn: boolean;
   postSignInPath: string;
+  checkoutSuccessPath?: string;
   tier?: Tier;
 }) {
   const t = useTranslations("Dashboard.uploadOrRecord");
@@ -37,9 +39,19 @@ export function UploadOrRecord({
         />
       </div>
       {tab === "upload" ? (
-        <Uploader signedIn={signedIn} postSignInPath={postSignInPath} tier={tier} />
+        <Uploader
+          signedIn={signedIn}
+          postSignInPath={postSignInPath}
+          checkoutSuccessPath={checkoutSuccessPath}
+          tier={tier}
+        />
       ) : (
-        <Recorder signedIn={signedIn} postSignInPath={postSignInPath} tier={tier} />
+        <Recorder
+          signedIn={signedIn}
+          postSignInPath={postSignInPath}
+          checkoutSuccessPath={checkoutSuccessPath}
+          tier={tier}
+        />
       )}
     </div>
   );

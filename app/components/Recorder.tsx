@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Mic, Square } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { ProgressView, useUpload, type UseUploadOpts } from "./Uploader";
+import { ProgressView, UploadErrorHelp, useUpload, type UseUploadOpts } from "./Uploader";
 
 const MAX_RECORDING_SEC = 30 * 60;
 
@@ -11,7 +11,7 @@ type RecState = "idle" | "recording";
 
 export function Recorder(props: UseUploadOpts) {
   const t = useTranslations("Dashboard.recorder");
-  const { phase, progress, errorMsg, filename, onPick } = useUpload(props);
+  const { phase, progress, uploadError, errorMsg, filename, onPick, retry } = useUpload(props);
   const [recState, setRecState] = useState<RecState>("idle");
   const [seconds, setSeconds] = useState(0);
   const [recError, setRecError] = useState<string | null>(null);
@@ -117,9 +117,14 @@ export function Recorder(props: UseUploadOpts) {
           ? t("recording", { min: MAX_RECORDING_SEC / 60 })
           : t("tapToRecord", { min: MAX_RECORDING_SEC / 60 })}
       </p>
-      {(recError || errorMsg) && (
+      {(recError || (errorMsg && !uploadError)) && (
         <p className="mt-4 text-sm text-red-600">{recError ?? errorMsg}</p>
       )}
+      <UploadErrorHelp
+        error={uploadError}
+        onRetry={retry}
+        checkoutSuccessPath={props.checkoutSuccessPath ?? props.postSignInPath ?? "/dashboard/new"}
+      />
     </div>
   );
 }
