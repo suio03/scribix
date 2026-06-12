@@ -59,7 +59,19 @@
         "label": "字幕（SRT/VTT）",
         "href": "#features"
       }
-    ]
+    ],
+    "currentPlanTitle": "現在のプラン",
+    "manageBilling": "請求を管理",
+    "youtubeUsageTitle": "YouTube 残り",
+    "youtubeUsageRemaining": "残り {remaining} 件",
+    "youtubeUsageMeter": "YouTube インポート {used} / {quota} 件使用",
+    "tierFree": "無料",
+    "tierBasic": "Starter",
+    "tierPro": "Pro Unlimited",
+    "cycleMonthly": "月額",
+    "cycleYearly": "年額",
+    "statusCanceled": "キャンセル済み",
+    "statusExpired": "期限切れ"
   },
   "Header": {
     "tryFree": "無料で試す",
@@ -483,6 +495,7 @@
     "faqTitle": "料金FAQ",
     "featureRows": [
       {
+        "key": "transcriptFiles",
         "label": "文字起こしファイル",
         "values": {
           "free": "合計45分まで",
@@ -491,6 +504,7 @@
         }
       },
       {
+        "key": "monthlyMinutes",
         "label": "月間分数",
         "values": {
           "free": "生涯45分",
@@ -499,6 +513,7 @@
         }
       },
       {
+        "key": "youtubeCaptionImports",
         "label": "YouTube caption imports",
         "values": {
           "free": "5 lifetime",
@@ -507,6 +522,7 @@
         }
       },
       {
+        "key": "maxYoutubeCaptionVideo",
         "label": "Max YouTube caption video",
         "values": {
           "free": "2 hours",
@@ -515,6 +531,7 @@
         }
       },
       {
+        "key": "maxFileLength",
         "label": "最大ファイル長",
         "values": {
           "free": "45分",
@@ -523,6 +540,7 @@
         }
       },
       {
+        "key": "maxFileSize",
         "label": "最大ファイルサイズ",
         "values": {
           "free": "1 GB",
@@ -531,6 +549,7 @@
         }
       },
       {
+        "key": "processingQueue",
         "label": "処理キュー",
         "values": {
           "free": "無料キュー",
@@ -539,6 +558,7 @@
         }
       },
       {
+        "key": "accuracyModel",
         "label": "精度モデル",
         "values": {
           "free": "標準",
@@ -547,6 +567,7 @@
         }
       },
       {
+        "key": "aiTranslation",
         "label": "AI翻訳",
         "values": {
           "free": "いいえ",
@@ -555,6 +576,7 @@
         }
       },
       {
+        "key": "speakerLabels",
         "label": "話者ラベル",
         "values": {
           "free": "はい",
@@ -563,6 +585,7 @@
         }
       },
       {
+        "key": "exports",
         "label": "エクスポート",
         "values": {
           "free": "TXT, DOCX, SRT, VTT, CSV",
@@ -571,6 +594,7 @@
         }
       },
       {
+        "key": "aiSummaries",
         "label": "AI要約",
         "values": {
           "free": "いいえ",
@@ -633,7 +657,12 @@
         "question": "有料プランに無料トライアルはありますか？",
         "answer": "はい。StarterとProはいずれも14日間無料で、トライアル終了前ならいつでもキャンセルできます。"
       }
-    ]
+    ],
+    "aiFeatures": "AI要約 + 翻訳",
+    "included": "含まれます",
+    "paidIncludedTitle": "すべての有料プランに含まれます",
+    "paidIncludedDescription": "有料プラン共通の機能はここにまとめ、プランごとの差分を比較しやすくしています。",
+    "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
   },
   "FAQ": {
     "label": "よくある質問",
@@ -775,12 +804,14 @@
     },
     "billing": {
       "title": "請求",
-      "description": "現在のプランを確認し、制限を比較して、Dashboard 内でアップグレードできます。",
+      "description": "有料プランの上限を比較し、アップグレードやサブスクリプション管理を行えます。",
       "currentPlan": "現在のプラン",
       "choosePlanTitle": "適切なプランを選択",
       "choosePlanDescription": "Starter は継続的な個人利用に適しています。長いファイル、優先処理、または月間利用が多い場合は Pro が適しています。",
       "checkoutOkTitle": "サブスクリプションがアクティブです—ようこそ。",
-      "checkoutOkBody": "新しいプランが有効になりました。使用量とサブスクリプション管理は下に表示されます。"
+      "checkoutOkBody": "新しいプランが有効になりました。使用量とサブスクリプション管理は下に表示されます。",
+      "aiFeatures": "AI要約 + 翻訳",
+      "included": "含まれます"
     },
     "viewer": {
       "back": "← すべての文字起こし",

@@ -59,7 +59,19 @@
         "label": "Sous-titres (SRT/VTT)",
         "href": "#features"
       }
-    ]
+    ],
+    "currentPlanTitle": "Forfait actuel",
+    "manageBilling": "Gérer la facturation",
+    "youtubeUsageTitle": "YouTube restant",
+    "youtubeUsageRemaining": "{remaining} imports restants",
+    "youtubeUsageMeter": "{used} / {quota} imports YouTube utilisés",
+    "tierFree": "Gratuit",
+    "tierBasic": "Starter",
+    "tierPro": "Pro Unlimited",
+    "cycleMonthly": "mensuel",
+    "cycleYearly": "annuel",
+    "statusCanceled": "annulé",
+    "statusExpired": "expiré"
   },
   "Header": {
     "tryFree": "Essayer gratuitement",
@@ -483,6 +495,7 @@
     "faqTitle": "FAQ tarification",
     "featureRows": [
       {
+        "key": "transcriptFiles",
         "label": "Fichiers de transcription",
         "values": {
           "free": "Limité à 45 min au total",
@@ -491,6 +504,7 @@
         }
       },
       {
+        "key": "monthlyMinutes",
         "label": "Minutes mensuelles",
         "values": {
           "free": "45 à vie",
@@ -499,6 +513,7 @@
         }
       },
       {
+        "key": "youtubeCaptionImports",
         "label": "YouTube caption imports",
         "values": {
           "free": "5 lifetime",
@@ -507,6 +522,7 @@
         }
       },
       {
+        "key": "maxYoutubeCaptionVideo",
         "label": "Max YouTube caption video",
         "values": {
           "free": "2 hours",
@@ -515,6 +531,7 @@
         }
       },
       {
+        "key": "maxFileLength",
         "label": "Durée max. du fichier",
         "values": {
           "free": "45 min",
@@ -523,6 +540,7 @@
         }
       },
       {
+        "key": "maxFileSize",
         "label": "Taille max. du fichier",
         "values": {
           "free": "1 GB",
@@ -531,6 +549,7 @@
         }
       },
       {
+        "key": "processingQueue",
         "label": "File de traitement",
         "values": {
           "free": "File gratuite",
@@ -539,6 +558,7 @@
         }
       },
       {
+        "key": "accuracyModel",
         "label": "Modèle de précision",
         "values": {
           "free": "Standard",
@@ -547,6 +567,7 @@
         }
       },
       {
+        "key": "aiTranslation",
         "label": "Traduction IA",
         "values": {
           "free": "Non",
@@ -555,6 +576,7 @@
         }
       },
       {
+        "key": "speakerLabels",
         "label": "Étiquettes de locuteurs",
         "values": {
           "free": "Oui",
@@ -563,6 +585,7 @@
         }
       },
       {
+        "key": "exports",
         "label": "Exports",
         "values": {
           "free": "TXT, DOCX, SRT, VTT, CSV",
@@ -571,6 +594,7 @@
         }
       },
       {
+        "key": "aiSummaries",
         "label": "Résumés IA",
         "values": {
           "free": "Non",
@@ -633,7 +657,12 @@
         "question": "Y a-t-il un essai gratuit sur les offres payantes ?",
         "answer": "Oui. Starter et Pro Unlimited incluent tous deux 14 jours gratuits, et vous pouvez annuler à tout moment avant la fin de l'essai."
       }
-    ]
+    ],
+    "aiFeatures": "Résumés IA + traduction",
+    "included": "Inclus",
+    "paidIncludedTitle": "Inclus dans chaque forfait payant",
+    "paidIncludedDescription": "Les fonctionnalités communes aux forfaits payants sont regroupées ici pour rendre les vraies différences plus faciles à comparer.",
+    "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
   },
   "FAQ": {
     "label": "FAQ",
@@ -775,12 +804,14 @@
     },
     "billing": {
       "title": "Facturation",
-      "description": "Consultez votre plan actuel, comparez les limites et changez de plan sans quitter le dashboard.",
+      "description": "Comparez les limites des forfaits payants, passez à une offre supérieure ou gérez votre abonnement.",
       "currentPlan": "Plan actuel",
       "choosePlanTitle": "Choisir le bon plan",
       "choosePlanDescription": "Starter convient à une transcription personnelle régulière. Pro est préférable pour les fichiers plus longs, le traitement prioritaire ou une utilisation mensuelle plus élevée.",
       "checkoutOkTitle": "Abonnement actif — bienvenue.",
-      "checkoutOkBody": "Votre nouveau plan est actif. L'utilisation et les contrôles d'abonnement sont affichés ci-dessous."
+      "checkoutOkBody": "Votre nouveau plan est actif. L'utilisation et les contrôles d'abonnement sont affichés ci-dessous.",
+      "aiFeatures": "Résumés IA + traduction",
+      "included": "Inclus"
     },
     "viewer": {
       "back": "← Toutes les transcriptions",

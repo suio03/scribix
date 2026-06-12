@@ -163,50 +163,6 @@ export function Generator({
             </div>
           </div>
         </div>
-
-        <div className="mt-10">
-          <div className="flex items-baseline justify-between border-b border-line pb-3">
-            <h2 className="font-display text-[20px] tracking-tight">
-              {t("examplesTitle")}
-            </h2>
-            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
-              {t("examplesHint")}
-            </span>
-          </div>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-            {examples.map((ex, i) => {
-              const Icon = exampleIcons[i];
-              return (
-                <li key={i}>
-                  <button
-                    type="button"
-                    className="group flex w-full items-center gap-4 rounded-xl border border-line bg-card p-4 text-left transition hover:-translate-y-0.5 hover:border-ink/40"
-                  >
-                    <span
-                      className={`inline-grid size-11 shrink-0 place-items-center rounded-lg bg-paper ${ex.color}`}
-                    >
-                      <Icon size={20} strokeWidth={1.6} />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[14px] font-medium text-ink">
-                        {ex.title}
-                      </span>
-                      <span className="mt-0.5 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.15em] text-muted">
-                        <span>{ex.type}</span>
-                        <span className="size-0.5 rounded-full bg-muted/60" />
-                        <span className="tabular">{ex.duration}</span>
-                      </span>
-                    </span>
-                    <Waveform
-                      bars={14}
-                      className="hidden h-7 text-line group-hover:text-accent sm:flex"
-                    />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
       </div>
     </section>
   );

@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.12.0] - 2026-06-13
+
+### Added
+- Added YouTube caption import from pasted video URLs, including caption track selection, video embeds, grouped transcript display, and playback-linked transcript highlighting.
+- Added separate YouTube caption import quotas, video duration limits, inspect rate limiting, and D1 metadata for YouTube transcripts.
+- Added OpenAI-backed transcript summaries with sanitized user-facing errors.
+- Added sidebar usage for both transcription minutes and YouTube caption imports.
+- Added stable pricing feature row keys and shared compact feature-row builders for pricing and billing pages.
+
+### Changed
+- Simplified dashboard billing into compact paid plan comparison cards and moved current plan usage into the sidebar.
+- Simplified public pricing cards to focus on purchase-decision features, with shared paid features shown in a separate section.
+- Hid translation controls for YouTube-sourced transcripts while keeping summaries available.
+- Improved upload transport retry handling, retry UI, and upload failure analytics diagnostics.
+
+### Fixed
+- Removed localized pricing feature selection that depended on English labels or hidden row positions.
+- Prevented OpenAI/provider implementation details from appearing in user-facing summary errors.
+- Prevented YouTube caption fetching from using unvalidated caption hosts.
+
+### Removed
+- Removed the landing generator example list from the primary tool section.
+
 ## [0.11.0] - 2026-06-11
 
 ### Added

@@ -59,7 +59,19 @@
         "label": "Subtítulos (SRT/VTT)",
         "href": "#features"
       }
-    ]
+    ],
+    "currentPlanTitle": "Plan actual",
+    "manageBilling": "Gestionar facturación",
+    "youtubeUsageTitle": "YouTube restante",
+    "youtubeUsageRemaining": "{remaining} importaciones restantes",
+    "youtubeUsageMeter": "{used} / {quota} importaciones de YouTube usadas",
+    "tierFree": "Gratis",
+    "tierBasic": "Starter",
+    "tierPro": "Pro Unlimited",
+    "cycleMonthly": "mensual",
+    "cycleYearly": "anual",
+    "statusCanceled": "cancelado",
+    "statusExpired": "vencido"
   },
   "Header": {
     "tryFree": "Probar gratis",
@@ -483,6 +495,7 @@
     "faqTitle": "Preguntas sobre precios",
     "featureRows": [
       {
+        "key": "transcriptFiles",
         "label": "Archivos de transcripción",
         "values": {
           "free": "Limitado a 45 min en total",
@@ -491,6 +504,7 @@
         }
       },
       {
+        "key": "monthlyMinutes",
         "label": "Minutos mensuales",
         "values": {
           "free": "45 de por vida",
@@ -499,6 +513,7 @@
         }
       },
       {
+        "key": "youtubeCaptionImports",
         "label": "YouTube caption imports",
         "values": {
           "free": "5 lifetime",
@@ -507,6 +522,7 @@
         }
       },
       {
+        "key": "maxYoutubeCaptionVideo",
         "label": "Max YouTube caption video",
         "values": {
           "free": "2 hours",
@@ -515,6 +531,7 @@
         }
       },
       {
+        "key": "maxFileLength",
         "label": "Duración máxima de archivo",
         "values": {
           "free": "45 min",
@@ -523,6 +540,7 @@
         }
       },
       {
+        "key": "maxFileSize",
         "label": "Tamaño máximo de archivo",
         "values": {
           "free": "1 GB",
@@ -531,6 +549,7 @@
         }
       },
       {
+        "key": "processingQueue",
         "label": "Cola de procesamiento",
         "values": {
           "free": "Cola gratuita",
@@ -539,6 +558,7 @@
         }
       },
       {
+        "key": "accuracyModel",
         "label": "Modelo de precisión",
         "values": {
           "free": "Estándar",
@@ -547,6 +567,7 @@
         }
       },
       {
+        "key": "aiTranslation",
         "label": "Traducción con IA",
         "values": {
           "free": "No",
@@ -555,6 +576,7 @@
         }
       },
       {
+        "key": "speakerLabels",
         "label": "Etiquetas de hablante",
         "values": {
           "free": "Sí",
@@ -563,6 +585,7 @@
         }
       },
       {
+        "key": "exports",
         "label": "Exportaciones",
         "values": {
           "free": "TXT, DOCX, SRT, VTT, CSV",
@@ -571,6 +594,7 @@
         }
       },
       {
+        "key": "aiSummaries",
         "label": "Resúmenes IA",
         "values": {
           "free": "No",
@@ -633,7 +657,12 @@
         "question": "¿Hay prueba gratis en los planes de pago?",
         "answer": "Sí. Starter y Pro Unlimited incluyen 14 días gratis, y puedes cancelar en cualquier momento antes de que termine la prueba."
       }
-    ]
+    ],
+    "aiFeatures": "Resúmenes IA + traducción",
+    "included": "Incluido",
+    "paidIncludedTitle": "Incluido en todos los planes de pago",
+    "paidIncludedDescription": "Las funciones compartidas de los planes de pago quedan fuera de las tarjetas para que las diferencias reales sean más fáciles de comparar.",
+    "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
   },
   "FAQ": {
     "label": "Preguntas frecuentes",
@@ -775,12 +804,14 @@
     },
     "billing": {
       "title": "Facturación",
-      "description": "Revisa tu plan actual, compara límites y actualiza sin salir del dashboard.",
+      "description": "Compara los límites de los planes de pago, actualiza o gestiona tu suscripción.",
       "currentPlan": "Plan actual",
       "choosePlanTitle": "Elige el plan adecuado",
       "choosePlanDescription": "Starter funciona para transcripción personal constante. Pro es mejor para archivos más largos, procesamiento prioritario o más uso mensual.",
       "checkoutOkTitle": "Suscripción activa — bienvenido.",
-      "checkoutOkBody": "Tu nuevo plan está activo. El uso y los controles de suscripción aparecen abajo."
+      "checkoutOkBody": "Tu nuevo plan está activo. El uso y los controles de suscripción aparecen abajo.",
+      "aiFeatures": "Resúmenes IA + traducción",
+      "included": "Incluido"
     },
     "viewer": {
       "back": "← Todos los transcripts",

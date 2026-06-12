@@ -59,6 +59,19 @@ class UploadFlowError extends Error {
   }
 }
 
+class UploadTransportError extends Error {
+  constructor(
+    public code: "upload_network_error" | "upload_stalled" | "upload_http_error",
+    message: string,
+    public attempts: number,
+    public elapsedMs: number,
+    public status?: number
+  ) {
+    super(message);
+    this.name = "UploadTransportError";
+  }
+}
+
 export type UseUploadOpts = {
   signedIn: boolean;
   /** Current account tier, used only for display copy in shared upload surfaces. */
@@ -169,6 +182,8 @@ export function useUpload({
       let transcriptId: string | null = null;
       let keepTranscript = false;
       let step = "preparing";
+      let uploadBytes = file.size;
+      let uploadDurationSecEstimate: number | undefined;
 
       try {
         const isVideo = inputType === "video";
@@ -176,6 +191,7 @@ export function useUpload({
           durationSecOverride && durationSecOverride > 0
             ? durationSecOverride
             : await readMediaDuration(file, inputType);
+        uploadDurationSecEstimate = durationSec || undefined;
 
         let uploadBody: Blob = file;
         let uploadFilename = file.name;
@@ -198,6 +214,8 @@ export function useUpload({
           uploadMime = blob.type || (ext === "wav" ? "audio/wav" : "audio/mpeg");
           uploadDurationSec = extractedDurationSec || durationSec;
         }
+        uploadBytes = uploadBody.size;
+        uploadDurationSecEstimate = uploadDurationSec || undefined;
 
         // Pre-flight: server validates duration cap + quota before upload.
         const initRes = await fetch("/api/transcripts/init", {
@@ -257,6 +275,13 @@ export function useUpload({
           error_type: uploadFailure.type,
           error_code: uploadFailure.code,
           error_message: errorSummary(uploadFailure.message),
+          ...uploadFailureDiagnostics({
+            err,
+            step,
+            fileSizeBytes: uploadBytes,
+            durationSec: uploadDurationSecEstimate,
+            retryable: uploadFailure.retryable,
+          }),
         });
         if (uploadFailure.code === "persist_failed") {
           keepTranscript = true;
@@ -384,15 +409,26 @@ export function UploadErrorHelp({
       <>
         <div className="mt-4 text-sm text-red-600">
           <p>{error.message}</p>
-          {showQuotaUpgrade ? (
-            <button
-              type="button"
-              onClick={() => setUpgradeOpen(true)}
-              className="mt-3 rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper transition hover:bg-accent"
-            >
-              {t("upgradePlan")}
-            </button>
-          ) : null}
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+            {error.retryable && onRetry ? (
+              <button
+                type="button"
+                onClick={onRetry}
+                className="rounded-full border border-line bg-paper px-4 py-2 text-[13px] font-medium text-ink transition hover:border-ink/40 hover:bg-card"
+              >
+                {t("retry")}
+              </button>
+            ) : null}
+            {showQuotaUpgrade ? (
+              <button
+                type="button"
+                onClick={() => setUpgradeOpen(true)}
+                className="rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper transition hover:bg-accent"
+              >
+                {t("upgradePlan")}
+              </button>
+            ) : null}
+          </div>
         </div>
         {showQuotaUpgrade ? (
           <UpgradePlanModal
@@ -613,6 +649,7 @@ function uploadWithProgress(
   onProgress: (frac: number) => void,
   t: UploaderT
 ): Promise<void> {
+  const startedAt = Date.now();
   const attempt = (n: number): Promise<void> =>
     new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -622,7 +659,14 @@ function uploadWithProgress(
         if (Date.now() - lastTick > UPLOAD_STALL_MS) {
           clearInterval(stallTimer);
           xhr.abort();
-          reject(new Error("upload_stalled"));
+          reject(
+            new UploadTransportError(
+              "upload_stalled",
+              t("uploadNetworkError"),
+              n,
+              Date.now() - startedAt
+            )
+          );
         }
       }, 5_000);
       const done = () => clearInterval(stallTimer);
@@ -639,19 +683,33 @@ function uploadWithProgress(
       xhr.addEventListener("load", () => {
         done();
         if (xhr.status >= 200 && xhr.status < 300) resolve();
-        else reject(new Error(`Upload failed: ${xhr.status} ${xhr.responseText.slice(0, 200)}`));
+        else {
+          reject(
+            new UploadTransportError(
+              "upload_http_error",
+              `Upload failed: ${xhr.status} ${xhr.responseText.slice(0, 200)}`,
+              n,
+              Date.now() - startedAt,
+              xhr.status
+            )
+          );
+        }
       });
       xhr.addEventListener("error", () => {
         done();
-        reject(new Error(t("uploadNetworkError")));
+        reject(
+          new UploadTransportError(
+            "upload_network_error",
+            t("uploadNetworkError"),
+            n,
+            Date.now() - startedAt
+          )
+        );
       });
       xhr.addEventListener("abort", () => done());
       xhr.send(file);
     }).catch((err) => {
-      const retryable =
-        err instanceof Error &&
-        (err.message === "upload_stalled" || err.message === t("uploadNetworkError"));
-      if (retryable && n < UPLOAD_MAX_ATTEMPTS) {
+      if (isRetryableTransportError(err) && n < UPLOAD_MAX_ATTEMPTS) {
         onProgress(0);
         return attempt(n + 1);
       }
@@ -721,6 +779,50 @@ function uploadErrorMessage(err: unknown, step: string, t: UploaderT): string {
   return t("uploadFallback", { step });
 }
 
+function isRetryableTransportError(err: unknown): boolean {
+  if (!(err instanceof UploadTransportError)) return false;
+  if (err.code === "upload_network_error" || err.code === "upload_stalled") return true;
+  return err.status === 408 || err.status === 429 || (err.status !== undefined && err.status >= 500);
+}
+
+function uploadFailureDiagnostics({
+  err,
+  step,
+  fileSizeBytes,
+  durationSec,
+  retryable,
+}: {
+  err: unknown;
+  step: string;
+  fileSizeBytes: number;
+  durationSec?: number;
+  retryable?: boolean;
+}): {
+  step: string;
+  file_size_mb: number;
+  duration_sec?: number;
+  upload_attempts?: number;
+  upload_elapsed_sec?: number;
+  upload_status?: number;
+  retryable?: boolean;
+} {
+  const diagnostics = {
+    step,
+    file_size_mb: Number((fileSizeBytes / (1024 * 1024)).toFixed(2)),
+    duration_sec: durationSec ? Math.round(durationSec) : undefined,
+    retryable,
+  };
+
+  if (!(err instanceof UploadTransportError)) return diagnostics;
+
+  return {
+    ...diagnostics,
+    upload_attempts: err.attempts,
+    upload_elapsed_sec: Number((err.elapsedMs / 1000).toFixed(1)),
+    upload_status: err.status,
+  };
+}
+
 function makeUploadError(
   code: string,
   message: string,
@@ -741,6 +843,12 @@ function uploadErrorDetail(err: unknown, step: string, t: UploaderT): UploadErro
     return makeUploadError(err.code, err.message, err.type, {
       help: err.help,
       retryable: err.retryable,
+    });
+  }
+
+  if (err instanceof UploadTransportError) {
+    return makeUploadError(err.code, err.message, "technical", {
+      retryable: isRetryableTransportError(err),
     });
   }
 

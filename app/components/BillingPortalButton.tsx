@@ -3,10 +3,12 @@
 import { useState } from "react";
 
 export function BillingPortalButton({
+  className = "rounded-full border border-line px-4 py-2 text-[13px] font-medium hover:bg-ink/5 disabled:cursor-wait disabled:opacity-60",
   label,
   openingLabel,
   errorLabel,
 }: {
+  className?: string;
   label: string;
   openingLabel: string;
   errorLabel: string;
@@ -41,7 +43,7 @@ export function BillingPortalButton({
         type="button"
         onClick={openPortal}
         disabled={pending}
-        className="rounded-full border border-line px-4 py-2 text-[13px] font-medium hover:bg-ink/5 disabled:cursor-wait disabled:opacity-60"
+        className={className}
       >
         {pending ? openingLabel : label}
       </button>

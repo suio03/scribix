@@ -10,7 +10,6 @@ import { Partners } from "@/app/components/Partners";
 import {
   PricingPlans,
   type PlanCopy,
-  type PlanFeatureCopy,
   type PlanId,
 } from "@/app/components/PricingPlans";
 import { Shell } from "@/app/components/Shell";
@@ -19,6 +18,11 @@ import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import type { BillingCycle, Tier } from "@/lib/plans";
+import {
+  compactPricingRows,
+  includedPaidRows,
+  type PlanFeatureCopy,
+} from "@/lib/pricing-feature-rows";
 
 const SITE = "https://scribix.io";
 const PATH = "/pricing";
@@ -82,6 +86,8 @@ export default async function PricingPage({
   const t = await getTranslations("PricingPage");
   const plans = t.raw("plans") as PlanCopy[];
   const featureRows = t.raw("featureRows") as PlanFeatureCopy[];
+  const pricingFeatureRows = compactPricingRows(featureRows, t);
+  const includedPaidFeatures = includedPaidRows(featureRows, t);
   const faqs = t.raw("faqs") as FaqCopy[];
   const chooseLabels = Object.fromEntries(
     plans.map((plan) => [plan.id, t("chooseLabel", { plan: plan.name })])
@@ -127,12 +133,18 @@ export default async function PricingPage({
               currentPlanLabel={t("currentPlanLabel")}
               currentTier={currentTier}
               dashboardNewPath={dashboardNewPath}
-              featureRows={featureRows}
+              density="compact"
+              featureRows={pricingFeatureRows}
               noCreditCard={t("noCreditCard")}
               plans={plans}
               signedIn={!!session}
               supportUpgradeLabel={t("supportUpgradeLabel")}
               unavailableLabel={t("unavailableLabel")}
+            />
+            <IncludedPaidPlans
+              description={t("paidIncludedDescription")}
+              features={includedPaidFeatures}
+              title={t("paidIncludedTitle")}
             />
           </div>
         </section>
@@ -181,4 +193,41 @@ function pathLanguages(path: string): Record<string, string> {
 function metadataUrlFor(locale: string, path: string): URL {
   const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   return new URL(`${prefix}${path}`, SITE);
+}
+
+function IncludedPaidPlans({
+  description,
+  features,
+  title,
+}: {
+  description: string;
+  features: PlanFeatureCopy[];
+  title: string;
+}) {
+  return (
+    <section className="mt-8 border border-line bg-card p-5 sm:p-6">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:items-start">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+            {title}
+          </p>
+          <p className="mt-2 max-w-[42ch] text-[14px] leading-6 text-muted">
+            {description}
+          </p>
+        </div>
+        <dl className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2">
+          {features.map((feature) => (
+            <div key={feature.key} className="bg-paper px-4 py-3">
+              <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                {feature.label}
+              </dt>
+              <dd className="mt-1 text-[14px] font-medium leading-6 text-ink">
+                {feature.values.starter}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  );
 }

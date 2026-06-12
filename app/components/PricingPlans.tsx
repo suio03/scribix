@@ -5,9 +5,10 @@ import {
   FreePlanButton,
   PaddleCheckoutButton,
 } from "@/app/components/PaddleCheckoutButton";
+import type { PlanFeatureCopy, PricingPlanId } from "@/lib/pricing-feature-rows";
 import type { BillingCycle, Tier } from "@/lib/plans";
 
-export type PlanId = "free" | "starter" | "pro";
+export type PlanId = PricingPlanId;
 
 export type PlanCopy = {
   id: PlanId;
@@ -18,11 +19,6 @@ export type PlanCopy = {
   annual?: string;
   annualPrice?: string;
   annualCadence?: string;
-};
-
-export type PlanFeatureCopy = {
-  label: string;
-  values: Record<PlanId, string>;
 };
 
 type PricingPlansProps = {
@@ -39,6 +35,7 @@ type PricingPlansProps = {
   currentCycle?: BillingCycle | null;
   currentTier?: Tier;
   dashboardNewPath: string;
+  density?: "default" | "compact";
   featureRows: PlanFeatureCopy[];
   noCreditCard: string;
   plans: PlanCopy[];
@@ -56,6 +53,7 @@ export function PricingPlans({
   currentCycle = null,
   currentTier = "free",
   dashboardNewPath,
+  density = "default",
   featureRows,
   noCreditCard,
   plans,
@@ -102,6 +100,7 @@ export function PricingPlans({
             currentPlanLabel={currentPlanLabel}
             currentTier={currentTier}
             dashboardNewPath={dashboardNewPath}
+            density={density}
             featureRows={featureRows}
             noCreditCard={noCreditCard}
             plan={plan}
@@ -148,6 +147,7 @@ function PlanCard({
   currentPlanLabel,
   currentTier,
   dashboardNewPath,
+  density,
   featureRows,
   noCreditCard,
   plan,
@@ -163,6 +163,7 @@ function PlanCard({
   currentPlanLabel: string;
   currentTier: Tier;
   dashboardNewPath: string;
+  density: "default" | "compact";
   featureRows: PlanFeatureCopy[];
   noCreditCard: string;
   plan: PlanCopy;
@@ -176,11 +177,11 @@ function PlanCard({
 
   return (
     <article
-      className={`relative flex min-h-[590px] flex-col border p-6 transition ${
+      className={`relative flex flex-col border p-6 transition ${
         primary
           ? "border-ink bg-ink text-paper shadow-[8px_8px_0_0_var(--accent)]"
           : "border-line bg-card hover:border-ink/35"
-      }`}
+      } ${density === "compact" ? "min-h-[520px]" : "min-h-[590px]"}`}
     >
       {primary ? (
         <div className="absolute right-5 top-5 inline-flex items-center gap-1.5 bg-accent px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-paper">
@@ -188,7 +189,7 @@ function PlanCard({
         </div>
       ) : null}
 
-      <div className="mt-7">
+      <div className={density === "compact" ? "mt-6" : "mt-7"}>
         <h2 className="font-display text-[31px] font-medium tracking-tight">
           {plan.name}
         </h2>
@@ -201,7 +202,7 @@ function PlanCard({
         </p>
       </div>
 
-      <div className="mt-8">
+      <div className={density === "compact" ? "mt-7" : "mt-8"}>
         <div className="flex flex-wrap items-end gap-x-2 gap-y-1">
           <span className="whitespace-nowrap font-display text-[56px] font-medium leading-none tracking-tight tabular">
             {display.price}
@@ -225,10 +226,15 @@ function PlanCard({
         </p>
       </div>
 
-      <dl className="mt-8 grid gap-0 border-t border-current/15">
+      <dl
+        className={`${
+          density === "compact" ? "mt-7" : "mt-8"
+        } grid gap-0 border-t border-current/15`}
+      >
         {featureRows.map((row) => (
           <Spec
-            key={row.label}
+            key={row.key}
+            density={density}
             label={row.label}
             value={row.values[plan.id]}
             primary={primary}
@@ -357,16 +363,22 @@ function tierForPlan(planId: PlanId): Tier {
 }
 
 function Spec({
+  density = "default",
   label,
   value,
   primary = false,
 }: {
+  density?: "default" | "compact";
   label: string;
   value: string;
   primary?: boolean;
 }) {
   return (
-    <div className="grid min-h-[54px] grid-cols-[minmax(0,112px)_minmax(0,1fr)] gap-3 border-b border-current/10 py-3 text-[14px]">
+    <div
+      className={`grid grid-cols-[minmax(0,112px)_minmax(0,1fr)] gap-3 border-b border-current/10 text-[14px] ${
+        density === "compact" ? "min-h-[48px] py-2.5" : "min-h-[54px] py-3"
+      }`}
+    >
       <dt
         className={`font-mono text-[10px] uppercase leading-[1.35] tracking-[0.12em] ${
           primary ? "text-paper/45" : "text-muted"

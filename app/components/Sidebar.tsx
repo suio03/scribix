@@ -27,6 +27,7 @@ import Image from "next/image";
 import { signIn, signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { BillingPortalButton } from "./BillingPortalButton";
 import { useSidebar } from "./SidebarContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Logo } from "./Logo";
@@ -74,6 +75,7 @@ export function Sidebar({
   userLabel?: string | null;
 }) {
   const t = useTranslations("Sidebar");
+  const billingPortalT = useTranslations("Dashboard.billingPortal");
   const pathname = usePathname();
   const { isOpen, isCollapsed, setOpen, setCollapsed } = useSidebar();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -84,6 +86,13 @@ export function Sidebar({
   const quotaMin = Math.max(1, Math.round(usage?.quotaMin ?? 45));
   const remainingMin = Math.max(0, quotaMin - usedMin);
   const remainingPercent = Math.min(100, Math.max(0, (remainingMin / quotaMin) * 100));
+  const usedYouTubeImports = Math.max(0, Math.round(usage?.usedYouTubeImports ?? 0));
+  const quotaYouTubeImports = Math.max(1, Math.round(usage?.quotaYouTubeImports ?? 5));
+  const remainingYouTubeImports = Math.max(0, quotaYouTubeImports - usedYouTubeImports);
+  const remainingYouTubePercent = Math.min(
+    100,
+    Math.max(0, (remainingYouTubeImports / quotaYouTubeImports) * 100)
+  );
   const closeMobileSidebar = () => {
     setAccountOpen(false);
     setOpen(false);
@@ -332,25 +341,54 @@ export function Sidebar({
         >
           {signedIn ? (
             <div
-              className={`rounded-xl border border-line bg-paper/60 p-3 ${
+              className={`rounded-xl border border-line bg-paper/70 p-3 ${
                 isCollapsed ? "lg:hidden" : ""
               }`}
             >
-              <div className="flex items-baseline justify-between">
-                <span className="text-[12px] font-medium text-muted">
-                  {t("usageTitle")}
-                </span>
-                <span className="font-mono text-[11px] tabular text-ink">
-                  {t("usageRemaining", { remaining: remainingMin })}
-                </span>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                    {t("currentPlanTitle")}
+                  </p>
+                  <p className="mt-1 break-words text-[13px] font-semibold leading-tight text-ink">
+                    {sidebarPlanLabel(t, usage)}
+                  </p>
+                </div>
+                {usage?.canManageBilling ? (
+                  <BillingPortalButton
+                    className="shrink-0 rounded-full border border-line px-2.5 py-1 text-[11px] font-medium text-ink transition hover:border-ink/35 hover:bg-card disabled:cursor-wait disabled:opacity-60"
+                    label={t("manageBilling")}
+                    openingLabel={billingPortalT("opening")}
+                    errorLabel={billingPortalT("genericError")}
+                  />
+                ) : (
+                  <Link
+                    href="/dashboard/billing"
+                    onClick={closeAfterNavigate}
+                    className="shrink-0 rounded-full border border-line px-2.5 py-1 text-[11px] font-medium text-ink transition hover:border-ink/35 hover:bg-card"
+                  >
+                    {usage?.tier === "free" ? t("upgradePlan") : t("manageBilling")}
+                  </Link>
+                )}
               </div>
-              <div
-                className="mt-2 h-1 overflow-hidden rounded-full bg-line"
-                aria-label={t("usageMeter", { used: usedMin, quota: quotaMin })}
-              >
-                <div
-                  className="h-full rounded-full bg-accent"
-                  style={{ width: `${remainingPercent}%` }}
+
+              <div className="mt-3 space-y-2.5">
+                <UsageMeter
+                  label={t("usageTitle")}
+                  value={t("usageRemaining", { remaining: remainingMin })}
+                  meterLabel={t("usageMeter", { used: usedMin, quota: quotaMin })}
+                  percent={remainingPercent}
+                  tone="accent"
+                />
+                <UsageMeter
+                  label={t("youtubeUsageTitle")}
+                  value={t("youtubeUsageRemaining", { remaining: remainingYouTubeImports })}
+                  meterLabel={t("youtubeUsageMeter", {
+                    used: usedYouTubeImports,
+                    quota: quotaYouTubeImports,
+                  })}
+                  percent={remainingYouTubePercent}
+                  tone="ink"
                 />
               </div>
             </div>
@@ -460,4 +498,52 @@ export function Sidebar({
       </aside>
     </>
   );
+}
+
+function UsageMeter({
+  label,
+  meterLabel,
+  percent,
+  tone,
+  value,
+}: {
+  label: string;
+  meterLabel: string;
+  percent: number;
+  tone: "accent" | "ink";
+  value: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="text-[12px] font-medium text-muted">{label}</span>
+        <span className="font-mono text-[11px] tabular text-ink">{value}</span>
+      </div>
+      <div
+        className="mt-1.5 h-1 overflow-hidden rounded-full bg-line"
+        aria-label={meterLabel}
+      >
+        <div
+          className={`h-full rounded-full ${tone === "accent" ? "bg-accent" : "bg-ink/70"}`}
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function sidebarPlanLabel(
+  t: ReturnType<typeof useTranslations<"Sidebar">>,
+  usage: SidebarUsage | undefined
+) {
+  const tier = usage?.tier ?? "free";
+  const tierLabel =
+    tier === "free" ? t("tierFree") : tier === "basic" ? t("tierBasic") : t("tierPro");
+  if (tier === "free") return tierLabel;
+
+  const cycle = usage?.billingCycle === "yearly" ? t("cycleYearly") : t("cycleMonthly");
+  const status = usage?.subscriptionStatus;
+  if (status === "canceled") return `${tierLabel} - ${cycle} - ${t("statusCanceled")}`;
+  if (status === "expired") return `${tierLabel} - ${cycle} - ${t("statusExpired")}`;
+  return `${tierLabel} - ${cycle}`;
 }

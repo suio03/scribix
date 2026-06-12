@@ -59,7 +59,19 @@
         "label": "Subtitles (SRT/VTT)",
         "href": "#features"
       }
-    ]
+    ],
+    "currentPlanTitle": "Current plan",
+    "manageBilling": "Manage billing",
+    "youtubeUsageTitle": "YouTube left",
+    "youtubeUsageRemaining": "{remaining} imports left",
+    "youtubeUsageMeter": "{used} / {quota} YouTube imports used",
+    "tierFree": "Free",
+    "tierBasic": "Starter",
+    "tierPro": "Pro Unlimited",
+    "cycleMonthly": "monthly",
+    "cycleYearly": "yearly",
+    "statusCanceled": "canceled",
+    "statusExpired": "expired"
   },
   "Header": {
     "tryFree": "Try Free",
@@ -483,6 +495,7 @@
     "faqTitle": "Pricing FAQ",
     "featureRows": [
       {
+        "key": "transcriptFiles",
         "label": "Transcript files",
         "values": {
           "free": "Limited by 45 min total",
@@ -491,6 +504,7 @@
         }
       },
       {
+        "key": "monthlyMinutes",
         "label": "Monthly minutes",
         "values": {
           "free": "45 lifetime",
@@ -499,6 +513,7 @@
         }
       },
       {
+        "key": "youtubeCaptionImports",
         "label": "YouTube caption imports",
         "values": {
           "free": "5 lifetime",
@@ -507,6 +522,7 @@
         }
       },
       {
+        "key": "maxYoutubeCaptionVideo",
         "label": "Max YouTube caption video",
         "values": {
           "free": "2 hours",
@@ -515,6 +531,7 @@
         }
       },
       {
+        "key": "maxFileLength",
         "label": "Max file length",
         "values": {
           "free": "45 min",
@@ -523,6 +540,7 @@
         }
       },
       {
+        "key": "maxFileSize",
         "label": "Max file size",
         "values": {
           "free": "1 GB",
@@ -531,6 +549,7 @@
         }
       },
       {
+        "key": "processingQueue",
         "label": "Processing queue",
         "values": {
           "free": "Free queue",
@@ -539,6 +558,7 @@
         }
       },
       {
+        "key": "accuracyModel",
         "label": "Accuracy model",
         "values": {
           "free": "Standard",
@@ -547,6 +567,7 @@
         }
       },
       {
+        "key": "aiTranslation",
         "label": "AI translation",
         "values": {
           "free": "No",
@@ -555,6 +576,7 @@
         }
       },
       {
+        "key": "speakerLabels",
         "label": "Speaker labels",
         "values": {
           "free": "Yes",
@@ -563,6 +585,7 @@
         }
       },
       {
+        "key": "exports",
         "label": "Exports",
         "values": {
           "free": "TXT, DOCX, SRT, VTT, CSV",
@@ -571,6 +594,7 @@
         }
       },
       {
+        "key": "aiSummaries",
         "label": "AI summaries",
         "values": {
           "free": "No",
@@ -633,7 +657,12 @@
         "question": "Is there a free trial on paid plans?",
         "answer": "Yes. Starter and Pro Unlimited both include 14 days free, and you can cancel anytime before the trial ends."
       }
-    ]
+    ],
+    "aiFeatures": "AI summaries + translation",
+    "included": "Included",
+    "paidIncludedTitle": "Included in every paid plan",
+    "paidIncludedDescription": "Shared paid-plan capabilities stay out of the comparison cards so the real differences are easier to scan.",
+    "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
   },
   "FAQ": {
     "label": "FAQ",
@@ -779,12 +808,14 @@
     },
     "billing": {
       "title": "Billing",
-      "description": "Review your current plan, compare limits, and upgrade without leaving the dashboard.",
+      "description": "Compare paid plan limits, upgrade, or manage your subscription.",
       "currentPlan": "Current plan",
       "choosePlanTitle": "Choose the right plan",
       "choosePlanDescription": "Starter works for steady personal transcription. Pro is better when longer files, priority processing, or heavier monthly usage matter.",
       "checkoutOkTitle": "Subscription active — welcome aboard.",
-      "checkoutOkBody": "Your new plan is live. Usage and subscription controls are shown below."
+      "checkoutOkBody": "Your new plan is live. Usage and subscription controls are shown below.",
+      "aiFeatures": "AI summaries + translation",
+      "included": "Included"
     },
     "viewer": {
       "back": "← All transcripts",

@@ -13,6 +13,13 @@ export type PlausibleEvents = {
     error_type?: "technical" | "product_limit" | "quota" | "auth";
     error_code: string;
     error_message?: string;
+    step?: string;
+    file_size_mb?: number;
+    duration_sec?: number;
+    upload_attempts?: number;
+    upload_elapsed_sec?: number;
+    upload_status?: number;
+    retryable?: boolean;
   };
   signin_success: { method?: string };
   download_click: { format: string };
