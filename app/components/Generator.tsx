@@ -19,7 +19,6 @@ import {
 import { useTranslations } from "next-intl";
 import { Waveform } from "./Waveform";
 import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
-import { YouTubeImporter } from "./YouTubeImporter";
 
 type TabId = "upload" | "youtube" | "record";
 type Tab = { id: TabId; label: string; hint: string };
@@ -58,7 +57,7 @@ export function Generator({
   const [tab, setTab] = useState<TabId>("upload");
   const [recording, setRecording] = useState(false);
 
-  const tabs = t.raw("tabs") as Tab[];
+  const tabs = (t.raw("tabs") as Tab[]).filter((item) => item.id !== "youtube");
   const trust = t.raw("trust") as TrustItem[];
   const examples = t.raw("examples") as Example[];
 
@@ -145,13 +144,6 @@ export function Generator({
                   signedIn={signedIn}
                   postSignInPath={postSignInPath}
                   checkoutSuccessPath={postSignInPath}
-                />
-              )}
-              {tab === "youtube" && (
-                <YouTubeImporter
-                  signedIn={signedIn}
-                  postSignInPath={postSignInPath}
-                  variant="flat"
                 />
               )}
               {tab === "record" && (

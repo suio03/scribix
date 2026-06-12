@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.12.2] - 2026-06-13
+
+### Changed
+- Soft-disabled new YouTube caption imports while preserving access to existing YouTube transcript pages.
+- Hid YouTube import entry points and YouTube-specific usage/pricing rows until the caption fetch backend is moved off the Worker path.
+
 ## [0.12.1] - 2026-06-13
 
 ### Changed
