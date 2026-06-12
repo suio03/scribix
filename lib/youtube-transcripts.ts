@@ -265,6 +265,7 @@ async function loadTranscriptTracks(
   logYouTube(logContext, "watch page parsed", {
     videoId,
     htmlBytes: watchHtml.length,
+    diagnostics: summarizeWatchHtml(watchHtml),
     hasPagePlayer: pagePlayer !== null,
     pageCaptionTracks:
       pagePlayer?.captions?.playerCaptionsTracklistRenderer?.captionTracks?.length ?? 0,
@@ -281,6 +282,8 @@ async function loadTranscriptTracks(
     videoId,
     rawTrackCount: rawTracks.length,
     source: hasCaptionTracks(innertubePlayer) ? "youtubei" : "watch-page",
+    playabilityStatus: player?.playabilityStatus?.status,
+    playabilityReason: player?.playabilityStatus?.reason,
   });
   if (rawTracks.length === 0) {
     throw new YouTubeTranscriptError("transcripts_unavailable");
@@ -353,9 +356,33 @@ async function fetchPlayerResponse(
     status: res.status,
     ok: res.ok,
     contentType: res.headers.get("content-type"),
+    contentLength: res.headers.get("content-length"),
+    redirected: res.redirected,
+    finalUrl: summarizeUrl(res.url),
   });
-  if (!res.ok) throw new YouTubeTranscriptError("youtube_fetch_failed");
-  const player = (await res.json()) as PlayerResponse;
+  const raw = await res.text();
+  if (!res.ok) {
+    logYouTube(logContext, "youtubei player body received for failed response", {
+      videoId,
+      status: res.status,
+      bytes: raw.length,
+      preview: previewText(raw),
+    });
+    throw new YouTubeTranscriptError("youtube_fetch_failed");
+  }
+
+  let player: PlayerResponse;
+  try {
+    player = JSON.parse(raw) as PlayerResponse;
+  } catch (error) {
+    logYouTube(logContext, "youtubei player json parse failed", {
+      videoId,
+      error: error instanceof Error ? error.message : String(error),
+      bytes: raw.length,
+      preview: previewText(raw),
+    });
+    throw new YouTubeTranscriptError("youtube_fetch_failed");
+  }
   logYouTube(logContext, "youtubei player parsed", {
     videoId,
     playabilityStatus: player.playabilityStatus?.status,
@@ -408,10 +435,33 @@ async function fetchWatchHtmlOnce(
     status: watchRes.status,
     ok: watchRes.ok,
     contentType: watchRes.headers.get("content-type"),
+    contentLength: watchRes.headers.get("content-length"),
+    redirected: watchRes.redirected,
+    finalUrl: summarizeUrl(watchRes.url),
     usedConsentCookie: extraHeaders?.cookie !== undefined,
   });
-  if (!watchRes.ok) throw new YouTubeTranscriptError("youtube_fetch_failed");
-  return { html: decodeEntities(await watchRes.text()) };
+  const raw = await watchRes.text();
+  if (!watchRes.ok) {
+    logYouTube(logContext, "watch page body received for failed response", {
+      videoId,
+      status: watchRes.status,
+      bytes: raw.length,
+      preview: previewText(raw),
+      diagnostics: summarizeWatchHtml(raw),
+      usedConsentCookie: extraHeaders?.cookie !== undefined,
+    });
+    throw new YouTubeTranscriptError("youtube_fetch_failed");
+  }
+
+  const html = decodeEntities(raw);
+  logYouTube(logContext, "watch page body received", {
+    videoId,
+    bytes: html.length,
+    preview: previewText(html),
+    diagnostics: summarizeWatchHtml(html),
+    usedConsentCookie: extraHeaders?.cookie !== undefined,
+  });
+  return { html };
 }
 
 function hasCaptionTracks(player: PlayerResponse | null): player is PlayerResponse {
@@ -715,6 +765,45 @@ function decodeEntities(value: string): string {
     .replace(/&#x([0-9a-f]+);/gi, (_, code: string) =>
       String.fromCodePoint(Number.parseInt(code, 16))
     );
+}
+
+function previewText(value: string): string {
+  return value
+    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 320);
+}
+
+function summarizeWatchHtml(html: string): Record<string, unknown> {
+  const lower = html.toLowerCase();
+  return {
+    hasInitialPlayerResponse: html.includes("ytInitialPlayerResponse"),
+    hasInnertubeApiKey:
+      html.includes("\"INNERTUBE_API_KEY\"") || html.includes("\"innertubeApiKey\""),
+    hasCaptionTracks: html.includes("captionTracks"),
+    hasConsentForm: html.includes('action="https://consent.youtube.com/s"'),
+    hasCaptcha: lower.includes("captcha"),
+    hasUnusualTraffic: lower.includes("unusual traffic"),
+    hasRobotCheck: lower.includes("our systems have detected unusual traffic"),
+    hasPlayabilityStatus: html.includes("\"playabilityStatus\""),
+    title: html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.replace(/\s+/g, " ").trim() ?? null,
+  };
+}
+
+function summarizeUrl(input: string): Record<string, unknown> | null {
+  try {
+    const url = new URL(input);
+    return {
+      host: url.hostname,
+      path: url.pathname,
+      paramKeys: Array.from(url.searchParams.keys()).sort(),
+    };
+  } catch {
+    return null;
+  }
 }
 
 function logYouTube(

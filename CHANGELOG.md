@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.12.1] - 2026-06-13
+
+### Changed
+- Added safer diagnostic logging for YouTube caption fetch failures, including watch page, consent, bot-check, and Innertube response signals.
+
 ## [0.12.0] - 2026-06-13
 
 ### Added
