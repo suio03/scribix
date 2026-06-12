@@ -11,6 +11,8 @@ export const PLANS = {
   free: {
     // One-time lifetime trial — never resets. Quota.maybeResetFreePeriod is a no-op for free.
     minutesPerCycle: 45,
+    youtubeImportsPerCycle: 5,
+    youtubeMaxVideoSec: 2 * 3600,
     maxFileSec: 45 * 60,
     // Keep public upload size simple and conservative across audio + video.
     maxFileBytes: 1 * 1024 * 1024 * 1024,
@@ -18,8 +20,9 @@ export const PLANS = {
     speechModels: ["universal-2"] as const,
   },
   basic: {
-    monthly: { minutesPerCycle: 600 },
-    yearly: { minutesPerCycle: 7200 },
+    monthly: { minutesPerCycle: 600, youtubeImportsPerCycle: 100 },
+    yearly: { minutesPerCycle: 7200, youtubeImportsPerCycle: 1200 },
+    youtubeMaxVideoSec: 4 * 3600,
     maxFileSec: 1 * 3600,
     maxFileBytes: 1 * 1024 * 1024 * 1024,
     // Capped at 1 GB across tiers: browser-side ffmpeg.wasm / Web Audio
@@ -29,8 +32,9 @@ export const PLANS = {
     speechModels: ["universal-3-pro", "universal-2"] as const,
   },
   pro: {
-    monthly: { minutesPerCycle: 2400 },
-    yearly: { minutesPerCycle: 28800 },
+    monthly: { minutesPerCycle: 2400, youtubeImportsPerCycle: 1000 },
+    yearly: { minutesPerCycle: 28800, youtubeImportsPerCycle: 12000 },
+    youtubeMaxVideoSec: 10 * 3600,
     maxFileSec: 10 * 3600,
     maxFileBytes: 1 * 1024 * 1024 * 1024,
     maxVideoUploadBytes: 1 * 1024 * 1024 * 1024,
@@ -46,6 +50,16 @@ export function quotaMinutesFor(tier: Tier, cycle: BillingCycle | null | undefin
   if (tier === "free") return PLANS.free.minutesPerCycle;
   const c: BillingCycle = cycle === "yearly" ? "yearly" : "monthly";
   return PLANS[tier][c].minutesPerCycle;
+}
+
+export function youtubeImportsFor(tier: Tier, cycle: BillingCycle | null | undefined): number {
+  if (tier === "free") return PLANS.free.youtubeImportsPerCycle;
+  const c: BillingCycle = cycle === "yearly" ? "yearly" : "monthly";
+  return PLANS[tier][c].youtubeImportsPerCycle;
+}
+
+export function youtubeMaxVideoSecFor(tier: Tier): number {
+  return PLANS[tier].youtubeMaxVideoSec;
 }
 
 // Display pricing — keep in sync with the public Starter/Pro pricing model.

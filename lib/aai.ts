@@ -66,25 +66,6 @@ export type AaiTranslation = {
   };
 };
 
-type AaiChatCompletion = {
-  choices?: Array<{
-    message?: {
-      content?: string;
-    };
-  }>;
-};
-
-export class AaiApiError extends Error {
-  constructor(
-    message: string,
-    readonly status: number,
-    readonly details: string
-  ) {
-    super(message);
-    this.name = "AaiApiError";
-  }
-}
-
 function key() {
   const k = process.env.ASSEMBLYAI_API_KEY;
   if (!k) throw new Error("ASSEMBLYAI_API_KEY not set");
@@ -157,39 +138,4 @@ export async function translateTranscript(
     throw new Error(`AAI translation failed: ${res.status} ${await res.text()}`);
   }
   return res.json();
-}
-
-export async function summarizeTranscriptById(transcriptId: string): Promise<string> {
-  const prompt = [
-    "Summarize this transcript for a busy professional.",
-    "Use this exact structure:",
-    "Overview: one concise paragraph.",
-    "Key points: 3-6 bullets.",
-    "Action items: bullets only if concrete action items are mentioned.",
-    "Keep the summary factual and do not invent names, decisions, or tasks.",
-    "",
-    "Transcript:",
-    "{{ transcript }}",
-  ].join("\n");
-
-  const res = await fetch(`${AAI_UNDERSTANDING_BASE}/chat/completions`, {
-    method: "POST",
-    headers: {
-      authorization: key(),
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-6",
-      prompt,
-      transcript_id: transcriptId,
-      max_tokens: 900,
-    }),
-  });
-  if (!res.ok) {
-    throw new AaiApiError("AAI summary failed", res.status, await res.text());
-  }
-  const json = (await res.json()) as AaiChatCompletion;
-  const summary = json.choices?.[0]?.message?.content?.trim();
-  if (!summary) throw new Error("AAI summary response was empty");
-  return summary;
 }

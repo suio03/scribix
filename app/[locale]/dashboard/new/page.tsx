@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getPathname, Link } from "@/i18n/navigation";
-import type { Tier } from "@/lib/plans";
+import type { BillingCycle, Tier } from "@/lib/plans";
 
 export default async function NewTranscriptPage() {
   const locale = await getLocale();
@@ -14,11 +14,13 @@ export default async function NewTranscriptPage() {
   const checkoutSuccessPath = newHref;
   const session = await auth();
   let tier: Tier = "free";
+  let billingCycle: BillingCycle | null = null;
 
   if (session) {
     const env = await cf();
     const user = await getOrCreateCurrentUser(env.DB, session);
     tier = user?.tier ?? "free";
+    billingCycle = user?.billing_cycle ?? null;
   }
 
   return (
@@ -40,6 +42,7 @@ export default async function NewTranscriptPage() {
           postSignInPath={newHref}
           checkoutSuccessPath={checkoutSuccessPath}
           tier={tier}
+          billingCycle={billingCycle}
         />
       </div>
     </main>

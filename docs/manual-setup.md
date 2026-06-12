@@ -172,6 +172,20 @@ For deployed environments, set the same secret on the Worker:
 npx wrangler secret put ASSEMBLYAI_API_KEY
 ```
 
+### 2.3 OpenAI API key for AI summaries (blocking — required for Summary)
+
+1. https://platform.openai.com/api-keys → **Create new secret key**.
+2. Copy the key.
+3. Drop into `.env.local` and `.dev.vars`:
+   ```
+   OPENAI_API_KEY=...
+   ```
+
+For deployed environments, set the same secret on the Worker:
+```sh
+npx wrangler secret put OPENAI_API_KEY
+```
+
 ---
 
 ## Phase 4 — Paddle payments
@@ -307,6 +321,7 @@ npx wrangler secret put AUTH_SECRET
 npx wrangler secret put GOOGLE_ID
 npx wrangler secret put GOOGLE_SECRET
 npx wrangler secret put ASSEMBLYAI_API_KEY
+npx wrangler secret put OPENAI_API_KEY
 npx wrangler secret put R2_ACCESS_KEY_ID
 npx wrangler secret put R2_SECRET_ACCESS_KEY
 npx wrangler secret put DISCORD_WEBHOOK_URL
@@ -346,6 +361,9 @@ GOOGLE_SECRET=
 ASSEMBLYAI_API_KEY=
 ASSEMBLYAI_WEBHOOK_URL=http://localhost:3000/api/webhook/assemblyai
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# OpenAI (AI summaries)
+OPENAI_API_KEY=
 
 # R2 presign (Phase 2)
 CLOUDFLARE_ACCOUNT_ID=

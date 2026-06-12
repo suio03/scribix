@@ -13,13 +13,13 @@ import {
   Infinity as InfinityIcon,
   ShieldCheck,
   CloudUpload,
-  Link2,
   Square,
   type LucideIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Waveform } from "./Waveform";
 import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
+import { YouTubeImporter } from "./YouTubeImporter";
 
 type TabId = "upload" | "youtube" | "record";
 type Tab = { id: TabId; label: string; hint: string };
@@ -58,8 +58,7 @@ export function Generator({
   const [tab, setTab] = useState<TabId>("upload");
   const [recording, setRecording] = useState(false);
 
-  // YouTube tab disabled until the backend supports it — re-enable by removing this filter.
-  const tabs = (t.raw("tabs") as Tab[]).filter((tabItem) => tabItem.id !== "youtube");
+  const tabs = t.raw("tabs") as Tab[];
   const trust = t.raw("trust") as TrustItem[];
   const examples = t.raw("examples") as Example[];
 
@@ -148,7 +147,13 @@ export function Generator({
                   checkoutSuccessPath={postSignInPath}
                 />
               )}
-              {tab === "youtube" && <YouTubePane />}
+              {tab === "youtube" && (
+                <YouTubeImporter
+                  signedIn={signedIn}
+                  postSignInPath={postSignInPath}
+                  variant="flat"
+                />
+              )}
               {tab === "record" && (
                 <RecordPane
                   recording={recording}
@@ -292,40 +297,6 @@ function UploadPane({
           <ProgressView phase={phase} progress={progress} filename={filename} />
         )}
       </div>
-    </div>
-  );
-}
-
-function YouTubePane() {
-  const t = useTranslations("Generator.youtube");
-  return (
-    <div className="rise-in">
-      <label className="mb-3 block font-mono text-[11px] uppercase tracking-[0.2em] text-muted">
-        {t("label")}
-      </label>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
-          <Link2
-            size={16}
-            strokeWidth={1.8}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
-          />
-          <input
-            type="url"
-            placeholder={t("placeholder")}
-            className="w-full rounded-xl border border-line bg-paper py-3.5 pl-11 pr-4 text-[14px] text-ink placeholder:text-muted/70 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
-          />
-        </div>
-        <button
-          type="button"
-          className="rounded-xl bg-ink px-6 py-3.5 text-[14px] font-medium text-paper transition hover:bg-accent"
-        >
-          {t("submit")}
-        </button>
-      </div>
-      <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
-        {t("hint")}
-      </p>
     </div>
   );
 }

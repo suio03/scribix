@@ -10,6 +10,7 @@ import { displaySpeakerName, speakerToneFor, type SpeakerNames } from "./speaker
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2] as const;
 const TRANSLATION_LANGUAGES = ["en", "zh", "es", "fr", "de", "ja", "ko", "pt", "it", "nl"] as const;
+let youtubeIframeApiPromise: Promise<YouTubeApi> | null = null;
 
 type Tab = "transcript" | "subtitles" | "translation" | "summary";
 type TranslationLang = (typeof TRANSLATION_LANGUAGES)[number];
@@ -26,6 +27,34 @@ type SummaryPayload = {
   summary: string;
 };
 
+type ErrorPayload = {
+  error?: string;
+  requestId?: string;
+};
+
+type YouTubePlayer = {
+  destroy: () => void;
+  getCurrentTime: () => number;
+};
+
+type YouTubeApi = {
+  Player: new (
+    element: HTMLIFrameElement,
+    options?: {
+      events?: {
+        onReady?: () => void;
+      };
+    }
+  ) => YouTubePlayer;
+};
+
+declare global {
+  interface Window {
+    YT?: YouTubeApi;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
 type Props = {
   id: string;
   audioUrl: string | null;
@@ -34,6 +63,8 @@ type Props = {
   sentences: AaiSegment[];
   fallbackText: string;
   sourceLanguage: string | null;
+  youtubeUrl: string | null;
+  youtubeVideoId: string | null;
   speakerNames: SpeakerNames;
   speakers: string[];
   isPaid: boolean;
@@ -49,6 +80,8 @@ export function TranscriptViewer({
   sentences,
   fallbackText,
   sourceLanguage,
+  youtubeUrl,
+  youtubeVideoId,
   speakerNames,
   speakers,
   isPaid,
@@ -57,6 +90,7 @@ export function TranscriptViewer({
 }: Props) {
   const t = useTranslations("Dashboard.viewer");
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const youtubeFrameRef = useRef<HTMLIFrameElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const summaryPollTimerRef = useRef<number | null>(null);
   const requestRef = useRef(0);
@@ -70,16 +104,35 @@ export function TranscriptViewer({
   const [translation, setTranslation] = useState<TranslationPayload | null>(null);
   const [summaryState, setSummaryState] = useState<SummaryState>("idle");
   const [summary, setSummary] = useState<SummaryPayload | null>(null);
+  const [summaryError, setSummaryError] = useState<string | null>(null);
   const [upgradeModal, setUpgradeModal] = useState<UpgradeReason | null>(null);
+  const translationEnabled = !youtubeVideoId;
 
   const seekTo = (ms: number) => {
     const a = audioRef.current;
-    if (!a) return;
-    a.currentTime = ms / 1000;
-    a.play().catch(() => {});
+    if (a) {
+      a.currentTime = ms / 1000;
+      a.play().catch(() => {});
+      return;
+    }
+    const frame = youtubeFrameRef.current;
+    if (!frame?.contentWindow) return;
+    const seconds = Math.max(0, ms / 1000);
+    frame.contentWindow.postMessage(
+      JSON.stringify({ event: "command", func: "seekTo", args: [seconds, true] }),
+      "https://www.youtube.com"
+    );
+    frame.contentWindow.postMessage(
+      JSON.stringify({ event: "command", func: "playVideo", args: [] }),
+      "https://www.youtube.com"
+    );
+    setCurrentMs(ms);
   };
 
-  const transcriptSegments = utterances.length > 0 ? utterances : paragraphs;
+  const transcriptSegments = useMemo(() => {
+    const baseSegments = utterances.length > 0 ? utterances : paragraphs;
+    return youtubeVideoId ? groupYouTubeTranscriptSegments(baseSegments) : baseSegments;
+  }, [paragraphs, utterances, youtubeVideoId]);
   const sourceTranslationLang = normalizeSourceTranslationLang(sourceLanguage);
   const availableTranslationLanguages = useMemo(
     () => TRANSLATION_LANGUAGES.filter((language) => language !== sourceTranslationLang),
@@ -106,9 +159,16 @@ export function TranscriptViewer({
   }, [availableTranslationLanguages, translationLang]);
 
   useEffect(() => {
-    if (tab !== "translation" || !isPaid) return;
+    if (translationEnabled || tab !== "translation") return;
+    setTab("transcript");
+    setTranslation(null);
+    setTranslationState("idle");
+  }, [tab, translationEnabled]);
+
+  useEffect(() => {
+    if (!translationEnabled || tab !== "translation" || !isPaid) return;
     void loadTranslation("GET");
-  }, [isPaid, tab, translationLang]);
+  }, [isPaid, tab, translationEnabled, translationLang]);
 
   useEffect(() => {
     if (tab !== "summary" || !isPaid) return;
@@ -169,6 +229,7 @@ export function TranscriptViewer({
     summaryRequestRef.current = requestId;
     if (summaryPollTimerRef.current) window.clearTimeout(summaryPollTimerRef.current);
     setSummaryState((state) => (method === "GET" && summary ? state : "loading"));
+    setSummaryError(null);
 
     try {
       const response = await fetch(`/api/transcripts/${id}/summary`, { method });
@@ -191,13 +252,19 @@ export function TranscriptViewer({
         setSummaryState("idle");
         return;
       }
-      if (!response.ok) throw new Error(`summary_${response.status}`);
+      if (!response.ok) {
+        const payload = await readErrorPayload(response);
+        throw new Error(payload?.requestId ? `Reference: ${payload.requestId}` : "");
+      }
 
       const json = (await response.json()) as SummaryPayload;
       setSummary(json);
       setSummaryState("ready");
-    } catch {
-      if (summaryRequestRef.current === requestId) setSummaryState("error");
+    } catch (error) {
+      if (summaryRequestRef.current === requestId) {
+        setSummaryError(error instanceof Error ? error.message : null);
+        setSummaryState("error");
+      }
     }
   }
 
@@ -207,6 +274,15 @@ export function TranscriptViewer({
         <AudioPlayer ref={audioRef} url={audioUrl} onTimeUpdate={setCurrentMs} />
       )}
 
+      {youtubeVideoId ? (
+        <YouTubeEmbed
+          ref={youtubeFrameRef}
+          videoId={youtubeVideoId}
+          sourceUrl={youtubeUrl}
+          onTimeUpdate={setCurrentMs}
+        />
+      ) : null}
+
       <div className="flex items-center justify-between gap-3">
         <div className="flex w-fit flex-wrap items-center gap-1 rounded-2xl bg-ink/5 p-1">
           <TabButton active={tab === "transcript"} onClick={() => setTab("transcript")}>
@@ -215,25 +291,27 @@ export function TranscriptViewer({
           <TabButton active={tab === "subtitles"} onClick={() => setTab("subtitles")}>
             {t("tabSubtitles")}
           </TabButton>
-          <TabButton
-            active={tab === "translation"}
-            onClick={() => {
-              if (!isPaid) {
-                setUpgradeModal("translation");
-                return;
-              }
-              setTab("translation");
-            }}
-          >
-            <span className="inline-flex items-center gap-1.5">
-              {safeT(t, "tabTranslation", "Translation")}
-              {!isPaid ? (
-                <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-accent">
-                  {safeT(t, "proBadge", "Pro")}
-                </span>
-              ) : null}
-            </span>
-          </TabButton>
+          {translationEnabled ? (
+            <TabButton
+              active={tab === "translation"}
+              onClick={() => {
+                if (!isPaid) {
+                  setUpgradeModal("translation");
+                  return;
+                }
+                setTab("translation");
+              }}
+            >
+              <span className="inline-flex items-center gap-1.5">
+                {safeT(t, "tabTranslation", "Translation")}
+                {!isPaid ? (
+                  <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-accent">
+                    {safeT(t, "proBadge", "Pro")}
+                  </span>
+                ) : null}
+              </span>
+            </TabButton>
+          ) : null}
           <TabButton
             active={tab === "summary"}
             onClick={() => {
@@ -278,7 +356,7 @@ export function TranscriptViewer({
         </div>
       </div>
 
-      {tab === "translation" ? (
+      {translationEnabled && tab === "translation" ? (
         <TranslationPanel
           lang={translationLang}
           languages={availableTranslationLanguages}
@@ -301,6 +379,7 @@ export function TranscriptViewer({
         <SummaryPanel
           state={summaryState}
           summary={summary?.summary ?? ""}
+          error={summaryError}
           onGenerate={() => loadSummary("POST")}
         />
       ) : hasSegments ? (
@@ -347,6 +426,92 @@ function TabButton({
     >
       {children}
     </button>
+  );
+}
+
+type YouTubeEmbedProps = {
+  ref: React.RefObject<HTMLIFrameElement | null>;
+  videoId: string;
+  sourceUrl: string | null;
+  onTimeUpdate: (ms: number) => void;
+};
+
+function YouTubeEmbed({ ref, videoId, sourceUrl, onTimeUpdate }: YouTubeEmbedProps) {
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+
+  useEffect(() => {
+    if (!origin) return;
+
+    let cancelled = false;
+    let player: YouTubePlayer | null = null;
+    let interval: number | null = null;
+
+    loadYouTubeIframeApi()
+      .then((YT) => {
+        if (cancelled || !ref.current) return;
+        player = new YT.Player(ref.current, {
+          events: {
+            onReady: () => {
+              interval = window.setInterval(() => {
+                try {
+                  const seconds = player?.getCurrentTime();
+                  if (typeof seconds === "number" && Number.isFinite(seconds)) {
+                    onTimeUpdate(seconds * 1000);
+                  }
+                } catch {
+                  // YouTube can briefly reject reads while the iframe is loading.
+                }
+              }, 250);
+            },
+          },
+        });
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+      if (interval) window.clearInterval(interval);
+      player?.destroy();
+    };
+  }, [onTimeUpdate, origin, ref, videoId]);
+
+  const src = useMemo(() => {
+    const params = new URLSearchParams({
+      enablejsapi: "1",
+      rel: "0",
+      modestbranding: "1",
+    });
+    if (origin) params.set("origin", origin);
+    return `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?${params.toString()}`;
+  }, [origin, videoId]);
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-line bg-ink">
+      <iframe
+        ref={ref}
+        src={src}
+        title="YouTube video player"
+        className="aspect-video w-full"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+        referrerPolicy="strict-origin-when-cross-origin"
+      />
+      {sourceUrl ? (
+        <a
+          href={sourceUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Open YouTube video"
+          className="sr-only"
+        >
+          YouTube
+        </a>
+      ) : null}
+    </div>
   );
 }
 
@@ -443,10 +608,12 @@ function TranslationPanel({
 function SummaryPanel({
   state,
   summary,
+  error,
   onGenerate,
 }: {
   state: SummaryState;
   summary: string;
+  error: string | null;
   onGenerate: () => void;
 }) {
   const t = useTranslations("Dashboard.viewer");
@@ -484,6 +651,11 @@ function SummaryPanel({
       ) : state === "error" ? (
         <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
           {safeT(t, "summaryError", "Summary failed. Please try again.")}
+          {error ? (
+            <span className="mt-2 block whitespace-pre-wrap text-[12px] leading-relaxed text-red-700/80">
+              {error}
+            </span>
+          ) : null}
         </p>
       ) : summary.trim() ? (
         <div className="whitespace-pre-wrap rounded-2xl border border-line bg-card px-5 py-5 text-[15px] leading-7 text-ink/85">
@@ -496,6 +668,14 @@ function SummaryPanel({
       )}
     </div>
   );
+}
+
+async function readErrorPayload(response: Response): Promise<ErrorPayload | null> {
+  try {
+    return (await response.json()) as ErrorPayload;
+  } catch {
+    return null;
+  }
 }
 
 type SegmentListProps = {
@@ -558,7 +738,12 @@ function SegmentList({
             {compactCJKSpaces(seg.text)}
           </button>
         ) : (
-          <div key={i}>
+          <div
+            key={i}
+            className={`-mx-3 rounded-xl px-3 py-2 transition ${
+              isActive ? "bg-accent-soft/80" : "hover:bg-ink/[0.03]"
+            }`}
+          >
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
@@ -580,7 +765,7 @@ function SegmentList({
               ) : null}
             </div>
             <p
-              className={`mt-1 text-base leading-relaxed transition ${
+              className={`mt-1 whitespace-pre-line text-base leading-relaxed transition ${
                 isActive ? "text-ink" : "text-ink/85"
               }`}
             >
@@ -591,6 +776,111 @@ function SegmentList({
       })}
     </div>
   );
+}
+
+function groupYouTubeTranscriptSegments(segments: AaiSegment[]): AaiSegment[] {
+  if (segments.length < 2) return segments;
+
+  const merged: AaiSegment[] = [];
+  let current: AaiSegment | null = null;
+
+  for (const segment of segments) {
+    const text = normalizeCaptionText(segment.text);
+    if (!text) continue;
+
+    const next = { ...segment, text };
+    if (!current) {
+      current = next;
+      continue;
+    }
+
+    if (canAppendToYouTubeBlock(current, next)) {
+      current = {
+        ...current,
+        text: appendCaptionText(current.text, next.text),
+        end: Math.max(current.end, next.end),
+      };
+      continue;
+    }
+
+    merged.push(current);
+    current = next;
+  }
+
+  if (current) merged.push(current);
+  return merged;
+}
+
+function canAppendToYouTubeBlock(current: AaiSegment, next: AaiSegment): boolean {
+  const currentSpeaker = current.speaker?.trim() ?? "";
+  const nextSpeaker = next.speaker?.trim() ?? "";
+  if (currentSpeaker !== nextSpeaker) return false;
+
+  const gapMs = next.start - current.end;
+  if (gapMs > 2600) return false;
+
+  const mergedDurationMs = Math.max(next.end, current.end) - current.start;
+  if (mergedDurationMs > 18000) return false;
+
+  const mergedTextLength = current.text.length + next.text.length + 1;
+  if (mergedTextLength > 520) return false;
+
+  if (endsSentence(current.text) && mergedDurationMs >= 12000) {
+    return false;
+  }
+
+  return true;
+}
+
+function appendCaptionText(current: string, next: string): string {
+  const left = current.trimEnd();
+  const right = next.trimStart();
+  if (!left) return right;
+  if (!right) return left;
+  const separator = startsDialogueCue(right) ? "\n" : " ";
+  return `${left}${separator}${right}`.replace(/[ \t]+/g, " ");
+}
+
+function normalizeCaptionText(text: string): string {
+  return compactCJKSpaces(text)
+    .replace(/\r?\n+/g, " ")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+}
+
+function startsDialogueCue(text: string): boolean {
+  return /^>>\s*\S/.test(text.trim());
+}
+
+function endsSentence(text: string): boolean {
+  return /[.!?。！？…]["')\]]?$/.test(text.trim());
+}
+
+function loadYouTubeIframeApi(): Promise<YouTubeApi> {
+  if (window.YT?.Player) return Promise.resolve(window.YT);
+  if (youtubeIframeApiPromise) return youtubeIframeApiPromise;
+
+  youtubeIframeApiPromise = new Promise((resolve, reject) => {
+    const previousReady = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      previousReady?.();
+      if (window.YT?.Player) resolve(window.YT);
+      else reject(new Error("youtube_iframe_api_unavailable"));
+    };
+
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src="https://www.youtube.com/iframe_api"]'
+    );
+    if (existing) return;
+
+    const script = document.createElement("script");
+    script.src = "https://www.youtube.com/iframe_api";
+    script.async = true;
+    script.onerror = () => reject(new Error("youtube_iframe_api_failed"));
+    document.head.appendChild(script);
+  });
+
+  return youtubeIframeApiPromise;
 }
 
 type AudioPlayerProps = {

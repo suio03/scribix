@@ -29,6 +29,14 @@ function cuesFromAai(aai: AaiTranscript): Cue[] {
       speaker: u.speaker,
     }));
   }
+  if (aai.paragraphs?.length) {
+    return aai.paragraphs.map((p) => ({
+      start: p.start,
+      end: p.end,
+      text: compactCJKSpaces(p.text),
+      speaker: p.speaker ?? undefined,
+    }));
+  }
   if (aai.words?.length) return chunkWords(aai.words, WORDS_PER_CUE);
   return [];
 }
