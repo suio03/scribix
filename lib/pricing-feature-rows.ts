@@ -3,8 +3,6 @@ export type PricingPlanId = "free" | "starter" | "pro";
 export type PlanFeatureKey =
   | "transcriptFiles"
   | "monthlyMinutes"
-  | "youtubeCaptionImports"
-  | "maxYoutubeCaptionVideo"
   | "maxFileLength"
   | "maxFileSize"
   | "processingQueue"

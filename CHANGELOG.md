@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.12.3] - 2026-06-13
+
+### Changed
+- Removed YouTube caption import entry points, viewer embed handling, quota usage, pricing copy, and related metadata reads after YouTube blocked the supported fetch path.
+- Updated localized landing and generator copy to focus on uploaded or recorded media transcription.
+
+### Removed
+- Removed unused YouTube caption service helpers, disabled YouTube API routes, importer UI, and stale generator example messages.
+
 ## [0.12.2] - 2026-06-13
 
 ### Changed

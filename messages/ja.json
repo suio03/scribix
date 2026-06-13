@@ -62,9 +62,6 @@
     ],
     "currentPlanTitle": "現在のプラン",
     "manageBilling": "請求を管理",
-    "youtubeUsageTitle": "YouTube 残り",
-    "youtubeUsageRemaining": "残り {remaining} 件",
-    "youtubeUsageMeter": "YouTube インポート {used} / {quota} 件使用",
     "tierFree": "無料",
     "tierBasic": "Starter",
     "tierPro": "Pro Unlimited",
@@ -84,7 +81,7 @@
     "issueLabel": "Issue №01 · 動画から文字へ",
     "h1Part1": "動画を文字に変換。",
     "h1Part2": "<accent>無料の AI 文字起こし。</accent>",
-    "description": "Scribix は任意の動画を、話者ラベル付きの正確なテキストに秒単位で変換します。MP4、MOV、WebM、AVI ファイルをアップロード、または YouTube リンクを貼り付けるだけで、<stat>200以上の言語</stat>での完全な文字起こしが、単語レベルのタイムスタンプ付きで得られます。<stat>無料</stat>、Google サインインで利用可能、ファイルは最大 1GB まで。",
+    "description": "Scribix は動画・音声ファイルを、話者ラベル付きの正確なテキストに数秒で変換します。MP4、MOV、WebM、AVI、MP3、WAV、M4A ファイルをアップロードすると、<stat>200以上の言語</stat>で単語レベルのタイムスタンプ付き全文 transcript を取得できます。Google サインインで<stat>無料</stat>、ファイルは最大 1GB まで。",
     "trust": [
       {
         "label": "99.9% 精度",
@@ -115,12 +112,6 @@
         "icon": "Upload"
       },
       {
-        "id": "youtube",
-        "label": "YouTube リンク",
-        "hint": "URL を貼り付け",
-        "icon": "PlaySquare"
-      },
-      {
         "id": "record",
         "label": "録音",
         "hint": "ライブ音声",
@@ -132,50 +123,12 @@
       "specs": "最大 1GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
       "button": "ファイルアップロード"
     },
-    "youtube": {
-      "label": "YouTube URL を貼り付け",
-      "placeholder": "https://www.youtube.com/watch?v=…",
-      "submit": "動画を文字起こし",
-      "hint": "最大 6 時間の動画をサポート · 自動字幕をスキップ、より高い精度のため音声を再取得"
-    },
     "record": {
       "active": "録音中…",
       "idle": "ライブ音声を録音",
       "activeTime": "00:00:12",
       "idleHint": "マイクをタップして開始"
-    },
-    "examplesTitle": "例",
-    "examplesHint": "デモを試す · クリックで読み込み",
-    "examples": [
-      {
-        "type": "audio",
-        "title": "Learn Case Interviews in Under 30 Minutes.mp3",
-        "duration": "29:04",
-        "icon": "FileAudio",
-        "color": "text-sage"
-      },
-      {
-        "type": "youtube",
-        "title": "Optimal Protocols for Studying & Learning",
-        "duration": "01:41:39",
-        "icon": "PlaySquare",
-        "color": "text-[#cc0000]"
-      },
-      {
-        "type": "video",
-        "title": "Joy is all around us — David Larbi · TED",
-        "duration": "04:15",
-        "icon": "FileVideo",
-        "color": "text-accent"
-      },
-      {
-        "type": "audio",
-        "title": "Aphantasia Explained — Visualization & Memory",
-        "duration": "01:30",
-        "icon": "FileAudio",
-        "color": "text-sage"
-      }
-    ]
+    }
   },
   "TrustStrip": {
     "tagline": "世界中の動画クリエイター、ジャーナリスト、ポッドキャスターに信頼されています",
@@ -255,8 +208,8 @@
       {
         "n": "01",
         "icon": "CloudUpload",
-        "title": "動画をアップロード—またはリンクを貼り付け。",
-        "body": "MP4、MOV、AVI、MKV、WebM ファイル（最大 1 GB）をドラッグ＆ドロップ、または YouTube、TikTok、Instagram URL を貼り付けます。形式変換不要—Scribix はあらゆる一般的なコンテナに対応。",
+        "title": "動画または音声ファイルをアップロード。",
+        "body": "最大 1 GB の MP4、MOV、AVI、MKV、WebM、MP3、WAV、M4A ファイルをドラッグ＆ドロップします。形式変換は不要です。Scribix は一般的なメディアコンテナに対応しています。",
         "duration": "最大 1 GB · 6 時間"
       },
       {
@@ -280,11 +233,11 @@
     "number": "03",
     "h2Part1": "毎日",
     "h2Part2": "<accent>動画をテキストに変換する</accent>人たち向け。",
-    "intro": "90 分のフッテージをショートフォーム動画に転用する YouTuber から、2 時間インタビューから正確に引用するジャーナリストまで、動画から文字起こしは、記録された会話を発行された作品に変えます。Scribix はその原動力です。",
+    "intro": "90 分の映像をショート動画に再利用するクリエイターから、2 時間のインタビューを正確に引用するジャーナリストまで、動画からテキストへの変換は、記録された会話を公開できる成果物に変えます。Scribix はそのためのツールです。",
     "items": [
       {
         "icon": "Clapperboard",
-        "title": "YouTube クリエイター",
+        "title": "動画クリエイター",
         "audience": "ロングフォーム→ショートフォーム",
         "body": "アクセシビリティのため字幕を生成、ロング動画をブログに転用、エピソードアーカイブを検索可能に。単語レベルのタイムスタンプにより、[12:04 – 12:38] の精度でバイラルクリップ抽出が簡単。",
         "workflow": [
@@ -409,15 +362,6 @@
         ]
       },
       {
-        "feature": "YouTube URL サポート",
-        "cells": [
-          "yes",
-          "no",
-          "no",
-          "no"
-        ]
-      },
-      {
         "feature": "エクスポート形式",
         "cells": [
           "7",
@@ -510,24 +454,6 @@
           "free": "生涯45分",
           "starter": "600分/月",
           "pro": "2,400優先分/月"
-        }
-      },
-      {
-        "key": "youtubeCaptionImports",
-        "label": "YouTube caption imports",
-        "values": {
-          "free": "5 lifetime",
-          "starter": "100/month",
-          "pro": "1,000/month"
-        }
-      },
-      {
-        "key": "maxYoutubeCaptionVideo",
-        "label": "Max YouTube caption video",
-        "values": {
-          "free": "2 hours",
-          "starter": "4 hours",
-          "pro": "10 hours"
         }
       },
       {
@@ -679,15 +605,11 @@
       },
       {
         "q": "Scribix はどの動画形式に対応していますか？",
-        "a": "MP4、MOV、AVI、MKV、WebM（各最大 1 GB）。音声のみファイル（MP3、WAV、M4A）も対応。YouTube、TikTok、Instagram URL を貼り付け—ダウンロード不要。"
+        "a": "MP4、MOV、AVI、MKV、WebM は各最大 1 GB まで対応しています。音声のみのファイル（MP3、WAV、M4A）にも対応しています。"
       },
       {
         "q": "Scribix の動画から文字への精度はどのくらいですか？",
         "a": "主言語のクリアな音声では 99.9%（TED トーク、ポッドキャスト、インタビューの 50 時間ベンチマークで測定）。重いアクセント、背景音楽、低ビットレート音声では若干低下—ただし話者ラベルと単語レベルタイムスタンプで修正が素早い。"
-      },
-      {
-        "q": "YouTube 動画をテキストに文字起こしできますか？",
-        "a": "はい。ジェネレータに YouTube URL を貼り付けます。Scribix は YouTube の自動字幕（通常 70–80% の精度）を使う代わりに、モデルで音声を再取得します。よりクリーンな出力、話者ラベル、YouTube が公開していない単語レベルタイムスタンプが得られます。"
       },
       {
         "q": "Scribix は何言語に対応していますか？",
@@ -699,7 +621,7 @@
       },
       {
         "q": "動画から文字への文字起こしはどのくらい時間がかかりますか？",
-        "a": "クリアな音声の MP4 の場合、動画 1 時間あたり約 1 分の計算時間。30 分会議は約 45 秒。YouTube 動画の取得ステップはダウンロードで 5–15 秒追加。"
+        "a": "音声が明瞭な MP4 の場合、動画 1 時間あたり約 1 分の計算時間が目安です。30 分の会議なら約 45 秒です。"
       },
       {
         "q": "動画をアップロードする際、データは安全ですか？",
@@ -721,7 +643,6 @@
     "h2Part2": "<accent>残りは私たちが。</accent>",
     "body": "Google サインインで無料お試し—45 分、クレジットカード不要。最初の文字起こしはコーヒーを飲み終わる前に出現。",
     "primaryCta": "動画をアップロード",
-    "secondaryCta": "YouTube リンクを貼り付け",
     "stats": [
       {
         "value": "99.9%",
@@ -963,34 +884,7 @@
     },
     "uploadOrRecord": {
       "upload": "アップロード",
-      "youtube": "YouTube",
       "record": "録音"
-    },
-    "youtube": {
-      "title": "Import YouTube captions",
-      "description": "Paste a YouTube URL and import the existing caption transcript. Scribix never downloads the video or audio.",
-      "limitsFree": "{imports, number} lifetime YouTube caption imports · up to {maxHours} hours per video",
-      "limitsPaid": "{imports, number} YouTube caption imports / {period} · up to {maxHours} hours per video",
-      "periodMonth": "month",
-      "periodYear": "year",
-      "urlLabel": "YouTube URL",
-      "placeholder": "https://www.youtube.com/watch?v=...",
-      "check": "Check captions",
-      "checking": "Checking...",
-      "tracksFound": "{count, plural, =1 {# caption track found} other {# caption tracks found}}",
-      "languageLabel": "Caption language",
-      "manual": "Manual captions",
-      "autoGenerated": "Auto-generated",
-      "import": "Import transcript",
-      "importing": "Importing...",
-      "errorInvalidUrl": "Paste a valid YouTube video URL.",
-      "errorUnavailable": "No captions are available for this video. Try another video or use the upload path.",
-      "errorTrackMissing": "That caption track is no longer available. Check the URL again.",
-      "errorEmpty": "This caption track is empty. Choose another language if available.",
-      "errorQuotaExceeded": "You have reached your YouTube caption import limit for this plan.",
-      "errorInspectRateLimited": "Too many caption checks. Wait a moment, then try again.",
-      "errorDurationExceeded": "This YouTube transcript is longer than your plan allows (max {maxHours} hours).",
-      "errorGeneric": "Could not fetch captions from YouTube. Try again in a moment."
     },
     "uploader": {
       "dropPrompt": "動画または音声ファイルをドロップ",

@@ -43,13 +43,12 @@ export async function generateMetadata({
       template: "%s · Scribix",
     },
     description:
-      "Convert any video to text free online. Upload MP4, MOV, or WebM — or paste a YouTube link — and get accurate, speaker-labeled transcripts in 200+ languages.",
+      "Convert video and audio files to text online. Upload MP4, MOV, WebM, MP3, WAV, or M4A and get accurate, speaker-labeled transcripts in 200+ languages.",
     keywords: [
       "video to text",
       "video to text converter",
       "convert video to text",
       "video transcription",
-      "youtube to text",
       "mp4 to text",
       "audio to text",
       "ai transcription",
@@ -62,7 +61,7 @@ export async function generateMetadata({
     openGraph: {
       title: "Video to Text — Free AI Transcription | Scribix",
       description:
-        "Upload a video or paste a YouTube link. Get an accurate, speaker-labeled transcript in seconds. Free with Google sign-in, 200+ languages.",
+        "Upload a video or audio file. Get an accurate, speaker-labeled transcript in seconds. Free with Google sign-in, 200+ languages.",
       type: "website",
       siteName: "Scribix",
       url: canonical,

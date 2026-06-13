@@ -28,7 +28,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
   const row = await env.DB.prepare(
     `SELECT id, user_id, title, status, error, duration_sec, language,
             created_at, completed_at, transcript_r2_key, audio_r2_key,
-            speaker_names_json, source, youtube_url, youtube_video_id
+            speaker_names_json
        FROM transcripts
       WHERE id = ?1 AND deleted_at IS NULL`
   )
@@ -46,9 +46,6 @@ export default async function TranscriptViewerPage({ params }: Params) {
       transcript_r2_key: string | null;
       audio_r2_key: string | null;
       speaker_names_json: string | null;
-      source: string | null;
-      youtube_url: string | null;
-      youtube_video_id: string | null;
     }>();
   if (!row) notFound();
   if (row.user_id !== userId) notFound();
@@ -109,8 +106,6 @@ export default async function TranscriptViewerPage({ params }: Params) {
           sentences={aai.sentences ?? []}
           fallbackText={aai.text ?? ""}
           sourceLanguage={row.language ?? aai.language_code ?? null}
-          youtubeUrl={row.source === "youtube" ? row.youtube_url : null}
-          youtubeVideoId={row.source === "youtube" ? row.youtube_video_id : null}
           initialSpeakerNames={parseSpeakerNames(row.speaker_names_json)}
           isPaid={user.tier !== "free"}
           checkoutSuccessPath={checkoutSuccessPath}

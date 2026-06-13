@@ -77,7 +77,7 @@ export default async function Image() {
             opacity: 0.7,
           }}
         >
-          Audio &middot; Video &middot; YouTube to Text
+          Audio &middot; Video &middot; AI Transcription
         </div>
       </div>
     ),

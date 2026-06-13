@@ -10,7 +10,7 @@ This document is the source of truth for v1 scope. Updated after a full plan-cha
 
 | Area | Decision |
 |---|---|
-| Inputs (v1) | Upload + Record. YouTube deferred. |
+| Inputs (v1) | Upload + Record. |
 | Pricing model | Subscription tiers (not credits). |
 | Tiers | **Free**, **Basic**, **Pro** |
 | Auth | Google OAuth + Google One-Tap (no email magic link, no Resend) |
@@ -489,7 +489,7 @@ All routes run on Cloudflare Workers (edge) by default — no per-route runtime 
 | | Why deferred |
 |---|---|
 | Email notifications (job complete, billing reminders) | No email infra in v1; users see status via dashboard |
-| YouTube link transcription | yt-dlp doesn't run on Pages; needs external extractor |
+| External video URL transcription | Deferred; external extractors are not part of the product. |
 | In-browser transcript editing | Days of frontend scope (autosave, undo, conflict) |
 | Additional rich export formats | TXT/SRT/VTT covers 95% of users |
 | Public share links | Adds permission model + abuse vector |

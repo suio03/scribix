@@ -1,6 +1,6 @@
 > Generated 2026-04-27. Reference file for building the landing page component.
 > Target keyword: **video to text** (homepage `/`)
-> CTA: drive visitors to the on-page generator (upload video / paste YouTube URL / record).
+> CTA: drive visitors to the on-page generator (upload video / upload audio / record).
 
 ---
 
@@ -9,7 +9,7 @@
 **Title tag**: `Video to Text — Free AI Transcription Online | Scribix`
 *(56 characters, keyword at position 1, intent-matched)*
 
-**Meta description**: `Convert any video to text free online. Upload MP4, MOV, or WebM — or paste a YouTube link — and get accurate, speaker-labeled transcripts in 200+ languages.`
+**Meta description**: `Convert any video to text free online. Upload MP4, MOV, WebM, MP3, WAV, or M4A — and get accurate, speaker-labeled transcripts in 200+ languages.`
 *(155 characters, keyword early, value-led, format specifics included)*
 
 **Schema types**: `SoftwareApplication` + `FAQPage` + `HowTo`
@@ -28,7 +28,7 @@
 
 ## Opening Paragraph (Hero subhead)
 
-Scribix converts any video into accurate, speaker-labeled text in seconds. Upload an MP4, MOV, WebM, or AVI file — or paste a YouTube link — and get a full transcript with word-level timestamps in 200+ languages. Free, no sign-up, no length limit.
+Scribix converts any video into accurate, speaker-labeled text in seconds. Upload an MP4, MOV, WebM, AVI, MP3, WAV, or M4A file — and get a full transcript with word-level timestamps in 200+ languages. Free, no sign-up, no length limit.
 
 ---
 
@@ -45,7 +45,7 @@ Scribix runs the same class of speech model that powers professional transcripti
 ## Section 2 — How Scribix Works in 3 Steps
 
 ### 1. Upload your video — or paste a link
-Drag and drop an `MP4`, `MOV`, `AVI`, `MKV`, or `WebM` file (up to **1 GB**), or paste a `YouTube`, `TikTok`, or `Instagram` URL. No format conversion needed — Scribix handles every common container.
+Drag and drop an `MP4`, `MOV`, `AVI`, `MKV`, or `WebM` file (up to **1 GB**). No format conversion needed — Scribix handles every common container.
 
 ### 2. AI transcribes with speaker labels
 Our model auto-detects the language (200+ supported), separates speakers, attaches timestamps to every word, and returns the full transcript in **under a minute for most one-hour videos**. Background noise, accents, and overlapping speech are handled by the same engine used in professional dictation tools.
@@ -81,13 +81,12 @@ Scribix accepts every common video and audio format used on the web today.
 | `WebM` | Video | 1 GB | Browser-recorded video |
 | `AVI` | Video | 1 GB | Older Windows codec |
 | `MKV` | Video | 1 GB | Open-container, supports multi-track audio |
-| YouTube URL | Stream | up to 6 hrs | Auto-captions are skipped — audio is re-transcribed for higher accuracy |
 | TikTok / Instagram URL | Stream | up to 1 hr | Public posts only |
 | `MP3` | Audio | 1 GB | Podcasts, voice notes |
 | `WAV` | Audio | 1 GB | Lossless studio recordings |
 | `M4A` | Audio | 1 GB | iPhone Voice Memos |
 
-> **Looking for audio-only?** See our dedicated [audio-to-text tool](/audio-to-text). For YouTube specifically, the [YouTube Transcript Generator](/youtube-transcript) is optimized for that single workflow.
+> **Looking for audio-only?** See our dedicated [audio-to-text tool](/audio-to-text).
 
 ---
 
@@ -113,7 +112,7 @@ Every word carries a timestamp. Speaker labels are automatic. This output is the
 
 ## Section 6 — Who Uses Video-to-Text Tools
 
-### YouTube creators
+### Video creators
 Generate accurate captions for accessibility, repurpose long videos into blog posts, build searchable episode archives. Scribix's word-level timestamps make it trivial to extract viral clips with `[12:04 – 12:38]` precision.
 
 ### Podcasters
@@ -144,10 +143,9 @@ Get a first-pass transcript of depositions, board meetings, and compliance inter
 | Speaker recognition | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Word-level timestamps | ✅ | Sentence-level | ✅ | ✅ | ✅ |
 | Export formats | **5** | 4 | 5 | 6 | 1 (raw) |
-| YouTube URL support | ✅ | ❌ | ❌ | ✅ | ❌ |
 | Privacy: files deleted | 24 hr | 30 days+ | 30 days+ | 30 days | local only |
 
-> Whisper.cpp is the only fair "free forever" alternative — but it requires a developer setup, no UI, no speaker labels, no YouTube fetcher. Scribix is what Whisper would feel like with the rough edges sanded off.
+> Whisper.cpp is the only fair "free forever" alternative — but it requires a developer setup, no UI, no speaker labels, no hosted fetcher. Scribix is what Whisper would feel like with the rough edges sanded off.
 
 ---
 
@@ -160,7 +158,7 @@ Get a first-pass transcript of depositions, board meetings, and compliance inter
 | 1 hour | ~90 seconds | 5 hours |
 | 3 hours (lecture) | ~5 minutes | 15 hours |
 
-Times measured on standard-quality MP4s with clear audio. Background music or heavy accents add 10–20% overhead. YouTube fetches add 5–15 seconds for the download step.
+Times measured on standard-quality MP4s with clear audio. Background music or heavy accents add 10–20% overhead.
 
 ---
 
@@ -178,13 +176,10 @@ For regulated workflows (legal, medical, financial), Scribix can sign an NDA and
 Yes. The free tier has no minute cap, no sign-up, and no credit card. You can transcribe a 6-hour conference recording for $0. Paid plans unlock priority queue, team libraries, and longer file retention.
 
 ### What video formats does Scribix support?
-MP4, MOV, AVI, MKV, WebM up to 1 GB each. Audio-only files (MP3, WAV, M4A) are also supported. Paste any YouTube, TikTok, or Instagram URL for stream-based input — no download needed on your end.
+MP4, MOV, AVI, MKV, WebM up to 1 GB each. Audio-only files (MP3, WAV, M4A) are also supported. 
 
 ### How accurate is Scribix's video-to-text?
 99.9% on clear audio in primary languages, measured against a 50-hour benchmark of TED talks, podcasts, and interviews. Accuracy drops slightly with heavy accents, background music, or low-bitrate audio — but speaker labels and word-level timestamps make corrections quick.
-
-### Can I transcribe a YouTube video to text?
-Yes. Paste any YouTube URL into the generator. Scribix re-transcribes the audio with our model rather than using YouTube's auto-captions (which are typically 70–80% accurate). This produces cleaner output, plus speaker labels, plus word-level timestamps that YouTube doesn't expose.
 
 ### How many languages does Scribix support?
 200+, with automatic language detection. The model handles code-switching (English ↔ Spanish, English ↔ Mandarin) within the same recording. For a list of all supported languages, see our [languages page](/languages).
@@ -193,7 +188,7 @@ Yes. Paste any YouTube URL into the generator. Scribix re-transcribes the audio 
 Yes. Scribix uses voice-fingerprinting to identify up to 8 distinct speakers and labels every line accordingly. You can rename `Speaker 1`, `Speaker 2` to actual names after transcription.
 
 ### How long does video-to-text transcription take?
-Around 1 minute of compute time per hour of video for clear-audio MP4s. A 30-minute meeting takes ~45 seconds. The fetch step for YouTube videos adds 5–15 seconds.
+Around 1 minute of compute time per hour of video for clear-audio MP4s. A 30-minute meeting takes ~45 seconds.
 
 ### Is my data secure when I upload a video?
 Files are uploaded over TLS 1.3, processed in encrypted memory, and deleted within 24 hours. We do not train models on user audio. SOC 2 alignment, GDPR-compliant data handling, and EU + US regional processing options.
@@ -214,7 +209,7 @@ Yes — but for an audio-first workflow, our [audio-to-text tool](/audio-to-text
 
 **Button text**: `Upload a Video` *(scrolls to generator)*
 
-**Secondary**: `Paste a YouTube Link →` *(scrolls to generator + opens YouTube tab)*
+**Secondary**: `Record Audio →` *(scrolls to generator + opens the record tab)*
 
 ---
 
@@ -232,7 +227,7 @@ Place inside `<head>`:
       "applicationCategory": "MultimediaApplication",
       "operatingSystem": "Any (web-based)",
       "url": "https://scribix.com/",
-      "description": "Free online video-to-text converter. Transcribe MP4, MOV, WebM, and YouTube videos in 200+ languages with speaker labels and word-level timestamps.",
+      "description": "Free online video-to-text converter. Transcribe MP4, MOV, WebM, and audio files in 200+ languages with speaker labels and word-level timestamps.",
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -249,8 +244,7 @@ Place inside `<head>`:
         "Word-level timestamps",
         "1 GB file size limit",
         "5 export formats: TXT, DOCX, SRT, VTT, CSV",
-        "YouTube, TikTok, Instagram URL support",
-        "No sign-up required",
+                "No sign-up required",
         "Files deleted within 24 hours"
       ]
     },
@@ -263,7 +257,7 @@ Place inside `<head>`:
           "@type": "HowToStep",
           "position": 1,
           "name": "Upload your video or paste a link",
-          "text": "Drag and drop an MP4, MOV, AVI, MKV, or WebM file (up to 1 GB), or paste a YouTube, TikTok, or Instagram URL."
+          "text": "Drag and drop an MP4, MOV, AVI, MKV, or WebM file (up to 1 GB)."
         },
         {
           "@type": "HowToStep",
@@ -295,7 +289,7 @@ Place inside `<head>`:
           "name": "What video formats does Scribix support?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "MP4, MOV, AVI, MKV, WebM up to 1 GB each. Audio-only files (MP3, WAV, M4A) are also supported. Paste any YouTube, TikTok, or Instagram URL for stream-based input."
+            "text": "MP4, MOV, AVI, MKV, WebM up to 1 GB each. Audio-only files (MP3, WAV, M4A) are also supported."
           }
         },
         {
@@ -304,14 +298,6 @@ Place inside `<head>`:
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "99.9% on clear audio in primary languages, measured against a 50-hour benchmark of TED talks, podcasts, and interviews."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can I transcribe a YouTube video to text?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes. Paste any YouTube URL into the generator. Scribix re-transcribes the audio with our model rather than using YouTube's auto-captions, producing cleaner output with speaker labels and word-level timestamps."
           }
         },
         {
@@ -377,7 +363,6 @@ Place inside `<head>`:
 | Target | Anchor text suggestion | Where to place |
 |---|---|---|
 | `/audio-to-text` | "Just have audio? Try our audio-to-text tool" | Section 4 (Format grid callout) + FAQ #10 |
-| `/youtube-transcript` | "YouTube creators: dedicated YouTube transcript generator" | Section 4 + Section 6 (YouTube creators use case) |
 | `/mp4-to-text` | "Convert MP4 specifically" | Section 4 row "MP4" |
 | `/mp3-to-text` | "MP3 to text" | Section 4 row "MP3" |
 | `/voice-to-text` | "Voice to text" | Use cases (researchers/journalists) |
@@ -389,7 +374,6 @@ Place inside `<head>`:
 | Source page | Anchor text | Placement |
 |---|---|---|
 | `/audio-to-text` | "Convert video to text" | Related tools sidebar |
-| `/youtube-transcript` | "Transcribe any video file" | Related tools / FAQ |
 | `/mp4-to-text` | "All video formats" | Top breadcrumb / hero subnote |
 | `/mp3-to-text` | "Video files supported too" | Related tools |
 
@@ -412,7 +396,6 @@ Place inside `<head>`:
 3. **Sample transcript demo** — Section 5 shows a real input → real output, which no competitor does. This is the highest-impact differentiator on the page.
 4. **Concrete speed table** — Section 8 gives transcription times in minutes per video length, vs competitors' vague "fast" / "in seconds."
 5. **Privacy depth** — Section 9 names the security model (TLS 1.3, 24-hr deletion, no training on user audio) where competitors give one vague sentence.
-6. **YouTube-first treatment** — explicit URL handling in Section 4 + dedicated FAQ #4 + use case #1; competitors mention YouTube weakly.
 
 **Format choice**: ElevenLabs depth (~3,000 words, dense feature coverage) + Vizard's friendly numbered-step flow + table-heavy layout for scannability. Word count target met: ~3,200 words across body, FAQ, and demo.
 

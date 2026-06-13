@@ -62,9 +62,6 @@
     ],
     "currentPlanTitle": "Piano attuale",
     "manageBilling": "Gestisci fatturazione",
-    "youtubeUsageTitle": "YouTube rimasti",
-    "youtubeUsageRemaining": "{remaining} importazioni rimaste",
-    "youtubeUsageMeter": "{used} / {quota} importazioni YouTube usate",
     "tierFree": "Gratuito",
     "tierBasic": "Starter",
     "tierPro": "Pro Unlimited",
@@ -84,7 +81,7 @@
     "issueLabel": "Issue №01 · Video to Text",
     "h1Part1": "Converti il video in testo.",
     "h1Part2": "<accent>Trascrizione IA gratuita.</accent>",
-    "description": "Scribix trasforma qualsiasi video in testo accurato e etichettato per relatore in pochi secondi. Carica un file MP4, MOV, WebM o AVI — o incolla un link YouTube — e ottieni un transcript completo con timestamp a livello di parola in <stat>200+ lingue</stat>. <stat>Gratuito</stat> con accesso Google, file fino a 1 GB.",
+    "description": "Scribix trasforma file video e audio in testo accurato con etichette dei relatori in pochi secondi. Carica un file MP4, MOV, WebM, AVI, MP3, WAV o M4A e ottieni una trascrizione completa con timestamp a livello di parola in <stat>200+ lingue</stat>. <stat>Gratis</stat> con accesso Google, file fino a 1 GB.",
     "trust": [
       {
         "label": "Accuratezza 99,9%",
@@ -115,12 +112,6 @@
         "icon": "Upload"
       },
       {
-        "id": "youtube",
-        "label": "Link YouTube",
-        "hint": "Incolla URL",
-        "icon": "PlaySquare"
-      },
-      {
         "id": "record",
         "label": "Registra",
         "hint": "Audio live",
@@ -132,50 +123,12 @@
       "specs": "Max 1 GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
       "button": "Carica File"
     },
-    "youtube": {
-      "label": "Incolla un URL YouTube",
-      "placeholder": "https://www.youtube.com/watch?v=…",
-      "submit": "Trascrivi Video",
-      "hint": "Supporta video fino a 6 ore · I sottotitoli automatici vengono saltati, l'audio viene riscritto per una maggiore accuratezza"
-    },
     "record": {
       "active": "Registrazione…",
       "idle": "Registra audio live",
       "activeTime": "00:00:12",
       "idleHint": "Tocca il microfono per iniziare"
-    },
-    "examplesTitle": "Esempi",
-    "examplesHint": "Prova la demo · Clicca per caricare",
-    "examples": [
-      {
-        "type": "audio",
-        "title": "Learn Case Interviews in Under 30 Minutes.mp3",
-        "duration": "29:04",
-        "icon": "FileAudio",
-        "color": "text-sage"
-      },
-      {
-        "type": "youtube",
-        "title": "Optimal Protocols for Studying & Learning",
-        "duration": "01:41:39",
-        "icon": "PlaySquare",
-        "color": "text-[#cc0000]"
-      },
-      {
-        "type": "video",
-        "title": "Joy is all around us — David Larbi · TED",
-        "duration": "04:15",
-        "icon": "FileVideo",
-        "color": "text-accent"
-      },
-      {
-        "type": "audio",
-        "title": "Aphantasia Explained — Visualization & Memory",
-        "duration": "01:30",
-        "icon": "FileAudio",
-        "color": "text-sage"
-      }
-    ]
+    }
   },
   "TrustStrip": {
     "tagline": "Di fiducia di creatori video, giornalisti e podcaster di tutto il mondo",
@@ -255,8 +208,8 @@
       {
         "n": "01",
         "icon": "CloudUpload",
-        "title": "Carica il tuo video — o incolla un link.",
-        "body": "Trascina e rilascia un file MP4, MOV, AVI, MKV o WebM (fino a 1 GB), oppure incolla un URL YouTube, TikTok o Instagram. Nessuna conversione di formato — Scribix gestisce ogni container comune.",
+        "title": "Carica il tuo file video o audio.",
+        "body": "Trascina e rilascia un file MP4, MOV, AVI, MKV, WebM, MP3, WAV o M4A fino a 1 GB. Nessuna conversione di formato: Scribix gestisce i container multimediali più comuni.",
         "duration": "Fino a 1 GB · 6 ore"
       },
       {
@@ -280,11 +233,11 @@
     "number": "03",
     "h2Part1": "Realizzato per le persone che",
     "h2Part2": "<accent>trasformano video in testo ogni giorno.</accent>",
-    "intro": "Da un YouTuber che ripropone 90 minuti di filmati in short, a un giornalista che cita una intervista di 2 ore accuratamente — video-to-text è come la conversazione registrata diventa lavoro pubblicato. Scribix è il cavallo da tiro dietro di tutto.",
+    "intro": "Dai creator che trasformano 90 minuti di filmati in short ai giornalisti che citano con precisione interviste di 2 ore, il video-to-text trasforma conversazioni registrate in lavoro pubblicato. Scribix è lo strumento dietro tutto questo.",
     "items": [
       {
         "icon": "Clapperboard",
-        "title": "Creatori YouTube",
+        "title": "Creator video",
         "audience": "Long-form a short-form",
         "body": "Genera didascalie per l'accessibilità, riproponii lunghi video in post di blog, costruisci archivi episodici ricercabili. Gli timestamp a livello di parola rendono banale estrarre clip virali con precisione [12:04 – 12:38].",
         "workflow": [
@@ -409,15 +362,6 @@
         ]
       },
       {
-        "feature": "Supporto URL YouTube",
-        "cells": [
-          "yes",
-          "no",
-          "no",
-          "no"
-        ]
-      },
-      {
         "feature": "Formati di esportazione",
         "cells": [
           "7",
@@ -510,24 +454,6 @@
           "free": "45 a vita",
           "starter": "600 min/mese",
           "pro": "2.400 min prioritari/mese"
-        }
-      },
-      {
-        "key": "youtubeCaptionImports",
-        "label": "YouTube caption imports",
-        "values": {
-          "free": "5 lifetime",
-          "starter": "100/month",
-          "pro": "1,000/month"
-        }
-      },
-      {
-        "key": "maxYoutubeCaptionVideo",
-        "label": "Max YouTube caption video",
-        "values": {
-          "free": "2 hours",
-          "starter": "4 hours",
-          "pro": "10 hours"
         }
       },
       {
@@ -679,15 +605,11 @@
       },
       {
         "q": "Quali formati video supporta Scribix?",
-        "a": "MP4, MOV, AVI, MKV e WebM fino a 1 GB ciascuno. Sono supportati anche file di solo audio (MP3, WAV, M4A). Incolla qualsiasi URL YouTube, TikTok o Instagram per input basato su streaming — nessun download necessario da parte tua."
+        "a": "MP4, MOV, AVI, MKV e WebM fino a 1 GB ciascuno. Sono supportati anche file solo audio (MP3, WAV, M4A)."
       },
       {
         "q": "Quanto è accurato il video-to-text di Scribix?",
-        "a": "99,9% su audio chiaro in lingue primarie, misurato contro un benchmark di 50 ore di conferenze TED, podcast e interviste. L'accuratezza diminuisce leggermente con accenti pesanti, musica di sottofondo o audio a basso bitrate — ma le etichette di relatore e gli timestamp a livello di parola rendono le correzioni rapide."
-      },
-      {
-        "q": "Posso trascrivere un video YouTube in testo?",
-        "a": "Sì. Incolla qualsiasi URL YouTube nel generatore. Scribix riscritto l'audio con il nostro modello piuttosto che utilizzare i sottotitoli automatici di YouTube (tipicamente 70–80% accurati). Questo produce un output più pulito, più etichette di relatore, più timestamp a livello di parola che YouTube non espone."
+        "a": "Circa 1 minuto di calcolo per ogni ora di video per MP4 con audio chiaro. Una riunione di 30 minuti richiede circa 45 secondi."
       },
       {
         "q": "Quante lingue supporta Scribix?",
@@ -699,7 +621,7 @@
       },
       {
         "q": "Quanto tempo ci vuole per la trascrizione video-to-text?",
-        "a": "Circa 1 minuto di tempo di calcolo per ora di video per MP4 con audio chiaro. Una riunione di 30 minuti richiede circa 45 secondi. Il step di fetch per i video YouTube aggiunge 5–15 secondi per il download."
+        "a": "Circa 1 minuto di calcolo per ogni ora di video per MP4 con audio chiaro. Una riunione di 30 minuti richiede circa 45 secondi."
       },
       {
         "q": "I miei dati sono sicuri quando carico un video?",
@@ -721,7 +643,6 @@
     "h2Part2": "<accent>Il resto lo faremo noi.</accent>",
     "body": "Provalo gratis con un accesso Google — 45 minuti, nessuna carta di credito. Il tuo primo transcript appare prima di finire il caffè.",
     "primaryCta": "Carica un Video",
-    "secondaryCta": "Incolla un Link YouTube",
     "stats": [
       {
         "value": "99,9%",
@@ -963,34 +884,7 @@
     },
     "uploadOrRecord": {
       "upload": "Carica",
-      "youtube": "YouTube",
       "record": "Registra"
-    },
-    "youtube": {
-      "title": "Import YouTube captions",
-      "description": "Paste a YouTube URL and import the existing caption transcript. Scribix never downloads the video or audio.",
-      "limitsFree": "{imports, number} lifetime YouTube caption imports · up to {maxHours} hours per video",
-      "limitsPaid": "{imports, number} YouTube caption imports / {period} · up to {maxHours} hours per video",
-      "periodMonth": "month",
-      "periodYear": "year",
-      "urlLabel": "YouTube URL",
-      "placeholder": "https://www.youtube.com/watch?v=...",
-      "check": "Check captions",
-      "checking": "Checking...",
-      "tracksFound": "{count, plural, =1 {# caption track found} other {# caption tracks found}}",
-      "languageLabel": "Caption language",
-      "manual": "Manual captions",
-      "autoGenerated": "Auto-generated",
-      "import": "Import transcript",
-      "importing": "Importing...",
-      "errorInvalidUrl": "Paste a valid YouTube video URL.",
-      "errorUnavailable": "No captions are available for this video. Try another video or use the upload path.",
-      "errorTrackMissing": "That caption track is no longer available. Check the URL again.",
-      "errorEmpty": "This caption track is empty. Choose another language if available.",
-      "errorQuotaExceeded": "You have reached your YouTube caption import limit for this plan.",
-      "errorInspectRateLimited": "Too many caption checks. Wait a moment, then try again.",
-      "errorDurationExceeded": "This YouTube transcript is longer than your plan allows (max {maxHours} hours).",
-      "errorGeneric": "Could not fetch captions from YouTube. Try again in a moment."
     },
     "uploader": {
       "dropPrompt": "Trascina un file video o audio",

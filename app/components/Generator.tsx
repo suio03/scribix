@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import {
   Upload,
-  PlaySquare,
   Mic,
   FileVideo,
   FileAudio,
@@ -20,19 +19,12 @@ import { useTranslations } from "next-intl";
 import { Waveform } from "./Waveform";
 import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
 
-type TabId = "upload" | "youtube" | "record";
+type TabId = "upload" | "record";
 type Tab = { id: TabId; label: string; hint: string };
 type TrustItem = { label: string };
-type Example = {
-  type: string;
-  title: string;
-  duration: string;
-  color: string;
-};
 
 const tabIcons: Record<TabId, LucideIcon> = {
   upload: Upload,
-  youtube: PlaySquare,
   record: Mic,
 };
 
@@ -43,8 +35,6 @@ const trustIcons: LucideIcon[] = [
   Users,
   ShieldCheck,
 ];
-
-const exampleIcons: LucideIcon[] = [FileAudio, PlaySquare, FileVideo, FileAudio];
 
 export function Generator({
   signedIn,
@@ -57,9 +47,8 @@ export function Generator({
   const [tab, setTab] = useState<TabId>("upload");
   const [recording, setRecording] = useState(false);
 
-  const tabs = (t.raw("tabs") as Tab[]).filter((item) => item.id !== "youtube");
+  const tabs = t.raw("tabs") as Tab[];
   const trust = t.raw("trust") as TrustItem[];
-  const examples = t.raw("examples") as Example[];
 
   return (
     <section

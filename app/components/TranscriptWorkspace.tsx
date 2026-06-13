@@ -18,8 +18,6 @@ type Props = {
   sentences: AaiSegment[];
   fallbackText: string;
   sourceLanguage: string | null;
-  youtubeUrl: string | null;
-  youtubeVideoId: string | null;
   initialSpeakerNames: SpeakerNames;
   isPaid: boolean;
   checkoutSuccessPath: string;
@@ -34,8 +32,6 @@ export function TranscriptWorkspace({
   sentences,
   fallbackText,
   sourceLanguage,
-  youtubeUrl,
-  youtubeVideoId,
   initialSpeakerNames,
   isPaid,
   checkoutSuccessPath,
@@ -61,8 +57,6 @@ export function TranscriptWorkspace({
           sentences={sentences}
           fallbackText={fallbackText}
           sourceLanguage={sourceLanguage}
-          youtubeUrl={youtubeUrl}
-          youtubeVideoId={youtubeVideoId}
           speakerNames={speakerNames}
           speakers={speakers}
           isPaid={isPaid}

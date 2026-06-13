@@ -176,7 +176,6 @@ async function handleTransactionCompleted(
             subscription_id = COALESCE(?5, subscription_id),
             subscription_status = 'active',
             minutes_used_this_period = 0,
-            youtube_imports_used_this_period = 0,
             period_started_at = ?6,
             period_ends_at = ?7
       WHERE id = ?8
@@ -236,7 +235,6 @@ async function handleSubscriptionActive(
             subscription_id = COALESCE(?5, subscription_id),
             subscription_status = 'active',
             minutes_used_this_period = CASE WHEN ?6 THEN 0 ELSE minutes_used_this_period END,
-            youtube_imports_used_this_period = CASE WHEN ?6 THEN 0 ELSE youtube_imports_used_this_period END,
             period_started_at = CASE WHEN ?6 THEN ?7 ELSE period_started_at END,
             period_ends_at = ?8
       WHERE id = ?9
@@ -355,13 +353,12 @@ async function expireSubscription(
               subscription_id = NULL,
               subscription_status = 'expired',
               minutes_used_this_period = ?2,
-              youtube_imports_used_this_period = ?3,
               period_started_at = CURRENT_TIMESTAMP,
               period_ends_at = '9999-12-31 00:00:00'
-        WHERE id = ?4
+        WHERE id = ?3
           AND deleted_at IS NULL`
     )
-    .bind(customerId, PLANS.free.minutesPerCycle, PLANS.free.youtubeImportsPerCycle, userId)
+    .bind(customerId, PLANS.free.minutesPerCycle, userId)
     .run();
 }
 
