@@ -3,6 +3,8 @@ export type PricingPlanId = "free" | "starter" | "pro";
 export type PlanFeatureKey =
   | "transcriptFiles"
   | "monthlyMinutes"
+  | "youtubeCaptionImports"
+  | "maxYoutubeCaptionVideo"
   | "maxFileLength"
   | "maxFileSize"
   | "processingQueue"
@@ -27,7 +29,9 @@ export function compactPricingRows(
 ): PlanFeatureCopy[] {
   return compactRows(featureRows, t, [
     "monthlyMinutes",
+    "youtubeCaptionImports",
     "maxFileLength",
+    "maxYoutubeCaptionVideo",
     "aiFeatures",
     "processingQueue",
   ]);
@@ -39,7 +43,9 @@ export function compactBillingRows(
 ): PlanFeatureCopy[] {
   return compactRows(featureRows, t, [
     "monthlyMinutes",
+    "youtubeCaptionImports",
     "maxFileLength",
+    "maxYoutubeCaptionVideo",
     "processingQueue",
     "aiFeatures",
   ]);

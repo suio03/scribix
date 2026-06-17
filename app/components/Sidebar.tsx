@@ -86,6 +86,13 @@ export function Sidebar({
   const quotaMin = Math.max(1, Math.round(usage?.quotaMin ?? 45));
   const remainingMin = Math.max(0, quotaMin - usedMin);
   const remainingPercent = Math.min(100, Math.max(0, (remainingMin / quotaMin) * 100));
+  const usedYouTubeImports = Math.max(0, Math.round(usage?.usedYouTubeImports ?? 0));
+  const quotaYouTubeImports = Math.max(1, Math.round(usage?.quotaYouTubeImports ?? 5));
+  const remainingYouTubeImports = Math.max(0, quotaYouTubeImports - usedYouTubeImports);
+  const remainingYouTubePercent = Math.min(
+    100,
+    Math.max(0, (remainingYouTubeImports / quotaYouTubeImports) * 100)
+  );
   const closeMobileSidebar = () => {
     setAccountOpen(false);
     setOpen(false);
@@ -372,6 +379,16 @@ export function Sidebar({
                   meterLabel={t("usageMeter", { used: usedMin, quota: quotaMin })}
                   percent={remainingPercent}
                   tone="accent"
+                />
+                <UsageMeter
+                  label={t("youtubeUsageTitle")}
+                  value={t("youtubeUsageRemaining", { remaining: remainingYouTubeImports })}
+                  meterLabel={t("youtubeUsageMeter", {
+                    used: usedYouTubeImports,
+                    quota: quotaYouTubeImports,
+                  })}
+                  percent={remainingYouTubePercent}
+                  tone="ink"
                 />
               </div>
             </div>

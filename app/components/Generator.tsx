@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import {
   Upload,
+  PlaySquare,
   Mic,
   FileVideo,
   FileAudio,
@@ -18,13 +19,15 @@ import {
 import { useTranslations } from "next-intl";
 import { Waveform } from "./Waveform";
 import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
+import { YouTubeImporter } from "./YouTubeImporter";
 
-type TabId = "upload" | "record";
+type TabId = "upload" | "youtube" | "record";
 type Tab = { id: TabId; label: string; hint: string };
 type TrustItem = { label: string };
 
 const tabIcons: Record<TabId, LucideIcon> = {
   upload: Upload,
+  youtube: PlaySquare,
   record: Mic,
 };
 
@@ -133,6 +136,13 @@ export function Generator({
                   signedIn={signedIn}
                   postSignInPath={postSignInPath}
                   checkoutSuccessPath={postSignInPath}
+                />
+              )}
+              {tab === "youtube" && (
+                <YouTubeImporter
+                  signedIn={signedIn}
+                  postSignInPath={postSignInPath}
+                  variant="flat"
                 />
               )}
               {tab === "record" && (

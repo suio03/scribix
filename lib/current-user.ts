@@ -11,13 +11,14 @@ export type CurrentUserRow = {
   customer_id: string | null;
   subscription_id: string | null;
   minutes_used_this_period: number;
+  youtube_imports_used_this_period: number;
   period_ends_at: string;
 };
 
 const CURRENT_USER_SELECT = `
   SELECT id, email, full_name, tier, billing_cycle, subscription_status,
          customer_id, subscription_id, minutes_used_this_period,
-         period_ends_at
+         youtube_imports_used_this_period, period_ends_at
     FROM users
    WHERE deleted_at IS NULL
 `;

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.13.0] - 2026-06-18
+
+### Added
+- Restored YouTube caption imports with URL inspection, caption track selection, dashboard/home entry points, and completed transcript creation through the dedicated caption service.
+- Restored YouTube transcript viewing with embedded playback, timestamp seeking, grouped caption display, sidebar quota usage, and pricing/account usage copy.
+- Added YouTube caption service configuration for local and Cloudflare environments.
+
+### Changed
+- Store and render canonical YouTube watch URLs derived from the returned video ID instead of trusting raw submitted URLs.
+- Reset YouTube import usage alongside subscription period changes in Paddle webhook handling.
+
+### Fixed
+- Guarded the YouTube import endpoint with quota pre-checks and per-user rate limiting before external caption fetches.
+- Clean up written transcript JSON from R2 if a YouTube transcript import fails after object creation.
+
 ## [0.12.3] - 2026-06-13
 
 ### Changed

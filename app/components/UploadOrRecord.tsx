@@ -1,19 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Upload, Mic, type LucideIcon } from "lucide-react";
+import { Upload, Mic, PlaySquare, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Uploader } from "./Uploader";
 import { Recorder } from "./Recorder";
+import { YouTubeImporter } from "./YouTubeImporter";
 import type { BillingCycle, Tier } from "@/lib/plans";
 
-type Tab = "upload" | "record";
+type Tab = "upload" | "youtube" | "record";
 
 export function UploadOrRecord({
   signedIn,
   postSignInPath,
   checkoutSuccessPath,
   tier = "free",
+  billingCycle = null,
 }: {
   signedIn: boolean;
   postSignInPath: string;
@@ -33,6 +35,12 @@ export function UploadOrRecord({
           label={t("upload")}
         />
         <TabBtn
+          active={tab === "youtube"}
+          onClick={() => setTab("youtube")}
+          icon={PlaySquare}
+          label={t("youtube")}
+        />
+        <TabBtn
           active={tab === "record"}
           onClick={() => setTab("record")}
           icon={Mic}
@@ -45,6 +53,13 @@ export function UploadOrRecord({
           postSignInPath={postSignInPath}
           checkoutSuccessPath={checkoutSuccessPath}
           tier={tier}
+        />
+      ) : tab === "youtube" ? (
+        <YouTubeImporter
+          signedIn={signedIn}
+          postSignInPath={postSignInPath}
+          tier={tier}
+          billingCycle={billingCycle}
         />
       ) : (
         <Recorder
