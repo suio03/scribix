@@ -152,6 +152,7 @@ export default async function DashboardPage({
                   <td className="px-4 py-3 sm:px-6">
                     <TranscriptRowMenu
                       id={r.id}
+                      title={r.title}
                       status={r.status}
                       audioAvailable={audioStillAvailable(r.created_at, r.audio_r2_key)}
                     />

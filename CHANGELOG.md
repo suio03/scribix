@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.14.0] - 2026-06-18
+
+### Added
+- Added transcript renaming from the dashboard row action menu for uploaded, recorded, and YouTube transcripts.
+
+### Changed
+- Extended the transcript PATCH endpoint to update titles with ownership checks and title sanitization.
+
 ## [0.13.0] - 2026-06-18
 
 ### Added

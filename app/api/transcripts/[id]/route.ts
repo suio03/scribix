@@ -99,7 +99,7 @@ export async function PATCH(req: Request, { params }: Params) {
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
   const { id: transcriptId } = await params;
 
-  let body: { speakerNames?: unknown };
+  let body: { speakerNames?: unknown; title?: unknown };
   try {
     const parsed = await req.json();
     body = parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
@@ -107,7 +107,12 @@ export async function PATCH(req: Request, { params }: Params) {
     return Response.json({ error: "invalid_json" }, { status: 400 });
   }
 
-  const speakerNames = sanitizeSpeakerNames(body.speakerNames);
+  const hasTitle = Object.hasOwn(body, "title");
+  const title = hasTitle ? sanitizeTranscriptTitle(body.title) : null;
+  if (hasTitle && !title) {
+    return Response.json({ error: "invalid_title" }, { status: 400 });
+  }
+  const speakerNames = hasTitle ? null : sanitizeSpeakerNames(body.speakerNames);
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
@@ -124,6 +129,16 @@ export async function PATCH(req: Request, { params }: Params) {
     return Response.json({ error: "forbidden" }, { status: 403 });
   }
 
+  if (hasTitle) {
+    await env.DB.prepare(
+      `UPDATE transcripts SET title = ?1 WHERE id = ?2 AND deleted_at IS NULL`
+    )
+      .bind(title, transcriptId)
+      .run();
+
+    return Response.json({ ok: true, title });
+  }
+
   await env.DB.prepare(
     `UPDATE transcripts SET speaker_names_json = ?1 WHERE id = ?2`
   )
@@ -131,6 +146,12 @@ export async function PATCH(req: Request, { params }: Params) {
     .run();
 
   return Response.json({ ok: true, speakerNames });
+}
+
+function sanitizeTranscriptTitle(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const title = value.replace(/\s+/g, " ").trim().slice(0, 200);
+  return title || null;
 }
 
 async function deleteTranslationObjects(
