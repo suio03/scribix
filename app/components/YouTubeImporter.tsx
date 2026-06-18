@@ -11,6 +11,7 @@ import {
   type BillingCycle,
   type Tier,
 } from "@/lib/plans";
+import { trackEvent } from "@/lib/analytics";
 import { markSignInPending } from "./Track";
 
 type YouTubeTrack = {
@@ -68,6 +69,7 @@ export function YouTubeImporter({
     setPhase("inspecting");
     setError(null);
     setResult(null);
+    trackEvent("youtube_inspect_attempt", { step: "inspect" });
 
     try {
       const response = await fetch("/api/transcripts/youtube", {
@@ -86,6 +88,7 @@ export function YouTubeImporter({
       setSelectedTrackId(preferredTrackId(inspectResult.tracks));
       setPhase("ready");
     } catch (caught) {
+      trackEvent("youtube_inspect_fail", youtubeInspectFailureProps(caught));
       setError(errorMessage(caught, t));
       setPhase("error");
     }
@@ -95,6 +98,7 @@ export function YouTubeImporter({
     if (busy || !result || !selectedTrack) return;
     setPhase("importing");
     setError(null);
+    trackEvent("youtube_import_attempt", { step: "import" });
 
     try {
       const response = await fetch("/api/transcripts/youtube/import", {
@@ -112,6 +116,7 @@ export function YouTubeImporter({
       }
       router.push(`/dashboard/transcripts/${imported.transcriptId}`);
     } catch (caught) {
+      trackEvent("youtube_import_fail", youtubeImportFailureProps(caught));
       setError(errorMessage(caught, t));
       setPhase("error");
     }
@@ -310,6 +315,32 @@ type YouTubeImportResponse = {
   error?: string;
 };
 
+type YouTubeFailureService = "scribix_app" | "youtube_caption_service";
+type YouTubeFailureType = "technical" | "product_limit" | "quota" | "auth" | "user_input";
+type YouTubeFailureMeta = {
+  service: YouTubeFailureService;
+  errorType: YouTubeFailureType;
+};
+
+const YOUTUBE_FAILURE_META: Record<string, YouTubeFailureMeta> = {
+  invalid_youtube_url: { service: "scribix_app", errorType: "user_input" },
+  missing_url: { service: "scribix_app", errorType: "user_input" },
+  missing_track: { service: "scribix_app", errorType: "user_input" },
+  invalid_json: { service: "scribix_app", errorType: "user_input" },
+  unauthorized: { service: "scribix_app", errorType: "auth" },
+  user_not_found: { service: "scribix_app", errorType: "auth" },
+  youtube_quota_exceeded: { service: "scribix_app", errorType: "quota" },
+  youtube_inspect_rate_limited: { service: "scribix_app", errorType: "quota" },
+  youtube_duration_exceeds_tier: { service: "scribix_app", errorType: "quota" },
+  missing_youtube_service_config: { service: "scribix_app", errorType: "technical" },
+  transcripts_unavailable: { service: "youtube_caption_service", errorType: "product_limit" },
+  track_not_found: { service: "youtube_caption_service", errorType: "product_limit" },
+  empty_transcript: { service: "youtube_caption_service", errorType: "product_limit" },
+  youtube_fetch_failed: { service: "youtube_caption_service", errorType: "technical" },
+  network_error: { service: "youtube_caption_service", errorType: "technical" },
+  unknown: { service: "youtube_caption_service", errorType: "technical" },
+};
+
 class YouTubeImportError extends Error {
   constructor(
     readonly code: string,
@@ -322,6 +353,40 @@ class YouTubeImportError extends Error {
 
 function youTubeImportError(payload: YouTubeErrorPayload, fallback: string): YouTubeImportError {
   return new YouTubeImportError(payload.error ?? fallback, payload.maxSec);
+}
+
+function youtubeInspectFailureProps(error: unknown) {
+  return {
+    ...youtubeFailureProps(error),
+    step: "inspect" as const,
+  };
+}
+
+function youtubeImportFailureProps(error: unknown) {
+  return {
+    ...youtubeFailureProps(error),
+    step: "import" as const,
+  };
+}
+
+function youtubeFailureProps(error: unknown) {
+  const normalized = normalizedYouTubeFailureCode(error);
+  const meta = YOUTUBE_FAILURE_META[normalized] ?? YOUTUBE_FAILURE_META.unknown;
+  return {
+    service: meta.service,
+    error_type: meta.errorType,
+    error_code: normalized,
+  };
+}
+
+function normalizedYouTubeFailureCode(error: unknown): string {
+  if (error instanceof YouTubeImportError) {
+    return YOUTUBE_FAILURE_META[error.code] ? error.code : "unknown";
+  }
+  if (error instanceof Error) {
+    return "network_error";
+  }
+  return "unknown";
 }
 
 function youtubeLimitCopy(

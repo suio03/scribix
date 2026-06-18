@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.14.1] - 2026-06-18
+
+### Added
+- Added YouTube inspect/import attempt and failure tracking for stability monitoring.
+
+### Fixed
+- Bucketed YouTube analytics error codes to avoid high-cardinality browser error messages.
+- Classified Scribix app-side YouTube failures separately from caption service failures.
+
 ## [0.14.0] - 2026-06-18
 
 ### Added

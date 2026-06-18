@@ -21,6 +21,20 @@ export type PlausibleEvents = {
     upload_status?: number;
     retryable?: boolean;
   };
+  youtube_inspect_attempt: { step: "inspect" };
+  youtube_inspect_fail: {
+    step: "inspect";
+    service: "scribix_app" | "youtube_caption_service";
+    error_type: "technical" | "product_limit" | "quota" | "auth" | "user_input";
+    error_code: string;
+  };
+  youtube_import_attempt: { step: "import" };
+  youtube_import_fail: {
+    step: "import";
+    service: "scribix_app" | "youtube_caption_service";
+    error_type: "technical" | "product_limit" | "quota" | "auth" | "user_input";
+    error_code: string;
+  };
   signin_success: { method?: string };
   download_click: { format: string };
   checkout_click: {
