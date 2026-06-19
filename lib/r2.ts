@@ -58,5 +58,7 @@ export const R2 = {
     `users/${userId}/${transcriptId}/translations/`,
   summaryKey: (userId: string, transcriptId: string) =>
     `users/${userId}/${transcriptId}/summary.json`,
+  extensionYoutubeSummaryKey: (userId: string, cacheKey: string) =>
+    `users/${userId}/extension/youtube-summaries/${cacheKey}.json`,
   bucket: BUCKET,
 };

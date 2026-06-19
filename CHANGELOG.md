@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.15.0] - 2026-06-20
+
+### Added
+- Added the YouTube transcript Chrome extension package, build scripts, and extension API routes.
+- Added daily free YouTube import quota support and extension abuse/cache migrations.
+
+### Changed
+- Changed free YouTube caption imports to reset daily at 10 imports per day.
+- Refreshed Scribix logo assets and generated extension-ready icon variants.
+
+### Fixed
+- Fixed production deploy builds so Paddle public configuration comes from `wrangler.jsonc` production vars instead of local sandbox env files.
+- Reserved and refunded YouTube import quota around import attempts so duration failures do not consume quota.
+
+### Removed
+- Removed the old logo showcase artifact.
+
 ## [0.14.1] - 2026-06-18
 
 ### Added

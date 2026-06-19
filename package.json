@@ -8,6 +8,8 @@
     "start": "next start",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview --remote",
     "deploy": "node scripts/deploy-production.mjs",
+    "extension:local": "node scripts/build-extension.mjs local",
+    "extension:zip": "node scripts/build-extension.mjs prod --zip",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "db:migrate:local": "wrangler d1 migrations apply scribix-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply scribix-db --remote",

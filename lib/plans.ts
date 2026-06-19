@@ -7,11 +7,13 @@
 export type Tier = "free" | "basic" | "pro";
 export type BillingCycle = "monthly" | "yearly";
 
+export const FREE_YOUTUBE_IMPORTS_PER_DAY = 10;
+
 export const PLANS = {
   free: {
-    // One-time lifetime trial — never resets. Quota.maybeResetFreePeriod is a no-op for free.
+    // Free transcript minutes are lifetime; YouTube caption imports reset daily.
     minutesPerCycle: 45,
-    youtubeImportsPerCycle: 5,
+    youtubeImportsPerCycle: FREE_YOUTUBE_IMPORTS_PER_DAY,
     youtubeMaxVideoSec: 2 * 3600,
     maxFileSec: 45 * 60,
     // Keep public upload size simple and conservative across audio + video.

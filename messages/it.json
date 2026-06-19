@@ -469,7 +469,7 @@
         "key": "youtubeCaptionImports",
         "label": "YouTube caption imports",
         "values": {
-          "free": "5 lifetime",
+          "free": "10/day",
           "starter": "100/month",
           "pro": "1,000/month"
         }
@@ -980,7 +980,7 @@
     "youtube": {
       "title": "Import YouTube captions",
       "description": "Paste a YouTube URL and import the existing caption transcript. Scribix never downloads the video or audio.",
-      "limitsFree": "{imports, number} lifetime YouTube caption imports · up to {maxHours} hours per video",
+      "limitsFree": "{imports, number} YouTube caption imports/day · up to {maxHours} hours per video",
       "limitsPaid": "{imports, number} YouTube caption imports / {period} · up to {maxHours} hours per video",
       "periodMonth": "month",
       "periodYear": "year",

@@ -11,7 +11,6 @@ import {
 } from "@/lib/youtube-caption-service";
 import { reserveYouTubeInspectAttempt } from "@/lib/youtube-inspect-rate-limit";
 import {
-  checkYouTubeImportQuota,
   refundYouTubeImport,
   reserveYouTubeImport,
 } from "@/lib/youtube-quota";
@@ -45,21 +44,6 @@ export async function POST(req: Request) {
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
 
-  const quotaPrecheck = await checkYouTubeImportQuota(env.DB, user.id);
-  if ("error" in quotaPrecheck) {
-    if (quotaPrecheck.error === "user_not_found") {
-      return Response.json({ error: "user_not_found" }, { status: 404 });
-    }
-    return Response.json(
-      {
-        error: quotaPrecheck.error,
-        cap: quotaPrecheck.cap,
-        remaining: quotaPrecheck.remaining,
-      },
-      { status: 429 }
-    );
-  }
-
   const importRateLimit = await reserveYouTubeInspectAttempt(env.DB, user.id);
   if ("error" in importRateLimit) {
     console.warn(`[youtube-captions:${requestId}:import] rate limited`, {
@@ -80,7 +64,22 @@ export async function POST(req: Request) {
     );
   }
 
-  let quotaReserved = false;
+  const quota = await reserveYouTubeImport(env.DB, user.id);
+  if ("error" in quota) {
+    if (quota.error === "user_not_found") {
+      return Response.json({ error: "user_not_found" }, { status: 404 });
+    }
+    return Response.json(
+      {
+        error: quota.error,
+        cap: quota.cap,
+        remaining: quota.remaining,
+      },
+      { status: 429 }
+    );
+  }
+
+  let quotaReserved = true;
   let transcriptKeyToCleanup: string | null = null;
 
   try {
@@ -102,6 +101,8 @@ export async function POST(req: Request) {
         durationSec: imported.durationSec,
         maxDurationSec,
       });
+      await refundYouTubeImport(env.DB, user.id);
+      quotaReserved = false;
       return Response.json(
         {
           error: "youtube_duration_exceeds_tier",
@@ -112,18 +113,6 @@ export async function POST(req: Request) {
         { status: 413 }
       );
     }
-
-    const quota = await reserveYouTubeImport(env.DB, user.id);
-    if ("error" in quota) {
-      if (quota.error === "user_not_found") {
-        return Response.json({ error: "user_not_found" }, { status: 404 });
-      }
-      return Response.json(
-        { error: quota.error, cap: quota.cap, remaining: quota.remaining },
-        { status: 429 }
-      );
-    }
-    quotaReserved = true;
 
     const transcriptId = newId();
     const transcriptKey = R2.transcriptKey(user.id, transcriptId);
