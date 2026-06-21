@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.15.2] - 2026-06-21
+
+### Fixed
+- Fixed Chrome extension login by routing users through a dedicated Scribix extension sign-in page.
+- Updated the extension login fallback URL to avoid opening the raw Auth.js Google provider endpoint.
+
 ## [0.15.1] - 2026-06-21
 
 ### Added

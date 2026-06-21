@@ -445,7 +445,7 @@ function openLogin() {
   const url =
     state.account && state.account.signInUrl
       ? state.account.signInUrl
-      : "https://scribix.io/api/auth/signin/google";
+      : "https://scribix.io/extension-login?callbackUrl=%2F";
   sendMessage({ type: "OPEN_URL", url });
 }
 

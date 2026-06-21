@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     return extensionJson(req, {
       signedIn: false,
       paid: false,
-      signInUrl: `${baseUrl}/api/auth/signin/google?callbackUrl=${encodeURIComponent("/")}`,
+      signInUrl: `${baseUrl}/extension-login?callbackUrl=${encodeURIComponent("/")}`,
       upgradeUrl: `${baseUrl}/pricing`,
     });
   }
@@ -30,7 +30,7 @@ export async function GET(req: Request) {
     email: user.email,
     tier: user.tier,
     paid: user.tier !== "free",
-    signInUrl: `${baseUrl}/api/auth/signin/google?callbackUrl=${encodeURIComponent("/")}`,
+    signInUrl: `${baseUrl}/extension-login?callbackUrl=${encodeURIComponent("/")}`,
     upgradeUrl: `${baseUrl}/pricing`,
   });
 }
