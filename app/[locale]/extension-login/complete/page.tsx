@@ -1,24 +1,22 @@
 import type { Metadata } from "next";
 import { Logo } from "@/app/components/Logo";
-import { ExtensionLoginButton } from "@/app/components/ExtensionLoginButton";
 import { safeYouTubeReturnUrl } from "@/lib/youtube-return-url";
 
 export const metadata: Metadata = {
-  title: "Sign in for Scribix Extension",
+  title: "Scribix Extension Signed In",
   robots: {
     index: false,
     follow: false,
   },
 };
 
-export default async function ExtensionLoginPage({
+export default async function ExtensionLoginCompletePage({
   searchParams,
 }: {
   searchParams: Promise<{ returnUrl?: string | string[] }>;
 }) {
   const params = await searchParams;
   const returnUrl = safeYouTubeReturnUrl(params.returnUrl);
-  const redirectTo = `/extension-login/complete${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ""}`;
 
   return (
     <main className="grid min-h-screen place-items-center bg-paper px-6 py-12 text-ink">
@@ -32,15 +30,20 @@ export default async function ExtensionLoginPage({
         </div>
 
         <div className="space-y-3">
-          <h1 className="font-display text-3xl leading-tight">Sign in to continue</h1>
+          <h1 className="font-display text-3xl leading-tight">You are signed in</h1>
           <p className="text-sm leading-6 text-muted">
-            Use your Scribix account to unlock Pro summaries in the Chrome extension.
+            Return to YouTube to continue using Scribix summaries.
           </p>
         </div>
 
-        <div className="mt-7">
-          <ExtensionLoginButton redirectTo={redirectTo} />
-        </div>
+        {returnUrl ? (
+          <a
+            className="mt-7 inline-flex h-12 w-full items-center justify-center rounded-lg bg-ink px-5 text-sm font-semibold text-paper transition hover:opacity-90"
+            href={returnUrl}
+          >
+            Back to YouTube
+          </a>
+        ) : null}
       </section>
     </main>
   );

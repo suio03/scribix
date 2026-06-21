@@ -21,6 +21,16 @@ init();
 function init() {
   mountWhenReady();
   refreshAccount();
+  chrome.runtime.onMessage.addListener((message) => {
+    if (!message || message.type !== "ACCOUNT_UPDATED") return;
+    if (message.account && typeof message.account === "object") {
+      state.account = message.account;
+      render();
+      toast("Signed in to Scribix");
+      return;
+    }
+    refreshAccount();
+  });
 
   const observer = new MutationObserver(() => {
     if (location.href !== locationHref) {
@@ -422,10 +432,10 @@ function groupTranscriptSnippets(snippets) {
 
 function headerAccountAction() {
   if (!state.account) return "";
-  if (!state.account.paid) {
+  if (!state.account.signedIn) {
     return `<button class="login-button" type="button" data-action="login">${icon("user")} Log In</button>`;
   }
-  return `<span class="plan-pill">${escapeHtml(state.account.tier || "Paid")}</span>`;
+  return accountAvatarMarkup(state.account);
 }
 
 function summaryEntry() {
@@ -445,8 +455,8 @@ function openLogin() {
   const url =
     state.account && state.account.signInUrl
       ? state.account.signInUrl
-      : "https://scribix.io/extension-login?callbackUrl=%2F";
-  sendMessage({ type: "OPEN_URL", url });
+      : "https://scribix.io/extension-login";
+  sendMessage({ type: "OPEN_LOGIN", url, returnUrl: location.href });
 }
 
 function openUpgrade() {
@@ -646,6 +656,32 @@ function escapeHtml(value) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function accountAvatarMarkup(account) {
+  const avatarUrl = safeImageUrl(account.avatarUrl);
+  const title = "Signed in to Scribix";
+  if (avatarUrl) {
+    return `
+      <span class="account-avatar" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}">
+        <img src="${escapeHtml(avatarUrl)}" alt="" referrerpolicy="no-referrer">
+      </span>
+    `;
+  }
+  return `
+    <span class="account-avatar fallback" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}">
+      ${icon("user")}
+    </span>
+  `;
+}
+
+function safeImageUrl(value) {
+  if (typeof value !== "string" || !value.trim()) return "";
+  try {
+    const url = new URL(value);
+    if (url.protocol === "https:") return url.toString();
+  } catch {}
+  return "";
 }
 
 function icon(name) {

@@ -1,11 +1,17 @@
 const API_BASE = "https://scribix.io";
 const CLIENT_ID_KEY = "scribixExtensionClientId";
+const LOGIN_CONTEXT_KEY = "scribixLoginContext";
 const TRANSCRIPT_CACHE_KEY = "scribixTranscriptCacheV1";
 const MAX_TRANSCRIPT_CACHE_ITEMS = 20;
 const MAX_TRANSCRIPT_CACHE_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+const LOGIN_POLL_INTERVAL_MS = 2000;
+const LOGIN_POLL_ATTEMPTS = 60;
 
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  handleMessage(message)
+let loginPollTimer = null;
+let loginCompletionInProgress = false;
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  handleMessage(message, sender)
     .then((result) => sendResponse({ ok: true, result }))
     .catch((error) => {
       sendResponse({
@@ -16,7 +22,11 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return true;
 });
 
-async function handleMessage(message) {
+chrome.tabs.onRemoved.addListener((tabId) => {
+  handleLoginTabRemoved(tabId);
+});
+
+async function handleMessage(message, sender) {
   if (!message || typeof message !== "object") throw new Error("invalid_message");
 
   switch (message.type) {
@@ -37,9 +47,134 @@ async function handleMessage(message) {
       if (typeof message.url !== "string") throw new Error("invalid_url");
       await chrome.tabs.create({ url: message.url });
       return { opened: true };
+    case "OPEN_LOGIN":
+      return openLogin(message, sender);
+    case "LOGIN_COMPLETE":
+      return completeLogin();
     default:
       throw new Error("unknown_message");
   }
+}
+
+async function openLogin(message, sender) {
+  const sourceTab = sender && sender.tab ? sender.tab : null;
+  const sourceTabId = typeof sourceTab?.id === "number" ? sourceTab.id : null;
+  const sourceWindowId = typeof sourceTab?.windowId === "number" ? sourceTab.windowId : null;
+  if (!sourceTabId) throw new Error("missing_source_tab");
+
+  loginCompletionInProgress = false;
+  stopLoginPoll();
+
+  const returnUrl = typeof message.returnUrl === "string" ? message.returnUrl : "";
+  const signInUrl = loginUrlWithReturnUrl(message.url, returnUrl);
+  const loginTab = await chrome.tabs.create({ url: signInUrl });
+
+  await chrome.storage.local.set({
+    [LOGIN_CONTEXT_KEY]: {
+      sourceTabId,
+      sourceWindowId,
+      loginTabId: loginTab.id ?? null,
+      returnUrl,
+      startedAt: Date.now(),
+    },
+  });
+  startLoginPoll(0);
+  return { opened: true };
+}
+
+async function completeLogin() {
+  const account = await apiFetch("/api/extension/account", { method: "GET" });
+  if (!account || !account.signedIn) return { signedIn: false };
+
+  return finishLogin(account);
+}
+
+async function finishLogin(account) {
+  if (loginCompletionInProgress) return { signedIn: true };
+  loginCompletionInProgress = true;
+  stopLoginPoll();
+
+  const context = await readLoginContext();
+  if (context) {
+    await focusSourceTab(context);
+    await notifySourceTab(context.sourceTabId, account);
+  }
+  await chrome.storage.local.remove(LOGIN_CONTEXT_KEY);
+  return { signedIn: true };
+}
+
+async function handleLoginTabRemoved(tabId) {
+  try {
+    const context = await readLoginContext();
+    if (context && context.loginTabId === tabId) {
+      stopLoginPoll();
+      loginCompletionInProgress = false;
+      await chrome.storage.local.remove(LOGIN_CONTEXT_KEY);
+    }
+  } catch {}
+}
+
+function loginUrlWithReturnUrl(url, returnUrl) {
+  const base = typeof url === "string" && url ? url : `${API_BASE}/extension-login`;
+  const loginUrl = new URL(base);
+  if (isYouTubeWatchUrl(returnUrl)) {
+    loginUrl.searchParams.set("returnUrl", returnUrl);
+  }
+  return loginUrl.toString();
+}
+
+function isYouTubeWatchUrl(value) {
+  try {
+    const url = new URL(value);
+    const hostAllowed = url.hostname === "youtube.com" || url.hostname === "www.youtube.com";
+    return hostAllowed && url.pathname === "/watch" && url.searchParams.has("v");
+  } catch {
+    return false;
+  }
+}
+
+function startLoginPoll(attempt) {
+  stopLoginPoll();
+  if (attempt >= LOGIN_POLL_ATTEMPTS) return;
+  loginPollTimer = setTimeout(async () => {
+    try {
+      const account = await apiFetch("/api/extension/account", { method: "GET" });
+      if (account && account.signedIn) {
+        await finishLogin(account);
+        return;
+      }
+    } catch {}
+    startLoginPoll(attempt + 1);
+  }, LOGIN_POLL_INTERVAL_MS);
+}
+
+function stopLoginPoll() {
+  if (loginPollTimer) {
+    clearTimeout(loginPollTimer);
+    loginPollTimer = null;
+  }
+}
+
+async function readLoginContext() {
+  const store = await chrome.storage.local.get(LOGIN_CONTEXT_KEY);
+  const context = store[LOGIN_CONTEXT_KEY];
+  if (!context || typeof context.sourceTabId !== "number") return null;
+  return context;
+}
+
+async function focusSourceTab(context) {
+  try {
+    if (typeof context.sourceWindowId === "number") {
+      await chrome.windows.update(context.sourceWindowId, { focused: true });
+    }
+    await chrome.tabs.update(context.sourceTabId, { active: true });
+  } catch {}
+}
+
+async function notifySourceTab(tabId, account) {
+  try {
+    await chrome.tabs.sendMessage(tabId, { type: "ACCOUNT_UPDATED", account });
+  } catch {}
 }
 
 async function getTranscript(message) {

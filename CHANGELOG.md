@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.15.3] - 2026-06-21
+
+### Changed
+- Updated the Chrome extension to version 0.1.1 with automatic return to the original YouTube tab after sign-in.
+- Changed the extension header to show the signed-in account avatar instead of the internal plan tier.
+
+### Fixed
+- Fixed duplicate extension sign-in refreshes by funneling login completion through a single guarded path.
+- Stopped abandoned extension login attempts from continuing account polling after the login tab is closed.
+
 ## [0.15.2] - 2026-06-21
 
 ### Fixed

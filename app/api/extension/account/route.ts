@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     return extensionJson(req, {
       signedIn: false,
       paid: false,
-      signInUrl: `${baseUrl}/extension-login?callbackUrl=${encodeURIComponent("/")}`,
+      signInUrl: `${baseUrl}/extension-login`,
       upgradeUrl: `${baseUrl}/pricing`,
     });
   }
@@ -28,9 +28,10 @@ export async function GET(req: Request) {
   return extensionJson(req, {
     signedIn: true,
     email: user.email,
+    avatarUrl: session.user.image ?? user.avatar_url,
     tier: user.tier,
     paid: user.tier !== "free",
-    signInUrl: `${baseUrl}/extension-login?callbackUrl=${encodeURIComponent("/")}`,
+    signInUrl: `${baseUrl}/extension-login`,
     upgradeUrl: `${baseUrl}/pricing`,
   });
 }

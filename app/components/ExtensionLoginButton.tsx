@@ -4,13 +4,13 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 
-export function ExtensionLoginButton({ callbackUrl = "/" }: { callbackUrl?: string }) {
+export function ExtensionLoginButton({ redirectTo = "/" }: { redirectTo?: string }) {
   const [pending, setPending] = useState(false);
 
   async function continueWithGoogle() {
     if (pending) return;
     setPending(true);
-    await signIn("google", { redirectTo: callbackUrl });
+    await signIn("google", { redirectTo });
   }
 
   return (

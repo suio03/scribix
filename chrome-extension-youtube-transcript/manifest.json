@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube Transcript & Summary Generator",
   "description": "Generate YouTube transcripts on desktop watch pages, with AI summaries for Scribix Pro users.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "action": {
     "default_title": "YouTube Transcript & Summary Generator",
     "default_icon": {
@@ -30,6 +30,11 @@
     {
       "matches": ["https://www.youtube.com/watch*", "https://youtube.com/watch*"],
       "js": ["content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://scribix.io/extension-login/complete*"],
+      "js": ["login-complete.js"],
       "run_at": "document_idle"
     }
   ],

@@ -5,6 +5,7 @@ export type CurrentUserRow = {
   id: string;
   email: string;
   full_name: string | null;
+  avatar_url: string | null;
   tier: Tier;
   billing_cycle: BillingCycle | null;
   subscription_status: string | null;
@@ -16,7 +17,7 @@ export type CurrentUserRow = {
 };
 
 const CURRENT_USER_SELECT = `
-  SELECT id, email, full_name, tier, billing_cycle, subscription_status,
+  SELECT id, email, full_name, avatar_url, tier, billing_cycle, subscription_status,
          customer_id, subscription_id, minutes_used_this_period,
          youtube_imports_used_this_period, period_ends_at
     FROM users
