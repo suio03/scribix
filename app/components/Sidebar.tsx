@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type ComponentType,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
@@ -21,7 +22,7 @@ import {
   Plus,
   UserRound,
   X,
-  type LucideIcon,
+  type LucideProps,
 } from "lucide-react";
 import Image from "next/image";
 import { signIn, signOut } from "next-auth/react";
@@ -38,7 +39,29 @@ type NavItem = {
   label: string;
   href: string;
   icon?: keyof typeof navIcons;
+  external?: boolean;
 };
+
+type SidebarIcon = ComponentType<LucideProps>;
+
+function YouTubeIcon({ size = 24, strokeWidth = 2, className, style }: LucideProps) {
+  void strokeWidth;
+  return (
+    <span
+      className={className}
+      aria-hidden="true"
+      style={{
+        ...style,
+        display: "inline-block",
+        width: size,
+        height: size,
+        backgroundColor: "currentColor",
+        WebkitMask: "url('/icons/youtube-extension.png') center / contain no-repeat",
+        mask: "url('/icons/youtube-extension.png') center / contain no-repeat",
+      }}
+    />
+  );
+}
 
 const navIcons = {
   Home,
@@ -48,7 +71,11 @@ const navIcons = {
   FileAudio,
   LayoutDashboard,
   UserRound,
-} satisfies Record<string, LucideIcon>;
+  YouTubeIcon,
+} satisfies Record<string, SidebarIcon>;
+
+const CHROME_EXTENSION_URL =
+  "https://chromewebstore.google.com/detail/youtube-transcript-summar/ighgffaindjodlejiddagjlehmgglgaf";
 
 function activePath(href: string) {
   const path = href.split("#")[0];
@@ -120,7 +147,13 @@ export function Sidebar({
     { label: t("billing"), href: "/dashboard/billing", icon: "BadgeDollarSign" },
     { label: t("account"), href: "/dashboard/account", icon: "UserRound" },
   ];
-  const productNav = variant === "dashboard" ? dashboardNav : nav;
+  const extensionNavItem: NavItem = {
+    label: t("browserExtension"),
+    href: CHROME_EXTENSION_URL,
+    icon: "YouTubeIcon",
+    external: true,
+  };
+  const productNav = variant === "dashboard" ? [dashboardNav[0], extensionNavItem, ...dashboardNav.slice(1)] : [...nav, extensionNavItem];
   const isDashboardPathActive = (href: string) => {
     if (href === "/dashboard") {
       return pathname === "/dashboard" || pathname.startsWith("/dashboard/transcripts");
@@ -256,27 +289,45 @@ export function Sidebar({
                   : !item.href.includes("#") && pathname === activePath(item.href);
               return (
                 <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    onClick={closeAfterNavigate}
-                    title={item.label}
-                    className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
-                      active
-                        ? "bg-accent-soft text-ink"
-                        : "text-muted hover:bg-paper hover:text-ink"
-                    } ${isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""}`}
-                  >
-                    {Icon ? (
-                      <Icon
-                        size={17}
-                        strokeWidth={1.6}
-                        className={active ? "text-accent" : ""}
-                      />
-                    ) : null}
-                    <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
-                      {item.label}
-                    </span>
-                  </Link>
+                  {item.external ? (
+                    <a
+                      href={item.href}
+                      onClick={closeAfterNavigate}
+                      title={item.label}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-muted transition hover:bg-paper hover:text-ink ${
+                        isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""
+                      }`}
+                    >
+                      {Icon ? <Icon size={17} strokeWidth={1.6} /> : null}
+                      <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
+                        {item.label}
+                      </span>
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={closeAfterNavigate}
+                      title={item.label}
+                      className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
+                        active
+                          ? "bg-accent-soft text-ink"
+                          : "text-muted hover:bg-paper hover:text-ink"
+                      } ${isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""}`}
+                    >
+                      {Icon ? (
+                        <Icon
+                          size={17}
+                          strokeWidth={1.6}
+                          className={active ? "text-accent" : ""}
+                        />
+                      ) : null}
+                      <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
+                        {item.label}
+                      </span>
+                    </Link>
+                  )}
                 </li>
               );
             })}

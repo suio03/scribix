@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.15.1] - 2026-06-21
+
+### Added
+- Added a YouTube Extension sidebar entry for signed-out and signed-in users.
+- Added a monochrome YouTube extension icon asset for the sidebar entry.
+
+### Changed
+- Renamed localized sidebar extension labels to YouTube Extension.
+
 ## [0.15.0] - 2026-06-20
 
 ### Added
