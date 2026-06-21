@@ -44,6 +44,11 @@
         "label": "Video zu Text",
         "href": "/#generator",
         "icon": "Clapperboard"
+      },
+      {
+        "label": "YouTube zu Text",
+        "href": "/youtube-to-transcript",
+        "icon": "Captions"
       }
     ],
     "tools": [
@@ -996,6 +1001,7 @@
       "importing": "Importing...",
       "errorInvalidUrl": "Paste a valid YouTube video URL.",
       "errorUnavailable": "No captions are available for this video. Try another video or use the upload path.",
+      "errorVideoUnplayable": "Wir konnten nicht auf die Untertitel dieses YouTube-Videos zugreifen. Es ist möglicherweise privat, eingeschränkt, regional begrenzt oder für unseren Untertiteldienst nicht verfügbar. Versuche ein anderes Video oder lade deine eigene Datei hoch.",
       "errorTrackMissing": "That caption track is no longer available. Check the URL again.",
       "errorEmpty": "This caption track is empty. Choose another language if available.",
       "errorQuotaExceeded": "You have reached your YouTube caption import limit for this plan.",
@@ -1723,6 +1729,396 @@
         "Audio transkribieren",
         "Transkript prüfen",
         "Kopieren oder exportieren"
+      ]
+    }
+  },
+  "YouTubeToTranscript": {
+    "metadata": {
+      "title": "YouTube zu Text | Scribix",
+      "description": "Füge eine YouTube-URL in Scribix ein, um verfügbare Untertitel als gespeichertes Transkript zu importieren. Wähle eine Spur, kopiere Text, exportiere oder fasse mit einem bezahlten Plan zusammen.",
+      "openGraphTitle": "YouTube zu Text | Scribix",
+      "openGraphDescription": "Füge eine YouTube-URL ein, importiere eine verfügbare Untertitelspur und speichere ein durchsuchbares Transkript mit Exporten und KI-Zusammenfassungen in bezahlten Plänen.",
+      "twitterTitle": "YouTube zu Text | Scribix",
+      "twitterDescription": "Importiere verfügbare YouTube-Untertitel als gespeicherte Transkripte, die du durchsuchen, kopieren, exportieren und mit bezahlten Plänen zusammenfassen kannst."
+    },
+    "hero": {
+      "issue": "REC · YOUTUBE-URL",
+      "issueLabel": "Ausgabe No.04 · YouTube zu Text",
+      "title": "YouTube zu Text.",
+      "accentTitle": "Gespeicherter, durchsuchbarer Text.",
+      "descriptionStart": "Füge eine YouTube-URL in Scribix ein und importiere die verfügbare Untertitelspur des Videos als Transkript, das du lesen, durchsuchen, kopieren, exportieren und mit bezahlten Plänen zusammenfassen kannst.",
+      "stat": "Kostenlos mit Google-Anmeldung",
+      "descriptionEnd": ". Scribix prüft zuerst die verfügbaren Untertitel und speichert das Transkript, ohne das YouTube-Video oder -Audio herunterzuladen.",
+      "primaryCta": "YouTube-URL einfügen",
+      "secondaryCta": "Datei transkribieren?",
+      "secondaryHref": "/",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "10 kostenlose Importe/Tag"
+        },
+        {
+          "icon": "Captions",
+          "label": "Sprachauswahl"
+        },
+        {
+          "icon": "Download",
+          "label": "TXT, DOCX, SRT, VTT, CSV"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "Keine Kreditkarte"
+        }
+      ]
+    },
+    "quickAnswer": {
+      "kicker": "Kurzantwort",
+      "title": "Link einfügen. Untertitel speichern.",
+      "body": "Scribix ist ein Tool von YouTube zu Text, das verfügbare YouTube-Untertitel in ein gespeichertes Transkript umwandelt. Es eignet sich für Vorlesungen, Interviews, Tutorials, Webinare, Podcasts und Forschungsvideos, die bereits manuelle oder automatisch erzeugte Untertitel haben. Füge die YouTube-URL ein, wähle eine Untertitelspur, importiere das Transkript und kopiere oder exportiere es als TXT, DOCX, SRT, VTT oder CSV. Wenn ein Video keine Untertitel hat, nutze stattdessen den normalen Upload-Flow mit deiner eigenen Audio- oder Videodatei."
+    },
+    "overview": {
+      "number": "01",
+      "label": "Überblick",
+      "rows": [
+        {
+          "item": "Ideal für",
+          "detail": "Untertitelte YouTube-Vorlesungen, Interviews, Tutorials, Podcasts, Webinare und Forschungsvideos"
+        },
+        {
+          "item": "Nicht ideal für",
+          "detail": "YouTube-Videos ohne Untertitel, private Videos oder Videos, die neu aus Audio transkribiert werden müssen"
+        },
+        {
+          "item": "Eingabe",
+          "detail": "Eine YouTube-Video-URL mit mindestens einer verfügbaren Untertitelspur"
+        },
+        {
+          "item": "Ausgabe",
+          "detail": "Gespeichertes Transkript mit Zeitstempeln, Sprachmetadaten, Kopieren, Export und bezahlten KI-Zusammenfassungen"
+        },
+        {
+          "item": "Workflow",
+          "detail": "URL einfügen, Untertitel prüfen, Sprache wählen, Transkript importieren, prüfen/exportieren"
+        },
+        {
+          "item": "Kostenloses Limit",
+          "detail": "10 YouTube-Untertitelimporte pro Tag mit Google-Anmeldung"
+        },
+        {
+          "item": "Videolänge",
+          "detail": "Kostenlos: bis zu 2 Stunden pro Video; bezahlte Pläne unterstützen längere Videos"
+        },
+        {
+          "item": "Datenschutz",
+          "detail": "Scribix importiert Untertitel und lädt kein YouTube-Video oder -Audio herunter"
+        }
+      ],
+      "bestFor": {
+        "title": "Ideal für",
+        "items": [
+          "Studierende und Lehrende, die untertitelte Vorlesungen in durchsuchbare Lernnotizen verwandeln.",
+          "Forschende und Journalistinnen, die Zitate aus Interviews, Panels und aufgezeichneten Vorträgen herausziehen.",
+          "Creator, die eigene YouTube-Untertitel in Blogentwürfe, Shownotes, Captions oder Zusammenfassungen umwandeln.",
+          "Operations- und Marketingteams, die Webinare, Demos und Kundenvideos prüfen, ohne die gesamte Aufnahme abzuspielen."
+        ]
+      },
+      "notBestFor": {
+        "title": "Nicht ideal für",
+        "items": [
+          "YouTube-Videos ohne Untertitelspur; dieser Flow importiert verfügbare Untertitel, statt aus einer URL neue Speech-to-Text-Transkription zu erzeugen.",
+          "Private, eingeschränkte, gelöschte oder regional blockierte YouTube-Videos, auf die der Untertiteldienst nicht zugreifen kann.",
+          "Zertifizierte juristische, medizinische, akademische oder Compliance-Transkripte, bei denen jedes Wort manuell geprüft werden muss.",
+          "Workflows, die einen anonymen Import ohne Konto erfordern."
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "So funktioniert es",
+      "title": "Fünf Schritte.",
+      "accentTitle": "Von URL zu Text.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Mit Google anmelden.",
+          "body": "Der kostenlose Plan enthält 10 YouTube-Untertitelimporte pro Tag und erfordert keine Kreditkarte.",
+          "meta": "Kostenlos"
+        },
+        {
+          "n": "02",
+          "icon": "Search",
+          "title": "YouTube-URL einfügen.",
+          "body": "Kopiere einen YouTube-Videolink und lass Scribix prüfen, ob Untertitelspuren verfügbar sind.",
+          "meta": "Prüfen"
+        },
+        {
+          "n": "03",
+          "icon": "Captions",
+          "title": "Untertitelspur wählen.",
+          "body": "Wähle die manuelle oder automatisch erzeugte Untertitelsprache, die du importieren möchtest.",
+          "meta": "Sprache"
+        },
+        {
+          "n": "04",
+          "icon": "FileText",
+          "title": "Transkript importieren.",
+          "body": "Scribix speichert die ausgewählte Spur mit Zeitstempeln in deiner Transkriptbibliothek.",
+          "meta": "Gespeichert"
+        },
+        {
+          "n": "05",
+          "icon": "Download",
+          "title": "Prüfen und exportieren.",
+          "body": "Kopiere den Text, lade TXT, DOCX, SRT, VTT oder CSV herunter oder erstelle mit einem bezahlten Plan eine KI-Zusammenfassung.",
+          "meta": "5 Formate"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "Anwendungsfälle",
+      "title": "Für YouTube-Videos, die zu",
+      "accentTitle": "nutzbarem Text werden sollen.",
+      "items": [
+        {
+          "icon": "Search",
+          "title": "Vorlesungen prüfen",
+          "who": "Studierende, Lehrende, Kursteams",
+          "output": "Durchsuchbare Lernnotizen aus einer untertitelten YouTube-Vorlesung"
+        },
+        {
+          "icon": "Users",
+          "title": "Interview-Recherche",
+          "who": "Journalisten, Forschende, Recruiting",
+          "output": "Zitatbank mit Zeitstempeln aus einem öffentlichen Interview oder Panel"
+        },
+        {
+          "icon": "Sparkles",
+          "title": "Creator-Repurposing",
+          "who": "YouTuber, Podcaster, Marketer",
+          "output": "Blog-Gliederung, Shownotes, Captions und bezahlte KI-Zusammenfassung"
+        },
+        {
+          "icon": "BadgeCheck",
+          "title": "Webinar-Follow-up",
+          "who": "Sales, Customer Success, Operations",
+          "output": "Schriftliche Aufzeichnung einer Demo, Produktpräsentation oder Kundensession"
+        },
+        {
+          "icon": "Captions",
+          "title": "Barrierefreiheit",
+          "who": "Content-Teams, Lehrende, Nonprofits",
+          "output": "Herunterladbare Untertiteldateien und lesbarer Transkripttext"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "Beispiel",
+      "title": "Ein Transkript mit Zeitstempeln zum Prüfen, Zitieren und Exportieren.",
+      "body": "Beispieleingabe: eine öffentliche YouTube-URL mit verfügbarer Untertitelspur. Der genaue Wortlaut hängt von der ausgewählten Spur ab, besonders wenn YouTube automatische Untertitel bereitstellt.",
+      "filename": "youtube.com/watch?v=[video-id]",
+      "transcript": "[00:00] Sprecher\nWillkommen zurück. Heute sehen wir uns drei Möglichkeiten an, lange YouTube-Videos in wirklich nutzbare Notizen zu verwandeln.\n\n[00:08] Sprecher\nDer erste Schritt ist zu prüfen, ob das Video bereits Untertitel hat. Wenn ja, kannst du das Transkript importieren, statt das gesamte Video erneut abzuspielen.\n\n[00:17] Sprecher\nSobald das Transkript gespeichert ist, suche nach wichtigen Begriffen, kopiere das benötigte Zitat oder exportiere die Datei für deinen nächsten Workflow."
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "Funktionen",
+      "title": "Untertitelimport,",
+      "accentTitle": "ohne Videodownload.",
+      "intro": "Scribix konzentriert den YouTube-Flow auf den Import von Untertiteln. Es prüft die YouTube-URL, listet verfügbare Spuren, kennzeichnet manuelle oder automatische Spuren, wenn Metadaten verfügbar sind, und importiert die ausgewählte Spur in deine Bibliothek.",
+      "items": [
+        {
+          "icon": "Captions",
+          "title": "Untertitelspuren",
+          "body": "Importiere verfügbare YouTube-Untertitelspuren, ohne Video oder Audio herunterzuladen."
+        },
+        {
+          "icon": "Globe",
+          "title": "Sprachauswahl",
+          "body": "Wähle aus den verfügbaren Untertitelsprachen, bevor du das Transkript speicherst."
+        },
+        {
+          "icon": "Clock3",
+          "title": "Zeitstempel",
+          "body": "Zeitgestempelte Segmente helfen, Zitate und wichtige Momente nachzuvollziehen."
+        },
+        {
+          "icon": "Download",
+          "title": "Fünf Exporte",
+          "body": "Lade TXT, DOCX, SRT, VTT oder CSV herunter oder kopiere das Transkript direkt."
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "Wie genau ist ein YouTube-Transkript?",
+          "body": [
+            "Die Genauigkeit hängt von der für das Video verfügbaren Untertitelspur ab. Manuelle Untertitel sind meist sauberer als automatisch erzeugte Untertitel, die Fehler durch Lärm, Akzente, Musik, Fachbegriffe, gleichzeitiges Sprechen oder unklare Sprache enthalten können.",
+            "Scribix bewahrt den verfügbaren Untertitelinhalt und macht daraus einen gespeicherten Transkript-Workflow; es verbessert oder regeneriert die Audiotranskription für YouTube-URLs nicht. Für Zitate sowie juristische, medizinische, akademische, finanzielle oder veröffentlichte Arbeit solltest du das importierte Transkript mit dem Originalvideo prüfen."
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "Ist dein YouTube-Transkript privat?",
+          "body": [
+            "Scribix erfordert eine Google-Anmeldung, damit importierte Transkripte in deinem Konto gespeichert werden können. Bei YouTube-URL-Importen importiert Scribix verfügbare Untertitel und lädt kein YouTube-Video oder -Audio herunter.",
+            "Dein gespeichertes Transkript bleibt in deinem Konto, bis du es löschst oder dein Konto schließt. Scribix trainiert niemals Modelle mit Nutzerdaten. Lies die"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "Datenschutzerklärung",
+            "suffix": "."
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "Vergleich",
+      "title": "Scribix im Vergleich zu anderen Wegen, ein YouTube-Transkript zu erhalten.",
+      "headers": [
+        "Ansatz",
+        "Ideal für",
+        "Einschränkung"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix YouTube zu Text",
+          "bestFor": "Verfügbare YouTube-Untertitel in einer durchsuchbaren Bibliothek mit Exporten und bezahlten Zusammenfassungen speichern",
+          "tradeoff": "Erfordert Google-Anmeldung und eine verfügbare Untertitelspur"
+        },
+        {
+          "approach": "YouTube-Transkriptpanel",
+          "bestFor": "Schnelles Lesen während des Anschauens auf YouTube",
+          "tradeoff": "Schwieriger über mehrere Videos hinweg zu speichern, organisieren, exportieren oder zusammenzufassen"
+        },
+        {
+          "approach": "Untertitel-Downloader-Websites",
+          "bestFor": "Einmalige Untertitel-Downloads",
+          "tradeoff": "Oft getrennt von Transkripthistorie, Zusammenfassungen und dem weiteren Workflow"
+        },
+        {
+          "approach": "Vollständige KI-Transkription per Video-Upload",
+          "bestFor": "Ein Transkript aus deiner eigenen Mediendatei erstellen, wenn keine Untertitel existieren",
+          "tradeoff": "Du musst die Audio-/Videodatei besitzen und hochladen"
+        },
+        {
+          "approach": "Manuelle Transkription",
+          "bestFor": "Zertifizierte oder kritische Arbeit",
+          "tradeoff": "Langsam und teuer für lange YouTube-Videos"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "Fragen,",
+      "accentTitle": "klar beantwortet.",
+      "intro": "Untertitelverfügbarkeit, Exporte, Datenschutz und bezahlte Zusammenfassungen werden erklärt, bevor du eine YouTube-URL einfügst.",
+      "items": [
+        {
+          "q": "Wie mache ich aus einem YouTube-Video ein Transkript?",
+          "a": "Füge die YouTube-URL in Scribix ein, prüfe die verfügbaren Untertitelspuren, wähle eine Sprache und importiere das Transkript. Scribix speichert es in deinem Konto, damit du es prüfen, kopieren, exportieren oder mit einem bezahlten Plan zusammenfassen kannst."
+        },
+        {
+          "q": "Funktioniert Scribix mit jedem YouTube-Video?",
+          "a": "Nein. Der YouTube-URL-Flow funktioniert, wenn Scribix auf mindestens eine Untertitelspur zugreifen kann. Wenn das Video keine Untertitel hat, privat, eingeschränkt, gelöscht oder blockiert ist, kann Scribix möglicherweise kein Transkript importieren."
+        },
+        {
+          "q": "Lädt Scribix das YouTube-Video oder -Audio herunter?",
+          "a": "Nein. Scribix importiert verfügbare YouTube-Untertitel. In diesem Flow lädt es kein YouTube-Video oder -Audio herunter."
+        },
+        {
+          "q": "Kann Scribix ein Transkript erzeugen, wenn ein YouTube-Video keine Untertitel hat?",
+          "a": "Nicht allein aus der YouTube-URL. Wenn du die Mediendatei besitzt, nutze den Video-zu-Text- oder Audio-zu-Text-Upload-Flow von Scribix, um aus der Datei ein neues KI-Transkript zu erzeugen."
+        },
+        {
+          "q": "Ist YouTube zu Text in Scribix kostenlos?",
+          "a": "Ja. Scribix enthält im kostenlosen Plan 10 YouTube-Untertitelimporte pro Tag mit Google-Anmeldung und ohne Kreditkarte."
+        },
+        {
+          "q": "Als was kann ich das YouTube-Transkript exportieren?",
+          "a": "Scribix kann abgeschlossene Transkripte als TXT, DOCX, SRT, VTT oder CSV exportieren. Du kannst den Text auch direkt in der App kopieren."
+        },
+        {
+          "q": "Kann ich die Transkriptsprache wählen?",
+          "a": "Ja, wenn das YouTube-Video mehrere Untertitelspuren hat. Scribix zeigt die verfügbaren Sprachen und lässt dich wählen, welche importiert wird."
+        },
+        {
+          "q": "Kann ich ein YouTube-Transkript zusammenfassen?",
+          "a": "Ja. Bezahlte Nutzer können KI-Zusammenfassungen verwenden, nachdem sie das YouTube-Transkript in Scribix importiert haben."
+        },
+        {
+          "q": "Sind importierte YouTube-Transkripte genau?",
+          "a": "Sie sind so genau wie die ausgewählte Untertitelspur. Manuelle Untertitel sind meist besser als automatische, aber jedes Transkript sollte vor Zitaten, Veröffentlichungen oder kritischen Entscheidungen geprüft werden."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Bereit, wenn du es bist",
+      "title": "Verwandle eine YouTube-URL in ein Transkript.",
+      "body": "Füge eine YouTube-URL in Scribix ein, importiere die verfügbaren Untertitel und speichere ein Transkript, das du durchsuchen, kopieren, exportieren oder zusammenfassen kannst.",
+      "primaryCta": "YouTube-URL einfügen",
+      "stats": [
+        {
+          "value": "10/Tag",
+          "label": "Kostenlose Importe"
+        },
+        {
+          "value": "5",
+          "label": "Exportarten"
+        },
+        {
+          "value": "0",
+          "label": "Videodownloads"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix YouTube zu Text",
+      "appDescription": "Scribix importiert verfügbare YouTube-Untertitelspuren als gespeicherte Transkripte, die mit bezahlten Plänen geprüft, kopiert, exportiert und zusammengefasst werden können.",
+      "offerDescription": "Der kostenlose Plan enthält 10 YouTube-Untertitelimporte pro Tag mit Google-Anmeldung und ohne Kreditkarte.",
+      "featureList": [
+        "YouTube-URL einfügen",
+        "Verfügbare YouTube-Untertitelspuren prüfen",
+        "Untertitelsprache wählen",
+        "Kennzeichnung manueller und automatischer Spuren",
+        "Gespeicherte Transkriptbibliothek",
+        "Prüfung mit Zeitstempeln",
+        "TXT-Export",
+        "DOCX-Export",
+        "SRT-Export",
+        "VTT-Export",
+        "CSV-Export",
+        "Bezahlte KI-Zusammenfassungen",
+        "Kein Download von YouTube-Video oder -Audio"
+      ],
+      "howToName": "So konvertierst du ein YouTube-Video mit Scribix in ein Transkript",
+      "howToDescription": "Füge eine YouTube-URL ein, wähle eine verfügbare Untertitelspur, importiere das Transkript und prüfe oder exportiere es anschließend.",
+      "howToSteps": [
+        {
+          "name": "YouTube-URL einfügen",
+          "text": "Kopiere einen YouTube-Videolink und füge ihn in Scribix ein."
+        },
+        {
+          "name": "Verfügbare Untertitel prüfen",
+          "text": "Scribix prüft, ob das Video verfügbare Untertitelspuren hat."
+        },
+        {
+          "name": "Untertitelspur wählen",
+          "text": "Wähle die Sprache oder Spur aus, die du importieren möchtest."
+        },
+        {
+          "name": "Transkript importieren",
+          "text": "Speichere die Untertitelspur als Transkript in deinem Scribix-Konto."
+        },
+        {
+          "name": "Prüfen und exportieren",
+          "text": "Prüfe das Transkript, kopiere Text, exportiere eine Datei oder fasse es mit einem bezahlten Plan zusammen."
+        }
       ]
     }
   }

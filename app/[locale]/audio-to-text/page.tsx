@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/auth";
 import { getPathname } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
+import { languageAlternates, urlFor } from "@/lib/metadata-url";
 import { Footer } from "@/app/components/Footer";
 import { GoogleOneTap } from "@/app/components/GoogleOneTap";
 import { Header } from "@/app/components/Header";
@@ -37,7 +37,6 @@ import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { TrackToolVisit } from "@/app/components/Track";
 
-const SITE = "https://scribix.io";
 const PATH = "/audio-to-text";
 
 type AudioToTextCopy = {
@@ -300,19 +299,4 @@ function JsonLd({ copy, locale }: { copy: AudioToTextCopy; locale: string }) {
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
     />
   );
-}
-
-function languageAlternates(path: string): Record<string, string> {
-  const languages: Record<string, string> = {
-    "x-default": urlFor(routing.defaultLocale, path).href,
-  };
-  for (const locale of routing.locales) {
-    languages[locale] = urlFor(locale, path).href;
-  }
-  return languages;
-}
-
-function urlFor(locale: string, path: string): URL {
-  const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
-  return new URL(`${prefix}${path}`, SITE);
 }

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.16.0] - 2026-06-22
+
+### Added
+- Added the localized YouTube to Transcript landing page with metadata, JSON-LD, sitemap coverage, and sidebar navigation.
+- Added YouTube landing page copy across English, French, Spanish, Italian, Japanese, and German.
+- Added automatic retry handling for transient YouTube caption service failures.
+
+### Changed
+- Shared localized alternate URL generation across landing pages and sitemap entries.
+
+### Fixed
+- Show a clearer YouTube unavailable message when the caption service cannot access a restricted, private, region-limited, or otherwise unavailable video.
+
 ## [0.15.3] - 2026-06-21
 
 ### Changed

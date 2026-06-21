@@ -44,6 +44,11 @@
         "label": "Vidéo en texte",
         "href": "/#generator",
         "icon": "Clapperboard"
+      },
+      {
+        "label": "YouTube en texte",
+        "href": "/youtube-to-transcript",
+        "icon": "Captions"
       }
     ],
     "tools": [
@@ -996,6 +1001,7 @@
       "importing": "Importing...",
       "errorInvalidUrl": "Paste a valid YouTube video URL.",
       "errorUnavailable": "No captions are available for this video. Try another video or use the upload path.",
+      "errorVideoUnplayable": "Nous n’avons pas pu accéder aux sous-titres de cette vidéo YouTube. Elle peut être privée, restreinte, limitée par région ou indisponible depuis notre service de sous-titres. Essayez une autre vidéo ou importez votre propre fichier.",
       "errorTrackMissing": "That caption track is no longer available. Check the URL again.",
       "errorEmpty": "This caption track is empty. Choose another language if available.",
       "errorQuotaExceeded": "You have reached your YouTube caption import limit for this plan.",
@@ -1723,6 +1729,396 @@
         "Transcrire l’audio",
         "Relire la transcription",
         "Copier ou exporter"
+      ]
+    }
+  },
+  "YouTubeToTranscript": {
+    "metadata": {
+      "title": "YouTube en texte | Scribix",
+      "description": "Collez une URL YouTube dans Scribix pour importer les sous-titres disponibles comme transcription enregistrée. Choisissez une piste, copiez le texte, exportez-le ou résumez-le avec un plan payant.",
+      "openGraphTitle": "YouTube en texte | Scribix",
+      "openGraphDescription": "Collez une URL YouTube, importez une piste de sous-titres disponible et enregistrez une transcription consultable avec exports et résumés IA payants.",
+      "twitterTitle": "YouTube en texte | Scribix",
+      "twitterDescription": "Importez les sous-titres YouTube disponibles comme transcriptions enregistrées que vous pouvez rechercher, copier, exporter et résumer avec un plan payant."
+    },
+    "hero": {
+      "issue": "REC · URL YOUTUBE",
+      "issueLabel": "Numéro No.04 · YouTube en texte",
+      "title": "YouTube en texte.",
+      "accentTitle": "Texte enregistré et consultable.",
+      "descriptionStart": "Collez une URL YouTube dans Scribix et importez la piste de sous-titres disponible de la vidéo sous forme de transcription que vous pouvez lire, rechercher, copier, exporter et résumer avec un plan payant.",
+      "stat": "Gratuit avec connexion Google",
+      "descriptionEnd": ". Scribix vérifie d’abord les sous-titres disponibles et enregistre la transcription sans télécharger la vidéo ni l’audio YouTube.",
+      "primaryCta": "Coller une URL YouTube",
+      "secondaryCta": "Besoin de transcrire un fichier?",
+      "secondaryHref": "/",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "10 imports gratuits/jour"
+        },
+        {
+          "icon": "Captions",
+          "label": "Choix de la langue"
+        },
+        {
+          "icon": "Download",
+          "label": "TXT, DOCX, SRT, VTT, CSV"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "Sans carte bancaire"
+        }
+      ]
+    },
+    "quickAnswer": {
+      "kicker": "Réponse rapide",
+      "title": "Collez un lien. Enregistrez les sous-titres.",
+      "body": "Scribix est un outil YouTube en texte qui transforme les sous-titres YouTube disponibles en transcription enregistrée. Il convient aux cours, interviews, tutoriels, webinaires, podcasts et vidéos de recherche qui ont déjà des sous-titres manuels ou automatiques. Collez l’URL YouTube, choisissez une piste de sous-titres, importez la transcription, puis copiez-la ou exportez-la en TXT, DOCX, SRT, VTT ou CSV. Si une vidéo n’a pas de sous-titres, utilisez plutôt le flux d’import standard avec votre propre fichier audio ou vidéo."
+    },
+    "overview": {
+      "number": "01",
+      "label": "Aperçu",
+      "rows": [
+        {
+          "item": "Idéal pour",
+          "detail": "Cours, interviews, tutoriels, podcasts, webinaires et vidéos de recherche YouTube avec sous-titres"
+        },
+        {
+          "item": "Moins adapté",
+          "detail": "Vidéos YouTube sans sous-titres, vidéos privées ou vidéos qui doivent être transcrites depuis l’audio"
+        },
+        {
+          "item": "Entrée",
+          "detail": "Une URL de vidéo YouTube avec au moins une piste de sous-titres disponible"
+        },
+        {
+          "item": "Sortie",
+          "detail": "Transcription enregistrée avec horodatages, métadonnées de langue, copie, exports et résumés IA payants"
+        },
+        {
+          "item": "Flux",
+          "detail": "Coller l’URL, vérifier les sous-titres, choisir la langue, importer la transcription, relire/exporter"
+        },
+        {
+          "item": "Limite gratuite",
+          "detail": "10 imports de sous-titres YouTube par jour avec connexion Google"
+        },
+        {
+          "item": "Durée vidéo",
+          "detail": "Gratuit : jusqu’à 2 heures par vidéo; les plans payants acceptent des vidéos plus longues"
+        },
+        {
+          "item": "Confidentialité",
+          "detail": "Scribix importe les sous-titres et ne télécharge pas la vidéo ni l’audio YouTube"
+        }
+      ],
+      "bestFor": {
+        "title": "Idéal pour",
+        "items": [
+          "Étudiants et enseignants qui transforment des cours sous-titrés en notes consultables.",
+          "Chercheurs et journalistes qui extraient des citations d’interviews, de panels et de conférences enregistrées.",
+          "Créateurs qui réutilisent leurs propres sous-titres YouTube en brouillons d’articles, notes d’émission, captions ou résumés.",
+          "Équipes opérations et marketing qui relisent webinaires, démos et vidéos client sans revoir tout l’enregistrement."
+        ]
+      },
+      "notBestFor": {
+        "title": "Moins adapté",
+        "items": [
+          "Vidéos YouTube sans piste de sous-titres; ce flux importe les sous-titres disponibles au lieu de générer une nouvelle transcription depuis une URL.",
+          "Vidéos YouTube privées, restreintes, supprimées ou bloquées par région auxquelles le service de sous-titres ne peut pas accéder.",
+          "Transcriptions juridiques, médicales, académiques ou de conformité certifiées où chaque mot doit être vérifié manuellement.",
+          "Flux qui exigent un import anonyme sans compte."
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "Fonctionnement",
+      "title": "Cinq étapes.",
+      "accentTitle": "De l’URL au texte.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Connectez-vous avec Google.",
+          "body": "Le plan gratuit inclut 10 imports de sous-titres YouTube par jour et ne demande aucune carte bancaire.",
+          "meta": "Plan gratuit"
+        },
+        {
+          "n": "02",
+          "icon": "Search",
+          "title": "Collez l’URL YouTube.",
+          "body": "Copiez un lien de vidéo YouTube et laissez Scribix vérifier si des pistes de sous-titres sont disponibles.",
+          "meta": "Vérification"
+        },
+        {
+          "n": "03",
+          "icon": "Captions",
+          "title": "Choisissez la piste de sous-titres.",
+          "body": "Sélectionnez la langue manuelle ou automatique que vous voulez importer.",
+          "meta": "Choix langue"
+        },
+        {
+          "n": "04",
+          "icon": "FileText",
+          "title": "Importez la transcription.",
+          "body": "Scribix enregistre la piste sélectionnée dans votre bibliothèque avec les horodatages.",
+          "meta": "Texte enregistré"
+        },
+        {
+          "n": "05",
+          "icon": "Download",
+          "title": "Relisez et exportez.",
+          "body": "Copiez le texte, téléchargez TXT, DOCX, SRT, VTT ou CSV, ou créez un résumé IA avec un plan payant.",
+          "meta": "5 formats"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "Cas d’usage",
+      "title": "Conçu pour les vidéos YouTube qui doivent devenir",
+      "accentTitle": "du texte exploitable.",
+      "items": [
+        {
+          "icon": "Search",
+          "title": "Révision de cours",
+          "who": "Étudiants, enseignants, équipes pédagogiques",
+          "output": "Notes de cours consultables à partir d’une vidéo YouTube sous-titrée"
+        },
+        {
+          "icon": "Users",
+          "title": "Recherche d’interviews",
+          "who": "Journalistes, chercheurs, recruteurs",
+          "output": "Banque de citations horodatées depuis une interview ou un panel public"
+        },
+        {
+          "icon": "Sparkles",
+          "title": "Réutilisation créateur",
+          "who": "YouTubers, podcasteurs, marketeurs",
+          "output": "Plan d’article, notes d’émission, captions et résumé IA payant"
+        },
+        {
+          "icon": "BadgeCheck",
+          "title": "Suivi de webinaire",
+          "who": "Ventes, succès client, opérations",
+          "output": "Trace écrite d’une démo, présentation produit ou session client"
+        },
+        {
+          "icon": "Captions",
+          "title": "Accessibilité",
+          "who": "Équipes contenu, enseignants, associations",
+          "output": "Fichiers de sous-titres téléchargeables et transcription lisible"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "Exemple",
+      "title": "Une transcription horodatée à relire, citer et exporter.",
+      "body": "Exemple d’entrée : une URL YouTube publique avec une piste de sous-titres disponible. Le texte exact dépend de la piste choisie, surtout quand YouTube fournit des sous-titres automatiques.",
+      "filename": "youtube.com/watch?v=[video-id]",
+      "transcript": "[00:00] Intervenant\nBienvenue. Aujourd’hui, nous regardons trois façons de transformer de longues vidéos YouTube en notes réellement utiles.\n\n[00:08] Intervenant\nLa première étape consiste à vérifier si la vidéo a déjà des sous-titres. Si c’est le cas, vous pouvez importer la transcription au lieu de revoir toute la vidéo.\n\n[00:17] Intervenant\nUne fois la transcription enregistrée, recherchez les termes importants, copiez la citation utile ou exportez le fichier pour votre prochain flux de travail."
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "Capacités",
+      "title": "Import de sous-titres,",
+      "accentTitle": "sans téléchargement vidéo.",
+      "intro": "Scribix concentre le flux YouTube sur l’import de sous-titres. Il vérifie l’URL YouTube, liste les pistes disponibles, indique si elles sont manuelles ou automatiques quand la métadonnée existe, puis importe la piste choisie dans votre bibliothèque.",
+      "items": [
+        {
+          "icon": "Captions",
+          "title": "Pistes de sous-titres",
+          "body": "Importez les pistes YouTube disponibles sans télécharger la vidéo ni l’audio."
+        },
+        {
+          "icon": "Globe",
+          "title": "Choix de langue",
+          "body": "Choisissez parmi les langues de sous-titres disponibles avant d’enregistrer la transcription."
+        },
+        {
+          "icon": "Clock3",
+          "title": "Horodatages",
+          "body": "Les segments horodatés facilitent la vérification des citations et des moments importants."
+        },
+        {
+          "icon": "Download",
+          "title": "Cinq exports",
+          "body": "Téléchargez TXT, DOCX, SRT, VTT ou CSV, ou copiez directement la transcription."
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "Quelle est la précision d’une transcription YouTube?",
+          "body": [
+            "La précision dépend de la piste de sous-titres disponible pour la vidéo. Les sous-titres manuels sont généralement plus propres que les sous-titres automatiques, qui peuvent contenir des erreurs dues au bruit, aux accents, à la musique, aux termes techniques, aux paroles superposées ou à un son peu clair.",
+            "Scribix conserve le contenu disponible et le transforme en transcription enregistrée; il n’améliore pas et ne régénère pas la transcription audio pour les URL YouTube. Pour les citations, travaux juridiques, médicaux, académiques, financiers ou publiés, vérifiez la transcription importée avec la vidéo originale avant de vous y fier."
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "Votre transcription YouTube est-elle privée?",
+          "body": [
+            "Scribix demande une connexion Google afin que les transcriptions importées soient enregistrées dans votre compte. Pour les imports par URL YouTube, Scribix importe les sous-titres disponibles et ne télécharge pas la vidéo ni l’audio YouTube.",
+            "Votre transcription enregistrée reste dans votre compte jusqu’à ce que vous la supprimiez ou fermiez votre compte. Scribix n’entraîne jamais de modèles avec les données utilisateur. Consultez la"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "politique de confidentialité",
+            "suffix": "."
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "Comparaison",
+      "title": "Scribix face aux autres façons d’obtenir une transcription YouTube.",
+      "headers": [
+        "Approche",
+        "Idéal pour",
+        "Limite"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix YouTube en texte",
+          "bestFor": "Enregistrer les sous-titres YouTube disponibles dans une bibliothèque consultable avec exports et résumés payants",
+          "tradeoff": "Nécessite une connexion Google et une piste de sous-titres disponible"
+        },
+        {
+          "approach": "Panneau de transcription YouTube",
+          "bestFor": "Lecture rapide pendant le visionnage sur YouTube",
+          "tradeoff": "Plus difficile à enregistrer, organiser, exporter ou résumer pour plusieurs vidéos"
+        },
+        {
+          "approach": "Sites de téléchargement de sous-titres",
+          "bestFor": "Téléchargements ponctuels",
+          "tradeoff": "Souvent séparés de votre historique de transcriptions, des résumés et du flux de transcription général"
+        },
+        {
+          "approach": "Transcription IA par import vidéo",
+          "bestFor": "Créer une transcription depuis votre propre fichier média quand aucun sous-titre n’existe",
+          "tradeoff": "Vous devez posséder le fichier audio/vidéo et l’importer"
+        },
+        {
+          "approach": "Transcription manuelle",
+          "bestFor": "Travaux certifiés ou à fort enjeu",
+          "tradeoff": "Lente et coûteuse pour de longues vidéos YouTube"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "Questions,",
+      "accentTitle": "réponses claires.",
+      "intro": "Disponibilité des sous-titres, exports, confidentialité et résumés payants sont expliqués avant de coller une URL YouTube.",
+      "items": [
+        {
+          "q": "Comment transformer une vidéo YouTube en transcription?",
+          "a": "Collez l’URL YouTube dans Scribix, vérifiez les pistes de sous-titres disponibles, choisissez une langue et importez la transcription. Scribix l’enregistre dans votre compte pour que vous puissiez la relire, la copier, l’exporter ou la résumer avec un plan payant."
+        },
+        {
+          "q": "Scribix fonctionne-t-il avec toutes les vidéos YouTube?",
+          "a": "Non. Le flux par URL YouTube fonctionne quand Scribix peut accéder à au moins une piste de sous-titres. Si la vidéo n’a pas de sous-titres, est privée, restreinte, supprimée ou bloquée, Scribix peut ne pas pouvoir importer de transcription."
+        },
+        {
+          "q": "Scribix télécharge-t-il la vidéo ou l’audio YouTube?",
+          "a": "Non. Scribix importe les sous-titres YouTube disponibles. Il ne télécharge pas la vidéo ni l’audio YouTube dans ce flux."
+        },
+        {
+          "q": "Scribix peut-il générer une transcription si la vidéo n’a pas de sous-titres?",
+          "a": "Pas depuis l’URL YouTube seule. Si vous possédez le fichier média, utilisez le flux vidéo en texte ou audio en texte de Scribix pour générer une nouvelle transcription IA depuis le fichier."
+        },
+        {
+          "q": "YouTube en texte est-il gratuit dans Scribix?",
+          "a": "Oui. Scribix inclut 10 imports de sous-titres YouTube par jour dans le plan gratuit avec connexion Google et sans carte bancaire."
+        },
+        {
+          "q": "Dans quels formats puis-je exporter la transcription YouTube?",
+          "a": "Scribix peut exporter les transcriptions terminées en TXT, DOCX, SRT, VTT ou CSV. Vous pouvez aussi copier directement le texte."
+        },
+        {
+          "q": "Puis-je choisir la langue de transcription?",
+          "a": "Oui, quand la vidéo YouTube propose plusieurs pistes de sous-titres. Scribix affiche les langues disponibles et vous laisse choisir celle à importer."
+        },
+        {
+          "q": "Puis-je résumer une transcription YouTube?",
+          "a": "Oui. Les utilisateurs payants peuvent utiliser les résumés IA après avoir importé la transcription YouTube dans Scribix."
+        },
+        {
+          "q": "Les transcriptions YouTube importées sont-elles précises?",
+          "a": "Elles sont aussi précises que la piste de sous-titres choisie. Les sous-titres manuels sont généralement meilleurs que les sous-titres automatiques, mais toute transcription doit être vérifiée avant citation, publication ou décision à fort enjeu."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Prêt quand vous l’êtes",
+      "title": "Transformez une URL YouTube en transcription.",
+      "body": "Collez une URL YouTube dans Scribix, importez les sous-titres disponibles et enregistrez une transcription que vous pouvez rechercher, copier, exporter ou résumer.",
+      "primaryCta": "Coller une URL YouTube",
+      "stats": [
+        {
+          "value": "10/jour",
+          "label": "Imports gratuits"
+        },
+        {
+          "value": "5",
+          "label": "Formats export"
+        },
+        {
+          "value": "0",
+          "label": "Téléchargements vidéo"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix YouTube en texte",
+      "appDescription": "Scribix importe les pistes de sous-titres YouTube disponibles comme transcriptions enregistrées à relire, copier, exporter et résumer avec un plan payant.",
+      "offerDescription": "Le plan gratuit inclut 10 imports de sous-titres YouTube par jour avec connexion Google et sans carte bancaire.",
+      "featureList": [
+        "Coller une URL YouTube",
+        "Vérifier les pistes de sous-titres YouTube disponibles",
+        "Choisir la langue des sous-titres",
+        "Étiquettes de pistes manuelles et automatiques",
+        "Bibliothèque de transcriptions enregistrées",
+        "Relecture horodatée",
+        "Export TXT",
+        "Export DOCX",
+        "Export SRT",
+        "Export VTT",
+        "Export CSV",
+        "Résumés IA payants",
+        "Aucun téléchargement de vidéo ou d’audio YouTube"
+      ],
+      "howToName": "Comment convertir une vidéo YouTube en transcription avec Scribix",
+      "howToDescription": "Collez une URL YouTube, choisissez une piste de sous-titres disponible, importez la transcription, puis relisez et exportez-la.",
+      "howToSteps": [
+        {
+          "name": "Coller l’URL YouTube",
+          "text": "Copiez un lien de vidéo YouTube et collez-le dans Scribix."
+        },
+        {
+          "name": "Vérifier les sous-titres disponibles",
+          "text": "Scribix vérifie si la vidéo possède des pistes de sous-titres disponibles."
+        },
+        {
+          "name": "Choisir une piste de sous-titres",
+          "text": "Sélectionnez la langue ou la piste que vous souhaitez importer."
+        },
+        {
+          "name": "Importer la transcription",
+          "text": "Enregistrez la piste comme transcription dans votre compte Scribix."
+        },
+        {
+          "name": "Relire et exporter",
+          "text": "Relisez la transcription, copiez le texte, exportez un fichier ou résumez-la avec un plan payant."
+        }
       ]
     }
   }

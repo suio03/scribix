@@ -33,6 +33,7 @@ export type YouTubeCaptionServiceErrorCode =
   | "invalid_youtube_url"
   | "youtube_fetch_failed"
   | "transcripts_unavailable"
+  | "video_unplayable"
   | "track_not_found"
   | "empty_transcript"
   | "missing_youtube_service_config";
@@ -75,6 +76,9 @@ type ServiceImportResponse = {
   languageCode?: unknown;
   snippets?: unknown;
 };
+
+const YOUTUBE_CAPTION_RETRY_DELAYS_MS = [600, 1500] as const;
+const YOUTUBE_CAPTION_RETRY_STATUSES = new Set([502, 503, 504]);
 
 export class YouTubeCaptionServiceError extends Error {
   constructor(
@@ -177,36 +181,93 @@ async function callYouTubeCaptionService<T>(
   options: YouTubeCaptionServiceOptions
 ): Promise<T> {
   const config = youtubeServiceConfig(options.env);
-  logYouTube(options, "service request started", { pathname });
-  const response = await fetch(new URL(pathname, config.url), {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${config.token}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  const url = new URL(pathname, config.url);
+  const serializedBody = JSON.stringify(body);
+  const maxAttempts = YOUTUBE_CAPTION_RETRY_DELAYS_MS.length + 1;
 
-  const text = await response.text();
-  let json: unknown = null;
-  try {
-    json = text ? JSON.parse(text) : null;
-  } catch {
-    json = null;
-  }
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    logYouTube(options, "service request started", { pathname, attempt, maxAttempts });
 
-  logYouTube(options, "service response received", {
-    pathname,
-    status: response.status,
-    ok: response.ok,
-  });
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${config.token}`,
+          "content-type": "application/json",
+          "x-scribix-request-id": options.requestId,
+        },
+        body: serializedBody,
+      });
+    } catch (error) {
+      const retryDelayMs = retryDelayForAttempt(attempt);
+      logYouTube(options, "service request failed", {
+        pathname,
+        attempt,
+        maxAttempts,
+        retrying: retryDelayMs !== null,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      if (retryDelayMs !== null) {
+        await delay(retryDelayMs);
+        continue;
+      }
+      throw new YouTubeCaptionServiceError("youtube_fetch_failed");
+    }
 
-  if (!response.ok) {
+    const text = await response.text();
+    let json: unknown = null;
+    try {
+      json = text ? JSON.parse(text) : null;
+    } catch {
+      json = null;
+    }
+
+    logYouTube(options, "service response received", {
+      pathname,
+      attempt,
+      maxAttempts,
+      status: response.status,
+      ok: response.ok,
+    });
+
+    if (response.ok) {
+      if (!isRecord(json)) throw new YouTubeCaptionServiceError("youtube_fetch_failed");
+      return json as T;
+    }
+
+    const serviceError = serviceErrorCode(json);
+    const retryDelayMs = shouldRetryServiceResponse(response.status, serviceError)
+      ? retryDelayForAttempt(attempt)
+      : null;
+    if (retryDelayMs !== null) {
+      logYouTube(options, "service response retry scheduled", {
+        pathname,
+        attempt,
+        maxAttempts,
+        status: response.status,
+        serviceError,
+        retryDelayMs,
+      });
+      await delay(retryDelayMs);
+      continue;
+    }
+
     const code = mapServiceError(json);
+    logYouTubeServiceErrorResponse(options, {
+      pathname,
+      attempt,
+      maxAttempts,
+      status: response.status,
+      contentType: response.headers.get("content-type"),
+      mappedError: code,
+      serviceError,
+      responseBody: summarizeServiceResponse(text),
+    });
     throw new YouTubeCaptionServiceError(code);
   }
-  if (!isRecord(json)) throw new YouTubeCaptionServiceError("youtube_fetch_failed");
-  return json as T;
+
+  throw new YouTubeCaptionServiceError("youtube_fetch_failed");
 }
 
 function youtubeServiceConfig(env: ServiceEnv | undefined): { url: URL; token: string } {
@@ -228,16 +289,15 @@ function youtubeServiceConfig(env: ServiceEnv | undefined): { url: URL; token: s
 }
 
 function mapServiceError(json: unknown): YouTubeCaptionServiceErrorCode {
-  const detail = isRecord(json) && isRecord(json.detail) ? json.detail : null;
-  const raw =
-    (detail && typeof detail.error === "string" ? detail.error : null) ||
-    (isRecord(json) && typeof json.error === "string" ? json.error : null);
+  const raw = serviceErrorCode(json);
 
   switch (raw) {
     case "invalid_url":
       return "invalid_youtube_url";
     case "captions_unavailable":
       return "transcripts_unavailable";
+    case "video_unplayable":
+      return "video_unplayable";
     case "track_not_found":
       return "track_not_found";
     case "youtube_blocked":
@@ -249,6 +309,45 @@ function mapServiceError(json: unknown): YouTubeCaptionServiceErrorCode {
     default:
       return "youtube_fetch_failed";
   }
+}
+
+function serviceErrorCode(json: unknown): string | null {
+  const detail = isRecord(json) && isRecord(json.detail) ? json.detail : null;
+  return (
+    (detail && typeof detail.error === "string" ? detail.error : null) ||
+    (isRecord(json) && typeof json.error === "string" ? json.error : null)
+  );
+}
+
+function shouldRetryServiceResponse(status: number, serviceError: string | null): boolean {
+  if (serviceError === "upstream_error") return true;
+  if (!YOUTUBE_CAPTION_RETRY_STATUSES.has(status)) return false;
+  return serviceError === null;
+}
+
+function retryDelayForAttempt(attempt: number): number | null {
+  return YOUTUBE_CAPTION_RETRY_DELAYS_MS[attempt - 1] ?? null;
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function summarizeServiceResponse(text: string): string {
+  const body = text.trim();
+  const limit = 2000;
+  if (body.length <= limit) return body;
+  return `${body.slice(0, limit)} ... [truncated ${body.length - limit} chars]`;
+}
+
+function logYouTubeServiceErrorResponse(
+  context: YouTubeCaptionServiceOptions,
+  details: Record<string, unknown>
+) {
+  if (process.env.NODE_ENV === "production" && process.env.YOUTUBE_CAPTION_DEBUG !== "1") {
+    return;
+  }
+  logYouTube(context, "service error response", details);
 }
 
 function normalizeTrack(value: unknown): YouTubeCaptionTrack | null {

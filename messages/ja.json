@@ -44,6 +44,11 @@
         "label": "動画を文字に",
         "href": "/#generator",
         "icon": "Clapperboard"
+      },
+      {
+        "label": "YouTubeをテキスト化",
+        "href": "/youtube-to-transcript",
+        "icon": "Captions"
       }
     ],
     "tools": [
@@ -996,6 +1001,7 @@
       "importing": "Importing...",
       "errorInvalidUrl": "Paste a valid YouTube video URL.",
       "errorUnavailable": "No captions are available for this video. Try another video or use the upload path.",
+      "errorVideoUnplayable": "このYouTube動画の字幕にアクセスできませんでした。非公開、制限付き、地域制限、または字幕サービス側から利用できない動画の可能性があります。別の動画を試すか、自分のファイルをアップロードしてください。",
       "errorTrackMissing": "That caption track is no longer available. Check the URL again.",
       "errorEmpty": "This caption track is empty. Choose another language if available.",
       "errorQuotaExceeded": "You have reached your YouTube caption import limit for this plan.",
@@ -1723,6 +1729,396 @@
         "音声を文字起こし",
         "文字起こしを確認",
         "コピーまたは書き出し"
+      ]
+    }
+  },
+  "YouTubeToTranscript": {
+    "metadata": {
+      "title": "YouTubeをテキスト化 | Scribix",
+      "description": "ScribixにYouTube URLを貼り付け、利用可能な字幕を保存済み transcript として取り込みます。字幕トラックを選び、テキストをコピー、エクスポート、有料プランで要約できます。",
+      "openGraphTitle": "YouTubeをテキスト化 | Scribix",
+      "openGraphDescription": "YouTube URLを貼り付け、利用可能な字幕トラックを取り込み、エクスポートや有料AI要約に使える検索可能な transcript として保存します。",
+      "twitterTitle": "YouTubeをテキスト化 | Scribix",
+      "twitterDescription": "利用可能なYouTube字幕を、検索、コピー、エクスポート、有料プランで要約できる保存済み transcript として取り込みます。"
+    },
+    "hero": {
+      "issue": "REC · YOUTUBE URL",
+      "issueLabel": "Issue No.04 · YouTubeをテキスト化",
+      "title": "YouTubeをテキスト化。",
+      "accentTitle": "保存して検索できるテキスト。",
+      "descriptionStart": "ScribixにYouTube URLを貼り付け、動画の利用可能な字幕トラックを、読む、検索する、コピーする、エクスポートする、有料プランで要約するための transcript として取り込みます。",
+      "stat": "Googleサインインで無料",
+      "descriptionEnd": "。Scribixはまず利用可能な字幕を確認し、YouTube動画や音声をダウンロードせずに transcript を保存します。",
+      "primaryCta": "YouTube URLを貼り付け",
+      "secondaryCta": "ファイルを文字起こしする?",
+      "secondaryHref": "/",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "無料で1日10件"
+        },
+        {
+          "icon": "Captions",
+          "label": "字幕言語を選択"
+        },
+        {
+          "icon": "Download",
+          "label": "TXT, DOCX, SRT, VTT, CSV"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "カード不要"
+        }
+      ]
+    },
+    "quickAnswer": {
+      "kicker": "クイック回答",
+      "title": "リンクを貼る。字幕を保存する。",
+      "body": "Scribixは、利用可能なYouTube字幕を保存済み transcript に変換するYouTubeテキスト化ツールです。手動または自動生成の字幕がある講義、インタビュー、チュートリアル、ウェビナー、ポッドキャスト、調査動画に向いています。YouTube URLを貼り付け、字幕トラックを選び、transcript を取り込んだら、TXT、DOCX、SRT、VTT、CSVとしてコピーまたはエクスポートできます。字幕がない動画の場合は、自分の音声または動画ファイルを通常のアップロードフローで使ってください。"
+    },
+    "overview": {
+      "number": "01",
+      "label": "概要",
+      "rows": [
+        {
+          "item": "最適",
+          "detail": "字幕付きのYouTube講義、インタビュー、チュートリアル、ポッドキャスト、ウェビナー、調査動画"
+        },
+        {
+          "item": "不向き",
+          "detail": "字幕がないYouTube動画、非公開動画、音声から新しく文字起こしする必要がある動画"
+        },
+        {
+          "item": "入力",
+          "detail": "少なくとも1つの利用可能な字幕トラックがあるYouTube動画URL"
+        },
+        {
+          "item": "出力",
+          "detail": "タイムスタンプ、字幕言語メタデータ、コピー、エクスポート、有料AI要約を備えた保存済み transcript"
+        },
+        {
+          "item": "流れ",
+          "detail": "URL貼り付け、字幕確認、言語選択、transcript取り込み、確認/エクスポート"
+        },
+        {
+          "item": "無料枠",
+          "detail": "GoogleサインインでYouTube字幕を1日10件取り込み"
+        },
+        {
+          "item": "動画の長さ",
+          "detail": "無料: 動画あたり最大2時間。有料プランではより長い動画に対応"
+        },
+        {
+          "item": "プライバシー",
+          "detail": "Scribixは字幕を取り込み、YouTube動画や音声をダウンロードしません"
+        }
+      ],
+      "bestFor": {
+        "title": "最適",
+        "items": [
+          "字幕付き講義を検索可能な学習ノートに変換したい学生や教育者。",
+          "インタビュー、パネル、録画トークから引用を抽出したい研究者やジャーナリスト。",
+          "自分のYouTube字幕をブログ下書き、ショーノート、captions、要約に再利用したいクリエイター。",
+          "ウェビナー、デモ、顧客動画を最初から見直さずに確認したい運用・マーケティングチーム。"
+        ]
+      },
+      "notBestFor": {
+        "title": "不向き",
+        "items": [
+          "字幕トラックがないYouTube動画。このフローはURLから新しいspeech-to-textを生成するのではなく、利用可能な字幕を取り込みます。",
+          "非公開、制限付き、削除済み、地域ブロックされたYouTube動画など、字幕サービスがアクセスできない動画。",
+          "法務、医療、学術、コンプライアンスなど、全単語の手動確認が必要な認証 transcript。",
+          "アカウントなしの匿名取り込みが必要なワークフロー。"
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "使い方",
+      "title": "5ステップ。",
+      "accentTitle": "URLからテキストへ。",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Googleでサインイン。",
+          "body": "無料プランではYouTube字幕を1日10件取り込め、カードは不要です。",
+          "meta": "無料プラン"
+        },
+        {
+          "n": "02",
+          "icon": "Search",
+          "title": "YouTube URLを貼り付け。",
+          "body": "YouTube動画リンクをコピーし、Scribixに利用可能な字幕トラックを確認させます。",
+          "meta": "字幕確認"
+        },
+        {
+          "n": "03",
+          "icon": "Captions",
+          "title": "字幕トラックを選択。",
+          "body": "取り込みたい手動または自動生成の字幕言語を選びます。",
+          "meta": "言語選択"
+        },
+        {
+          "n": "04",
+          "icon": "FileText",
+          "title": "Transcriptを取り込み。",
+          "body": "Scribixが選択した字幕トラックをタイムスタンプ付きでライブラリに保存します。",
+          "meta": "保存済み"
+        },
+        {
+          "n": "05",
+          "icon": "Download",
+          "title": "確認してエクスポート。",
+          "body": "テキストをコピーし、TXT、DOCX、SRT、VTT、CSVをダウンロードするか、有料プランでAI要約を作成します。",
+          "meta": "5形式"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "用途",
+      "title": "YouTube動画を",
+      "accentTitle": "使えるテキストに。",
+      "items": [
+        {
+          "icon": "Search",
+          "title": "講義レビュー",
+          "who": "学生、教員、コース運営",
+          "output": "字幕付きYouTube講義から検索可能な学習ノートを作成"
+        },
+        {
+          "icon": "Users",
+          "title": "インタビュー調査",
+          "who": "ジャーナリスト、研究者、採用担当",
+          "output": "公開インタビューやパネルからタイムスタンプ付き引用集を作成"
+        },
+        {
+          "icon": "Sparkles",
+          "title": "クリエイター再利用",
+          "who": "YouTuber、ポッドキャスター、マーケター",
+          "output": "ブログ構成、ショーノート、captions、有料AI要約"
+        },
+        {
+          "icon": "BadgeCheck",
+          "title": "ウェビナー後処理",
+          "who": "営業、CS、運用",
+          "output": "デモ、製品トーク、顧客セッションの記録"
+        },
+        {
+          "icon": "Captions",
+          "title": "アクセシビリティ",
+          "who": "コンテンツチーム、教育者、非営利団体",
+          "output": "ダウンロード可能な字幕ファイルと読みやすい transcript"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "例",
+      "title": "確認、引用、エクスポートできるタイムスタンプ付き transcript。",
+      "body": "入力例: 利用可能な字幕トラックがある公開YouTube URL。正確な文言は選択した字幕トラックに依存し、YouTubeの自動字幕では特に差が出ます。",
+      "filename": "youtube.com/watch?v=[video-id]",
+      "transcript": "[00:00] Speaker\nおかえりなさい。今日は、長いYouTube動画を実際に使えるノートに変える3つの方法を見ていきます。\n\n[00:08] Speaker\n最初のステップは、その動画にすでに字幕があるか確認することです。字幕があれば、動画全体を見直す代わりに transcript を取り込めます。\n\n[00:17] Speaker\nTranscriptが保存されたら、重要な用語を検索し、必要な引用をコピーし、次のワークフロー用にファイルをエクスポートできます。"
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "機能",
+      "title": "字幕取り込み、",
+      "accentTitle": "動画ダウンロードなし。",
+      "intro": "ScribixのYouTubeフローは字幕取り込みに特化しています。YouTube URLを確認し、利用可能な字幕トラックを一覧表示し、メタデータがある場合は手動/自動生成を示し、選択したトラックを transcript ライブラリに取り込みます。",
+      "items": [
+        {
+          "icon": "Captions",
+          "title": "字幕トラック",
+          "body": "YouTube動画や音声をダウンロードせず、利用可能な字幕トラックを取り込みます。"
+        },
+        {
+          "icon": "Globe",
+          "title": "言語選択",
+          "body": "保存前に、利用可能な字幕言語から選択できます。"
+        },
+        {
+          "icon": "Clock3",
+          "title": "タイムスタンプ",
+          "body": "タイムスタンプ付きセグメントで、引用や重要な場面を追いやすくなります。"
+        },
+        {
+          "icon": "Download",
+          "title": "5つのエクスポート",
+          "body": "TXT、DOCX、SRT、VTT、CSVをダウンロードするか、transcriptを直接コピーできます。"
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "YouTube transcript の精度はどのくらいですか?",
+          "body": [
+            "精度は動画で利用可能な字幕トラックに依存します。手動字幕は通常、自動生成字幕よりきれいですが、自動字幕にはノイズ、アクセント、音楽、専門用語、発話の重なり、不明瞭な音声による誤りが含まれることがあります。",
+            "Scribixは利用可能な字幕内容を保存済み transcript ワークフローに変換します。YouTube URLについて音声 transcript を改善または再生成するものではありません。引用、法務、医療、学術、金融、公開用途では、取り込んだ transcript を元動画と照合してから使用してください。"
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "YouTube transcript は非公開ですか?",
+          "body": [
+            "Scribixでは、取り込んだ transcript をアカウントに保存するためGoogleサインインが必要です。YouTube URL取り込みでは、Scribixは利用可能な字幕を取り込み、YouTube動画や音声をダウンロードしません。",
+            "保存済み transcript は、削除するかアカウントを閉じるまでアカウント内に残ります。Scribixはユーザーデータでモデルを学習しません。詳しくは"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "プライバシーポリシー",
+            "suffix": "をご覧ください。"
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "比較",
+      "title": "YouTube transcript を取得する他の方法との比較。",
+      "headers": [
+        "方法",
+        "最適",
+        "制約"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix YouTubeをテキスト化",
+          "bestFor": "利用可能なYouTube字幕を、エクスポートと有料要約付きの検索可能なライブラリに保存",
+          "tradeoff": "Googleサインインと利用可能な字幕トラックが必要"
+        },
+        {
+          "approach": "YouTubeの transcript パネル",
+          "bestFor": "YouTube視聴中にすばやく読む",
+          "tradeoff": "複数動画を保存、整理、エクスポート、要約しにくい"
+        },
+        {
+          "approach": "字幕ダウンロードサイト",
+          "bestFor": "一回限りの字幕ダウンロード",
+          "tradeoff": "transcript履歴、要約、広いワークフローから分離されがち"
+        },
+        {
+          "approach": "動画アップロードによるAI文字起こし",
+          "bestFor": "字幕がない場合に自分のメディアファイルから transcript を作成",
+          "tradeoff": "音声/動画ファイルを所有し、アップロードする必要がある"
+        },
+        {
+          "approach": "手動文字起こし",
+          "bestFor": "認証済みまたは重要度の高い作業",
+          "tradeoff": "長いYouTube動画では時間と費用がかかる"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "質問に、",
+      "accentTitle": "明確に回答。",
+      "intro": "YouTube URLを貼り付ける前に、字幕の有無、エクスポート、プライバシー、有料要約について説明します。",
+      "items": [
+        {
+          "q": "YouTube動画をtranscriptにするには?",
+          "a": "ScribixにYouTube URLを貼り付け、利用可能な字幕トラックを確認し、言語を選んで transcript を取り込みます。Scribixはそれをアカウントに保存し、確認、コピー、エクスポート、有料プランで要約できるようにします。"
+        },
+        {
+          "q": "ScribixはすべてのYouTube動画で使えますか?",
+          "a": "いいえ。YouTube URLフローは、Scribixが少なくとも1つの字幕トラックにアクセスできる場合に動作します。字幕がない、非公開、制限付き、削除済み、ブロック済みの動画では transcript を取り込めない場合があります。"
+        },
+        {
+          "q": "ScribixはYouTube動画や音声をダウンロードしますか?",
+          "a": "いいえ。Scribixは利用可能なYouTube字幕を取り込みます。このフローではYouTube動画や音声をダウンロードしません。"
+        },
+        {
+          "q": "字幕がないYouTube動画でもtranscriptを生成できますか?",
+          "a": "YouTube URLだけではできません。メディアファイルを所有している場合は、Scribixのvideo-to-textまたはaudio-to-textアップロードフローでファイルから新しいAI transcriptを生成してください。"
+        },
+        {
+          "q": "ScribixのYouTubeテキスト化は無料ですか?",
+          "a": "はい。Scribixの無料プランには、Googleサインインとカード不要で、YouTube字幕の取り込みが1日10件含まれます。"
+        },
+        {
+          "q": "YouTube transcript はどの形式でエクスポートできますか?",
+          "a": "Scribixは完了した transcript をTXT、DOCX、SRT、VTT、CSVとしてエクスポートできます。アプリ内でテキストを直接コピーすることもできます。"
+        },
+        {
+          "q": "Transcript の言語を選べますか?",
+          "a": "はい。YouTube動画に複数の字幕トラックがある場合、Scribixが利用可能な字幕言語を表示し、取り込むものを選べます。"
+        },
+        {
+          "q": "YouTube transcript を要約できますか?",
+          "a": "はい。有料ユーザーは、YouTube transcript をScribixに取り込んだ後、AI要約を利用できます。"
+        },
+        {
+          "q": "取り込んだYouTube transcript は正確ですか?",
+          "a": "選択した字幕トラックと同じ精度です。手動字幕は通常、自動生成字幕より高品質ですが、引用、公開、重要な判断に使う前には必ず確認してください。"
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "準備ができたら",
+      "title": "YouTube URLをtranscriptに。",
+      "body": "ScribixにYouTube URLを貼り付け、利用可能な字幕を取り込み、検索、コピー、エクスポート、要約できる transcript として保存します。",
+      "primaryCta": "YouTube URLを貼り付け",
+      "stats": [
+        {
+          "value": "10/日",
+          "label": "無料取り込み"
+        },
+        {
+          "value": "5",
+          "label": "Export形式"
+        },
+        {
+          "value": "0",
+          "label": "動画DL"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix YouTubeをテキスト化",
+      "appDescription": "Scribixは利用可能なYouTube字幕トラックを、確認、コピー、エクスポート、有料プランで要約できる保存済み transcript として取り込みます。",
+      "offerDescription": "無料プランには、Googleサインインとカード不要でYouTube字幕の取り込みが1日10件含まれます。",
+      "featureList": [
+        "YouTube URLを貼り付け",
+        "利用可能なYouTube字幕トラックを確認",
+        "字幕言語を選択",
+        "手動/自動生成字幕トラックのラベル",
+        "保存済みtranscriptライブラリ",
+        "タイムスタンプ付き確認",
+        "TXTエクスポート",
+        "DOCXエクスポート",
+        "SRTエクスポート",
+        "VTTエクスポート",
+        "CSVエクスポート",
+        "有料AI要約",
+        "YouTube動画/音声のダウンロードなし"
+      ],
+      "howToName": "ScribixでYouTube動画をtranscriptに変換する方法",
+      "howToDescription": "YouTube URLを貼り付け、利用可能な字幕トラックを選び、transcript を取り込み、確認してエクスポートします。",
+      "howToSteps": [
+        {
+          "name": "YouTube URLを貼り付け",
+          "text": "YouTube動画リンクをコピーしてScribixに貼り付けます。"
+        },
+        {
+          "name": "利用可能な字幕を確認",
+          "text": "Scribixが動画に利用可能な字幕トラックがあるか確認します。"
+        },
+        {
+          "name": "字幕トラックを選択",
+          "text": "取り込みたい字幕言語またはトラックを選択します。"
+        },
+        {
+          "name": "Transcriptを取り込み",
+          "text": "字幕トラックをScribixアカウント内のtranscriptとして保存します。"
+        },
+        {
+          "name": "確認してエクスポート",
+          "text": "Transcriptを確認し、テキストをコピー、ファイルをエクスポート、または有料プランで要約します。"
+        }
       ]
     }
   }

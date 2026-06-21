@@ -10,6 +10,8 @@ export function statusForYouTubeCaptionError(code: YouTubeCaptionServiceErrorCod
       return 400;
     case "transcripts_unavailable":
       return 404;
+    case "video_unplayable":
+      return 422;
     case "missing_youtube_service_config":
       return 503;
     case "track_not_found":

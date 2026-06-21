@@ -286,6 +286,8 @@ function errorMessage(
       return t("errorInvalidUrl");
     case "transcripts_unavailable":
       return t("errorUnavailable");
+    case "video_unplayable":
+      return t("errorVideoUnplayable");
     case "track_not_found":
       return t("errorTrackMissing");
     case "empty_transcript":
@@ -334,6 +336,7 @@ const YOUTUBE_FAILURE_META: Record<string, YouTubeFailureMeta> = {
   youtube_duration_exceeds_tier: { service: "scribix_app", errorType: "quota" },
   missing_youtube_service_config: { service: "scribix_app", errorType: "technical" },
   transcripts_unavailable: { service: "youtube_caption_service", errorType: "product_limit" },
+  video_unplayable: { service: "youtube_caption_service", errorType: "product_limit" },
   track_not_found: { service: "youtube_caption_service", errorType: "product_limit" },
   empty_transcript: { service: "youtube_caption_service", errorType: "product_limit" },
   youtube_fetch_failed: { service: "youtube_caption_service", errorType: "technical" },

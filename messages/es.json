@@ -44,6 +44,11 @@
         "label": "Vídeo a texto",
         "href": "/#generator",
         "icon": "Clapperboard"
+      },
+      {
+        "label": "YouTube a texto",
+        "href": "/youtube-to-transcript",
+        "icon": "Captions"
       }
     ],
     "tools": [
@@ -996,6 +1001,7 @@
       "importing": "Importing...",
       "errorInvalidUrl": "Paste a valid YouTube video URL.",
       "errorUnavailable": "No captions are available for this video. Try another video or use the upload path.",
+      "errorVideoUnplayable": "No pudimos acceder a los subtítulos de este video de YouTube. Puede ser privado, estar restringido, limitado por región o no estar disponible desde nuestro servicio de subtítulos. Prueba otro video o sube tu propio archivo.",
       "errorTrackMissing": "That caption track is no longer available. Check the URL again.",
       "errorEmpty": "This caption track is empty. Choose another language if available.",
       "errorQuotaExceeded": "You have reached your YouTube caption import limit for this plan.",
@@ -1723,6 +1729,396 @@
         "Transcribir el audio",
         "Revisar la transcripción",
         "Copiar o exportar"
+      ]
+    }
+  },
+  "YouTubeToTranscript": {
+    "metadata": {
+      "title": "YouTube a texto | Scribix",
+      "description": "Pega una URL de YouTube en Scribix para importar los subtítulos disponibles como una transcripción guardada. Elige una pista, copia el texto, exporta o resume con planes de pago.",
+      "openGraphTitle": "YouTube a texto | Scribix",
+      "openGraphDescription": "Pega una URL de YouTube, importa una pista de subtítulos disponible y guarda una transcripción buscable con exportaciones y resúmenes de IA en planes de pago.",
+      "twitterTitle": "YouTube a texto | Scribix",
+      "twitterDescription": "Importa subtítulos disponibles de YouTube como transcripciones guardadas que puedes buscar, copiar, exportar y resumir con planes de pago."
+    },
+    "hero": {
+      "issue": "REC · URL DE YOUTUBE",
+      "issueLabel": "Issue No.04 · YouTube a texto",
+      "title": "YouTube a texto.",
+      "accentTitle": "Texto guardado y buscable.",
+      "descriptionStart": "Pega una URL de YouTube en Scribix e importa la pista de subtítulos disponible del vídeo como una transcripción que puedes leer, buscar, copiar, exportar y resumir con planes de pago.",
+      "stat": "Gratis con inicio de sesión de Google",
+      "descriptionEnd": ". Scribix comprueba primero los subtítulos disponibles y guarda la transcripción sin descargar el vídeo ni el audio de YouTube.",
+      "primaryCta": "Pegar una URL de YouTube",
+      "secondaryCta": "¿Necesitas transcribir un archivo?",
+      "secondaryHref": "/",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "10 importaciones gratis/día"
+        },
+        {
+          "icon": "Captions",
+          "label": "Selector de idioma"
+        },
+        {
+          "icon": "Download",
+          "label": "TXT, DOCX, SRT, VTT, CSV"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "Sin tarjeta"
+        }
+      ]
+    },
+    "quickAnswer": {
+      "kicker": "Respuesta rápida",
+      "title": "Pega un enlace. Guarda los subtítulos.",
+      "body": "Scribix es una herramienta de YouTube a texto que convierte los subtítulos disponibles de YouTube en una transcripción guardada. Es ideal para clases, entrevistas, tutoriales, webinars, podcasts y vídeos de investigación que ya tienen subtítulos manuales o automáticos. Pega la URL de YouTube, elige una pista de subtítulos, importa la transcripción y luego cópiala o expórtala como TXT, DOCX, SRT, VTT o CSV. Si un vídeo no tiene subtítulos, usa el flujo normal de subida con tu propio archivo de audio o vídeo."
+    },
+    "overview": {
+      "number": "01",
+      "label": "Resumen",
+      "rows": [
+        {
+          "item": "Ideal para",
+          "detail": "Clases, entrevistas, tutoriales, podcasts, webinars y vídeos de investigación de YouTube con subtítulos"
+        },
+        {
+          "item": "No ideal para",
+          "detail": "Vídeos de YouTube sin subtítulos, vídeos privados o vídeos que necesitas transcribir de nuevo desde el audio"
+        },
+        {
+          "item": "Entrada",
+          "detail": "Una URL de vídeo de YouTube con al menos una pista de subtítulos disponible"
+        },
+        {
+          "item": "Salida",
+          "detail": "Transcripción guardada con marcas de tiempo, metadatos de idioma, copia, exportación y resúmenes de IA de pago"
+        },
+        {
+          "item": "Flujo",
+          "detail": "Pegar URL, comprobar subtítulos, elegir idioma, importar transcripción, revisar/exportar"
+        },
+        {
+          "item": "Límite gratis",
+          "detail": "10 importaciones de subtítulos de YouTube al día con inicio de sesión de Google"
+        },
+        {
+          "item": "Duración",
+          "detail": "Gratis: hasta 2 horas por vídeo; los planes de pago admiten vídeos más largos"
+        },
+        {
+          "item": "Privacidad",
+          "detail": "Scribix importa subtítulos y no descarga el vídeo ni el audio de YouTube"
+        }
+      ],
+      "bestFor": {
+        "title": "Ideal para",
+        "items": [
+          "Estudiantes y docentes que convierten clases subtituladas en apuntes buscables.",
+          "Investigadores y periodistas que extraen citas de entrevistas, paneles y charlas grabadas.",
+          "Creadores que reutilizan sus propios subtítulos de YouTube para borradores de blog, notas, captions o resúmenes.",
+          "Equipos de operaciones y marketing que revisan webinars, demos y vídeos de clientes sin reproducir toda la grabación."
+        ]
+      },
+      "notBestFor": {
+        "title": "No ideal para",
+        "items": [
+          "Vídeos de YouTube sin pista de subtítulos; este flujo importa subtítulos disponibles en lugar de generar speech-to-text nuevo desde una URL.",
+          "Vídeos privados, restringidos, eliminados o bloqueados por región a los que el servicio de subtítulos no puede acceder.",
+          "Transcripciones legales, médicas, académicas o de cumplimiento certificadas donde cada palabra debe verificarse manualmente.",
+          "Flujos que requieren importación anónima sin cuenta."
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "Cómo funciona",
+      "title": "Cinco pasos.",
+      "accentTitle": "De URL a texto.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Inicia sesión con Google.",
+          "body": "El plan gratuito incluye 10 importaciones de subtítulos de YouTube al día y no requiere tarjeta.",
+          "meta": "Plan gratis"
+        },
+        {
+          "n": "02",
+          "icon": "Search",
+          "title": "Pega la URL de YouTube.",
+          "body": "Copia un enlace de vídeo de YouTube y deja que Scribix compruebe si hay pistas de subtítulos disponibles.",
+          "meta": "Comprobar"
+        },
+        {
+          "n": "03",
+          "icon": "Captions",
+          "title": "Elige la pista de subtítulos.",
+          "body": "Selecciona la pista manual o automática que quieres importar.",
+          "meta": "Idioma"
+        },
+        {
+          "n": "04",
+          "icon": "FileText",
+          "title": "Importa la transcripción.",
+          "body": "Scribix guarda la pista seleccionada en tu biblioteca con marcas de tiempo.",
+          "meta": "Texto guardado"
+        },
+        {
+          "n": "05",
+          "icon": "Download",
+          "title": "Revisa y exporta.",
+          "body": "Copia el texto, descarga TXT, DOCX, SRT, VTT o CSV, o crea un resumen de IA con un plan de pago.",
+          "meta": "5 formatos"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "Casos de uso",
+      "title": "Creado para vídeos de YouTube que deben convertirse en",
+      "accentTitle": "texto útil.",
+      "items": [
+        {
+          "icon": "Search",
+          "title": "Revisión de clases",
+          "who": "Estudiantes, docentes, equipos educativos",
+          "output": "Apuntes buscables desde una clase de YouTube subtitulada"
+        },
+        {
+          "icon": "Users",
+          "title": "Investigación de entrevistas",
+          "who": "Periodistas, investigadores, reclutadores",
+          "output": "Banco de citas con marcas de tiempo desde una entrevista o panel público"
+        },
+        {
+          "icon": "Sparkles",
+          "title": "Reutilización de contenido",
+          "who": "YouTubers, podcasters, marketers",
+          "output": "Esquema de blog, notas, captions y resumen de IA de pago"
+        },
+        {
+          "icon": "BadgeCheck",
+          "title": "Seguimiento de webinars",
+          "who": "Ventas, éxito del cliente, operaciones",
+          "output": "Registro escrito de una demo, charla de producto o sesión con clientes"
+        },
+        {
+          "icon": "Captions",
+          "title": "Accesibilidad",
+          "who": "Equipos de contenido, docentes, organizaciones",
+          "output": "Archivos de subtítulos descargables y texto legible"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "Ejemplo",
+      "title": "Una transcripción con marcas de tiempo para revisar, citar y exportar.",
+      "body": "Ejemplo de entrada: una URL pública de YouTube con una pista de subtítulos disponible. El texto exacto depende de la pista elegida, especialmente cuando YouTube proporciona subtítulos automáticos.",
+      "filename": "youtube.com/watch?v=[video-id]",
+      "transcript": "[00:00] Hablante\nBienvenidos. Hoy veremos tres formas de convertir vídeos largos de YouTube en notas que realmente puedes usar.\n\n[00:08] Hablante\nEl primer paso es comprobar si el vídeo ya tiene subtítulos. Si los tiene, puedes importar la transcripción en lugar de reproducir todo el vídeo.\n\n[00:17] Hablante\nCuando la transcripción esté guardada, busca los términos importantes, copia la cita que necesitas o exporta el archivo para tu siguiente flujo de trabajo."
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "Capacidades",
+      "title": "Importación de subtítulos,",
+      "accentTitle": "sin descargar vídeo.",
+      "intro": "Scribix centra el flujo de YouTube en importar subtítulos. Comprueba la URL, lista las pistas disponibles, etiqueta cada pista como manual o automática cuando la metadata existe e importa la pista seleccionada a tu biblioteca.",
+      "items": [
+        {
+          "icon": "Captions",
+          "title": "Pistas de subtítulos",
+          "body": "Importa pistas de subtítulos disponibles de YouTube sin descargar el vídeo ni el audio."
+        },
+        {
+          "icon": "Globe",
+          "title": "Elección de idioma",
+          "body": "Elige entre los idiomas disponibles antes de guardar la transcripción."
+        },
+        {
+          "icon": "Clock3",
+          "title": "Marcas de tiempo",
+          "body": "Los segmentos con tiempo ayudan a rastrear citas y revisar momentos importantes."
+        },
+        {
+          "icon": "Download",
+          "title": "Cinco exportaciones",
+          "body": "Descarga TXT, DOCX, SRT, VTT o CSV, o copia la transcripción directamente."
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "¿Qué tan precisa es una transcripción de YouTube?",
+          "body": [
+            "La precisión depende de la pista de subtítulos disponible para el vídeo. Los subtítulos manuales suelen ser más limpios que los automáticos, que pueden incluir errores por ruido, acentos, música, términos técnicos, voces superpuestas o audio poco claro.",
+            "Scribix conserva el contenido de subtítulos disponible y lo convierte en una transcripción guardada; no mejora ni regenera la transcripción de audio para URLs de YouTube. Para citas, trabajos legales, médicos, académicos, financieros o publicados, revisa la transcripción importada contra el vídeo original antes de usarla."
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "¿Tu transcripción de YouTube es privada?",
+          "body": [
+            "Scribix requiere inicio de sesión con Google para guardar las transcripciones importadas en tu cuenta. Para importaciones por URL de YouTube, Scribix importa subtítulos disponibles y no descarga el vídeo ni el audio de YouTube.",
+            "Tu transcripción guardada permanece en tu cuenta hasta que la elimines o cierres la cuenta. Scribix nunca entrena modelos con datos de usuarios. Lee la"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "política de privacidad",
+            "suffix": "."
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "Comparación",
+      "title": "Scribix frente a otras formas de obtener una transcripción de YouTube.",
+      "headers": [
+        "Enfoque",
+        "Ideal para",
+        "Limitación"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix YouTube a texto",
+          "bestFor": "Guardar subtítulos disponibles de YouTube en una biblioteca buscable con exportaciones y resúmenes de pago",
+          "tradeoff": "Requiere inicio de sesión con Google y una pista de subtítulos disponible"
+        },
+        {
+          "approach": "Panel de transcripción de YouTube",
+          "bestFor": "Lectura rápida mientras ves el vídeo en YouTube",
+          "tradeoff": "Más difícil de guardar, organizar, exportar o resumir en varios vídeos"
+        },
+        {
+          "approach": "Sitios para descargar subtítulos",
+          "bestFor": "Descargas puntuales",
+          "tradeoff": "Suelen estar separados de tu historial de transcripciones, resúmenes y flujo general"
+        },
+        {
+          "approach": "Transcripción IA por subida de vídeo",
+          "bestFor": "Crear una transcripción desde tu propio archivo cuando no hay subtítulos",
+          "tradeoff": "Necesitas tener el archivo de audio/vídeo y subirlo"
+        },
+        {
+          "approach": "Transcripción manual",
+          "bestFor": "Trabajo certificado o de alto riesgo",
+          "tradeoff": "Lenta y costosa para vídeos largos de YouTube"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "Preguntas,",
+      "accentTitle": "respondidas con claridad.",
+      "intro": "La disponibilidad de subtítulos, exportaciones, privacidad y resúmenes de pago se explican antes de pegar una URL de YouTube.",
+      "items": [
+        {
+          "q": "¿Cómo convierto un vídeo de YouTube en una transcripción?",
+          "a": "Pega la URL de YouTube en Scribix, comprueba las pistas de subtítulos disponibles, elige un idioma e importa la transcripción. Scribix la guarda en tu cuenta para que puedas revisarla, copiarla, exportarla o resumirla con un plan de pago."
+        },
+        {
+          "q": "¿Scribix funciona con todos los vídeos de YouTube?",
+          "a": "No. El flujo por URL de YouTube funciona cuando Scribix puede acceder al menos a una pista de subtítulos. Si el vídeo no tiene subtítulos, es privado, restringido, eliminado o bloqueado, Scribix quizá no pueda importar una transcripción."
+        },
+        {
+          "q": "¿Scribix descarga el vídeo o el audio de YouTube?",
+          "a": "No. Scribix importa subtítulos disponibles de YouTube. No descarga el vídeo ni el audio de YouTube en este flujo."
+        },
+        {
+          "q": "¿Scribix puede generar una transcripción si un vídeo no tiene subtítulos?",
+          "a": "No desde la URL de YouTube sola. Si tienes el archivo, usa el flujo de vídeo a texto o audio a texto de Scribix para generar una nueva transcripción de IA desde el archivo."
+        },
+        {
+          "q": "¿YouTube a texto es gratis en Scribix?",
+          "a": "Sí. Scribix incluye 10 importaciones de subtítulos de YouTube al día en el plan gratuito con inicio de sesión de Google y sin tarjeta."
+        },
+        {
+          "q": "¿En qué formatos puedo exportar la transcripción de YouTube?",
+          "a": "Scribix puede exportar transcripciones completadas como TXT, DOCX, SRT, VTT o CSV. También puedes copiar el texto directamente desde la app."
+        },
+        {
+          "q": "¿Puedo elegir el idioma de la transcripción?",
+          "a": "Sí, cuando el vídeo de YouTube tiene varias pistas de subtítulos. Scribix muestra los idiomas disponibles y te deja elegir cuál importar."
+        },
+        {
+          "q": "¿Puedo resumir una transcripción de YouTube?",
+          "a": "Sí. Los usuarios de pago pueden usar resúmenes de IA después de importar la transcripción de YouTube en Scribix."
+        },
+        {
+          "q": "¿Son precisas las transcripciones importadas de YouTube?",
+          "a": "Son tan precisas como la pista de subtítulos seleccionada. Los subtítulos manuales suelen ser mejores que los automáticos, pero toda transcripción debe revisarse antes de citar, publicar o usarla en decisiones de alto riesgo."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Listo cuando tú lo estés",
+      "title": "Convierte una URL de YouTube en una transcripción.",
+      "body": "Pega una URL de YouTube en Scribix, importa los subtítulos disponibles y guarda una transcripción que puedes buscar, copiar, exportar o resumir.",
+      "primaryCta": "Pegar una URL de YouTube",
+      "stats": [
+        {
+          "value": "10/día",
+          "label": "Imports gratis"
+        },
+        {
+          "value": "5",
+          "label": "Exportaciones"
+        },
+        {
+          "value": "0",
+          "label": "Descargas vídeo"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix YouTube a texto",
+      "appDescription": "Scribix importa pistas de subtítulos disponibles de YouTube como transcripciones guardadas que pueden revisarse, copiarse, exportarse y resumirse con planes de pago.",
+      "offerDescription": "El plan gratuito incluye 10 importaciones de subtítulos de YouTube al día con inicio de sesión de Google y sin tarjeta.",
+      "featureList": [
+        "Pegar una URL de YouTube",
+        "Comprobar pistas de subtítulos disponibles",
+        "Elegir idioma de subtítulos",
+        "Etiquetas de pistas manuales y automáticas",
+        "Biblioteca de transcripciones guardadas",
+        "Revisión con marcas de tiempo",
+        "Exportación TXT",
+        "Exportación DOCX",
+        "Exportación SRT",
+        "Exportación VTT",
+        "Exportación CSV",
+        "Resúmenes de IA de pago",
+        "Sin descarga de vídeo o audio de YouTube"
+      ],
+      "howToName": "Cómo convertir un vídeo de YouTube en una transcripción con Scribix",
+      "howToDescription": "Pega una URL de YouTube, elige una pista disponible, importa la transcripción y luego revísala y expórtala.",
+      "howToSteps": [
+        {
+          "name": "Pegar la URL de YouTube",
+          "text": "Copia un enlace de vídeo de YouTube y pégalo en Scribix."
+        },
+        {
+          "name": "Comprobar subtítulos disponibles",
+          "text": "Scribix comprueba si el vídeo tiene pistas de subtítulos disponibles."
+        },
+        {
+          "name": "Elegir una pista de subtítulos",
+          "text": "Selecciona el idioma o la pista que quieres importar."
+        },
+        {
+          "name": "Importar la transcripción",
+          "text": "Guarda la pista como transcripción en tu cuenta de Scribix."
+        },
+        {
+          "name": "Revisar y exportar",
+          "text": "Revisa la transcripción, copia texto, exporta un archivo o resúmela con un plan de pago."
+        }
       ]
     }
   }

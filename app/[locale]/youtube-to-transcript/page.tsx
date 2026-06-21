@@ -27,19 +27,24 @@ import {
   type ProofItem,
   type TableRow,
 } from "@/app/components/marketing/ToolLandingSections";
-import {
-  AudioUploadCard,
-  type AudioUploadCardCopy,
-} from "@/app/components/upload/AudioUploadCard";
 import { Partners } from "@/app/components/Partners";
 import { Shell } from "@/app/components/Shell";
 import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { TrackToolVisit } from "@/app/components/Track";
+import { YouTubeImporter } from "@/app/components/YouTubeImporter";
 
-const PATH = "/mp3-to-text";
+const PATH = "/youtube-to-transcript";
 
-type Mp3ToTextCopy = {
+type YouTubeToTranscriptCopy = {
+  metadata: {
+    title: string;
+    description: string;
+    openGraphTitle: string;
+    openGraphDescription: string;
+    twitterTitle: string;
+    twitterDescription: string;
+  };
   hero: {
     issue: string;
     issueLabel: string;
@@ -49,12 +54,11 @@ type Mp3ToTextCopy = {
     stat: string;
     descriptionEnd: string;
     primaryCta: string;
-    signedInPrimaryCta: string;
+    signedInPrimaryCta?: string;
     secondaryCta: string;
     secondaryHref: string;
     proof: ProofItem[];
   };
-  upload: AudioUploadCardCopy;
   quickAnswer: {
     kicker: string;
     title: string;
@@ -120,7 +124,7 @@ type Mp3ToTextCopy = {
     title: string;
     body: string;
     primaryCta: string;
-    signedInPrimaryCta: string;
+    signedInPrimaryCta?: string;
     stats: Array<{ value: string; label: string }>;
   };
   jsonLd: {
@@ -130,7 +134,7 @@ type Mp3ToTextCopy = {
     featureList: string[];
     howToName: string;
     howToDescription: string;
-    howToSteps: string[];
+    howToSteps: Array<{ name: string; text: string }>;
   };
 };
 
@@ -141,7 +145,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const canonical = urlFor(locale, PATH);
-  const t = await getTranslations({ locale, namespace: "Mp3ToText.metadata" });
+  const t = await getTranslations({ locale, namespace: "YouTubeToTranscript.metadata" });
 
   return {
     title: t("title"),
@@ -165,7 +169,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Mp3ToTextPage({
+export default async function YouTubeToTranscriptPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
@@ -174,14 +178,15 @@ export default async function Mp3ToTextPage({
   setRequestLocale(locale);
 
   const session = await auth();
-  const postSignInPath = getPathname({ href: "/dashboard/new", locale });
+  const toolPath = getPathname({ href: PATH, locale });
   const homePath = getPathname({ href: "/", locale });
   const dashboardPath = getPathname({ href: "/dashboard", locale });
+  const newTranscriptPath = getPathname({ href: "/dashboard/new", locale });
   const sidebarUsage = await getSidebarUsage(session);
-  const t = await getTranslations("Mp3ToText");
+  const t = await getTranslations("YouTubeToTranscript");
   const copy = {
+    metadata: t.raw("metadata"),
     hero: t.raw("hero"),
-    upload: t.raw("upload"),
     quickAnswer: t.raw("quickAnswer"),
     overview: t.raw("overview"),
     howItWorks: t.raw("howItWorks"),
@@ -193,7 +198,7 @@ export default async function Mp3ToTextPage({
     faq: t.raw("faq"),
     finalCta: t.raw("finalCta"),
     jsonLd: t.raw("jsonLd"),
-  } as Mp3ToTextCopy;
+  } as YouTubeToTranscriptCopy;
 
   return (
     <Shell
@@ -202,7 +207,7 @@ export default async function Mp3ToTextPage({
           usage={sidebarUsage}
           signedIn={!!session}
           signInRedirect={dashboardPath}
-          newTranscriptRedirect={postSignInPath}
+          newTranscriptRedirect={newTranscriptPath}
           signOutRedirect={homePath}
           userImage={session?.user?.image ?? null}
           userLabel={session?.user?.name ?? session?.user?.email ?? null}
@@ -213,7 +218,7 @@ export default async function Mp3ToTextPage({
       {!session && process.env.GOOGLE_ID ? (
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
-      <TrackToolVisit slug="mp3-to-text" />
+      <TrackToolVisit slug="youtube-to-transcript" />
       <Header showSidebarToggle />
       <main>
         <ToolHero
@@ -227,12 +232,11 @@ export default async function Mp3ToTextPage({
             </>
           }
         >
-          <AudioUploadCard
+          <YouTubeImporter
             signedIn={!!session}
-            postSignInPath={postSignInPath}
-            copy={copy.upload}
-            accept="audio/mpeg,.mp3"
-            toolSlug="mp3-to-text"
+            postSignInPath={toolPath}
+            tier={sidebarUsage?.tier ?? "free"}
+            billingCycle={sidebarUsage?.billingCycle ?? null}
           />
         </ToolHero>
         <QuickAnswerSection {...copy.quickAnswer} />
@@ -252,7 +256,13 @@ export default async function Mp3ToTextPage({
   );
 }
 
-function JsonLd({ copy, locale }: { copy: Mp3ToTextCopy; locale: string }) {
+function JsonLd({
+  copy,
+  locale,
+}: {
+  copy: YouTubeToTranscriptCopy;
+  locale: string;
+}) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -275,10 +285,11 @@ function JsonLd({ copy, locale }: { copy: Mp3ToTextCopy; locale: string }) {
         "@type": "HowTo",
         name: copy.jsonLd.howToName,
         description: copy.jsonLd.howToDescription,
-        step: copy.jsonLd.howToSteps.map((name, i) => ({
+        step: copy.jsonLd.howToSteps.map((step, i) => ({
           "@type": "HowToStep",
           position: i + 1,
-          name,
+          name: step.name,
+          text: step.text,
         })),
       },
       {

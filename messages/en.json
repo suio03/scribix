@@ -44,6 +44,11 @@
         "label": "Video to Text",
         "href": "/#generator",
         "icon": "Clapperboard"
+      },
+      {
+        "label": "YouTube to Transcript",
+        "href": "/youtube-to-transcript",
+        "icon": "Captions"
       }
     ],
     "tools": [
@@ -999,6 +1004,7 @@
       "importing": "Importing...",
       "errorInvalidUrl": "Paste a valid YouTube video URL.",
       "errorUnavailable": "No captions are available for this video. Try another video or use the upload path.",
+      "errorVideoUnplayable": "We couldn’t access captions for this YouTube video. It may be private, restricted, region-limited, or unavailable from our caption service. Try another video or upload your own file.",
       "errorTrackMissing": "That caption track is no longer available. Check the URL again.",
       "errorEmpty": "This caption track is empty. Choose another language if available.",
       "errorQuotaExceeded": "You have reached your YouTube caption import limit for this plan.",
@@ -1726,6 +1732,396 @@
         "Transcribe the audio",
         "Review the transcript",
         "Copy or export"
+      ]
+    }
+  },
+  "YouTubeToTranscript": {
+    "metadata": {
+      "title": "YouTube to Transcript | Scribix",
+      "description": "Paste a YouTube URL into Scribix to import available captions as a saved transcript. Choose a caption track, copy text, export, or summarize on paid plans.",
+      "openGraphTitle": "YouTube to Transcript | Scribix",
+      "openGraphDescription": "Paste a YouTube URL, import an available caption track, and save a searchable transcript with exports and paid AI summaries.",
+      "twitterTitle": "YouTube to Transcript | Scribix",
+      "twitterDescription": "Import available YouTube captions as saved transcripts you can search, copy, export, and summarize on paid plans."
+    },
+    "hero": {
+      "issue": "REC · YOUTUBE URL",
+      "issueLabel": "Issue No.04 · YouTube to Transcript",
+      "title": "YouTube to transcript.",
+      "accentTitle": "Saved, searchable text.",
+      "descriptionStart": "Paste a YouTube URL into Scribix and import the video's available caption track as a transcript you can read, search, copy, export, and summarize on paid plans.",
+      "stat": "Free with Google sign-in",
+      "descriptionEnd": ". Scribix checks the available captions first and saves the transcript without downloading the YouTube video or audio.",
+      "primaryCta": "Paste a YouTube URL",
+      "secondaryCta": "Need file transcription?",
+      "secondaryHref": "/",
+      "proof": [
+        {
+          "icon": "BadgeCheck",
+          "label": "10 free imports/day"
+        },
+        {
+          "icon": "Captions",
+          "label": "Caption language picker"
+        },
+        {
+          "icon": "Download",
+          "label": "TXT, DOCX, SRT, VTT, CSV"
+        },
+        {
+          "icon": "ShieldCheck",
+          "label": "No credit card"
+        }
+      ]
+    },
+    "quickAnswer": {
+      "kicker": "Quick answer",
+      "title": "Paste a link. Save the captions.",
+      "body": "Scribix is a YouTube-to-transcript tool for turning available YouTube captions into a saved transcript. It is best for lectures, interviews, tutorials, webinars, podcasts, and research videos that already have manual or auto-generated captions. Paste the YouTube URL, choose a caption track, import the transcript, then copy it or export it as TXT, DOCX, SRT, VTT, or CSV. If a video has no captions, use the regular upload flow with your own audio or video file instead."
+    },
+    "overview": {
+      "number": "01",
+      "label": "Overview",
+      "rows": [
+        {
+          "item": "Best for",
+          "detail": "Captioned YouTube lectures, interviews, tutorials, podcasts, webinars, and research videos"
+        },
+        {
+          "item": "Not best for",
+          "detail": "YouTube videos with no captions, private videos, or videos you need newly transcribed from audio"
+        },
+        {
+          "item": "Input",
+          "detail": "A YouTube video URL with at least one available caption track"
+        },
+        {
+          "item": "Output",
+          "detail": "Saved transcript with timestamps, caption language metadata, copy, export, and paid AI summary options"
+        },
+        {
+          "item": "Workflow",
+          "detail": "Paste URL, check captions, choose language, import transcript, review/export"
+        },
+        {
+          "item": "Free limit",
+          "detail": "10 YouTube caption imports/day with Google sign-in"
+        },
+        {
+          "item": "Video length",
+          "detail": "Free: up to 2 hours per video; paid plans support longer videos"
+        },
+        {
+          "item": "Privacy",
+          "detail": "Scribix imports captions and does not download the YouTube video or audio"
+        }
+      ],
+      "bestFor": {
+        "title": "Best for",
+        "items": [
+          "Students and educators turning captioned lectures into searchable study notes.",
+          "Researchers and journalists pulling quotes from interviews, panels, and recorded talks.",
+          "Creators repurposing their own YouTube captions into blog drafts, show notes, captions, or summaries.",
+          "Operators and marketers reviewing webinars, demos, and customer videos without replaying the full recording."
+        ]
+      },
+      "notBestFor": {
+        "title": "Not best for",
+        "items": [
+          "YouTube videos with no caption track; this flow imports available captions instead of generating new speech-to-text from a URL.",
+          "Private, restricted, deleted, or region-blocked YouTube videos that the caption service cannot access.",
+          "Certified legal, medical, academic, or compliance transcripts where every word must be manually verified.",
+          "Workflows that require anonymous import without an account."
+        ]
+      }
+    },
+    "howItWorks": {
+      "number": "02",
+      "label": "How it works",
+      "title": "Five steps.",
+      "accentTitle": "URL to transcript.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "Lock",
+          "title": "Sign in with Google.",
+          "body": "The free plan includes 10 YouTube caption imports per day and no credit card.",
+          "meta": "Free plan"
+        },
+        {
+          "n": "02",
+          "icon": "Search",
+          "title": "Paste the YouTube URL.",
+          "body": "Copy a YouTube video link and let Scribix check whether caption tracks are available.",
+          "meta": "Check captions"
+        },
+        {
+          "n": "03",
+          "icon": "Captions",
+          "title": "Choose the caption track.",
+          "body": "Pick the manual or auto-generated caption language you want to import.",
+          "meta": "Language picker"
+        },
+        {
+          "n": "04",
+          "icon": "FileText",
+          "title": "Import the transcript.",
+          "body": "Scribix saves the selected caption track to your transcript library with timestamps.",
+          "meta": "Saved text"
+        },
+        {
+          "n": "05",
+          "icon": "Download",
+          "title": "Review and export.",
+          "body": "Copy the text, download TXT, DOCX, SRT, VTT, or CSV, or create an AI summary on a paid plan.",
+          "meta": "5 formats"
+        }
+      ]
+    },
+    "useCases": {
+      "number": "03",
+      "label": "Use cases",
+      "title": "Built for YouTube videos that need to become",
+      "accentTitle": "usable text.",
+      "items": [
+        {
+          "icon": "Search",
+          "title": "Lecture review",
+          "who": "Students, teachers, course teams",
+          "output": "Searchable study notes from a captioned YouTube lecture"
+        },
+        {
+          "icon": "Users",
+          "title": "Interview research",
+          "who": "Journalists, researchers, recruiters",
+          "output": "Timestamped quote bank from a public interview or panel"
+        },
+        {
+          "icon": "Sparkles",
+          "title": "Creator repurposing",
+          "who": "YouTubers, podcasters, marketers",
+          "output": "Blog outline, show notes, captions, and paid AI summary"
+        },
+        {
+          "icon": "BadgeCheck",
+          "title": "Webinar follow-up",
+          "who": "Sales, customer success, operations",
+          "output": "Written record of a demo, product talk, or customer session"
+        },
+        {
+          "icon": "Captions",
+          "title": "Accessibility workflow",
+          "who": "Content teams, educators, nonprofits",
+          "output": "Downloadable caption files and readable transcript text"
+        }
+      ]
+    },
+    "demo": {
+      "number": "04",
+      "label": "Example",
+      "title": "A timestamped transcript you can inspect, quote, and export.",
+      "body": "Example input: a public YouTube URL with an available caption track. The exact wording depends on the video's selected caption track, especially when YouTube provides auto-generated captions.",
+      "filename": "youtube.com/watch?v=[video-id]",
+      "transcript": "[00:00] Speaker\nWelcome back. Today we are looking at three ways to turn long YouTube videos into notes you can actually use.\n\n[00:08] Speaker\nThe first step is to check whether the video already has captions. If it does, you can import the transcript instead of replaying the entire video.\n\n[00:17] Speaker\nOnce the transcript is saved, search for the terms that matter, copy the quote you need, or export the file for your next workflow."
+    },
+    "capabilities": {
+      "number": "05",
+      "label": "Capabilities",
+      "title": "Caption import,",
+      "accentTitle": "without video download.",
+      "intro": "Scribix focuses the YouTube workflow on caption import. It checks the YouTube URL, lists available caption tracks, labels each track as manual or auto-generated when metadata is available, and imports the selected track into your transcript library.",
+      "items": [
+        {
+          "icon": "Captions",
+          "title": "Caption tracks",
+          "body": "Import available YouTube caption tracks instead of downloading the video or audio."
+        },
+        {
+          "icon": "Globe",
+          "title": "Language choice",
+          "body": "Choose from the available caption languages before saving the transcript."
+        },
+        {
+          "icon": "Clock3",
+          "title": "Timestamps",
+          "body": "Timestamped segments make quotes and review moments easier to trace."
+        },
+        {
+          "icon": "Download",
+          "title": "Five exports",
+          "body": "Download TXT, DOCX, SRT, VTT, or CSV, or copy the transcript directly."
+        }
+      ]
+    },
+    "insights": {
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "How accurate is a YouTube transcript?",
+          "body": [
+            "Accuracy depends on the caption track available for the video. Manual captions are usually cleaner than auto-generated captions, while auto-generated captions can include errors from noise, accents, music, technical terms, crosstalk, or unclear speech.",
+            "Scribix preserves the available caption content and turns it into a saved transcript workflow; it does not improve or regenerate the audio transcript for YouTube URLs. For quotes, legal, medical, academic, financial, or published work, review the imported transcript against the original video before relying on it."
+          ]
+        },
+        {
+          "icon": "Lock",
+          "title": "Is your YouTube transcript private?",
+          "body": [
+            "Scribix requires Google sign-in so imported transcripts can be saved to your account. For YouTube URL imports, Scribix imports available captions and does not download the YouTube video or audio.",
+            "Your saved transcript stays in your account until you delete it or close your account. Scribix never trains models on user data. Read the"
+          ],
+          "link": {
+            "href": "/privacy",
+            "label": "privacy policy",
+            "suffix": "."
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "number": "06",
+      "label": "Compared",
+      "title": "Scribix vs other ways to get a YouTube transcript.",
+      "headers": [
+        "Approach",
+        "Best for",
+        "Tradeoff"
+      ],
+      "rows": [
+        {
+          "approach": "Scribix YouTube to Transcript",
+          "bestFor": "Saving available YouTube captions into a searchable library with exports and paid summaries",
+          "tradeoff": "Requires Google sign-in and an available caption track"
+        },
+        {
+          "approach": "YouTube transcript panel",
+          "bestFor": "Quick reading while watching on YouTube",
+          "tradeoff": "Harder to save, organize, export, or summarize across multiple videos"
+        },
+        {
+          "approach": "Subtitle downloader websites",
+          "bestFor": "One-off caption downloads",
+          "tradeoff": "Often separate from your transcript history, summaries, and broader transcription workflow"
+        },
+        {
+          "approach": "Full AI video transcription upload",
+          "bestFor": "Creating a transcript from your own media file when no captions exist",
+          "tradeoff": "Requires you to have the audio/video file and upload it"
+        },
+        {
+          "approach": "Manual transcription",
+          "bestFor": "Certified or high-stakes work",
+          "tradeoff": "Slow and expensive for long YouTube videos"
+        }
+      ]
+    },
+    "faq": {
+      "number": "07",
+      "label": "FAQ",
+      "title": "Questions,",
+      "accentTitle": "answered carefully.",
+      "intro": "Caption availability, exports, privacy, and paid summaries are explained plainly before you paste a YouTube URL.",
+      "items": [
+        {
+          "q": "How do I turn a YouTube video into a transcript?",
+          "a": "Paste the YouTube URL into Scribix, check the available caption tracks, choose a language, and import the transcript. Scribix saves the transcript to your account so you can review, copy, export, or summarize it on a paid plan."
+        },
+        {
+          "q": "Does Scribix work with every YouTube video?",
+          "a": "No. The YouTube URL workflow works when Scribix can access at least one caption track for the video. If the video has no captions, is private, restricted, deleted, or blocked, Scribix may not be able to import a transcript."
+        },
+        {
+          "q": "Does Scribix download the YouTube video or audio?",
+          "a": "No. Scribix imports available YouTube captions. It does not download the YouTube video or audio for this workflow."
+        },
+        {
+          "q": "Can Scribix generate a transcript if a YouTube video has no captions?",
+          "a": "Not from the YouTube URL alone. If you own the media file, use Scribix's video-to-text or audio-to-text upload flow to generate a new AI transcript from the file."
+        },
+        {
+          "q": "Is YouTube to transcript free in Scribix?",
+          "a": "Yes. Scribix includes 10 YouTube caption imports per day on the free plan with Google sign-in and no credit card."
+        },
+        {
+          "q": "What can I export the YouTube transcript as?",
+          "a": "Scribix can export completed transcripts as TXT, DOCX, SRT, VTT, or CSV. You can also copy transcript text directly from the app."
+        },
+        {
+          "q": "Can I choose the transcript language?",
+          "a": "Yes, when the YouTube video has multiple caption tracks. Scribix shows the available caption languages and lets you choose which one to import."
+        },
+        {
+          "q": "Can I summarize a YouTube transcript?",
+          "a": "Yes. Paid users can use AI summaries after importing the YouTube transcript into Scribix."
+        },
+        {
+          "q": "Are imported YouTube transcripts accurate?",
+          "a": "They are as accurate as the selected YouTube caption track. Manual captions are usually stronger than auto-generated captions, but every transcript should be reviewed before quoting, publishing, or using it for high-stakes decisions."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Ready when you are",
+      "title": "Turn a YouTube URL into a transcript.",
+      "body": "Paste a YouTube URL into Scribix, import the available captions, and save a transcript you can search, copy, export, or summarize.",
+      "primaryCta": "Paste a YouTube URL",
+      "stats": [
+        {
+          "value": "10/day",
+          "label": "Free imports"
+        },
+        {
+          "value": "5",
+          "label": "Export types"
+        },
+        {
+          "value": "0",
+          "label": "Video downloads"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix YouTube to Transcript",
+      "appDescription": "Scribix imports available YouTube caption tracks as saved transcripts that can be reviewed, copied, exported, and summarized on paid plans.",
+      "offerDescription": "Free plan includes 10 YouTube caption imports per day with Google sign-in and no credit card.",
+      "featureList": [
+        "Paste a YouTube URL",
+        "Check available YouTube caption tracks",
+        "Choose caption language",
+        "Manual and auto-generated caption track labels",
+        "Saved transcript library",
+        "Timestamped transcript review",
+        "TXT export",
+        "DOCX export",
+        "SRT export",
+        "VTT export",
+        "CSV export",
+        "Paid AI summaries",
+        "No YouTube video or audio download"
+      ],
+      "howToName": "How to convert a YouTube video to a transcript with Scribix",
+      "howToDescription": "Paste a YouTube URL, choose an available caption track, import the transcript, then review and export it.",
+      "howToSteps": [
+        {
+          "name": "Paste the YouTube URL",
+          "text": "Copy a YouTube video link and paste it into Scribix."
+        },
+        {
+          "name": "Check available captions",
+          "text": "Scribix checks whether the video has available caption tracks."
+        },
+        {
+          "name": "Choose a caption track",
+          "text": "Select the caption language or track you want to import."
+        },
+        {
+          "name": "Import the transcript",
+          "text": "Save the caption track as a transcript in your Scribix account."
+        },
+        {
+          "name": "Review and export",
+          "text": "Review the transcript, copy text, export a file, or summarize it on a paid plan."
+        }
       ]
     }
   }
