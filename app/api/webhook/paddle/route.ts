@@ -2,6 +2,7 @@ import { cf } from "@/lib/cf";
 import { discordAlert } from "@/lib/discord";
 import { verifyPaddleSignature } from "@/lib/paddle";
 import { findPaddlePlanByPriceId } from "@/lib/paddle-plans";
+import { resolvePaddleEventScope } from "@/lib/paddle-webhook-routing";
 import { PLANS, type BillingCycle, type Tier } from "@/lib/plans";
 
 type PaddleWebhookEvent = {
@@ -44,6 +45,7 @@ type PaddleSubscription = {
 };
 
 type PaddleCustomData = {
+  project?: string;
   userId?: string;
   tier?: Tier;
   cycle?: BillingCycle;
@@ -63,6 +65,21 @@ type UserBillingRow = {
   period_started_at: string;
   period_ends_at: string;
 };
+
+const HANDLED_EVENT_TYPES = new Set([
+  "transaction.completed",
+  "subscription.activated",
+  "subscription.updated",
+  "subscription.canceled",
+  "subscription.paused",
+  "subscription.past_due",
+]);
+
+const PRICE_REQUIRED_EVENT_TYPES = new Set([
+  "transaction.completed",
+  "subscription.activated",
+  "subscription.updated",
+]);
 
 export async function POST(req: Request) {
   const env = await cf();
@@ -88,6 +105,29 @@ export async function POST(req: Request) {
     return Response.json({ error: "missing_event_fields" }, { status: 400 });
   }
 
+  if (!event.data || !HANDLED_EVENT_TYPES.has(eventType)) {
+    return Response.json({ ok: true, ignored: "event_type" });
+  }
+
+  const scope = resolvePaddleEventScope(
+    event.data,
+    "scribix",
+    (priceId) => Boolean(findPaddlePlanByPriceId(env, priceId))
+  );
+  if (scope.kind !== "owned") {
+    if (scope.kind === "unknown" || scope.kind === "conflict") {
+      await discordAlert("webhook_error", {
+        source: "paddle-routing",
+        eventId,
+        eventType,
+        reason: scope.kind === "conflict" ? "project_price_conflict" : "unowned_event",
+        project: scope.kind === "conflict" ? scope.project : undefined,
+        priceIds: scope.priceIds.join(",") || "none",
+      });
+    }
+    return Response.json({ ok: true, ignored: scope.kind });
+  }
+
   const dedupe = await env.DB.prepare(
     `INSERT OR IGNORE INTO paddle_events (event_id, event_type)
      VALUES (?1, ?2)`
@@ -97,6 +137,15 @@ export async function POST(req: Request) {
   if (!dedupe.meta?.changes) return Response.json({ ok: true, dedup: true });
 
   try {
+    if (
+      PRICE_REQUIRED_EVENT_TYPES.has(eventType) &&
+      scope.source === "metadata" &&
+      !scope.priceIds.some((priceId) => Boolean(findPaddlePlanByPriceId(env, priceId)))
+    ) {
+      throw new Error(
+        `owned_unknown_price [${eventType}] (${scope.priceIds.join(",") || "no-price"})`
+      );
+    }
     await processPaddleEvent(env, event);
     await env.DB.prepare(
       `UPDATE paddle_events SET processed_at = CURRENT_TIMESTAMP WHERE event_id = ?1`
@@ -105,23 +154,47 @@ export async function POST(req: Request) {
       .run();
     return Response.json({ ok: true });
   } catch (error) {
+    const shouldAlert = await claimFailureAlert(env.DB, eventId, eventType);
     await env.DB.prepare(`DELETE FROM paddle_events WHERE event_id = ?1`)
       .bind(eventId)
       .run();
     console.error("Paddle webhook failed:", error);
-    await discordAlert("webhook_error", {
-      source: "paddle",
-      eventId,
-      eventType,
-      reason: error instanceof Error ? error.message : "unknown",
-    });
+    if (shouldAlert) {
+      await discordAlert("webhook_error", {
+        source: "paddle",
+        eventId,
+        eventType,
+        reason: error instanceof Error ? error.message : "unknown",
+      });
+    }
     return Response.json({ error: "webhook_processing_failed" }, { status: 500 });
+  }
+}
+
+async function claimFailureAlert(
+  db: D1Database,
+  eventId: string,
+  eventType: string
+): Promise<boolean> {
+  try {
+    const result = await db
+      .prepare(
+        `INSERT OR IGNORE INTO paddle_events (event_id, event_type, processed_at)
+         VALUES (?1, ?2, CURRENT_TIMESTAMP)`
+      )
+      .bind(`alert:${eventId}`, `alert:${eventType}`)
+      .run();
+    return Boolean(result.meta?.changes);
+  } catch (error) {
+    console.error("Failed to claim Paddle failure alert:", error);
+    return true;
   }
 }
 
 async function processPaddleEvent(env: CloudflareEnv, event: PaddleWebhookEvent) {
   const type = event.event_type;
   if (!event.data) return;
+  if (!type || !HANDLED_EVENT_TYPES.has(type)) return;
 
   switch (type) {
     case "transaction.completed":
@@ -148,7 +221,10 @@ async function handleTransactionCompleted(
   transaction: PaddleTransaction,
   occurredAt?: string
 ) {
-  const priceId = priceIdFromTransaction(transaction);
+  const priceId = priceIdFromTransaction(
+    transaction,
+    (candidate) => Boolean(findPaddlePlanByPriceId(env, candidate))
+  );
   const plan = findPaddlePlanByPriceId(env, priceId);
   if (!plan) {
     await discordAlert("webhook_error", {
@@ -207,7 +283,13 @@ async function handleSubscriptionActive(
   subscription: PaddleSubscription,
   occurredAt?: string
 ) {
-  const priceId = priceIdFromSubscription(subscription);
+  const status = subscription.status?.toLowerCase();
+  if (status && status !== "active" && status !== "trialing") return;
+
+  const priceId = priceIdFromSubscription(
+    subscription,
+    (candidate) => Boolean(findPaddlePlanByPriceId(env, candidate))
+  );
   const plan = findPaddlePlanByPriceId(env, priceId);
   if (!plan) {
     await discordAlert("webhook_error", {
@@ -365,17 +447,32 @@ async function expireSubscription(
     .run();
 }
 
-function priceIdFromTransaction(transaction: PaddleTransaction): string | null {
-  return (
-    transaction.items?.[0]?.price?.id ??
-    transaction.details?.line_items?.[0]?.price_id ??
-    null
-  );
+function priceIdFromTransaction(
+  transaction: PaddleTransaction,
+  isKnownPriceId: (priceId: string) => boolean
+): string | null {
+  const priceIds = [
+    ...(transaction.items ?? []).map((item) => item.price?.id),
+    ...(transaction.details?.line_items ?? []).map((item) => item.price_id),
+  ].filter((priceId): priceId is string => Boolean(priceId));
+  return priceIds.find(isKnownPriceId) ?? priceIds[0] ?? null;
 }
 
-function priceIdFromSubscription(subscription: PaddleSubscription): string | null {
+function priceIdFromSubscription(
+  subscription: PaddleSubscription,
+  isKnownPriceId: (priceId: string) => boolean = () => false
+): string | null {
   const active = subscription.items?.find((item) => item.status === "active");
-  return active?.price?.id ?? subscription.items?.[0]?.price?.id ?? null;
+  const priceIds = (subscription.items ?? [])
+    .map((item) => item.price?.id)
+    .filter((priceId): priceId is string => Boolean(priceId));
+  return (
+    (active?.price?.id && isKnownPriceId(active.price.id) ? active.price.id : null) ??
+    priceIds.find(isKnownPriceId) ??
+    active?.price?.id ??
+    priceIds[0] ??
+    null
+  );
 }
 
 function periodFromTransaction(

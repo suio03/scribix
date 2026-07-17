@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.16.1] - 2026-07-17
+
+### Changed
+- Added project metadata to Paddle checkouts and isolated webhook processing by project ownership with legacy Price ID fallback.
+
+### Fixed
+- Stopped foreign Paddle events from triggering retries or mutating Scribix billing state.
+- Deduplicated webhook failure alerts while preserving retries for owned events with missing price configuration.
+- Prevented non-active subscription updates from restoring canceled or paused access.
+- Kept cancellation, pause, and past-due handling available when a historical Price ID is no longer configured.
+
 ## [0.16.0] - 2026-06-22
 
 ### Added

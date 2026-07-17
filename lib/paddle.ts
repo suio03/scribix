@@ -51,6 +51,7 @@ export async function createPaddleTransaction(
     collection_mode: "automatic",
     checkout: { url: input.checkoutUrl },
     custom_data: {
+      project: "scribix",
       userId: input.userId,
       tier: input.tier,
       cycle: input.cycle,
