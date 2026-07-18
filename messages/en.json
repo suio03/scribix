@@ -134,7 +134,7 @@
     ],
     "upload": {
       "instruction": "Drop a video or audio file, or click to browse.",
-      "specs": "Max 1GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
+      "specs": "Video up to 5 GB · Audio up to 1 GB · MP4 · MOV · WEBM · MP3 · WAV · M4A",
       "button": "Upload File"
     },
     "record": {
@@ -208,7 +208,7 @@
       },
       {
         "icon": "Lock",
-        "title": "Files deleted in 24 hours",
+        "title": "Files deleted after 14 days",
         "body": "TLS 1.3 in transit, AES-256 at rest, processing in encrypted memory. SOC 2-aligned, GDPR-compliant. We never train models on your audio."
       }
     ]
@@ -387,7 +387,7 @@
       {
         "feature": "Files deleted after",
         "cells": [
-          "7 days",
+          "14 days",
           "30 days+",
           "30 days+",
           "Self-host"
@@ -501,9 +501,9 @@
         "key": "maxFileSize",
         "label": "Max file size",
         "values": {
-          "free": "1 GB",
-          "starter": "1 GB",
-          "pro": "1 GB"
+          "free": "2 GB video / 1 GB audio",
+          "starter": "5 GB video / 1 GB audio",
+          "pro": "5 GB video / 1 GB audio"
         }
       },
       {
@@ -657,7 +657,7 @@
       },
       {
         "q": "Is my data secure when I upload a video?",
-        "a": "Files are uploaded over TLS 1.3, processed in encrypted memory, and deleted within 24 hours. We don't train models on user audio. SOC 2-aligned infrastructure, GDPR-compliant data handling, and EU + US regional processing options."
+        "a": "Files are uploaded securely and deleted automatically after 14 days. We don't train models on user audio."
       },
       {
         "q": "What can I export the transcript as?",
@@ -773,7 +773,7 @@
     "viewer": {
       "back": "← All transcripts",
       "audioExpiredLabel": "Audio expired.",
-      "audioExpiredBody": "Source files are kept for 7 days; the transcript stays as long as you want.",
+      "audioExpiredBody": "Source files are kept for 14 days; the transcript stays as long as you want.",
       "missing": "Transcript file is missing from storage.",
       "transcribingHint": "Transcribing your audio. This usually takes about a minute per hour of input.",
       "workingHint": "Working on your transcript…",
@@ -805,6 +805,7 @@
       "mute": "Mute",
       "unmute": "Unmute",
       "playbackSpeed": "Playback speed",
+      "mediaPlaybackUnsupported": "This media format cannot be played in your current browser.",
       "translate": "Translate",
       "translating": "Translating…",
       "translationLanguageLabel": "Translate to",
@@ -935,9 +936,9 @@
     "uploader": {
       "dropPrompt": "Drop a video or audio file",
       "limits": "Uploads up to 1 GB · Free trial: 45 min lifetime",
-      "limitsFree": "Uploads up to 1 GB · Free trial: 45 min lifetime",
-      "limitsBasic": "Uploads up to 1 GB · Up to 1 hour per file",
-      "limitsPro": "Uploads up to 1 GB · Up to 10 hours per file",
+      "limitsFree": "Videos up to {size} · Audio up to 1 GB · Free trial: 45 min lifetime",
+      "limitsBasic": "Videos up to {size} · Audio up to 1 GB · Up to 1 hour per file",
+      "limitsPro": "Videos up to {size} · Audio up to 1 GB · Up to 10 hours per file",
       "choose": "Choose file",
       "upgradePlan": "Upgrade plan",
       "phasePreparing": "Preparing…",
@@ -957,6 +958,7 @@
       "insufficientQuota": "This file needs ~{neededMin} min but you only have {remainingMin} min left this period. Upgrade or wait for the next cycle.",
       "aaiSubmitFailed": "Transcription service is unavailable. Please try again in a moment.",
       "extractionTimeout": "Audio extraction took too long in this browser. Retry, or extract the audio locally and upload that file.",
+      "unsupportedMedia": "This media format is not supported. Choose another audio or video file.",
       "retry": "Retry",
       "close": "Close",
       "chooseAudioFile": "Choose audio file",
@@ -1096,7 +1098,7 @@
         },
         {
           "item": "Privacy",
-          "detail": "Audio is deleted after 7 days; transcripts stay until you delete them"
+          "detail": "Audio is deleted after 14 days; transcripts stay until you delete them"
         }
       ],
       "bestFor": {
@@ -1229,7 +1231,7 @@
           "icon": "Lock",
           "title": "Is your audio private?",
           "body": [
-            "Scribix uses your uploaded audio only to generate and deliver transcripts for your account. Audio and video files are deleted automatically after 7 days.",
+            "Scribix uses your uploaded audio only to generate and deliver transcripts for your account. Audio and video files are deleted automatically after 14 days.",
             "Transcripts stay in your account until you delete them or close your account. Read the"
           ],
           "link": {
@@ -1309,7 +1311,7 @@
         },
         {
           "q": "Is my audio stored forever?",
-          "a": "No. Scribix's privacy policy says uploaded audio and video files are deleted automatically after 7 days. Transcripts stay in your account until you delete them or close your account."
+          "a": "No. Scribix's privacy policy says uploaded audio and video files are deleted automatically after 14 days. Transcripts stay in your account until you delete them or close your account."
         }
       ]
     },
@@ -1329,7 +1331,7 @@
           "label": "Languages"
         },
         {
-          "value": "7 days",
+          "value": "14 days",
           "label": "Auto-delete"
         }
       ]
@@ -1464,7 +1466,7 @@
         },
         {
           "item": "Privacy",
-          "detail": "Audio is deleted after 7 days; transcripts stay until you delete them"
+          "detail": "Audio is deleted after 14 days; transcripts stay until you delete them"
         }
       ],
       "bestFor": {
@@ -1598,7 +1600,7 @@
           "icon": "Lock",
           "title": "Is your MP3 private?",
           "body": [
-            "Scribix uses your uploaded MP3 only to generate and deliver transcripts for your account. Audio and video files are deleted automatically after 7 days.",
+            "Scribix uses your uploaded MP3 only to generate and deliver transcripts for your account. Audio and video files are deleted automatically after 14 days.",
             "Transcripts stay in your account until you delete them or close your account. Read the"
           ],
           "link": {
@@ -1678,7 +1680,7 @@
         },
         {
           "q": "Is my MP3 stored forever?",
-          "a": "No. Scribix's privacy policy says uploaded audio and video files are deleted automatically after 7 days. Transcripts stay in your account until you delete them or close your account."
+          "a": "No. Scribix's privacy policy says uploaded audio and video files are deleted automatically after 14 days. Transcripts stay in your account until you delete them or close your account."
         },
         {
           "q": "Do I need an account to convert MP3 to text?",
@@ -1702,7 +1704,7 @@
           "label": "Languages"
         },
         {
-          "value": "7 days",
+          "value": "14 days",
           "label": "Auto-delete"
         }
       ]

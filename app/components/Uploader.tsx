@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
-import type { Tier } from "@/lib/plans";
+import { AUDIO_EXTENSIONS, VIDEO_EXTENSIONS } from "@/lib/media-upload";
+import { ONE_GIB, PLANS, type Tier } from "@/lib/plans";
 import { UpgradePlanModal } from "./UpgradePlanModal";
 import { markSignInPending } from "./Track";
 
@@ -15,8 +16,10 @@ const DEFAULT_TOOL_SLUG = "transcribe";
 type UploaderT = ReturnType<typeof useTranslations<"Dashboard.uploader">>;
 
 const ACCEPT = "audio/*,video/*";
-const MAX_UPLOAD_BYTES = 1024 * 1024 * 1024;
+const MAX_UPLOAD_BYTES = ONE_GIB;
 const MAX_UPLOAD_LABEL = "1 GB";
+// Build-time kill switch: changing it requires rebuilding and redeploying the client bundle.
+const DIRECT_VIDEO_ENABLED = process.env.NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED !== "false";
 
 export type UploadPhase =
   | "idle"
@@ -29,6 +32,11 @@ export type UploadPhase =
 
 type UploadErrorType = "technical" | "product_limit" | "quota" | "auth";
 type UploadHelp = "extract_audio";
+type DirectVideoFallbackReason =
+  | "over_1gb"
+  | "cannot_read_metadata"
+  | "extraction_timeout"
+  | "extraction_failed";
 
 export type UploadErrorDetail = {
   message: string;
@@ -88,6 +96,7 @@ export type UseUploadOpts = {
 
 export function useUpload({
   signedIn,
+  tier = "free",
   postSignInPath = "/dashboard/new",
   audioOnly = false,
   toolSlug = DEFAULT_TOOL_SLUG,
@@ -129,31 +138,13 @@ export function useUpload({
         return;
       }
 
-      if (inputType === "video" && file.size > MAX_UPLOAD_BYTES) {
+      const sizeCap = inputType === "video" ? PLANS[tier].maxVideoUploadBytes : MAX_UPLOAD_BYTES;
+      if (file.size > sizeCap) {
         const error = makeUploadError(
-          "video_file_too_large",
-          t("videoTooBig", { size: MAX_UPLOAD_LABEL }),
-          "product_limit",
-          { help: "extract_audio" }
-        );
-        setFilename(file.name);
-        setPhase("error");
-        setUploadError(error);
-        trackEvent("transcribe_fail", {
-          tool_slug: toolSlug,
-          source,
-          input_type: inputType,
-          error_type: error.type,
-          error_code: error.code,
-          error_message: error.message,
-        });
-        return;
-      }
-
-      if (inputType === "audio" && file.size > MAX_UPLOAD_BYTES) {
-        const error = makeUploadError(
-          "audio_file_too_large",
-          t("audioTooBig", { size: MAX_UPLOAD_LABEL }),
+          inputType === "video" ? "video_file_too_large" : "audio_file_too_large",
+          inputType === "video"
+            ? t("fileTooLargeWithCap", { mb: Math.floor(sizeCap / (1024 * 1024)) })
+            : t("audioTooBig", { size: MAX_UPLOAD_LABEL }),
           "product_limit"
         );
         setFilename(file.name);
@@ -184,38 +175,75 @@ export function useUpload({
       let step = "preparing";
       let uploadBytes = file.size;
       let uploadDurationSecEstimate: number | undefined;
+      let multipartUploadId: string | null = null;
+      let directVideo = false;
+      let directUploadCompleted = false;
+      let fallbackReason: DirectVideoFallbackReason | undefined;
+      const uploadStartedAt = Date.now();
 
       try {
         const isVideo = inputType === "video";
-        const durationSec =
-          durationSecOverride && durationSecOverride > 0
-            ? durationSecOverride
-            : await readMediaDuration(file, inputType);
-        uploadDurationSecEstimate = durationSec || undefined;
+        let durationSec = durationSecOverride && durationSecOverride > 0
+          ? durationSecOverride
+          : undefined;
+        if (!durationSec) {
+          try {
+            durationSec = await readMediaDuration(file, inputType);
+          } catch (error) {
+            if (!isVideo || !DIRECT_VIDEO_ENABLED) throw error;
+            directVideo = true;
+            fallbackReason = "cannot_read_metadata";
+          }
+        }
+        uploadDurationSecEstimate = durationSec;
 
         let uploadBody: Blob = file;
         let uploadFilename = file.name;
-        let uploadMime = file.type || "application/octet-stream";
+        let uploadMime = browserMediaMime(file, inputType);
         let uploadDurationSec = durationSec;
-        let initIsVideo = false;
 
         if (isVideo) {
-          step = "extracting audio";
-          setPhase("extracting");
-          setProgress(0);
-          const { extractAudioFromVideo } = await import("@/lib/audio-extractor");
-          const { blob, durationSec: extractedDurationSec } = await extractAudioFromVideo(
-            file,
-            (p) => setProgress(p)
-          );
-          const ext = blob.type === "audio/wav" ? "wav" : "mp3";
-          uploadBody = blob;
-          uploadFilename = `${file.name.replace(/\.[^.]+$/, "")}.${ext}`;
-          uploadMime = blob.type || (ext === "wav" ? "audio/wav" : "audio/mpeg");
-          uploadDurationSec = extractedDurationSec || durationSec;
+          if (file.size > ONE_GIB) {
+            directVideo = true;
+            fallbackReason = "over_1gb";
+          }
+          if (!directVideo) {
+            step = "extracting audio";
+            setPhase("extracting");
+            setProgress(0);
+            try {
+              const { extractAudioFromVideo } = await import("@/lib/audio-extractor");
+              const { blob, durationSec: extractedDurationSec } = await extractAudioFromVideo(
+                file,
+                (p) => setProgress(p)
+              );
+              const ext = blob.type === "audio/wav" ? "wav" : "mp3";
+              uploadBody = blob;
+              uploadFilename = `${file.name.replace(/\.[^.]+$/, "")}.${ext}`;
+              uploadMime = blob.type || (ext === "wav" ? "audio/wav" : "audio/mpeg");
+              uploadDurationSec = extractedDurationSec || durationSec;
+            } catch (error) {
+              if (!DIRECT_VIDEO_ENABLED) throw error;
+              directVideo = true;
+              fallbackReason = extractionFallbackReason(error);
+              uploadBody = file;
+              uploadFilename = file.name;
+              uploadMime = browserMediaMime(file, inputType);
+              uploadDurationSec = durationSec;
+            }
+          }
         }
         uploadBytes = uploadBody.size;
         uploadDurationSecEstimate = uploadDurationSec || undefined;
+
+        if (directVideo) {
+          trackEvent("direct_video_attempt", directVideoAnalytics({
+            fallbackReason,
+            file,
+            durationSec: uploadDurationSec,
+            startedAt: uploadStartedAt,
+          }));
+        }
 
         // Pre-flight: server validates duration cap + quota before upload.
         const initRes = await fetch("/api/transcripts/init", {
@@ -226,20 +254,46 @@ export function useUpload({
             bytes: uploadBody.size,
             mime: uploadMime,
             durationSec: uploadDurationSec,
-            isVideo: initIsVideo,
+            isVideo: directVideo,
+            directVideo,
             source,
           }),
         });
         if (!initRes.ok) throw await readError(initRes, t);
         const init = (await initRes.json()) as {
           transcriptId: string;
-          uploadUrl: string;
+          uploadUrl?: string;
+          uploadId?: string;
+          partSize?: number;
+          uploadMode: "single" | "multipart";
         };
         transcriptId = init.transcriptId;
 
-        step = "uploading audio";
+        step = directVideo ? "uploading video" : "uploading audio";
         setPhase("uploading");
-        await uploadWithProgress(init.uploadUrl, uploadBody, (p) => setProgress(p), t);
+        setProgress(0);
+        if (directVideo) {
+          if (!init.uploadId || !init.partSize) throw new Error("invalid_multipart_init");
+          multipartUploadId = init.uploadId;
+          await uploadMultipart(
+            transcriptId,
+            init.uploadId,
+            init.partSize,
+            file,
+            setProgress,
+            t
+          );
+          trackEvent("direct_video_upload_completed", directVideoAnalytics({
+            fallbackReason,
+            file,
+            durationSec: uploadDurationSec,
+            startedAt: uploadStartedAt,
+          }));
+          directUploadCompleted = true;
+        } else {
+          if (!init.uploadUrl) throw new Error("invalid_single_upload_init");
+          await uploadWithProgress(init.uploadUrl, uploadBody, setProgress, t, uploadMime);
+        }
 
         step = "submitting transcript";
         setPhase("submitting");
@@ -260,6 +314,10 @@ export function useUpload({
             source,
             input_type: inputType,
             duration_sec: uploadDurationSec || undefined,
+            upload_mode: directVideo ? "direct_video" : "extracted_audio",
+            fallback_reason: fallbackReason,
+            file_size_mb: fileSizeMb(file.size),
+            upload_elapsed_sec: elapsedSec(uploadStartedAt),
           });
           router.push(`/dashboard/transcripts/${transcriptId}`);
         } else {
@@ -283,8 +341,22 @@ export function useUpload({
             retryable: uploadFailure.retryable,
           }),
         });
-        if (uploadFailure.code === "persist_failed") {
+        if (directVideo && !directUploadCompleted) {
+          trackEvent("direct_video_upload_failed", {
+            ...directVideoAnalytics({
+              fallbackReason,
+              file,
+              durationSec: uploadDurationSecEstimate,
+              startedAt: uploadStartedAt,
+            }),
+            error_code: uploadFailure.code,
+          });
+        }
+        if (uploadFailure.code === "persist_failed" || err instanceof MultipartCompletionUncertainError) {
           keepTranscript = true;
+        }
+        if (transcriptId && multipartUploadId && !keepTranscript) {
+          await abortMultipart(transcriptId, multipartUploadId);
         }
         if (transcriptId && !keepTranscript) {
           await cleanupTranscript(transcriptId);
@@ -293,7 +365,7 @@ export function useUpload({
         setUploadError(uploadFailure);
       }
     },
-    [router, signedIn, postSignInPath, audioOnly, toolSlug, t]
+    [router, signedIn, postSignInPath, audioOnly, tier, toolSlug, t]
   );
 
   const retry = useCallback(() => {
@@ -321,6 +393,7 @@ export function Uploader(props: UseUploadOpts) {
   const [dragOver, setDragOver] = useState(false);
   const limitCopyKey =
     props.tier === "pro" ? "limitsPro" : props.tier === "basic" ? "limitsBasic" : "limitsFree";
+  const videoLimitLabel = (props.tier === "basic" || props.tier === "pro") ? "5 GB" : "2 GB";
 
   return (
     <div
@@ -353,7 +426,7 @@ export function Uploader(props: UseUploadOpts) {
       {phase === "idle" || phase === "error" ? (
         <>
           <p className="text-base font-medium">{t("dropPrompt")}</p>
-          <p className="mt-1 text-sm text-ink/60">{t(limitCopyKey)}</p>
+          <p className="mt-1 text-sm text-ink/60">{t(limitCopyKey, { size: videoLimitLabel })}</p>
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
@@ -569,39 +642,15 @@ export function ProgressView({
 
 export const UPLOAD_ACCEPT = ACCEPT;
 
-const AUDIO_EXTENSIONS = new Set([
-  "aac",
-  "aif",
-  "aiff",
-  "flac",
-  "m4a",
-  "mp3",
-  "oga",
-  "ogg",
-  "opus",
-  "wav",
-  "webm",
-]);
-
-const VIDEO_EXTENSIONS = new Set([
-  "avi",
-  "flv",
-  "m4v",
-  "mkv",
-  "mov",
-  "mp4",
-  "mpeg",
-  "mpg",
-  "webm",
-  "wmv",
-]);
-
 function isLikelyAudioFile(file: File): boolean {
   if (file.type.startsWith("audio/")) return true;
   if (file.type.startsWith("video/")) return false;
 
   const ext = file.name.split(".").pop()?.toLowerCase();
-  return ext ? AUDIO_EXTENSIONS.has(ext) : false;
+  // Some containers (for example MP4/WebM/FLV) can carry either audio or
+  // video. With no browser MIME, prefer the video path; AAI can still extract
+  // its audio, while treating a large video as audio would apply the 1 GB cap.
+  return ext ? AUDIO_EXTENSIONS.has(ext) && !VIDEO_EXTENSIONS.has(ext) : false;
 }
 
 function isLikelyVideoFile(file: File): boolean {
@@ -616,6 +665,14 @@ function getUploadInputType(file: File): "audio" | "video" | "unknown" {
   if (isLikelyAudioFile(file)) return "audio";
   if (isLikelyVideoFile(file)) return "video";
   return "unknown";
+}
+
+function browserMediaMime(file: File, inputType: "audio" | "video" | "unknown"): string {
+  if (file.type) return file.type;
+  const ext = file.name.split(".").pop()?.toLowerCase() || "octet-stream";
+  if (inputType === "video") return `video/${ext}`;
+  if (inputType === "audio") return `audio/${ext}`;
+  return "application/octet-stream";
 }
 
 async function readMediaDuration(
@@ -634,7 +691,8 @@ async function readMediaDuration(
         once: true,
       });
     });
-    return Number.isFinite(el.duration) ? el.duration : 0;
+    if (Number.isFinite(el.duration) && el.duration > 0) return el.duration;
+    throw new Error("cannot_read_metadata");
   } finally {
     URL.revokeObjectURL(url);
   }
@@ -647,7 +705,8 @@ function uploadWithProgress(
   url: string,
   file: Blob,
   onProgress: (frac: number) => void,
-  t: UploaderT
+  t: UploaderT,
+  mime?: string
 ): Promise<void> {
   const startedAt = Date.now();
   const attempt = (n: number): Promise<void> =>
@@ -672,6 +731,7 @@ function uploadWithProgress(
       const done = () => clearInterval(stallTimer);
 
       xhr.open("PUT", url);
+      if (mime) xhr.setRequestHeader("content-type", mime);
       xhr.upload.addEventListener("progress", (e) => {
         if (!e.lengthComputable) return;
         if (e.loaded !== lastLoaded) {
@@ -717,6 +777,133 @@ function uploadWithProgress(
     });
 
   return attempt(1);
+}
+
+async function uploadMultipart(
+  transcriptId: string,
+  uploadId: string,
+  partSize: number,
+  file: File,
+  onProgress: (frac: number) => void,
+  t: UploaderT
+): Promise<void> {
+  const partCount = Math.ceil(file.size / partSize);
+  const loadedByPart = new Array<number>(partCount).fill(0);
+  let nextIndex = 0;
+
+  const worker = async () => {
+    while (true) {
+      const index = nextIndex;
+      nextIndex += 1;
+      if (index >= partCount) return;
+      const partNumber = index + 1;
+      const start = index * partSize;
+      const end = Math.min(start + partSize, file.size);
+      const blob = file.slice(start, end);
+
+      const signResponse = await fetch(`/api/transcripts/${transcriptId}/multipart/part`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ uploadId, partNumber }),
+      });
+      if (!signResponse.ok) throw await readError(signResponse, t);
+      const { url } = (await signResponse.json()) as { url?: string };
+      if (!url) throw new Error("invalid_multipart_part_url");
+
+      await uploadWithProgress(url, blob, (fraction) => {
+        loadedByPart[index] = Math.max(loadedByPart[index], fraction * blob.size);
+        const loaded = loadedByPart.reduce((total, bytes) => total + bytes, 0);
+        onProgress(Math.min(1, loaded / file.size));
+      }, t);
+      loadedByPart[index] = blob.size;
+    }
+  };
+
+  await Promise.all([worker(), worker()]);
+  await completeMultipartWithRetry(transcriptId, uploadId, t);
+  onProgress(1);
+}
+
+class MultipartCompletionUncertainError extends Error {
+  constructor(public cause: unknown) {
+    super("multipart_completion_uncertain");
+    this.name = "MultipartCompletionUncertainError";
+  }
+}
+
+async function completeMultipartWithRetry(
+  transcriptId: string,
+  uploadId: string,
+  t: UploaderT
+): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch(`/api/transcripts/${transcriptId}/multipart/complete`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ uploadId }),
+      });
+      if (response.ok) return;
+      const error = await readError(response, t);
+      if (response.status < 500 && response.status !== 408 && response.status !== 429) throw error;
+      lastError = error;
+    } catch (error) {
+      if (error instanceof UploadFlowError) throw error;
+      lastError = error;
+    }
+    if (attempt < 3) {
+      await new Promise((resolve) => setTimeout(resolve, attempt * 1_000));
+    }
+  }
+  throw new MultipartCompletionUncertainError(lastError);
+}
+
+async function abortMultipart(transcriptId: string, uploadId: string): Promise<void> {
+  try {
+    await fetch(`/api/transcripts/${transcriptId}/multipart/abort`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ uploadId }),
+    });
+  } catch {
+    // The bucket lifecycle aborts abandoned multipart uploads after seven days.
+  }
+}
+
+function extractionFallbackReason(error: unknown): DirectVideoFallbackReason {
+  const message = error instanceof Error ? error.message : "";
+  return message === "extraction_timeout" || message === "webaudio_timeout"
+    ? "extraction_timeout"
+    : "extraction_failed";
+}
+
+function fileSizeMb(bytes: number): number {
+  return Number((bytes / (1024 * 1024)).toFixed(2));
+}
+
+function elapsedSec(startedAt: number): number {
+  return Number(((Date.now() - startedAt) / 1000).toFixed(1));
+}
+
+function directVideoAnalytics({
+  fallbackReason,
+  file,
+  durationSec,
+  startedAt,
+}: {
+  fallbackReason?: DirectVideoFallbackReason;
+  file: File;
+  durationSec?: number;
+  startedAt: number;
+}) {
+  return {
+    upload_mode: "direct_video" as const,
+    fallback_reason: fallbackReason,
+    file_size_mb: fileSizeMb(file.size),
+    duration_sec: durationSec ? Math.round(durationSec) : undefined,
+    upload_elapsed_sec: elapsedSec(startedAt),
+  };
 }
 
 async function pollStatus(id: string, t: UploaderT): Promise<"completed" | "error"> {
@@ -882,6 +1069,8 @@ function uploadStepCode(step: string): string {
       return "audio_extraction_failed";
     case "uploading audio":
       return "audio_upload_failed";
+    case "uploading video":
+      return "direct_video_upload_failed";
     case "submitting transcript":
       return "transcript_submit_failed";
     case "polling transcript":
@@ -927,6 +1116,8 @@ async function readError(res: Response, t: UploaderT): Promise<UploadFlowError> 
         }), "quota");
       case "aai_submit_failed":
         return new UploadFlowError("aai_submit_failed", t("aaiSubmitFailed"));
+      case "unsupported_media":
+        return new UploadFlowError("unsupported_media", t("unsupportedMedia"), "product_limit");
       case "persist_failed":
         return new UploadFlowError("persist_failed", t("persistFailed"));
       default:

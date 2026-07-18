@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What Scribix is
 
-A Next.js (App Router, React 19) audio/video transcription SaaS deployed to **Cloudflare Workers via OpenNext** (`@opennextjs/cloudflare`), not Vercel. Users upload audio/video (or record / paste a YouTube URL), it's transcribed by **AssemblyAI**, and results are stored and exported. Persistence is **Cloudflare D1** (SQLite); media lives in **Cloudflare R2**; billing is not currently wired to a payment provider; auth is **next-auth (Google)**.
+A Next.js (App Router, React 19) audio/video transcription SaaS deployed to **Cloudflare Workers via OpenNext** (`@opennextjs/cloudflare`), not Vercel. Users upload or record audio/video for **AssemblyAI** transcription, or import available YouTube caption tracks through the dedicated caption service. Results are stored and exported. Persistence is **Cloudflare D1** (SQLite); media lives in **Cloudflare R2**; billing runs through **Paddle Billing**; auth is **next-auth (Google)**.
 
 Because it targets the Workers runtime, all server code must be edge-compatible: use `fetch` (no Node networking), and reach Cloudflare bindings through `await cf()` (`lib/cf.ts`), never assume Node globals.
 
@@ -32,11 +32,17 @@ This is the central architecture and spans several files — read these together
 3. **`POST /api/webhook/assemblyai`** — AAI calls back on completion; verified via the `X-Scribix-Token` header matching the row's `webhook_token`. Fetches the result, writes transcript JSON to R2, reconciles quota against actual `audio_duration`, sets `completed`.
 4. **Status statuses** progress through `pending → uploading → queued → processing → extracting_audio → uploading_audio → transcribing → completed | error | failed` (see `migrations/0002`).
 
-Quota model (`lib/quota.ts` + `lib/plans.ts`): a **single `minutes_used_this_period` counter** on `users`, no credit ledger. Free tier is a one-time lifetime trial (never resets). Reservations are atomic and reconciled against actual duration after completion.
+Quota model (`lib/quota.ts` + `lib/plans.ts`): a **single `minutes_used_this_period` counter** on `users`, no credit ledger. Free transcription minutes are a one-time lifetime trial (never reset). Reservations are atomic and reconciled against actual duration after completion.
 
 ## Billing
 
-Payment-provider checkout, portal, and webhook routes are currently absent. Tier caps and pricing display live in `lib/plans.ts`; user subscription state remains on the `users` table for the next provider integration.
+Paddle is wired through `app/api/paddle/create-checkout/route.ts`, `app/api/paddle/create-portal/route.ts`, and `app/api/webhook/paddle/route.ts`. Price IDs are resolved in `lib/paddle-plans.ts`; public caps and display prices remain in `lib/plans.ts`. The webhook verifies Paddle signatures, dedupes events in `paddle_events`, stores Paddle customer/subscription IDs on `users`, resets minute and YouTube-import counters when a billing period advances, and expires users back to free when paid access ends.
+
+## YouTube captions and extension
+
+The in-app YouTube workflow uses `app/components/YouTubeImporter.tsx` plus `app/api/transcripts/youtube/*` routes to inspect available caption tracks, reserve YouTube import quota, import the selected captions, and save a completed transcript row. It does not download YouTube video/audio. Free users get 10 YouTube caption imports per UTC day and a 2-hour YouTube video cap; paid caps come from `lib/plans.ts`.
+
+The Chrome extension lives in `chrome-extension-youtube-transcript/` and calls `GET /api/extension/account`, `POST /api/extension/youtube/transcript`, and `POST /api/extension/youtube/summary`. Its manifest matches YouTube broadly for SPA navigation, but `content.js` only mounts the panel on desktop `/watch` pages with a video ID. Extension transcript quota is enforced separately in `lib/youtube-extension-quota.ts`.
 
 ## Auth
 
@@ -63,4 +69,4 @@ next-intl with locales `["en", "fr", "es", "it", "ja", "de"]`, `defaultLocale: "
 
 ## Reference
 
-`docs/progress.md` is the original product/architecture spec (the "source of truth" referenced in migration comments). `docs/runbooks/` holds ops procedures (launch checklist, AAI bulk delete). `docs/landing-page-*.md` document SEO landing-page intent — the homepage targets "video to text"; each tool gets its own landing page.
+`docs/progress.md` is a historical v1 planning artifact, not the current source of truth. Current operational setup lives in `docs/manual-setup.md`; `docs/runbooks/` holds ops procedures (launch checklist, AAI bulk delete). `docs/landing-page-*.md` document SEO landing-page intent — the homepage targets "video to text"; each tool gets its own landing page.

@@ -72,14 +72,16 @@ Add any preview / staging origins you actually use. Apply:
 npx wrangler r2 bucket cors put scribix-media --file r2-cors.json
 ```
 
-### 0.5 R2 lifecycle: delete audio after 7 days (deploy-only, do before launch)
+### 0.5 R2 lifecycle and media retention
 
-```sh
-npx wrangler r2 bucket lifecycle add scribix-media \
-  --id audio-7d --prefix audio/ --expire-days 7
-```
+Do not add a completed-media expiration rule. Media objects share the
+`users/{userId}/{transcriptId}/` prefix with transcript JSON and translations,
+so an R2 prefix lifecycle would also delete permanent transcript data.
 
-Verify with `npx wrangler r2 bucket lifecycle list scribix-media`.
+The hourly cleanup worker deletes uploaded audio/video after 14 days and only
+clears the database key after R2 confirms deletion. Keep the bucket's default
+7-day abort rule for incomplete multipart uploads. Verify the current rules with
+`npx wrangler r2 bucket lifecycle list scribix-media`.
 
 ### 0.6 R2 API tokens for presign (blocking — Phase 2 onwards)
 
@@ -238,6 +240,20 @@ Subscribe at minimum to:
 - `subscription.past_due`
 
 Copy the notification destination secret to `PADDLE_WEBHOOK_SECRET`.
+
+The company Paddle account may also deliver events for other products to this
+destination. Scribix checkout transactions automatically write
+`custom_data.project = "scribix"`. The webhook verifies the signature and then:
+
+- acknowledges unsupported or foreign-project events without changing users;
+- falls back to configured Scribix Price IDs for legacy events without project metadata;
+- deduplicates owned events and failure alerts in the `paddle_events` table;
+- retries owned payment, activation, and update events when their Price ID is unknown;
+- still processes cancellation, pause, and past-due events identified by signed project metadata when their historical Price ID is no longer configured.
+
+When rotating Price IDs, remember that legacy subscriptions created before project
+metadata was added can only be identified by their configured Price ID. Keep their
+ownership mapping available until those subscriptions have ended.
 
 ### 4.4 Production secrets and vars
 

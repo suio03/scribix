@@ -36,7 +36,7 @@ export default async function PrivacyPage({
         <li>We collect your email and name to create your account.</li>
         <li>
           We store the audio/video you upload and the transcript we make from it. Audio is
-          deleted after 7 days; transcripts stay until you delete them.
+          deleted after 14 days; transcripts stay until you delete them.
         </li>
         <li>
           We process your audio only to generate and deliver transcripts for your account.
@@ -91,7 +91,7 @@ export default async function PrivacyPage({
       <H2>Retention</H2>
       <ul className="ml-5 list-disc space-y-2">
         <li>
-          <strong>Audio &amp; video:</strong> deleted automatically 7 days after upload.
+          <strong>Audio &amp; video:</strong> deleted automatically 14 days after upload.
         </li>
         <li>
           <strong>Transcripts:</strong> kept until you delete them or your account.

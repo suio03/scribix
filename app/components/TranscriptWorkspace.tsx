@@ -12,6 +12,7 @@ import { speakerToneFor } from "./speakerDisplay";
 type Props = {
   id: string;
   audioUrl: string | null;
+  mediaMime: string | null;
   audioAvailable: boolean;
   utterances: AaiSegment[];
   paragraphs: AaiSegment[];
@@ -28,6 +29,7 @@ type Props = {
 export function TranscriptWorkspace({
   id,
   audioUrl,
+  mediaMime,
   audioAvailable,
   utterances,
   paragraphs,
@@ -56,6 +58,7 @@ export function TranscriptWorkspace({
         <TranscriptViewer
           id={id}
           audioUrl={audioUrl}
+          mediaMime={mediaMime}
           utterances={utterances}
           paragraphs={paragraphs}
           sentences={sentences}

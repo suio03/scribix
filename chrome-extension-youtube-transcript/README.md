@@ -5,7 +5,8 @@ Manifest V3 Chrome extension for the Scribix YouTube transcript panel.
 ## Scope
 
 - Chrome desktop only.
-- Injects a Scribix panel into YouTube `watch` pages.
+- The manifest matches YouTube broadly so the extension can follow YouTube SPA navigation.
+- The panel only mounts on desktop YouTube `watch` pages with a video ID.
 - Anonymous users can extract 10 YouTube transcripts per day.
 - AI Summary is visible to everyone, but generation requires a paid Scribix session.
 - The panel follows the user's system light/dark theme.

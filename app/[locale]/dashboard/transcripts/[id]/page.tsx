@@ -6,7 +6,6 @@ import { redirect } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { presignGet } from "@/lib/r2";
 import { parseSpeakerNames } from "@/lib/speaker-names";
 import { TranscriptWorkspace } from "@/app/components/TranscriptWorkspace";
 
@@ -28,7 +27,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
   const row = await env.DB.prepare(
     `SELECT id, user_id, title, status, error, duration_sec, language,
             created_at, completed_at, transcript_r2_key, audio_r2_key,
-            speaker_names_json, source, youtube_url, youtube_video_id
+            speaker_names_json, source, youtube_url, youtube_video_id, mime_type
        FROM transcripts
       WHERE id = ?1 AND deleted_at IS NULL`
   )
@@ -49,6 +48,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
       source: string | null;
       youtube_url: string | null;
       youtube_video_id: string | null;
+      mime_type: string | null;
     }>();
   if (!row) notFound();
   if (row.user_id !== userId) notFound();
@@ -62,7 +62,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
   const expired = audioExpired(row.created_at);
   const audioUrl =
     row.status === "completed" && row.audio_r2_key && !expired
-      ? await presignGet(row.audio_r2_key, 60 * 60)
+      ? `/api/transcripts/${row.id}/audio`
       : null;
 
   const audioAvailable = Boolean(row.audio_r2_key) && !expired;
@@ -103,6 +103,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
         <TranscriptWorkspace
           id={row.id}
           audioUrl={audioUrl}
+          mediaMime={row.mime_type}
           audioAvailable={audioAvailable}
           utterances={aai.utterances ?? []}
           paragraphs={aai.paragraphs ?? []}

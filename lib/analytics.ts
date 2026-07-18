@@ -5,7 +5,14 @@ export type PlausibleEvents = {
     source?: "upload" | "record";
     input_type?: "audio" | "video" | "unknown";
     duration_sec?: number;
+    upload_mode?: "extracted_audio" | "direct_video";
+    fallback_reason?: "over_1gb" | "cannot_read_metadata" | "extraction_timeout" | "extraction_failed";
+    file_size_mb?: number;
+    upload_elapsed_sec?: number;
   };
+  direct_video_attempt: DirectVideoEventProps;
+  direct_video_upload_completed: DirectVideoEventProps;
+  direct_video_upload_failed: DirectVideoEventProps & { error_code: string };
   transcribe_fail: {
     tool_slug: string;
     source?: "upload" | "record";
@@ -92,6 +99,14 @@ export type PlausibleEvents = {
     error_message?: string;
     paddle_status?: number;
   };
+};
+
+type DirectVideoEventProps = {
+  upload_mode: "direct_video";
+  fallback_reason?: "over_1gb" | "cannot_read_metadata" | "extraction_timeout" | "extraction_failed";
+  file_size_mb: number;
+  duration_sec?: number;
+  upload_elapsed_sec: number;
 };
 
 declare global {

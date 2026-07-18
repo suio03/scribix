@@ -51,13 +51,14 @@ export async function DELETE(_: Request, { params }: Params) {
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(
-    `SELECT user_id, audio_r2_key, transcript_r2_key
+    `SELECT user_id, status, audio_r2_key, transcript_r2_key
        FROM transcripts
       WHERE id = ?1 AND deleted_at IS NULL`
   )
     .bind(transcriptId)
     .first<{
       user_id: string;
+      status: string;
       audio_r2_key: string | null;
       transcript_r2_key: string | null;
     }>();
@@ -66,29 +67,31 @@ export async function DELETE(_: Request, { params }: Params) {
     return Response.json({ error: "forbidden" }, { status: 403 });
   }
 
-  await env.DB.prepare(
-    `UPDATE transcripts SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?1`
-  )
-    .bind(transcriptId)
-    .run();
+  try {
+    await Promise.all([
+      row.audio_r2_key ? env.SCRIBIX_MEDIA.delete(row.audio_r2_key) : null,
+      row.transcript_r2_key ? env.SCRIBIX_MEDIA.delete(row.transcript_r2_key) : null,
+      deleteTranslationObjects(env, user.id, transcriptId),
+      env.SCRIBIX_MEDIA.delete(R2.summaryKey(user.id, transcriptId)),
+    ]);
+  } catch (error) {
+    console.error(JSON.stringify({
+      event: "transcript_r2_delete_failed",
+      transcriptId,
+      status: row.status,
+      errorCategory: "r2_delete",
+      error: error instanceof Error ? error.message.slice(0, 200) : "unknown",
+    }));
+    return Response.json({ error: "delete_failed" }, { status: 502 });
+  }
 
-  // Best-effort R2 cleanup. Soft-delete row stays as the source of truth;
-  // any failure here is swallowed since the user already sees the row gone.
-  await Promise.all([
-    row.audio_r2_key ? env.SCRIBIX_MEDIA.delete(row.audio_r2_key).catch(() => {}) : null,
-    row.transcript_r2_key
-      ? env.SCRIBIX_MEDIA.delete(row.transcript_r2_key).catch(() => {})
-      : null,
-    deleteTranslationObjects(env, user.id, transcriptId).catch(() => {}),
-    env.SCRIBIX_MEDIA.delete(R2.summaryKey(user.id, transcriptId)).catch(() => {}),
+  await env.DB.batch([
     env.DB.prepare(`DELETE FROM transcript_translations WHERE transcript_id = ?1`)
-      .bind(transcriptId)
-      .run()
-      .catch(() => {}),
+      .bind(transcriptId),
     env.DB.prepare(`DELETE FROM transcript_summaries WHERE transcript_id = ?1`)
-      .bind(transcriptId)
-      .run()
-      .catch(() => {}),
+      .bind(transcriptId),
+    env.DB.prepare(`UPDATE transcripts SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?1`)
+      .bind(transcriptId),
   ]);
 
   return Response.json({ ok: true });

@@ -134,7 +134,7 @@
     ],
     "upload": {
       "instruction": "Trascina un file video o audio, oppure clicca per cercare.",
-      "specs": "Max 1 GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
+      "specs": "Video fino a 5 GB · Audio fino a 1 GB · MP4 · MOV · WEBM · MP3 · WAV · M4A",
       "button": "Carica File"
     },
     "record": {
@@ -387,7 +387,7 @@
       {
         "feature": "File eliminati dopo",
         "cells": [
-          "7 days",
+          "14 days",
           "30 days+",
           "30 days+",
           "Self-host"
@@ -501,9 +501,9 @@
         "key": "maxFileSize",
         "label": "Dimensione max file",
         "values": {
-          "free": "1 GB",
-          "starter": "1 GB",
-          "pro": "1 GB"
+          "free": "2 GB video / 1 GB audio",
+          "starter": "5 GB video / 1 GB audio",
+          "pro": "5 GB video / 1 GB audio"
         }
       },
       {
@@ -769,7 +769,7 @@
     "viewer": {
       "back": "← Tutti i transcript",
       "audioExpiredLabel": "Audio scaduto.",
-      "audioExpiredBody": "I file di origine vengono conservati per 7 giorni; il transcript rimane finché lo desideri.",
+      "audioExpiredBody": "I file di origine vengono conservati per 14 giorni; il transcript rimane finché lo desideri.",
       "missing": "Il file del transcript è mancante dalla memoria.",
       "transcribingHint": "Trascrizione del tuo audio. Questo di solito richiede circa un minuto per ora di input.",
       "workingHint": "Lavoro in corso sul tuo transcript…",
@@ -801,6 +801,7 @@
       "mute": "Muto",
       "unmute": "Attiva audio",
       "playbackSpeed": "Velocità di riproduzione",
+      "mediaPlaybackUnsupported": "Questo formato multimediale non può essere riprodotto nel browser attuale.",
       "translationLanguages": {
         "en": "Inglese",
         "zh": "Cinese",
@@ -932,9 +933,9 @@
     "uploader": {
       "dropPrompt": "Trascina un file video o audio",
       "limits": "Caricamenti fino a 1 GB · Prova gratuita: 45 min per tutta la vita",
-      "limitsFree": "Caricamenti fino a 1 GB · Prova gratuita: 45 min totali",
-      "limitsBasic": "Caricamenti fino a 1 GB · Fino a 1 ora per file",
-      "limitsPro": "Caricamenti fino a 1 GB · Fino a 10 ore per file",
+      "limitsFree": "Video fino a {size} · Audio fino a 1 GB · Prova gratuita: 45 min totali",
+      "limitsBasic": "Video fino a {size} · Audio fino a 1 GB · Fino a 1 ora per file",
+      "limitsPro": "Video fino a {size} · Audio fino a 1 GB · Fino a 10 ore per file",
       "choose": "Scegli file",
       "upgradePlan": "Aggiorna piano",
       "phasePreparing": "Preparazione…",
@@ -954,6 +955,7 @@
       "insufficientQuota": "Questo file richiede ~{neededMin} min ma hai solo {remainingMin} min rimasti in questo periodo. Upgrade o attendi il ciclo successivo.",
       "aaiSubmitFailed": "Il servizio di trascrizione non è disponibile. Per favore riprova tra un momento.",
       "extractionTimeout": "L'estrazione audio ha impiegato troppo tempo in questo browser. Riprova, oppure estrai l'audio localmente e carica quel file.",
+      "unsupportedMedia": "Questo formato multimediale non è supportato. Scegli un altro file audio o video.",
       "retry": "Riprova",
       "close": "Chiudi",
       "chooseAudioFile": "Scegli file audio",
@@ -1093,7 +1095,7 @@
         },
         {
           "item": "Privacy",
-          "detail": "L’audio viene eliminato dopo 7 giorni; le trascrizioni restano finché non le elimini"
+          "detail": "L’audio viene eliminato dopo 14 giorni; le trascrizioni restano finché non le elimini"
         }
       ],
       "bestFor": {
@@ -1226,7 +1228,7 @@
           "icon": "Lock",
           "title": "Il tuo audio è privato?",
           "body": [
-            "Scribix usa l’audio caricato solo per generare e consegnare trascrizioni nel tuo account. I file audio e video vengono eliminati automaticamente dopo 7 giorni.",
+            "Scribix usa l’audio caricato solo per generare e consegnare trascrizioni nel tuo account. I file audio e video vengono eliminati automaticamente dopo 14 giorni.",
             "Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account. Leggi la"
           ],
           "link": {
@@ -1306,7 +1308,7 @@
         },
         {
           "q": "Il mio audio viene conservato per sempre?",
-          "a": "No. La privacy policy di Scribix indica che i file audio e video vengono eliminati automaticamente dopo 7 giorni. Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account."
+          "a": "No. La privacy policy di Scribix indica che i file audio e video vengono eliminati automaticamente dopo 14 giorni. Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account."
         }
       ]
     },
@@ -1326,7 +1328,7 @@
           "label": "Lingue"
         },
         {
-          "value": "7 giorni",
+          "value": "14 giorni",
           "label": "Auto-elimina"
         }
       ]
@@ -1461,7 +1463,7 @@
         },
         {
           "item": "Privacy",
-          "detail": "L’audio viene eliminato dopo 7 giorni; le trascrizioni restano finché non le elimini"
+          "detail": "L’audio viene eliminato dopo 14 giorni; le trascrizioni restano finché non le elimini"
         }
       ],
       "bestFor": {
@@ -1595,7 +1597,7 @@
           "icon": "Lock",
           "title": "Il tuo MP3 è privato?",
           "body": [
-            "Scribix usa il MP3 caricato solo per generare e consegnare trascrizioni nel tuo account. I file audio e video vengono eliminati automaticamente dopo 7 giorni.",
+            "Scribix usa il MP3 caricato solo per generare e consegnare trascrizioni nel tuo account. I file audio e video vengono eliminati automaticamente dopo 14 giorni.",
             "Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account. Leggi la"
           ],
           "link": {
@@ -1675,7 +1677,7 @@
         },
         {
           "q": "Il mio MP3 viene conservato per sempre?",
-          "a": "No. La privacy policy di Scribix indica che i file audio e video caricati vengono eliminati automaticamente dopo 7 giorni. Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account."
+          "a": "No. La privacy policy di Scribix indica che i file audio e video caricati vengono eliminati automaticamente dopo 14 giorni. Le trascrizioni restano nel tuo account finché non le elimini o chiudi l’account."
         },
         {
           "q": "Serve un account per convertire MP3 in testo?",
@@ -1699,7 +1701,7 @@
           "label": "Lingue"
         },
         {
-          "value": "7 giorni",
+          "value": "14 giorni",
           "label": "Eliminazione auto"
         }
       ]

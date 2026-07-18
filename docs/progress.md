@@ -1,8 +1,8 @@
-# Scribix v1 — Implementation Plan
+# Scribix v1 — Historical Implementation Plan
 
 Reference architecture: `/Users/laughingli/Documents/side-projects/pixfy`. We borrow the patterns, polish what's worth polishing, and drop what doesn't apply to a transcription product.
 
-This document is the source of truth for v1 scope. Updated after a full plan-challenge pass — see `## Changelog` at the bottom for the deltas.
+This document is an archived v1 planning artifact. It preserves early design context, but it is not the current source of truth for implementation, billing, quotas, or operations. Prefer the code, `CLAUDE.md`, `docs/manual-setup.md`, and `docs/runbooks/` for current facts.
 
 ---
 
@@ -648,4 +648,4 @@ This plan was rewritten on 2026-04-29 after a ten-question challenge pass. Key c
 14. **Engagement tracking columns on `users`.** `total_minutes_lifetime`, `total_files_lifetime`, `active_days_count`, `last_active_at`, `hit_daily_cap_count`. Powers post-launch targeted-discount logic; `hit_daily_cap_count` is the strongest upgrade signal — a user who hits the daily wall repeatedly is literally telling you they want more. (§5)
 15. **Google One-Tap added as primary auth entry.** ID token verified server-side via Google `tokeninfo`, then mints a next-auth-compatible JWT cookie. Standard OAuth redirect remains as fallback for incognito / blocked-prompt cases. Manual-setup §1.2 gains an "Authorized JavaScript origins" config step. (§7)
 
-*This plan is the source of truth for v1 scope. Any change goes here first, then into code.*
+*Historical note: this plan preserved the original v1 scope decisions. Do not treat it as current product or architecture truth without checking code and runbooks.*

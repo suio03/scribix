@@ -94,7 +94,11 @@ export default async function HomePage({
       <TrackToolVisit slug="home" />
       <Header showSidebarToggle />
       <main>
-        <Generator signedIn={!!session} postSignInPath={postSignInPath} />
+        <Generator
+          signedIn={!!session}
+          postSignInPath={postSignInPath}
+          tier={sidebarUsage?.tier}
+        />
         <section className="px-4 pb-8 sm:px-8">
           <div className="mx-auto max-w-[1100px] border-t border-line pt-5">
             <p className="text-[14px] leading-[1.6] text-muted">

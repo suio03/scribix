@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.17.0] - 2026-07-19
+
+### Added
+- Added hybrid video ingestion with browser audio extraction for smaller files and 100 MiB R2 multipart uploads for original videos up to the plan limit.
+- Added authenticated multipart part signing, server-side ListParts validation, idempotent completion checks, upload analytics, and stable audio/video transcript playback.
+- Added a documented hybrid upload rollout plan and structured cleanup logging for expired or failed media deletion.
+
+### Changed
+- Increased video upload limits to 2 GB for Free and a safe 5 GB product limit for Starter and Pro while retaining the 1 GB audio limit.
+- Extended source-media retention to 14 days and pending upload retention to 24 hours, with R2 deletion required before database references are cleared.
+- Updated the YouTube extension to 0.1.2 so its content script can follow YouTube SPA navigation while mounting only on supported watch pages.
+- Refreshed project guidance, localized product copy, privacy/terms copy, and Cloudflare operational documentation for the current billing, upload, and retention behavior.
+
+### Fixed
+- Preserved valid audio uploads with missing browser MIME metadata by explicitly setting upload Content-Type and sharing the supported audio-container rules between client and server.
+- Prevented transient multipart completion failures from discarding completed large uploads by retrying safely and confirming the final R2 object before cleanup.
+- Prevented media deletion failures from hiding or removing transcript records before R2 cleanup succeeds.
+- Added localized unsupported-media and playback-error messages across all supported locales.
+
+### Removed
+- Removed superseded landing-page planning documents that no longer represent the current implementation source of truth.
+
 ## [0.16.1] - 2026-07-17
 
 ### Changed

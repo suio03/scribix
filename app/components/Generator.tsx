@@ -17,6 +17,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import type { Tier } from "@/lib/plans";
 import { Waveform } from "./Waveform";
 import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
 import { YouTubeImporter } from "./YouTubeImporter";
@@ -42,9 +43,11 @@ const trustIcons: LucideIcon[] = [
 export function Generator({
   signedIn,
   postSignInPath,
+  tier = "free",
 }: {
   signedIn: boolean;
   postSignInPath: string;
+  tier?: Tier;
 }) {
   const t = useTranslations("Generator");
   const [tab, setTab] = useState<TabId>("upload");
@@ -136,6 +139,7 @@ export function Generator({
                   signedIn={signedIn}
                   postSignInPath={postSignInPath}
                   checkoutSuccessPath={postSignInPath}
+                  tier={tier}
                 />
               )}
               {tab === "youtube" && (
@@ -163,10 +167,12 @@ function UploadPane({
   signedIn,
   postSignInPath,
   checkoutSuccessPath,
+  tier,
 }: {
   signedIn: boolean;
   postSignInPath: string;
   checkoutSuccessPath: string;
+  tier: Tier;
 }) {
   const t = useTranslations("Generator.upload");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -175,6 +181,7 @@ function UploadPane({
     signedIn,
     postSignInPath,
     checkoutSuccessPath,
+    tier,
     toolSlug: "home",
   });
 

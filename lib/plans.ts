@@ -8,6 +8,10 @@ export type Tier = "free" | "basic" | "pro";
 export type BillingCycle = "monthly" | "yearly";
 
 export const FREE_YOUTUBE_IMPORTS_PER_DAY = 10;
+export const ONE_GIB = 1024 * 1024 * 1024;
+// Stay below AssemblyAI's advertised 5 GB URL-ingest ceiling even if it is
+// enforced using decimal bytes rather than GiB.
+export const PAID_VIDEO_UPLOAD_BYTES = 4_900_000_000;
 
 export const PLANS = {
   free: {
@@ -16,9 +20,9 @@ export const PLANS = {
     youtubeImportsPerCycle: FREE_YOUTUBE_IMPORTS_PER_DAY,
     youtubeMaxVideoSec: 2 * 3600,
     maxFileSec: 45 * 60,
-    // Keep public upload size simple and conservative across audio + video.
-    maxFileBytes: 1 * 1024 * 1024 * 1024,
-    maxVideoUploadBytes: 1 * 1024 * 1024 * 1024,
+    // Audio remains single-PUT; direct video uses multipart upload.
+    maxFileBytes: ONE_GIB,
+    maxVideoUploadBytes: 2 * ONE_GIB,
     speechModels: ["universal-2"] as const,
   },
   basic: {
@@ -26,11 +30,8 @@ export const PLANS = {
     yearly: { minutesPerCycle: 7200, youtubeImportsPerCycle: 1200 },
     youtubeMaxVideoSec: 4 * 3600,
     maxFileSec: 1 * 3600,
-    maxFileBytes: 1 * 1024 * 1024 * 1024,
-    // Capped at 1 GB across tiers: browser-side ffmpeg.wasm / Web Audio
-    // extraction is unreliable beyond this. Users with larger videos are
-    // guided to extract audio locally and upload the audio file instead.
-    maxVideoUploadBytes: 1 * 1024 * 1024 * 1024,
+    maxFileBytes: ONE_GIB,
+    maxVideoUploadBytes: PAID_VIDEO_UPLOAD_BYTES,
     speechModels: ["universal-3-pro", "universal-2"] as const,
   },
   pro: {
@@ -38,8 +39,8 @@ export const PLANS = {
     yearly: { minutesPerCycle: 28800, youtubeImportsPerCycle: 12000 },
     youtubeMaxVideoSec: 10 * 3600,
     maxFileSec: 10 * 3600,
-    maxFileBytes: 1 * 1024 * 1024 * 1024,
-    maxVideoUploadBytes: 1 * 1024 * 1024 * 1024,
+    maxFileBytes: ONE_GIB,
+    maxVideoUploadBytes: PAID_VIDEO_UPLOAD_BYTES,
     speechModels: ["universal-3-pro", "universal-2"] as const,
   },
 } as const;

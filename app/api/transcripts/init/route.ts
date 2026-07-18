@@ -2,9 +2,10 @@ import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { newId, newWebhookToken } from "@/lib/ids";
-import { PLANS, type Tier } from "@/lib/plans";
+import { isAllowedMedia, mediaExtension, MULTIPART_PART_BYTES } from "@/lib/media-upload";
+import { PLANS } from "@/lib/plans";
 import { checkQuota } from "@/lib/quota";
-import { presignPut, R2 } from "@/lib/r2";
+import { createMultipartUpload, presignPut, R2 } from "@/lib/r2";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -16,6 +17,7 @@ export async function POST(req: Request) {
     mime?: string;
     durationSec?: number;
     isVideo?: boolean;
+    directVideo?: boolean;
     source?: string;
   };
   try {
@@ -27,11 +29,22 @@ export async function POST(req: Request) {
   if (!filename || typeof bytes !== "number" || !mime) {
     return Response.json({ error: "missing_fields" }, { status: 400 });
   }
-  const durationSec = Number(body.durationSec);
-  if (!Number.isFinite(durationSec) || durationSec <= 0) {
+  const directVideo = body.directVideo === true;
+  const isVideo = body.isVideo === true;
+  const rawDuration = body.durationSec;
+  const durationSec = rawDuration == null ? null : Number(rawDuration);
+  if (durationSec !== null && (!Number.isFinite(durationSec) || durationSec <= 0)) {
     return Response.json({ error: "invalid_duration" }, { status: 400 });
   }
-  const isVideo = body.isVideo === true;
+  if (directVideo && !isVideo) {
+    return Response.json({ error: "invalid_direct_video" }, { status: 400 });
+  }
+  if (durationSec === null && !directVideo) {
+    return Response.json({ error: "invalid_duration" }, { status: 400 });
+  }
+  if (!isAllowedMedia(filename, mime, directVideo)) {
+    return Response.json({ error: "unsupported_media" }, { status: 415 });
+  }
   const source: "upload" | "record" = body.source === "record" ? "record" : "upload";
 
   const env = await cf();
@@ -42,7 +55,7 @@ export async function POST(req: Request) {
   const plan = PLANS[userRow.tier];
 
   // Per-file duration cap. Applies to both audio + video.
-  if (durationSec > plan.maxFileSec) {
+  if (durationSec !== null && durationSec > plan.maxFileSec) {
     return Response.json(
       { error: "duration_exceeds_tier", maxSec: plan.maxFileSec, tier: userRow.tier },
       { status: 413 }
@@ -60,7 +73,7 @@ export async function POST(req: Request) {
   }
 
   // Pre-flight quota check (read-only). Atomic reserve still happens at /start.
-  const estimateMin = Math.ceil(durationSec / 60);
+  const estimateMin = durationSec === null ? 1 : Math.ceil(durationSec / 60);
   const quotaCheck = await checkQuota(env.DB, userId, estimateMin);
   if ("error" in quotaCheck) {
     if (quotaCheck.error === "no_quota") {
@@ -90,14 +103,13 @@ export async function POST(req: Request) {
   }
 
   const transcriptId = newId();
-  // Video uploads always land in R2 as MP3 — force the key extension to match
-  // what gets PUT, so R2 keys don't lie about contents.
-  const sourceExt = (filename.split(".").pop() ?? "bin").toLowerCase().slice(0, 8);
-  const ext = isVideo ? "mp3" : sourceExt;
+  // Extensionless audio is valid when the browser supplies an audio MIME.
+  // Keep a stable, non-executable suffix for its private R2 object key.
+  const ext = mediaExtension(filename) ?? "audio";
   const audioKey = R2.audioKey(userId, transcriptId, ext);
   const webhookToken = newWebhookToken();
   const title = filename.replace(/\.[^.]+$/, "").slice(0, 200) || "Untitled";
-  const storedMime = isVideo ? "audio/mpeg" : mime;
+  const storedMime = mime.toLowerCase();
 
   await env.DB.prepare(
     `INSERT INTO transcripts
@@ -118,6 +130,29 @@ export async function POST(req: Request) {
     )
     .run();
 
+  if (directVideo) {
+    try {
+      const uploadId = await createMultipartUpload(audioKey, storedMime);
+      return Response.json({
+        transcriptId,
+        uploadId,
+        partSize: MULTIPART_PART_BYTES,
+        uploadMode: "multipart",
+      });
+    } catch (error) {
+      await env.DB.prepare(`DELETE FROM transcripts WHERE id = ?1 AND status = 'pending'`)
+        .bind(transcriptId)
+        .run();
+      console.error("multipart init failed", { transcriptId, error });
+      return Response.json({ error: "multipart_init_failed" }, { status: 502 });
+    }
+  }
+
   const uploadUrl = await presignPut(audioKey, 60 * 60 * 24);
-  return Response.json({ transcriptId, uploadUrl, expiresInSec: 60 * 60 * 24 });
+  return Response.json({
+    transcriptId,
+    uploadUrl,
+    uploadMode: "single",
+    expiresInSec: 60 * 60 * 24,
+  });
 }

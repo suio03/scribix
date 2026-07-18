@@ -58,6 +58,7 @@ declare global {
 type Props = {
   id: string;
   audioUrl: string | null;
+  mediaMime: string | null;
   utterances: AaiSegment[];
   paragraphs: AaiSegment[];
   sentences: AaiSegment[];
@@ -75,6 +76,7 @@ type Props = {
 export function TranscriptViewer({
   id,
   audioUrl,
+  mediaMime,
   utterances,
   paragraphs,
   sentences,
@@ -88,7 +90,7 @@ export function TranscriptViewer({
   onOpenSpeakerEditor,
 }: Props) {
   const t = useTranslations("Dashboard.viewer");
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLMediaElement | null>(null);
   const youtubeFrameRef = useRef<HTMLIFrameElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const summaryPollTimerRef = useRef<number | null>(null);
@@ -271,7 +273,12 @@ export function TranscriptViewer({
   return (
     <div className="space-y-6">
       {audioUrl && (
-        <AudioPlayer ref={audioRef} url={audioUrl} onTimeUpdate={setCurrentMs} />
+        <AudioPlayer
+          ref={audioRef}
+          url={audioUrl}
+          isVideo={mediaMime?.startsWith("video/") === true}
+          onTimeUpdate={setCurrentMs}
+        />
       )}
 
       {youtubeVideoId ? (
@@ -884,18 +891,21 @@ function loadYouTubeIframeApi(): Promise<YouTubeApi> {
 }
 
 type AudioPlayerProps = {
-  ref: React.RefObject<HTMLAudioElement | null>;
+  ref: React.RefObject<HTMLMediaElement | null>;
   url: string;
+  isVideo: boolean;
   onTimeUpdate?: (ms: number) => void;
 };
 
-function AudioPlayer({ ref, url, onTimeUpdate }: AudioPlayerProps) {
+function AudioPlayer({ ref, url, isVideo, onTimeUpdate }: AudioPlayerProps) {
   const t = useTranslations("Dashboard.viewer");
   const [playing, setPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [current, setCurrent] = useState(0);
   const [muted, setMuted] = useState(false);
   const [rateIdx, setRateIdx] = useState(1); // SPEEDS index → 1.0x
+  const [playbackError, setPlaybackError] = useState(false);
+  const refreshedRef = useRef(false);
 
   useEffect(() => {
     const a = ref.current;
@@ -913,12 +923,31 @@ function AudioPlayer({ ref, url, onTimeUpdate }: AudioPlayerProps) {
       const idx = SPEEDS.findIndex((s) => Math.abs(s - a.playbackRate) < 0.01);
       if (idx >= 0) setRateIdx(idx);
     };
+    const onError = () => {
+      if (refreshedRef.current) {
+        setPlaybackError(true);
+        return;
+      }
+      refreshedRef.current = true;
+      const currentTime = a.currentTime;
+      const wasPlaying = !a.paused;
+      const playbackRate = a.playbackRate;
+      const separator = url.includes("?") ? "&" : "?";
+      a.src = `${url}${separator}refresh=${Date.now()}`;
+      a.addEventListener("loadedmetadata", () => {
+        a.currentTime = Math.min(currentTime, Number.isFinite(a.duration) ? a.duration : currentTime);
+        a.playbackRate = playbackRate;
+        if (wasPlaying) void a.play().catch(() => setPlaybackError(true));
+      }, { once: true });
+      a.load();
+    };
     a.addEventListener("play", onPlay);
     a.addEventListener("pause", onPause);
     a.addEventListener("timeupdate", onTime);
     a.addEventListener("loadedmetadata", onMeta);
     a.addEventListener("volumechange", onVol);
     a.addEventListener("ratechange", onRate);
+    a.addEventListener("error", onError);
     return () => {
       a.removeEventListener("play", onPlay);
       a.removeEventListener("pause", onPause);
@@ -926,8 +955,9 @@ function AudioPlayer({ ref, url, onTimeUpdate }: AudioPlayerProps) {
       a.removeEventListener("loadedmetadata", onMeta);
       a.removeEventListener("volumechange", onVol);
       a.removeEventListener("ratechange", onRate);
+      a.removeEventListener("error", onError);
     };
-  }, [ref, onTimeUpdate]);
+  }, [ref, onTimeUpdate, url]);
 
   const togglePlay = () => {
     const a = ref.current;
@@ -959,51 +989,73 @@ function AudioPlayer({ ref, url, onTimeUpdate }: AudioPlayerProps) {
   const pct = duration > 0 ? (current / duration) * 1000 : 0;
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-ink/5 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4">
-      <audio ref={ref} src={url} preload="metadata" className="hidden" />
+    <div>
+      <div className="flex items-center gap-3 rounded-2xl bg-ink/5 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4">
+        {isVideo ? (
+          <video
+            ref={ref as React.RefObject<HTMLVideoElement | null>}
+            src={url}
+            preload="metadata"
+            playsInline
+            className="hidden"
+          />
+        ) : (
+          <audio
+            ref={ref as React.RefObject<HTMLAudioElement | null>}
+            src={url}
+            preload="metadata"
+            className="hidden"
+          />
+        )}
 
-      <button
-        type="button"
-        onClick={togglePlay}
-        aria-label={playing ? t("pause") : t("play")}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink/70 text-paper transition hover:bg-ink"
-      >
-        {playing ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" className="ml-0.5" />}
-      </button>
+        <button
+          type="button"
+          onClick={togglePlay}
+          aria-label={playing ? t("pause") : t("play")}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink/70 text-paper transition hover:bg-ink"
+        >
+          {playing ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" className="ml-0.5" />}
+        </button>
 
-      <span className="w-12 text-sm tabular-nums text-ink/70">{fmtTime(current)}</span>
+        <span className="w-12 text-sm tabular-nums text-ink/70">{fmtTime(current)}</span>
 
-      <input
-        type="range"
-        min={0}
-        max={1000}
-        step={1}
-        value={pct}
-        onChange={onScrub}
-        className="flex-1 accent-ink"
-      />
+        <input
+          type="range"
+          min={0}
+          max={1000}
+          step={1}
+          value={pct}
+          onChange={onScrub}
+          className="flex-1 accent-ink"
+        />
 
-      <span className="w-12 text-right text-sm tabular-nums text-ink/70">
-        {fmtTime(duration)}
-      </span>
+        <span className="w-12 text-right text-sm tabular-nums text-ink/70">
+          {fmtTime(duration)}
+        </span>
 
-      <button
-        type="button"
-        onClick={toggleMute}
-        aria-label={muted ? t("unmute") : t("mute")}
-        className="text-ink/60 transition hover:text-ink"
-      >
-        {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-      </button>
+        <button
+          type="button"
+          onClick={toggleMute}
+          aria-label={muted ? t("unmute") : t("mute")}
+          className="text-ink/60 transition hover:text-ink"
+        >
+          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </button>
 
-      <button
-        type="button"
-        onClick={cycleSpeed}
-        aria-label={t("playbackSpeed")}
-        className="w-12 text-sm font-medium tabular-nums text-ink/70 transition hover:text-ink"
-      >
-        {SPEEDS[rateIdx]}x
-      </button>
+        <button
+          type="button"
+          onClick={cycleSpeed}
+          aria-label={t("playbackSpeed")}
+          className="w-12 text-sm font-medium tabular-nums text-ink/70 transition hover:text-ink"
+        >
+          {SPEEDS[rateIdx]}x
+        </button>
+      </div>
+      {playbackError ? (
+        <p className="mt-2 text-[13px] text-red-600">
+          {safeT(t, "mediaPlaybackUnsupported", "This media format cannot be played in your current browser.")}
+        </p>
+      ) : null}
     </div>
   );
 };

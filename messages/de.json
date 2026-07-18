@@ -134,7 +134,7 @@
     ],
     "upload": {
       "instruction": "Ziehen Sie eine Video- oder Audiodatei herein, oder klicken Sie zum Durchsuchen.",
-      "specs": "Max. 1GB · MP4 · MOV · WEBM · AVI · MKV · MP3 · WAV · M4A",
+      "specs": "Video bis 5 GB · Audio bis 1 GB · MP4 · MOV · WEBM · MP3 · WAV · M4A",
       "button": "Datei hochladen"
     },
     "record": {
@@ -387,7 +387,7 @@
       {
         "feature": "Dateien gelöscht nach",
         "cells": [
-          "7 days",
+          "14 days",
           "30 days+",
           "30 days+",
           "Self-host"
@@ -501,9 +501,9 @@
         "key": "maxFileSize",
         "label": "Max. Dateigröße",
         "values": {
-          "free": "1 GB",
-          "starter": "1 GB",
-          "pro": "1 GB"
+          "free": "2 GB Video / 1 GB Audio",
+          "starter": "5 GB Video / 1 GB Audio",
+          "pro": "5 GB Video / 1 GB Audio"
         }
       },
       {
@@ -769,7 +769,7 @@
     "viewer": {
       "back": "← Alle Transkriptionen",
       "audioExpiredLabel": "Audio abgelaufen.",
-      "audioExpiredBody": "Quelldateien werden 7 Tage lang aufbewahrt; das Transkript bleibt so lange, wie Sie möchten.",
+      "audioExpiredBody": "Quelldateien werden 14 Tage lang aufbewahrt; das Transkript bleibt so lange, wie Sie möchten.",
       "missing": "Transkriptionsdatei fehlt im Speicher.",
       "transcribingHint": "Ihre Audio wird transkribiert. Dies dauert normalerweise etwa eine Minute pro Stunde Eingabe.",
       "workingHint": "Arbeitet an Ihrer Transkription…",
@@ -801,6 +801,7 @@
       "mute": "Stummschalten",
       "unmute": "Lautstärke einschalten",
       "playbackSpeed": "Wiedergabegeschwindigkeit",
+      "mediaPlaybackUnsupported": "Dieses Medienformat kann in Ihrem aktuellen Browser nicht wiedergegeben werden.",
       "translationLanguages": {
         "en": "Englisch",
         "zh": "Chinesisch",
@@ -932,9 +933,9 @@
     "uploader": {
       "dropPrompt": "Ziehen Sie eine Video- oder Audiodatei ein",
       "limits": "Uploads bis zu 1 GB · Kostenlose Test: 45 Min. Lebenszeit",
-      "limitsFree": "Uploads bis zu 1 GB · Kostenloser Test: 45 Min. insgesamt",
-      "limitsBasic": "Uploads bis zu 1 GB · Bis zu 1 Stunde pro Datei",
-      "limitsPro": "Uploads bis zu 1 GB · Bis zu 10 Stunden pro Datei",
+      "limitsFree": "Videos bis zu {size} · Audio bis zu 1 GB · Kostenloser Test: 45 Min. insgesamt",
+      "limitsBasic": "Videos bis zu {size} · Audio bis zu 1 GB · Bis zu 1 Stunde pro Datei",
+      "limitsPro": "Videos bis zu {size} · Audio bis zu 1 GB · Bis zu 10 Stunden pro Datei",
       "choose": "Datei wählen",
       "upgradePlan": "Plan upgraden",
       "phasePreparing": "Wird vorbereitet…",
@@ -954,6 +955,7 @@
       "insufficientQuota": "Diese Datei benötigt etwa {neededMin} Min., aber Sie haben nur {remainingMin} Min. übrig in dieser Periode. Upgraden Sie oder warten Sie auf den nächsten Zyklus.",
       "aaiSubmitFailed": "Transkriptionsdienst nicht verfügbar. Bitte versuchen Sie es in einem Moment erneut.",
       "extractionTimeout": "Die Audioextraktion hat in diesem Browser zu lange gedauert. Versuchen Sie es erneut oder extrahieren Sie das Audio lokal und laden Sie diese Datei hoch.",
+      "unsupportedMedia": "Dieses Medienformat wird nicht unterstützt. Wählen Sie eine andere Audio- oder Videodatei.",
       "retry": "Erneut versuchen",
       "close": "Schließen",
       "chooseAudioFile": "Audiodatei wählen",
@@ -1093,7 +1095,7 @@
         },
         {
           "item": "Datenschutz",
-          "detail": "Audio wird nach 7 Tagen gelöscht; Transkripte bleiben, bis du sie löschst"
+          "detail": "Audio wird nach 14 Tagen gelöscht; Transkripte bleiben, bis du sie löschst"
         }
       ],
       "bestFor": {
@@ -1226,7 +1228,7 @@
           "icon": "Lock",
           "title": "Ist dein Audio privat?",
           "body": [
-            "Scribix verwendet hochgeladenes Audio nur, um Transkripte für dein Konto zu erstellen und bereitzustellen. Audio- und Videodateien werden automatisch nach 7 Tagen gelöscht.",
+            "Scribix verwendet hochgeladenes Audio nur, um Transkripte für dein Konto zu erstellen und bereitzustellen. Audio- und Videodateien werden automatisch nach 14 Tagen gelöscht.",
             "Transkripte bleiben in deinem Konto, bis du sie löschst oder das Konto schließt. Lies die"
           ],
           "link": {
@@ -1306,7 +1308,7 @@
         },
         {
           "q": "Wird mein Audio für immer gespeichert?",
-          "a": "Nein. Laut Datenschutzerklärung werden hochgeladene Audio- und Videodateien automatisch nach 7 Tagen gelöscht. Transkripte bleiben in deinem Konto, bis du sie löschst oder das Konto schließt."
+          "a": "Nein. Laut Datenschutzerklärung werden hochgeladene Audio- und Videodateien automatisch nach 14 Tagen gelöscht. Transkripte bleiben in deinem Konto, bis du sie löschst oder das Konto schließt."
         }
       ]
     },
@@ -1326,7 +1328,7 @@
           "label": "Sprachen"
         },
         {
-          "value": "7 Tage",
+          "value": "14 Tage",
           "label": "Auto-Löschung"
         }
       ]
@@ -1461,7 +1463,7 @@
         },
         {
           "item": "Datenschutz",
-          "detail": "Audio wird nach 7 Tagen gelöscht; Transkripte bleiben, bis du sie löschst"
+          "detail": "Audio wird nach 14 Tagen gelöscht; Transkripte bleiben, bis du sie löschst"
         }
       ],
       "bestFor": {
@@ -1595,7 +1597,7 @@
           "icon": "Lock",
           "title": "Ist deine MP3 privat?",
           "body": [
-            "Scribix verwendet deine hochgeladene MP3 nur, um Transkripte für dein Konto zu erstellen und bereitzustellen. Audio- und Videodateien werden automatisch nach 7 Tagen gelöscht.",
+            "Scribix verwendet deine hochgeladene MP3 nur, um Transkripte für dein Konto zu erstellen und bereitzustellen. Audio- und Videodateien werden automatisch nach 14 Tagen gelöscht.",
             "Transkripte bleiben in deinem Konto, bis du sie löschst oder dein Konto schließt. Lies die"
           ],
           "link": {
@@ -1675,7 +1677,7 @@
         },
         {
           "q": "Wird meine MP3 dauerhaft gespeichert?",
-          "a": "Nein. Die Datenschutzerklärung von Scribix sagt, dass hochgeladene Audio- und Videodateien automatisch nach 7 Tagen gelöscht werden. Transkripte bleiben in deinem Konto, bis du sie löschst oder dein Konto schließt."
+          "a": "Nein. Die Datenschutzerklärung von Scribix sagt, dass hochgeladene Audio- und Videodateien automatisch nach 14 Tagen gelöscht werden. Transkripte bleiben in deinem Konto, bis du sie löschst oder dein Konto schließt."
         },
         {
           "q": "Brauche ich ein Konto, um MP3 in Text umzuwandeln?",
@@ -1699,7 +1701,7 @@
           "label": "Sprachen"
         },
         {
-          "value": "7 Tage",
+          "value": "14 Tage",
           "label": "Auto-Löschung"
         }
       ]

@@ -25,8 +25,9 @@ Phase 7 — this file is the "everything else" pre-flight.
 ## R2
 
 - [ ] CORS allows `PUT` from `https://scribix.io` (manual-setup §0.4).
-- [ ] Lifecycle rule on `audio/` prefix expires objects after **7 days**
-  (manual-setup §0.5). This is the sole authority for audio expiry.
+- [ ] The default lifecycle aborts incomplete multipart uploads after **7 days**.
+- [ ] No completed-media expiration rule targets `users/`; the hourly cleanup
+  worker is the sole authority for the **14-day** media expiry (manual-setup §0.5).
 
 ## Smoke tests on prod
 

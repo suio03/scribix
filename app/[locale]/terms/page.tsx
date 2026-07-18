@@ -88,7 +88,7 @@ export default async function TermsPage({
 
       <H2>Storage &amp; Deletion</H2>
       <p>
-        Audio and video files are deleted automatically 7 days after upload. Transcripts are
+        Audio and video files are deleted automatically 14 days after upload. Transcripts are
         retained until you delete them or close your account. Deleting a transcript or your
         account removes our copies; operational processing records are purged on a regular
         cadence as part of standard operations.

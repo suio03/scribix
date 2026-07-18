@@ -3,9 +3,10 @@ import { submitTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { discordAlert } from "@/lib/discord";
+import { isAllowedMedia, isUploadExpired } from "@/lib/media-upload";
 import { PLANS, type Tier } from "@/lib/plans";
 import { presignGet } from "@/lib/r2";
-import { reconcileQuota, reserveQuota } from "@/lib/quota";
+import { checkQuota, reconcileQuota, reserveQuota } from "@/lib/quota";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -20,8 +21,9 @@ export async function POST(req: Request, { params }: Params) {
   } catch {
     return Response.json({ error: "invalid_json" }, { status: 400 });
   }
-  const estimate = Number(body.durationSecEstimate);
-  if (!Number.isFinite(estimate) || estimate <= 0) {
+  const rawEstimate = body.durationSecEstimate;
+  const estimate = rawEstimate == null ? null : Number(rawEstimate);
+  if (estimate !== null && (!Number.isFinite(estimate) || estimate <= 0)) {
     return Response.json({ error: "invalid_duration" }, { status: 400 });
   }
 
@@ -31,7 +33,8 @@ export async function POST(req: Request, { params }: Params) {
   const userId = user.id;
 
   const row = await env.DB.prepare(
-    `SELECT t.id, t.user_id, t.status, t.audio_r2_key, t.webhook_token, u.tier
+    `SELECT t.id, t.user_id, t.status, t.audio_r2_key, t.webhook_token,
+            t.filename, t.mime_type, t.bytes, t.created_at, u.tier
        FROM transcripts t
        JOIN users u ON u.id = t.user_id
       WHERE t.id = ?1 AND t.deleted_at IS NULL`
@@ -43,6 +46,10 @@ export async function POST(req: Request, { params }: Params) {
       status: string;
       audio_r2_key: string | null;
       webhook_token: string;
+      filename: string | null;
+      mime_type: string | null;
+      bytes: number | null;
+      created_at: string;
       tier: Tier;
     }>();
   if (!row) return Response.json({ error: "not_found" }, { status: 404 });
@@ -53,14 +60,52 @@ export async function POST(req: Request, { params }: Params) {
   if (!row.audio_r2_key) {
     return Response.json({ error: "no_audio_key" }, { status: 400 });
   }
+  if (isUploadExpired(row.created_at)) {
+    return Response.json({ error: "upload_expired" }, { status: 410 });
+  }
 
   const plan = PLANS[row.tier];
-  const estimateMin = Math.ceil(estimate / 60);
-  if (estimate > plan.maxFileSec) {
+  if (estimate !== null && estimate > plan.maxFileSec) {
     return Response.json(
       { error: "duration_exceeds_tier", maxSec: plan.maxFileSec, tier: row.tier },
       { status: 413 }
     );
+  }
+
+  const object = await env.SCRIBIX_MEDIA.head(row.audio_r2_key);
+  if (!object) return Response.json({ error: "upload_incomplete" }, { status: 409 });
+  if (!row.bytes || object.size !== row.bytes) {
+    return Response.json({ error: "upload_size_mismatch" }, { status: 409 });
+  }
+  const contentType = object.httpMetadata?.contentType?.toLowerCase() ?? "";
+  const storedMime = row.mime_type?.toLowerCase() ?? "";
+  const effectiveContentType = !contentType || contentType === "application/octet-stream"
+    ? storedMime
+    : contentType;
+  const isVideo = storedMime.startsWith("video/");
+  const sizeCap = isVideo ? plan.maxVideoUploadBytes : plan.maxFileBytes;
+  if (object.size > sizeCap) {
+    return Response.json({ error: "file_too_large", maxBytes: sizeCap }, { status: 413 });
+  }
+  if (!row.filename || !effectiveContentType || !isAllowedMedia(row.filename, effectiveContentType, isVideo)) {
+    return Response.json({ error: "unsupported_media" }, { status: 415 });
+  }
+
+  let estimateMin: number;
+  if (estimate === null) {
+    const quota = await checkQuota(env.DB, userId, 1);
+    if ("error" in quota) {
+      if (quota.error === "no_quota") {
+        return Response.json(
+          { error: "no_quota", remainingMin: quota.remainingMin, capMin: quota.capMin, tier: row.tier },
+          { status: 429 }
+        );
+      }
+      return Response.json({ error: quota.error }, { status: 400 });
+    }
+    estimateMin = Math.min(Math.ceil(plan.maxFileSec / 60), quota.remainingMin);
+  } else {
+    estimateMin = Math.ceil(estimate / 60);
   }
 
   const reservation = await reserveQuota(env.DB, userId, estimateMin);
@@ -94,11 +139,17 @@ export async function POST(req: Request, { params }: Params) {
 
   // Upload-status sentinel before AAI submit. Either AAI accepts (we move to queued)
   // or we throw, which leaves the row at 'uploading' for inline reconcile to mop up.
-  await env.DB.prepare(
-    `UPDATE transcripts SET status = 'uploading', reserved_minutes = ?1 WHERE id = ?2`
+  const claimed = await env.DB.prepare(
+    `UPDATE transcripts
+        SET status = 'uploading', reserved_minutes = ?1
+      WHERE id = ?2 AND status = 'pending'`
   )
     .bind(reservedMin, transcriptId)
     .run();
+  if (!claimed.meta?.changes) {
+    await reconcileQuota(env.DB, userId, reservedMin, 0);
+    return Response.json({ error: "already_started" }, { status: 409 });
+  }
 
   let audioUrl: string;
   let aaiId: string;
