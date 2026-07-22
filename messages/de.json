@@ -153,28 +153,6 @@
       "idleHint": "Tippen Sie auf das Mikrofon zum Starten"
     }
   },
-  "TrustStrip": {
-    "tagline": "Im Scribix-Transkriptionsablauf enthalten",
-    "logos": [],
-    "stats": [
-      {
-        "value": "45 Min.",
-        "label": "Kostenloses Guthaben"
-      },
-      {
-        "value": "5",
-        "label": "Exportformate"
-      },
-      {
-        "value": "1 GB",
-        "label": "Audiolimit"
-      },
-      {
-        "value": "10 Std.",
-        "label": "Dateilänge bei Pro"
-      }
-    ]
-  },
   "Features": {
     "label": "Funktionen",
     "number": "01",
@@ -374,7 +352,7 @@
         "label": "Max YouTube caption video",
         "values": {
           "free": "2 hours",
-          "starter": "4 hours",
+          "starter": "10 hours",
           "pro": "10 hours"
         }
       },
@@ -383,7 +361,7 @@
         "label": "Max. Dateilänge",
         "values": {
           "free": "45 Min.",
-          "starter": "1 Stunde",
+          "starter": "10 Stunden",
           "pro": "10 Stunden"
         }
       },
@@ -824,7 +802,7 @@
       "dropPrompt": "Ziehen Sie eine Video- oder Audiodatei ein",
       "limits": "Uploads bis zu 1 GB · Kostenlose Test: 45 Min. Lebenszeit",
       "limitsFree": "Videos bis zu {size} · Audio bis zu 1 GB · Kostenloser Test: 45 Min. insgesamt",
-      "limitsBasic": "Videos bis zu {size} · Audio bis zu 1 GB · Bis zu 1 Stunde pro Datei",
+      "limitsBasic": "Videos bis zu {size} · Audio bis zu 1 GB · Bis zu 10 Stunden pro Datei",
       "limitsPro": "Videos bis zu {size} · Audio bis zu 1 GB · Bis zu 10 Stunden pro Datei",
       "choose": "Datei wählen",
       "upgradePlan": "Plan upgraden",

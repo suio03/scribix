@@ -70,4 +70,4 @@ next-intl with locales `["en", "fr", "es", "it", "ja", "de"]`, `defaultLocale: "
 
 ## Reference
 
-`docs/progress.md` is a historical v1 planning artifact, not the current source of truth. Current operational setup lives in `docs/manual-setup.md`; `docs/runbooks/` holds ops procedures (launch checklist, AAI bulk delete); `docs/plan-hybrid-video-upload.md` records the shipped hybrid-upload architecture and its remaining production validation.
+`docs/progress.md` is a historical v1 planning artifact, not the current source of truth. Current operational setup lives in `docs/manual-setup.md`; `docs/runbooks/` holds ops procedures, including the active `post-release-monitoring.md` checklist for upload reliability and conversion. `docs/plan-hybrid-video-upload.md` records the shipped hybrid-upload architecture, while `docs/plan-post-july-19-reliability-growth.md` is the dated analysis, decision record, and implementation status for release `0.18.0` rather than an evergreen backlog.

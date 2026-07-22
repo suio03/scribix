@@ -8,7 +8,6 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { discordAlert } from "@/lib/discord";
 
 export async function DELETE() {
   const session = await auth();
@@ -53,11 +52,13 @@ export async function DELETE() {
     ).bind(userId),
   ]);
 
-  await discordAlert("account_deleted", {
-    userId,
-    email: session.user.email ?? "—",
-    transcripts: results.length,
-  });
+  console.info(
+    JSON.stringify({
+      event: "account_deleted",
+      userId,
+      transcripts: results.length,
+    })
+  );
 
   return Response.json({ ok: true });
 }

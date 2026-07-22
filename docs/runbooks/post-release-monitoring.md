@@ -2,6 +2,8 @@
 
 Use this runbook for the first seven complete days after the repaired upload pipeline is deployed. The code identifies this release as `upload_pipeline_version=2026-07-22.1`.
 
+Release `0.18.0` (commit `99bf119`) was pushed to `main` and production migrations `0016` through `0019` were applied on 2026-07-22. Confirm the Cloudflare deployment is healthy before treating the next complete Melbourne calendar day as day 1.
+
 ## Prerequisites
 
 - Deploy the application and apply migrations `0016` through `0019` to the production D1 database.

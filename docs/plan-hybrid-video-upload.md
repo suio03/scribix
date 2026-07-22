@@ -192,12 +192,18 @@ R2 CORS 必须允许 multipart 所需方法和 `Content-Type` 等 header。完�
 
 ## Analytics 与可观察性
 
-由浏览器通过现有 `lib/analytics.ts` 上报：
+由浏览器通过现有 `lib/analytics.ts` 上报。`direct_video_attempt` 保留为兼容事件；发布后漏斗以更明确的生命周期事件为准：
 
 ```text
 direct_video_attempt
+direct_video_selected
+direct_video_preflight_rejected
+direct_video_upload_started
 direct_video_upload_completed
+direct_video_processing
+direct_video_transcribe_completed
 direct_video_upload_failed
+direct_video_abandoned
 transcribe_success
 ```
 
@@ -216,10 +222,14 @@ upload_elapsed_sec
 核心漏斗：
 
 ```text
-direct_video_attempt
+direct_video_selected
+→ direct_video_upload_started
 → direct_video_upload_completed
-→ transcribe_success
+→ direct_video_processing
+→ direct_video_transcribe_completed
 ```
+
+`direct_video_preflight_rejected`、`direct_video_upload_failed` 和 `direct_video_abandoned` 分别解释进入上传前、上传中和离开页面时的掉点；全局 `transcribe_success` / `transcribe_fail` 继续用于跨上传模式比较。
 
 cleanup worker 使用 structured log 记录扫描、成功删除、删除失败和待重试数量。应用已输出 `cleanup_r2_delete_failed`；Cloudflare 侧持续失败告警属于独立生产配置，发布代码不会自动创建。媒体漏删监控不伪装成 Plausible 访客事件。
 

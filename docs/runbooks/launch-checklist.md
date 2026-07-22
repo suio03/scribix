@@ -63,8 +63,9 @@ Phase 7 — this file is the "everything else" pre-flight.
 - [ ] **AAI bulk-delete cadence** — schedule the first run on the 1st Monday
   of the next month and add a calendar reminder
   (see `docs/runbooks/aai-bulk-delete.md`).
-- [ ] **Discord webhook** — confirmed posting from prod (try a test transcript
-  failure or watch the first paid checkout).
+- [ ] **Discord webhooks** — confirmed a test transcript failure reaches
+  `error-tracking`, the first paid checkout reaches `checkout-alerts`, and user
+  feedback reaches `product-feedback`.
 - [ ] **Cleanup log alert** — Cloudflare observability alerts on repeated
   `cleanup_r2_delete_failed` events; structured logs exist in code, but the
   persistent production alert must be configured separately.
@@ -82,5 +83,6 @@ Phase 7 — this file is the "everything else" pre-flight.
 
 ## Day-1 monitoring
 
-- [ ] Watch the Discord ops channel for the first hour after announcing.
+- [ ] Watch the Discord error and checkout channels for the first hour after
+  announcing.
 - [ ] First failed transcription should fire a `transcription_failed` alert.

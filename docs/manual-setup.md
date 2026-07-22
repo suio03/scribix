@@ -323,18 +323,27 @@ In `.env.local` and `.dev.vars`; for production, use the non-secret
 ADMIN_EMAILS=you@example.com,teammate@example.com
 ```
 
-### 6.2 Discord error alerts (optional but recommended)
+### 6.2 Discord operational alerts (optional but recommended)
 
-1. Discord server → channel settings → **Integrations** → **Webhooks** → **New Webhook**.
-2. Copy the webhook URL.
-3. Set:
-   ```
-   DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
-   ```
+Create separate private Discord channels for errors and billing activity. In each
+channel, open **Channel settings → Integrations → Webhooks → New Webhook**, then
+set the corresponding URL:
+
+```
+DISCORD_ERROR_WEBHOOK_URL=https://discord.com/api/webhooks/...
+DISCORD_CHECKOUT_WEBHOOK_URL=https://discord.com/api/webhooks/...
+```
+
+- `DISCORD_ERROR_WEBHOOK_URL` should point to `error-tracking` and receives
+  webhook and transcription failures.
+- `DISCORD_CHECKOUT_WEBHOOK_URL` should point to `checkout-alerts` and receives
+  payments, subscription changes, and other billing alerts.
+
+User feedback must not share either webhook.
 
 ### 6.3 Discord feedback alerts (optional but recommended)
 
-Create a separate private Discord channel such as `scribix-feedback`, then:
+Create a separate private Discord channel such as `product-feedback`, then:
 
 1. Channel settings → **Integrations** → **Webhooks** → **New Webhook**.
 2. Name it `Scribix Feedback`.
@@ -400,7 +409,8 @@ npx wrangler secret put R2_SECRET_ACCESS_KEY
 npx wrangler secret put YOUTUBE_CAPTION_SERVICE_TOKEN
 npx wrangler secret put PADDLE_API_KEY
 npx wrangler secret put PADDLE_WEBHOOK_SECRET
-npx wrangler secret put DISCORD_WEBHOOK_URL
+npx wrangler secret put DISCORD_ERROR_WEBHOOK_URL
+npx wrangler secret put DISCORD_CHECKOUT_WEBHOOK_URL
 npx wrangler secret put DISCORD_FEEDBACK_WEBHOOK_URL
 ```
 
@@ -473,6 +483,7 @@ PADDLE_PRO_YEARLY_PRICE_ID=
 
 # Admin / ops (Phase 6)
 ADMIN_EMAILS=
-DISCORD_WEBHOOK_URL=
+DISCORD_ERROR_WEBHOOK_URL=
+DISCORD_CHECKOUT_WEBHOOK_URL=
 DISCORD_FEEDBACK_WEBHOOK_URL=
 ```

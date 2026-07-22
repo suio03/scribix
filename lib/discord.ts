@@ -1,6 +1,5 @@
-// Discord webhook alerts.
-// Operational alerts use DISCORD_WEBHOOK_URL. User feedback uses a separate
-// DISCORD_FEEDBACK_WEBHOOK_URL so product ideas do not mix with incidents.
+// Discord webhook alerts. Errors, checkout events, and user feedback use
+// separate webhooks so each notification reaches the appropriate channel.
 
 type AlertKind =
   | "checkout_success"
@@ -9,8 +8,19 @@ type AlertKind =
   | "payment_failed"
   | "downgrade_blocked"
   | "webhook_error"
-  | "transcription_failed"
-  | "account_deleted";
+  | "transcription_failed";
+
+type AlertChannel = "error" | "checkout";
+
+const CHANNEL_BY_KIND: Record<AlertKind, AlertChannel> = {
+  checkout_success: "checkout",
+  subscription_canceled: "checkout",
+  subscription_expired: "checkout",
+  payment_failed: "checkout",
+  downgrade_blocked: "checkout",
+  webhook_error: "error",
+  transcription_failed: "error",
+};
 
 const STYLE: Record<AlertKind, { title: string; color: number }> = {
   checkout_success: { title: "✅ New payment", color: 0x57f287 },
@@ -20,18 +30,23 @@ const STYLE: Record<AlertKind, { title: string; color: number }> = {
   downgrade_blocked: { title: "🛑 Downgrade blocked", color: 0xeb459e },
   webhook_error: { title: "🚨 Webhook error", color: 0x992d22 },
   transcription_failed: { title: "❌ Transcription failed", color: 0xed4245 },
-  account_deleted: { title: "👋 Account deleted", color: 0x95a5a6 },
 };
+
+function alertWebhookUrl(kind: AlertKind): string | undefined {
+  return CHANNEL_BY_KIND[kind] === "checkout"
+    ? process.env.DISCORD_CHECKOUT_WEBHOOK_URL
+    : process.env.DISCORD_ERROR_WEBHOOK_URL;
+}
 
 export async function discordAlert(
   kind: AlertKind,
   fields: Record<string, string | number | undefined | null>
 ): Promise<void> {
-  const url = process.env.DISCORD_WEBHOOK_URL;
+  const url = alertWebhookUrl(kind);
   if (!url) return;
   const { title, color } = STYLE[kind];
   try {
-    await fetch(url, {
+    const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -49,8 +64,12 @@ export async function discordAlert(
         ],
       }),
     });
+
+    if (!response.ok) {
+      console.error(`discordAlert failed [${kind}]:`, response.status);
+    }
   } catch (e) {
-    console.error("discordAlert failed:", e);
+    console.error(`discordAlert failed [${kind}]:`, e);
   }
 }
 

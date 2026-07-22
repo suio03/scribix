@@ -90,12 +90,12 @@ npx wrangler d1 execute scribix-db --remote \
                AND id NOT IN (SELECT user_id FROM transcripts);"
 ```
 
-### 6. Post a Discord summary
+### 6. Log the summary
 
-Drop a one-line note in the ops channel:
+Write a one-line structured log entry:
 
 ```
-AAI bulk-delete: <N> transcripts purged, <M> users hard-deleted. <K> non-200 ids skipped (see /tmp/aai-purge-result.log).
+{"event":"aai_bulk_delete_completed","transcriptsPurged":<N>,"usersDeleted":<M>,"failedIds":<K>}
 ```
 
 ## Failure modes

@@ -29,7 +29,9 @@ declare namespace Cloudflare {
 		R2_SECRET_ACCESS_KEY: string;
 		ADMIN_EMAILS: string;
 		QUOTA_BYPASS: string;
-		DISCORD_WEBHOOK_URL: string;
+		DISCORD_ERROR_WEBHOOK_URL: string;
+		DISCORD_CHECKOUT_WEBHOOK_URL: string;
+		DISCORD_FEEDBACK_WEBHOOK_URL: string;
 	}
 }
 interface CloudflareEnv extends Cloudflare.Env {}

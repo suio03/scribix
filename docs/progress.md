@@ -299,7 +299,7 @@ End-to-end: **5 hops**, all edge-runtime.
                 calls AssemblyAI POST /v2/transcript with:
                   - audio_url: signed R2 URL (24h TTL)
                   - audio_end_at: server-computed cap (so AAI bills only up to remaining quota)
-                  - speech_model: tier-dependent (universal-3-pro for paid; universal-2 for free)
+                  - speech_model: tier-dependent (universal-3-5-pro for paid; universal-2 for free)
                   - speaker_labels: true
                   - language_detection: true
                   - webhook_url: https://scribix.io/api/webhook/assemblyai
@@ -372,10 +372,10 @@ AssemblyAI accepts video (MP4/MOV/WebM) directly and pulls the audio track itsel
 
 `speech_model` is a single-value field on AAI's submit endpoint — no native multi-model fallback. We implement fallback ourselves:
 
-1. Submit with `universal-3-pro` for Basic / Pro tiers.
+1. Submit with `universal-3-5-pro` for Basic / Pro tiers.
 2. If AAI's completion payload reports an unsupported-language error (or returns an explicit fallback signal), the webhook handler resubmits the same `audio_url` with `speech_model='universal-2'`.
 3. The `transcripts.speech_model` column records the model that **actually completed**, not the one originally requested.
-4. Track fallback rate via Discord alerts on resubmission so we can tune the supported-language list later.
+4. Track fallback rate via structured logs so we can tune the supported-language list later.
 
 If the first-pass submission failed before billing, we eat no AAI cost on the fallback. If AAI did bill the failed Universal-3-Pro pass, that's an edge cost we'll measure post-launch.
 
@@ -544,11 +544,11 @@ Each phase ends in something demonstrable.
 - [x] `audio_end_at` cap on AAI submit (`start/route.ts`).
 - [x] Reconciliation in webhook completion (success + error paths in `webhook/assemblyai/route.ts`).
 - [x] 402 / 413 / 429 error UX — split `no_quota` (429) vs `insufficient_quota` (402, remaining < estimate/2 per §10.2); 413 for size/duration tier caps; friendly messages in `Uploader.readError`.
-- [x] Speech model fallback (§9.6) — wired via AAI's native `speech_models` array (`["universal-3-pro", "universal-2"]` for paid tiers); `transcripts.speech_model` records the model that actually completed.
+- [x] Speech model fallback (§9.6) — wired via AAI's native `speech_models` array (`["universal-3-5-pro", "universal-2"]` for paid tiers); `transcripts.speech_model` records the model that actually completed.
 
 ### Phase 6 — admin + ops (1 day) — ✅ done (commit `c534eee`)
 - [x] Admin list pages (users + transcripts) — gated by `ADMIN_EMAILS` (`lib/admin.ts`); paginated lists at `/admin/users` and `/admin/transcripts` with search/filter and "include deleted" toggle.
-- [x] Discord error alerts — added `transcription_failed` and `account_deleted` kinds; wired AAI submit failure (`start/route.ts`), AAI-side error completion + bad webhook token (`webhook/assemblyai/route.ts`), and account deletion.
+- [x] Discord alerts — transcription and webhook failures route to `error-tracking`; checkout events route to `checkout-alerts`; account deletion is logged without a Discord notification.
 - [x] Account-delete endpoint — `DELETE /api/account` soft-deletes user + cascade-soft-deletes transcripts + bulk-removes R2 audio + transcript JSON; UI in `DeleteAccountButton` on `/dashboard/account`.
 - [x] Runbook for monthly AAI bulk-delete (`docs/runbooks/aai-bulk-delete.md`) — purges AAI for soft-deleted rows, then hard-deletes the D1 rows + orphaned users.
 
@@ -591,7 +591,9 @@ NEXT_PUBLIC_CREEM_ENV=test|prod
 CREEM_WEBHOOK_SECRET=
 
 ADMIN_EMAILS=                      # comma-separated allowlist
-DISCORD_WEBHOOK_URL=               # optional, for error alerts
+DISCORD_ERROR_WEBHOOK_URL=         # optional, for error alerts
+DISCORD_CHECKOUT_WEBHOOK_URL=      # optional, for billing alerts
+DISCORD_FEEDBACK_WEBHOOK_URL=      # optional, for user feedback
 ```
 
 ### Pages bindings (`wrangler.jsonc`)

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.18.1] - 2026-07-22
+
+### Changed
+- Unified Starter file and YouTube duration limits at 10 hours and updated the localized pricing and upload guidance.
+- Split Discord delivery across dedicated error, checkout, and feedback webhooks while keeping account deletion and successful maintenance summaries in structured logs.
+- Refreshed upload analytics and post-release operational documentation to match the shipped lifecycle events and monitoring workflow.
+
+### Fixed
+- Replaced AssemblyAI's deprecated paid speech model with `universal-3-5-pro` while retaining `universal-2` fallback.
+- Prevented transcription failures, billing events, and feedback from being mixed into the same Discord channel.
+
+### Removed
+- Removed the unsupported homepage trust-stat strip and its localized copy.
+
 ## [0.18.0] - 2026-07-22
 
 ### Added

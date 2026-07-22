@@ -153,28 +153,6 @@
       "idleHint": "Tap the mic to start"
     }
   },
-  "TrustStrip": {
-    "tagline": "Included in the Scribix transcription workflow",
-    "logos": [],
-    "stats": [
-      {
-        "value": "45 min",
-        "label": "Free allowance"
-      },
-      {
-        "value": "5",
-        "label": "Export formats"
-      },
-      {
-        "value": "1 GB",
-        "label": "Audio file limit"
-      },
-      {
-        "value": "10 hr",
-        "label": "Pro file length"
-      }
-    ]
-  },
   "Features": {
     "label": "Features",
     "number": "01",
@@ -374,7 +352,7 @@
         "label": "Max YouTube caption video",
         "values": {
           "free": "2 hours",
-          "starter": "4 hours",
+          "starter": "10 hours",
           "pro": "10 hours"
         }
       },
@@ -383,7 +361,7 @@
         "label": "Max file length",
         "values": {
           "free": "45 min",
-          "starter": "1 hour",
+          "starter": "10 hours",
           "pro": "10 hours"
         }
       },
@@ -495,7 +473,7 @@
       },
       {
         "question": "What is the max file length?",
-        "answer": "Free supports files up to 45 minutes, Starter supports files up to 1 hour, and Pro supports files up to 10 hours."
+        "answer": "Free supports files up to 45 minutes, while Starter and Pro support files up to 10 hours."
       },
       {
         "question": "Can I change plans later?",
@@ -827,7 +805,7 @@
       "dropPrompt": "Drop a video or audio file",
       "limits": "Uploads up to 1 GB · Free trial: 45 min lifetime",
       "limitsFree": "Videos up to {size} · Audio up to 1 GB · Free trial: 45 min lifetime",
-      "limitsBasic": "Videos up to {size} · Audio up to 1 GB · Up to 1 hour per file",
+      "limitsBasic": "Videos up to {size} · Audio up to 1 GB · Up to 10 hours per file",
       "limitsPro": "Videos up to {size} · Audio up to 1 GB · Up to 10 hours per file",
       "choose": "Choose file",
       "upgradePlan": "Upgrade plan",

@@ -6,7 +6,6 @@ import { Sidebar } from "../components/Sidebar";
 import { getSidebarUsage } from "../components/sidebarUsage";
 import { Header } from "../components/Header";
 import { Generator } from "../components/Generator";
-import { TrustStrip } from "../components/TrustStrip";
 import { Features } from "../components/Features";
 import { HowItWorks } from "../components/HowItWorks";
 import { UseCases } from "../components/UseCases";
@@ -111,7 +110,6 @@ export default async function HomePage({
             </p>
           </div>
         </section>
-        <TrustStrip />
         <Features />
         <HowItWorks />
         <UseCases />

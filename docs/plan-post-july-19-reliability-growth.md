@@ -1,15 +1,15 @@
 # Scribix 可靠性、转化与增长修复计划
 
-> 状态：本地实施和生产 D1 migration 已完成，等待部署与发布后七天观测
+> 状态：release `0.18.0` 已通过 commit `99bf119` 推送到 `main`，生产 D1 migration 已完成；等待确认 Cloudflare 部署结果并开始发布后七天观测
 >
-> 2026-07-22 已获授权按批次实施全部本地修复，并已应用生产 D1 migrations `0016–0019`。Plausible/Bing 后台配置仍需单独执行，部署由本次 ship push 触发。
+> 2026-07-22 已获授权并完成全部本地修复，生产 D1 migrations `0016–0019` 已应用。Plausible/Bing 后台配置仍需单独执行；本次 push 已触发部署，但不能代替生产环境验收。
 
 ### 1.0 实施进度（2026-07-22）
 
 - 已完成本地代码：T1、U1–U5、C1–C4、B1–B2、S1–S5、M1。
 - 已完成本地数据准备：支付归属 migration 已在本地 D1 成功应用；tracking repo 已支持 Plausible 完整事件、Bing query/page 拉取和发布后健康报告。
-- 尚需外部执行：Plausible goals 配置、Bing Webmaster 验证/API key/sitemap、部署。
-- 部署后才能完成：U3 的真实大视频端到端验证，以及 M1 的连续七天目标判定。
+- 尚需外部执行：确认 Cloudflare 生产部署成功、Plausible goals 配置、Bing Webmaster 验证/API key/sitemap。
+- 生产部署确认后才能完成：U3 的真实大视频端到端验证，以及 M1 的连续七天目标判定。
 - M2 自动验证已通过：生产构建、TypeScript、121 个静态页面生成和补丁空白检查均成功；公开页面已完成英文、西班牙语浏览器烟测。需真实账号、套餐、网络故障、大视频和支付沙箱的场景按 `docs/runbooks/post-release-monitoring.md` 在部署前后验证。
 
 ## 1. 数据背景

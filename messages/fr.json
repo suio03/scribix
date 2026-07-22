@@ -153,28 +153,6 @@
       "idleHint": "Appuyez sur le micro pour commencer"
     }
   },
-  "TrustStrip": {
-    "tagline": "Inclus dans le flux de transcription Scribix",
-    "logos": [],
-    "stats": [
-      {
-        "value": "45 min",
-        "label": "Crédit offert"
-      },
-      {
-        "value": "5",
-        "label": "Formats d’export"
-      },
-      {
-        "value": "1 Go",
-        "label": "Limite audio"
-      },
-      {
-        "value": "10 h",
-        "label": "Durée avec Pro"
-      }
-    ]
-  },
   "Features": {
     "label": "Caractéristiques",
     "number": "01",
@@ -374,7 +352,7 @@
         "label": "Max YouTube caption video",
         "values": {
           "free": "2 hours",
-          "starter": "4 hours",
+          "starter": "10 hours",
           "pro": "10 hours"
         }
       },
@@ -383,7 +361,7 @@
         "label": "Durée max. du fichier",
         "values": {
           "free": "45 min",
-          "starter": "1 heure",
+          "starter": "10 heures",
           "pro": "10 heures"
         }
       },
@@ -824,7 +802,7 @@
       "dropPrompt": "Déposez une vidéo ou un fichier audio",
       "limits": "Téléversements jusqu'à 1 Go · Essai gratuit : 45 min au total",
       "limitsFree": "Vidéos jusqu'à {size} · Audio jusqu'à 1 Go · Essai gratuit : 45 min au total",
-      "limitsBasic": "Vidéos jusqu'à {size} · Audio jusqu'à 1 Go · Jusqu'à 1 heure par fichier",
+      "limitsBasic": "Vidéos jusqu'à {size} · Audio jusqu'à 1 Go · Jusqu'à 10 heures par fichier",
       "limitsPro": "Vidéos jusqu'à {size} · Audio jusqu'à 1 Go · Jusqu'à 10 heures par fichier",
       "choose": "Choisir un fichier",
       "upgradePlan": "Changer de forfait",

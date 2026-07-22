@@ -28,11 +28,11 @@ export const PLANS = {
   basic: {
     monthly: { minutesPerCycle: 600, youtubeImportsPerCycle: 100 },
     yearly: { minutesPerCycle: 7200, youtubeImportsPerCycle: 1200 },
-    youtubeMaxVideoSec: 4 * 3600,
-    maxFileSec: 1 * 3600,
+    youtubeMaxVideoSec: 10 * 3600,
+    maxFileSec: 10 * 3600,
     maxFileBytes: ONE_GIB,
     maxVideoUploadBytes: PAID_VIDEO_UPLOAD_BYTES,
-    speechModels: ["universal-3-pro", "universal-2"] as const,
+    speechModels: ["universal-3-5-pro", "universal-2"] as const,
   },
   pro: {
     monthly: { minutesPerCycle: 2400, youtubeImportsPerCycle: 1000 },
@@ -41,7 +41,7 @@ export const PLANS = {
     maxFileSec: 10 * 3600,
     maxFileBytes: ONE_GIB,
     maxVideoUploadBytes: PAID_VIDEO_UPLOAD_BYTES,
-    speechModels: ["universal-3-pro", "universal-2"] as const,
+    speechModels: ["universal-3-5-pro", "universal-2"] as const,
   },
 } as const;
 

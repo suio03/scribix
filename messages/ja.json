@@ -153,28 +153,6 @@
       "idleHint": "マイクをタップして開始"
     }
   },
-  "TrustStrip": {
-    "tagline": "Scribixの文字起こしに含まれる機能",
-    "logos": [],
-    "stats": [
-      {
-        "value": "45分",
-        "label": "無料枠"
-      },
-      {
-        "value": "5",
-        "label": "書き出し形式"
-      },
-      {
-        "value": "1 GB",
-        "label": "音声上限"
-      },
-      {
-        "value": "10時間",
-        "label": "Proの長さ上限"
-      }
-    ]
-  },
   "Features": {
     "label": "機能",
     "number": "01",
@@ -374,7 +352,7 @@
         "label": "Max YouTube caption video",
         "values": {
           "free": "2 hours",
-          "starter": "4 hours",
+          "starter": "10 hours",
           "pro": "10 hours"
         }
       },
@@ -383,7 +361,7 @@
         "label": "最大ファイル長",
         "values": {
           "free": "45分",
-          "starter": "1時間",
+          "starter": "10時間",
           "pro": "10時間"
         }
       },
@@ -824,7 +802,7 @@
       "dropPrompt": "動画または音声ファイルをドロップ",
       "limits": "アップロード最大 1 GB · 無料トライアル：45 分（生涯）",
       "limitsFree": "動画は最大 {size} · 音声は最大 1 GB · 無料トライアル：45 分（生涯）",
-      "limitsBasic": "動画は最大 {size} · 音声は最大 1 GB · 1ファイル最大1時間",
+      "limitsBasic": "動画は最大 {size} · 音声は最大 1 GB · 1ファイル最大10時間",
       "limitsPro": "動画は最大 {size} · 音声は最大 1 GB · 1ファイル最大10時間",
       "choose": "ファイルを選択",
       "upgradePlan": "プランをアップグレード",

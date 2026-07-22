@@ -153,28 +153,6 @@
       "idleHint": "Tocca il microfono per iniziare"
     }
   },
-  "TrustStrip": {
-    "tagline": "Incluso nel flusso di trascrizione Scribix",
-    "logos": [],
-    "stats": [
-      {
-        "value": "45 min",
-        "label": "Credito gratuito"
-      },
-      {
-        "value": "5",
-        "label": "Formati di esportazione"
-      },
-      {
-        "value": "1 GB",
-        "label": "Limite audio"
-      },
-      {
-        "value": "10 ore",
-        "label": "Durata con Pro"
-      }
-    ]
-  },
   "Features": {
     "label": "Funzionalità",
     "number": "01",
@@ -374,7 +352,7 @@
         "label": "Max YouTube caption video",
         "values": {
           "free": "2 hours",
-          "starter": "4 hours",
+          "starter": "10 hours",
           "pro": "10 hours"
         }
       },
@@ -383,7 +361,7 @@
         "label": "Durata max file",
         "values": {
           "free": "45 min",
-          "starter": "1 ora",
+          "starter": "10 ore",
           "pro": "10 ore"
         }
       },
@@ -824,7 +802,7 @@
       "dropPrompt": "Trascina un file video o audio",
       "limits": "Caricamenti fino a 1 GB · Prova gratuita: 45 min per tutta la vita",
       "limitsFree": "Video fino a {size} · Audio fino a 1 GB · Prova gratuita: 45 min totali",
-      "limitsBasic": "Video fino a {size} · Audio fino a 1 GB · Fino a 1 ora per file",
+      "limitsBasic": "Video fino a {size} · Audio fino a 1 GB · Fino a 10 ore per file",
       "limitsPro": "Video fino a {size} · Audio fino a 1 GB · Fino a 10 ore per file",
       "choose": "Scegli file",
       "upgradePlan": "Aggiorna piano",
