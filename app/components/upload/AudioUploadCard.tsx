@@ -1,8 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { signIn } from "next-auth/react";
 import { CloudUpload, FileAudio } from "lucide-react";
 import { ProgressView, UploadErrorHelp, useUpload } from "@/app/components/Uploader";
+import { markSignInPending } from "@/app/components/Track";
+import { trackEvent } from "@/lib/analytics";
 
 export type AudioUploadCardCopy = {
   uploadTab: string;
@@ -38,6 +41,20 @@ export function AudioUploadCard({
     toolSlug,
   });
 
+  useEffect(() => {
+    trackEvent("landing_cta_impression", { tool_slug: toolSlug });
+  }, [toolSlug]);
+
+  const chooseFile = async () => {
+    trackEvent("landing_cta_click", { tool_slug: toolSlug, signed_in: signedIn });
+    if (!signedIn) {
+      markSignInPending();
+      await signIn("google", { redirectTo: postSignInPath });
+      return;
+    }
+    inputRef.current?.click();
+  };
+
   return (
     <div className="relative overflow-hidden rounded-3xl border border-line bg-card shadow-[0_30px_80px_-40px_rgba(14,13,11,0.18)]">
       <div className="grain" />
@@ -64,6 +81,12 @@ export function AudioUploadCard({
             onDrop={(e) => {
               e.preventDefault();
               setDragOver(false);
+              trackEvent("landing_cta_click", { tool_slug: toolSlug, signed_in: signedIn });
+              if (!signedIn) {
+                markSignInPending();
+                void signIn("google", { redirectTo: postSignInPath });
+                return;
+              }
               const file = e.dataTransfer.files?.[0];
               if (file) onPick(file);
             }}
@@ -95,7 +118,7 @@ export function AudioUploadCard({
                 </p>
                 <button
                   type="button"
-                  onClick={() => inputRef.current?.click()}
+                  onClick={() => void chooseFile()}
                   className="group mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
                 >
                   <CloudUpload
@@ -111,7 +134,7 @@ export function AudioUploadCard({
                 <UploadErrorHelp
                   error={uploadError}
                   onRetry={retry}
-                  onChooseFile={() => inputRef.current?.click()}
+                  onChooseFile={() => void chooseFile()}
                   checkoutSuccessPath={postSignInPath}
                 />
               </>

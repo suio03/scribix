@@ -10,8 +10,6 @@ import { TrustStrip } from "../components/TrustStrip";
 import { Features } from "../components/Features";
 import { HowItWorks } from "../components/HowItWorks";
 import { UseCases } from "../components/UseCases";
-import { Comparison } from "../components/Comparison";
-import { Testimonials } from "../components/Testimonials";
 import { FAQ } from "../components/FAQ";
 import { FinalCTA } from "../components/FinalCTA";
 import { Footer } from "../components/Footer";
@@ -43,7 +41,7 @@ const jsonLd = {
       operatingSystem: "Web",
       url: "https://scribix.io",
       description:
-        "Convert any video or audio to text. Speaker labels, word-level timestamps, 200+ languages, TXT/SRT/VTT export.",
+        "Convert video or audio to text with speaker labels, word-level timestamps, automatic language detection, and TXT, DOCX, SRT, VTT, or CSV export.",
       offers: {
         "@type": "AggregateOffer",
         priceCurrency: "USD",
@@ -96,7 +94,7 @@ export default async function HomePage({
       <main>
         <Generator
           signedIn={!!session}
-          postSignInPath={postSignInPath}
+          postSignInPath={homePath}
           tier={sidebarUsage?.tier}
         />
         <section className="px-4 pb-8 sm:px-8">
@@ -117,8 +115,6 @@ export default async function HomePage({
         <Features />
         <HowItWorks />
         <UseCases />
-        <Comparison />
-        <Testimonials />
         <FAQ />
         <FinalCTA />
       </main>

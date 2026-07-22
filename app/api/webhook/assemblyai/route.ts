@@ -15,8 +15,9 @@ export async function POST(req: Request) {
   if (!aaiId) return Response.json({ error: "missing_id" }, { status: 400 });
 
   const env = await cf();
+  const token = req.headers.get("x-scribix-token");
 
-  const row = await env.DB.prepare(
+  let row = await env.DB.prepare(
     `SELECT id, user_id, webhook_token, reserved_minutes, status
        FROM transcripts WHERE aai_transcript_id = ?1`
   )
@@ -28,12 +29,55 @@ export async function POST(req: Request) {
       reserved_minutes: number | null;
       status: string;
     }>();
+  if (!row && token) {
+    const candidate = await env.DB.prepare(
+      `SELECT id, user_id, webhook_token, reserved_minutes, status
+         FROM transcripts
+        WHERE webhook_token = ?1
+          AND status = 'uploading'
+          AND aai_transcript_id IS NULL`
+    )
+      .bind(token)
+      .first<{
+        id: string;
+        user_id: string;
+        webhook_token: string;
+        reserved_minutes: number | null;
+        status: string;
+      }>();
+    if (candidate) {
+      const claimed = await env.DB.prepare(
+        `UPDATE transcripts
+            SET aai_transcript_id = ?1, status = 'queued'
+          WHERE id = ?2
+            AND webhook_token = ?3
+            AND status = 'uploading'
+            AND aai_transcript_id IS NULL`
+      )
+        .bind(aaiId, candidate.id, token)
+        .run();
+      if (claimed.meta?.changes) row = { ...candidate, status: "queued" };
+      else {
+        row = await env.DB.prepare(
+          `SELECT id, user_id, webhook_token, reserved_minutes, status
+             FROM transcripts WHERE aai_transcript_id = ?1`
+        )
+          .bind(aaiId)
+          .first<{
+            id: string;
+            user_id: string;
+            webhook_token: string;
+            reserved_minutes: number | null;
+            status: string;
+          }>();
+      }
+    }
+  }
   if (!row) {
     // 200 to stop AAI retrying — we don't have this transcript on our side.
     return Response.json({ ok: true, ignored: "unknown_transcript" });
   }
 
-  const token = req.headers.get("x-scribix-token");
   if (token !== row.webhook_token) {
     await discordAlert("webhook_error", {
       source: "assemblyai",

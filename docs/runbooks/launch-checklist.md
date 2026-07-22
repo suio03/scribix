@@ -11,7 +11,9 @@ Phase 7 — this file is the "everything else" pre-flight.
 - [ ] Custom domain `scribix.io` attached in Cloudflare Workers.
 - [ ] Worker secrets set via `wrangler secret put` (see manual-setup §7.3).
 - [ ] `wrangler.jsonc` `vars` block has prod URLs.
+- [ ] `NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` has the intended build-time value before deploy, or is intentionally omitted to use the enabled default.
 - [ ] `db:migrate:remote` applied.
+- [ ] `npm run deploy:cleanup` deployed the hourly cleanup Worker and its cron is visible in Cloudflare.
 
 ## Webhook URLs
 
@@ -39,6 +41,13 @@ Phase 7 — this file is the "everything else" pre-flight.
 - [ ] Paddle cancellation marks the subscription canceled without removing
   access before the period end.
 - [ ] Upload a 30 s audio file → row reaches `completed` → transcript renders.
+- [ ] Upload a video just over 1 GiB → multipart completes → AssemblyAI accepts
+  the original video → transcript renders and media playback works.
+- [ ] Test Free rejection over 2 GiB and paid acceptance near the 4.9 billion-byte cap.
+- [ ] Force a metadata/extraction failure → the same file automatically falls
+  back to direct video without asking the user to select it again.
+- [ ] Retry multipart complete after it has already succeeded → the endpoint
+  confirms the exact-size final object instead of failing or deleting it.
 - [ ] Hit `/refunds`, `/terms`, `/privacy` — all 200 OK.
 - [ ] Hit `https://scribix.io/sitemap.xml` and `/robots.txt` — both serve.
 - [ ] Soft-delete a transcript → audio + JSON disappear from R2; row hidden.
@@ -56,6 +65,9 @@ Phase 7 — this file is the "everything else" pre-flight.
   (see `docs/runbooks/aai-bulk-delete.md`).
 - [ ] **Discord webhook** — confirmed posting from prod (try a test transcript
   failure or watch the first paid checkout).
+- [ ] **Cleanup log alert** — Cloudflare observability alerts on repeated
+  `cleanup_r2_delete_failed` events; structured logs exist in code, but the
+  persistent production alert must be configured separately.
 
 ## Marketing
 

@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square } from "lucide-react";
+import { Mic, Pause, Play, Square, Trash2, Upload } from "lucide-react";
+import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { ProgressView, UploadErrorHelp, useUpload, type UseUploadOpts } from "./Uploader";
+import { markSignInPending } from "./Track";
 
 const MAX_RECORDING_SEC = 30 * 60;
 
-type RecState = "idle" | "recording";
+type RecState = "idle" | "recording" | "paused" | "reviewing";
 
 export function Recorder(props: UseUploadOpts) {
   const t = useTranslations("Dashboard.recorder");
@@ -15,13 +17,20 @@ export function Recorder(props: UseUploadOpts) {
   const [recState, setRecState] = useState<RecState>("idle");
   const [seconds, setSeconds] = useState(0);
   const [recError, setRecError] = useState<string | null>(null);
+  const [recordedFile, setRecordedFile] = useState<File | null>(null);
+  const [recordedDurationSec, setRecordedDurationSec] = useState(0);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const startedAtRef = useRef<number>(0);
+  const cancelRequestedRef = useRef(false);
 
   useEffect(() => () => stopAll(), []);
+  useEffect(() => () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
 
   function stopAll() {
     if (tickRef.current) clearInterval(tickRef.current);
@@ -34,17 +43,31 @@ export function Recorder(props: UseUploadOpts) {
 
   async function start() {
     setRecError(null);
+    if (!props.signedIn) {
+      markSignInPending();
+      await signIn("google", { redirectTo: props.postSignInPath ?? "/dashboard/new" });
+      return;
+    }
     try {
+      if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+        throw new Error(t("unsupported"));
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
       const mime = pickMime();
       const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+      cancelRequestedRef.current = false;
       recRef.current = rec;
       chunksRef.current = [];
       rec.addEventListener("dataavailable", (e) => {
         if (e.data && e.data.size > 0) chunksRef.current.push(e.data);
       });
       rec.addEventListener("stop", async () => {
+        if (cancelRequestedRef.current) {
+          cancelRequestedRef.current = false;
+          stopAll();
+          return;
+        }
         const type = rec.mimeType || "audio/webm";
         const blob = new Blob(chunksRef.current, { type });
         const ext = type.includes("mp4") ? "m4a" : "webm";
@@ -52,9 +75,10 @@ export function Recorder(props: UseUploadOpts) {
         const file = new File([blob], `recording-${ts}.${ext}`, { type });
         const durationSec = Math.max(1, Math.round((Date.now() - startedAtRef.current) / 1000));
         stopAll();
-        setRecState("idle");
-        setSeconds(0);
-        await onPick(file, "record", durationSec);
+        setRecordedFile(file);
+        setRecordedDurationSec(durationSec);
+        setPreviewUrl(URL.createObjectURL(file));
+        setRecState("reviewing");
       });
       startedAtRef.current = Date.now();
       rec.start(1000);
@@ -78,6 +102,55 @@ export function Recorder(props: UseUploadOpts) {
     recRef.current?.stop();
   }
 
+  function pause() {
+    if (recRef.current?.state !== "recording") return;
+    recRef.current.pause();
+    if (tickRef.current) clearInterval(tickRef.current);
+    tickRef.current = null;
+    setRecState("paused");
+  }
+
+  function resume() {
+    if (recRef.current?.state !== "paused") return;
+    recRef.current.resume();
+    startedAtRef.current = Date.now() - seconds * 1000;
+    tickRef.current = setInterval(() => {
+      setSeconds((current) => {
+        const next = current + 1;
+        if (next >= MAX_RECORDING_SEC && recRef.current?.state === "recording") {
+          recRef.current.stop();
+        }
+        return next;
+      });
+    }, 1000);
+    setRecState("recording");
+  }
+
+  function cancel() {
+    if (recRef.current && recRef.current.state !== "inactive") {
+      cancelRequestedRef.current = true;
+      recRef.current.stop();
+    }
+    stopAll();
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+    setRecordedFile(null);
+    setRecordedDurationSec(0);
+    setSeconds(0);
+    setRecState("idle");
+  }
+
+  async function uploadRecording() {
+    if (!recordedFile) return;
+    const file = recordedFile;
+    const duration = recordedDurationSec;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+    setRecordedFile(null);
+    setRecState("idle");
+    await onPick(file, "record", duration);
+  }
+
   if (phase !== "idle" && phase !== "error") {
     return (
       <div className="rounded-2xl border border-line p-10 text-center">
@@ -87,20 +160,51 @@ export function Recorder(props: UseUploadOpts) {
   }
 
   const recording = recState === "recording";
+  const paused = recState === "paused";
+
+  if (recState === "reviewing" && recordedFile && previewUrl) {
+    return (
+      <div className="rounded-2xl border border-line p-10 text-center">
+        <p className="text-base font-medium">{t("review")}</p>
+        <p className="mt-1 font-mono text-sm tabular-nums text-ink/60">
+          {formatTime(recordedDurationSec)}
+        </p>
+        <audio controls src={previewUrl} className="mx-auto mt-5 w-full max-w-md" />
+        <div className="mt-5 flex flex-wrap justify-center gap-2">
+          <button
+            type="button"
+            onClick={cancel}
+            className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-medium"
+          >
+            <Trash2 size={15} />
+            {t("cancel")}
+          </button>
+          <button
+            type="button"
+            onClick={() => void uploadRecording()}
+            className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:bg-accent"
+          >
+            <Upload size={15} />
+            {t("upload")}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-line p-10 text-center">
       <button
         type="button"
-        onClick={recording ? stop : start}
-        aria-label={recording ? t("stop") : t("start")}
+        onClick={recording || paused ? stop : start}
+        aria-label={recording || paused ? t("stop") : t("start")}
         className={`relative inline-grid size-24 place-items-center rounded-full border-4 transition ${
-          recording
+          recording || paused
             ? "border-rec/30 bg-rec text-paper"
             : "border-line bg-card text-ink hover:border-accent hover:text-accent"
         }`}
       >
-        {recording ? (
+        {recording || paused ? (
           <Square size={26} strokeWidth={2} fill="currentColor" />
         ) : (
           <Mic size={28} strokeWidth={1.6} />
@@ -109,12 +213,24 @@ export function Recorder(props: UseUploadOpts) {
           <span className="absolute inset-0 -m-2 animate-ping rounded-full border-2 border-rec/40" />
         )}
       </button>
+      {recording || paused ? (
+        <button
+          type="button"
+          onClick={paused ? resume : pause}
+          className="ml-3 inline-grid size-11 place-items-center rounded-full border border-line text-ink hover:border-accent hover:text-accent"
+          aria-label={paused ? t("resume") : t("pause")}
+        >
+          {paused ? <Play size={18} /> : <Pause size={18} />}
+        </button>
+      ) : null}
       <p className="mt-6 font-mono text-base font-medium tabular-nums">
         {formatTime(seconds)}
       </p>
       <p className="mt-1 text-sm text-ink/60">
         {recording
           ? t("recording", { min: MAX_RECORDING_SEC / 60 })
+          : paused
+          ? t("paused")
           : t("tapToRecord", { min: MAX_RECORDING_SEC / 60 })}
       </p>
       {(recError || (errorMsg && !uploadError)) && (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { CheckCircle2, Link2, Loader2, PlaySquare } from "lucide-react";
@@ -30,6 +30,7 @@ type InspectResult = {
 };
 
 type Phase = "idle" | "inspecting" | "ready" | "importing" | "error";
+const YOUTUBE_OAUTH_CONTEXT_KEY = "scribix:youtube_oauth_context";
 
 export function YouTubeImporter({
   signedIn,
@@ -51,6 +52,7 @@ export function YouTubeImporter({
   const [result, setResult] = useState<InspectResult | null>(null);
   const [selectedTrackId, setSelectedTrackId] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const restoredRef = useRef(false);
 
   const selectedTrack = useMemo(
     () => result?.tracks.find((track) => track.id === selectedTrackId) ?? null,
@@ -58,9 +60,20 @@ export function YouTubeImporter({
   );
   const busy = phase === "inspecting" || phase === "importing";
 
-  async function inspect() {
+  useEffect(() => {
+    if (!signedIn || restoredRef.current) return;
+    restoredRef.current = true;
+    const restoredUrl = takeYouTubeOAuthUrl(postSignInPath);
+    if (!restoredUrl) return;
+    setUrl(restoredUrl);
+    void inspect(restoredUrl);
+  }, [signedIn, postSignInPath]);
+
+  async function inspect(urlOverride?: string) {
     if (busy) return;
+    const requestedUrl = (urlOverride ?? url).trim();
     if (!signedIn) {
+      saveYouTubeOAuthUrl(requestedUrl, postSignInPath);
       markSignInPending();
       await signIn("google", { redirectTo: postSignInPath });
       return;
@@ -75,7 +88,7 @@ export function YouTubeImporter({
       const response = await fetch("/api/transcripts/youtube", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url: requestedUrl }),
       });
       const json = (await response.json()) as InspectResult | YouTubeErrorPayload;
       if (!response.ok) {
@@ -225,6 +238,42 @@ export function YouTubeImporter({
       ) : null}
     </div>
   );
+}
+
+function saveYouTubeOAuthUrl(url: string, postSignInPath: string): void {
+  if (!url) return;
+  try {
+    sessionStorage.setItem(YOUTUBE_OAUTH_CONTEXT_KEY, JSON.stringify({
+      url,
+      postSignInPath,
+      savedAt: Date.now(),
+    }));
+  } catch {}
+}
+
+function takeYouTubeOAuthUrl(postSignInPath: string): string | null {
+  try {
+    const raw = sessionStorage.getItem(YOUTUBE_OAUTH_CONTEXT_KEY);
+    if (!raw) return null;
+    sessionStorage.removeItem(YOUTUBE_OAUTH_CONTEXT_KEY);
+    const value = JSON.parse(raw) as {
+      url?: unknown;
+      postSignInPath?: unknown;
+      savedAt?: unknown;
+    };
+    if (
+      typeof value.url !== "string" ||
+      typeof value.postSignInPath !== "string" ||
+      value.postSignInPath !== postSignInPath ||
+      typeof value.savedAt !== "number" ||
+      Date.now() - value.savedAt > 30 * 60 * 1000
+    ) {
+      return null;
+    }
+    return value.url;
+  } catch {
+    return null;
+  }
 }
 
 function preferredTrackId(tracks: YouTubeTrack[]): string {

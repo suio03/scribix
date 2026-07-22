@@ -5,9 +5,10 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, UPLOAD_PIPELINE_VERSION } from "@/lib/analytics";
 import { AUDIO_EXTENSIONS, VIDEO_EXTENSIONS } from "@/lib/media-upload";
-import { ONE_GIB, PLANS, type Tier } from "@/lib/plans";
+import { PLANS, type Tier } from "@/lib/plans";
+import type { UploadFallbackReason, UploadPipeline } from "@/lib/upload-preflight";
 import { UpgradePlanModal } from "./UpgradePlanModal";
 import { markSignInPending } from "./Track";
 
@@ -16,8 +17,6 @@ const DEFAULT_TOOL_SLUG = "transcribe";
 type UploaderT = ReturnType<typeof useTranslations<"Dashboard.uploader">>;
 
 const ACCEPT = "audio/*,video/*";
-const MAX_UPLOAD_BYTES = ONE_GIB;
-const MAX_UPLOAD_LABEL = "1 GB";
 // Build-time kill switch: changing it requires rebuilding and redeploying the client bundle.
 const DIRECT_VIDEO_ENABLED = process.env.NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED !== "false";
 
@@ -32,11 +31,7 @@ export type UploadPhase =
 
 type UploadErrorType = "technical" | "product_limit" | "quota" | "auth";
 type UploadHelp = "extract_audio";
-type DirectVideoFallbackReason =
-  | "over_1gb"
-  | "cannot_read_metadata"
-  | "extraction_timeout"
-  | "extraction_failed";
+type UpgradeReason = "quota" | "duration" | "file_size";
 
 export type UploadErrorDetail = {
   message: string;
@@ -44,6 +39,9 @@ export type UploadErrorDetail = {
   type: UploadErrorType;
   help?: UploadHelp;
   retryable?: boolean;
+  upgradeReason?: UpgradeReason;
+  suggestedTier?: "basic" | "pro";
+  canUpgrade?: boolean;
 };
 
 class UploadFlowError extends Error {
@@ -56,7 +54,13 @@ class UploadFlowError extends Error {
     code: string,
     message: string,
     type: UploadErrorType = "technical",
-    opts: { help?: UploadHelp; retryable?: boolean } = {}
+    opts: {
+      help?: UploadHelp;
+      retryable?: boolean;
+      upgradeReason?: UpgradeReason;
+      suggestedTier?: "basic" | "pro";
+      canUpgrade?: boolean;
+    } = {}
   ) {
     super(message);
     this.name = "UploadFlowError";
@@ -64,12 +68,23 @@ class UploadFlowError extends Error {
     this.type = type;
     this.help = opts.help;
     this.retryable = opts.retryable ?? false;
+    this.upgradeReason = opts.upgradeReason;
+    this.suggestedTier = opts.suggestedTier;
+    this.canUpgrade = opts.canUpgrade;
   }
+
+  upgradeReason?: UpgradeReason;
+  suggestedTier?: "basic" | "pro";
+  canUpgrade?: boolean;
 }
 
 class UploadTransportError extends Error {
   constructor(
-    public code: "upload_network_error" | "upload_stalled" | "upload_http_error",
+    public code:
+      | "upload_network_error"
+      | "upload_stalled"
+      | "upload_http_error"
+      | "upload_timeout",
     message: string,
     public attempts: number,
     public elapsedMs: number,
@@ -94,6 +109,21 @@ export type UseUploadOpts = {
   toolSlug?: string;
 };
 
+type PendingProcessing = {
+  transcriptId: string;
+  filename: string;
+  toolSlug: string;
+  source: "upload" | "record";
+  inputType: "audio" | "video" | "unknown";
+  uploadMode: UploadPipeline;
+  fallbackReason?: UploadFallbackReason;
+  fileSizeMb: number;
+  durationSec?: number;
+  startedAt: number;
+};
+
+const PENDING_PROCESSING_KEY = "scribix:pending_processing";
+
 export function useUpload({
   signedIn,
   tier = "free",
@@ -112,6 +142,40 @@ export function useUpload({
     source: "upload" | "record";
     durationSecOverride?: number;
   } | null>(null);
+  const recoveryStartedRef = useRef(false);
+  const retrySubmitRef = useRef<PendingProcessing | null>(null);
+  const activeDirectUploadRef = useRef<{
+    props: ReturnType<typeof directVideoAnalytics>;
+    step: ReturnType<typeof directVideoFailureStep>;
+  } | null>(null);
+
+  useEffect(() => {
+    const markAbandoned = () => {
+      const active = activeDirectUploadRef.current;
+      if (!active) return;
+      trackEvent("direct_video_abandoned", {
+        ...active.props,
+        step: active.step,
+      });
+      activeDirectUploadRef.current = null;
+    };
+    window.addEventListener("pagehide", markAbandoned);
+    return () => window.removeEventListener("pagehide", markAbandoned);
+  }, []);
+
+  useEffect(() => {
+    const shouldWarn =
+      phase === "extracting" ||
+      phase === "uploading" ||
+      phase === "submitting";
+    if (!shouldWarn) return;
+    const warnBeforeLeave = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeLeave);
+    return () => window.removeEventListener("beforeunload", warnBeforeLeave);
+  }, [phase]);
 
   const onPick = useCallback(
     async (
@@ -126,29 +190,6 @@ export function useUpload({
         setFilename(file.name);
         setPhase("error");
         const error = makeUploadError("audio_only_file_type", t("audioOnly"), "product_limit");
-        setUploadError(error);
-        trackEvent("transcribe_fail", {
-          tool_slug: toolSlug,
-          source,
-          input_type: inputType,
-          error_type: error.type,
-          error_code: error.code,
-          error_message: error.message,
-        });
-        return;
-      }
-
-      const sizeCap = inputType === "video" ? PLANS[tier].maxVideoUploadBytes : MAX_UPLOAD_BYTES;
-      if (file.size > sizeCap) {
-        const error = makeUploadError(
-          inputType === "video" ? "video_file_too_large" : "audio_file_too_large",
-          inputType === "video"
-            ? t("fileTooLargeWithCap", { mb: Math.floor(sizeCap / (1024 * 1024)) })
-            : t("audioTooBig", { size: MAX_UPLOAD_LABEL }),
-          "product_limit"
-        );
-        setFilename(file.name);
-        setPhase("error");
         setUploadError(error);
         trackEvent("transcribe_fail", {
           tool_slug: toolSlug,
@@ -178,7 +219,9 @@ export function useUpload({
       let multipartUploadId: string | null = null;
       let directVideo = false;
       let directUploadCompleted = false;
-      let fallbackReason: DirectVideoFallbackReason | undefined;
+      let fallbackReason: UploadFallbackReason | undefined;
+      let directUploadStarted = false;
+      let pendingProcessing: PendingProcessing | null = null;
       const uploadStartedAt = Date.now();
 
       try {
@@ -191,11 +234,43 @@ export function useUpload({
             durationSec = await readMediaDuration(file, inputType);
           } catch (error) {
             if (!isVideo || !DIRECT_VIDEO_ENABLED) throw error;
-            directVideo = true;
-            fallbackReason = "cannot_read_metadata";
           }
         }
         uploadDurationSecEstimate = durationSec;
+
+        step = "preflight";
+        const preflightRes = await fetch("/api/transcripts/preflight", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            filename: file.name,
+            bytes: file.size,
+            mime: browserMediaMime(file, inputType),
+            durationSec,
+            isVideo,
+          }),
+        });
+        if (!preflightRes.ok) {
+          const preflightError = await readError(preflightRes, t);
+          if (isVideo && (file.size > PLANS[tier].maxFileBytes || !durationSec)) {
+            trackEvent("direct_video_preflight_rejected", {
+              ...directVideoAnalytics({
+                fallbackReason: !durationSec ? "cannot_read_metadata" : "over_1gb",
+                file,
+                durationSec,
+                startedAt: uploadStartedAt,
+              }),
+              error_code: preflightError.code,
+            });
+          }
+          throw preflightError;
+        }
+        const preflight = (await preflightRes.json()) as {
+          pipeline: UploadPipeline;
+          fallbackReason?: UploadFallbackReason;
+        };
+        directVideo = preflight.pipeline === "direct_video";
+        fallbackReason = preflight.fallbackReason;
 
         let uploadBody: Blob = file;
         let uploadFilename = file.name;
@@ -203,10 +278,6 @@ export function useUpload({
         let uploadDurationSec = durationSec;
 
         if (isVideo) {
-          if (file.size > ONE_GIB) {
-            directVideo = true;
-            fallbackReason = "over_1gb";
-          }
           if (!directVideo) {
             step = "extracting audio";
             setPhase("extracting");
@@ -237,15 +308,23 @@ export function useUpload({
         uploadDurationSecEstimate = uploadDurationSec || undefined;
 
         if (directVideo) {
-          trackEvent("direct_video_attempt", directVideoAnalytics({
+          const directProps = directVideoAnalytics({
             fallbackReason,
             file,
             durationSec: uploadDurationSec,
             startedAt: uploadStartedAt,
-          }));
+          });
+          trackEvent("direct_video_attempt", directProps);
+          trackEvent("direct_video_selected", directProps);
+          directUploadStarted = true;
+          activeDirectUploadRef.current = {
+            props: directProps,
+            step: "multipart_init",
+          };
+          trackEvent("direct_video_upload_started", directProps);
         }
 
-        // Pre-flight: server validates duration cap + quota before upload.
+        step = directVideo ? "multipart init" : "single upload init";
         const initRes = await fetch("/api/transcripts/init", {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -275,13 +354,22 @@ export function useUpload({
         if (directVideo) {
           if (!init.uploadId || !init.partSize) throw new Error("invalid_multipart_init");
           multipartUploadId = init.uploadId;
+          if (activeDirectUploadRef.current) {
+            activeDirectUploadRef.current.step = "part_upload";
+          }
           await uploadMultipart(
             transcriptId,
             init.uploadId,
             init.partSize,
             file,
             setProgress,
-            t
+            t,
+            () => {
+              step = "completing multipart";
+              if (activeDirectUploadRef.current) {
+                activeDirectUploadRef.current.step = "multipart_complete";
+              }
+            }
           );
           trackEvent("direct_video_upload_completed", directVideoAnalytics({
             fallbackReason,
@@ -290,6 +378,7 @@ export function useUpload({
             startedAt: uploadStartedAt,
           }));
           directUploadCompleted = true;
+          activeDirectUploadRef.current = null;
         } else {
           if (!init.uploadUrl) throw new Error("invalid_single_upload_init");
           await uploadWithProgress(init.uploadUrl, uploadBody, setProgress, t, uploadMime);
@@ -297,18 +386,46 @@ export function useUpload({
 
         step = "submitting transcript";
         setPhase("submitting");
+        pendingProcessing = {
+          transcriptId,
+          filename: file.name,
+          toolSlug,
+          source,
+          inputType,
+          uploadMode: directVideo ? "direct_video" : "extracted_audio",
+          fallbackReason,
+          fileSizeMb: fileSizeMb(file.size),
+          durationSec: uploadDurationSec || undefined,
+          startedAt: uploadStartedAt,
+        };
         const startRes = await fetch(`/api/transcripts/${transcriptId}/start`, {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ durationSecEstimate: uploadDurationSec }),
         });
-        if (!startRes.ok) throw await readError(startRes, t);
+        if (!startRes.ok) {
+          const startError = await readError(startRes, t);
+          if (startError.code !== "aai_submit_uncertain") throw startError;
+          console.warn("AAI submit result is uncertain; continuing status recovery.", {
+            transcriptId,
+          });
+        }
 
         step = "polling transcript";
         setPhase("polling");
         keepTranscript = true;
+        savePendingProcessing(pendingProcessing);
+        if (directVideo) {
+          trackEvent("direct_video_processing", directVideoAnalytics({
+            fallbackReason,
+            file,
+            durationSec: uploadDurationSec,
+            startedAt: uploadStartedAt,
+          }));
+        }
         const finalStatus = await pollStatus(transcriptId, t);
         if (finalStatus === "completed") {
+          clearPendingProcessing(transcriptId);
           trackEvent("transcribe_success", {
             tool_slug: toolSlug,
             source,
@@ -318,7 +435,16 @@ export function useUpload({
             fallback_reason: fallbackReason,
             file_size_mb: fileSizeMb(file.size),
             upload_elapsed_sec: elapsedSec(uploadStartedAt),
+            upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
           });
+          if (directVideo) {
+            trackEvent("direct_video_transcribe_completed", directVideoAnalytics({
+              fallbackReason,
+              file,
+              durationSec: uploadDurationSec,
+              startedAt: uploadStartedAt,
+            }));
+          }
           router.push(`/dashboard/transcripts/${transcriptId}`);
         } else {
           throw new Error(t("transcriptionGeneric", { status: finalStatus }));
@@ -333,6 +459,9 @@ export function useUpload({
           error_type: uploadFailure.type,
           error_code: uploadFailure.code,
           error_message: errorSummary(uploadFailure.message),
+          upload_mode: directVideo ? "direct_video" : "extracted_audio",
+          fallback_reason: fallbackReason,
+          upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
           ...uploadFailureDiagnostics({
             err,
             step,
@@ -341,7 +470,7 @@ export function useUpload({
             retryable: uploadFailure.retryable,
           }),
         });
-        if (directVideo && !directUploadCompleted) {
+        if (directVideo && directUploadStarted && !directUploadCompleted) {
           trackEvent("direct_video_upload_failed", {
             ...directVideoAnalytics({
               fallbackReason,
@@ -350,10 +479,21 @@ export function useUpload({
               startedAt: uploadStartedAt,
             }),
             error_code: uploadFailure.code,
+            step: directVideoFailureStep(step),
+            retryable: uploadFailure.retryable,
           });
+          activeDirectUploadRef.current = null;
         }
-        if (uploadFailure.code === "persist_failed" || err instanceof MultipartCompletionUncertainError) {
+        if (
+          uploadFailure.code === "persist_failed" ||
+          uploadFailure.code === "aai_submit_uncertain" ||
+          err instanceof MultipartCompletionUncertainError
+        ) {
           keepTranscript = true;
+        }
+        if (uploadFailure.code === "aai_submit_failed" && pendingProcessing) {
+          keepTranscript = true;
+          retrySubmitRef.current = pendingProcessing;
         }
         if (transcriptId && multipartUploadId && !keepTranscript) {
           await abortMultipart(transcriptId, multipartUploadId);
@@ -368,11 +508,105 @@ export function useUpload({
     [router, signedIn, postSignInPath, audioOnly, tier, toolSlug, t]
   );
 
+  useEffect(() => {
+    if (!signedIn || recoveryStartedRef.current) return;
+    const pending = readPendingProcessing();
+    if (!pending) return;
+    recoveryStartedRef.current = true;
+    setFilename(pending.filename);
+    setUploadError(null);
+    setPhase("polling");
+
+    void pollStatus(pending.transcriptId, t)
+      .then(() => {
+        clearPendingProcessing(pending.transcriptId);
+        trackEvent("transcribe_success", {
+          tool_slug: pending.toolSlug,
+          source: pending.source,
+          input_type: pending.inputType,
+          duration_sec: pending.durationSec,
+          upload_mode: pending.uploadMode,
+          fallback_reason: pending.fallbackReason,
+          file_size_mb: pending.fileSizeMb,
+          upload_elapsed_sec: elapsedSec(pending.startedAt),
+          upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
+          restored: true,
+        });
+        if (pending.uploadMode === "direct_video") {
+          trackEvent("direct_video_transcribe_completed", {
+            upload_mode: "direct_video",
+            fallback_reason: pending.fallbackReason,
+            file_size_mb: pending.fileSizeMb,
+            duration_sec: pending.durationSec,
+            upload_elapsed_sec: elapsedSec(pending.startedAt),
+            upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
+          });
+        }
+        router.push(`/dashboard/transcripts/${pending.transcriptId}`);
+      })
+      .catch((error) => {
+        clearPendingProcessing(pending.transcriptId);
+        const detail = uploadErrorDetail(error, "polling transcript", t);
+        trackEvent("transcribe_fail", {
+          tool_slug: pending.toolSlug,
+          source: pending.source,
+          input_type: pending.inputType,
+          error_type: detail.type,
+          error_code: detail.code,
+          error_message: errorSummary(detail.message),
+          step: "polling transcript",
+          upload_mode: pending.uploadMode,
+          fallback_reason: pending.fallbackReason,
+          upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
+          restored: true,
+        });
+        setPhase("error");
+        setUploadError(detail);
+      });
+  }, [router, signedIn, t]);
+
   const retry = useCallback(() => {
+    const submit = retrySubmitRef.current;
+    if (submit) {
+      retrySubmitRef.current = null;
+      setUploadError(null);
+      setPhase("submitting");
+      void fetch(`/api/transcripts/${submit.transcriptId}/start`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ durationSecEstimate: submit.durationSec }),
+      })
+        .then(async (response) => {
+          if (!response.ok) throw await readError(response, t);
+          savePendingProcessing(submit);
+          setPhase("polling");
+          await pollStatus(submit.transcriptId, t);
+          clearPendingProcessing(submit.transcriptId);
+          trackEvent("transcribe_success", {
+            tool_slug: submit.toolSlug,
+            source: submit.source,
+            input_type: submit.inputType,
+            duration_sec: submit.durationSec,
+            upload_mode: submit.uploadMode,
+            fallback_reason: submit.fallbackReason,
+            file_size_mb: submit.fileSizeMb,
+            upload_elapsed_sec: elapsedSec(submit.startedAt),
+            upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
+          });
+          router.push(`/dashboard/transcripts/${submit.transcriptId}`);
+        })
+        .catch((error) => {
+          const detail = uploadErrorDetail(error, "submitting transcript", t);
+          if (detail.code === "aai_submit_failed") retrySubmitRef.current = submit;
+          setPhase("error");
+          setUploadError(detail);
+        });
+      return;
+    }
     const lastPick = lastPickRef.current;
     if (!lastPick) return;
     void onPick(lastPick.file, lastPick.source, lastPick.durationSecOverride);
-  }, [onPick]);
+  }, [onPick, router, t]);
 
   return {
     phase,
@@ -463,17 +697,38 @@ export function UploadErrorHelp({
   const [guideOpen, setGuideOpen] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
   const showExtractGuide = error?.help === "extract_audio";
-  const showQuotaUpgrade =
+  const showUpgrade =
     checkoutSuccessPath !== undefined &&
-    (error?.code === "no_quota" || error?.code === "insufficient_quota");
+    error?.canUpgrade === true &&
+    error.upgradeReason !== undefined;
 
   useEffect(() => {
     if (showExtractGuide) setGuideOpen(true);
   }, [showExtractGuide, error?.code, error?.message]);
 
   useEffect(() => {
-    if (showQuotaUpgrade) setUpgradeOpen(true);
-  }, [showQuotaUpgrade, error?.code, error?.message]);
+    if (!showUpgrade || !error?.upgradeReason) return;
+    trackEvent("upgrade_cta_shown", {
+      reason: error.upgradeReason,
+      error_code: error.code,
+      suggested_tier: error.suggestedTier,
+    });
+  }, [showUpgrade, error?.code, error?.suggestedTier, error?.upgradeReason]);
+
+  const openUpgrade = () => {
+    if (!error?.upgradeReason) return;
+    trackEvent("upgrade_cta_click", {
+      reason: error.upgradeReason,
+      error_code: error.code,
+      suggested_tier: error.suggestedTier,
+    });
+    trackEvent("upgrade_modal_opened", {
+      reason: error.upgradeReason,
+      error_code: error.code,
+      suggested_tier: error.suggestedTier,
+    });
+    setUpgradeOpen(true);
+  };
 
   if (!error) return null;
 
@@ -492,10 +747,10 @@ export function UploadErrorHelp({
                 {t("retry")}
               </button>
             ) : null}
-            {showQuotaUpgrade ? (
+            {showUpgrade ? (
               <button
                 type="button"
-                onClick={() => setUpgradeOpen(true)}
+                onClick={openUpgrade}
                 className="rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper transition hover:bg-accent"
               >
                 {t("upgradePlan")}
@@ -503,11 +758,19 @@ export function UploadErrorHelp({
             ) : null}
           </div>
         </div>
-        {showQuotaUpgrade ? (
+        {showUpgrade && error.upgradeReason ? (
           <UpgradePlanModal
-            reason="quota"
+            reason={error.upgradeReason}
             open={upgradeOpen}
             checkoutSuccessPath={checkoutSuccessPath}
+            initialTier={error.suggestedTier}
+            onCheckoutStart={(selectedTier) => {
+              sessionStorage.setItem("scribix:upgrade_context", JSON.stringify({
+                reason: error.upgradeReason,
+                error_code: error.code,
+                suggested_tier: selectedTier,
+              }));
+            }}
             onClose={() => setUpgradeOpen(false)}
           />
         ) : null}
@@ -525,6 +788,15 @@ export function UploadErrorHelp({
         >
           {t("extractGuideButton")}
         </button>
+        {showUpgrade ? (
+          <button
+            type="button"
+            onClick={openUpgrade}
+            className="ml-2 inline-flex items-center justify-center rounded-full bg-ink px-4 py-2 text-[13px] font-medium text-paper transition hover:bg-accent"
+          >
+            {t("upgradePlan")}
+          </button>
+        ) : null}
       </div>
       {guideOpen && typeof document !== "undefined" ? createPortal(
         <div
@@ -592,6 +864,22 @@ export function UploadErrorHelp({
           </div>
         </div>,
         document.body
+      ) : null}
+      {showUpgrade && error.upgradeReason ? (
+        <UpgradePlanModal
+          reason={error.upgradeReason}
+          open={upgradeOpen}
+          checkoutSuccessPath={checkoutSuccessPath}
+          initialTier={error.suggestedTier}
+          onCheckoutStart={(selectedTier) => {
+            sessionStorage.setItem("scribix:upgrade_context", JSON.stringify({
+              reason: error.upgradeReason,
+              error_code: error.code,
+              suggested_tier: selectedTier,
+            }));
+          }}
+          onClose={() => setUpgradeOpen(false)}
+        />
       ) : null}
     </>
   );
@@ -771,7 +1059,7 @@ function uploadWithProgress(
     }).catch((err) => {
       if (isRetryableTransportError(err) && n < UPLOAD_MAX_ATTEMPTS) {
         onProgress(0);
-        return attempt(n + 1);
+        return waitUntilOnline().then(() => attempt(n + 1));
       }
       throw err;
     });
@@ -785,8 +1073,11 @@ async function uploadMultipart(
   partSize: number,
   file: File,
   onProgress: (frac: number) => void,
-  t: UploaderT
+  t: UploaderT,
+  onCompleteStarted?: () => void
 ): Promise<void> {
+  const overallStartedAt = Date.now();
+  const overallTimeoutMs = 4 * 60 * 60 * 1000;
   const partCount = Math.ceil(file.size / partSize);
   const loadedByPart = new Array<number>(partCount).fill(0);
   let nextIndex = 0;
@@ -796,6 +1087,14 @@ async function uploadMultipart(
       const index = nextIndex;
       nextIndex += 1;
       if (index >= partCount) return;
+      if (Date.now() - overallStartedAt > overallTimeoutMs) {
+        throw new UploadTransportError(
+          "upload_timeout",
+          t("uploadNetworkError"),
+          1,
+          Date.now() - overallStartedAt
+        );
+      }
       const partNumber = index + 1;
       const start = index * partSize;
       const end = Math.min(start + partSize, file.size);
@@ -820,6 +1119,7 @@ async function uploadMultipart(
   };
 
   await Promise.all([worker(), worker()]);
+  onCompleteStarted?.();
   await completeMultipartWithRetry(transcriptId, uploadId, t);
   onProgress(1);
 }
@@ -871,7 +1171,7 @@ async function abortMultipart(transcriptId: string, uploadId: string): Promise<v
   }
 }
 
-function extractionFallbackReason(error: unknown): DirectVideoFallbackReason {
+function extractionFallbackReason(error: unknown): UploadFallbackReason {
   const message = error instanceof Error ? error.message : "";
   return message === "extraction_timeout" || message === "webaudio_timeout"
     ? "extraction_timeout"
@@ -892,7 +1192,7 @@ function directVideoAnalytics({
   durationSec,
   startedAt,
 }: {
-  fallbackReason?: DirectVideoFallbackReason;
+  fallbackReason?: UploadFallbackReason;
   file: File;
   durationSec?: number;
   startedAt: number;
@@ -903,17 +1203,87 @@ function directVideoAnalytics({
     file_size_mb: fileSizeMb(file.size),
     duration_sec: durationSec ? Math.round(durationSec) : undefined,
     upload_elapsed_sec: elapsedSec(startedAt),
+    upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
   };
 }
 
-async function pollStatus(id: string, t: UploaderT): Promise<"completed" | "error"> {
+async function pollStatus(id: string, t: UploaderT): Promise<"completed"> {
+  let delayMs = 3_000;
   while (true) {
-    await new Promise((r) => setTimeout(r, 3000));
-    const res = await fetch(`/api/transcripts/${id}/status`);
-    if (!res.ok) throw await readError(res, t);
-    const { status, error } = (await res.json()) as { status: string; error: string | null };
-    if (status === "completed") return "completed";
-    if (status === "error") throw new Error(error ?? t("transcriptionFailed"));
+    await wait(delayMs);
+    if (typeof navigator !== "undefined" && !navigator.onLine) {
+      await waitUntilOnline();
+    }
+    try {
+      const res = await fetch(`/api/transcripts/${id}/status`, { cache: "no-store" });
+      if (!res.ok) {
+        if (res.status === 408 || res.status === 429 || res.status >= 500) {
+          delayMs = Math.min(15_000, Math.round(delayMs * 1.6));
+          continue;
+        }
+        throw await readError(res, t);
+      }
+      const { status, error } = (await res.json()) as { status: string; error: string | null };
+      delayMs = 3_000;
+      if (status === "completed") return "completed";
+      if (status === "error") {
+        throw new UploadFlowError(
+          error || "transcription_failed",
+          error ? t("transcriptionGeneric", { status: error }) : t("transcriptionFailed"),
+          "technical"
+        );
+      }
+    } catch (error) {
+      if (error instanceof UploadFlowError) throw error;
+      delayMs = Math.min(15_000, Math.round(delayMs * 1.6));
+    }
+  }
+}
+
+function wait(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function waitUntilOnline(): Promise<void> {
+  if (typeof window === "undefined" || navigator.onLine) return Promise.resolve();
+  return new Promise((resolve) => {
+    window.addEventListener("online", () => resolve(), { once: true });
+  });
+}
+
+function savePendingProcessing(pending: PendingProcessing): void {
+  try {
+    sessionStorage.setItem(PENDING_PROCESSING_KEY, JSON.stringify(pending));
+  } catch {}
+}
+
+function readPendingProcessing(): PendingProcessing | null {
+  try {
+    const raw = sessionStorage.getItem(PENDING_PROCESSING_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw) as Partial<PendingProcessing>;
+    if (
+      typeof value.transcriptId !== "string" ||
+      typeof value.filename !== "string" ||
+      typeof value.toolSlug !== "string" ||
+      typeof value.startedAt !== "number" ||
+      (value.uploadMode !== "direct_video" && value.uploadMode !== "extracted_audio")
+    ) {
+      sessionStorage.removeItem(PENDING_PROCESSING_KEY);
+      return null;
+    }
+    return value as PendingProcessing;
+  } catch {
+    return null;
+  }
+}
+
+function clearPendingProcessing(transcriptId: string): void {
+  const pending = readPendingProcessing();
+  if (!pending || pending.transcriptId === transcriptId) {
+    try {
+      sessionStorage.removeItem(PENDING_PROCESSING_KEY);
+    } catch {}
   }
 }
 
@@ -1014,7 +1384,13 @@ function makeUploadError(
   code: string,
   message: string,
   type: UploadErrorType = "technical",
-  opts: { help?: UploadHelp; retryable?: boolean } = {}
+  opts: {
+    help?: UploadHelp;
+    retryable?: boolean;
+    upgradeReason?: UpgradeReason;
+    suggestedTier?: "basic" | "pro";
+    canUpgrade?: boolean;
+  } = {}
 ): UploadErrorDetail {
   return {
     code,
@@ -1022,6 +1398,9 @@ function makeUploadError(
     type,
     help: opts.help,
     retryable: opts.retryable,
+    upgradeReason: opts.upgradeReason,
+    suggestedTier: opts.suggestedTier,
+    canUpgrade: opts.canUpgrade,
   };
 }
 
@@ -1030,6 +1409,9 @@ function uploadErrorDetail(err: unknown, step: string, t: UploaderT): UploadErro
     return makeUploadError(err.code, err.message, err.type, {
       help: err.help,
       retryable: err.retryable,
+      upgradeReason: err.upgradeReason,
+      suggestedTier: err.suggestedTier,
+      canUpgrade: err.canUpgrade,
     });
   }
 
@@ -1080,6 +1462,15 @@ function uploadStepCode(step: string): string {
   }
 }
 
+function directVideoFailureStep(step: string) {
+  if (step === "multipart init") return "multipart_init" as const;
+  if (step === "uploading video") return "part_upload" as const;
+  if (step === "completing multipart") return "multipart_complete" as const;
+  if (step === "submitting transcript") return "aai_submit" as const;
+  if (step === "polling transcript") return "polling" as const;
+  return "part_upload" as const;
+}
+
 async function readError(res: Response, t: UploaderT): Promise<UploadFlowError> {
   try {
     const j = (await res.json()) as {
@@ -1089,6 +1480,9 @@ async function readError(res: Response, t: UploaderT): Promise<UploadFlowError> 
       remainingMin?: number;
       capMin?: number;
       neededMin?: number;
+      canUpgrade?: boolean;
+      suggestedTier?: "basic" | "pro";
+      help?: UploadHelp;
     };
     switch (j.error) {
       case "unauthorized":
@@ -1097,25 +1491,47 @@ async function readError(res: Response, t: UploaderT): Promise<UploadFlowError> 
         const mb = j.maxBytes ? Math.floor(j.maxBytes / (1024 * 1024)) : null;
         return new UploadFlowError("file_too_large", mb
           ? t("fileTooLargeWithCap", { mb })
-          : t("fileTooLarge"), "product_limit");
+          : t("fileTooLarge"), "product_limit", {
+          help: j.help,
+          upgradeReason: "file_size",
+          canUpgrade: j.canUpgrade,
+          suggestedTier: j.suggestedTier,
+        });
       }
       case "duration_exceeds_tier": {
         const min = j.maxSec ? Math.floor(j.maxSec / 60) : null;
         return new UploadFlowError("duration_exceeds_tier", min
           ? t("durationExceedsTierWithCap", { min })
-          : t("durationExceedsTier"), "product_limit");
+          : t("durationExceedsTier"), "product_limit", {
+          help: j.help,
+          upgradeReason: "duration",
+          canUpgrade: j.canUpgrade,
+          suggestedTier: j.suggestedTier,
+        });
       }
       case "no_quota":
         return new UploadFlowError("no_quota", j.capMin
           ? t("noQuotaWithCap", { capMin: j.capMin })
-          : t("noQuota"), "quota");
+          : t("noQuota"), "quota", {
+          upgradeReason: "quota",
+          canUpgrade: j.canUpgrade,
+          suggestedTier: j.suggestedTier,
+        });
       case "insufficient_quota":
         return new UploadFlowError("insufficient_quota", t("insufficientQuota", {
           neededMin: j.neededMin ?? "?",
           remainingMin: j.remainingMin ?? 0,
-        }), "quota");
+        }), "quota", {
+          upgradeReason: "quota",
+          canUpgrade: j.canUpgrade,
+          suggestedTier: j.suggestedTier,
+        });
       case "aai_submit_failed":
-        return new UploadFlowError("aai_submit_failed", t("aaiSubmitFailed"));
+        return new UploadFlowError("aai_submit_failed", t("aaiSubmitFailed"), "technical", {
+          retryable: true,
+        });
+      case "aai_submit_uncertain":
+        return new UploadFlowError("aai_submit_uncertain", t("persistFailed"));
       case "unsupported_media":
         return new UploadFlowError("unsupported_media", t("unsupportedMedia"), "product_limit");
       case "persist_failed":

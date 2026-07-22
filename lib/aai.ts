@@ -43,6 +43,23 @@ export type AaiTranscript = {
   sentences?: AaiSegment[];
 };
 
+export type AaiSubmitResult = {
+  transcript: AaiTranscript;
+  attempts: number;
+};
+
+export class AaiSubmitError extends Error {
+  constructor(
+    message: string,
+    readonly category: "http" | "network" | "invalid_response",
+    readonly attempts: number,
+    readonly status?: number
+  ) {
+    super(message);
+    this.name = "AaiSubmitError";
+  }
+}
+
 export type AaiTranslatedUtterance = {
   speaker?: string | null;
   text: string;
@@ -72,17 +89,58 @@ function key() {
   return k;
 }
 
-export async function submitTranscript(body: AaiSubmit): Promise<AaiTranscript> {
-  const res = await fetch(`${AAI_BASE}/transcript`, {
-    method: "POST",
-    headers: {
-      authorization: key(),
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error(`AAI submit failed: ${res.status} ${await res.text()}`);
-  return res.json();
+export async function submitTranscript(body: AaiSubmit): Promise<AaiSubmitResult> {
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    let res: Response;
+    try {
+      res = await fetch(`${AAI_BASE}/transcript`, {
+        method: "POST",
+        headers: {
+          authorization: key(),
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(20_000),
+      });
+    } catch (error) {
+      // A network timeout is ambiguous: the upstream may have accepted the
+      // request even though we did not receive its response. Never auto-submit
+      // again in this case because that could create a duplicate job.
+      throw new AaiSubmitError(
+        error instanceof Error ? error.message : "AAI submit network error",
+        "network",
+        attempt
+      );
+    }
+
+    if (res.ok) {
+      try {
+        return { transcript: await res.json(), attempts: attempt };
+      } catch {
+        throw new AaiSubmitError("AAI submit returned invalid JSON", "invalid_response", attempt);
+      }
+    }
+
+    const responseBody = (await res.text()).slice(0, 500);
+    const retryable = res.status === 429 || res.status >= 500;
+    if (!retryable || attempt === maxAttempts) {
+      throw new AaiSubmitError(
+        `AAI submit failed: ${res.status} ${responseBody}`,
+        "http",
+        attempt,
+        res.status
+      );
+    }
+
+    const retryAfter = Number(res.headers.get("retry-after"));
+    const delayMs = Number.isFinite(retryAfter) && retryAfter > 0
+      ? Math.min(10_000, retryAfter * 1000)
+      : attempt * 750;
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  throw new AaiSubmitError("AAI submit exhausted retries", "http", maxAttempts);
 }
 
 export async function getTranscript(id: string): Promise<AaiTranscript> {

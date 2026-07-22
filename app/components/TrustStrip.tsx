@@ -4,7 +4,6 @@ type Stat = { value: string; label: string };
 
 export async function TrustStrip() {
   const t = await getTranslations("TrustStrip");
-  const logos = t.raw("logos") as string[];
   const stats = t.raw("stats") as Stat[];
 
   return (
@@ -14,18 +13,7 @@ export async function TrustStrip() {
           {t("tagline")}
         </p>
 
-        <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-4 text-center text-[13px] font-medium text-muted/80 sm:grid-cols-3 lg:grid-cols-6">
-          {logos.map((logo) => (
-            <span
-              key={logo}
-              className="font-display tracking-tight transition hover:text-ink"
-            >
-              {logo}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-4">
           {stats.map((s) => (
             <div
               key={s.label}

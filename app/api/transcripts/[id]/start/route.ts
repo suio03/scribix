@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { submitTranscript } from "@/lib/aai";
+import { AaiSubmitError, submitTranscript } from "@/lib/aai";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { discordAlert } from "@/lib/discord";
@@ -141,7 +141,7 @@ export async function POST(req: Request, { params }: Params) {
   // or we throw, which leaves the row at 'uploading' for inline reconcile to mop up.
   const claimed = await env.DB.prepare(
     `UPDATE transcripts
-        SET status = 'uploading', reserved_minutes = ?1
+        SET status = 'uploading', reserved_minutes = ?1, submit_started_at = CURRENT_TIMESTAMP
       WHERE id = ?2 AND status = 'pending'`
   )
     .bind(reservedMin, transcriptId)
@@ -168,14 +168,42 @@ export async function POST(req: Request, { params }: Params) {
       webhook_auth_header_name: webhookUrl ? "X-Scribix-Token" : undefined,
       webhook_auth_header_value: webhookUrl ? row.webhook_token : undefined,
     });
-    aaiId = submitted.id;
+    aaiId = submitted.transcript.id;
+    console.info(JSON.stringify({
+      event: "aai_submit_succeeded",
+      transcriptId,
+      attempts: submitted.attempts,
+    }));
   } catch (err) {
+    const submitError = err instanceof AaiSubmitError ? err : null;
+    console.error(JSON.stringify({
+      event: "aai_submit_failed",
+      transcriptId,
+      category: submitError?.category ?? "unknown",
+      upstreamStatus: submitError?.status,
+      attempts: submitError?.attempts ?? 1,
+    }));
+
+    if (submitError?.category === "network" || submitError?.category === "invalid_response") {
+      await discordAlert("transcription_failed", {
+        stage: "submit_uncertain",
+        transcriptId,
+        userId,
+        category: submitError.category,
+        attempts: submitError.attempts,
+      });
+      return Response.json(
+        { error: "aai_submit_uncertain", retryable: false },
+        { status: 503 }
+      );
+    }
+
     // Refund the reservation — AAI never accepted the job, so no work is
     // outstanding. Without this, presign/AAI outages permanently strand quota.
     const errMsg = err instanceof Error ? err.message : "submit_failed";
     await reconcileQuota(env.DB, userId, reservedMin, 0);
     await env.DB.prepare(
-      `UPDATE transcripts SET status = 'error', error = ?1, reserved_minutes = 0 WHERE id = ?2`
+      `UPDATE transcripts SET status = 'pending', error = ?1, reserved_minutes = 0 WHERE id = ?2`
     )
       .bind(errMsg, transcriptId)
       .run();
@@ -184,6 +212,8 @@ export async function POST(req: Request, { params }: Params) {
       transcriptId,
       userId,
       error: errMsg.slice(0, 200),
+      upstreamStatus: submitError?.status,
+      attempts: submitError?.attempts,
     });
     return Response.json({ error: "aai_submit_failed" }, { status: 502 });
   }

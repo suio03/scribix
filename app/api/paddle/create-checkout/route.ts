@@ -62,6 +62,28 @@ export async function POST(req: Request) {
       tier: plan.tier,
       cycle: plan.cycle,
     });
+    try {
+      await env.DB.prepare(
+        `INSERT INTO paddle_checkout_intents
+           (transaction_id, user_id, tier, billing_cycle)
+         VALUES (?1, ?2, ?3, ?4)
+         ON CONFLICT(transaction_id) DO UPDATE SET
+           user_id = excluded.user_id,
+           tier = excluded.tier,
+           billing_cycle = excluded.billing_cycle`
+      )
+        .bind(checkout.transactionId, user.id, plan.tier, plan.cycle)
+        .run();
+    } catch (error) {
+      // Paddle custom_data remains the primary association. Do not make the
+      // user create a second Paddle transaction if the fallback ledger write
+      // has a transient failure.
+      console.error("checkout intent persistence failed", {
+        transactionId: checkout.transactionId,
+        userId: user.id,
+        error,
+      });
+    }
     return Response.json(checkout);
   } catch (error) {
     if (error instanceof PaddleApiError) {

@@ -144,7 +144,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "AudioToText.metadata" });
 
   return {
-    title: t("title"),
+    title: { absolute: t("title") },
     description: t("description"),
     alternates: {
       canonical,
@@ -174,7 +174,8 @@ export default async function AudioToTextPage({
   setRequestLocale(locale);
 
   const session = await auth();
-  const postSignInPath = getPathname({ href: "/dashboard/new", locale });
+  const newTranscriptPath = getPathname({ href: "/dashboard/new", locale });
+  const postSignInPath = getPathname({ href: PATH, locale });
   const homePath = getPathname({ href: "/", locale });
   const dashboardPath = getPathname({ href: "/dashboard", locale });
   const sidebarUsage = await getSidebarUsage(session);
@@ -202,7 +203,7 @@ export default async function AudioToTextPage({
           usage={sidebarUsage}
           signedIn={!!session}
           signInRedirect={dashboardPath}
-          newTranscriptRedirect={postSignInPath}
+          newTranscriptRedirect={newTranscriptPath}
           signOutRedirect={homePath}
           userImage={session?.user?.image ?? null}
           userLabel={session?.user?.name ?? session?.user?.email ?? null}

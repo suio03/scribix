@@ -44,7 +44,7 @@ Cap at 1000 per run. If there are more, repeat after step 4.
 jq '.[0].results | length' /tmp/aai-purge-batch.json
 ```
 
-If 0, you're done — exit. If ≥ 950, plan to run this multiple times today.
+If 0, you're done — exit. If ≥ 950, plan to run this multiple times during the same maintenance window.
 
 ### 3. DELETE each from AssemblyAI
 

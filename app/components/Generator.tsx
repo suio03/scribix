@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { signIn } from "next-auth/react";
 import {
   Upload,
   PlaySquare,
@@ -13,14 +14,14 @@ import {
   Infinity as InfinityIcon,
   ShieldCheck,
   CloudUpload,
-  Square,
   type LucideIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { Tier } from "@/lib/plans";
-import { Waveform } from "./Waveform";
 import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
+import { Recorder } from "./Recorder";
 import { YouTubeImporter } from "./YouTubeImporter";
+import { markSignInPending } from "./Track";
 
 type TabId = "upload" | "youtube" | "record";
 type Tab = { id: TabId; label: string; hint: string };
@@ -51,7 +52,6 @@ export function Generator({
 }) {
   const t = useTranslations("Generator");
   const [tab, setTab] = useState<TabId>("upload");
-  const [recording, setRecording] = useState(false);
 
   const tabs = t.raw("tabs") as Tab[];
   const trust = t.raw("trust") as TrustItem[];
@@ -150,9 +150,12 @@ export function Generator({
                 />
               )}
               {tab === "record" && (
-                <RecordPane
-                  recording={recording}
-                  onToggle={() => setRecording((r) => !r)}
+                <Recorder
+                  signedIn={signedIn}
+                  postSignInPath={postSignInPath}
+                  checkoutSuccessPath={postSignInPath}
+                  tier={tier}
+                  toolSlug="home"
                 />
               )}
             </div>
@@ -185,6 +188,15 @@ function UploadPane({
     toolSlug: "home",
   });
 
+  const chooseFile = async () => {
+    if (!signedIn) {
+      markSignInPending();
+      await signIn("google", { redirectTo: postSignInPath });
+      return;
+    }
+    inputRef.current?.click();
+  };
+
   return (
     <div className="rise-in">
       <div
@@ -196,6 +208,11 @@ function UploadPane({
         onDrop={(e) => {
           e.preventDefault();
           setDragOver(false);
+          if (!signedIn) {
+            markSignInPending();
+            void signIn("google", { redirectTo: postSignInPath });
+            return;
+          }
           const file = e.dataTransfer.files?.[0];
           if (file) onPick(file);
         }}
@@ -226,11 +243,11 @@ function UploadPane({
             </div>
             <p className="mt-6 text-[15px] text-ink">{t("instruction")}</p>
             <p className="mt-1.5 font-mono text-[12px] uppercase tracking-[0.15em] text-muted">
-              {t("specs")}
+              {t(tier === "free" ? "specsFree" : "specsPaid")}
             </p>
             <button
               type="button"
-              onClick={() => inputRef.current?.click()}
+              onClick={() => void chooseFile()}
               className="group mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
             >
               <CloudUpload
@@ -243,58 +260,13 @@ function UploadPane({
             <UploadErrorHelp
               error={uploadError}
               onRetry={retry}
-              onChooseFile={() => inputRef.current?.click()}
+              onChooseFile={() => void chooseFile()}
               checkoutSuccessPath={checkoutSuccessPath}
             />
           </>
         ) : (
           <ProgressView phase={phase} progress={progress} filename={filename} />
         )}
-      </div>
-    </div>
-  );
-}
-
-function RecordPane({
-  recording,
-  onToggle,
-}: {
-  recording: boolean;
-  onToggle: () => void;
-}) {
-  const t = useTranslations("Generator.record");
-  return (
-    <div className="rise-in flex flex-col items-center gap-6 py-6 sm:py-10">
-      <button
-        type="button"
-        onClick={onToggle}
-        className={`group relative inline-grid size-24 place-items-center rounded-full border-4 transition ${
-          recording
-            ? "border-rec/30 bg-rec text-paper"
-            : "border-line bg-card text-ink hover:border-accent hover:text-accent"
-        }`}
-      >
-        {recording ? (
-          <Square size={26} strokeWidth={2} fill="currentColor" />
-        ) : (
-          <Mic size={28} strokeWidth={1.6} />
-        )}
-        {recording && (
-          <span className="absolute inset-0 -m-2 animate-ping rounded-full border-2 border-rec/40" />
-        )}
-      </button>
-      <div className="flex flex-col items-center gap-2">
-        <span className="font-display text-[22px] tracking-tight">
-          {recording ? t("active") : t("idle")}
-        </span>
-        <Waveform
-          bars={32}
-          animated={recording}
-          className={`h-8 ${recording ? "text-accent" : "text-line"}`}
-        />
-        <span className="font-mono text-[12px] uppercase tracking-[0.18em] text-muted">
-          {recording ? t("activeTime") : t("idleHint")}
-        </span>
       </div>
     </div>
   );

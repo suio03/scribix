@@ -1,4 +1,12 @@
 {
+  "SiteMetadata": {
+    "title": "Video zu Text — 45 Minuten kostenlos | Scribix",
+    "description": "Wandle Video und Audio in editierbaren Text mit Sprecherlabels, Zeitstempeln und TXT-, DOCX-, SRT-, VTT- oder CSV-Export um. 45 Minuten ohne Karte testen.",
+    "openGraphTitle": "Video und Audio zu Text | Scribix",
+    "openGraphDescription": "Medien hochladen und ein editierbares Transkript mit Sprecherlabels, Zeitstempeln und flexiblen Exporten erhalten.",
+    "twitterTitle": "Video und Audio zu Text | Scribix",
+    "twitterDescription": "45 Minuten KI-Transkription kostenlos testen. Keine Kreditkarte nötig."
+  },
   "Sidebar": {
     "openNav": "Navigation öffnen",
     "closeNav": "Navigation schließen",
@@ -69,7 +77,7 @@
     "manageBilling": "Abrechnung verwalten",
     "tierFree": "Kostenlos",
     "tierBasic": "Starter",
-    "tierPro": "Pro Unlimited",
+    "tierPro": "Pro",
     "cycleMonthly": "monatlich",
     "cycleYearly": "jährlich",
     "statusCanceled": "gekündigt",
@@ -89,26 +97,26 @@
     "issueLabel": "Ausgabe №01 · Video zu Text",
     "h1Part1": "Video in Text umwandeln.",
     "h1Part2": "<accent>Kostenlose KI-Transkription.</accent>",
-    "description": "Scribix verwandelt Video- und Audiodateien in Sekunden in präzisen Text mit Sprecherkennzeichnung. Lade eine MP4-, MOV-, WebM-, AVI-, MP3-, WAV- oder M4A-Datei hoch und erhalte ein vollständiges Transkript mit wortgenauen Zeitstempeln in <stat>200+ Sprachen</stat>. <stat>Kostenlos</stat> mit Google-Anmeldung, Dateien bis zu 1 GB.",
+    "description": "Scribix wandelt Video- und Audiodateien in Text mit Sprecherkennzeichnung um, den du prüfen und exportieren kannst. Lade MP4, MOV, WebM, AVI, MP3, WAV oder M4A hoch und erhalte Wort-Zeitstempel mit <stat>automatischer Spracherkennung</stat>. <stat>45 Minuten kostenlos</stat>, ohne Kreditkarte.",
     "trust": [
       {
-        "label": "99,9% Genauigkeit",
+        "label": "45 Minuten kostenlos",
         "icon": "Target"
       },
       {
-        "label": "200+ Sprachen",
+        "label": "Automatische Spracherkennung",
         "icon": "Globe"
       },
       {
-        "label": "Bis zu 1GB Dateien",
+        "label": "Audio bis 1 GB",
         "icon": "InfinityIcon"
       },
       {
-        "label": "Sprechererkennung",
+        "label": "Sprecherlabels",
         "icon": "Users"
       },
       {
-        "label": "Privat & sicher",
+        "label": "5 Exportformate",
         "icon": "ShieldCheck"
       }
     ],
@@ -134,8 +142,9 @@
     ],
     "upload": {
       "instruction": "Ziehen Sie eine Video- oder Audiodatei herein, oder klicken Sie zum Durchsuchen.",
-      "specs": "Video bis 5 GB · Audio bis 1 GB · MP4 · MOV · WEBM · MP3 · WAV · M4A",
-      "button": "Datei hochladen"
+      "button": "Datei hochladen",
+      "specsFree": "Video bis 2 GB · Audio bis 1 GB · Dateien bis 45 Min.",
+      "specsPaid": "Video bis 5 GB · Audio bis 1 GB · Limits je nach Tarif"
     },
     "record": {
       "active": "Wird aufgenommen…",
@@ -145,31 +154,24 @@
     }
   },
   "TrustStrip": {
-    "tagline": "Vertraut von Videokünstlern, Journalisten und Podcastern weltweit",
-    "logos": [
-      "Stanford Podcast Network",
-      "TED Conferences",
-      "The Atlantic",
-      "Y Combinator",
-      "Wirecutter",
-      "MIT Sloan Review"
-    ],
+    "tagline": "Im Scribix-Transkriptionsablauf enthalten",
+    "logos": [],
     "stats": [
       {
-        "value": "10M+",
-        "label": "Transkribierte Minuten"
+        "value": "45 Min.",
+        "label": "Kostenloses Guthaben"
       },
       {
-        "value": "100K+",
-        "label": "Aktive Kreative"
+        "value": "5",
+        "label": "Exportformate"
       },
       {
-        "value": "200+",
-        "label": "Unterstützte Sprachen"
+        "value": "1 GB",
+        "label": "Audiolimit"
       },
       {
-        "value": "99,9%",
-        "label": "Genauigkeit auf Wortebene"
+        "value": "10 Std.",
+        "label": "Dateilänge bei Pro"
       }
     ]
   },
@@ -181,14 +183,14 @@
     "items": [
       {
         "icon": "Users",
-        "title": "Sprechererkennung, bis zu 8 Stimmen",
-        "body": "Voice-Fingerprinting trennt und beschriftet jeden Redebeitrag – \"Sprecher 1\", \"Sprecher 2\" werden mit einem Klick zu echten Namen. Perfekt für Interviews, Podcasts und Panels.",
+        "title": "Sprecherlabels für Gespräche",
+        "body": "Scribix fordert Sprechertrennung an und trennt Redebeiträge, wenn die Aufnahmequalität es zulässt. Die Labels lassen sich danach umbenennen.",
         "span": "lg:col-span-2"
       },
       {
         "icon": "Globe",
-        "title": "200+ Sprachen, automatisch erkannt",
-        "body": "Von Mandarin bis Maltesisch mit Code-Switching-Unterstützung. Das Modell passt sich an, wenn Sprecher die Sprache wechseln."
+        "title": "Automatische Spracherkennung",
+        "body": "Scribix erkennt die gesprochene Sprache automatisch, sodass meist keine Spracheinstellung nötig ist."
       },
       {
         "icon": "Clock",
@@ -203,13 +205,13 @@
       },
       {
         "icon": "Sparkles",
-        "title": "Studio-Qualität Genauigkeit",
-        "body": "99,9% bei klarem Audio in Primärsprachen, gemessen anhand eines 50-Stunden-Benchmarks von TED-Talks, Podcasts und Interviews. Hintergrundgeräusche und Akzente werden elegant bewältigt."
+        "title": "Prüfbare Transkripte",
+        "body": "Das Ergebnis hängt von Aufnahmequalität, Geräuschen, Akzenten, Fachbegriffen und überlappender Sprache ab. Sprecherlabels und Zeitstempel erleichtern die Prüfung."
       },
       {
         "icon": "Lock",
-        "title": "Dateien nach 24 Stunden gelöscht",
-        "body": "TLS 1.3 in der Übertragung, AES-256 im Ruhezustand, Verarbeitung im verschlüsselten Speicher. SOC 2-konform, GDPR-konform. Wir trainieren nie Modelle auf Ihrem Audio."
+        "title": "Quelldateien nach 14 Tagen gelöscht",
+        "body": "Hochgeladene Audio- und Videodateien werden nach 14 Tagen automatisch gelöscht. Transkripte bleiben bis zur Löschung oder Kontoschließung erhalten."
       }
     ]
   },
@@ -217,7 +219,7 @@
     "label": "Wie es funktioniert",
     "number": "02",
     "h2Part1": "Drei Schritte.",
-    "h2Part2": "<accent>Video zu Text in unter einer Minute.</accent>",
+    "h2Part2": "Transkription mit Sprecherlabels.",
     "steps": [
       {
         "n": "01",
@@ -230,8 +232,8 @@
         "n": "02",
         "icon": "Cpu",
         "title": "KI transkribiert mit Sprecherbeschriftungen.",
-        "body": "Unser Modell erkennt die Sprache automatisch (200+ unterstützt), trennt bis zu 8 Sprecher und fügt Zeitstempel an jedes Wort an. Ein 1-Stunden-Video wird in etwa 90 Sekunden transkribiert.",
-        "duration": "~90s für 1-Stunden-Video"
+        "body": "Scribix erkennt die Sprache, trennt Sprecher bei geeigneter Audioqualität und fügt Wort-Zeitstempel hinzu. Die Dauer hängt von Datei und Auslastung ab.",
+        "duration": "Dauer variiert"
       },
       {
         "n": "03",
@@ -308,7 +310,7 @@
         "icon": "Scale",
         "title": "Legal & Compliance",
         "audience": "Aussagen, Anhörungen",
-        "body": "Erste Transkripte von Aussagen, Vorstandssitzungen und Compliance-Interviews – dann lassen Sie einen Menschen die Teile überprüfen, die wichtig sind. Zeitcodierte Transkripte und eine nachvollziehbare Verarbeitungskette. SOC 2-konform.",
+        "body": "Erstelle einen zeitgestempelten ersten Entwurf zur Prüfung. Rechtliche oder Compliance-Transkripte müssen vor der Nutzung von einer qualifizierten Person geprüft werden.",
         "workflow": [
           "Anhörungs-Aufnahme",
           "Zeitcodiertes Transkript",
@@ -317,124 +319,12 @@
       }
     ]
   },
-  "Comparison": {
-    "label": "Verglichen",
-    "number": "04",
-    "h2": "Schneller, präziser, <accent>und eine echte kostenlose Testversion.</accent>",
-    "intro": "Wir benchmarken monatlich gegen die führenden Video-zu-Text-Tools anhand eines 200-Stunden-Test-Sets mit 12 Sprachen, 48 Sprechern und 4 Audioumgebungen – Studio, Telefon, Konferenz und Außenbereich.",
-    "featureHeader": "Funktion",
-    "cols": [
-      "Scribix",
-      "Otter",
-      "Rev",
-      "Whisper.cpp"
-    ],
-    "rows": [
-      {
-        "feature": "Kostenlose Testversion",
-        "cells": [
-          "45 Min einmalig",
-          "300 / mo",
-          "45 trial",
-          "Unlimited"
-        ]
-      },
-      {
-        "feature": "Dateigröße-Limit",
-        "cells": [
-          "1 GB",
-          "1.1 GB",
-          "2 GB",
-          "Local"
-        ]
-      },
-      {
-        "feature": "Unterstützte Sprachen",
-        "cells": [
-          "200+",
-          "30+",
-          "38",
-          "99"
-        ]
-      },
-      {
-        "feature": "Sprechertrennung",
-        "cells": [
-          "yes",
-          "yes",
-          "yes",
-          "no"
-        ]
-      },
-      {
-        "feature": "Zeitstempel auf Wortebene",
-        "cells": [
-          "yes",
-          "no",
-          "yes",
-          "yes"
-        ]
-      },
-      {
-        "feature": "Exportformate",
-        "cells": [
-          "7",
-          "4",
-          "5",
-          "1"
-        ]
-      },
-      {
-        "feature": "Dateien gelöscht nach",
-        "cells": [
-          "14 days",
-          "30 days+",
-          "30 days+",
-          "Self-host"
-        ]
-      },
-      {
-        "feature": "Preisgestaltung – 100 Stunden",
-        "cells": [
-          "$12",
-          "$30",
-          "$150",
-          "Compute only"
-        ]
-      }
-    ]
-  },
-  "Testimonials": {
-    "label": "Testimonien",
-    "number": "05",
-    "h2": "Entwickelt für die <accent>chaotische Realität</accent> von aufgezeichnetem Video.",
-    "items": [
-      {
-        "quote": "Ich produziere einen wöchentlichen Video-Podcast mit drei Gästen. Scribix verwandelt drei Stunden überlappender Audio in etwas, das ich direkt in mein CMS einfügen kann. Allein die Sprecherbeschriftungen sparen mir einen ganzen Nachmittag.",
-        "name": "Maya Bhattacharya",
-        "role": "Senior Producer · The Open Notebook",
-        "rating": "5.0"
-      },
-      {
-        "quote": "Wir hatten einen Rechtsfall, in dem wir zeitcodierte Transkripte von 14 Stunden Aussage-Video brauchten. Scribix lieferte eine sauberere Ausgabe als der beglaubigte Service, den wir $4/min gezahlt hatten. Verrückt.",
-        "name": "Daniel Reyes",
-        "role": "Litigation Counsel · Reyes & Patel",
-        "rating": "4.9"
-      },
-      {
-        "quote": "Ich nehme jedes Feldforschungs-Interview in Bahasa mit Code-gewechseltem Englisch auf Video auf. Andere Tools scheitern. Scribix transkribiert das Ganze, ohne dass ich eine Spracheinstellung berühre.",
-        "name": "Dr. Aisha Mohktar",
-        "role": "Anthropologist · NUS",
-        "rating": "5.0"
-      }
-    ]
-  },
   "PricingPage": {
     "metadata": {
       "title": "Preise",
-      "description": "Einfache Scribix-Preise: kostenlos starten, mit Starter 600 Minuten pro Monat nutzen oder Pro Unlimited mit 2.400 priorisierten Minuten und Fair-Use-Verarbeitung wählen.",
+      "description": "Einfache Preise: 45 kostenlose Minuten auf Lebenszeit, Starter mit 600 Minuten pro Monat oder Pro mit 2.400 Minuten pro Monat.",
       "ogTitle": "Scribix Preise",
-      "ogDescription": "Kostenlose Testphase sowie Starter- und Pro Unlimited-Pläne für Audio- und Video-Transkription."
+      "ogDescription": "Kostenloser, Starter- und Pro-Tarif für Audio- und Videotranskription."
     },
     "h1": "Einfache Preise für ernsthafte Transkription.",
     "bestValue": "Bester Wert",
@@ -458,7 +348,7 @@
         "values": {
           "free": "Auf 45 Min. gesamt begrenzt",
           "starter": "Unbegrenzte Dateien innerhalb von 600 Min.",
-          "pro": "Unbegrenzte Dateien"
+          "pro": "Innerhalb von 2.400 Min./Monat"
         }
       },
       {
@@ -467,7 +357,7 @@
         "values": {
           "free": "45 lebenslang",
           "starter": "600 Min./Monat",
-          "pro": "2.400 priorisierte Min./Monat"
+          "pro": "2.400 Min./Monat"
         }
       },
       {
@@ -510,9 +400,9 @@
         "key": "processingQueue",
         "label": "Verarbeitungswarteschlange",
         "values": {
-          "free": "Kostenlose Warteschlange",
-          "starter": "Standardwarteschlange",
-          "pro": "Priorisierte Warteschlange"
+          "free": "Standard",
+          "starter": "Standard",
+          "pro": "Standard"
         }
       },
       {
@@ -581,10 +471,10 @@
       },
       {
         "id": "pro",
-        "name": "Pro Unlimited",
+        "name": "Pro",
         "price": "$19",
         "cadence": "pro Monat",
-        "summary": "Der beste Wert für ernsthafte Transkription.",
+        "summary": "Einfache Preise: 45 kostenlose Minuten auf Lebenszeit, Starter mit 600 Minuten pro Monat oder Pro mit 2.400 Minuten pro Monat.",
         "annual": "$179/Jahr",
         "annualPrice": "$179",
         "annualCadence": "pro Jahr"
@@ -609,11 +499,11 @@
       },
       {
         "question": "Kann ich später den Plan wechseln?",
-        "answer": "Ja. Die Planstruktur ist so gedacht, dass du mit Starter beginnen und zu Pro wechseln kannst, wenn längere Dateien, priorisierte Warteschlange oder KI-Ausgaben wichtig werden."
+        "answer": "Ja. Du kannst mit Starter beginnen und zu Pro wechseln, wenn du längere Dateien oder mehr Minuten benötigst."
       },
       {
         "question": "Gibt es eine kostenlose Testphase für kostenpflichtige Pläne?",
-        "answer": "Ja. Starter und Pro Unlimited enthalten beide 14 Tage kostenlos, und du kannst jederzeit vor Ende der Testphase kündigen."
+        "answer": "Bezahlte Tarife haben keine separate Testphase. Nutze die 45 kostenlosen Minuten auf Lebenszeit, um die Qualität vor dem Abo zu prüfen."
       }
     ],
     "aiFeatures": "KI-Zusammenfassungen + Übersetzung",
@@ -624,7 +514,7 @@
   },
   "FAQ": {
     "label": "Häufig gestellte Fragen",
-    "number": "07",
+    "number": "04",
     "h2Part1": "Fragen,",
     "h2Part2": "<accent>sorgfältig beantwortet.</accent>",
     "contactPrefix": "Können Sie nicht finden, was Sie suchen? Senden Sie eine E-Mail an",
@@ -633,31 +523,31 @@
     "items": [
       {
         "q": "Ist Scribix wirklich kostenlos für Video zu Text?",
-        "a": "Ja. Die kostenlose Testversion benötigt nur eine Google-Anmeldung – keine Kreditkarte. Sie erhalten 45 Minuten Transkription, um die Qualität zu testen, bevor Sie sich entscheiden. Bezahlte Pläne entsperren längere Dateien, Prioritätswarteschlange, Team-Bibliotheken und längere Dateispeicherung."
+        "a": "Ja. Mit Google-Anmeldung erhältst du 45 Transkriptionsminuten auf Lebenszeit, ohne Kreditkarte. Bezahlte Tarife erhöhen Nutzungs- und Dateilängenlimits."
       },
       {
         "q": "Welche Videoformate unterstützt Scribix?",
-        "a": "MP4, MOV, AVI, MKV und WebM bis zu jeweils 1 GB. Reine Audiodateien (MP3, WAV, M4A) werden ebenfalls unterstützt."
+        "a": "Unterstützt werden MP4, MOV, AVI, MKV, WebM, MP3, WAV und M4A. Kostenlos: Video bis 2 GB, Audio bis 1 GB; bezahlt: Video bis 5 GB, Audio bis 1 GB, abhängig von Dauer und Kontingent."
       },
       {
         "q": "Wie genau ist Scribix's Video-zu-Text?",
-        "a": "99,9% bei klarem Audio in Primärsprachen, gemessen anhand eines 50-Stunden-Benchmarks von TED-Talks, Podcasts und Interviews. Die Genauigkeit sinkt leicht bei starken Akzenten, Hintergrundmusik oder niedrig-bitraten Audio – aber Sprecherbeschriftungen und Zeitstempel auf Wortebene machen Korrektionen schnell."
+        "a": "Die Qualität hängt von Klarheit, Mikrofonabstand, Geräuschen, Akzenten, Fachbegriffen und überlappender Sprache ab. Prüfe wichtige Transkripte."
       },
       {
         "q": "Wie viele Sprachen unterstützt Scribix?",
-        "a": "200+, mit automatischer Spracherkennung. Das Modell bewältigt Code-Switching (Englisch ↔ Spanisch, Englisch ↔ Mandarin) innerhalb derselben Aufnahme. Keine Notwendigkeit, eine Primärsprache vorab auszuwählen."
+        "a": "Scribix erkennt die gesprochene Sprache automatisch. Die Abdeckung hängt vom Transkriptionsmodell deines Tarifs und vom Audio ab."
       },
       {
         "q": "Kann Scribix verschiedene Sprecher unterscheiden?",
-        "a": "Ja. Voice-Fingerprinting identifiziert bis zu 8 unterschiedliche Sprecher und beschriftet jede Zeile entsprechend. Sie können Sprecher 1, Sprecher 2 usw. nach der Transkription in echte Namen umbenennen, und das Modell merkt sich Stimmen über Aufnahmen hinweg."
+        "a": "Ja. Scribix fordert Sprecherlabels an und kann Gespräche bei geeigneter Aufnahmequalität trennen. Die Labels lassen sich danach umbenennen."
       },
       {
         "q": "Wie lange dauert die Video-zu-Text-Transkription?",
-        "a": "Bei MP4s mit klarem Ton dauert die Verarbeitung ungefähr 1 Minute Rechenzeit pro Videostunde. Ein 30-minütiges Meeting dauert etwa 45 Sekunden."
+        "a": "Die Dauer hängt von Länge, Format, Extraktion, Netzwerk und Dienstauslastung ab. Scribix zeigt den Fortschritt an."
       },
       {
         "q": "Sind meine Daten sicher, wenn ich ein Video hochlade?",
-        "a": "Dateien werden über TLS 1.3 hochgeladen, im verschlüsselten Speicher verarbeitet und innerhalb von 24 Stunden gelöscht. Wir trainieren keine Modelle auf Benutzer-Audio. SOC 2-konforme Infrastruktur, GDPR-konforme Datenverarbeitung und Verarbeitungsoptionen in der EU und USA."
+        "a": "Hochgeladene Audio- und Videodateien werden nach 14 Tagen automatisch gelöscht. Transkripte bleiben bis zur Löschung oder Kontoschließung erhalten. Details stehen in der Datenschutzrichtlinie."
       },
       {
         "q": "Worauf kann ich das Transkript exportieren?",
@@ -677,16 +567,16 @@
     "primaryCta": "Video hochladen",
     "stats": [
       {
-        "value": "99,9%",
-        "label": "Genauigkeit"
+        "value": "45 Min.",
+        "label": "Kostenloses Guthaben"
       },
       {
-        "value": "5×",
-        "label": "Echtzeit"
+        "value": "5",
+        "label": "Exportformate"
       },
       {
-        "value": "7d",
-        "label": "Auto-Delete"
+        "value": "1 GB",
+        "label": "Audiolimit"
       }
     ]
   },
@@ -749,7 +639,7 @@
       "deleteWarning": "Löschen Sie dauerhaft Ihr Konto, Ihre Transkriptionen und Audio. Dies kann nicht rückgängig gemacht werden.",
       "tierFree": "Kostenlos",
       "tierBasic": "Starter",
-      "tierPro": "Pro Unlimited",
+      "tierPro": "Pro",
       "cycleMonthly": "monatlich",
       "cycleYearly": "jährlich",
       "statusCanceled": "(gekündigt – Zugriff bis Periodenende)",
@@ -982,7 +872,14 @@
       "stop": "Aufnahme beenden",
       "tapToRecord": "Zum Aufnehmen tippen · bis zu {min} Min.",
       "recording": "Aufnahme läuft – stoppt automatisch bei {min} Min.",
-      "micDenied": "Mikrofonzugriff verweigert."
+      "micDenied": "Mikrofonzugriff verweigert.",
+      "unsupported": "Audioaufnahmen werden in diesem Browser nicht unterstützt.",
+      "pause": "Aufnahme pausieren",
+      "resume": "Aufnahme fortsetzen",
+      "paused": "Aufnahme pausiert",
+      "review": "Aufnahme prüfen",
+      "cancel": "Verwerfen",
+      "upload": "Aufnahme transkribieren"
     },
     "youtube": {
       "title": "Import YouTube captions",
@@ -1014,12 +911,12 @@
   },
   "AudioToText": {
     "metadata": {
-      "title": "Audio zu Text | KI-Transkription online",
-      "description": "Wandle Audio online mit Scribix in Text um. Mit Google anmelden, MP3, WAV oder M4A hochladen und Sprecher-Transkripte kopieren oder exportieren.",
-      "openGraphTitle": "Audio zu Text | KI-Transkription online | Scribix",
-      "openGraphDescription": "Mit Google anmelden, Audio hochladen und ein Transkript mit Sprechern, Zeitstempeln und Exporten erhalten.",
-      "twitterTitle": "Audio zu Text | Scribix",
-      "twitterDescription": "Audio hochladen und durchsuchbare Transkripte mit Sprechern, Zeitstempeln und Exporten erhalten."
+      "title": "Audio in Text — 45 Minuten kostenlos | Scribix",
+      "description": "MP3, WAV und M4A in Text mit Sprecherlabels und Zeitstempeln umwandeln. TXT, DOCX, SRT, VTT oder CSV exportieren. 45 Minuten kostenlos.",
+      "openGraphTitle": "Audio in Text — 45 Minuten kostenlos | Scribix",
+      "openGraphDescription": "MP3, WAV und M4A in Text mit Sprecherlabels und Zeitstempeln umwandeln. TXT, DOCX, SRT, VTT oder CSV exportieren. 45 Minuten kostenlos.",
+      "twitterTitle": "Audio in Text — 45 Minuten kostenlos | Scribix",
+      "twitterDescription": "MP3, WAV und M4A in Text mit Sprecherlabels und Zeitstempeln umwandeln. TXT, DOCX, SRT, VTT oder CSV exportieren. 45 Minuten kostenlos."
     },
     "hero": {
       "issue": "REC · 00:00:00",
@@ -1027,9 +924,9 @@
       "title": "Audio in Text umwandeln.",
       "accentTitle": "KI-Transkription.",
       "descriptionStart": "Scribix wandelt Audiodateien in präzisen Text mit Sprecherlabels um, den du prüfen, kopieren und exportieren kannst. Melde dich mit Google an, lade eine Audiodatei hoch und erhalte ein Transkript mit Zeitstempeln in",
-      "stat": "über 200 Sprachen",
+      "stat": "Automatische Spracherkennung",
       "descriptionEnd": ".",
-      "primaryCta": "Anmelden, um Audio hochzuladen",
+      "primaryCta": "45 Minuten kostenlos testen",
       "signedInPrimaryCta": "Audio hochladen",
       "secondaryCta": "Brauchst du Video zu Text?",
       "secondaryHref": "/",
@@ -1040,7 +937,7 @@
         },
         {
           "icon": "Globe",
-          "label": "200+ Sprachen"
+          "label": "Automatische Spracherkennung"
         },
         {
           "icon": "Users",
@@ -1057,7 +954,7 @@
       "uploadHint": "Audio",
       "instruction": "Audiodatei ablegen oder zum Auswählen klicken.",
       "specs": "Kostenlose Probe: 45 Min. · MP3 · WAV · M4A · keine Kreditkarte",
-      "button": "Anmelden, um Audio hochzuladen",
+      "button": "45 Minuten kostenlos testen",
       "signedInButton": "Audio hochladen"
     },
     "quickAnswer": {
@@ -1194,7 +1091,7 @@
       "items": [
         {
           "icon": "Globe",
-          "title": "200+ Sprachen",
+          "title": "Automatische Spracherkennung",
           "body": "Automatische Spracherkennung hält den Upload einfach, wenn Aufnahmen mehrere Sprecher oder Regionen enthalten."
         },
         {
@@ -1220,7 +1117,7 @@
           "icon": "Sparkles",
           "title": "Wie genau ist Audio-zu-Text-Transkription?",
           "body": [
-            "Scribix kann bei klarem Audio 99,9% Genauigkeit erreichen. Reale Ergebnisse hängen von Aufnahmequalität, Mikrofonabstand, Hintergrundgeräuschen, Akzenten, Fachvokabular und überlappenden Stimmen ab.",
+            "Klare Aufnahmen liefern meist bessere Ergebnisse. Die Qualität hängt von Abstand, Geräuschen, Akzenten, Fachbegriffen und überlappender Sprache ab.",
             "Für juristische, medizinische, akademische, finanzielle oder veröffentlichte Arbeit sollte das Transkript als starker erster Entwurf geprüft werden."
           ]
         },
@@ -1300,11 +1197,11 @@
         },
         {
           "q": "Wie viele Sprachen unterstützt Scribix?",
-          "a": "Scribix unterstützt Transkription in über 200 Sprachen mit automatischer Erkennung."
+          "a": "Scribix erkennt die gesprochene Sprache automatisch. Die Abdeckung hängt vom Transkriptionsmodell deines Tarifs und vom Audio ab."
         },
         {
           "q": "Wie genau ist Scribix?",
-          "a": "Scribix kann bei klarem Audio 99,9% erreichen, aber Ergebnisse hängen von Audioqualität, Akzenten, Rauschen, Übersprechen und Fachvokabular ab. Prüfe wichtige Transkripte vor Veröffentlichung oder Nutzung."
+          "a": "Klare Aufnahmen liefern meist bessere Ergebnisse. Die Qualität hängt von Abstand, Geräuschen, Akzenten, Fachbegriffen und überlappender Sprache ab."
         },
         {
           "q": "Wird mein Audio für immer gespeichert?",
@@ -1324,8 +1221,8 @@
           "label": "Probe"
         },
         {
-          "value": "200+",
-          "label": "Sprachen"
+          "value": "Automatisch",
+          "label": "Spracherkennung"
         },
         {
           "value": "14 Tage",
@@ -1340,7 +1237,6 @@
       "featureList": [
         "Audiodatei hochladen",
         "Automatische Spracherkennung",
-        "200+ Sprachen",
         "Sprecherlabels",
         "Zeitgestempelte Transkripte",
         "TXT-Export",
@@ -1395,7 +1291,7 @@
       "title": "MP3 in Text umwandeln.",
       "accentTitle": "KI-Transkription.",
       "descriptionStart": "Scribix wandelt MP3-Audio in präzisen, sprechergetrennten Text um, den du prüfen, kopieren und exportieren kannst. Melde dich mit Google an, lade deine MP3 hoch und erhalte ein Transkript mit Zeitstempeln in",
-      "stat": "über 200 Sprachen",
+      "stat": "Automatische Spracherkennung",
       "descriptionEnd": ".",
       "primaryCta": "MP3 in Text umwandeln",
       "signedInPrimaryCta": "MP3 hochladen",
@@ -1408,7 +1304,7 @@
         },
         {
           "icon": "Globe",
-          "label": "Über 200 Sprachen"
+          "label": "Automatische Spracherkennung"
         },
         {
           "icon": "Users",
@@ -1563,7 +1459,7 @@
       "items": [
         {
           "icon": "Globe",
-          "title": "Über 200 Sprachen",
+          "title": "Automatische Spracherkennung",
           "body": "Automatische Spracherkennung hält den Upload einfach, wenn Aufnahmen verschiedene Regionen oder Sprecher umfassen."
         },
         {
@@ -1589,7 +1485,7 @@
           "icon": "Sparkles",
           "title": "Wie genau ist MP3-zu-Text-Transkription?",
           "body": [
-            "Scribix kann bei klarem Audio 99,9 % Genauigkeit erreichen. Die tatsächlichen Ergebnisse hängen von Mikrofonqualität, Sprecherabstand, Hintergrundrauschen, Akzenten, Überschneidungen, Fachvokabular und MP3-Qualität ab.",
+            "Klare Aufnahmen liefern meist bessere Ergebnisse. Die Qualität hängt von Abstand, Geräuschen, Akzenten, Fachbegriffen und überlappender Sprache ab.",
             "Für juristische, medizinische, akademische, finanzielle oder veröffentlichte Inhalte solltest du das Transkript als starken ersten Entwurf betrachten und vor dem Teilen prüfen."
           ]
         },
@@ -1665,11 +1561,11 @@
         },
         {
           "q": "Wie viele Sprachen unterstützt Scribix?",
-          "a": "Scribix unterstützt Transkription in über 200 Sprachen mit automatischer Spracherkennung."
+          "a": "Scribix erkennt die gesprochene Sprache automatisch. Die Abdeckung hängt vom Transkriptionsmodell deines Tarifs und vom Audio ab."
         },
         {
           "q": "Wie genau ist MP3-Transkription?",
-          "a": "Scribix kann bei klarem Audio 99,9 % Genauigkeit erreichen, aber die Genauigkeit hängt von Audioqualität, Akzenten, Rauschen, Überschneidungen und Fachvokabular ab. Prüfe wichtige Transkripte vor Veröffentlichung oder Nutzung."
+          "a": "Klare Aufnahmen liefern meist bessere Ergebnisse. Die Qualität hängt von Abstand, Geräuschen, Akzenten, Fachbegriffen und überlappender Sprache ab."
         },
         {
           "q": "Beeinflusst MP3-Komprimierung die Transkriptionsqualität?",
@@ -1697,8 +1593,8 @@
           "label": "Test"
         },
         {
-          "value": "200+",
-          "label": "Sprachen"
+          "value": "Automatisch",
+          "label": "Spracherkennung"
         },
         {
           "value": "14 Tage",

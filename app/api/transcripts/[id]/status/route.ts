@@ -21,7 +21,7 @@ export async function GET(_: Request, { params }: Params) {
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(
     `SELECT id, user_id, webhook_token, reserved_minutes, status, error,
-            aai_transcript_id, created_at, completed_at
+            aai_transcript_id, created_at, submit_started_at, completed_at
        FROM transcripts
       WHERE id = ?1 AND deleted_at IS NULL`
   )
@@ -35,6 +35,7 @@ export async function GET(_: Request, { params }: Params) {
       error: string | null;
       aai_transcript_id: string | null;
       created_at: string;
+      submit_started_at: string | null;
       completed_at: string | null;
     }>();
   if (!row) return Response.json({ error: "not_found" }, { status: 404 });
@@ -50,7 +51,7 @@ export async function GET(_: Request, { params }: Params) {
   if (
     row.status === "uploading" &&
     !row.aai_transcript_id &&
-    isOlderThanMin(row.created_at, STRANDED_UPLOAD_MIN)
+    isOlderThanMin(row.submit_started_at ?? row.created_at, STRANDED_UPLOAD_MIN)
   ) {
     const claim = await env.DB.prepare(
       `UPDATE transcripts SET status = 'error', error = ?1, reserved_minutes = 0

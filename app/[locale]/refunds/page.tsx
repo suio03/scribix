@@ -35,7 +35,7 @@ export default async function RefundsPage({
 
       <H2>Refund Eligibility</H2>
       <p>
-        Refund requests apply only to <strong>subscription purchases</strong> (Starter or Pro Unlimited,
+        Refund requests apply only to <strong>subscription purchases</strong> (Starter or Pro,
         monthly or yearly) and must be submitted within <strong>14 days of the purchase date</strong>.
       </p>
       <p>

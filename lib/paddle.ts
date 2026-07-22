@@ -122,6 +122,27 @@ export async function createPaddlePortalSession({
   return { url };
 }
 
+export async function getPaddleTransaction<T>({
+  apiKey,
+  environment,
+  transactionId,
+}: {
+  apiKey: string;
+  environment: PaddleEnvironment;
+  transactionId: string;
+}): Promise<T> {
+  const json = await paddleRequest<{ data?: T }>(
+    environment,
+    apiKey,
+    `/transactions/${encodeURIComponent(transactionId)}`,
+    { method: "GET" }
+  );
+  if (!json.data) {
+    throw new PaddleApiError("Paddle transaction response was missing data.", 502, "");
+  }
+  return json.data;
+}
+
 export async function verifyPaddleSignature({
   rawBody,
   signatureHeader,

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "../../i18n/routing";
 import Analytics from "../components/Analytics";
@@ -35,42 +35,30 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const canonical = metadataUrlFor(locale, "");
+  const t = await getTranslations({ locale, namespace: "SiteMetadata" });
 
   return {
     metadataBase: new URL(SITE),
     title: {
-      default: "Video to Text — Free AI Transcription Online | Scribix",
+      default: t("title"),
       template: "%s · Scribix",
     },
-    description:
-      "Convert video and audio files to text online. Upload MP4, MOV, WebM, MP3, WAV, or M4A and get accurate, speaker-labeled transcripts in 200+ languages.",
-    keywords: [
-      "video to text",
-      "video to text converter",
-      "convert video to text",
-      "video transcription",
-      "mp4 to text",
-      "audio to text",
-      "ai transcription",
-      "speaker recognition",
-    ],
+    description: t("description"),
     alternates: {
       canonical,
       languages: homeLanguages(),
     },
     openGraph: {
-      title: "Video to Text — Free AI Transcription | Scribix",
-      description:
-        "Upload a video or audio file. Get an accurate, speaker-labeled transcript in seconds. Free with Google sign-in, 200+ languages.",
+      title: t("openGraphTitle"),
+      description: t("openGraphDescription"),
       type: "website",
       siteName: "Scribix",
       url: canonical,
     },
     twitter: {
       card: "summary_large_image",
-      title: "Video to Text — Free AI Transcription | Scribix",
-      description:
-        "Convert any video to text free online. Speaker labels, word-level timestamps, 200+ languages.",
+      title: t("twitterTitle"),
+      description: t("twitterDescription"),
     },
   };
 }

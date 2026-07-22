@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.18.0] - 2026-07-22
+
+### Added
+- Added authenticated upload preflight, tier-aware limit guidance, upgrade conversion events, and detailed direct-video lifecycle telemetry.
+- Added real browser recording with pause, resume, preview, discard, permission handling, and upload support.
+- Added durable Paddle transaction and adjustment ownership records without duplicating monetary data from Paddle.
+- Added post-release reliability monitoring, Bing tracking support, and a documented growth and conversion repair plan.
+
+### Changed
+- Made Paddle the sole financial source of truth while keeping checkout completion, plan, cycle, and transaction attribution in Scribix and Plausible.
+- Improved localized metadata, sitemap stability, robots rules, landing-page authentication return paths, and core English and translated product copy.
+- Replaced unsupported marketing proof, security claims, customer logos, and benchmark language with verifiable product facts.
+
+### Fixed
+- Prevented ambiguous AssemblyAI submissions and stale cleanup from permanently consuming transcription quota, including recovery by webhook token when the upstream ID response is lost.
+- Improved multipart upload retry, offline recovery, polling recovery, refresh continuation, and safe submit retry behavior without duplicate uploads or transcription jobs.
+- Prevented missing Paddle totals from blocking plan activation and recovered historical or out-of-order adjustment ownership without silently discarding Scribix events.
+- Removed redirected localized legal URLs from sitemap hreflang output and aligned canonical legal entries with middleware behavior.
+- Restored functional homepage recording, YouTube OAuth URL recovery, and authentication before file selection on public upload tools.
+
+### Removed
+- Removed client-side revenue amounts, local monetary ledger columns, the internal revenue endpoint, and unused checkout payment breakdowns.
+- Removed the obsolete logo exploration asset and unsupported testimonial/comparison content.
+
 ## [0.17.0] - 2026-07-19
 
 ### Added

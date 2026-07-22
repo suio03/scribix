@@ -27,16 +27,16 @@ There is **no test framework or `npm test`**. Validate changes with `npm run bui
 
 This is the central architecture and spans several files — read these together before touching the pipeline:
 
-1. **`POST /api/transcripts/init`** — validates per-tier duration/size caps (`PLANS` in `lib/plans.ts`), creates a `pending` transcript row, and returns a presigned R2 **PUT** URL (`lib/r2.ts`). The client uploads media directly to R2 (browser → R2, not through the Worker). Video is extracted to ~64 kbps mono MP3 client-side (ffmpeg.wasm / Web Audio) before this step; `maxVideoUploadBytes` is a hard ceiling so a client can't claim `isVideo` and PUT an unbounded blob.
-2. **`POST /api/transcripts/[id]/start`** — reserves quota (`reserveQuota` in `lib/quota.ts`), presigns an R2 **GET** URL, and submits to AssemblyAI (`submitTranscript` in `lib/aai.ts`) with a webhook callback. Status moves `pending → uploading → queued`. On AAI submit failure it **refunds the reservation** (`reconcileQuota`) and marks the row `error` — quota must never strand.
-3. **`POST /api/webhook/assemblyai`** — AAI calls back on completion; verified via the `X-Scribix-Token` header matching the row's `webhook_token`. Fetches the result, writes transcript JSON to R2, reconciles quota against actual `audio_duration`, sets `completed`.
-4. **Status statuses** progress through `pending → uploading → queued → processing → extracting_audio → uploading_audio → transcribing → completed | error | failed` (see `migrations/0002`).
+1. **`POST /api/transcripts/init`** — validates per-tier duration/size/format caps (`PLANS` and `lib/media-upload.ts`) and creates a `pending` row. Audio and successfully extracted small-video audio receive a presigned single PUT URL. Videos over 1 GiB, metadata failures, and extraction failures create an R2 multipart upload instead. Direct video uses fixed 100 MiB parts with two browser workers and server-side ListParts/ETag validation; never buffer the whole file in JavaScript. Free video is capped at 2 GiB, paid video at 4.9 billion bytes (displayed as 5 GB), and audio at 1 GiB.
+2. **`POST /api/transcripts/[id]/start`** — HEAD-validates the completed R2 object (existence, exact bytes, current tier cap, media type), atomically reserves quota (`reserveQuota` in `lib/quota.ts`), presigns an R2 **GET** URL, and submits to AssemblyAI (`submitTranscript` in `lib/aai.ts`) with a webhook callback. Unknown-duration direct video conservatively reserves the smaller of the plan file limit and remaining quota. Status moves `pending → uploading → queued`. Definite AAI submit failures refund immediately; ambiguous network/response failures stay `uploading` and continue status recovery without a blind resubmit.
+3. **`POST /api/webhook/assemblyai`** — AAI calls back on completion; verified via the `X-Scribix-Token` header matching the row's `webhook_token`. If an ambiguous submit lost the AAI ID, the unique token binds it before processing. The handler fetches the result, writes transcript JSON to R2, reconciles quota against actual `audio_duration`, and sets `completed`.
+4. **Statuses** progress through `pending → uploading → queued → processing → extracting_audio → uploading_audio → transcribing → completed | error | failed` (see `migrations/0002`).
 
 Quota model (`lib/quota.ts` + `lib/plans.ts`): a **single `minutes_used_this_period` counter** on `users`, no credit ledger. Free transcription minutes are a one-time lifetime trial (never reset). Reservations are atomic and reconciled against actual duration after completion.
 
 ## Billing
 
-Paddle is wired through `app/api/paddle/create-checkout/route.ts`, `app/api/paddle/create-portal/route.ts`, and `app/api/webhook/paddle/route.ts`. Price IDs are resolved in `lib/paddle-plans.ts`; public caps and display prices remain in `lib/plans.ts`. The webhook verifies Paddle signatures, dedupes events in `paddle_events`, stores Paddle customer/subscription IDs on `users`, resets minute and YouTube-import counters when a billing period advances, and expires users back to free when paid access ends.
+Paddle is wired through `app/api/paddle/create-checkout/route.ts`, `app/api/paddle/create-portal/route.ts`, and `app/api/webhook/paddle/route.ts`. Price IDs are resolved in `lib/paddle-plans.ts`; public caps and display prices remain in `lib/plans.ts`. Paddle is the only source of truth for monetary amounts. Scribix stores transaction and adjustment ownership metadata for entitlement, idempotency, and routing, but does not copy revenue, tax, or refund amounts. The webhook verifies Paddle signatures, dedupes events in `paddle_events`, stores Paddle customer/subscription IDs on `users`, resets minute and YouTube-import counters when a billing period advances, and expires users back to free when paid access ends.
 
 ## YouTube captions and extension
 
@@ -52,11 +52,11 @@ The Chrome extension lives in `chrome-extension-youtube-transcript/` and calls `
 
 next-intl with locales `["en", "fr", "es", "it", "ja", "de"]`, `defaultLocale: "en"`, `localePrefix: "as-needed"`. Localized pages live under `app/[locale]/...`; config in `i18n/` (`routing.ts`, `request.ts`, `navigation.ts`); strings in `messages/*.json`. `middleware.ts` runs the intl middleware and additionally rewrites/redirects legal pages (`privacy`, `refunds`, `terms`) to canonical English-only URLs.
 
-**Locale-file rule:** changing an existing string → edit `en.json` only. Adding a new key → mirror the English value into all 6 locale files, or next-intl throws a missing-message error at runtime.
+**Locale-file rule:** adding a new key requires the same key in all 6 locale files, or next-intl throws a missing-message error at runtime. When a string changes a product fact or behavior (limits, retention, errors), update the corresponding translation in every locale; a purely editorial English rewrite may stay in `en.json`.
 
 ## Cleanup Worker
 
-`crons/cleanup-worker.ts` is a **separate** scheduled Worker (deployed via `wrangler.cleanup.jsonc`, sharing the same D1 + R2 bindings). Hourly it hard-deletes stale `pending`/`uploading` rows (>1h), stalled in-flight rows (>24h), `error`/`failed` rows (>7d), and deletes R2 audio for `completed` rows >14d while preserving transcript JSON forever.
+`crons/cleanup-worker.ts` is a **separate** scheduled Worker (deployed via `wrangler.cleanup.jsonc`, sharing the same D1 + R2 bindings). Hourly it hard-deletes stale `pending`/`uploading` and in-flight rows (>24h), refunding any outstanding reservation atomically before deletion; deletes `error`/`failed` rows (>7d); and deletes completed audio/video media >14d while preserving transcript JSON. Every path deletes referenced R2 objects before clearing keys or deleting D1 rows; failures retain the reference for the next hourly retry. The bucket lifecycle only aborts incomplete multipart uploads after 7 days and must not expire the shared `users/` prefix.
 
 ## Conventions
 
@@ -64,9 +64,10 @@ next-intl with locales `["en", "fr", "es", "it", "ja", "de"]`, `defaultLocale: "
 - Route handlers export HTTP-method functions from `route.ts`. Add `"use client"` only where browser APIs/hooks require it.
 - Cloudflare bindings: `DB` (D1), `SCRIBIX_MEDIA` (R2), `ASSETS`. Reach them via `await cf()`. After changing `wrangler.jsonc` bindings, run `npm run cf-typegen`.
 - R2 object key layout is `users/{userId}/{transcriptId}`. R2 presigning uses `aws4fetch` against the S3-compatible endpoint (the Workers R2 binding can't presign) — requires `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`.
+- `NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` is a build-time kill switch, not a runtime rollout control. It defaults to enabled; setting it to `false` only takes effect after rebuilding and redeploying.
 - Treat `wrangler.jsonc`, `wrangler.cleanup.jsonc`, `migrations/`, and `cloudflare-env.d.ts` as deployment-sensitive. Document required remote migrations in PRs. Never commit secrets (`worker-secrets.env`, `.dev.vars`).
 - Commits: short imperative, Conventional Commit prefixes (`feat:`, `fix:`). `CHANGELOG.md` is maintained per release.
 
 ## Reference
 
-`docs/progress.md` is a historical v1 planning artifact, not the current source of truth. Current operational setup lives in `docs/manual-setup.md`; `docs/runbooks/` holds ops procedures (launch checklist, AAI bulk delete). `docs/landing-page-*.md` document SEO landing-page intent — the homepage targets "video to text"; each tool gets its own landing page.
+`docs/progress.md` is a historical v1 planning artifact, not the current source of truth. Current operational setup lives in `docs/manual-setup.md`; `docs/runbooks/` holds ops procedures (launch checklist, AAI bulk delete); `docs/plan-hybrid-video-upload.md` records the shipped hybrid-upload architecture and its remaining production validation.

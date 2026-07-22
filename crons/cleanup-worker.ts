@@ -37,7 +37,9 @@ const FAILED_STATUSES = ["error", "failed"];
 
 type CleanupRow = {
   id: string;
+  user_id: string;
   status: string;
+  reserved_minutes: number | null;
   audio_r2_key: string | null;
   transcript_r2_key: string | null;
 };
@@ -66,11 +68,16 @@ async function deleteR2(
   }
 }
 
-async function sweepExpiredRows(env: Env, statuses: string[], cutoffIso: string): Promise<SweepStats> {
+async function sweepExpiredRows(
+  env: Env,
+  statuses: string[],
+  cutoffIso: string,
+  refundReservation: boolean
+): Promise<SweepStats> {
   const statusPlaceholders = statuses.map((_, i) => `?${i + 1}`).join(",");
   const cutoffParam = `?${statuses.length + 1}`;
   const rows = await env.DB.prepare(
-    `SELECT id, status, audio_r2_key, transcript_r2_key
+    `SELECT id, user_id, status, reserved_minutes, audio_r2_key, transcript_r2_key
        FROM transcripts
       WHERE status IN (${statusPlaceholders})
         AND deleted_at IS NULL
@@ -86,15 +93,41 @@ async function sweepExpiredRows(env: Env, statuses: string[], cutoffIso: string)
       stats.retry += 1;
       continue;
     }
-    await env.DB.prepare(`DELETE FROM transcripts WHERE id = ?1`).bind(r.id).run();
-    stats.deleted += 1;
+    const deleteStatusPlaceholders = statuses.map((_, i) => `?${i + 2}`).join(",");
+    const refundStatusPlaceholders = statuses.map((_, i) => `?${i + 4}`).join(",");
+    const deleteStatement = env.DB.prepare(
+      `DELETE FROM transcripts
+        WHERE id = ?1
+          AND status IN (${deleteStatusPlaceholders})
+          AND created_at < ?${statuses.length + 2}`
+    ).bind(r.id, ...statuses, cutoffIso);
+    if (refundReservation && r.reserved_minutes && r.reserved_minutes > 0) {
+      const results = await env.DB.batch([
+        env.DB.prepare(
+          `UPDATE users
+              SET minutes_used_this_period = MAX(0, minutes_used_this_period - ?1)
+            WHERE id = ?2
+              AND EXISTS (
+                SELECT 1 FROM transcripts
+                 WHERE id = ?3
+                   AND status IN (${refundStatusPlaceholders})
+                   AND created_at < ?${statuses.length + 4}
+              )`
+        ).bind(r.reserved_minutes, r.user_id, r.id, ...statuses, cutoffIso),
+        deleteStatement,
+      ]);
+      if (results[1].meta?.changes) stats.deleted += 1;
+    } else {
+      const deleted = await deleteStatement.run();
+      if (deleted.meta?.changes) stats.deleted += 1;
+    }
   }
   return stats;
 }
 
 async function sweepLegacySoftDeleted(env: Env): Promise<SweepStats> {
   const rows = await env.DB.prepare(
-    `SELECT id, status, audio_r2_key, transcript_r2_key
+    `SELECT id, user_id, status, reserved_minutes, audio_r2_key, transcript_r2_key
       FROM transcripts
       WHERE deleted_at IS NOT NULL`
   ).all<CleanupRow>();
@@ -116,7 +149,7 @@ async function sweepLegacySoftDeleted(env: Env): Promise<SweepStats> {
 
 async function sweepExpiredAudio(env: Env, cutoffIso: string): Promise<SweepStats> {
   const rows = await env.DB.prepare(
-    `SELECT id, status, audio_r2_key, transcript_r2_key
+    `SELECT id, user_id, status, reserved_minutes, audio_r2_key, transcript_r2_key
        FROM transcripts
       WHERE status = 'completed'
         AND deleted_at IS NULL
@@ -150,9 +183,9 @@ function isoCutoff(msAgo: number): string {
 }
 
 async function runCleanup(env: Env): Promise<void> {
-  const preSubmit = await sweepExpiredRows(env, PRE_SUBMIT_STATUSES, isoCutoff(PENDING_TTL_MS));
-  const inFlight = await sweepExpiredRows(env, IN_FLIGHT_STATUSES, isoCutoff(IN_FLIGHT_TTL_MS));
-  const failed = await sweepExpiredRows(env, FAILED_STATUSES, isoCutoff(FAILED_TTL_MS));
+  const preSubmit = await sweepExpiredRows(env, PRE_SUBMIT_STATUSES, isoCutoff(PENDING_TTL_MS), true);
+  const inFlight = await sweepExpiredRows(env, IN_FLIGHT_STATUSES, isoCutoff(IN_FLIGHT_TTL_MS), true);
+  const failed = await sweepExpiredRows(env, FAILED_STATUSES, isoCutoff(FAILED_TTL_MS), false);
   const legacyDeleted = await sweepLegacySoftDeleted(env);
   const expired = await sweepExpiredAudio(env, isoCutoff(AUDIO_TTL_MS));
   const sweeps = { preSubmit, inFlight, failed, legacyDeleted, expiredMedia: expired };

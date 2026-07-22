@@ -1,6 +1,6 @@
 import { cf } from "@/lib/cf";
 import { discordAlert } from "@/lib/discord";
-import { verifyPaddleSignature } from "@/lib/paddle";
+import { getPaddleTransaction, paddleEnvironment, verifyPaddleSignature } from "@/lib/paddle";
 import { findPaddlePlanByPriceId } from "@/lib/paddle-plans";
 import { resolvePaddleEventScope } from "@/lib/paddle-webhook-routing";
 import { PLANS, type BillingCycle, type Tier } from "@/lib/plans";
@@ -9,19 +9,30 @@ type PaddleWebhookEvent = {
   event_id?: string;
   event_type?: string;
   occurred_at?: string;
-  data?: PaddleTransaction | PaddleSubscription;
+  data?: PaddleTransaction | PaddleSubscription | PaddleAdjustment;
 };
 
 type PaddleTransaction = {
   id?: string;
+  status?: string;
   customer_id?: string | null;
   subscription_id?: string | null;
+  created_at?: string;
   custom_data?: PaddleCustomData | null;
   billing_period?: PaddlePeriod | null;
   items?: Array<{ price?: { id?: string } | null }> | null;
   details?: {
     line_items?: Array<{ price_id?: string; billing_period?: PaddlePeriod | null }> | null;
   } | null;
+};
+
+type PaddleAdjustment = {
+  id?: string;
+  transaction_id?: string;
+  action?: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 type PaddleSubscription = {
@@ -73,6 +84,8 @@ const HANDLED_EVENT_TYPES = new Set([
   "subscription.canceled",
   "subscription.paused",
   "subscription.past_due",
+  "adjustment.created",
+  "adjustment.updated",
 ]);
 
 const PRICE_REQUIRED_EVENT_TYPES = new Set([
@@ -109,13 +122,16 @@ export async function POST(req: Request) {
     return Response.json({ ok: true, ignored: "event_type" });
   }
 
-  const scope = resolvePaddleEventScope(
-    event.data,
-    "scribix",
-    (priceId) => Boolean(findPaddlePlanByPriceId(env, priceId))
-  );
-  if (scope.kind !== "owned") {
-    if (scope.kind === "unknown" || scope.kind === "conflict") {
+  const adjustmentEvent = eventType === "adjustment.created" || eventType === "adjustment.updated";
+  const scope = adjustmentEvent
+    ? null
+    : resolvePaddleEventScope(
+        event.data as PaddleTransaction | PaddleSubscription,
+        "scribix",
+        (priceId) => Boolean(findPaddlePlanByPriceId(env, priceId))
+      );
+  if (!adjustmentEvent && scope?.kind !== "owned") {
+    if (scope?.kind === "unknown" || scope?.kind === "conflict") {
       await discordAlert("webhook_error", {
         source: "paddle-routing",
         eventId,
@@ -125,7 +141,7 @@ export async function POST(req: Request) {
         priceIds: scope.priceIds.join(",") || "none",
       });
     }
-    return Response.json({ ok: true, ignored: scope.kind });
+    return Response.json({ ok: true, ignored: scope?.kind ?? "unknown" });
   }
 
   const dedupe = await env.DB.prepare(
@@ -137,8 +153,14 @@ export async function POST(req: Request) {
   if (!dedupe.meta?.changes) return Response.json({ ok: true, dedup: true });
 
   try {
+    let ignored: string | undefined;
+    if (adjustmentEvent) {
+      const owned = await ensureAdjustmentOwnership(env, event.data as PaddleAdjustment);
+      if (!owned) ignored = "unowned_adjustment";
+    }
     if (
       PRICE_REQUIRED_EVENT_TYPES.has(eventType) &&
+      scope?.kind === "owned" &&
       scope.source === "metadata" &&
       !scope.priceIds.some((priceId) => Boolean(findPaddlePlanByPriceId(env, priceId)))
     ) {
@@ -146,13 +168,13 @@ export async function POST(req: Request) {
         `owned_unknown_price [${eventType}] (${scope.priceIds.join(",") || "no-price"})`
       );
     }
-    await processPaddleEvent(env, event);
+    if (!ignored) await processPaddleEvent(env, event);
     await env.DB.prepare(
       `UPDATE paddle_events SET processed_at = CURRENT_TIMESTAMP WHERE event_id = ?1`
     )
       .bind(eventId)
       .run();
-    return Response.json({ ok: true });
+    return Response.json({ ok: true, ...(ignored ? { ignored } : {}) });
   } catch (error) {
     const shouldAlert = await claimFailureAlert(env.DB, eventId, eventType);
     await env.DB.prepare(`DELETE FROM paddle_events WHERE event_id = ?1`)
@@ -191,6 +213,93 @@ async function claimFailureAlert(
   }
 }
 
+async function ensureAdjustmentOwnership(
+  env: CloudflareEnv,
+  adjustment: PaddleAdjustment
+): Promise<boolean> {
+  const transactionId = adjustment.transaction_id;
+  if (!transactionId?.startsWith("txn_")) throw new Error("invalid_adjustment_transaction");
+
+  const recorded = await env.DB.prepare(
+    `SELECT transaction_id FROM paddle_transactions WHERE transaction_id = ?1`
+  )
+    .bind(transactionId)
+    .first<{ transaction_id: string }>();
+  if (recorded) return true;
+
+  // A checkout intent proves this is ours, but the transaction webhook may be
+  // arriving out of order. Fail so Paddle retries after the parent row lands.
+  const intent = await env.DB.prepare(
+    `SELECT transaction_id FROM paddle_checkout_intents WHERE transaction_id = ?1`
+  )
+    .bind(transactionId)
+    .first<{ transaction_id: string }>();
+  if (intent) throw new Error("owned_adjustment_transaction_pending");
+
+  // Historical Scribix transactions predate the ownership registry. Resolve
+  // them lazily from Paddle instead of silently discarding their adjustments.
+  const apiKey = env.PADDLE_API_KEY?.trim();
+  if (!apiKey) throw new Error("paddle_api_key_missing_for_adjustment_lookup");
+  const transaction = await getPaddleTransaction<PaddleTransaction>({
+    apiKey,
+    environment: paddleEnvironment(env.NEXT_PUBLIC_PADDLE_ENV),
+    transactionId,
+  });
+  const scope = resolvePaddleEventScope(
+    transaction,
+    "scribix",
+    (priceId) => Boolean(findPaddlePlanByPriceId(env, priceId))
+  );
+  if (scope.kind === "foreign") return false;
+  if (scope.kind === "unknown") {
+    await discordAlert("webhook_error", {
+      source: "paddle-routing",
+      reason: "unresolved_adjustment_owner",
+      adjustmentId: adjustment.id,
+      transactionId,
+      priceIds: scope.priceIds.join(",") || "none",
+    });
+    return false;
+  }
+  if (scope.kind === "conflict") {
+    throw new Error(
+      `unresolved_adjustment_owner [${scope.kind}] (${scope.priceIds.join(",") || "no-price"})`
+    );
+  }
+
+  const priceId = priceIdFromTransaction(
+    transaction,
+    (candidate) => Boolean(findPaddlePlanByPriceId(env, candidate))
+  );
+  const plan = findPaddlePlanByPriceId(env, priceId);
+  if (!plan) throw new Error("historical_adjustment_unknown_price");
+  const user = await findBillingUser(
+    env.DB,
+    transaction.custom_data?.userId,
+    transaction.customer_id
+  );
+  if (!user) throw new Error("historical_adjustment_user_not_found");
+
+  await env.DB.prepare(
+    `INSERT INTO paddle_transactions
+       (transaction_id, user_id, customer_id, subscription_id, tier, billing_cycle,
+        status, occurred_at)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)`
+  )
+    .bind(
+      transactionId,
+      user.id,
+      transaction.customer_id ?? null,
+      transaction.subscription_id ?? null,
+      plan.tier,
+      plan.cycle,
+      transaction.status ?? "completed",
+      transaction.created_at ?? adjustment.created_at ?? new Date().toISOString()
+    )
+    .run();
+  return true;
+}
+
 async function processPaddleEvent(env: CloudflareEnv, event: PaddleWebhookEvent) {
   const type = event.event_type;
   if (!event.data) return;
@@ -210,6 +319,10 @@ async function processPaddleEvent(env: CloudflareEnv, event: PaddleWebhookEvent)
       return;
     case "subscription.past_due":
       await handleSubscriptionPastDue(env, event.data as PaddleSubscription);
+      return;
+    case "adjustment.created":
+    case "adjustment.updated":
+      await handleAdjustment(env.DB, event.data as PaddleAdjustment, event.occurred_at);
       return;
     default:
       return;
@@ -236,15 +349,25 @@ async function handleTransactionCompleted(
     throw new Error("unknown_paddle_price");
   }
 
-  const userId = transaction.custom_data?.userId;
+  const transactionId = transaction.id;
+  if (!transactionId) throw new Error("missing_transaction_id");
+  const intent = await env.DB.prepare(
+    `SELECT user_id, tier, billing_cycle
+       FROM paddle_checkout_intents
+      WHERE transaction_id = ?1`
+  )
+    .bind(transactionId)
+    .first<{ user_id: string; tier: Tier; billing_cycle: BillingCycle }>();
+  const userId = transaction.custom_data?.userId ?? intent?.user_id;
   if (!userId) throw new Error("missing_custom_user_id");
   const customerId = transaction.customer_id;
   if (!customerId?.startsWith("ctm_")) throw new Error("missing_customer_id");
   const subscriptionId = transaction.subscription_id;
 
   const period = periodFromTransaction(transaction, plan.cycle, occurredAt);
-  await env.DB.prepare(
-    `UPDATE users
+  await env.DB.batch([
+    env.DB.prepare(
+      `UPDATE users
         SET tier = ?1,
             billing_cycle = ?2,
             customer_id = ?3,
@@ -257,25 +380,86 @@ async function handleTransactionCompleted(
             period_ends_at = ?7
       WHERE id = ?8
         AND deleted_at IS NULL`
-  )
-    .bind(
+    ).bind(
+        plan.tier,
+        plan.cycle,
+        customerId,
+        plan.priceId,
+        subscriptionId,
+        period.startsAt,
+        period.endsAt,
+        userId
+      ),
+    env.DB.prepare(
+      `INSERT INTO paddle_transactions
+         (transaction_id, user_id, customer_id, subscription_id, tier, billing_cycle,
+          status, occurred_at)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+       ON CONFLICT(transaction_id) DO UPDATE SET
+         user_id = excluded.user_id,
+         customer_id = excluded.customer_id,
+         subscription_id = excluded.subscription_id,
+         tier = excluded.tier,
+         billing_cycle = excluded.billing_cycle,
+         status = excluded.status,
+         occurred_at = excluded.occurred_at,
+         updated_at = CURRENT_TIMESTAMP`
+    ).bind(
+      transactionId,
+      userId,
+      customerId,
+      subscriptionId,
       plan.tier,
       plan.cycle,
-      customerId,
-      plan.priceId,
-      subscriptionId,
-      period.startsAt,
-      period.endsAt,
-      userId
-    )
-    .run();
+      transaction.status ?? "completed",
+      occurredAt ?? new Date().toISOString()
+    ),
+  ]);
 
   await discordAlert("checkout_success", {
     userId,
     tier: plan.tier,
     cycle: plan.cycle,
-    transactionId: transaction.id,
+    transactionId,
   });
+}
+
+async function handleAdjustment(
+  db: D1Database,
+  adjustment: PaddleAdjustment,
+  occurredAt?: string
+) {
+  const adjustmentId = adjustment.id;
+  const transactionId = adjustment.transaction_id;
+  const action = adjustment.action;
+  const status = adjustment.status;
+  if (
+    !adjustmentId ||
+    !transactionId ||
+    !action ||
+    !status
+  ) {
+    throw new Error("invalid_adjustment_payload");
+  }
+
+  await db.prepare(
+    `INSERT INTO paddle_adjustments
+       (adjustment_id, transaction_id, action, status, occurred_at)
+     VALUES (?1, ?2, ?3, ?4, ?5)
+     ON CONFLICT(adjustment_id) DO UPDATE SET
+       action = excluded.action,
+       status = excluded.status,
+       occurred_at = excluded.occurred_at,
+       updated_at = CURRENT_TIMESTAMP`
+  )
+    .bind(
+      adjustmentId,
+      transactionId,
+      action,
+      status,
+      occurredAt ?? adjustment.updated_at ?? adjustment.created_at ?? new Date().toISOString()
+    )
+    .run();
 }
 
 async function handleSubscriptionActive(

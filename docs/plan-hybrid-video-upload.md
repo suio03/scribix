@@ -1,6 +1,6 @@
-# 混合视频上传架构 Plan（客户端提取 + 原视频直传 + 14 天临时存储）
+# 混合视频上传架构（客户端提取 + 原视频直传 + 14 天临时存储）
 
-> 状态：应用代码已实现，待预览环境大文件与 AAI 端到端验证 · 更新于 2026-07-18 · 不需要 D1 migration
+> 状态：v0.17.0 已于 2026-07-19 合入 `main`；仍需生产/预览环境大文件与 AAI 端到端验证，并配置 Cloudflare cleanup 持续失败告警。不需要 D1 migration。
 
 ## 背景与目标
 
@@ -37,7 +37,7 @@
 
 ## 为什么暂不提取音频
 
-- R2 Standard 为 `$0.015 / GB-month`，一个 2GB 视频保存 14 天的理论边际存储费约为 `$0.014`。
+- 方案确认时 R2 Standard 为 `$0.015 / GB-month`，一个 2GB 视频保存 14 天的理论边际存储费约为 `$0.014`；后续成本评估应重新核对当前价格。
 - R2 对外出口流量免费；当前阶段节省的存储费不足以覆盖 FFmpeg server、任务状态机、重试和媒体切换的实现复杂度。
 - 原视频本来就要供 AssemblyAI 拉取，转录完成后继续复用同一个对象即可回放。
 - 等真实数据证明回放兼容性、存储规模或请求成本成为问题后，再单独评估后台音频瘦身。
@@ -120,7 +120,8 @@
 4. 客户端只通知服务端所有预期 part 已上传，不提交 ETag 列表。
 5. 服务端使用现有 R2 S3 credentials，通过 S3-compatible `ListParts` 读取真实 part number、size 和 ETag；不依赖 Workers binding（`R2MultipartUpload` 没有 `listParts()`）。
 6. 服务端校验 part 连续、数量符合预期、除最后一片外均为 100MiB，最后一片与 transcript 中保存的总字节数一致，然后用 `ListParts` 返回的 `{ partNumber, etag }` 完成 multipart。
-7. 完成后进入 `/start`；未完成的 multipart 不允许提交 AAI。
+7. 客户端对网络错误、408、429 和 5xx 最多重试 complete 3 次；服务端在 ListParts 或 Complete 响应不确定时 HEAD 最终对象，若大小与 transcript `bytes` 完全一致则幂等返回成功。
+8. 三次重试后仍无法确认时保留 transcript 和 multipart，不立即 abort/删除；完成后进入 `/start`，未完成的 multipart 不允许提交 AAI。
 
 100MiB 是协议常量，不根据网速或重试次数动态变化。4.9GB 文件约 47–50 片，远低于 R2 的 part 数量限制，同时满足除最后一片外每片至少 5MiB 的要求。重新上传相同 part number 会替换旧 part；若替换请求失败，客户端继续把该 part 视为未完成并重传。
 
@@ -217,34 +218,33 @@ upload_elapsed_sec
 ```text
 direct_video_attempt
 → direct_video_upload_completed
-→ AAI accepted
 → transcribe_success
 ```
 
-cleanup worker 使用 structured log 记录扫描、成功删除、删除失败和待重试数量。持续删除失败触发日志告警；媒体漏删监控不伪装成 Plausible 访客事件。
+cleanup worker 使用 structured log 记录扫描、成功删除、删除失败和待重试数量。应用已输出 `cleanup_r2_delete_failed`；Cloudflare 侧持续失败告警属于独立生产配置，发布代码不会自动创建。媒体漏删监控不伪装成 Plausible 访客事件。
 
-## 上线顺序
+## 实现状态
 
-### Phase 1A — 上传基础
+### 已实现 — 上传基础
 
 1. 套餐限制和未知时长 quota 规则。
 2. multipart init / part sign / complete / abort。
 3. `/start` R2 HEAD 校验。
 4. 自动 fallback 和 analytics。
 
-### Phase 1B — 直传转录与回放
+### 已实现 — 直传转录与回放
 
 1. AAI 直传视频 URL。
 2. 稳定媒体端点支持 video/audio。
 3. signed URL 过期后的单次恢复。
 4. 使用 `NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` 作为 build-time kill switch；首发即全量开启，紧急关闭需要重新 build + deploy，不支持运行时百分比放量。
 
-### Phase 1C — Cleanup 可靠性
+### 已实现 — Cleanup 可靠性
 
 1. 将 pending/uploading TTL 从 1 小时提高到 24 小时。
 2. 确认 cleanup worker 对视频 key 与音频 key 一视同仁，并继续按 14 天清理。
 3. 重构 cleanup 删除结果：R2 成功后才清空 key 或删除 row；失败时保留引用并在下一轮重试。
-4. 增加 structured log 汇总和持续删除失败告警。
+4. 增加 structured log 汇总；持续删除失败告警由 Cloudflare 运维配置完成。
 5. 保留现有“7 天后 abort 未完成 multipart”规则，不新增媒体 expiration lifecycle。
 6. 验证媒体到期后返回 410，transcript 文本仍可访问。
 
@@ -291,7 +291,7 @@ cleanup worker 使用 structured log 记录扫描、成功删除、删除失败�
 - cleanup worker 删除超过 14 天的原视频或音频；只有 R2 删除成功后才清空 `audio_r2_key`。
 - R2 删除失败时 key / row 被保留，下一轮 cleanup 能再次定位并重试。
 - pending、uploading、failed 等 hard-delete 路径不会在 R2 删除失败后先删除 DB row。
-- structured log 能区分成功、失败和待重试，持续失败能触发告警。
+- structured log 能区分成功、失败和待重试；配置 Cloudflare 告警后，持续失败能触发通知。
 - transcript 文本和 JSON 不随媒体删除。
 - 主动删除 transcript/account 时立即清理原视频。
 - bucket 不配置媒体 expiration lifecycle，避免误删同前缀下的 transcript JSON 和 translations。

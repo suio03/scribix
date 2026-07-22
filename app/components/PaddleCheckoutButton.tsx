@@ -28,6 +28,7 @@ export function PaddleCheckoutButton({
   checkoutSuccessPath,
   children,
   className,
+  onCheckoutStart,
 }: {
   tier: Exclude<Tier, "free">;
   cycle: BillingCycle;
@@ -35,12 +36,14 @@ export function PaddleCheckoutButton({
   checkoutSuccessPath: string;
   children: React.ReactNode;
   className: string;
+  onCheckoutStart?: () => void;
 }) {
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
 
   async function startCheckout() {
     setFailed(false);
+    onCheckoutStart?.();
     trackEvent("checkout_click", { tier, cycle, signed_in: signedIn });
     if (!signedIn) {
       await signIn(undefined, { callbackUrl: window.location.href });
@@ -87,6 +90,7 @@ export function PaddleCheckoutButton({
         cycle,
         transaction_id: json.transactionId,
       });
+      saveCheckoutContext(json.transactionId, tier, cycle);
 
       const readyPaddle = await paddleRequest;
       if (!readyPaddle) {
@@ -265,20 +269,40 @@ async function getPaddleConfig(): Promise<PaddlePublicConfig | null> {
 function trackPaddleCheckoutEvent(event: PaddleEventData) {
   const data = event.data;
   const customData = checkoutCustomData(data?.custom_data);
+  const stored = readCheckoutContext(data?.transaction_id);
   const common = {
-    tier: customData.tier,
-    cycle: customData.cycle,
+    tier: customData.tier ?? stored?.tier,
+    cycle: customData.cycle ?? stored?.cycle,
     transaction_id: data?.transaction_id,
     checkout_id: data?.id,
   };
 
   if (event.name === "checkout.completed") {
-    trackEvent("checkout_completed", {
+    if (data?.transaction_id && wasCheckoutCompletedTracked(data.transaction_id)) return;
+    const props = {
       ...common,
-      currency_code: data?.currency_code,
-      total: data?.totals?.total,
-      payment_method: data?.payment?.method_details?.type,
-    });
+    };
+    trackEvent("checkout_completed", props);
+    const upgradeContext = readUpgradeContext();
+    if (upgradeContext && common.tier && common.cycle) {
+      trackEvent("upgrade_checkout_completed", {
+        ...upgradeContext,
+        tier: common.tier,
+        cycle: common.cycle,
+        transaction_id: data?.transaction_id,
+      });
+      clearUpgradeContext();
+    }
+    if (data?.transaction_id) {
+      void fetch("/api/paddle/checkout-observed", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          transactionId: data.transaction_id,
+        }),
+      }).catch(() => {});
+    }
+    if (data?.transaction_id) markCheckoutCompletedTracked(data.transaction_id);
     return;
   }
 
@@ -301,6 +325,93 @@ function trackPaddleCheckoutEvent(event: PaddleEventData) {
       error_message: event.detail,
     });
   }
+}
+
+type StoredCheckoutContext = {
+  tier: "basic" | "pro";
+  cycle: "monthly" | "yearly";
+  savedAt: number;
+};
+
+type StoredUpgradeContext = {
+  reason: "quota" | "duration" | "file_size";
+  error_code: string;
+  suggested_tier?: "basic" | "pro";
+};
+
+const CHECKOUT_CONTEXT_PREFIX = "scribix:checkout:";
+const CHECKOUT_COMPLETED_PREFIX = "scribix:checkout_completed:";
+const UPGRADE_CONTEXT_KEY = "scribix:upgrade_context";
+
+function saveCheckoutContext(
+  transactionId: string,
+  tier: "basic" | "pro",
+  cycle: "monthly" | "yearly"
+): void {
+  try {
+    sessionStorage.setItem(
+      `${CHECKOUT_CONTEXT_PREFIX}${transactionId}`,
+      JSON.stringify({ tier, cycle, savedAt: Date.now() })
+    );
+  } catch {}
+}
+
+function readCheckoutContext(transactionId: string | undefined): StoredCheckoutContext | null {
+  if (!transactionId) return null;
+  try {
+    const raw = sessionStorage.getItem(`${CHECKOUT_CONTEXT_PREFIX}${transactionId}`);
+    if (!raw) return null;
+    const value = JSON.parse(raw) as StoredCheckoutContext;
+    if (
+      (value.tier !== "basic" && value.tier !== "pro") ||
+      (value.cycle !== "monthly" && value.cycle !== "yearly") ||
+      !Number.isFinite(value.savedAt) ||
+      Date.now() - value.savedAt > 24 * 60 * 60 * 1000
+    ) {
+      sessionStorage.removeItem(`${CHECKOUT_CONTEXT_PREFIX}${transactionId}`);
+      return null;
+    }
+    return value;
+  } catch {
+    return null;
+  }
+}
+
+function wasCheckoutCompletedTracked(transactionId: string): boolean {
+  try {
+    return sessionStorage.getItem(`${CHECKOUT_COMPLETED_PREFIX}${transactionId}`) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markCheckoutCompletedTracked(transactionId: string): void {
+  try {
+    sessionStorage.setItem(`${CHECKOUT_COMPLETED_PREFIX}${transactionId}`, "1");
+  } catch {}
+}
+
+function readUpgradeContext(): StoredUpgradeContext | null {
+  try {
+    const raw = sessionStorage.getItem(UPGRADE_CONTEXT_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw) as StoredUpgradeContext;
+    if (
+      (value.reason !== "quota" && value.reason !== "duration" && value.reason !== "file_size") ||
+      typeof value.error_code !== "string"
+    ) {
+      return null;
+    }
+    return value;
+  } catch {
+    return null;
+  }
+}
+
+function clearUpgradeContext(): void {
+  try {
+    sessionStorage.removeItem(UPGRADE_CONTEXT_KEY);
+  } catch {}
 }
 
 function checkoutCustomData(value: object | null | undefined): {

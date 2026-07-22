@@ -7,22 +7,26 @@ import { Link } from "@/i18n/navigation";
 import { PLANS, PRICING_DISPLAY } from "@/lib/plans";
 import { PaddleCheckoutButton } from "./PaddleCheckoutButton";
 
-export type UpgradeReason = "translation" | "summary" | "quota";
+export type UpgradeReason = "translation" | "summary" | "quota" | "duration" | "file_size";
 type UpgradeTier = "basic" | "pro";
 
 export function UpgradePlanModal({
   reason,
   open,
   checkoutSuccessPath,
+  initialTier = "pro",
+  onCheckoutStart,
   onClose,
 }: {
   reason: UpgradeReason | null;
   open: boolean;
   checkoutSuccessPath: string;
+  initialTier?: UpgradeTier;
+  onCheckoutStart?: (tier: UpgradeTier) => void;
   onClose: () => void;
 }) {
   const t = useTranslations("Dashboard.viewer");
-  const [selectedTier, setSelectedTier] = useState<UpgradeTier>("pro");
+  const [selectedTier, setSelectedTier] = useState<UpgradeTier>(initialTier);
   if (!open || !reason) return null;
 
   const selectedPlan = upgradePlanCopy(selectedTier, t);
@@ -103,6 +107,7 @@ export function UpgradePlanModal({
             cycle="monthly"
             signedIn={true}
             checkoutSuccessPath={checkoutSuccessPath}
+            onCheckoutStart={() => onCheckoutStart?.(selectedTier)}
             className="inline-flex h-11 items-center justify-center rounded-xl bg-accent px-5 text-[14px] font-semibold text-paper transition hover:bg-accent/90"
           >
             {safeT(t, "upgradeContinue", "Continue")}
@@ -163,6 +168,28 @@ function upgradeReasonCopy(
         t,
         "upgradeQuotaModalBody",
         "Upgrade to add more transcription minutes and continue without waiting."
+      ),
+    };
+  }
+
+  if (reason === "duration") {
+    return {
+      title: safeT(t, "upgradeDurationModalTitle", "Transcribe this longer file"),
+      body: safeT(
+        t,
+        "upgradeDurationModalBody",
+        "Choose a plan whose per-file duration limit covers this recording."
+      ),
+    };
+  }
+
+  if (reason === "file_size") {
+    return {
+      title: safeT(t, "upgradeFileSizeModalTitle", "Upload this larger video"),
+      body: safeT(
+        t,
+        "upgradeFileSizeModalBody",
+        "Paid plans support larger direct video uploads. Audio files still have a 1 GB limit."
       ),
     };
   }

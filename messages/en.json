@@ -1,4 +1,12 @@
 {
+  "SiteMetadata": {
+    "title": "Video to Text — 45 Free Minutes | Scribix",
+    "description": "Convert video and audio to editable text with speaker labels, timestamps, and TXT, DOCX, SRT, VTT, or CSV exports. Try 45 minutes free with no card.",
+    "openGraphTitle": "Video and Audio to Text | Scribix",
+    "openGraphDescription": "Upload media and get an editable transcript with speaker labels, timestamps, and flexible exports.",
+    "twitterTitle": "Video and Audio to Text | Scribix",
+    "twitterDescription": "Try 45 minutes of AI transcription free. No credit card required."
+  },
   "Sidebar": {
     "openNav": "Open navigation",
     "closeNav": "Close navigation",
@@ -69,7 +77,7 @@
     "manageBilling": "Manage billing",
     "tierFree": "Free",
     "tierBasic": "Starter",
-    "tierPro": "Pro Unlimited",
+    "tierPro": "Pro",
     "cycleMonthly": "monthly",
     "cycleYearly": "yearly",
     "statusCanceled": "canceled",
@@ -89,26 +97,26 @@
     "issueLabel": "Issue №01 · Video to Text",
     "h1Part1": "Convert video to text.",
     "h1Part2": "<accent>Free AI transcription.</accent>",
-    "description": "Scribix turns video and audio files into accurate, speaker-labeled text in seconds. Upload an MP4, MOV, WebM, AVI, MP3, WAV, or M4A file and get a full transcript with word-level timestamps in <stat>200+ languages</stat>. <stat>Free</stat> with Google sign-in, files up to 1 GB.",
+    "description": "Scribix turns video and audio files into speaker-labeled text you can review and export. Upload MP4, MOV, WebM, AVI, MP3, WAV, or M4A and get word-level timestamps with <stat>automatic language detection</stat>. <stat>45 minutes free</stat> with Google sign-in and no credit card.",
     "trust": [
       {
-        "label": "99.9% Accuracy",
+        "label": "45 Free Minutes",
         "icon": "Target"
       },
       {
-        "label": "200+ Languages",
+        "label": "Automatic Language Detection",
         "icon": "Globe"
       },
       {
-        "label": "Up to 1GB Files",
+        "label": "Up to 1 GB Audio",
         "icon": "InfinityIcon"
       },
       {
-        "label": "Speaker Recognition",
+        "label": "Speaker Labels",
         "icon": "Users"
       },
       {
-        "label": "Private & Secure",
+        "label": "5 Export Formats",
         "icon": "ShieldCheck"
       }
     ],
@@ -134,8 +142,9 @@
     ],
     "upload": {
       "instruction": "Drop a video or audio file, or click to browse.",
-      "specs": "Video up to 5 GB · Audio up to 1 GB · MP4 · MOV · WEBM · MP3 · WAV · M4A",
-      "button": "Upload File"
+      "button": "Upload File",
+      "specsFree": "Video up to 2 GB · Audio up to 1 GB · Files up to 45 min",
+      "specsPaid": "Video up to 5 GB · Audio up to 1 GB · Limits vary by plan"
     },
     "record": {
       "active": "Recording…",
@@ -145,31 +154,24 @@
     }
   },
   "TrustStrip": {
-    "tagline": "Trusted by video creators, journalists, and podcasters worldwide",
-    "logos": [
-      "Stanford Podcast Network",
-      "TED Conferences",
-      "The Atlantic",
-      "Y Combinator",
-      "Wirecutter",
-      "MIT Sloan Review"
-    ],
+    "tagline": "Included in the Scribix transcription workflow",
+    "logos": [],
     "stats": [
       {
-        "value": "10M+",
-        "label": "Minutes transcribed"
+        "value": "45 min",
+        "label": "Free allowance"
       },
       {
-        "value": "100K+",
-        "label": "Active creators"
+        "value": "5",
+        "label": "Export formats"
       },
       {
-        "value": "200+",
-        "label": "Languages supported"
+        "value": "1 GB",
+        "label": "Audio file limit"
       },
       {
-        "value": "99.9%",
-        "label": "Word-level accuracy"
+        "value": "10 hr",
+        "label": "Pro file length"
       }
     ]
   },
@@ -181,14 +183,14 @@
     "items": [
       {
         "icon": "Users",
-        "title": "Speaker recognition, up to 8 voices",
-        "body": "Voice-fingerprinting separates and labels each turn — Speaker 1, Speaker 2 become real names with one click. Perfect for interviews, podcasts, and panels.",
+        "title": "Speaker labels for conversations",
+        "body": "Scribix requests speaker diarization during transcription and separates turns when the recording quality supports it. Labels can be renamed afterward.",
         "span": "lg:col-span-2"
       },
       {
         "icon": "Globe",
-        "title": "200+ languages, auto-detected",
-        "body": "From Mandarin to Maltese with code-switching support. The model adapts mid-recording when speakers swap languages."
+        "title": "Automatic language detection",
+        "body": "Scribix detects the spoken language automatically so most uploads do not need a language setting."
       },
       {
         "icon": "Clock",
@@ -203,13 +205,13 @@
       },
       {
         "icon": "Sparkles",
-        "title": "Studio-grade accuracy",
-        "body": "99.9% on clear audio in primary languages, measured on a 50-hour benchmark of TED talks, podcasts, and interviews. Background noise and accents handled gracefully."
+        "title": "Reviewable transcript output",
+        "body": "Results vary with recording quality, noise, accents, vocabulary, and overlapping speech. Speaker labels and timestamps make review faster."
       },
       {
         "icon": "Lock",
-        "title": "Files deleted after 14 days",
-        "body": "TLS 1.3 in transit, AES-256 at rest, processing in encrypted memory. SOC 2-aligned, GDPR-compliant. We never train models on your audio."
+        "title": "Source files deleted after 14 days",
+        "body": "Uploaded audio and video are deleted automatically after 14 days. Transcripts remain until you delete them or close your account."
       }
     ]
   },
@@ -217,7 +219,7 @@
     "label": "How it works",
     "number": "02",
     "h2Part1": "Three steps.",
-    "h2Part2": "<accent>Video to text in under a minute.</accent>",
+    "h2Part2": "AI transcription with speaker labels.",
     "steps": [
       {
         "n": "01",
@@ -230,8 +232,8 @@
         "n": "02",
         "icon": "Cpu",
         "title": "AI transcribes with speaker labels.",
-        "body": "Our model auto-detects the language (200+ supported), separates up to 8 speakers, and attaches timestamps to every word. A 1-hour video transcribes in about 90 seconds.",
-        "duration": "~90s for 1 hr video"
+        "body": "Scribix detects the language, separates speakers when the audio supports it, and adds word-level timestamps. Processing time varies by file and service load.",
+        "duration": "Timing varies by file"
       },
       {
         "n": "03",
@@ -308,7 +310,7 @@
         "icon": "Scale",
         "title": "Legal & Compliance",
         "audience": "Depositions, hearings",
-        "body": "First-pass transcripts of depositions, board meetings, and compliance interviews — then have a human verify the parts that matter. Time-coded transcripts and an auditable processing chain. SOC 2-aligned.",
+        "body": "Create a timestamped first draft for review. Legal or compliance transcripts must be checked by a qualified person before use.",
         "workflow": [
           "Hearing recording",
           "Time-coded transcript",
@@ -317,124 +319,12 @@
       }
     ]
   },
-  "Comparison": {
-    "label": "Compared",
-    "number": "04",
-    "h2": "Faster, more accurate, <accent>and a real free trial.</accent>",
-    "intro": "We benchmark monthly against the leading video-to-text tools on a 200-hour test set spanning 12 languages, 48 speakers, and 4 audio environments — studio, phone, conference, and outdoor.",
-    "featureHeader": "Feature",
-    "cols": [
-      "Scribix",
-      "Otter",
-      "Rev",
-      "Whisper.cpp"
-    ],
-    "rows": [
-      {
-        "feature": "Free trial",
-        "cells": [
-          "45 min one-time",
-          "300 / mo",
-          "45 min trial",
-          "Unlimited"
-        ]
-      },
-      {
-        "feature": "File size limit",
-        "cells": [
-          "1 GB",
-          "1.1 GB",
-          "2 GB",
-          "Local"
-        ]
-      },
-      {
-        "feature": "Languages supported",
-        "cells": [
-          "200+",
-          "30+",
-          "38",
-          "99"
-        ]
-      },
-      {
-        "feature": "Speaker diarization",
-        "cells": [
-          "yes",
-          "yes",
-          "yes",
-          "no"
-        ]
-      },
-      {
-        "feature": "Word-level timestamps",
-        "cells": [
-          "yes",
-          "no",
-          "yes",
-          "yes"
-        ]
-      },
-      {
-        "feature": "Export formats",
-        "cells": [
-          "7",
-          "4",
-          "5",
-          "1"
-        ]
-      },
-      {
-        "feature": "Files deleted after",
-        "cells": [
-          "14 days",
-          "30 days+",
-          "30 days+",
-          "Self-host"
-        ]
-      },
-      {
-        "feature": "Pricing — 100 hrs",
-        "cells": [
-          "$12",
-          "$30",
-          "$150",
-          "Compute only"
-        ]
-      }
-    ]
-  },
-  "Testimonials": {
-    "label": "Testimonials",
-    "number": "05",
-    "h2": "Built for the <accent>messy reality</accent> of recorded video.",
-    "items": [
-      {
-        "quote": "I produce a weekly video podcast with three guests. Scribix turns three hours of overlapping audio into something I can paste straight into my CMS. The speaker labels alone save me a full afternoon.",
-        "name": "Maya Bhattacharya",
-        "role": "Senior Producer · The Open Notebook",
-        "rating": "5.0"
-      },
-      {
-        "quote": "We had a court case where we needed time-coded transcripts of 14 hours of testimony video. Scribix delivered cleaner output than the certified service we'd been paying $4/min for. Wild.",
-        "name": "Daniel Reyes",
-        "role": "Litigation Counsel · Reyes & Patel",
-        "rating": "4.9"
-      },
-      {
-        "quote": "I record every fieldwork interview in Bahasa with code-switched English on video. Other tools stumble. Scribix transcribes the whole thing without me touching a language setting.",
-        "name": "Dr. Aisha Mohktar",
-        "role": "Anthropologist · NUS",
-        "rating": "5.0"
-      }
-    ]
-  },
   "PricingPage": {
     "metadata": {
       "title": "Pricing",
-      "description": "Simple Scribix pricing: start free, upgrade to Starter for 600 minutes per month, or choose Pro Unlimited for 2,400 priority minutes and fair-use processing.",
+      "description": "Simple Scribix pricing: start with 45 free lifetime minutes, upgrade to Starter for 600 minutes per month, or choose Pro for 2,400 minutes per month.",
       "ogTitle": "Scribix Pricing",
-      "ogDescription": "Free trial, Starter, and Pro Unlimited plans for video and audio transcription."
+      "ogDescription": "Free, Starter, and Pro plans for video and audio transcription."
     },
     "h1": "Simple pricing for serious transcription.",
     "bestValue": "Best value",
@@ -458,7 +348,7 @@
         "values": {
           "free": "Limited by 45 min total",
           "starter": "Unlimited files within 600 min",
-          "pro": "Unlimited files"
+          "pro": "Within 2,400 min/month"
         }
       },
       {
@@ -467,7 +357,7 @@
         "values": {
           "free": "45 lifetime",
           "starter": "600 min/month",
-          "pro": "2,400 priority min/month"
+          "pro": "2,400 min/month"
         }
       },
       {
@@ -510,9 +400,9 @@
         "key": "processingQueue",
         "label": "Processing queue",
         "values": {
-          "free": "Free queue",
-          "starter": "Standard queue",
-          "pro": "Priority queue"
+          "free": "Standard",
+          "starter": "Standard",
+          "pro": "Standard"
         }
       },
       {
@@ -581,10 +471,10 @@
       },
       {
         "id": "pro",
-        "name": "Pro Unlimited",
+        "name": "Pro",
         "price": "$19",
         "cadence": "per month",
-        "summary": "Best value for serious transcription.",
+        "summary": "Simple Scribix pricing: start with 45 free lifetime minutes, upgrade to Starter for 600 minutes per month, or choose Pro for 2,400 minutes per month.",
         "annual": "$179/year",
         "annualPrice": "$179",
         "annualCadence": "per year"
@@ -609,11 +499,11 @@
       },
       {
         "question": "Can I change plans later?",
-        "answer": "Yes. The plan structure is designed so you can start on Starter and move to Pro when longer files, priority queue, or AI outputs become important."
+        "answer": "Yes. You can start on Starter and move to Pro when you need longer files or a larger minute allowance."
       },
       {
         "question": "Is there a free trial on paid plans?",
-        "answer": "Yes. Starter and Pro Unlimited both include 14 days free, and you can cancel anytime before the trial ends."
+        "answer": "Paid plans do not include a separate trial. Use the 45 free lifetime minutes to check transcript quality before subscribing."
       }
     ],
     "aiFeatures": "AI summaries + translation",
@@ -624,7 +514,7 @@
   },
   "FAQ": {
     "label": "FAQ",
-    "number": "07",
+    "number": "04",
     "h2Part1": "Questions,",
     "h2Part2": "<accent>answered carefully.</accent>",
     "contactPrefix": "Can't find what you're looking for? Email",
@@ -633,31 +523,31 @@
     "items": [
       {
         "q": "Is Scribix really free for video to text?",
-        "a": "Yes. The free trial only needs a Google sign-in — no credit card. You get 45 minutes of transcription to try the quality before you decide. Paid plans unlock longer files, priority queue, team libraries, and longer file retention."
+        "a": "Yes. Google sign-in gives you 45 lifetime transcription minutes with no credit card. Paid plans increase usage and file-length limits."
       },
       {
         "q": "What video formats does Scribix support?",
-        "a": "MP4, MOV, AVI, MKV, and WebM up to 1 GB each. Audio-only files (MP3, WAV, M4A) are also supported."
+        "a": "MP4, MOV, AVI, MKV, WebM, MP3, WAV, and M4A are supported. Free allows video up to 2 GB and audio up to 1 GB; paid plans allow video up to 5 GB and audio up to 1 GB, subject to duration and quota limits."
       },
       {
         "q": "How accurate is Scribix's video-to-text?",
-        "a": "99.9% on clear audio in primary languages, measured against a 50-hour benchmark of TED talks, podcasts, and interviews. Accuracy drops slightly with heavy accents, background music, or low-bitrate audio — but speaker labels and word-level timestamps make corrections quick."
+        "a": "Transcript quality depends on recording clarity, microphone distance, background noise, accents, specialized vocabulary, and overlapping speech. Review important transcripts before publishing or relying on them."
       },
       {
         "q": "How many languages does Scribix support?",
-        "a": "200+, with automatic language detection. The model handles code-switching (English ↔ Spanish, English ↔ Mandarin) within the same recording. No need to pre-select a primary language."
+        "a": "Scribix detects the spoken language automatically. Language coverage depends on the transcription model selected for your plan and the audio itself."
       },
       {
         "q": "Can Scribix tell different speakers apart?",
-        "a": "Yes. Voice-fingerprinting identifies up to 8 distinct speakers and labels every line accordingly. You can rename Speaker 1, Speaker 2, etc. to actual names after transcription, and the model remembers voices across recordings."
+        "a": "Yes. Scribix requests speaker labels during transcription, so conversations can be separated by speaker when recording quality supports it. You can rename the generated speaker labels afterward."
       },
       {
         "q": "How long does video-to-text transcription take?",
-        "a": "Around 1 minute of compute time per hour of video for clear-audio MP4s. A 30-minute meeting takes about 45 seconds."
+        "a": "Processing time varies with file length, format, extraction needs, network conditions, and transcription-service load. Scribix shows progress while the job is running."
       },
       {
         "q": "Is my data secure when I upload a video?",
-        "a": "Files are uploaded securely and deleted automatically after 14 days. We don't train models on user audio."
+        "a": "Uploaded audio and video are deleted automatically after 14 days. Transcripts remain until you delete them or close your account. See the privacy policy for details."
       },
       {
         "q": "What can I export the transcript as?",
@@ -673,20 +563,20 @@
     "kicker": "Ready when you are",
     "h2Part1": "Drop in a video.",
     "h2Part2": "<accent>We'll do the rest.</accent>",
-    "body": "Try it free with a Google sign-in — 45 minutes, no credit card. Your first transcript appears before you can finish your coffee.",
+    "body": "Try it free with a Google sign-in — 45 minutes, no credit card. Processing time varies by file.",
     "primaryCta": "Upload a Video",
     "stats": [
       {
-        "value": "99.9%",
-        "label": "Accuracy"
+        "value": "45 min",
+        "label": "Free allowance"
       },
       {
-        "value": "5×",
-        "label": "Real-time"
+        "value": "5",
+        "label": "Export formats"
       },
       {
-        "value": "7d",
-        "label": "Auto-delete"
+        "value": "1 GB",
+        "label": "Audio file limit"
       }
     ]
   },
@@ -753,7 +643,7 @@
       "deleteWarning": "Permanently delete your account, transcripts, and audio. This cannot be undone.",
       "tierFree": "Free",
       "tierBasic": "Starter",
-      "tierPro": "Pro Unlimited",
+      "tierPro": "Pro",
       "cycleMonthly": "monthly",
       "cycleYearly": "yearly",
       "statusCanceled": "(canceled — access until period end)",
@@ -985,7 +875,14 @@
       "stop": "Stop recording",
       "tapToRecord": "Tap to record · up to {min} min",
       "recording": "Recording — auto-stops at {min} min",
-      "micDenied": "Microphone access denied."
+      "micDenied": "Microphone access denied.",
+      "unsupported": "Audio recording is not supported in this browser.",
+      "pause": "Pause recording",
+      "resume": "Resume recording",
+      "paused": "Recording paused",
+      "review": "Review your recording",
+      "cancel": "Discard",
+      "upload": "Transcribe recording"
     },
     "youtube": {
       "title": "Import YouTube captions",
@@ -1017,12 +914,12 @@
   },
   "AudioToText": {
     "metadata": {
-      "title": "Audio to Text | AI Transcription Online",
-      "description": "Convert audio to text online with Scribix. Sign in with Google, upload MP3, WAV, or M4A audio, and get speaker-labeled transcripts to copy or export.",
-      "openGraphTitle": "Audio to Text | AI Transcription Online | Scribix",
-      "openGraphDescription": "Sign in with Google, upload audio, and get a speaker-labeled transcript with timestamps and exports.",
-      "twitterTitle": "Audio to Text | Scribix",
-      "twitterDescription": "Upload audio and get searchable transcripts with speaker labels, timestamps, and exports."
+      "title": "Audio to Text Converter — 45 Free Minutes | Scribix",
+      "description": "Convert MP3, WAV, and M4A audio to speaker-labeled text with timestamps. Export TXT, DOCX, SRT, VTT, or CSV. Try 45 minutes free with no credit card.",
+      "openGraphTitle": "Audio to Text Converter — 45 Free Minutes | Scribix",
+      "openGraphDescription": "Convert MP3, WAV, and M4A audio to speaker-labeled text with timestamps. Export TXT, DOCX, SRT, VTT, or CSV. Try 45 minutes free with no credit card.",
+      "twitterTitle": "Audio to Text Converter — 45 Free Minutes | Scribix",
+      "twitterDescription": "Convert MP3, WAV, and M4A audio to speaker-labeled text with timestamps. Export TXT, DOCX, SRT, VTT, or CSV. Try 45 minutes free with no credit card."
     },
     "hero": {
       "issue": "REC · 00:00:00",
@@ -1030,9 +927,9 @@
       "title": "Convert audio to text.",
       "accentTitle": "AI transcription.",
       "descriptionStart": "Scribix converts audio files into accurate, speaker-labeled text you can review, copy, and export. Sign in with Google, upload an audio file, and get a transcript with timestamps in",
-      "stat": "200+ languages",
+      "stat": "Automatic language detection",
       "descriptionEnd": ".",
-      "primaryCta": "Sign in to Upload Audio",
+      "primaryCta": "Try 45 Minutes Free",
       "signedInPrimaryCta": "Upload Audio",
       "secondaryCta": "Need video to text?",
       "secondaryHref": "/",
@@ -1043,7 +940,7 @@
         },
         {
           "icon": "Globe",
-          "label": "200+ languages"
+          "label": "Automatic language detection"
         },
         {
           "icon": "Users",
@@ -1060,7 +957,7 @@
       "uploadHint": "Audio",
       "instruction": "Drop an audio file, or click to browse.",
       "specs": "Free trial: 45 min · MP3 · WAV · M4A · No credit card",
-      "button": "Sign in to Upload Audio",
+      "button": "Try 45 Minutes Free",
       "signedInButton": "Upload Audio"
     },
     "quickAnswer": {
@@ -1197,7 +1094,7 @@
       "items": [
         {
           "icon": "Globe",
-          "title": "200+ languages",
+          "title": "Automatic language detection",
           "body": "Automatic language detection keeps the upload flow simple when your recordings span different speakers or regions."
         },
         {
@@ -1223,7 +1120,7 @@
           "icon": "Sparkles",
           "title": "How accurate is audio-to-text transcription?",
           "body": [
-            "Scribix can reach 99.9% accuracy on clear audio. Real-world accuracy depends on recording quality, microphone distance, background noise, accents, specialized vocabulary, and overlapping speakers.",
+            "Clear recordings generally produce better transcripts. Quality varies with microphone distance, noise, accents, specialized vocabulary, and overlapping speakers.",
             "For legal, medical, academic, financial, or published work, treat the transcript as a strong first draft and review it before sharing."
           ]
         },
@@ -1303,11 +1200,11 @@
         },
         {
           "q": "How many languages does Scribix support?",
-          "a": "Scribix supports transcription in 200+ languages with automatic language detection."
+          "a": "Scribix detects the spoken language automatically. Language coverage depends on the transcription model selected for your plan and the audio itself."
         },
         {
           "q": "How accurate is Scribix?",
-          "a": "Scribix can reach 99.9% accuracy on clear audio, but real-world results depend on audio quality, accents, noise, speaker overlap, and specialized vocabulary. Review important transcripts before publishing or relying on them."
+          "a": "Clear recordings generally produce better transcripts. Quality varies with microphone distance, noise, accents, specialized vocabulary, and overlapping speakers."
         },
         {
           "q": "Is my audio stored forever?",
@@ -1327,8 +1224,8 @@
           "label": "Trial"
         },
         {
-          "value": "200+",
-          "label": "Languages"
+          "value": "Automatic",
+          "label": "Language detection"
         },
         {
           "value": "14 days",
@@ -1343,7 +1240,6 @@
       "featureList": [
         "Audio file upload",
         "Automatic language detection",
-        "200+ languages",
         "Speaker labels",
         "Timestamped transcripts",
         "TXT export",
@@ -1398,7 +1294,7 @@
       "title": "Convert MP3 to text.",
       "accentTitle": "AI transcription.",
       "descriptionStart": "Scribix converts MP3 audio into accurate, speaker-labeled text you can review, copy, and export. Sign in with Google, upload your MP3, and get a timestamped transcript in",
-      "stat": "200+ languages",
+      "stat": "Automatic language detection",
       "descriptionEnd": ".",
       "primaryCta": "Convert MP3 to Text",
       "signedInPrimaryCta": "Upload MP3",
@@ -1411,7 +1307,7 @@
         },
         {
           "icon": "Globe",
-          "label": "200+ languages"
+          "label": "Automatic language detection"
         },
         {
           "icon": "Users",
@@ -1566,7 +1462,7 @@
       "items": [
         {
           "icon": "Globe",
-          "title": "200+ languages",
+          "title": "Automatic language detection",
           "body": "Automatic language detection keeps the upload flow simple when your recordings span different speakers or regions."
         },
         {
@@ -1592,7 +1488,7 @@
           "icon": "Sparkles",
           "title": "How accurate is MP3-to-text transcription?",
           "body": [
-            "Scribix can reach 99.9% accuracy on clear audio. Real-world accuracy depends on microphone quality, speaker distance, background noise, accents, overlapping speech, specialized vocabulary, and the quality of the MP3 recording.",
+            "Clear recordings generally produce better transcripts. Quality varies with microphone distance, noise, accents, specialized vocabulary, and overlapping speakers.",
             "For legal, medical, academic, financial, or published work, treat the transcript as a strong first draft and review it before sharing."
           ]
         },
@@ -1668,11 +1564,11 @@
         },
         {
           "q": "How many languages does Scribix support?",
-          "a": "Scribix supports transcription in 200+ languages with automatic language detection."
+          "a": "Scribix detects the spoken language automatically. Language coverage depends on the transcription model selected for your plan and the audio itself."
         },
         {
           "q": "How accurate is MP3 transcription?",
-          "a": "Scribix can reach 99.9% accuracy on clear audio, but accuracy depends on audio quality, accents, noise, overlapping speakers, and specialized vocabulary. Review important transcripts before publishing or relying on them."
+          "a": "Clear recordings generally produce better transcripts. Quality varies with microphone distance, noise, accents, specialized vocabulary, and overlapping speakers."
         },
         {
           "q": "Does MP3 compression affect transcription quality?",
@@ -1700,8 +1596,8 @@
           "label": "Trial"
         },
         {
-          "value": "200+",
-          "label": "Languages"
+          "value": "Automatic",
+          "label": "Language detection"
         },
         {
           "value": "14 days",
@@ -1716,7 +1612,6 @@
       "featureList": [
         "MP3 file upload",
         "Automatic language detection",
-        "200+ languages",
         "Speaker labels",
         "Timestamped transcripts",
         "TXT export",

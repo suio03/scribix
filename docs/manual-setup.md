@@ -188,6 +188,47 @@ For deployed environments, set the same secret on the Worker:
 npx wrangler secret put OPENAI_API_KEY
 ```
 
+### 2.4 Direct-video build switch
+
+`NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` controls the browser fallback from
+audio extraction to original-video multipart upload. It defaults to enabled.
+This is a build-time client variable, so changing only a deployed Worker
+runtime variable has no effect.
+
+For local development, set it in `.env.local` before starting Next.js:
+
+```sh
+NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED=true
+```
+
+For explicit production control, add it to `wrangler.jsonc` `vars`; absence
+means enabled. `npm run deploy` loads those vars into the OpenNext build. To use
+the emergency kill switch, set it to `"false"` and run a fresh build/deploy.
+This is not a percentage rollout flag.
+
+---
+
+## Phase 3 — YouTube caption service
+
+The in-app importer and Chrome extension call the dedicated caption service;
+the Scribix Worker does not download YouTube media itself. Configure the service
+base URL and its shared bearer token in `.env.local` and `.dev.vars`:
+
+```sh
+YOUTUBE_CAPTION_SERVICE_URL=https://your-caption-service.example.com
+YOUTUBE_CAPTION_SERVICE_TOKEN=...
+```
+
+Put `YOUTUBE_CAPTION_SERVICE_URL` in production `wrangler.jsonc` vars and store
+the token as a Worker secret:
+
+```sh
+npx wrangler secret put YOUTUBE_CAPTION_SERVICE_TOKEN
+```
+
+`YOUTUBE_CAPTION_DEBUG=1` enables verbose service diagnostics. Do not enable it
+in production unless actively investigating a caption-service failure.
+
 ---
 
 ## Phase 4 — Paddle payments
@@ -276,7 +317,8 @@ until Scribix implements downgrade semantics in-app.
 
 ### 6.1 Admin allowlist
 
-In `.env.local`, `.dev.vars`, and Worker secrets:
+In `.env.local` and `.dev.vars`; for production, use the non-secret
+`wrangler.jsonc` `vars` block:
 ```
 ADMIN_EMAILS=you@example.com,teammate@example.com
 ```
@@ -315,6 +357,21 @@ sqlite> SELECT aai_transcript_id FROM transcripts
 # Then DELETE FROM transcripts WHERE id IN (...) AND deleted_at IS NOT NULL;
 ```
 
+### 6.5 Scheduled media cleanup Worker
+
+Deploy the separate hourly Worker after its D1/R2 bindings are configured:
+
+```sh
+npm run deploy:cleanup
+```
+
+Scheduled cleanup does not need a secret. To enable its optional manual HTTP
+trigger, set a dedicated key on the cleanup Worker and pass it as `?key=...`:
+
+```sh
+npx wrangler secret put CLEANUP_KEY --config wrangler.cleanup.jsonc
+```
+
 ---
 
 ## Phase 7 — launch
@@ -331,7 +388,7 @@ Cloudflare Dashboard → Workers → `scribix` → **Custom Domains** → add `s
 
 ### 7.3 Production env vars
 
-Mirror everything from `.dev.vars` to Worker secrets. Use `wrangler secret put` for each (one prompt per secret):
+Set server-only production credentials as Worker secrets (one prompt per secret):
 ```sh
 npx wrangler secret put AUTH_SECRET
 npx wrangler secret put GOOGLE_ID
@@ -340,7 +397,11 @@ npx wrangler secret put ASSEMBLYAI_API_KEY
 npx wrangler secret put OPENAI_API_KEY
 npx wrangler secret put R2_ACCESS_KEY_ID
 npx wrangler secret put R2_SECRET_ACCESS_KEY
+npx wrangler secret put YOUTUBE_CAPTION_SERVICE_TOKEN
+npx wrangler secret put PADDLE_API_KEY
+npx wrangler secret put PADDLE_WEBHOOK_SECRET
 npx wrangler secret put DISCORD_WEBHOOK_URL
+npx wrangler secret put DISCORD_FEEDBACK_WEBHOOK_URL
 ```
 
 Public/non-secret vars go in `wrangler.jsonc` under `vars`:
@@ -350,7 +411,15 @@ Public/non-secret vars go in `wrangler.jsonc` under `vars`:
   "NEXTAUTH_URL": "https://scribix.io",
   "ADMIN_EMAILS": "you@example.com",
   "CLOUDFLARE_ACCOUNT_ID": "abc...",
-  "ASSEMBLYAI_WEBHOOK_URL": "https://scribix.io/api/webhook/assemblyai"
+  "ASSEMBLYAI_WEBHOOK_URL": "https://scribix.io/api/webhook/assemblyai",
+  "NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED": "true",
+  "YOUTUBE_CAPTION_SERVICE_URL": "https://your-caption-service.example.com",
+  "NEXT_PUBLIC_PADDLE_ENV": "production",
+  "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN": "live_...",
+  "PADDLE_BASIC_MONTHLY_PRICE_ID": "pri_...",
+  "PADDLE_BASIC_YEARLY_PRICE_ID": "pri_...",
+  "PADDLE_PRO_MONTHLY_PRICE_ID": "pri_...",
+  "PADDLE_PRO_YEARLY_PRICE_ID": "pri_..."
 }
 ```
 
@@ -377,6 +446,7 @@ GOOGLE_SECRET=
 ASSEMBLYAI_API_KEY=
 ASSEMBLYAI_WEBHOOK_URL=http://localhost:3000/api/webhook/assemblyai
 NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED=true
 
 # OpenAI (AI summaries)
 OPENAI_API_KEY=
@@ -386,7 +456,23 @@ CLOUDFLARE_ACCOUNT_ID=
 R2_ACCESS_KEY_ID=
 R2_SECRET_ACCESS_KEY=
 
+# YouTube caption service (Phase 3)
+YOUTUBE_CAPTION_SERVICE_URL=
+YOUTUBE_CAPTION_SERVICE_TOKEN=
+YOUTUBE_CAPTION_DEBUG=0
+
+# Paddle Billing (Phase 4)
+PADDLE_API_KEY=
+PADDLE_WEBHOOK_SECRET=
+NEXT_PUBLIC_PADDLE_ENV=sandbox
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=
+PADDLE_BASIC_MONTHLY_PRICE_ID=
+PADDLE_BASIC_YEARLY_PRICE_ID=
+PADDLE_PRO_MONTHLY_PRICE_ID=
+PADDLE_PRO_YEARLY_PRICE_ID=
+
 # Admin / ops (Phase 6)
 ADMIN_EMAILS=
 DISCORD_WEBHOOK_URL=
+DISCORD_FEEDBACK_WEBHOOK_URL=
 ```

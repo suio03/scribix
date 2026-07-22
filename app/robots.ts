@@ -6,7 +6,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/dashboard", "/admin", "/api"],
+        disallow: [
+          "/dashboard",
+          "/*/dashboard",
+          "/admin",
+          "/*/admin",
+          "/api/",
+          "/extension-login",
+          "/*/extension-login",
+        ],
       },
     ],
     sitemap: "https://scribix.io/sitemap.xml",
