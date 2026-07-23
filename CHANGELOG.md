@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.19.0] - 2026-07-23
+
+### Added
+- Added a localized AI note-taker landing page with metadata, structured data, sitemap coverage, conversion tracking, and tailored copy across all six supported locales.
+- Added the AI Note Taker to localized site navigation.
+
+### Changed
+- Made shared marketing sections reusable with page-specific translation namespaces, icon mappings, and upload attribution.
+- Unified the transcript summary experience under the AI Notes name across supported locales.
+- Carried plan limits, billing cycles, and landing-page attribution through YouTube imports.
+
 ## [0.18.2] - 2026-07-23
 
 ### Added

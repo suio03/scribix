@@ -95,6 +95,7 @@ export default async function HomePage({
           signedIn={!!session}
           postSignInPath={homePath}
           tier={sidebarUsage?.tier}
+          billingCycle={sidebarUsage?.billingCycle}
         />
         <section className="px-4 pb-8 sm:px-8">
           <div className="mx-auto max-w-[1100px] border-t border-line pt-5">

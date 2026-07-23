@@ -1,19 +1,38 @@
-import { CloudUpload, Cpu, Download, type LucideIcon } from "lucide-react";
+import {
+  CloudUpload,
+  Cpu,
+  Download,
+  ListChecks,
+  type LucideIcon,
+} from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "./SectionLabel";
 import { Waveform } from "./Waveform";
 
 type Step = {
   n: string;
+  icon?: "CloudUpload" | "Cpu" | "Download" | "ListChecks";
   title: string;
   body: string;
   duration: string;
 };
 
 const icons: LucideIcon[] = [CloudUpload, Cpu, Download];
+const iconByName: Record<NonNullable<Step["icon"]>, LucideIcon> = {
+  CloudUpload,
+  Cpu,
+  Download,
+  ListChecks,
+};
 
-export async function HowItWorks() {
-  const t = await getTranslations("HowItWorks");
+type HowItWorksNamespace = "HowItWorks" | "AiNoteTaker.howItWorks";
+
+export async function HowItWorks({
+  namespace = "HowItWorks",
+}: {
+  namespace?: HowItWorksNamespace;
+} = {}) {
+  const t = await getTranslations(namespace);
   const steps = t.raw("steps") as Step[];
 
   return (
@@ -35,7 +54,7 @@ export async function HowItWorks() {
 
         <div className="mt-14 grid gap-8 lg:grid-cols-3">
           {steps.map((s, i) => {
-            const Icon = icons[i];
+            const Icon = s.icon ? iconByName[s.icon] : icons[i];
             return (
               <article
                 key={s.n}

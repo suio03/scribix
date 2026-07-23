@@ -5,6 +5,8 @@ import {
   FlaskConical,
   GraduationCap,
   Scale,
+  BriefcaseBusiness,
+  Handshake,
   type LucideIcon,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
@@ -12,10 +14,21 @@ import { SectionLabel } from "./SectionLabel";
 
 type Case = {
   title: string;
+  icon?: UseCaseIcon;
   audience: string;
   body: string;
   workflow: string[];
 };
+
+type UseCaseIcon =
+  | "Clapperboard"
+  | "Mic"
+  | "Newspaper"
+  | "FlaskConical"
+  | "GraduationCap"
+  | "Scale"
+  | "BriefcaseBusiness"
+  | "Handshake";
 
 const icons: LucideIcon[] = [
   Clapperboard,
@@ -25,9 +38,25 @@ const icons: LucideIcon[] = [
   GraduationCap,
   Scale,
 ];
+const iconByName: Record<UseCaseIcon, LucideIcon> = {
+  Clapperboard,
+  Mic,
+  Newspaper,
+  FlaskConical,
+  GraduationCap,
+  Scale,
+  BriefcaseBusiness,
+  Handshake,
+};
 
-export async function UseCases() {
-  const t = await getTranslations("UseCases");
+type UseCasesNamespace = "UseCases" | "AiNoteTaker.useCases";
+
+export async function UseCases({
+  namespace = "UseCases",
+}: {
+  namespace?: UseCasesNamespace;
+} = {}) {
+  const t = await getTranslations(namespace);
   const cases = t.raw("items") as Case[];
 
   return (
@@ -49,7 +78,7 @@ export async function UseCases() {
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {cases.map((c, i) => {
-            const Icon = icons[i];
+            const Icon = c.icon ? iconByName[c.icon] : icons[i];
             return (
               <article
                 key={c.title}

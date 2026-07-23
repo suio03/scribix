@@ -19,6 +19,7 @@ import {
   ChevronRight,
   FileAudio,
   LayoutDashboard,
+  ListChecks,
   LogIn,
   Plus,
   UserRound,
@@ -72,6 +73,7 @@ const navIcons = {
   Clapperboard,
   FileAudio,
   LayoutDashboard,
+  ListChecks,
   UserRound,
   YouTubeIcon,
 } satisfies Record<string, SidebarIcon>;

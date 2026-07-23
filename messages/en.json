@@ -57,6 +57,11 @@
         "label": "YouTube to Transcript",
         "href": "/youtube-to-transcript",
         "icon": "Captions"
+      },
+      {
+        "label": "AI Note Taker",
+        "href": "/ai-note-taker",
+        "icon": "ListChecks"
       }
     ],
     "tools": [
@@ -421,7 +426,7 @@
       },
       {
         "key": "aiSummaries",
-        "label": "AI summaries",
+        "label": "AI notes",
         "values": {
           "free": "No",
           "starter": "Yes",
@@ -484,7 +489,7 @@
         "answer": "Paid plans do not include a separate trial. Use the 45 free lifetime minutes to check transcript quality before subscribing."
       }
     ],
-    "aiFeatures": "AI summaries + translation",
+    "aiFeatures": "AI notes + translation",
     "included": "Included",
     "paidIncludedTitle": "Included in every paid plan",
     "paidIncludedDescription": "Shared paid-plan capabilities stay out of the comparison cards so the real differences are easier to scan.",
@@ -635,7 +640,7 @@
       "choosePlanDescription": "Starter works for steady personal transcription. Pro is better when longer files, priority processing, or heavier monthly usage matter.",
       "checkoutOkTitle": "Subscription active — welcome aboard.",
       "checkoutOkBody": "Your new plan is live. Usage and subscription controls are shown below.",
-      "aiFeatures": "AI summaries + translation",
+      "aiFeatures": "AI notes + translation",
       "included": "Included"
     },
     "viewer": {
@@ -655,7 +660,7 @@
       "tabTranscript": "Transcript",
       "tabSubtitles": "Subtitles",
       "tabTranslation": "Translation",
-      "tabSummary": "Summary",
+      "tabSummary": "AI Notes",
       "proBadge": "Pro",
       "speakerLabel": "Speaker {speaker}",
       "speakersCount": "Rename speakers",
@@ -699,8 +704,8 @@
       "upgradePro": "Pro",
       "upgradeTranslationModalTitle": "Translate this transcript",
       "upgradeTranslationModalBody": "Upgrade to translate completed transcripts into supported languages with speaker-aligned output.",
-      "upgradeSummaryModalTitle": "Summarize this transcript",
-      "upgradeSummaryModalBody": "Upgrade to turn long transcripts into an overview, key points, and action items.",
+      "upgradeSummaryModalTitle": "Create AI notes",
+      "upgradeSummaryModalBody": "Upgrade to turn completed transcripts into an overview, key points, and action items.",
       "upgradeQuotaModalTitle": "Keep transcribing",
       "upgradeQuotaModalBody": "Upgrade to add more transcription minutes and continue without waiting.",
       "upgradePlanToggle": "Choose plan",
@@ -710,24 +715,24 @@
       "upgradeProMonthlyDescription": "For long files, priority processing, and heavier transcript volume.",
       "upgradeProMonthlyBulletMinutes": "{minutes, number} priority minutes each month",
       "upgradeProMonthlyBulletLength": "{hours, plural, =1 {Transcribe files up to # hour} other {Transcribe files up to # hours}}",
-      "upgradeProMonthlyBulletAi": "Includes AI translation and AI summaries",
+      "upgradeProMonthlyBulletAi": "Includes AI translation and AI notes",
       "upgradeStarterMonthlyDescription": "For steady personal transcription with the paid AI tools unlocked.",
       "upgradeStarterMonthlyBulletMinutes": "{minutes, number} minutes each month",
-      "upgradeStarterMonthlyBulletAi": "Includes AI translation and AI summaries",
+      "upgradeStarterMonthlyBulletAi": "Includes AI translation and AI notes",
       "upgradeStarterMonthlyBulletExports": "Unlimited transcript exports",
       "closeUpgrade": "Close upgrade modal",
-      "summaryPanelTitle": "AI summary",
+      "summaryPanelTitle": "AI notes",
       "summaryPanelDescription": "Generate a concise overview, key points, and action items.",
-      "generateSummary": "Generate summary",
-      "regenerateSummary": "Generate summary",
-      "summarizing": "Summarizing…",
-      "summaryProcessing": "Summarizing…",
-      "summaryIdle": "Generate a summary when you are ready.",
-      "summaryError": "Summary failed. Please try again.",
-      "upgradeSummaryTitle": "Unlock AI summary",
-      "upgradeSummaryBody": "Summary is included in Starter and Pro. Upgrade to summarize completed transcripts.",
-      "summary": "Summary",
-      "summarySoon": "Summary — coming soon",
+      "generateSummary": "Generate AI notes",
+      "regenerateSummary": "Generate AI notes",
+      "summarizing": "Creating AI notes…",
+      "summaryProcessing": "Creating AI notes…",
+      "summaryIdle": "Generate AI notes when you are ready.",
+      "summaryError": "AI notes failed. Please try again.",
+      "upgradeSummaryTitle": "Unlock AI notes",
+      "upgradeSummaryBody": "AI notes are included in Starter and Pro. Upgrade to turn completed transcripts into structured notes.",
+      "summary": "AI Notes",
+      "summarySoon": "AI Notes — coming soon",
       "more": "More",
       "moreSoon": "More options — coming soon"
     },
@@ -1235,6 +1240,270 @@
         "Transcribe the audio",
         "Review the transcript",
         "Copy or export"
+      ]
+    }
+  },
+  "AiNoteTaker": {
+    "metadata": {
+      "title": "AI Note Taker for Audio, Video & YouTube | Scribix",
+      "description": "Turn audio, video, mic recordings, and captioned YouTube videos into transcripts and AI notes with key points, action items, speakers, and timestamps.",
+      "openGraphTitle": "AI Note Taker for Recorded Conversations | Scribix",
+      "openGraphDescription": "Capture the transcript, speakers, timestamps, summary, key points, and action items from audio or video.",
+      "twitterTitle": "AI Note Taker for Audio and Video | Scribix",
+      "twitterDescription": "Upload, record, or paste a supported YouTube URL. Get a reviewable transcript and structured AI notes."
+    },
+    "hero": {
+      "issue": "REC · AI NOTES",
+      "issueLabel": "Issue No.05 · AI Note Taker",
+      "h1Part1": "AI note taker for every recording.",
+      "h1Part2": "<accent>From conversation to clear next steps.</accent>",
+      "description": "Upload a video or audio file, record through your microphone, or paste a YouTube URL with available captions. Scribix creates a speaker-labeled, timestamped transcript; Starter and Pro users can turn it into structured AI notes with an overview, key points, and action items.",
+      "primaryCta": "Start with 45 Free Minutes",
+      "signedInPrimaryCta": "Create New Transcript",
+      "secondaryCta": "View Pricing",
+      "secondaryHref": "/pricing",
+      "trust": [
+        {
+          "label": "Audio, Video, YouTube & Mic",
+          "icon": "Upload"
+        },
+        {
+          "label": "Speaker Labels",
+          "icon": "Users"
+        },
+        {
+          "label": "Word-level Timestamps",
+          "icon": "Clock"
+        },
+        {
+          "label": "AI Notes on Paid Plans",
+          "icon": "Sparkles"
+        }
+      ]
+    },
+    "features": {
+      "label": "Features",
+      "number": "01",
+      "h2": "An AI note taker that keeps the <accent>source and the takeaway.</accent>",
+      "intro": "Scribix turns a recording into two useful layers: a transcript you can verify and a shorter set of AI notes you can act on. The notes focus on an overview, key points, and action items, while speaker labels and timestamps keep important moments traceable to the recording.",
+      "items": [
+        {
+          "icon": "Sparkles",
+          "title": "Structured AI notes",
+          "body": "Generate an overview, key points, and action items from a completed transcript on Starter and Pro plans.",
+          "span": "lg:col-span-2"
+        },
+        {
+          "icon": "Users",
+          "title": "Speaker-labeled conversations",
+          "body": "Scribix separates speaker turns when recording quality supports it, and you can rename the generated labels afterward."
+        },
+        {
+          "icon": "Clock",
+          "title": "Timestamps you can check",
+          "body": "Word-level timestamps help you return to the exact moment behind a note, quote, or follow-up."
+        },
+        {
+          "icon": "Files",
+          "title": "Four ways to add a recording",
+          "body": "Upload video, upload audio, record through your microphone, or import an available caption track from a YouTube URL.",
+          "span": "lg:col-span-2"
+        },
+        {
+          "icon": "FileDown",
+          "title": "Transcript exports",
+          "body": "Review and edit the transcript, then copy it or export TXT, DOCX, SRT, VTT, or CSV."
+        },
+        {
+          "icon": "Lock",
+          "title": "Clear retention controls",
+          "body": "Uploaded audio and video are deleted automatically after 14 days. Transcripts remain until you delete them or close your account."
+        }
+      ]
+    },
+    "howItWorks": {
+      "label": "How it works",
+      "number": "02",
+      "h2Part1": "Three steps.",
+      "h2Part2": "From recording to AI notes.",
+      "steps": [
+        {
+          "n": "01",
+          "icon": "CloudUpload",
+          "title": "Add the conversation.",
+          "body": "Upload an audio or video file, record live audio through your microphone, or paste a YouTube URL that has an available caption track.",
+          "duration": "Audio · Video · YouTube · Mic"
+        },
+        {
+          "n": "02",
+          "icon": "Cpu",
+          "title": "Create a traceable transcript.",
+          "body": "Scribix transcribes uploaded or recorded media, adds speaker labels when the audio supports them, and attaches word-level timestamps. YouTube URLs import the selected caption track instead.",
+          "duration": "Speakers + timestamps"
+        },
+        {
+          "n": "03",
+          "icon": "ListChecks",
+          "title": "Generate and review the notes.",
+          "body": "On Starter and Pro plans, create AI notes with an overview, key points, and action items. Check important details against the transcript before sharing or acting on them.",
+          "duration": "Overview · Key points · Actions"
+        }
+      ]
+    },
+    "useCases": {
+      "label": "Use Cases",
+      "number": "03",
+      "h2Part1": "Built for conversations that need",
+      "h2Part2": "<accent>a useful written record.</accent>",
+      "intro": "Use Scribix after meetings, interviews, lectures, webinars, podcasts, and research sessions when replaying the full recording would slow down the next step.",
+      "items": [
+        {
+          "icon": "BriefcaseBusiness",
+          "title": "Meeting follow-up",
+          "audience": "Founders, operators, project teams",
+          "body": "Keep the full discussion searchable, then pull out the main points and follow-up tasks without inviting a bot into the call.",
+          "workflow": [
+            "Meeting recording",
+            "Speaker-labeled transcript",
+            "Key points + actions"
+          ]
+        },
+        {
+          "icon": "Handshake",
+          "title": "Customer and sales calls",
+          "audience": "Sales, success, product teams",
+          "body": "Review customer language, trace important moments by timestamp, and turn agreed follow-ups into an action list.",
+          "workflow": [
+            "Call recording",
+            "Customer evidence",
+            "Follow-up list"
+          ]
+        },
+        {
+          "icon": "GraduationCap",
+          "title": "Lectures and study",
+          "audience": "Students and educators",
+          "body": "Convert a recorded lecture into searchable text and a shorter set of key points for revision.",
+          "workflow": [
+            "Lecture audio",
+            "Timestamped transcript",
+            "Study notes"
+          ]
+        },
+        {
+          "icon": "Newspaper",
+          "title": "Interviews and research",
+          "audience": "Journalists, recruiters, researchers",
+          "body": "Keep speaker turns and timestamps beside the source material, then summarize themes and next steps for analysis.",
+          "workflow": [
+            "Recorded interview",
+            "Traceable quotes",
+            "Themes + actions"
+          ]
+        },
+        {
+          "icon": "Mic",
+          "title": "Podcasts and webinars",
+          "audience": "Creators, marketers, producers",
+          "body": "Turn long-form recordings into a transcript plus concise notes for show notes, recaps, and content planning.",
+          "workflow": [
+            "Episode or webinar",
+            "Full transcript",
+            "Recap outline"
+          ]
+        }
+      ]
+    },
+    "faq": {
+      "label": "FAQ",
+      "number": "04",
+      "h2Part1": "AI note taking,",
+      "h2Part2": "<accent>explained clearly.</accent>",
+      "contactPrefix": "Still have a question? Email",
+      "contactEmail": "hello@scribix.io",
+      "contactSuffix": "and we will help you choose the right workflow.",
+      "items": [
+        {
+          "q": "What is an AI note taker?",
+          "a": "An AI note taker converts a recorded conversation into written text and a shorter set of organized notes. Scribix keeps the transcript, speaker labels, and timestamps alongside AI-generated overviews, key points, and action items on paid plans."
+        },
+        {
+          "q": "Can I use Scribix for in-person meetings?",
+          "a": "Yes. Record the meeting through your device microphone or upload an audio or video recording afterward. Recording quality, microphone placement, room noise, and overlapping speech all affect the result."
+        },
+        {
+          "q": "Does Scribix join Zoom, Google Meet, or Microsoft Teams calls?",
+          "a": "No. Scribix does not send a meeting bot into calls. Add a recording yourself by uploading a file, recording through your microphone, or importing captions from a supported YouTube URL."
+        },
+        {
+          "q": "What does Scribix include in AI notes?",
+          "a": "AI notes contain an overview, key points, and action items. The completed transcript also includes timestamps and speaker labels when the recording supports them."
+        },
+        {
+          "q": "Is the AI note taker free?",
+          "a": "Scribix includes 45 lifetime transcription minutes with Google sign-in and no credit card. AI summaries and structured notes are available on Starter and Pro plans."
+        },
+        {
+          "q": "Can I create notes from a YouTube video?",
+          "a": "Yes, when the YouTube video has an available caption track. Paste the URL, choose a caption track, import it, and generate AI notes on a paid plan. If no captions are available, upload a media file you own instead."
+        },
+        {
+          "q": "How accurate are the transcript and AI notes?",
+          "a": "Results depend on audio clarity, microphone distance, background noise, accents, specialized vocabulary, and overlapping speech. Review names, numbers, commitments, quotes, and other important details against the recording before relying on them."
+        },
+        {
+          "q": "How long does Scribix keep my recordings?",
+          "a": "Uploaded audio and video files are deleted automatically after 14 days. Transcripts remain in your account until you delete them or close your account."
+        },
+        {
+          "q": "Can I export my notes?",
+          "a": "AI notes are displayed in the transcript workspace. There is no dedicated notes-file export; transcript downloads are available as TXT, DOCX, SRT, VTT, or CSV."
+        }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Ready when you are",
+      "h2Part1": "Add the recording.",
+      "h2Part2": "<accent>Leave with clear notes.</accent>",
+      "body": "Start with 45 free transcription minutes. Upgrade to Starter or Pro when you want structured AI notes with an overview, key points, and action items.",
+      "primaryCta": "Start Taking Notes",
+      "stats": [
+        {
+          "value": "45 min",
+          "label": "Free transcription"
+        },
+        {
+          "value": "3",
+          "label": "AI note sections"
+        },
+        {
+          "value": "14 days",
+          "label": "Media auto-delete"
+        }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix AI Note Taker",
+      "appDescription": "AI note-taking tool that turns uploaded audio, video, microphone recordings, and available YouTube captions into traceable transcripts and structured notes.",
+      "offerDescription": "45 lifetime transcription minutes are included with Google sign-in; AI notes are available on Starter and Pro plans.",
+      "featureList": [
+        "Audio and video upload",
+        "Live microphone recording",
+        "YouTube caption import",
+        "Speaker labels",
+        "Word-level timestamps",
+        "AI overview",
+        "AI key points",
+        "AI action items",
+        "Transcript editing and export"
+      ],
+      "howToName": "How to create AI notes with Scribix",
+      "howToDescription": "Add a recording, create a traceable transcript, then generate and review structured AI notes on a paid plan.",
+      "howToSteps": [
+        "Upload, record, or paste a supported YouTube URL",
+        "Create or import the transcript",
+        "Generate AI notes on Starter or Pro",
+        "Review the notes against the transcript"
       ]
     }
   },

@@ -3,6 +3,7 @@ import {
   Globe,
   Clock,
   FileDown,
+  Files,
   Sparkles,
   Lock,
   type LucideIcon,
@@ -10,12 +11,35 @@ import {
 import { getTranslations } from "next-intl/server";
 import { SectionLabel } from "./SectionLabel";
 
-type Item = { title: string; body: string; span?: string };
+type FeatureIcon =
+  | "Users"
+  | "Globe"
+  | "Clock"
+  | "FileDown"
+  | "Files"
+  | "Sparkles"
+  | "Lock";
+type Item = { title: string; body: string; span?: string; icon?: FeatureIcon };
 
 const icons: LucideIcon[] = [Users, Globe, Clock, FileDown, Sparkles, Lock];
+const iconByName: Record<FeatureIcon, LucideIcon> = {
+  Users,
+  Globe,
+  Clock,
+  FileDown,
+  Files,
+  Sparkles,
+  Lock,
+};
 
-export async function Features() {
-  const t = await getTranslations("Features");
+type FeaturesNamespace = "Features" | "AiNoteTaker.features";
+
+export async function Features({
+  namespace = "Features",
+}: {
+  namespace?: FeaturesNamespace;
+} = {}) {
+  const t = await getTranslations(namespace);
   const items = t.raw("items") as Item[];
 
   return (
@@ -39,7 +63,7 @@ export async function Features() {
 
         <div className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
           {items.map((f, i) => {
-            const Icon = icons[i];
+            const Icon = f.icon ? iconByName[f.icon] : icons[i];
             return (
               <article
                 key={f.title}

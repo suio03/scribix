@@ -37,12 +37,14 @@ export function YouTubeImporter({
   postSignInPath,
   tier = "free",
   billingCycle = null,
+  toolSlug = "dashboard-transcribe",
   variant = "card",
 }: {
   signedIn: boolean;
   postSignInPath: string;
   tier?: Tier;
   billingCycle?: BillingCycle | null;
+  toolSlug?: string;
   variant?: "card" | "flat";
 }) {
   const t = useTranslations("Dashboard.youtube");
@@ -82,7 +84,10 @@ export function YouTubeImporter({
     setPhase("inspecting");
     setError(null);
     setResult(null);
-    trackEvent("youtube_inspect_attempt", { step: "inspect" });
+    trackEvent("youtube_inspect_attempt", {
+      step: "inspect",
+      tool_slug: toolSlug,
+    });
 
     try {
       const response = await fetch("/api/transcripts/youtube", {
@@ -101,7 +106,10 @@ export function YouTubeImporter({
       setSelectedTrackId(preferredTrackId(inspectResult.tracks));
       setPhase("ready");
     } catch (caught) {
-      trackEvent("youtube_inspect_fail", youtubeInspectFailureProps(caught));
+      trackEvent("youtube_inspect_fail", {
+        ...youtubeInspectFailureProps(caught),
+        tool_slug: toolSlug,
+      });
       setError(errorMessage(caught, t));
       setPhase("error");
     }
@@ -111,7 +119,10 @@ export function YouTubeImporter({
     if (busy || !result || !selectedTrack) return;
     setPhase("importing");
     setError(null);
-    trackEvent("youtube_import_attempt", { step: "import" });
+    trackEvent("youtube_import_attempt", {
+      step: "import",
+      tool_slug: toolSlug,
+    });
 
     try {
       const response = await fetch("/api/transcripts/youtube/import", {
@@ -129,7 +140,10 @@ export function YouTubeImporter({
       }
       router.push(`/dashboard/transcripts/${imported.transcriptId}`);
     } catch (caught) {
-      trackEvent("youtube_import_fail", youtubeImportFailureProps(caught));
+      trackEvent("youtube_import_fail", {
+        ...youtubeImportFailureProps(caught),
+        tool_slug: toolSlug,
+      });
       setError(errorMessage(caught, t));
       setPhase("error");
     }

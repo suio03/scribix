@@ -4,8 +4,14 @@ import { SectionLabel } from "./SectionLabel";
 
 type Item = { q: string; a: string };
 
-export async function FAQ() {
-  const t = await getTranslations("FAQ");
+type FaqNamespace = "FAQ" | "AiNoteTaker.faq";
+
+export async function FAQ({
+  namespace = "FAQ",
+}: {
+  namespace?: FaqNamespace;
+} = {}) {
+  const t = await getTranslations(namespace);
   const faqs = t.raw("items") as Item[];
 
   return (

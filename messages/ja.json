@@ -57,6 +57,11 @@
         "label": "YouTubeをテキスト化",
         "href": "/youtube-to-transcript",
         "icon": "Captions"
+      },
+      {
+        "label": "AI議事録",
+        "href": "/ai-note-taker",
+        "icon": "ListChecks"
       }
     ],
     "tools": [
@@ -421,7 +426,7 @@
       },
       {
         "key": "aiSummaries",
-        "label": "AI要約",
+        "label": "AI議事録",
         "values": {
           "free": "いいえ",
           "starter": "はい",
@@ -484,7 +489,7 @@
         "answer": "有料プランに別の無料期間はありません。生涯45分の無料枠で品質を確認してから登録できます。"
       }
     ],
-    "aiFeatures": "AI要約 + 翻訳",
+    "aiFeatures": "AI議事録 + 翻訳",
     "included": "含まれます",
     "paidIncludedTitle": "すべての有料プランに含まれます",
     "paidIncludedDescription": "有料プラン共通の機能はここにまとめ、プランごとの差分を比較しやすくしています。",
@@ -631,7 +636,7 @@
       "choosePlanDescription": "Starter は継続的な個人利用に適しています。長いファイル、優先処理、または月間利用が多い場合は Pro が適しています。",
       "checkoutOkTitle": "サブスクリプションがアクティブです—ようこそ。",
       "checkoutOkBody": "新しいプランが有効になりました。使用量とサブスクリプション管理は下に表示されます。",
-      "aiFeatures": "AI要約 + 翻訳",
+      "aiFeatures": "AI議事録 + 翻訳",
       "included": "含まれます"
     },
     "viewer": {
@@ -651,7 +656,7 @@
       "tabTranscript": "文字起こし",
       "tabSubtitles": "字幕",
       "tabTranslation": "翻訳",
-      "tabSummary": "要約",
+      "tabSummary": "AI議事録",
       "proBadge": "Pro",
       "speakerLabel": "話者 {speaker}",
       "speakersCount": "話者名を変更",
@@ -694,8 +699,8 @@
       "upgradePro": "Pro",
       "upgradeTranslationModalTitle": "この文字起こしを翻訳",
       "upgradeTranslationModalBody": "アップグレードすると、完了した文字起こしを対応言語へ、話者に合わせた形式で翻訳できます。",
-      "upgradeSummaryModalTitle": "この文字起こしを要約",
-      "upgradeSummaryModalBody": "アップグレードすると、長い文字起こしを概要、重要ポイント、アクション項目にまとめられます。",
+      "upgradeSummaryModalTitle": "AI議事録を作成",
+      "upgradeSummaryModalBody": "アップグレードすると、完成した文字起こしを概要、重要ポイント、アクション項目に整理できます。",
       "upgradeQuotaModalTitle": "文字起こしを続ける",
       "upgradeQuotaModalBody": "アップグレードすると文字起こし分数を追加し、待たずに続行できます。",
       "upgradePlanToggle": "プランを選択",
@@ -705,26 +710,26 @@
       "upgradeProMonthlyDescription": "長いファイル、優先処理、より多い文字起こし量向け。",
       "upgradeProMonthlyBulletMinutes": "毎月 {minutes, number} 分の優先処理",
       "upgradeProMonthlyBulletLength": "最大 {hours, number} 時間のファイルを文字起こし",
-      "upgradeProMonthlyBulletAi": "AI翻訳とAI要約を含む",
+      "upgradeProMonthlyBulletAi": "AI翻訳とAI議事録を含む",
       "upgradeStarterMonthlyDescription": "有料AIツールを使える、継続的な個人向け文字起こしプラン。",
       "upgradeStarterMonthlyBulletMinutes": "毎月 {minutes, number} 分",
-      "upgradeStarterMonthlyBulletAi": "AI翻訳とAI要約を含む",
+      "upgradeStarterMonthlyBulletAi": "AI翻訳とAI議事録を含む",
       "upgradeStarterMonthlyBulletExports": "文字起こしのエクスポート無制限",
       "closeUpgrade": "アップグレードモーダルを閉じる",
-      "summaryPanelTitle": "AI要約",
+      "summaryPanelTitle": "AI議事録",
       "summaryPanelDescription": "簡潔な概要、重要ポイント、アクション項目を生成します。",
-      "generateSummary": "要約を生成",
-      "regenerateSummary": "要約を生成",
-      "summarizing": "要約中…",
-      "summaryProcessing": "要約中…",
-      "summaryIdle": "準備ができたら要約を生成します。",
-      "summaryError": "要約に失敗しました。もう一度お試しください。",
-      "upgradeSummaryTitle": "AI要約を解除",
-      "upgradeSummaryBody": "要約はStarterとProに含まれています。アップグレードすると、完了した文字起こしを要約できます。",
+      "generateSummary": "AI議事録を生成",
+      "regenerateSummary": "AI議事録を生成",
+      "summarizing": "AI議事録を作成中…",
+      "summaryProcessing": "AI議事録を作成中…",
+      "summaryIdle": "準備ができたらAI議事録を生成します。",
+      "summaryError": "AI議事録の作成に失敗しました。もう一度お試しください。",
+      "upgradeSummaryTitle": "AI議事録を利用",
+      "upgradeSummaryBody": "AI議事録はStarterとProに含まれています。アップグレードすると、完成した文字起こしを構造化された議事録に整理できます。",
       "moreSoon": "その他のオプション — 近日公開",
       "more": "その他",
-      "summarySoon": "要約 — 近日公開",
-      "summary": "要約",
+      "summarySoon": "AI議事録 — 近日公開",
+      "summary": "AI議事録",
       "translateSoon": "翻訳 — 近日公開",
       "translate": "翻訳"
     },
@@ -1234,6 +1239,113 @@
         "文字起こしを確認",
         "コピーまたはエクスポート"
       ]
+    }
+  },
+  "AiNoteTaker": {
+    "metadata": {
+      "title": "音声・動画対応のAI議事録ツール | Scribix",
+      "description": "音声、動画、マイク録音、字幕付きYouTube動画から、文字起こしと概要・要点・アクションアイテムを含むAI議事録を作成します。",
+      "openGraphTitle": "録音から作るAI議事録ツール | Scribix",
+      "openGraphDescription": "発言者、タイムスタンプ、概要、要点、アクションアイテムを録音から整理します。",
+      "twitterTitle": "音声・動画対応のAI議事録ツール | Scribix",
+      "twitterDescription": "ファイルのアップロード、マイク録音、対応するYouTube URLから、確認しやすい文字起こしとAI議事録を作成できます。"
+    },
+    "hero": {
+      "issue": "REC · AI議事録",
+      "issueLabel": "Issue No.05 · AI議事録ツール",
+      "h1Part1": "あらゆる録音を、AI議事録に。",
+      "h1Part2": "<accent>会話から次のアクションまで整理。</accent>",
+      "description": "動画や音声ファイルのアップロード、マイク録音、字幕が利用できるYouTube URLに対応します。Scribixは発言者とタイムスタンプ付きの文字起こしを作成し、StarterとProでは概要、要点、アクションアイテムをAIで整理できます。",
+      "primaryCta": "無料の45分から始める",
+      "signedInPrimaryCta": "文字起こしを作成",
+      "secondaryCta": "料金を見る",
+      "secondaryHref": "/pricing",
+      "trust": [
+        { "label": "音声・動画・YouTube・マイク", "icon": "Upload" },
+        { "label": "発言者ラベル", "icon": "Users" },
+        { "label": "単語単位のタイムスタンプ", "icon": "Clock" },
+        { "label": "有料プランでAI議事録", "icon": "Sparkles" }
+      ]
+    },
+    "features": {
+      "label": "機能",
+      "number": "01",
+      "h2": "元の発言をたどれる、<accent>実用的なAI議事録。</accent>",
+      "intro": "Scribixは録音を、確認できる文字起こしと、行動につなげやすい短いAI議事録に整理します。概要、要点、アクションアイテムをまとめながら、発言者とタイムスタンプで重要な内容を元の録音までたどれます。",
+      "items": [
+        { "icon": "Sparkles", "title": "構造化されたAI議事録", "body": "StarterとProでは、完成した文字起こしから概要、要点、アクションアイテムを生成できます。", "span": "lg:col-span-2" },
+        { "icon": "Users", "title": "発言者ごとの文字起こし", "body": "録音品質が十分な場合は発言者の交代を分けて表示します。生成されたラベルは後から変更できます。" },
+        { "icon": "Clock", "title": "確認できるタイムスタンプ", "body": "単語単位のタイムスタンプから、メモや引用、フォローアップの根拠となる箇所へ戻れます。" },
+        { "icon": "Files", "title": "4つの入力方法", "body": "動画または音声のアップロード、マイク録音、YouTube URLから利用可能な字幕トラックの取り込みに対応します。", "span": "lg:col-span-2" },
+        { "icon": "FileDown", "title": "文字起こしの書き出し", "body": "文字起こしを確認・編集し、コピーまたはTXT、DOCX、SRT、VTT、CSVでダウンロードできます。" },
+        { "icon": "Lock", "title": "明確な保存期間", "body": "アップロードした音声・動画は14日後に自動削除されます。文字起こしは、自分で削除するかアカウントを閉鎖するまで保存されます。" }
+      ]
+    },
+    "howItWorks": {
+      "label": "使い方",
+      "number": "02",
+      "h2Part1": "3ステップ。",
+      "h2Part2": "録音からAI議事録まで。",
+      "steps": [
+        { "n": "01", "icon": "CloudUpload", "title": "会話を追加します。", "body": "音声・動画ファイルをアップロードするか、マイクで録音します。字幕トラックが利用できるYouTube URLを貼り付けることもできます。", "duration": "音声 · 動画 · YouTube · マイク" },
+        { "n": "02", "icon": "Cpu", "title": "確認可能な文字起こしを作成します。", "body": "アップロードまたは録音したメディアを文字起こしし、音声品質が対応する場合は発言者ラベルと単語単位のタイムスタンプを追加します。YouTube URLでは選択した字幕トラックを取り込みます。", "duration": "発言者 + タイムスタンプ" },
+        { "n": "03", "icon": "ListChecks", "title": "AI議事録を生成して確認します。", "body": "StarterまたはProで、概要、要点、アクションアイテムを生成します。共有や実行の前に、重要な内容を文字起こしと照合してください。", "duration": "概要 · 要点 · アクション" }
+      ]
+    },
+    "useCases": {
+      "label": "活用シーン",
+      "number": "03",
+      "h2Part1": "会話の記録を、",
+      "h2Part2": "<accent>次に使える情報へ。</accent>",
+      "intro": "会議、商談、講義、インタビュー、ウェビナー、ポッドキャスト、調査セッションなど、録音全体を聞き直す時間を減らしたい場面で活用できます。",
+      "items": [
+        { "icon": "BriefcaseBusiness", "title": "会議のフォローアップ", "audience": "経営者、業務担当、プロジェクトチーム", "body": "会議ボットを参加させず、録音から会話全体を検索可能にし、要点とフォローアップタスクを整理します。", "workflow": ["会議の録音", "発言者付き文字起こし", "要点 + アクション"] },
+        { "icon": "Handshake", "title": "商談・顧客インタビュー", "audience": "営業、カスタマーサクセス、プロダクト", "body": "顧客の言葉を確認し、タイムスタンプから重要な場面に戻り、合意したフォローアップをタスクにまとめます。", "workflow": ["通話録音", "顧客の発言", "フォローアップ一覧"] },
+        { "icon": "GraduationCap", "title": "講義と学習", "audience": "学生、教員", "body": "録音した講義を検索可能な文字起こしと、復習しやすい短い要点に変換します。", "workflow": ["講義音声", "タイムスタンプ付き文字起こし", "学習メモ"] },
+        { "icon": "Newspaper", "title": "取材とリサーチ", "audience": "記者、採用担当、研究者", "body": "発言者とタイムスタンプを元データとともに残し、分析に必要なテーマと次のアクションを整理します。", "workflow": ["インタビュー録音", "確認できる引用", "テーマ + アクション"] },
+        { "icon": "Mic", "title": "ポッドキャストとウェビナー", "audience": "クリエイター、マーケター、制作者", "body": "長時間の録音を、全文の文字起こしと概要作成やコンテンツ企画に使える短いメモへ変換します。", "workflow": ["エピソードまたはウェビナー", "全文文字起こし", "概要の構成"] }
+      ]
+    },
+    "faq": {
+      "label": "よくある質問",
+      "number": "04",
+      "h2Part1": "AI議事録について、",
+      "h2Part2": "<accent>わかりやすく回答。</accent>",
+      "contactPrefix": "解決しない場合は",
+      "contactEmail": "hello@scribix.io",
+      "contactSuffix": "までお問い合わせください。用途に合う方法をご案内します。",
+      "items": [
+        { "q": "AI議事録ツールとは何ですか？", "a": "録音した会話を文字に起こし、短く整理された記録を作るツールです。Scribixの有料プランでは、文字起こし、発言者、タイムスタンプに加え、概要、要点、アクションアイテムをAIで生成できます。" },
+        { "q": "対面会議でも使えますか？", "a": "はい。端末のマイクで会議を録音するか、後から音声・動画ファイルをアップロードしてください。マイクの位置、室内の雑音、同時発話などが結果に影響します。" },
+        { "q": "Zoom、Google Meet、Microsoft Teamsの会議にScribixが参加しますか？", "a": "いいえ。Scribixは会議ボットを通話に参加させません。ファイルのアップロード、マイク録音、または対応するYouTube URLの字幕取り込みで録音を追加します。" },
+        { "q": "AI議事録には何が含まれますか？", "a": "概要、要点、アクションアイテムが含まれます。完成した文字起こしにはタイムスタンプが付き、録音品質が対応する場合は発言者ラベルも表示されます。" },
+        { "q": "AI議事録は無料で使えますか？", "a": "Googleでログインすると、クレジットカード不要で生涯合計45分の無料文字起こしを利用できます。AI要約と構造化されたAI議事録はStarterとProで利用できます。" },
+        { "q": "YouTube動画からAI議事録を作れますか？", "a": "利用可能な字幕トラックがある動画なら作成できます。URLを貼り付けて字幕を選び、取り込んだ後に有料プランでAI議事録を生成します。字幕がない場合は、所有するメディアファイルをアップロードしてください。" },
+        { "q": "文字起こしとAI議事録の精度はどの程度ですか？", "a": "音声の明瞭さ、マイクとの距離、雑音、アクセント、専門用語、発言の重なりによって結果は変わります。氏名、数値、約束、引用など重要な内容は元の録音で確認してください。" },
+        { "q": "録音はどのくらい保存されますか？", "a": "アップロードした音声・動画は14日後に自動削除されます。文字起こしは、自分で削除するかアカウントを閉鎖するまで保存されます。" },
+        { "q": "作成したメモを書き出せますか？", "a": "AI議事録は文字起こし画面に表示されます。AI議事録専用のファイル書き出しはありませんが、文字起こしはTXT、DOCX、SRT、VTT、CSVでダウンロードできます。" }
+      ]
+    },
+    "finalCta": {
+      "kicker": "準備ができたら",
+      "h2Part1": "録音を追加するだけ。",
+      "h2Part2": "<accent>次に使える議事録へ。</accent>",
+      "body": "まずは45分の無料文字起こしから。概要、要点、アクションアイテムをAIで整理する場合はStarterまたはProをご利用ください。",
+      "primaryCta": "AI議事録を作成する",
+      "stats": [
+        { "value": "45分", "label": "無料文字起こし" },
+        { "value": "3", "label": "AI議事録の項目" },
+        { "value": "14日", "label": "メディア自動削除" }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix AI議事録ツール",
+      "appDescription": "音声、動画、マイク録音、利用可能なYouTube字幕から、確認可能な文字起こしと構造化されたAI議事録を作成するツールです。",
+      "offerDescription": "Googleログインで生涯合計45分の文字起こしが無料。AI議事録はStarterとProで利用できます。",
+      "featureList": ["音声・動画アップロード", "マイク録音", "YouTube字幕の取り込み", "発言者ラベル", "単語単位のタイムスタンプ", "AIによる概要", "AIによる要点", "AIによるアクションアイテム", "文字起こしの編集と書き出し"],
+      "howToName": "ScribixでAI議事録を作成する方法",
+      "howToDescription": "録音を追加して確認可能な文字起こしを作成し、有料プランで構造化されたAI議事録を生成・確認します。",
+      "howToSteps": ["アップロード、録音、または対応するYouTube URLを貼り付ける", "文字起こしを作成または取り込む", "StarterまたはProでAI議事録を生成する", "文字起こしと照合して確認する"]
     }
   },
   "Feedback": {

@@ -4,8 +4,14 @@ import { Waveform } from "./Waveform";
 
 type Stat = { value: string; label: string };
 
-export async function FinalCTA() {
-  const t = await getTranslations("FinalCTA");
+type FinalCtaNamespace = "FinalCTA" | "AiNoteTaker.finalCta";
+
+export async function FinalCTA({
+  namespace = "FinalCTA",
+}: {
+  namespace?: FinalCtaNamespace;
+} = {}) {
+  const t = await getTranslations(namespace);
   const stats = t.raw("stats") as Stat[];
 
   return (

@@ -9,15 +9,17 @@ import {
   FileVideo,
   FileAudio,
   Globe,
+  Clock,
   Target,
   Users,
   Infinity as InfinityIcon,
   ShieldCheck,
   CloudUpload,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { Tier } from "@/lib/plans";
+import type { BillingCycle, Tier } from "@/lib/plans";
 import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
 import { Recorder } from "./Recorder";
 import { YouTubeImporter } from "./YouTubeImporter";
@@ -25,7 +27,17 @@ import { markSignInPending } from "./Track";
 
 type TabId = "upload" | "youtube" | "record";
 type Tab = { id: TabId; label: string; hint: string };
-type TrustItem = { label: string };
+type TrustIcon =
+  | "Upload"
+  | "Target"
+  | "Globe"
+  | "InfinityIcon"
+  | "Users"
+  | "Clock"
+  | "Sparkles"
+  | "ShieldCheck";
+type TrustItem = { label: string; icon?: TrustIcon };
+type GeneratorNamespace = "Generator" | "AiNoteTaker.hero";
 
 const tabIcons: Record<TabId, LucideIcon> = {
   upload: Upload,
@@ -41,19 +53,37 @@ const trustIcons: LucideIcon[] = [
   ShieldCheck,
 ];
 
+const trustIconByName: Record<TrustIcon, LucideIcon> = {
+  Upload,
+  Target,
+  Globe,
+  InfinityIcon,
+  Users,
+  Clock,
+  Sparkles,
+  ShieldCheck,
+};
+
 export function Generator({
   signedIn,
   postSignInPath,
   tier = "free",
+  billingCycle = null,
+  namespace = "Generator",
+  toolSlug = "home",
 }: {
   signedIn: boolean;
   postSignInPath: string;
   tier?: Tier;
+  billingCycle?: BillingCycle | null;
+  namespace?: GeneratorNamespace;
+  toolSlug?: string;
 }) {
-  const t = useTranslations("Generator");
+  const t = useTranslations(namespace);
+  const generatorT = useTranslations("Generator");
   const [tab, setTab] = useState<TabId>("upload");
 
-  const tabs = t.raw("tabs") as Tab[];
+  const tabs = generatorT.raw("tabs") as Tab[];
   const trust = t.raw("trust") as TrustItem[];
 
   return (
@@ -91,7 +121,7 @@ export function Generator({
 
         <ul className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px]">
           {trust.map((item, i) => {
-            const Icon = trustIcons[i];
+            const Icon = item.icon ? trustIconByName[item.icon] : trustIcons[i];
             return (
               <li
                 key={item.label}
@@ -140,12 +170,16 @@ export function Generator({
                   postSignInPath={postSignInPath}
                   checkoutSuccessPath={postSignInPath}
                   tier={tier}
+                  toolSlug={toolSlug}
                 />
               )}
               {tab === "youtube" && (
                 <YouTubeImporter
                   signedIn={signedIn}
                   postSignInPath={postSignInPath}
+                  tier={tier}
+                  billingCycle={billingCycle}
+                  toolSlug={toolSlug}
                   variant="flat"
                 />
               )}
@@ -155,7 +189,7 @@ export function Generator({
                   postSignInPath={postSignInPath}
                   checkoutSuccessPath={postSignInPath}
                   tier={tier}
-                  toolSlug="home"
+                  toolSlug={toolSlug}
                 />
               )}
             </div>
@@ -171,11 +205,13 @@ function UploadPane({
   postSignInPath,
   checkoutSuccessPath,
   tier,
+  toolSlug,
 }: {
   signedIn: boolean;
   postSignInPath: string;
   checkoutSuccessPath: string;
   tier: Tier;
+  toolSlug: string;
 }) {
   const t = useTranslations("Generator.upload");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -185,7 +221,7 @@ function UploadPane({
     postSignInPath,
     checkoutSuccessPath,
     tier,
-    toolSlug: "home",
+    toolSlug,
   });
 
   const chooseFile = async () => {

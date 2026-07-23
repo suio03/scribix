@@ -329,7 +329,7 @@ export function TranscriptViewer({
             }}
           >
             <span className="inline-flex items-center gap-1.5">
-              {safeT(t, "tabSummary", "Summary")}
+              {safeT(t, "tabSummary", "AI Notes")}
               {!isPaid ? (
                 <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-accent">
                   {safeT(t, "proBadge", "Pro")}
@@ -632,7 +632,7 @@ function SummaryPanel({
       <div className="flex flex-col gap-3 rounded-2xl border border-line bg-card px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-[14px] font-medium text-ink">
-            {safeT(t, "summaryPanelTitle", "AI summary")}
+            {safeT(t, "summaryPanelTitle", "AI notes")}
           </p>
           <p className="mt-1 text-[13px] text-ink/55">
             {safeT(t, "summaryPanelDescription", "Generate a concise overview, key points, and action items.")}
@@ -646,18 +646,18 @@ function SummaryPanel({
             className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-accent px-4 text-[13px] font-medium text-paper transition hover:bg-accent/90 disabled:cursor-wait disabled:opacity-65"
           >
             <Sparkles size={15} />
-            {busy ? safeT(t, "summarizing", "Summarizing...") : safeT(t, "generateSummary", "Generate summary")}
+            {busy ? safeT(t, "summarizing", "Creating AI notes...") : safeT(t, "generateSummary", "Generate AI notes")}
           </button>
         ) : null}
       </div>
 
       {state === "loading" || state === "processing" ? (
         <p className="rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-ink/60">
-          {safeT(t, "summaryProcessing", "Summarizing...")}
+          {safeT(t, "summaryProcessing", "Creating AI notes...")}
         </p>
       ) : state === "error" ? (
         <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {safeT(t, "summaryError", "Summary failed. Please try again.")}
+          {safeT(t, "summaryError", "AI notes failed. Please try again.")}
           {error ? (
             <span className="mt-2 block whitespace-pre-wrap text-[12px] leading-relaxed text-red-700/80">
               {error}
@@ -670,7 +670,7 @@ function SummaryPanel({
         </div>
       ) : (
         <p className="rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-ink/60">
-          {safeT(t, "summaryIdle", "Generate a summary when you are ready.")}
+          {safeT(t, "summaryIdle", "Generate AI notes when you are ready.")}
         </p>
       )}
     </div>

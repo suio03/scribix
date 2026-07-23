@@ -237,6 +237,7 @@ export default async function YouTubeToTranscriptPage({
             postSignInPath={toolPath}
             tier={sidebarUsage?.tier ?? "free"}
             billingCycle={sidebarUsage?.billingCycle ?? null}
+            toolSlug="youtube-to-transcript"
           />
         </ToolHero>
         <QuickAnswerSection {...copy.quickAnswer} />

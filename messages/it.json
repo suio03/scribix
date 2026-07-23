@@ -57,6 +57,11 @@
         "label": "YouTube in testo",
         "href": "/youtube-to-transcript",
         "icon": "Captions"
+      },
+      {
+        "label": "Appunti AI",
+        "href": "/ai-note-taker",
+        "icon": "ListChecks"
       }
     ],
     "tools": [
@@ -421,7 +426,7 @@
       },
       {
         "key": "aiSummaries",
-        "label": "Riassunti IA",
+        "label": "Appunti AI",
         "values": {
           "free": "No",
           "starter": "Sì",
@@ -484,7 +489,7 @@
         "answer": "I piani a pagamento non includono una prova separata. Usa i 45 minuti gratuiti una tantum per verificare la qualità prima dell’abbonamento."
       }
     ],
-    "aiFeatures": "Riepiloghi IA + traduzione",
+    "aiFeatures": "Appunti AI + traduzione",
     "included": "Incluso",
     "paidIncludedTitle": "Incluso in ogni piano a pagamento",
     "paidIncludedDescription": "Le funzionalità comuni dei piani a pagamento sono separate dalle schede, così le differenze reali sono più facili da confrontare.",
@@ -631,7 +636,7 @@
       "choosePlanDescription": "Starter va bene per trascrizioni personali costanti. Pro è migliore per file più lunghi, elaborazione prioritaria o maggiore utilizzo mensile.",
       "checkoutOkTitle": "Abbonamento attivo — benvenuto.",
       "checkoutOkBody": "Il tuo nuovo piano è attivo. Utilizzo e controlli dell'abbonamento sono mostrati sotto.",
-      "aiFeatures": "Riepiloghi IA + traduzione",
+      "aiFeatures": "Appunti AI + traduzione",
       "included": "Incluso"
     },
     "viewer": {
@@ -651,7 +656,7 @@
       "tabTranscript": "Transcript",
       "tabSubtitles": "Sottotitoli",
       "tabTranslation": "Traduzione",
-      "tabSummary": "Riassunto",
+      "tabSummary": "Appunti AI",
       "proBadge": "Pro",
       "speakerLabel": "Speaker {speaker}",
       "speakersCount": "Rinomina speaker",
@@ -694,8 +699,8 @@
       "upgradePro": "Pro",
       "upgradeTranslationModalTitle": "Traduci questo transcript",
       "upgradeTranslationModalBody": "Fai l’upgrade per tradurre transcript completati nelle lingue supportate con output allineato agli speaker.",
-      "upgradeSummaryModalTitle": "Riassumi questo transcript",
-      "upgradeSummaryModalBody": "Fai l’upgrade per trasformare transcript lunghi in panoramica, punti chiave e azioni.",
+      "upgradeSummaryModalTitle": "Crea appunti AI",
+      "upgradeSummaryModalBody": "Fai l’upgrade per trasformare le trascrizioni completate in panoramica, punti chiave e azioni.",
       "upgradeQuotaModalTitle": "Continua a trascrivere",
       "upgradeQuotaModalBody": "Fai l’upgrade per aggiungere altri minuti di trascrizione e continuare senza aspettare.",
       "upgradePlanToggle": "Scegli piano",
@@ -705,26 +710,26 @@
       "upgradeProMonthlyDescription": "Per file lunghi, elaborazione prioritaria e volumi di trascrizione più alti.",
       "upgradeProMonthlyBulletMinutes": "{minutes, number} minuti prioritari al mese",
       "upgradeProMonthlyBulletLength": "Trascrivi file fino a {hours, plural, =1 {# ora} other {# ore}}",
-      "upgradeProMonthlyBulletAi": "Include traduzione AI e riassunti AI",
+      "upgradeProMonthlyBulletAi": "Include traduzione e appunti AI",
       "upgradeStarterMonthlyDescription": "Per trascrizione personale regolare con gli strumenti AI a pagamento sbloccati.",
       "upgradeStarterMonthlyBulletMinutes": "{minutes, number} minuti al mese",
-      "upgradeStarterMonthlyBulletAi": "Include traduzione AI e riassunti AI",
+      "upgradeStarterMonthlyBulletAi": "Include traduzione e appunti AI",
       "upgradeStarterMonthlyBulletExports": "Export transcript illimitati",
       "closeUpgrade": "Chiudi modale upgrade",
-      "summaryPanelTitle": "Riassunto AI",
+      "summaryPanelTitle": "Appunti AI",
       "summaryPanelDescription": "Genera una panoramica concisa, punti chiave e azioni.",
-      "generateSummary": "Genera riassunto",
-      "regenerateSummary": "Genera riassunto",
-      "summarizing": "Riassunto in corso…",
-      "summaryProcessing": "Riassunto in corso…",
-      "summaryIdle": "Genera un riassunto quando sei pronto.",
-      "summaryError": "Riassunto non riuscito. Riprova.",
-      "upgradeSummaryTitle": "Sblocca il riassunto AI",
-      "upgradeSummaryBody": "Il riassunto è incluso in Starter e Pro. Fai l’upgrade per riassumere transcript completati.",
+      "generateSummary": "Genera appunti AI",
+      "regenerateSummary": "Genera appunti AI",
+      "summarizing": "Creazione degli appunti AI…",
+      "summaryProcessing": "Creazione degli appunti AI…",
+      "summaryIdle": "Genera appunti AI quando sei pronto.",
+      "summaryError": "Creazione degli appunti AI non riuscita. Riprova.",
+      "upgradeSummaryTitle": "Sblocca gli appunti AI",
+      "upgradeSummaryBody": "Gli appunti AI sono inclusi in Starter e Pro. Fai l’upgrade per trasformare le trascrizioni completate in appunti strutturati.",
       "moreSoon": "Altre opzioni — in arrivo",
       "more": "Altro",
-      "summarySoon": "Riassunto — in arrivo",
-      "summary": "Riassunto",
+      "summarySoon": "Appunti AI — in arrivo",
+      "summary": "Appunti AI",
       "translateSoon": "Traduzione — in arrivo",
       "translate": "Traduci"
     },
@@ -1233,6 +1238,113 @@
         "Rivedi la trascrizione",
         "Copia o esporta"
       ]
+    }
+  },
+  "AiNoteTaker": {
+    "metadata": {
+      "title": "AI per prendere appunti da audio e video | Scribix",
+      "description": "Trasforma audio, video, registrazioni dal microfono e video YouTube con sottotitoli in trascrizioni e appunti AI strutturati.",
+      "openGraphTitle": "AI per prendere appunti dalle registrazioni | Scribix",
+      "openGraphDescription": "Ottieni trascrizione, parlanti, timestamp, riepilogo, punti chiave e attività da audio o video.",
+      "twitterTitle": "AI per prendere appunti da audio e video | Scribix",
+      "twitterDescription": "Carica, registra o incolla un URL YouTube compatibile per ottenere una trascrizione verificabile e appunti AI."
+    },
+    "hero": {
+      "issue": "REC · APPUNTI AI",
+      "issueLabel": "Edizione n. 05 · Appunti AI",
+      "h1Part1": "L’AI per prendere appunti da ogni registrazione.",
+      "h1Part2": "<accent>Dalla conversazione ai prossimi passi.</accent>",
+      "description": "Carica un file video o audio, registra con il microfono oppure incolla l’URL di un video YouTube con sottotitoli disponibili. Scribix crea una trascrizione con parlanti e timestamp; con Starter e Pro puoi anche generare un riepilogo, i punti chiave e le attività da svolgere.",
+      "primaryCta": "Inizia con 45 minuti gratuiti",
+      "signedInPrimaryCta": "Crea una trascrizione",
+      "secondaryCta": "Vedi i prezzi",
+      "secondaryHref": "/pricing",
+      "trust": [
+        { "label": "Audio, video, YouTube e microfono", "icon": "Upload" },
+        { "label": "Etichette dei parlanti", "icon": "Users" },
+        { "label": "Timestamp parola per parola", "icon": "Clock" },
+        { "label": "Appunti AI nei piani a pagamento", "icon": "Sparkles" }
+      ]
+    },
+    "features": {
+      "label": "Funzionalità",
+      "number": "01",
+      "h2": "Appunti AI che conservano <accent>la fonte e ciò che conta.</accent>",
+      "intro": "Scribix trasforma una registrazione in due livelli utili: una trascrizione che puoi verificare e appunti AI più brevi su cui agire. Riepilogo, punti chiave e attività mantengono il contesto grazie ai parlanti e ai timestamp.",
+      "items": [
+        { "icon": "Sparkles", "title": "Appunti AI strutturati", "body": "Genera un riepilogo, i punti chiave e le attività da una trascrizione completata con i piani Starter e Pro.", "span": "lg:col-span-2" },
+        { "icon": "Users", "title": "Conversazioni divise per parlante", "body": "Scribix separa i turni quando la qualità della registrazione lo consente. In seguito puoi rinominare le etichette generate." },
+        { "icon": "Clock", "title": "Timestamp verificabili", "body": "I timestamp parola per parola ti riportano al momento esatto da cui nasce un appunto, una citazione o un’attività." },
+        { "icon": "Files", "title": "Quattro modi per aggiungere una registrazione", "body": "Carica video, carica audio, registra con il microfono oppure importa una traccia di sottotitoli disponibile da un URL YouTube.", "span": "lg:col-span-2" },
+        { "icon": "FileDown", "title": "Esportazione della trascrizione", "body": "Rivedi e modifica la trascrizione, quindi copiala o esportala in TXT, DOCX, SRT, VTT o CSV." },
+        { "icon": "Lock", "title": "Conservazione trasparente", "body": "I file audio e video caricati vengono eliminati automaticamente dopo 14 giorni. Le trascrizioni rimangono finché non le elimini o chiudi l’account." }
+      ]
+    },
+    "howItWorks": {
+      "label": "Come funziona",
+      "number": "02",
+      "h2Part1": "Tre passaggi.",
+      "h2Part2": "Dalla registrazione agli appunti AI.",
+      "steps": [
+        { "n": "01", "icon": "CloudUpload", "title": "Aggiungi la conversazione.", "body": "Carica un file audio o video, registra dal vivo con il microfono oppure incolla un URL YouTube con una traccia di sottotitoli disponibile.", "duration": "Audio · Video · YouTube · Microfono" },
+        { "n": "02", "icon": "Cpu", "title": "Crea una trascrizione verificabile.", "body": "Scribix trascrive i contenuti caricati o registrati, separa i parlanti quando l’audio lo consente e aggiunge timestamp parola per parola. Per gli URL YouTube importa invece la traccia di sottotitoli scelta.", "duration": "Parlanti + timestamp" },
+        { "n": "03", "icon": "ListChecks", "title": "Genera e controlla gli appunti.", "body": "Con Starter o Pro, crea un riepilogo, i punti chiave e le attività. Verifica le informazioni importanti nella trascrizione prima di condividerle o utilizzarle.", "duration": "Riepilogo · Punti chiave · Attività" }
+      ]
+    },
+    "useCases": {
+      "label": "Casi d’uso",
+      "number": "03",
+      "h2Part1": "Per conversazioni che richiedono",
+      "h2Part2": "<accent>un resoconto davvero utile.</accent>",
+      "intro": "Usa Scribix dopo riunioni, interviste, lezioni, webinar, podcast e sessioni di ricerca quando riascoltare tutta la registrazione rallenterebbe il passaggio successivo.",
+      "items": [
+        { "icon": "BriefcaseBusiness", "title": "Follow-up delle riunioni", "audience": "Founder, operations e team di progetto", "body": "Mantieni consultabile l’intera conversazione e ricava punti principali e attività senza invitare un bot nella chiamata.", "workflow": ["Registrazione della riunione", "Trascrizione per parlante", "Punti chiave + attività"] },
+        { "icon": "Handshake", "title": "Chiamate commerciali e con i clienti", "audience": "Vendite, customer success e prodotto", "body": "Rivedi le parole del cliente, torna ai momenti importanti e trasforma i follow-up concordati in un elenco di attività.", "workflow": ["Chiamata registrata", "Evidenze del cliente", "Elenco follow-up"] },
+        { "icon": "GraduationCap", "title": "Lezioni e studio", "audience": "Studenti e docenti", "body": "Converti una lezione registrata in testo ricercabile e in un insieme più breve di punti chiave per il ripasso.", "workflow": ["Audio della lezione", "Trascrizione con timestamp", "Appunti di studio"] },
+        { "icon": "Newspaper", "title": "Interviste e ricerca", "audience": "Giornalisti, recruiter e ricercatori", "body": "Mantieni parlanti e timestamp accanto alla fonte, poi riassumi temi e prossimi passi per l’analisi.", "workflow": ["Intervista registrata", "Citazioni verificabili", "Temi + attività"] },
+        { "icon": "Mic", "title": "Podcast e webinar", "audience": "Creator, marketing e produzione", "body": "Trasforma contenuti lunghi in una trascrizione e in appunti concisi per riepiloghi, resoconti e pianificazione editoriale.", "workflow": ["Episodio o webinar", "Trascrizione completa", "Scaletta del riepilogo"] }
+      ]
+    },
+    "faq": {
+      "label": "FAQ",
+      "number": "04",
+      "h2Part1": "Appunti con l’AI,",
+      "h2Part2": "<accent>spiegati con chiarezza.</accent>",
+      "contactPrefix": "Hai ancora una domanda? Scrivi a",
+      "contactEmail": "hello@scribix.io",
+      "contactSuffix": "e ti aiuteremo a scegliere il flusso giusto.",
+      "items": [
+        { "q": "Che cos’è un’AI per prendere appunti?", "a": "È uno strumento che trasforma una conversazione registrata in testo e in appunti organizzati più brevi. Nei piani a pagamento, Scribix affianca a trascrizione, parlanti e timestamp un riepilogo, i punti chiave e le attività generati dall’AI." },
+        { "q": "Posso usare Scribix per riunioni in presenza?", "a": "Sì. Registra la riunione con il microfono del dispositivo oppure carica in seguito un file audio o video. Posizione del microfono, rumore della stanza e voci sovrapposte influenzano il risultato." },
+        { "q": "Scribix entra nelle chiamate Zoom, Google Meet o Microsoft Teams?", "a": "No. Scribix non invia un bot nelle riunioni. Aggiungi tu la registrazione caricando un file, registrando con il microfono o importando i sottotitoli da un URL YouTube compatibile." },
+        { "q": "Che cosa includono gli appunti AI di Scribix?", "a": "Includono un riepilogo, i punti chiave e le attività. La trascrizione completata contiene anche timestamp ed etichette dei parlanti quando la registrazione ne consente il rilevamento." },
+        { "q": "L’AI per prendere appunti è gratuita?", "a": "Scribix include un totale di 45 minuti di trascrizione gratuita, con accesso Google e senza carta. Riepiloghi e appunti AI strutturati sono disponibili con Starter e Pro." },
+        { "q": "Posso creare appunti da un video YouTube?", "a": "Sì, se il video ha una traccia di sottotitoli disponibile. Incolla l’URL, scegli la traccia, importala e genera gli appunti AI con un piano a pagamento. Se i sottotitoli non sono disponibili, carica un file multimediale di tua proprietà." },
+        { "q": "Quanto sono accurati la trascrizione e gli appunti AI?", "a": "Il risultato dipende dalla chiarezza dell’audio, dalla distanza del microfono, dal rumore, dagli accenti, dal lessico specialistico e dalle voci sovrapposte. Controlla nomi, numeri, impegni e citazioni importanti nella registrazione." },
+        { "q": "Per quanto tempo Scribix conserva le registrazioni?", "a": "I file audio e video caricati vengono eliminati automaticamente dopo 14 giorni. Le trascrizioni restano nell’account finché non le elimini o chiudi l’account." },
+        { "q": "Posso esportare gli appunti?", "a": "Gli appunti AI vengono mostrati nell’area della trascrizione. Non esiste un’esportazione dedicata per gli appunti; la trascrizione può essere scaricata in TXT, DOCX, SRT, VTT o CSV." }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Quando vuoi",
+      "h2Part1": "Aggiungi la registrazione.",
+      "h2Part2": "<accent>Ottieni appunti chiari.</accent>",
+      "body": "Inizia con 45 minuti gratuiti di trascrizione. Passa a Starter o Pro per generare un riepilogo, i punti chiave e le attività con l’AI.",
+      "primaryCta": "Inizia a prendere appunti",
+      "stats": [
+        { "value": "45 min", "label": "Trascrizione gratuita" },
+        { "value": "3", "label": "Sezioni degli appunti AI" },
+        { "value": "14 giorni", "label": "Eliminazione dei media" }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix AI per prendere appunti",
+      "appDescription": "Strumento AI che trasforma audio, video, registrazioni dal microfono e sottotitoli YouTube disponibili in trascrizioni verificabili e appunti strutturati.",
+      "offerDescription": "Sono inclusi 45 minuti di trascrizione con accesso Google; gli appunti AI sono disponibili con Starter e Pro.",
+      "featureList": ["Caricamento audio e video", "Registrazione dal microfono", "Importazione dei sottotitoli YouTube", "Etichette dei parlanti", "Timestamp parola per parola", "Riepilogo AI", "Punti chiave AI", "Attività generate dall’AI", "Modifica ed esportazione della trascrizione"],
+      "howToName": "Come creare appunti AI con Scribix",
+      "howToDescription": "Aggiungi una registrazione, crea una trascrizione verificabile, quindi genera e controlla appunti strutturati con un piano a pagamento.",
+      "howToSteps": ["Caricare, registrare o incollare un URL YouTube compatibile", "Creare o importare la trascrizione", "Generare appunti AI con Starter o Pro", "Controllare gli appunti nella trascrizione"]
     }
   },
   "Feedback": {

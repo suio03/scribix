@@ -152,11 +152,11 @@ function upgradeReasonCopy(
 ) {
   if (reason === "summary") {
     return {
-      title: safeT(t, "upgradeSummaryModalTitle", "Summarize this transcript"),
+      title: safeT(t, "upgradeSummaryModalTitle", "Create AI notes"),
       body: safeT(
         t,
         "upgradeSummaryModalBody",
-        "Upgrade to turn long transcripts into an overview, key points, and action items."
+        "Upgrade to turn completed transcripts into an overview, key points, and action items."
       ),
     };
   }
@@ -227,7 +227,7 @@ function upgradePlanCopy(
         safeTValues(t, "upgradeProMonthlyBulletLength", `Transcribe files up to ${formatDurationHours(maxFileHours)}`, {
           hours: maxFileHours,
         }),
-        safeT(t, "upgradeProMonthlyBulletAi", "Includes AI translation and AI summaries"),
+        safeT(t, "upgradeProMonthlyBulletAi", "Includes AI translation and AI notes"),
       ],
     };
   }
@@ -244,7 +244,7 @@ function upgradePlanCopy(
       safeTValues(t, "upgradeStarterMonthlyBulletMinutes", `${formatNumber(monthlyMinutes)} minutes each month`, {
         minutes: monthlyMinutes,
       }),
-      safeT(t, "upgradeStarterMonthlyBulletAi", "Includes AI translation and AI summaries"),
+      safeT(t, "upgradeStarterMonthlyBulletAi", "Includes AI translation and AI notes"),
       safeT(t, "upgradeStarterMonthlyBulletExports", "Unlimited transcript exports"),
     ],
   };

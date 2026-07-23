@@ -4,6 +4,7 @@ import { languageAlternates, urlFor } from "@/lib/metadata-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const coreContentModified = new Date("2026-07-22T00:00:00.000Z");
+  const aiNoteTakerModified = new Date("2026-07-23T00:00:00.000Z");
   const legalContentModified = new Date("2026-05-01T00:00:00.000Z");
   const entries: MetadataRoute.Sitemap = [
     {
@@ -33,6 +34,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.9,
       alternates: { languages: languageAlternates("/youtube-to-transcript") },
+    },
+    {
+      url: urlFor(routing.defaultLocale, "/ai-note-taker").href,
+      lastModified: aiNoteTakerModified,
+      changeFrequency: "weekly",
+      priority: 0.9,
+      alternates: { languages: languageAlternates("/ai-note-taker") },
     },
     {
       url: urlFor(routing.defaultLocale, "/pricing").href,

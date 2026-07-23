@@ -56,16 +56,18 @@ export type PlausibleEvents = {
     cycle: "monthly" | "yearly";
     transaction_id?: string;
   };
-  youtube_inspect_attempt: { step: "inspect" };
+  youtube_inspect_attempt: { step: "inspect"; tool_slug: string };
   youtube_inspect_fail: {
     step: "inspect";
+    tool_slug: string;
     service: "scribix_app" | "youtube_caption_service";
     error_type: "technical" | "product_limit" | "quota" | "auth" | "user_input";
     error_code: string;
   };
-  youtube_import_attempt: { step: "import" };
+  youtube_import_attempt: { step: "import"; tool_slug: string };
   youtube_import_fail: {
     step: "import";
+    tool_slug: string;
     service: "scribix_app" | "youtube_caption_service";
     error_type: "technical" | "product_limit" | "quota" | "auth" | "user_input";
     error_code: string;

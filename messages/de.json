@@ -57,6 +57,11 @@
         "label": "YouTube zu Text",
         "href": "/youtube-to-transcript",
         "icon": "Captions"
+      },
+      {
+        "label": "KI-Notizen",
+        "href": "/ai-note-taker",
+        "icon": "ListChecks"
       }
     ],
     "tools": [
@@ -421,7 +426,7 @@
       },
       {
         "key": "aiSummaries",
-        "label": "KI-Zusammenfassungen",
+        "label": "KI-Notizen",
         "values": {
           "free": "Nein",
           "starter": "Ja",
@@ -484,7 +489,7 @@
         "answer": "Bezahlte Tarife haben keine separate Testphase. Nutze die 45 kostenlosen Minuten auf Lebenszeit, um die Qualität vor dem Abo zu prüfen."
       }
     ],
-    "aiFeatures": "KI-Zusammenfassungen + Übersetzung",
+    "aiFeatures": "KI-Notizen + Übersetzung",
     "included": "Enthalten",
     "paidIncludedTitle": "In jedem kostenpflichtigen Plan enthalten",
     "paidIncludedDescription": "Gemeinsame Funktionen kostenpflichtiger Pläne stehen hier, damit die echten Unterschiede leichter zu erkennen sind.",
@@ -631,7 +636,7 @@
       "choosePlanDescription": "Starter passt für regelmäßige persönliche Transkription. Pro ist besser für längere Dateien, Prioritätsverarbeitung oder höhere monatliche Nutzung.",
       "checkoutOkTitle": "Abonnement aktiv – willkommen.",
       "checkoutOkBody": "Ihr neuer Plan ist aktiv. Nutzung und Abo-Verwaltung werden unten angezeigt.",
-      "aiFeatures": "KI-Zusammenfassungen + Übersetzung",
+      "aiFeatures": "KI-Notizen + Übersetzung",
       "included": "Enthalten"
     },
     "viewer": {
@@ -651,7 +656,7 @@
       "tabTranscript": "Transkript",
       "tabSubtitles": "Untertitel",
       "tabTranslation": "Übersetzung",
-      "tabSummary": "Zusammenfassung",
+      "tabSummary": "KI-Notizen",
       "proBadge": "Pro",
       "speakerLabel": "Sprecher {speaker}",
       "speakersCount": "Sprecher umbenennen",
@@ -694,8 +699,8 @@
       "upgradePro": "Pro",
       "upgradeTranslationModalTitle": "Dieses Transkript übersetzen",
       "upgradeTranslationModalBody": "Upgraden Sie, um fertige Transkripte mit sprecherbezogener Ausgabe in unterstützte Sprachen zu übersetzen.",
-      "upgradeSummaryModalTitle": "Dieses Transkript zusammenfassen",
-      "upgradeSummaryModalBody": "Upgraden Sie, um lange Transkripte in Übersicht, Kernpunkte und Aufgaben umzuwandeln.",
+      "upgradeSummaryModalTitle": "KI-Notizen erstellen",
+      "upgradeSummaryModalBody": "Upgraden Sie, um fertige Transkripte in Übersicht, Kernpunkte und Aufgaben umzuwandeln.",
       "upgradeQuotaModalTitle": "Weiter transkribieren",
       "upgradeQuotaModalBody": "Upgraden Sie, um mehr Transkriptionsminuten zu erhalten und ohne Warten fortzufahren.",
       "upgradePlanToggle": "Plan auswählen",
@@ -705,26 +710,26 @@
       "upgradeProMonthlyDescription": "Für lange Dateien, Prioritätsverarbeitung und höheres Transkriptionsvolumen.",
       "upgradeProMonthlyBulletMinutes": "{minutes, number} Prioritätsminuten pro Monat",
       "upgradeProMonthlyBulletLength": "Dateien bis zu {hours, plural, =1 {# Stunde} other {# Stunden}} transkribieren",
-      "upgradeProMonthlyBulletAi": "Enthält KI-Übersetzung und KI-Zusammenfassungen",
+      "upgradeProMonthlyBulletAi": "Enthält KI-Übersetzung und KI-Notizen",
       "upgradeStarterMonthlyDescription": "Für regelmäßige persönliche Transkription mit freigeschalteten KI-Tools.",
       "upgradeStarterMonthlyBulletMinutes": "{minutes, number} Minuten pro Monat",
-      "upgradeStarterMonthlyBulletAi": "Enthält KI-Übersetzung und KI-Zusammenfassungen",
+      "upgradeStarterMonthlyBulletAi": "Enthält KI-Übersetzung und KI-Notizen",
       "upgradeStarterMonthlyBulletExports": "Unbegrenzte Transkript-Exporte",
       "closeUpgrade": "Upgrade-Dialog schließen",
-      "summaryPanelTitle": "KI-Zusammenfassung",
+      "summaryPanelTitle": "KI-Notizen",
       "summaryPanelDescription": "Erstellen Sie eine kurze Übersicht, Kernpunkte und Aufgaben.",
-      "generateSummary": "Zusammenfassung erstellen",
-      "regenerateSummary": "Zusammenfassung erstellen",
-      "summarizing": "Wird zusammengefasst…",
-      "summaryProcessing": "Wird zusammengefasst…",
-      "summaryIdle": "Erstellen Sie eine Zusammenfassung, wenn Sie bereit sind.",
-      "summaryError": "Zusammenfassung fehlgeschlagen. Bitte versuchen Sie es erneut.",
-      "upgradeSummaryTitle": "KI-Zusammenfassung freischalten",
-      "upgradeSummaryBody": "Zusammenfassung ist in Starter und Pro enthalten. Upgraden Sie, um fertige Transkripte zusammenzufassen.",
+      "generateSummary": "KI-Notizen erstellen",
+      "regenerateSummary": "KI-Notizen erstellen",
+      "summarizing": "KI-Notizen werden erstellt…",
+      "summaryProcessing": "KI-Notizen werden erstellt…",
+      "summaryIdle": "Erstellen Sie KI-Notizen, wenn Sie bereit sind.",
+      "summaryError": "KI-Notizen konnten nicht erstellt werden. Bitte versuchen Sie es erneut.",
+      "upgradeSummaryTitle": "KI-Notizen freischalten",
+      "upgradeSummaryBody": "KI-Notizen sind in Starter und Pro enthalten. Upgraden Sie, um fertige Transkripte in strukturierte Notizen umzuwandeln.",
       "moreSoon": "Weitere Optionen — bald verfügbar",
       "more": "Mehr",
-      "summarySoon": "Zusammenfassung — bald verfügbar",
-      "summary": "Zusammenfassung",
+      "summarySoon": "KI-Notizen — bald verfügbar",
+      "summary": "KI-Notizen",
       "translateSoon": "Übersetzung — bald verfügbar",
       "translate": "Übersetzen"
     },
@@ -1233,6 +1238,113 @@
         "Transkript prüfen",
         "Kopieren oder exportieren"
       ]
+    }
+  },
+  "AiNoteTaker": {
+    "metadata": {
+      "title": "KI-Notizentool für Audio und Video | Scribix",
+      "description": "Verwandeln Sie Audio, Video, Mikrofonaufnahmen und YouTube-Videos mit Untertiteln in Transkripte und strukturierte KI-Notizen.",
+      "openGraphTitle": "KI-Notizentool für aufgezeichnete Gespräche | Scribix",
+      "openGraphDescription": "Erfassen Sie Transkript, Sprecher, Zeitstempel, Zusammenfassung, Kernpunkte und Aufgaben aus Audio oder Video.",
+      "twitterTitle": "KI-Notizentool für Audio und Video | Scribix",
+      "twitterDescription": "Datei hochladen, aufnehmen oder eine unterstützte YouTube-URL einfügen und ein prüfbares Transkript mit KI-Notizen erhalten."
+    },
+    "hero": {
+      "issue": "REC · KI-NOTIZEN",
+      "issueLabel": "Ausgabe Nr. 05 · KI-Notizentool",
+      "h1Part1": "Das KI-Notizentool für jede Aufnahme.",
+      "h1Part2": "<accent>Vom Gespräch zu klaren nächsten Schritten.</accent>",
+      "description": "Laden Sie eine Video- oder Audiodatei hoch, nehmen Sie über Ihr Mikrofon auf oder fügen Sie die URL eines YouTube-Videos mit verfügbaren Untertiteln ein. Scribix erstellt ein Transkript mit Sprecherkennzeichnung und Zeitstempeln; mit Starter und Pro entstehen daraus außerdem eine Zusammenfassung, Kernpunkte und Aufgaben.",
+      "primaryCta": "Mit 45 Gratisminuten starten",
+      "signedInPrimaryCta": "Neues Transkript erstellen",
+      "secondaryCta": "Preise ansehen",
+      "secondaryHref": "/pricing",
+      "trust": [
+        { "label": "Audio, Video, YouTube und Mikrofon", "icon": "Upload" },
+        { "label": "Sprecherkennzeichnung", "icon": "Users" },
+        { "label": "Zeitstempel auf Wortebene", "icon": "Clock" },
+        { "label": "KI-Notizen in Bezahlplänen", "icon": "Sparkles" }
+      ]
+    },
+    "features": {
+      "label": "Funktionen",
+      "number": "01",
+      "h2": "Ein KI-Notizentool, das <accent>Quelle und Ergebnis bewahrt.</accent>",
+      "intro": "Scribix macht aus einer Aufnahme zwei nützliche Ebenen: ein prüfbares Transkript und kompakte KI-Notizen für die weitere Arbeit. Zusammenfassung, Kernpunkte und Aufgaben bleiben durch Sprecherkennzeichnung und Zeitstempel mit dem Gespräch verknüpft.",
+      "items": [
+        { "icon": "Sparkles", "title": "Strukturierte KI-Notizen", "body": "Erstellen Sie mit Starter oder Pro aus einem fertigen Transkript eine Zusammenfassung, Kernpunkte und Aufgaben.", "span": "lg:col-span-2" },
+        { "icon": "Users", "title": "Gespräche nach Sprecher getrennt", "body": "Scribix trennt Sprecherwechsel, wenn die Aufnahmequalität dies unterstützt. Die erzeugten Bezeichnungen können Sie anschließend umbenennen." },
+        { "icon": "Clock", "title": "Prüfbare Zeitstempel", "body": "Zeitstempel auf Wortebene führen Sie zum genauen Moment hinter einer Notiz, einem Zitat oder einer Aufgabe zurück." },
+        { "icon": "Files", "title": "Vier Wege zur Aufnahme", "body": "Laden Sie Video oder Audio hoch, nehmen Sie über das Mikrofon auf oder importieren Sie eine verfügbare Untertitelspur über eine YouTube-URL.", "span": "lg:col-span-2" },
+        { "icon": "FileDown", "title": "Transkripte exportieren", "body": "Prüfen und bearbeiten Sie das Transkript. Danach können Sie es kopieren oder als TXT, DOCX, SRT, VTT oder CSV herunterladen." },
+        { "icon": "Lock", "title": "Klare Aufbewahrungsfristen", "body": "Hochgeladene Audio- und Videodateien werden nach 14 Tagen automatisch gelöscht. Transkripte bleiben gespeichert, bis Sie sie löschen oder Ihr Konto schließen." }
+      ]
+    },
+    "howItWorks": {
+      "label": "So funktioniert es",
+      "number": "02",
+      "h2Part1": "Drei Schritte.",
+      "h2Part2": "Von der Aufnahme zu KI-Notizen.",
+      "steps": [
+        { "n": "01", "icon": "CloudUpload", "title": "Fügen Sie das Gespräch hinzu.", "body": "Laden Sie eine Audio- oder Videodatei hoch, nehmen Sie über Ihr Mikrofon auf oder fügen Sie eine YouTube-URL mit verfügbarer Untertitelspur ein.", "duration": "Audio · Video · YouTube · Mikrofon" },
+        { "n": "02", "icon": "Cpu", "title": "Erstellen Sie ein nachvollziehbares Transkript.", "body": "Scribix transkribiert hochgeladene oder aufgenommene Medien, trennt Sprecher bei geeigneter Audioqualität und ergänzt Zeitstempel auf Wortebene. Bei YouTube-URLs wird stattdessen die ausgewählte Untertitelspur importiert.", "duration": "Sprecher + Zeitstempel" },
+        { "n": "03", "icon": "ListChecks", "title": "Erstellen und prüfen Sie die Notizen.", "body": "Mit Starter oder Pro erzeugen Sie eine Zusammenfassung, Kernpunkte und Aufgaben. Prüfen Sie wichtige Angaben im Transkript, bevor Sie sie weitergeben oder danach handeln.", "duration": "Zusammenfassung · Kernpunkte · Aufgaben" }
+      ]
+    },
+    "useCases": {
+      "label": "Anwendungsfälle",
+      "number": "03",
+      "h2Part1": "Für Gespräche, die",
+      "h2Part2": "<accent>eine nutzbare Dokumentation brauchen.</accent>",
+      "intro": "Nutzen Sie Scribix nach Meetings, Interviews, Vorlesungen, Webinaren, Podcasts und Forschungsgesprächen, wenn das erneute Anhören der gesamten Aufnahme den nächsten Schritt verzögern würde.",
+      "items": [
+        { "icon": "BriefcaseBusiness", "title": "Meeting-Nachbereitung", "audience": "Geschäftsführung, Operations, Projektteams", "body": "Halten Sie das gesamte Gespräch durchsuchbar fest und leiten Sie Kernpunkte und Aufgaben ab, ohne einen Bot zum Meeting einzuladen.", "workflow": ["Meeting-Aufnahme", "Transkript nach Sprecher", "Kernpunkte + Aufgaben"] },
+        { "icon": "Handshake", "title": "Kunden- und Verkaufsgespräche", "audience": "Vertrieb, Customer Success, Produktteams", "body": "Prüfen Sie Kundenaussagen, springen Sie per Zeitstempel zu wichtigen Momenten und machen Sie aus vereinbarten Folgeschritten eine Aufgabenliste.", "workflow": ["Gesprächsaufnahme", "Kundenaussagen", "Follow-up-Liste"] },
+        { "icon": "GraduationCap", "title": "Vorlesungen und Lernen", "audience": "Studierende und Lehrende", "body": "Verwandeln Sie eine aufgezeichnete Vorlesung in durchsuchbaren Text und kompakte Kernpunkte für die Wiederholung.", "workflow": ["Vorlesungsaufnahme", "Transkript mit Zeitstempeln", "Lernnotizen"] },
+        { "icon": "Newspaper", "title": "Interviews und Forschung", "audience": "Journalismus, Recruiting, Forschung", "body": "Bewahren Sie Sprecher und Zeitstempel zusammen mit der Quelle und fassen Sie Themen und nächste Schritte für die Analyse zusammen.", "workflow": ["Interviewaufnahme", "Nachvollziehbare Zitate", "Themen + Aufgaben"] },
+        { "icon": "Mic", "title": "Podcasts und Webinare", "audience": "Content, Marketing, Produktion", "body": "Machen Sie aus langen Aufnahmen ein vollständiges Transkript und kompakte Notizen für Show Notes, Rückblicke und Contentplanung.", "workflow": ["Episode oder Webinar", "Vollständiges Transkript", "Gliederung für den Rückblick"] }
+      ]
+    },
+    "faq": {
+      "label": "FAQ",
+      "number": "04",
+      "h2Part1": "KI-Notizen,",
+      "h2Part2": "<accent>klar erklärt.</accent>",
+      "contactPrefix": "Noch eine Frage? Schreiben Sie an",
+      "contactEmail": "hello@scribix.io",
+      "contactSuffix": "und wir helfen Ihnen, den passenden Ablauf zu finden.",
+      "items": [
+        { "q": "Was ist ein KI-Notizentool?", "a": "Ein KI-Notizentool verwandelt ein aufgezeichnetes Gespräch in Text und kompakte, geordnete Notizen. In den Bezahlplänen verbindet Scribix Transkript, Sprecher und Zeitstempel mit einer KI-generierten Zusammenfassung, Kernpunkten und Aufgaben." },
+        { "q": "Kann ich Scribix für Meetings vor Ort verwenden?", "a": "Ja. Nehmen Sie das Meeting über das Mikrofon Ihres Geräts auf oder laden Sie anschließend eine Audio- oder Videodatei hoch. Mikrofonposition, Raumgeräusche und gleichzeitiges Sprechen beeinflussen das Ergebnis." },
+        { "q": "Nimmt Scribix an Zoom-, Google-Meet- oder Microsoft-Teams-Meetings teil?", "a": "Nein. Scribix sendet keinen Meeting-Bot in Ihre Gespräche. Fügen Sie selbst eine Aufnahme per Upload, Mikrofon oder über die Untertitel einer unterstützten YouTube-URL hinzu." },
+        { "q": "Was enthalten die KI-Notizen von Scribix?", "a": "Die KI-Notizen enthalten eine Zusammenfassung, Kernpunkte und Aufgaben. Das fertige Transkript enthält außerdem Zeitstempel und, sofern die Aufnahme dies unterstützt, Sprecherkennzeichnungen." },
+        { "q": "Ist das KI-Notizentool kostenlos?", "a": "Scribix enthält nach der Google-Anmeldung 45 einmalige kostenlose Transkriptionsminuten und verlangt keine Kreditkarte. KI-Zusammenfassungen und strukturierte Notizen sind in Starter und Pro verfügbar." },
+        { "q": "Kann ich Notizen aus einem YouTube-Video erstellen?", "a": "Ja, wenn eine Untertitelspur verfügbar ist. Fügen Sie die URL ein, wählen und importieren Sie die Spur und erstellen Sie anschließend im Bezahlplan KI-Notizen. Ohne Untertitel laden Sie stattdessen eine eigene Mediendatei hoch." },
+        { "q": "Wie genau sind Transkript und KI-Notizen?", "a": "Das Ergebnis hängt von Audioqualität, Mikrofonabstand, Hintergrundgeräuschen, Akzenten, Fachbegriffen und überlappender Sprache ab. Prüfen Sie Namen, Zahlen, Zusagen und wichtige Zitate anhand der Aufnahme." },
+        { "q": "Wie lange speichert Scribix meine Aufnahmen?", "a": "Hochgeladene Audio- und Videodateien werden nach 14 Tagen automatisch gelöscht. Transkripte bleiben in Ihrem Konto, bis Sie sie löschen oder das Konto schließen." },
+        { "q": "Kann ich meine Notizen exportieren?", "a": "Die KI-Notizen werden im Transkript-Arbeitsbereich angezeigt. Einen eigenen Datei-Export für Notizen gibt es nicht; das Transkript lässt sich als TXT, DOCX, SRT, VTT oder CSV herunterladen." }
+      ]
+    },
+    "finalCta": {
+      "kicker": "Wenn Sie bereit sind",
+      "h2Part1": "Aufnahme hinzufügen.",
+      "h2Part2": "<accent>Mit klaren Notizen weiterarbeiten.</accent>",
+      "body": "Starten Sie mit 45 kostenlosen Transkriptionsminuten. Wechseln Sie zu Starter oder Pro, wenn Sie Zusammenfassung, Kernpunkte und Aufgaben per KI erstellen möchten.",
+      "primaryCta": "Jetzt Notizen erstellen",
+      "stats": [
+        { "value": "45 Min.", "label": "Kostenlose Transkription" },
+        { "value": "3", "label": "Bereiche der KI-Notizen" },
+        { "value": "14 Tage", "label": "Automatische Medienlöschung" }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Scribix KI-Notizentool",
+      "appDescription": "KI-Notizentool, das Audio, Video, Mikrofonaufnahmen und verfügbare YouTube-Untertitel in nachvollziehbare Transkripte und strukturierte Notizen verwandelt.",
+      "offerDescription": "45 einmalige Transkriptionsminuten sind nach Google-Anmeldung kostenlos; KI-Notizen sind in Starter und Pro verfügbar.",
+      "featureList": ["Audio- und Video-Upload", "Mikrofonaufnahme", "Import von YouTube-Untertiteln", "Sprecherkennzeichnung", "Zeitstempel auf Wortebene", "KI-Zusammenfassung", "KI-Kernpunkte", "KI-Aufgaben", "Bearbeitung und Export von Transkripten"],
+      "howToName": "So erstellen Sie KI-Notizen mit Scribix",
+      "howToDescription": "Fügen Sie eine Aufnahme hinzu, erstellen Sie ein nachvollziehbares Transkript und erzeugen und prüfen Sie strukturierte KI-Notizen im Bezahlplan.",
+      "howToSteps": ["Datei hochladen, aufnehmen oder unterstützte YouTube-URL einfügen", "Transkript erstellen oder importieren", "KI-Notizen mit Starter oder Pro erzeugen", "Notizen anhand des Transkripts prüfen"]
     }
   },
   "Feedback": {

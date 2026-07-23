@@ -57,6 +57,11 @@
         "label": "YouTube en texte",
         "href": "/youtube-to-transcript",
         "icon": "Captions"
+      },
+      {
+        "label": "Notes IA",
+        "href": "/ai-note-taker",
+        "icon": "ListChecks"
       }
     ],
     "tools": [
@@ -421,7 +426,7 @@
       },
       {
         "key": "aiSummaries",
-        "label": "Résumés IA",
+        "label": "Notes IA",
         "values": {
           "free": "Non",
           "starter": "Oui",
@@ -484,7 +489,7 @@
         "answer": "Les offres payantes n’incluent pas d’essai distinct. Utilisez les 45 minutes gratuites à vie pour vérifier la qualité avant de vous abonner."
       }
     ],
-    "aiFeatures": "Résumés IA + traduction",
+    "aiFeatures": "Notes IA + traduction",
     "included": "Inclus",
     "paidIncludedTitle": "Inclus dans chaque forfait payant",
     "paidIncludedDescription": "Les fonctionnalités communes aux forfaits payants sont regroupées ici pour rendre les vraies différences plus faciles à comparer.",
@@ -631,7 +636,7 @@
       "choosePlanDescription": "Starter convient à une transcription personnelle régulière. Pro est préférable pour les fichiers plus longs, le traitement prioritaire ou une utilisation mensuelle plus élevée.",
       "checkoutOkTitle": "Abonnement actif — bienvenue.",
       "checkoutOkBody": "Votre nouveau plan est actif. L'utilisation et les contrôles d'abonnement sont affichés ci-dessous.",
-      "aiFeatures": "Résumés IA + traduction",
+      "aiFeatures": "Notes IA + traduction",
       "included": "Inclus"
     },
     "viewer": {
@@ -651,7 +656,7 @@
       "tabTranscript": "Transcription",
       "tabSubtitles": "Sous-titres",
       "tabTranslation": "Traduction",
-      "tabSummary": "Résumé",
+      "tabSummary": "Notes IA",
       "proBadge": "Pro",
       "speakerLabel": "Intervenant {speaker}",
       "speakersCount": "Renommer les intervenants",
@@ -694,8 +699,8 @@
       "upgradePro": "Pro",
       "upgradeTranslationModalTitle": "Traduire cette transcription",
       "upgradeTranslationModalBody": "Passez à un forfait supérieur pour traduire les transcriptions terminées dans les langues prises en charge avec une sortie alignée par locuteur.",
-      "upgradeSummaryModalTitle": "Résumer cette transcription",
-      "upgradeSummaryModalBody": "Passez à un forfait supérieur pour transformer les longues transcriptions en aperçu, points clés et actions.",
+      "upgradeSummaryModalTitle": "Créer des notes IA",
+      "upgradeSummaryModalBody": "Passez à un forfait supérieur pour transformer les transcriptions terminées en aperçu, points clés et actions.",
       "upgradeQuotaModalTitle": "Continuez à transcrire",
       "upgradeQuotaModalBody": "Passez à un forfait supérieur pour ajouter plus de minutes de transcription et continuer sans attendre.",
       "upgradePlanToggle": "Choisir un forfait",
@@ -705,26 +710,26 @@
       "upgradeProMonthlyDescription": "Pour les fichiers longs, le traitement prioritaire et un volume de transcription plus élevé.",
       "upgradeProMonthlyBulletMinutes": "{minutes, number} minutes prioritaires par mois",
       "upgradeProMonthlyBulletLength": "Transcrivez des fichiers jusqu’à {hours, plural, =1 {# heure} other {# heures}}",
-      "upgradeProMonthlyBulletAi": "Inclut la traduction IA et les résumés IA",
+      "upgradeProMonthlyBulletAi": "Inclut la traduction IA et les notes IA",
       "upgradeStarterMonthlyDescription": "Pour une transcription personnelle régulière avec les outils IA payants débloqués.",
       "upgradeStarterMonthlyBulletMinutes": "{minutes, number} minutes par mois",
-      "upgradeStarterMonthlyBulletAi": "Inclut la traduction IA et les résumés IA",
+      "upgradeStarterMonthlyBulletAi": "Inclut la traduction IA et les notes IA",
       "upgradeStarterMonthlyBulletExports": "Exports de transcription illimités",
       "closeUpgrade": "Fermer la fenêtre de mise à niveau",
-      "summaryPanelTitle": "Résumé IA",
+      "summaryPanelTitle": "Notes IA",
       "summaryPanelDescription": "Générez une vue d’ensemble concise, les points clés et les actions.",
-      "generateSummary": "Générer le résumé",
-      "regenerateSummary": "Générer le résumé",
-      "summarizing": "Résumé en cours…",
-      "summaryProcessing": "Résumé en cours…",
-      "summaryIdle": "Générez un résumé quand vous êtes prêt.",
-      "summaryError": "Le résumé a échoué. Veuillez réessayer.",
-      "upgradeSummaryTitle": "Débloquer le résumé IA",
-      "upgradeSummaryBody": "Le résumé est inclus dans Starter et Pro. Passez à un forfait supérieur pour résumer les transcriptions terminées.",
+      "generateSummary": "Générer les notes IA",
+      "regenerateSummary": "Générer les notes IA",
+      "summarizing": "Création des notes IA…",
+      "summaryProcessing": "Création des notes IA…",
+      "summaryIdle": "Générez des notes IA quand vous êtes prêt.",
+      "summaryError": "La création des notes IA a échoué. Veuillez réessayer.",
+      "upgradeSummaryTitle": "Débloquer les notes IA",
+      "upgradeSummaryBody": "Les notes IA sont incluses dans Starter et Pro. Passez à un forfait supérieur pour transformer les transcriptions terminées en notes structurées.",
       "moreSoon": "Plus d’options — bientôt disponible",
       "more": "Plus",
-      "summarySoon": "Résumé — bientôt disponible",
-      "summary": "Résumé",
+      "summarySoon": "Notes IA — bientôt disponibles",
+      "summary": "Notes IA",
       "translateSoon": "Traduction — bientôt disponible",
       "translate": "Traduire"
     },
@@ -1233,6 +1238,113 @@
         "Relire la transcription",
         "Copier ou exporter"
       ]
+    }
+  },
+  "AiNoteTaker": {
+    "metadata": {
+      "title": "Outil de prise de notes IA pour audio et vidéo | Scribix",
+      "description": "Transformez vos fichiers audio et vidéo, vos enregistrements micro et les vidéos YouTube sous-titrées en transcription et notes IA structurées.",
+      "openGraphTitle": "Outil de prise de notes IA pour vos enregistrements | Scribix",
+      "openGraphDescription": "Retrouvez la transcription, les intervenants, les horodatages, la synthèse, les points clés et les actions à mener.",
+      "twitterTitle": "Outil de prise de notes IA audio et vidéo | Scribix",
+      "twitterDescription": "Importez, enregistrez ou collez une URL YouTube compatible pour obtenir une transcription vérifiable et des notes IA structurées."
+    },
+    "hero": {
+      "issue": "REC · NOTES IA",
+      "issueLabel": "Dossier n° 05 · Prise de notes IA",
+      "h1Part1": "L’outil de prise de notes IA pour tous vos enregistrements.",
+      "h1Part2": "<accent>De la conversation aux prochaines étapes.</accent>",
+      "description": "Importez un fichier audio ou vidéo, enregistrez avec votre microphone ou collez l’URL d’une vidéo YouTube disposant de sous-titres. Scribix crée une transcription horodatée avec identification des intervenants ; les offres Starter et Pro permettent ensuite de générer une synthèse, les points clés et les actions à mener.",
+      "primaryCta": "Commencer avec 45 minutes gratuites",
+      "signedInPrimaryCta": "Créer une transcription",
+      "secondaryCta": "Voir les tarifs",
+      "secondaryHref": "/pricing",
+      "trust": [
+        { "label": "Audio, vidéo, YouTube et micro", "icon": "Upload" },
+        { "label": "Identification des intervenants", "icon": "Users" },
+        { "label": "Horodatage mot à mot", "icon": "Clock" },
+        { "label": "Notes IA avec une offre payante", "icon": "Sparkles" }
+      ]
+    },
+    "features": {
+      "label": "Fonctionnalités",
+      "number": "01",
+      "h2": "Une prise de notes IA qui conserve <accent>la source et l’essentiel.</accent>",
+      "intro": "Scribix transforme un enregistrement en deux niveaux d’information : une transcription que vous pouvez vérifier et des notes IA plus courtes pour passer à l’action. La synthèse, les points clés et les actions restent reliés au contexte grâce aux intervenants et aux horodatages.",
+      "items": [
+        { "icon": "Sparkles", "title": "Notes IA structurées", "body": "Générez une synthèse, les points clés et les actions à mener à partir d’une transcription terminée avec une offre Starter ou Pro.", "span": "lg:col-span-2" },
+        { "icon": "Users", "title": "Intervenants identifiés", "body": "Scribix sépare les prises de parole lorsque la qualité de l’enregistrement le permet. Vous pouvez ensuite renommer les libellés." },
+        { "icon": "Clock", "title": "Des horodatages vérifiables", "body": "L’horodatage mot à mot permet de retrouver le passage exact à l’origine d’une note, d’une citation ou d’un suivi." },
+        { "icon": "Files", "title": "Quatre façons d’ajouter un enregistrement", "body": "Importez une vidéo, un fichier audio, enregistrez avec votre microphone ou récupérez une piste de sous-titres disponible depuis une URL YouTube.", "span": "lg:col-span-2" },
+        { "icon": "FileDown", "title": "Export de la transcription", "body": "Relisez et modifiez la transcription, puis copiez-la ou exportez-la aux formats TXT, DOCX, SRT, VTT ou CSV." },
+        { "icon": "Lock", "title": "Une conservation clairement définie", "body": "Les fichiers audio et vidéo importés sont automatiquement supprimés après 14 jours. Les transcriptions restent disponibles jusqu’à leur suppression ou la fermeture du compte." }
+      ]
+    },
+    "howItWorks": {
+      "label": "Fonctionnement",
+      "number": "02",
+      "h2Part1": "Trois étapes.",
+      "h2Part2": "De l’enregistrement aux notes IA.",
+      "steps": [
+        { "n": "01", "icon": "CloudUpload", "title": "Ajoutez la conversation.", "body": "Importez un fichier audio ou vidéo, enregistrez via votre microphone ou collez l’URL d’une vidéo YouTube avec une piste de sous-titres disponible.", "duration": "Audio · Vidéo · YouTube · Micro" },
+        { "n": "02", "icon": "Cpu", "title": "Créez une transcription traçable.", "body": "Scribix transcrit les médias importés ou enregistrés, sépare les intervenants lorsque l’audio le permet et ajoute un horodatage mot à mot. Pour une URL YouTube, Scribix importe la piste de sous-titres choisie.", "duration": "Intervenants + horodatages" },
+        { "n": "03", "icon": "ListChecks", "title": "Générez et relisez les notes.", "body": "Avec Starter ou Pro, générez une synthèse, les points clés et les actions à mener. Vérifiez les informations importantes dans la transcription avant de les partager ou de les utiliser.", "duration": "Synthèse · Points clés · Actions" }
+      ]
+    },
+    "useCases": {
+      "label": "Cas d’usage",
+      "number": "03",
+      "h2Part1": "Pour les conversations qui méritent",
+      "h2Part2": "<accent>un compte rendu exploitable.</accent>",
+      "intro": "Utilisez Scribix après une réunion, un entretien, un cours, un webinaire, un podcast ou une session de recherche lorsque réécouter l’intégralité de l’enregistrement ralentirait la suite.",
+      "items": [
+        { "icon": "BriefcaseBusiness", "title": "Suivi de réunion", "audience": "Direction, opérations, équipes projet", "body": "Conservez une discussion consultable, puis dégagez les points essentiels et les tâches de suivi sans inviter de bot dans la réunion.", "workflow": ["Enregistrement", "Transcription par intervenant", "Points clés + actions"] },
+        { "icon": "Handshake", "title": "Appels clients et commerciaux", "audience": "Ventes, service client, produit", "body": "Retrouvez les mots du client, revenez aux passages importants et transformez les suivis convenus en liste d’actions.", "workflow": ["Appel enregistré", "Verbatims clients", "Liste de suivi"] },
+        { "icon": "GraduationCap", "title": "Cours et révisions", "audience": "Étudiants et enseignants", "body": "Transformez un cours enregistré en texte consultable et en points clés plus courts pour réviser.", "workflow": ["Cours enregistré", "Transcription horodatée", "Fiche de révision"] },
+        { "icon": "Newspaper", "title": "Entretiens et recherche", "audience": "Journalistes, recruteurs, chercheurs", "body": "Conservez les intervenants et les horodatages avec la source, puis synthétisez les thèmes et les prochaines actions.", "workflow": ["Entretien enregistré", "Citations traçables", "Thèmes + actions"] },
+        { "icon": "Mic", "title": "Podcasts et webinaires", "audience": "Créateurs, marketing, production", "body": "Obtenez la transcription d’un contenu long et des notes concises pour préparer un résumé, un compte rendu ou de nouveaux contenus.", "workflow": ["Épisode ou webinaire", "Transcription complète", "Plan de synthèse"] }
+      ]
+    },
+    "faq": {
+      "label": "FAQ",
+      "number": "04",
+      "h2Part1": "La prise de notes IA,",
+      "h2Part2": "<accent>expliquée clairement.</accent>",
+      "contactPrefix": "Une autre question ? Écrivez à",
+      "contactEmail": "hello@scribix.io",
+      "contactSuffix": "et nous vous aiderons à choisir le bon processus.",
+      "items": [
+        { "q": "Qu’est-ce qu’un outil de prise de notes IA ?", "a": "Un outil de prise de notes IA transforme une conversation enregistrée en texte et en notes organisées plus courtes. Avec une offre payante, Scribix associe la transcription, les intervenants et les horodatages à une synthèse, des points clés et des actions à mener." },
+        { "q": "Puis-je utiliser Scribix pour une réunion en présentiel ?", "a": "Oui. Enregistrez la réunion avec le microphone de votre appareil ou importez ensuite un fichier audio ou vidéo. La qualité du résultat dépend notamment du placement du micro, du bruit ambiant et des prises de parole simultanées." },
+        { "q": "Scribix rejoint-il les réunions Zoom, Google Meet ou Microsoft Teams ?", "a": "Non. Scribix n’envoie pas de bot dans vos réunions. Ajoutez vous-même un enregistrement en important un fichier, en enregistrant via votre microphone ou en récupérant les sous-titres d’une URL YouTube compatible." },
+        { "q": "Que contiennent les notes IA de Scribix ?", "a": "Les notes IA comprennent une synthèse, les points clés et les actions à mener. La transcription terminée comporte aussi des horodatages et, lorsque l’enregistrement le permet, l’identification des intervenants." },
+        { "q": "L’outil de prise de notes IA est-il gratuit ?", "a": "Scribix comprend 45 minutes de transcription utilisables à vie après connexion avec Google, sans carte bancaire. Les synthèses et notes IA structurées sont disponibles avec les offres Starter et Pro." },
+        { "q": "Puis-je créer des notes à partir d’une vidéo YouTube ?", "a": "Oui, si la vidéo dispose d’une piste de sous-titres accessible. Collez l’URL, choisissez la piste, importez-la, puis générez des notes IA avec une offre payante. Sans sous-titres, importez plutôt un fichier multimédia que vous possédez." },
+        { "q": "Quelle est la fiabilité de la transcription et des notes IA ?", "a": "Le résultat dépend de la clarté de l’audio, de la distance du microphone, du bruit, des accents, du vocabulaire spécialisé et des voix qui se chevauchent. Vérifiez les noms, chiffres, engagements et citations importants dans l’enregistrement." },
+        { "q": "Combien de temps Scribix conserve-t-il mes enregistrements ?", "a": "Les fichiers audio et vidéo importés sont automatiquement supprimés après 14 jours. Les transcriptions restent dans votre compte jusqu’à leur suppression ou la fermeture du compte." },
+        { "q": "Puis-je exporter mes notes ?", "a": "Les notes IA s’affichent dans l’espace de transcription. Il n’existe pas d’export dédié pour les notes ; la transcription peut être téléchargée aux formats TXT, DOCX, SRT, VTT ou CSV." }
+      ]
+    },
+    "finalCta": {
+      "kicker": "À vous de jouer",
+      "h2Part1": "Ajoutez l’enregistrement.",
+      "h2Part2": "<accent>Repartez avec des notes claires.</accent>",
+      "body": "Commencez avec 45 minutes de transcription gratuites. Passez à Starter ou Pro pour générer une synthèse, les points clés et les actions à mener.",
+      "primaryCta": "Commencer la prise de notes",
+      "stats": [
+        { "value": "45 min", "label": "Transcription gratuite" },
+        { "value": "3", "label": "Rubriques de notes IA" },
+        { "value": "14 jours", "label": "Suppression des médias" }
+      ]
+    },
+    "jsonLd": {
+      "appName": "Outil de prise de notes IA Scribix",
+      "appDescription": "Outil de prise de notes IA qui transforme des fichiers audio et vidéo, des enregistrements micro et des sous-titres YouTube disponibles en transcription traçable et en notes structurées.",
+      "offerDescription": "45 minutes de transcription utilisables à vie après connexion avec Google ; les notes IA sont disponibles avec Starter et Pro.",
+      "featureList": ["Import audio et vidéo", "Enregistrement via le microphone", "Import de sous-titres YouTube", "Identification des intervenants", "Horodatage mot à mot", "Synthèse IA", "Points clés générés par IA", "Actions à mener générées par IA", "Édition et export de la transcription"],
+      "howToName": "Comment créer des notes IA avec Scribix",
+      "howToDescription": "Ajoutez un enregistrement, créez une transcription traçable, puis générez et vérifiez des notes IA structurées avec une offre payante.",
+      "howToSteps": ["Importer, enregistrer ou coller une URL YouTube compatible", "Créer ou importer la transcription", "Générer des notes IA avec Starter ou Pro", "Vérifier les notes dans la transcription"]
     }
   },
   "Feedback": {
