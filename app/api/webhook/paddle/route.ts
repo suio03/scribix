@@ -417,6 +417,7 @@ async function handleTransactionCompleted(
   ]);
 
   await discordAlert("checkout_success", {
+    Project: "scribix",
     userId,
     tier: plan.tier,
     cycle: plan.cycle,
