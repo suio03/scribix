@@ -16,6 +16,20 @@ export function Partners() {
             className="block h-auto max-w-[150px]"
           />
         </a>
+        <a
+          href="https://theresanaiforthat.com/ai/scribix/?ref=featured&v=3028022"
+          target="_blank"
+          rel="nofollow noopener noreferrer"
+          aria-label="Scribix featured on There's An AI For That"
+        >
+          <img
+            src="https://media.theresanaiforthat.com/featured-on-taaft.png?width=600"
+            alt="Featured on There's An AI For That"
+            width="259"
+            height="54"
+            className="block h-auto max-w-[259px]"
+          />
+        </a>
       </div>
     </div>
   );

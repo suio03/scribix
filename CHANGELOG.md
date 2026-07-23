@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.18.2] - 2026-07-23
+
+### Added
+- Added a There's An AI For That partner badge beside the existing Dang.ai homepage badge.
+
 ## [0.18.1] - 2026-07-22
 
 ### Changed
