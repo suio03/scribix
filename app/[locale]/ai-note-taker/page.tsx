@@ -150,7 +150,7 @@ function JsonLd({
           "@type": "AggregateOffer",
           priceCurrency: "USD",
           lowPrice: "0",
-          highPrice: "19",
+          highPrice: "20",
           description: copy.jsonLd.offerDescription,
         },
         featureList: copy.jsonLd.featureList,

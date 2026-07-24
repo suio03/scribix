@@ -174,7 +174,7 @@ For deployed environments, set the same secret on the Worker:
 npx wrangler secret put ASSEMBLYAI_API_KEY
 ```
 
-### 2.3 OpenAI API key for AI summaries (blocking — required for Summary)
+### 2.3 OpenAI API key for AI Notes (blocking)
 
 1. https://platform.openai.com/api-keys → **Create new secret key**.
 2. Copy the key.
@@ -458,7 +458,7 @@ ASSEMBLYAI_WEBHOOK_URL=http://localhost:3000/api/webhook/assemblyai
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED=true
 
-# OpenAI (AI summaries)
+# OpenAI (AI Notes)
 OPENAI_API_KEY=
 
 # R2 presign (Phase 2)

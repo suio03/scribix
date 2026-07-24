@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.20.0] - 2026-07-25
+
+### Added
+- Added an annual-first monthly/yearly selector to the localized Pro upgrade modal, with the $120 yearly total, $10 monthly equivalent, and 50% savings shown together.
+- Added monthly allowance windows for yearly Pro subscriptions so 2,400 transcription minutes and YouTube import credits reset each month without rollover.
+
+### Changed
+- Simplified new purchases to Free and Pro, priced at $20 monthly or $120 yearly, while preserving existing Starter subscriptions as a legacy plan.
+- Updated production Paddle Pro Price IDs, localized pricing and billing copy, account usage, Terms, launch checks, and structured offer metadata for the new model.
+- Refreshed AI Notes setup, project guidance, and post-release monitoring documentation.
+
+### Fixed
+- Prevented delayed transcription completion or failure reconciliation from changing a newer monthly allowance window.
+- Added the Scribix project identifier to successful checkout Discord alerts.
+
+### Removed
+- Removed Starter from new upgrade and purchase surfaces, along with the obsolete plan-comparison action in the single-plan upgrade modal.
+
 ## [0.19.0] - 2026-07-23
 
 ### Added

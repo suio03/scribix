@@ -1,9 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { PLANS, PRICING_DISPLAY } from "@/lib/plans";
+import {
+  PLANS,
+  PRICING_DISPLAY,
+  type BillingCycle,
+} from "@/lib/plans";
 import { PaddleCheckoutButton } from "./PaddleCheckoutButton";
 
 export type UpgradeReason = "translation" | "summary" | "quota" | "duration" | "file_size";
@@ -22,10 +26,16 @@ export function UpgradePlanModal({
   onClose: () => void;
 }) {
   const t = useTranslations("Dashboard.viewer");
+  const [cycle, setCycle] = useState<BillingCycle>("yearly");
   if (!open || !reason) return null;
 
   const selectedPlan = upgradePlanCopy(t);
   const copy = upgradeReasonCopy(reason, t);
+  const monthlyPrice = formatPrice(PRICING_DISPLAY.pro.monthly.amount);
+  const yearlyPrice = formatPrice(PRICING_DISPLAY.pro.yearly.amount);
+  const yearlyMonthlyEquivalent = formatPrice(
+    PRICING_DISPLAY.pro.yearly.amount / 12
+  );
 
   return (
     <div
@@ -37,7 +47,7 @@ export function UpgradePlanModal({
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="w-full max-w-[560px] rounded-2xl border border-line bg-paper p-5 shadow-[0_30px_80px_-35px_rgba(14,13,11,0.45)]">
+      <div className="max-h-[calc(100vh-2rem)] w-full max-w-[620px] overflow-y-auto rounded-2xl border border-line bg-paper p-5 shadow-[0_30px_80px_-35px_rgba(14,13,11,0.45)] sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 id="upgrade-plan-title" className="text-[21px] font-semibold tracking-tight text-ink">
@@ -57,18 +67,39 @@ export function UpgradePlanModal({
           </button>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-line bg-card p-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <h3 className="text-[17px] font-semibold text-ink">{selectedPlan.title}</h3>
-              <p className="mt-2 text-[13px] leading-5 text-ink/62">{selectedPlan.description}</p>
-            </div>
-            <div className="shrink-0 sm:text-right">
-              <div className="text-[28px] font-semibold tracking-tight text-ink">{selectedPlan.price}</div>
-              <div className="text-[12px] text-ink/50">
-                {safeT(t, "upgradeMonthlyCadence", "/month")}
-              </div>
-            </div>
+        <div className="mt-5 rounded-2xl border border-line bg-card p-4 sm:p-5">
+          <div>
+            <h3 className="text-[17px] font-semibold text-ink">{selectedPlan.title}</h3>
+            <p className="mt-1.5 text-[13px] leading-5 text-ink/62">{selectedPlan.description}</p>
+          </div>
+
+          <div
+            aria-label={safeT(t, "upgradeBillingLabel", "Choose billing")}
+            className="mt-4 grid gap-2.5 sm:grid-cols-2"
+            role="radiogroup"
+          >
+            <BillingOption
+              active={cycle === "yearly"}
+              badge={safeT(t, "upgradeYearlyBadge", "Save 50%")}
+              cadence={safeT(t, "upgradeYearlyCadence", "/year")}
+              detail={safeTValues(
+                t,
+                "upgradeYearlyEquivalent",
+                `${yearlyMonthlyEquivalent}/month equivalent`,
+                { price: yearlyMonthlyEquivalent }
+              )}
+              label={safeT(t, "upgradeYearly", "Yearly")}
+              onClick={() => setCycle("yearly")}
+              price={yearlyPrice}
+            />
+            <BillingOption
+              active={cycle === "monthly"}
+              cadence={safeT(t, "upgradeMonthlyCadence", "/month")}
+              detail={safeT(t, "upgradeMonthlyDetail", "Billed monthly")}
+              label={safeT(t, "upgradeMonthly", "Monthly")}
+              onClick={() => setCycle("monthly")}
+              price={monthlyPrice}
+            />
           </div>
 
           <div className="mt-4 grid gap-2">
@@ -81,26 +112,80 @@ export function UpgradePlanModal({
           </div>
         </div>
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="mt-4">
           <PaddleCheckoutButton
             tier="pro"
-            cycle="monthly"
+            cycle={cycle}
             signedIn={true}
             checkoutSuccessPath={checkoutSuccessPath}
             onCheckoutStart={onCheckoutStart}
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-accent px-5 text-[14px] font-semibold text-paper transition hover:bg-accent/90"
+            className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-accent px-5 text-[14px] font-semibold text-paper transition hover:bg-accent/90"
           >
-            {safeT(t, "upgradeContinue", "Continue")}
+            {cycle === "yearly"
+              ? safeT(t, "upgradeContinueYearly", "Continue with yearly")
+              : safeT(t, "upgradeContinueMonthly", "Continue with monthly")}
           </PaddleCheckoutButton>
-          <Link
-            href="/pricing"
-            className="inline-flex h-11 items-center justify-center rounded-xl border border-line bg-paper px-5 text-[14px] font-semibold text-ink transition hover:border-ink/35 hover:bg-card"
-          >
-            {safeT(t, "upgradeComparePlans", "Compare all plans")}
-          </Link>
         </div>
       </div>
     </div>
+  );
+}
+
+function BillingOption({
+  active,
+  badge,
+  cadence,
+  detail,
+  label,
+  onClick,
+  price,
+}: {
+  active: boolean;
+  badge?: string;
+  cadence: string;
+  detail: string;
+  label: string;
+  onClick: () => void;
+  price: string;
+}) {
+  return (
+    <button
+      aria-checked={active}
+      className={`relative min-w-0 rounded-xl border p-3.5 text-left transition ${
+        active
+          ? "border-ink bg-ink text-paper shadow-[4px_4px_0_0_var(--accent)]"
+          : "border-line bg-paper text-ink hover:border-ink/40"
+      }`}
+      onClick={onClick}
+      role="radio"
+      type="button"
+    >
+      <div className="flex min-h-5 items-center justify-between gap-2">
+        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em]">
+          {label}
+        </span>
+        {badge ? (
+          <span className="shrink-0 bg-accent px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-paper">
+            {badge}
+          </span>
+        ) : null}
+      </div>
+      <div className="mt-3 flex flex-wrap items-end gap-x-1.5 gap-y-1">
+        <span className="font-display text-[32px] font-medium leading-none tracking-tight">
+          {price}
+        </span>
+        <span
+          className={`pb-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${
+            active ? "text-paper/55" : "text-ink/45"
+          }`}
+        >
+          {cadence}
+        </span>
+      </div>
+      <p className={`mt-2 text-[11px] ${active ? "text-paper/62" : "text-ink/48"}`}>
+        {detail}
+      </p>
+    </button>
   );
 }
 
@@ -169,7 +254,6 @@ function upgradePlanCopy(
   const maxFileHours = PLANS.pro.maxFileSec / 3600;
   return {
     title: safeT(t, "upgradePro", "Pro"),
-    price: safeT(t, "upgradeProMonthlyPrice", formatProPrice()),
     description: safeT(
       t,
       "upgradeProMonthlyDescription",
@@ -187,10 +271,9 @@ function upgradePlanCopy(
   };
 }
 
-function formatProPrice(): string {
-  const price = PRICING_DISPLAY.pro.monthly;
-  if (price.currency === "USD") return `$${price.amount}`;
-  return `${formatNumber(price.amount)} ${price.currency}`;
+function formatPrice(amount: number): string {
+  if (PRICING_DISPLAY.pro.monthly.currency === "USD") return `$${amount}`;
+  return `${formatNumber(amount)} ${PRICING_DISPLAY.pro.monthly.currency}`;
 }
 
 function formatDurationHours(hours: number): string {

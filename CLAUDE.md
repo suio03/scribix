@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What Scribix is
 
-A Next.js (App Router, React 19) audio/video transcription SaaS deployed to **Cloudflare Workers via OpenNext** (`@opennextjs/cloudflare`), not Vercel. Users upload or record audio/video for **AssemblyAI** transcription, or import available YouTube caption tracks through the dedicated caption service. Results are stored and exported. Persistence is **Cloudflare D1** (SQLite); media lives in **Cloudflare R2**; billing runs through **Paddle Billing**; auth is **next-auth (Google)**.
+A Next.js (App Router, React 19) audio/video transcription SaaS deployed to **Cloudflare Workers via OpenNext** (`@opennextjs/cloudflare`), not Vercel. Users upload or record audio/video for **AssemblyAI** transcription, or import available YouTube caption tracks through the dedicated caption service. Paid users can turn completed transcripts into AI Notes with an overview, key points, and action items. Results are stored and exported. Persistence is **Cloudflare D1** (SQLite); media lives in **Cloudflare R2**; billing runs through **Paddle Billing**; auth is **next-auth (Google)**.
 
 Because it targets the Workers runtime, all server code must be edge-compatible: use `fetch` (no Node networking), and reach Cloudflare bindings through `await cf()` (`lib/cf.ts`), never assume Node globals.
 
@@ -38,6 +38,14 @@ Quota model (`lib/quota.ts` + `lib/plans.ts`): a **single `minutes_used_this_per
 
 Paddle is wired through `app/api/paddle/create-checkout/route.ts`, `app/api/paddle/create-portal/route.ts`, and `app/api/webhook/paddle/route.ts`. Price IDs are resolved in `lib/paddle-plans.ts`; public caps and display prices remain in `lib/plans.ts`. Paddle is the only source of truth for monetary amounts. Scribix stores transaction and adjustment ownership metadata for entitlement, idempotency, and routing, but does not copy revenue, tax, or refund amounts. The webhook verifies Paddle signatures, dedupes events in `paddle_events`, stores Paddle customer/subscription IDs on `users`, resets minute and YouTube-import counters when a billing period advances, and expires users back to free when paid access ends.
 
+Discord notifications have strict channel ownership: transcription/webhook failures use `DISCORD_ERROR_WEBHOOK_URL`, billing events use `DISCORD_CHECKOUT_WEBHOOK_URL`, and submitted feedback uses `DISCORD_FEEDBACK_WEBHOOK_URL`. Successful transcription and maintenance events, plus account deletion, stay in structured logs rather than Discord.
+
+## AI Notes
+
+**AI Notes** is the user-facing name for the existing summary pipeline; internal routes, storage fields, and types may still use `summary`. Starter and Pro users generate notes from a completed transcript through `GET/POST /api/transcripts/[id]/summary`. `lib/openai-summary.ts` asks OpenAI for an overview, key points, and concrete action items, then the route stores the payload in R2 and status metadata in D1. `OPENAI_API_KEY` is required.
+
+`/[locale]/ai-note-taker` is the localized acquisition page. It reuses the shared upload, recording, YouTube, and marketing components. When changing these entry points, preserve `tier`, `billingCycle`, and `toolSlug` through every path so limits and analytics attribution stay correct.
+
 ## YouTube captions and extension
 
 The in-app YouTube workflow uses `app/components/YouTubeImporter.tsx` plus `app/api/transcripts/youtube/*` routes to inspect available caption tracks, reserve YouTube import quota, import the selected captions, and save a completed transcript row. It does not download YouTube video/audio. Free users get 10 YouTube caption imports per UTC day and a 2-hour YouTube video cap; paid caps come from `lib/plans.ts`.
@@ -70,4 +78,4 @@ next-intl with locales `["en", "fr", "es", "it", "ja", "de"]`, `defaultLocale: "
 
 ## Reference
 
-`docs/progress.md` is a historical v1 planning artifact, not the current source of truth. Current operational setup lives in `docs/manual-setup.md`; `docs/runbooks/` holds ops procedures, including the active `post-release-monitoring.md` checklist for upload reliability and conversion. `docs/plan-hybrid-video-upload.md` records the shipped hybrid-upload architecture, while `docs/plan-post-july-19-reliability-growth.md` is the dated analysis, decision record, and implementation status for release `0.18.0` rather than an evergreen backlog.
+`docs/progress.md` is a historical v1 planning artifact, not the current source of truth. Current operational setup lives in `docs/manual-setup.md`; `docs/runbooks/` holds ops procedures, including the active `post-release-monitoring.md` checklist for upload reliability and conversion. `docs/plan-hybrid-video-upload.md` records the shipped hybrid-upload architecture, while `docs/plan-post-july-19-reliability-growth.md` is the dated analysis and decision record for the `0.18.x` reliability work rather than an evergreen backlog.
