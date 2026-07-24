@@ -81,7 +81,7 @@
     "currentPlanTitle": "現在のプラン",
     "manageBilling": "請求を管理",
     "tierFree": "無料",
-    "tierBasic": "Starter",
+    "tierBasic": "旧Starter",
     "tierPro": "Pro",
     "cycleMonthly": "月額",
     "cycleYearly": "年額",
@@ -282,7 +282,7 @@
         "icon": "GraduationCap",
         "title": "学生",
         "audience": "講義＆学習",
-        "body": "2 時間の講義を検索可能なノートに変換。混乱した瞬間をマーク、単語をクリック、再度聞く。無料で試してから、Starter プラン 1 ヶ月分でセメスター全体の講義をカバーできます。",
+        "body": "2時間の講義を検索できるノートに変換。分かりにくい箇所をマークし、単語をクリックして聞き直せます。まず無料で試し、学期中の長い講義にはProを利用できます。",
         "workflow": [
           "講義録画",
           "検索可能なノート",
@@ -305,17 +305,18 @@
   "PricingPage": {
     "metadata": {
       "title": "料金",
-      "description": "シンプルな料金体系：生涯45分無料、月600分のStarter、または月2,400分のPro。",
+      "description": "Scribixのシンプルな料金体系：生涯45分の無料枠で始め、Proなら毎月2,400分の文字起こしを利用できます。",
       "ogTitle": "Scribixの料金",
-      "ogDescription": "音声・動画文字起こし向けの無料、Starter、Proプラン。"
+      "ogDescription": "動画・音声文字起こし向けの無料プランとProプラン。"
     },
-    "h1": "本格的な文字起こしのためのシンプルな料金。",
+    "h1": "必要なものを、ひとつのプランで。",
     "bestValue": "おすすめ",
     "annualPrefix": "年額",
     "billingToggleLabel": "請求間隔",
     "billingMonthly": "月額",
     "billingYearly": "年額",
-    "billingYearlyBadge": "最大35%お得",
+    "billingYearlyBadge": "50%お得",
+    "billingYearlyNote": "年額{price}を請求 · {savings}お得",
     "noCreditCard": "クレジットカード不要",
     "chooseLabel": "{plan}を選択",
     "currentPlanLabel": "現在のプラン",
@@ -336,11 +337,11 @@
       },
       {
         "key": "monthlyMinutes",
-        "label": "月間分数",
+        "label": "文字起こし枠",
         "values": {
           "free": "生涯45分",
           "starter": "600分/月",
-          "pro": "月2,400分"
+          "pro": "月40時間（2,400分）"
         }
       },
       {
@@ -363,11 +364,11 @@
       },
       {
         "key": "maxFileLength",
-        "label": "最大ファイル長",
+        "label": "ファイルの長さ",
         "values": {
-          "free": "45分",
-          "starter": "10時間",
-          "pro": "10時間"
+          "free": "最大45分",
+          "starter": "最大10時間",
+          "pro": "最大10時間"
         }
       },
       {
@@ -390,11 +391,11 @@
       },
       {
         "key": "accuracyModel",
-        "label": "精度モデル",
+        "label": "文字起こしモデル",
         "values": {
           "free": "標準",
           "starter": "最高精度",
-          "pro": "最高精度"
+          "pro": "利用可能な最高精度"
         }
       },
       {
@@ -443,23 +444,14 @@
         "summary": "支払う前に、Scribixを一度試して文字起こし品質を確認できます。"
       },
       {
-        "id": "starter",
-        "name": "Starter",
-        "price": "$12",
-        "cadence": "月額",
-        "summary": "分数上限を意識しながら、個人で継続的に使う方向け。",
-        "annual": "$99/年",
-        "annualPrice": "$99",
-        "annualCadence": "年額"
-      },
-      {
         "id": "pro",
         "name": "Pro",
-        "price": "$19",
+        "price": "$20",
         "cadence": "月額",
-        "summary": "シンプルな料金体系：生涯45分無料、月600分のStarter、または月2,400分のPro。",
-        "annual": "$179/年",
-        "annualPrice": "$179",
+        "summary": "長時間の録音を文字起こしし、分かりやすいAI議事録にまとめ、翻訳までひとつのプランで行えます。",
+        "purchaseNote": "いつでも解約可能",
+        "annual": "$120/年",
+        "annualPrice": "$120",
         "annualCadence": "年額"
       }
     ],
@@ -474,15 +466,19 @@
       },
       {
         "question": "未使用の分数は繰り越されますか？",
-        "answer": "月額プランの分数は各請求サイクルでリセットされます。年額プランでは、更新時に年間分数をまとめて付与する想定です。"
+        "answer": "いいえ。Proでは毎月2,400分の文字起こし枠が付与されます。年額払いの場合も毎月リセットされ、未使用分は繰り越されません。"
       },
       {
         "question": "最大ファイル長はどれくらいですか？",
-        "answer": "無料は最大45分、Starterは最大1時間、Proは最大10時間のファイルに対応します。"
+        "answer": "無料プランは最大45分、Proは最大10時間のファイルに対応します。"
+      },
+      {
+        "question": "アップロードするファイルにサイズ上限はありますか？",
+        "answer": "はい。動画はProで最大5 GB、無料プランで最大2 GBです。音声は最大1 GBです。ファイルの長さと残りの月間文字起こし枠も適用されます。"
       },
       {
         "question": "後からプランを変更できますか？",
-        "answer": "はい。Starterから始め、より長いファイルや多くの分数が必要になったらProに変更できます。"
+        "answer": "はい。無料プランで始め、必要になったらProに登録し、請求アカウントからサブスクリプションの管理や解約ができます。"
       },
       {
         "question": "有料プランに無料トライアルはありますか？",
@@ -491,8 +487,8 @@
     ],
     "aiFeatures": "AI議事録 + 翻訳",
     "included": "含まれます",
-    "paidIncludedTitle": "すべての有料プランに含まれます",
-    "paidIncludedDescription": "有料プラン共通の機能はここにまとめ、プランごとの差分を比較しやすくしています。",
+    "paidIncludedTitle": "その他の機能",
+    "paidIncludedDescription": "エクスポート無制限 · 話者ラベル · TXT, DOCX, SRT, VTT, CSV",
     "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
   },
   "FAQ": {
@@ -621,7 +617,7 @@
       "dangerZone": "危険ゾーン",
       "deleteWarning": "アカウント、文字起こし、音声を永久削除します。これは取り消せません。",
       "tierFree": "フリー",
-      "tierBasic": "Starter",
+      "tierBasic": "旧Starter",
       "tierPro": "Pro",
       "cycleMonthly": "月額",
       "cycleYearly": "年額",
@@ -630,10 +626,10 @@
     },
     "billing": {
       "title": "請求",
-      "description": "有料プランの上限を比較し、アップグレードやサブスクリプション管理を行えます。",
+      "description": "Proの月額払いまたは年額払いを選択し、既存のサブスクリプションを管理できます。",
       "currentPlan": "現在のプラン",
       "choosePlanTitle": "適切なプランを選択",
-      "choosePlanDescription": "Starter は継続的な個人利用に適しています。長いファイル、優先処理、または月間利用が多い場合は Pro が適しています。",
+      "choosePlanDescription": "Proには毎月2,400分の文字起こし、AI議事録、翻訳が含まれます。",
       "checkoutOkTitle": "サブスクリプションがアクティブです—ようこそ。",
       "checkoutOkBody": "新しいプランが有効になりました。使用量とサブスクリプション管理は下に表示されます。",
       "aiFeatures": "AI議事録 + 翻訳",
@@ -694,8 +690,7 @@
       "translationLanguageLabel": "翻訳先",
       "translating": "翻訳中…",
       "upgradeTranslationTitle": "AI翻訳を解除",
-      "upgradeTranslationBody": "翻訳はStarterとProに含まれています。アップグレードすると、完了した文字起こしを対応言語に翻訳できます。",
-      "upgradeStarter": "Starter",
+      "upgradeTranslationBody": "翻訳はProに含まれています。Proにアップグレードすると、完了した文字起こしを対応言語に翻訳できます。",
       "upgradePro": "Pro",
       "upgradeTranslationModalTitle": "この文字起こしを翻訳",
       "upgradeTranslationModalBody": "アップグレードすると、完了した文字起こしを対応言語へ、話者に合わせた形式で翻訳できます。",
@@ -703,18 +698,14 @@
       "upgradeSummaryModalBody": "アップグレードすると、完成した文字起こしを概要、重要ポイント、アクション項目に整理できます。",
       "upgradeQuotaModalTitle": "文字起こしを続ける",
       "upgradeQuotaModalBody": "アップグレードすると文字起こし分数を追加し、待たずに続行できます。",
-      "upgradePlanToggle": "プランを選択",
       "upgradeMonthlyCadence": "/月",
       "upgradeContinue": "続ける",
       "upgradeComparePlans": "すべてのプランを比較",
-      "upgradeProMonthlyDescription": "長いファイル、優先処理、より多い文字起こし量向け。",
-      "upgradeProMonthlyBulletMinutes": "毎月 {minutes, number} 分の優先処理",
+      "upgradeProMonthlyPrice": "$20",
+      "upgradeProMonthlyDescription": "毎月の文字起こし量が多い方向け。",
+      "upgradeProMonthlyBulletMinutes": "毎月 {minutes, number} 分の文字起こし",
       "upgradeProMonthlyBulletLength": "最大 {hours, number} 時間のファイルを文字起こし",
       "upgradeProMonthlyBulletAi": "AI翻訳とAI議事録を含む",
-      "upgradeStarterMonthlyDescription": "有料AIツールを使える、継続的な個人向け文字起こしプラン。",
-      "upgradeStarterMonthlyBulletMinutes": "毎月 {minutes, number} 分",
-      "upgradeStarterMonthlyBulletAi": "AI翻訳とAI議事録を含む",
-      "upgradeStarterMonthlyBulletExports": "文字起こしのエクスポート無制限",
       "closeUpgrade": "アップグレードモーダルを閉じる",
       "summaryPanelTitle": "AI議事録",
       "summaryPanelDescription": "簡潔な概要、重要ポイント、アクション項目を生成します。",
@@ -725,7 +716,7 @@
       "summaryIdle": "準備ができたらAI議事録を生成します。",
       "summaryError": "AI議事録の作成に失敗しました。もう一度お試しください。",
       "upgradeSummaryTitle": "AI議事録を利用",
-      "upgradeSummaryBody": "AI議事録はStarterとProに含まれています。アップグレードすると、完成した文字起こしを構造化された議事録に整理できます。",
+      "upgradeSummaryBody": "AI議事録はProに含まれています。Proにアップグレードすると、完成した文字起こしを構造化された議事録に整理できます。",
       "moreSoon": "その他のオプション — 近日公開",
       "more": "その他",
       "summarySoon": "AI議事録 — 近日公開",
@@ -1255,7 +1246,7 @@
       "issueLabel": "Issue No.05 · AI議事録ツール",
       "h1Part1": "あらゆる録音を、AI議事録に。",
       "h1Part2": "<accent>会話から次のアクションまで整理。</accent>",
-      "description": "動画や音声ファイルのアップロード、マイク録音、字幕が利用できるYouTube URLに対応します。Scribixは発言者とタイムスタンプ付きの文字起こしを作成し、StarterとProでは概要、要点、アクションアイテムをAIで整理できます。",
+      "description": "動画や音声ファイルのアップロード、マイク録音、字幕が利用できるYouTube URLに対応します。Scribixは発言者とタイムスタンプ付きの文字起こしを作成し、Proでは概要、要点、アクションアイテムをAIで整理できます。",
       "primaryCta": "無料の45分から始める",
       "signedInPrimaryCta": "文字起こしを作成",
       "secondaryCta": "料金を見る",
@@ -1273,7 +1264,7 @@
       "h2": "元の発言をたどれる、<accent>実用的なAI議事録。</accent>",
       "intro": "Scribixは録音を、確認できる文字起こしと、行動につなげやすい短いAI議事録に整理します。概要、要点、アクションアイテムをまとめながら、発言者とタイムスタンプで重要な内容を元の録音までたどれます。",
       "items": [
-        { "icon": "Sparkles", "title": "構造化されたAI議事録", "body": "StarterとProでは、完成した文字起こしから概要、要点、アクションアイテムを生成できます。", "span": "lg:col-span-2" },
+        { "icon": "Sparkles", "title": "構造化されたAI議事録", "body": "Proでは、完成した文字起こしから概要、要点、アクションアイテムを生成できます。", "span": "lg:col-span-2" },
         { "icon": "Users", "title": "発言者ごとの文字起こし", "body": "録音品質が十分な場合は発言者の交代を分けて表示します。生成されたラベルは後から変更できます。" },
         { "icon": "Clock", "title": "確認できるタイムスタンプ", "body": "単語単位のタイムスタンプから、メモや引用、フォローアップの根拠となる箇所へ戻れます。" },
         { "icon": "Files", "title": "4つの入力方法", "body": "動画または音声のアップロード、マイク録音、YouTube URLから利用可能な字幕トラックの取り込みに対応します。", "span": "lg:col-span-2" },
@@ -1289,7 +1280,7 @@
       "steps": [
         { "n": "01", "icon": "CloudUpload", "title": "会話を追加します。", "body": "音声・動画ファイルをアップロードするか、マイクで録音します。字幕トラックが利用できるYouTube URLを貼り付けることもできます。", "duration": "音声 · 動画 · YouTube · マイク" },
         { "n": "02", "icon": "Cpu", "title": "確認可能な文字起こしを作成します。", "body": "アップロードまたは録音したメディアを文字起こしし、音声品質が対応する場合は発言者ラベルと単語単位のタイムスタンプを追加します。YouTube URLでは選択した字幕トラックを取り込みます。", "duration": "発言者 + タイムスタンプ" },
-        { "n": "03", "icon": "ListChecks", "title": "AI議事録を生成して確認します。", "body": "StarterまたはProで、概要、要点、アクションアイテムを生成します。共有や実行の前に、重要な内容を文字起こしと照合してください。", "duration": "概要 · 要点 · アクション" }
+        { "n": "03", "icon": "ListChecks", "title": "AI議事録を生成して確認します。", "body": "Proで概要、要点、アクションアイテムを生成します。共有や実行の前に、重要な内容を文字起こしと照合してください。", "duration": "概要 · 要点 · アクション" }
       ]
     },
     "useCases": {
@@ -1319,7 +1310,7 @@
         { "q": "対面会議でも使えますか？", "a": "はい。端末のマイクで会議を録音するか、後から音声・動画ファイルをアップロードしてください。マイクの位置、室内の雑音、同時発話などが結果に影響します。" },
         { "q": "Zoom、Google Meet、Microsoft Teamsの会議にScribixが参加しますか？", "a": "いいえ。Scribixは会議ボットを通話に参加させません。ファイルのアップロード、マイク録音、または対応するYouTube URLの字幕取り込みで録音を追加します。" },
         { "q": "AI議事録には何が含まれますか？", "a": "概要、要点、アクションアイテムが含まれます。完成した文字起こしにはタイムスタンプが付き、録音品質が対応する場合は発言者ラベルも表示されます。" },
-        { "q": "AI議事録は無料で使えますか？", "a": "Googleでログインすると、クレジットカード不要で生涯合計45分の無料文字起こしを利用できます。AI要約と構造化されたAI議事録はStarterとProで利用できます。" },
+        { "q": "AI議事録は無料で使えますか？", "a": "Googleでログインすると、クレジットカード不要で生涯合計45分の無料文字起こしを利用できます。AI要約と構造化されたAI議事録はProで利用できます。" },
         { "q": "YouTube動画からAI議事録を作れますか？", "a": "利用可能な字幕トラックがある動画なら作成できます。URLを貼り付けて字幕を選び、取り込んだ後に有料プランでAI議事録を生成します。字幕がない場合は、所有するメディアファイルをアップロードしてください。" },
         { "q": "文字起こしとAI議事録の精度はどの程度ですか？", "a": "音声の明瞭さ、マイクとの距離、雑音、アクセント、専門用語、発言の重なりによって結果は変わります。氏名、数値、約束、引用など重要な内容は元の録音で確認してください。" },
         { "q": "録音はどのくらい保存されますか？", "a": "アップロードした音声・動画は14日後に自動削除されます。文字起こしは、自分で削除するかアカウントを閉鎖するまで保存されます。" },
@@ -1330,7 +1321,7 @@
       "kicker": "準備ができたら",
       "h2Part1": "録音を追加するだけ。",
       "h2Part2": "<accent>次に使える議事録へ。</accent>",
-      "body": "まずは45分の無料文字起こしから。概要、要点、アクションアイテムをAIで整理する場合はStarterまたはProをご利用ください。",
+      "body": "まずは45分の無料文字起こしから。概要、要点、アクションアイテムをAIで整理する場合はProをご利用ください。",
       "primaryCta": "AI議事録を作成する",
       "stats": [
         { "value": "45分", "label": "無料文字起こし" },
@@ -1341,11 +1332,11 @@
     "jsonLd": {
       "appName": "Scribix AI議事録ツール",
       "appDescription": "音声、動画、マイク録音、利用可能なYouTube字幕から、確認可能な文字起こしと構造化されたAI議事録を作成するツールです。",
-      "offerDescription": "Googleログインで生涯合計45分の文字起こしが無料。AI議事録はStarterとProで利用できます。",
+      "offerDescription": "Googleログインで生涯合計45分の文字起こしが無料。AI議事録はProで利用できます。",
       "featureList": ["音声・動画アップロード", "マイク録音", "YouTube字幕の取り込み", "発言者ラベル", "単語単位のタイムスタンプ", "AIによる概要", "AIによる要点", "AIによるアクションアイテム", "文字起こしの編集と書き出し"],
       "howToName": "ScribixでAI議事録を作成する方法",
       "howToDescription": "録音を追加して確認可能な文字起こしを作成し、有料プランで構造化されたAI議事録を生成・確認します。",
-      "howToSteps": ["アップロード、録音、または対応するYouTube URLを貼り付ける", "文字起こしを作成または取り込む", "StarterまたはProでAI議事録を生成する", "文字起こしと照合して確認する"]
+      "howToSteps": ["アップロード、録音、または対応するYouTube URLを貼り付ける", "文字起こしを作成または取り込む", "ProでAI議事録を生成する", "文字起こしと照合して確認する"]
     }
   },
   "Feedback": {

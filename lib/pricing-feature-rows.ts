@@ -18,7 +18,9 @@ export type PlanFeatureKey =
 export type PlanFeatureCopy = {
   key: PlanFeatureKey;
   label: string;
+  annualLabel?: string;
   values: Record<PricingPlanId, string>;
+  annualValues?: Partial<Record<PricingPlanId, string>>;
 };
 
 type PricingFeatureT = (key: string) => string;
@@ -29,11 +31,10 @@ export function compactPricingRows(
 ): PlanFeatureCopy[] {
   return compactRows(featureRows, t, [
     "monthlyMinutes",
-    "youtubeCaptionImports",
-    "maxFileLength",
-    "maxYoutubeCaptionVideo",
     "aiFeatures",
-    "processingQueue",
+    "maxFileLength",
+    "accuracyModel",
+    "youtubeCaptionImports",
   ]);
 }
 
@@ -43,11 +44,10 @@ export function compactBillingRows(
 ): PlanFeatureCopy[] {
   return compactRows(featureRows, t, [
     "monthlyMinutes",
-    "youtubeCaptionImports",
-    "maxFileLength",
-    "maxYoutubeCaptionVideo",
-    "processingQueue",
     "aiFeatures",
+    "maxFileLength",
+    "accuracyModel",
+    "youtubeCaptionImports",
   ]);
 }
 
@@ -59,6 +59,8 @@ export function includedPaidRows(
   const exports = rowsByKey.get("exports");
 
   return [
+    rowsByKey.get("aiSummaries"),
+    rowsByKey.get("aiTranslation"),
     exports
       ? {
           ...exports,
@@ -70,8 +72,8 @@ export function includedPaidRows(
         }
       : null,
     rowsByKey.get("speakerLabels"),
-    rowsByKey.get("accuracyModel"),
     rowsByKey.get("maxFileSize"),
+    rowsByKey.get("maxYoutubeCaptionVideo"),
   ].filter((row): row is PlanFeatureCopy => Boolean(row));
 }
 

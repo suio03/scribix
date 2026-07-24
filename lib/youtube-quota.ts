@@ -1,12 +1,11 @@
-import type { BillingCycle, Tier } from "@/lib/plans";
 import { youtubeImportsFor } from "@/lib/plans";
+import {
+  maybeResetAllowancePeriod,
+  type ResettableQuotaRow,
+} from "@/lib/quota-period";
 import { isTodayUtc } from "@/lib/utc-date";
 
-type YouTubeQuotaRow = {
-  id: string;
-  tier: Tier;
-  billing_cycle: BillingCycle | null;
-  youtube_imports_used_this_period: number;
+type YouTubeQuotaRow = ResettableQuotaRow & {
   youtube_imports_period_started_at: string | null;
 };
 
@@ -22,7 +21,8 @@ export async function checkYouTubeImportQuota(
   const user = await readYouTubeQuotaUser(db, userId);
   if (!user) return { error: "user_not_found" };
 
-  const fresh = await maybeResetYouTubeDailyQuota(db, user);
+  const paidFresh = await maybeResetAllowancePeriod(db, user);
+  const fresh = await maybeResetYouTubeDailyQuota(db, paidFresh);
   const cap = youtubeImportsFor(fresh.tier, fresh.billing_cycle);
   const remaining = Math.max(0, cap - fresh.youtube_imports_used_this_period);
   if (remaining <= 0) return { error: "youtube_quota_exceeded", remaining: 0, cap };
@@ -36,7 +36,8 @@ export async function reserveYouTubeImport(
   const user = await readYouTubeQuotaUser(db, userId);
   if (!user) return { error: "user_not_found" };
 
-  const fresh = await maybeResetYouTubeDailyQuota(db, user);
+  const paidFresh = await maybeResetAllowancePeriod(db, user);
+  const fresh = await maybeResetYouTubeDailyQuota(db, paidFresh);
   const cap = youtubeImportsFor(fresh.tier, fresh.billing_cycle);
   const remaining = Math.max(0, cap - fresh.youtube_imports_used_this_period);
   if (remaining <= 0) return { error: "youtube_quota_exceeded", remaining: 0, cap };
@@ -82,8 +83,9 @@ async function readYouTubeQuotaUser(
 ): Promise<YouTubeQuotaRow | null> {
   return db
     .prepare(
-      `SELECT id, tier, billing_cycle, youtube_imports_used_this_period
-            , youtube_imports_period_started_at
+      `SELECT id, tier, billing_cycle, minutes_used_this_period,
+              youtube_imports_used_this_period, youtube_imports_period_started_at,
+              period_started_at, period_ends_at
          FROM users
         WHERE id = ?1
           AND deleted_at IS NULL`

@@ -1,5 +1,6 @@
 import type { Session } from "next-auth";
 import type { BillingCycle, Tier } from "@/lib/plans";
+import { maybeResetAllowancePeriod } from "@/lib/quota-period";
 
 export type CurrentUserRow = {
   id: string;
@@ -13,13 +14,14 @@ export type CurrentUserRow = {
   subscription_id: string | null;
   minutes_used_this_period: number;
   youtube_imports_used_this_period: number;
+  period_started_at: string;
   period_ends_at: string;
 };
 
 const CURRENT_USER_SELECT = `
   SELECT id, email, full_name, avatar_url, tier, billing_cycle, subscription_status,
          customer_id, subscription_id, minutes_used_this_period,
-         youtube_imports_used_this_period, period_ends_at
+         youtube_imports_used_this_period, period_started_at, period_ends_at
     FROM users
    WHERE deleted_at IS NULL
 `;
@@ -38,7 +40,7 @@ export async function getOrCreateCurrentUser(
       .prepare(`${CURRENT_USER_SELECT} AND id = ?1`)
       .bind(id)
       .first<CurrentUserRow>();
-    if (byId) return byId;
+    if (byId) return maybeResetAllowancePeriod(db, byId);
   }
 
   if (email) {
@@ -46,7 +48,7 @@ export async function getOrCreateCurrentUser(
       .prepare(`${CURRENT_USER_SELECT} AND email = ?1`)
       .bind(email)
       .first<CurrentUserRow>();
-    if (byEmail) return byEmail;
+    if (byEmail) return maybeResetAllowancePeriod(db, byEmail);
   }
 
   if (!id || !email) return null;
@@ -63,8 +65,9 @@ export async function getOrCreateCurrentUser(
     .bind(id, email, name, image)
     .run();
 
-  return db
+  const created = await db
     .prepare(`${CURRENT_USER_SELECT} AND id = ?1`)
     .bind(id)
     .first<CurrentUserRow>();
+  return created ? maybeResetAllowancePeriod(db, created) : null;
 }

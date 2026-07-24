@@ -66,7 +66,7 @@ export async function POST(req: Request) {
           neededMin: estimateMin,
           tier: user.tier,
           canUpgrade: user.tier !== "pro",
-          suggestedTier: user.tier === "free" ? "basic" : "pro",
+          suggestedTier: "pro",
         },
         { status: quota.error === "no_quota" ? 429 : 402 }
       );

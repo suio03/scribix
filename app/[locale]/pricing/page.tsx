@@ -86,8 +86,13 @@ export default async function PricingPage({
   const t = await getTranslations("PricingPage");
   const plans = t.raw("plans") as PlanCopy[];
   const featureRows = t.raw("featureRows") as PlanFeatureCopy[];
-  const pricingFeatureRows = compactPricingRows(featureRows, t);
-  const includedPaidFeatures = includedPaidRows(featureRows, t);
+  const pricingFeatureRows = compactPricingRows(featureRows, t).filter(
+    (feature) => feature.key !== "youtubeCaptionImports"
+  );
+  const includedPaidFeatures = includedPaidRows(featureRows, t).filter(
+    (feature) =>
+      (feature.key !== "maxFileSize" && feature.key !== "maxYoutubeCaptionVideo")
+  );
   const faqs = t.raw("faqs") as FaqCopy[];
   const chooseLabels = Object.fromEntries(
     plans.map((plan) => [plan.id, t("chooseLabel", { plan: plan.name })])
@@ -120,11 +125,13 @@ export default async function PricingPage({
         <section className="px-4 py-10 sm:px-8 sm:py-14">
           <div className="mx-auto max-w-[1100px]">
             <PricingPlans
+              analyticsSource="pricing"
               billingLabels={{
                 label: t("billingToggleLabel"),
                 monthly: t("billingMonthly"),
                 yearly: t("billingYearly"),
                 yearlyBadge: t("billingYearlyBadge"),
+                yearlyNote: t.raw("billingYearlyNote") as string,
               }}
               bestValue={t("bestValue")}
               checkoutSuccessPath={checkoutSuccessPath}
@@ -142,6 +149,7 @@ export default async function PricingPage({
               unavailableLabel={t("unavailableLabel")}
             />
             <IncludedPaidPlans
+              compact
               description={t("paidIncludedDescription")}
               features={includedPaidFeatures}
               title={t("paidIncludedTitle")}
@@ -196,14 +204,29 @@ function metadataUrlFor(locale: string, path: string): URL {
 }
 
 function IncludedPaidPlans({
+  compact,
   description,
   features,
   title,
 }: {
+  compact: boolean;
   description: string;
   features: PlanFeatureCopy[];
   title: string;
 }) {
+  if (compact) {
+    return (
+      <section className="mt-8 border border-line bg-card px-5 py-4 sm:px-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4">
+          <p className="shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+            {title}
+          </p>
+          <p className="text-[14px] leading-6 text-muted">{description}</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="mt-8 border border-line bg-card p-5 sm:p-6">
       <div className="grid gap-5 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:items-start">
@@ -217,12 +240,25 @@ function IncludedPaidPlans({
         </div>
         <dl className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2">
           {features.map((feature) => (
-            <div key={feature.key} className="bg-paper px-4 py-3">
-              <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+            <div
+              key={feature.key}
+              className={`px-4 py-4 ${
+                feature.key === "aiSummaries" || feature.key === "aiTranslation"
+                  ? "bg-ink text-paper"
+                  : "bg-paper text-ink"
+              }`}
+            >
+              <dt
+                className={`font-mono text-[10px] uppercase tracking-[0.14em] ${
+                  feature.key === "aiSummaries" || feature.key === "aiTranslation"
+                    ? "text-paper/50"
+                    : "text-muted"
+                }`}
+              >
                 {feature.label}
               </dt>
-              <dd className="mt-1 text-[14px] font-medium leading-6 text-ink">
-                {feature.values.starter}
+              <dd className="mt-1 text-[14px] font-medium leading-6">
+                {feature.values.pro}
               </dd>
             </div>
           ))}

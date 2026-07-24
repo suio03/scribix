@@ -1,8 +1,8 @@
-# Runbook — launch checklist
+# Runbook — launch and major-release checklist
 
-One-shot list to walk before flipping `scribix.io` live. Most of the heavy
-lifting (CF account, secrets, custom domain) lives in `docs/manual-setup.md`
-Phase 7 — this file is the "everything else" pre-flight.
+Use this before the first live launch and again for major user-facing releases.
+Most infrastructure setup lives in `docs/manual-setup.md` Phase 7; skip only
+the one-time items that are already verified and unchanged.
 
 ## Prereqs (from manual-setup.md)
 
@@ -41,6 +41,8 @@ Phase 7 — this file is the "everything else" pre-flight.
 - [ ] Paddle cancellation marks the subscription canceled without removing
   access before the period end.
 - [ ] Upload a 30 s audio file → row reaches `completed` → transcript renders.
+- [ ] On a completed transcript, Free opens the AI Notes upgrade flow; Starter
+  or Pro generates an overview, key points, and action items.
 - [ ] Upload a video just over 1 GiB → multipart completes → AssemblyAI accepts
   the original video → transcript renders and media playback works.
 - [ ] Test Free rejection over 2 GiB and paid acceptance near the 4.9 billion-byte cap.
@@ -48,6 +50,8 @@ Phase 7 — this file is the "everything else" pre-flight.
   back to direct video without asking the user to select it again.
 - [ ] Retry multipart complete after it has already succeeded → the endpoint
   confirms the exact-size final object instead of failing or deleting it.
+- [ ] Hit `/ai-note-taker` and at least one localized variant; confirm the
+  localized navigation entry, canonical/hreflang, upload, record, and YouTube tabs.
 - [ ] Hit `/refunds`, `/terms`, `/privacy` — all 200 OK.
 - [ ] Hit `https://scribix.io/sitemap.xml` and `/robots.txt` — both serve.
 - [ ] Soft-delete a transcript → audio + JSON disappear from R2; row hidden.
@@ -73,11 +77,12 @@ Phase 7 — this file is the "everything else" pre-flight.
 ## Marketing
 
 - [ ] Submit `https://scribix.io/sitemap.xml` to Google Search Console.
+- [ ] Confirm the sitemap contains `/ai-note-taker` with all six locale alternates.
 - [ ] Verify domain in Google Search Console + Bing Webmaster.
 - [ ] OG card preview looks right (`https://scribix.io` → opengraph-image
   served from `app/[locale]/opengraph-image.tsx`).
-- [ ] Pricing page yearly bullets read "available immediately, refreshed at
-  renewal" (§1 marketing copy note).
+- [ ] Pricing, account usage, and Terms agree that yearly Pro receives 2,400
+  minutes each month, resets monthly, and does not roll over.
 - [ ] Paddle Customer Portal plan switching is restricted so unsupported
   self-service downgrades are not exposed.
 

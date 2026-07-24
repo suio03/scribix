@@ -40,7 +40,7 @@ export type UploadErrorDetail = {
   help?: UploadHelp;
   retryable?: boolean;
   upgradeReason?: UpgradeReason;
-  suggestedTier?: "basic" | "pro";
+  suggestedTier?: "pro";
   canUpgrade?: boolean;
 };
 
@@ -58,7 +58,7 @@ class UploadFlowError extends Error {
       help?: UploadHelp;
       retryable?: boolean;
       upgradeReason?: UpgradeReason;
-      suggestedTier?: "basic" | "pro";
+      suggestedTier?: "pro";
       canUpgrade?: boolean;
     } = {}
   ) {
@@ -74,7 +74,7 @@ class UploadFlowError extends Error {
   }
 
   upgradeReason?: UpgradeReason;
-  suggestedTier?: "basic" | "pro";
+  suggestedTier?: "pro";
   canUpgrade?: boolean;
 }
 
@@ -763,12 +763,11 @@ export function UploadErrorHelp({
             reason={error.upgradeReason}
             open={upgradeOpen}
             checkoutSuccessPath={checkoutSuccessPath}
-            initialTier={error.suggestedTier}
-            onCheckoutStart={(selectedTier) => {
+            onCheckoutStart={() => {
               sessionStorage.setItem("scribix:upgrade_context", JSON.stringify({
                 reason: error.upgradeReason,
                 error_code: error.code,
-                suggested_tier: selectedTier,
+                suggested_tier: "pro",
               }));
             }}
             onClose={() => setUpgradeOpen(false)}
@@ -870,12 +869,11 @@ export function UploadErrorHelp({
           reason={error.upgradeReason}
           open={upgradeOpen}
           checkoutSuccessPath={checkoutSuccessPath}
-          initialTier={error.suggestedTier}
-          onCheckoutStart={(selectedTier) => {
+          onCheckoutStart={() => {
             sessionStorage.setItem("scribix:upgrade_context", JSON.stringify({
               reason: error.upgradeReason,
               error_code: error.code,
-              suggested_tier: selectedTier,
+              suggested_tier: "pro",
             }));
           }}
           onClose={() => setUpgradeOpen(false)}
@@ -1388,7 +1386,7 @@ function makeUploadError(
     help?: UploadHelp;
     retryable?: boolean;
     upgradeReason?: UpgradeReason;
-    suggestedTier?: "basic" | "pro";
+    suggestedTier?: "pro";
     canUpgrade?: boolean;
   } = {}
 ): UploadErrorDetail {
@@ -1481,7 +1479,7 @@ async function readError(res: Response, t: UploaderT): Promise<UploadFlowError> 
       capMin?: number;
       neededMin?: number;
       canUpgrade?: boolean;
-      suggestedTier?: "basic" | "pro";
+      suggestedTier?: "pro";
       help?: UploadHelp;
     };
     switch (j.error) {

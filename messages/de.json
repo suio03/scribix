@@ -81,7 +81,7 @@
     "currentPlanTitle": "Aktueller Plan",
     "manageBilling": "Abrechnung verwalten",
     "tierFree": "Kostenlos",
-    "tierBasic": "Starter",
+    "tierBasic": "Starter (Bestandstarif)",
     "tierPro": "Pro",
     "cycleMonthly": "monatlich",
     "cycleYearly": "jährlich",
@@ -282,7 +282,7 @@
         "icon": "GraduationCap",
         "title": "Studenten",
         "audience": "Vorlesungen & Studium",
-        "body": "Wandeln Sie eine 2-Stunden-Vorlesung in durchsuchbare Notizen um. Markieren Sie einen verwirrenden Moment, klicken Sie auf das Wort, hören Sie es erneut. Testen Sie kostenlos, dann deckt ein einziger Starter-Monat ein ganzes Semester an Vorlesungen ab.",
+        "body": "Wandeln Sie eine 2-Stunden-Vorlesung in durchsuchbare Notizen um. Markieren Sie einen schwierigen Moment, klicken Sie auf das Wort und hören Sie es erneut. Testen Sie kostenlos und nutzen Sie Pro für längere Vorlesungen im Semester.",
         "workflow": [
           "Vorlesungsaufnahme",
           "Durchsuchbare Notizen",
@@ -305,17 +305,18 @@
   "PricingPage": {
     "metadata": {
       "title": "Preise",
-      "description": "Einfache Preise: 45 kostenlose Minuten auf Lebenszeit, Starter mit 600 Minuten pro Monat oder Pro mit 2.400 Minuten pro Monat.",
+      "description": "Einfache Scribix-Preise: 45 kostenlose Minuten auf Lebenszeit, danach Pro mit 2.400 Transkriptionsminuten pro Monat.",
       "ogTitle": "Scribix Preise",
-      "ogDescription": "Kostenloser, Starter- und Pro-Tarif für Audio- und Videotranskription."
+      "ogDescription": "Kostenloser und Pro-Tarif für Video- und Audiotranskription."
     },
-    "h1": "Einfache Preise für ernsthafte Transkription.",
+    "h1": "Ein Plan. Alles, was du brauchst.",
     "bestValue": "Bester Wert",
     "annualPrefix": "Jährlich",
     "billingToggleLabel": "Abrechnungsintervall",
     "billingMonthly": "Monatlich",
     "billingYearly": "Jährlich",
-    "billingYearlyBadge": "Bis zu 35 % sparen",
+    "billingYearlyBadge": "50 % sparen",
+    "billingYearlyNote": "{price} jährlich abgerechnet · {savings} sparen",
     "noCreditCard": "Keine Kreditkarte erforderlich",
     "chooseLabel": "{plan} wählen",
     "currentPlanLabel": "Aktueller Plan",
@@ -336,11 +337,11 @@
       },
       {
         "key": "monthlyMinutes",
-        "label": "Monatliche Minuten",
+        "label": "Transkriptionskontingent",
         "values": {
-          "free": "45 lebenslang",
+          "free": "45 Min. auf Lebenszeit",
           "starter": "600 Min./Monat",
-          "pro": "2.400 Min./Monat"
+          "pro": "40 Std./Monat (2.400 Min.)"
         }
       },
       {
@@ -363,11 +364,11 @@
       },
       {
         "key": "maxFileLength",
-        "label": "Max. Dateilänge",
+        "label": "Dateilänge",
         "values": {
-          "free": "45 Min.",
-          "starter": "10 Stunden",
-          "pro": "10 Stunden"
+          "free": "Bis zu 45 Min.",
+          "starter": "Bis zu 10 Stunden",
+          "pro": "Bis zu 10 Stunden"
         }
       },
       {
@@ -390,11 +391,11 @@
       },
       {
         "key": "accuracyModel",
-        "label": "Genauigkeitsmodell",
+        "label": "Transkriptionsmodell",
         "values": {
           "free": "Standard",
           "starter": "Beste Genauigkeit",
-          "pro": "Beste Genauigkeit"
+          "pro": "Bestes verfügbares Modell"
         }
       },
       {
@@ -443,23 +444,14 @@
         "summary": "Teste Scribix einmal und prüfe die Transkriptionsqualität, bevor du bezahlst."
       },
       {
-        "id": "starter",
-        "name": "Starter",
-        "price": "$12",
-        "cadence": "pro Monat",
-        "summary": "Für regelmäßige persönliche Nutzung, bei der das Minutenlimit noch spürbar bleibt.",
-        "annual": "$99/Jahr",
-        "annualPrice": "$99",
-        "annualCadence": "pro Jahr"
-      },
-      {
         "id": "pro",
         "name": "Pro",
-        "price": "$19",
+        "price": "$20",
         "cadence": "pro Monat",
-        "summary": "Einfache Preise: 45 kostenlose Minuten auf Lebenszeit, Starter mit 600 Minuten pro Monat oder Pro mit 2.400 Minuten pro Monat.",
-        "annual": "$179/Jahr",
-        "annualPrice": "$179",
+        "summary": "Transkribiere lange Aufnahmen, verwandle sie in klare KI-Notizen und übersetze sie – alles in einem Plan.",
+        "purchaseNote": "Jederzeit kündbar",
+        "annual": "$120/Jahr",
+        "annualPrice": "$120",
         "annualCadence": "pro Jahr"
       }
     ],
@@ -474,15 +466,19 @@
       },
       {
         "question": "Werden ungenutzte Minuten übertragen?",
-        "answer": "Minuten in Monatsplänen werden mit jedem Abrechnungszyklus zurückgesetzt. Jahrespläne sind dafür vorgesehen, das gesamte Jahreskontingent bei Verlängerung bereitzustellen."
+        "answer": "Nein. Pro enthält jeden Monat 2.400 Transkriptionsminuten. Das Kontingent wird monatlich zurückgesetzt und ungenutzte Minuten werden nicht übertragen – auch bei jährlicher Abrechnung."
       },
       {
         "question": "Wie lang darf eine Datei maximal sein?",
-        "answer": "Kostenlos unterstützt Dateien bis 45 Minuten, Starter bis 1 Stunde und Pro bis 10 Stunden."
+        "answer": "Kostenlos unterstützt Dateien bis 45 Minuten, Pro Dateien bis 10 Stunden."
+      },
+      {
+        "question": "Gibt es Größenlimits für Uploads?",
+        "answer": "Ja. Video-Uploads sind bei Pro bis 5 GB und bei Kostenlos bis 2 GB möglich. Audio-Uploads dürfen bis zu 1 GB groß sein. Dateidauer und verbleibende Monatsminuten gelten weiterhin."
       },
       {
         "question": "Kann ich später den Plan wechseln?",
-        "answer": "Ja. Du kannst mit Starter beginnen und zu Pro wechseln, wenn du längere Dateien oder mehr Minuten benötigst."
+        "answer": "Ja. Du kannst kostenlos starten, Pro abonnieren, wenn du es brauchst, und dein Abonnement in deinem Abrechnungskonto verwalten oder kündigen."
       },
       {
         "question": "Gibt es eine kostenlose Testphase für kostenpflichtige Pläne?",
@@ -491,8 +487,8 @@
     ],
     "aiFeatures": "KI-Notizen + Übersetzung",
     "included": "Enthalten",
-    "paidIncludedTitle": "In jedem kostenpflichtigen Plan enthalten",
-    "paidIncludedDescription": "Gemeinsame Funktionen kostenpflichtiger Pläne stehen hier, damit die echten Unterschiede leichter zu erkennen sind.",
+    "paidIncludedTitle": "Ebenfalls enthalten",
+    "paidIncludedDescription": "Unbegrenzte Exporte · Sprecherlabels · TXT, DOCX, SRT, VTT, CSV",
     "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
   },
   "FAQ": {
@@ -621,7 +617,7 @@
       "dangerZone": "Gefahrenzone",
       "deleteWarning": "Löschen Sie dauerhaft Ihr Konto, Ihre Transkriptionen und Audio. Dies kann nicht rückgängig gemacht werden.",
       "tierFree": "Kostenlos",
-      "tierBasic": "Starter",
+      "tierBasic": "Starter (Bestandstarif)",
       "tierPro": "Pro",
       "cycleMonthly": "monatlich",
       "cycleYearly": "jährlich",
@@ -630,10 +626,10 @@
     },
     "billing": {
       "title": "Abrechnung",
-      "description": "Vergleichen Sie Limits kostenpflichtiger Pläne, upgraden Sie oder verwalten Sie Ihr Abonnement.",
+      "description": "Wähle monatliche oder jährliche Pro-Abrechnung oder verwalte dein bestehendes Abonnement.",
       "currentPlan": "Aktueller Plan",
       "choosePlanTitle": "Wählen Sie den passenden Plan",
-      "choosePlanDescription": "Starter passt für regelmäßige persönliche Transkription. Pro ist besser für längere Dateien, Prioritätsverarbeitung oder höhere monatliche Nutzung.",
+      "choosePlanDescription": "Pro enthält jeden Monat 2.400 Transkriptionsminuten, KI-Notizen und Übersetzung.",
       "checkoutOkTitle": "Abonnement aktiv – willkommen.",
       "checkoutOkBody": "Ihr neuer Plan ist aktiv. Nutzung und Abo-Verwaltung werden unten angezeigt.",
       "aiFeatures": "KI-Notizen + Übersetzung",
@@ -694,8 +690,7 @@
       "translationLanguageLabel": "Übersetzen nach",
       "translating": "Wird übersetzt…",
       "upgradeTranslationTitle": "KI-Übersetzung freischalten",
-      "upgradeTranslationBody": "Übersetzung ist in Starter und Pro enthalten. Upgraden Sie, um fertige Transkripte in unterstützte Sprachen zu übersetzen.",
-      "upgradeStarter": "Starter",
+      "upgradeTranslationBody": "Übersetzung ist in Pro enthalten. Upgraden Sie, um fertige Transkripte in unterstützte Sprachen zu übersetzen.",
       "upgradePro": "Pro",
       "upgradeTranslationModalTitle": "Dieses Transkript übersetzen",
       "upgradeTranslationModalBody": "Upgraden Sie, um fertige Transkripte mit sprecherbezogener Ausgabe in unterstützte Sprachen zu übersetzen.",
@@ -703,18 +698,14 @@
       "upgradeSummaryModalBody": "Upgraden Sie, um fertige Transkripte in Übersicht, Kernpunkte und Aufgaben umzuwandeln.",
       "upgradeQuotaModalTitle": "Weiter transkribieren",
       "upgradeQuotaModalBody": "Upgraden Sie, um mehr Transkriptionsminuten zu erhalten und ohne Warten fortzufahren.",
-      "upgradePlanToggle": "Plan auswählen",
       "upgradeMonthlyCadence": "/Monat",
       "upgradeContinue": "Weiter",
       "upgradeComparePlans": "Alle Pläne vergleichen",
-      "upgradeProMonthlyDescription": "Für lange Dateien, Prioritätsverarbeitung und höheres Transkriptionsvolumen.",
-      "upgradeProMonthlyBulletMinutes": "{minutes, number} Prioritätsminuten pro Monat",
+      "upgradeProMonthlyPrice": "$20",
+      "upgradeProMonthlyDescription": "Für ein höheres Transkriptionsvolumen im Laufe des Monats.",
+      "upgradeProMonthlyBulletMinutes": "{minutes, number} Transkriptionsminuten pro Monat",
       "upgradeProMonthlyBulletLength": "Dateien bis zu {hours, plural, =1 {# Stunde} other {# Stunden}} transkribieren",
       "upgradeProMonthlyBulletAi": "Enthält KI-Übersetzung und KI-Notizen",
-      "upgradeStarterMonthlyDescription": "Für regelmäßige persönliche Transkription mit freigeschalteten KI-Tools.",
-      "upgradeStarterMonthlyBulletMinutes": "{minutes, number} Minuten pro Monat",
-      "upgradeStarterMonthlyBulletAi": "Enthält KI-Übersetzung und KI-Notizen",
-      "upgradeStarterMonthlyBulletExports": "Unbegrenzte Transkript-Exporte",
       "closeUpgrade": "Upgrade-Dialog schließen",
       "summaryPanelTitle": "KI-Notizen",
       "summaryPanelDescription": "Erstellen Sie eine kurze Übersicht, Kernpunkte und Aufgaben.",
@@ -725,7 +716,7 @@
       "summaryIdle": "Erstellen Sie KI-Notizen, wenn Sie bereit sind.",
       "summaryError": "KI-Notizen konnten nicht erstellt werden. Bitte versuchen Sie es erneut.",
       "upgradeSummaryTitle": "KI-Notizen freischalten",
-      "upgradeSummaryBody": "KI-Notizen sind in Starter und Pro enthalten. Upgraden Sie, um fertige Transkripte in strukturierte Notizen umzuwandeln.",
+      "upgradeSummaryBody": "KI-Notizen sind in Pro enthalten. Upgraden Sie, um fertige Transkripte in strukturierte Notizen umzuwandeln.",
       "moreSoon": "Weitere Optionen — bald verfügbar",
       "more": "Mehr",
       "summarySoon": "KI-Notizen — bald verfügbar",
@@ -1254,7 +1245,7 @@
       "issueLabel": "Ausgabe Nr. 05 · KI-Notizentool",
       "h1Part1": "Das KI-Notizentool für jede Aufnahme.",
       "h1Part2": "<accent>Vom Gespräch zu klaren nächsten Schritten.</accent>",
-      "description": "Laden Sie eine Video- oder Audiodatei hoch, nehmen Sie über Ihr Mikrofon auf oder fügen Sie die URL eines YouTube-Videos mit verfügbaren Untertiteln ein. Scribix erstellt ein Transkript mit Sprecherkennzeichnung und Zeitstempeln; mit Starter und Pro entstehen daraus außerdem eine Zusammenfassung, Kernpunkte und Aufgaben.",
+      "description": "Laden Sie eine Video- oder Audiodatei hoch, nehmen Sie über Ihr Mikrofon auf oder fügen Sie die URL eines YouTube-Videos mit verfügbaren Untertiteln ein. Scribix erstellt ein Transkript mit Sprecherkennzeichnung und Zeitstempeln; mit Pro entstehen daraus außerdem eine Zusammenfassung, Kernpunkte und Aufgaben.",
       "primaryCta": "Mit 45 Gratisminuten starten",
       "signedInPrimaryCta": "Neues Transkript erstellen",
       "secondaryCta": "Preise ansehen",
@@ -1272,7 +1263,7 @@
       "h2": "Ein KI-Notizentool, das <accent>Quelle und Ergebnis bewahrt.</accent>",
       "intro": "Scribix macht aus einer Aufnahme zwei nützliche Ebenen: ein prüfbares Transkript und kompakte KI-Notizen für die weitere Arbeit. Zusammenfassung, Kernpunkte und Aufgaben bleiben durch Sprecherkennzeichnung und Zeitstempel mit dem Gespräch verknüpft.",
       "items": [
-        { "icon": "Sparkles", "title": "Strukturierte KI-Notizen", "body": "Erstellen Sie mit Starter oder Pro aus einem fertigen Transkript eine Zusammenfassung, Kernpunkte und Aufgaben.", "span": "lg:col-span-2" },
+        { "icon": "Sparkles", "title": "Strukturierte KI-Notizen", "body": "Erstellen Sie mit Pro aus einem fertigen Transkript eine Zusammenfassung, Kernpunkte und Aufgaben.", "span": "lg:col-span-2" },
         { "icon": "Users", "title": "Gespräche nach Sprecher getrennt", "body": "Scribix trennt Sprecherwechsel, wenn die Aufnahmequalität dies unterstützt. Die erzeugten Bezeichnungen können Sie anschließend umbenennen." },
         { "icon": "Clock", "title": "Prüfbare Zeitstempel", "body": "Zeitstempel auf Wortebene führen Sie zum genauen Moment hinter einer Notiz, einem Zitat oder einer Aufgabe zurück." },
         { "icon": "Files", "title": "Vier Wege zur Aufnahme", "body": "Laden Sie Video oder Audio hoch, nehmen Sie über das Mikrofon auf oder importieren Sie eine verfügbare Untertitelspur über eine YouTube-URL.", "span": "lg:col-span-2" },
@@ -1288,7 +1279,7 @@
       "steps": [
         { "n": "01", "icon": "CloudUpload", "title": "Fügen Sie das Gespräch hinzu.", "body": "Laden Sie eine Audio- oder Videodatei hoch, nehmen Sie über Ihr Mikrofon auf oder fügen Sie eine YouTube-URL mit verfügbarer Untertitelspur ein.", "duration": "Audio · Video · YouTube · Mikrofon" },
         { "n": "02", "icon": "Cpu", "title": "Erstellen Sie ein nachvollziehbares Transkript.", "body": "Scribix transkribiert hochgeladene oder aufgenommene Medien, trennt Sprecher bei geeigneter Audioqualität und ergänzt Zeitstempel auf Wortebene. Bei YouTube-URLs wird stattdessen die ausgewählte Untertitelspur importiert.", "duration": "Sprecher + Zeitstempel" },
-        { "n": "03", "icon": "ListChecks", "title": "Erstellen und prüfen Sie die Notizen.", "body": "Mit Starter oder Pro erzeugen Sie eine Zusammenfassung, Kernpunkte und Aufgaben. Prüfen Sie wichtige Angaben im Transkript, bevor Sie sie weitergeben oder danach handeln.", "duration": "Zusammenfassung · Kernpunkte · Aufgaben" }
+        { "n": "03", "icon": "ListChecks", "title": "Erstellen und prüfen Sie die Notizen.", "body": "Mit Pro erzeugen Sie eine Zusammenfassung, Kernpunkte und Aufgaben. Prüfen Sie wichtige Angaben im Transkript, bevor Sie sie weitergeben oder danach handeln.", "duration": "Zusammenfassung · Kernpunkte · Aufgaben" }
       ]
     },
     "useCases": {
@@ -1318,7 +1309,7 @@
         { "q": "Kann ich Scribix für Meetings vor Ort verwenden?", "a": "Ja. Nehmen Sie das Meeting über das Mikrofon Ihres Geräts auf oder laden Sie anschließend eine Audio- oder Videodatei hoch. Mikrofonposition, Raumgeräusche und gleichzeitiges Sprechen beeinflussen das Ergebnis." },
         { "q": "Nimmt Scribix an Zoom-, Google-Meet- oder Microsoft-Teams-Meetings teil?", "a": "Nein. Scribix sendet keinen Meeting-Bot in Ihre Gespräche. Fügen Sie selbst eine Aufnahme per Upload, Mikrofon oder über die Untertitel einer unterstützten YouTube-URL hinzu." },
         { "q": "Was enthalten die KI-Notizen von Scribix?", "a": "Die KI-Notizen enthalten eine Zusammenfassung, Kernpunkte und Aufgaben. Das fertige Transkript enthält außerdem Zeitstempel und, sofern die Aufnahme dies unterstützt, Sprecherkennzeichnungen." },
-        { "q": "Ist das KI-Notizentool kostenlos?", "a": "Scribix enthält nach der Google-Anmeldung 45 einmalige kostenlose Transkriptionsminuten und verlangt keine Kreditkarte. KI-Zusammenfassungen und strukturierte Notizen sind in Starter und Pro verfügbar." },
+        { "q": "Ist das KI-Notizentool kostenlos?", "a": "Scribix enthält nach der Google-Anmeldung 45 einmalige kostenlose Transkriptionsminuten und verlangt keine Kreditkarte. KI-Zusammenfassungen und strukturierte Notizen sind mit Pro verfügbar." },
         { "q": "Kann ich Notizen aus einem YouTube-Video erstellen?", "a": "Ja, wenn eine Untertitelspur verfügbar ist. Fügen Sie die URL ein, wählen und importieren Sie die Spur und erstellen Sie anschließend im Bezahlplan KI-Notizen. Ohne Untertitel laden Sie stattdessen eine eigene Mediendatei hoch." },
         { "q": "Wie genau sind Transkript und KI-Notizen?", "a": "Das Ergebnis hängt von Audioqualität, Mikrofonabstand, Hintergrundgeräuschen, Akzenten, Fachbegriffen und überlappender Sprache ab. Prüfen Sie Namen, Zahlen, Zusagen und wichtige Zitate anhand der Aufnahme." },
         { "q": "Wie lange speichert Scribix meine Aufnahmen?", "a": "Hochgeladene Audio- und Videodateien werden nach 14 Tagen automatisch gelöscht. Transkripte bleiben in Ihrem Konto, bis Sie sie löschen oder das Konto schließen." },
@@ -1329,7 +1320,7 @@
       "kicker": "Wenn Sie bereit sind",
       "h2Part1": "Aufnahme hinzufügen.",
       "h2Part2": "<accent>Mit klaren Notizen weiterarbeiten.</accent>",
-      "body": "Starten Sie mit 45 kostenlosen Transkriptionsminuten. Wechseln Sie zu Starter oder Pro, wenn Sie Zusammenfassung, Kernpunkte und Aufgaben per KI erstellen möchten.",
+      "body": "Starten Sie mit 45 kostenlosen Transkriptionsminuten. Wechseln Sie zu Pro, wenn Sie Zusammenfassung, Kernpunkte und Aufgaben per KI erstellen möchten.",
       "primaryCta": "Jetzt Notizen erstellen",
       "stats": [
         { "value": "45 Min.", "label": "Kostenlose Transkription" },
@@ -1340,11 +1331,11 @@
     "jsonLd": {
       "appName": "Scribix KI-Notizentool",
       "appDescription": "KI-Notizentool, das Audio, Video, Mikrofonaufnahmen und verfügbare YouTube-Untertitel in nachvollziehbare Transkripte und strukturierte Notizen verwandelt.",
-      "offerDescription": "45 einmalige Transkriptionsminuten sind nach Google-Anmeldung kostenlos; KI-Notizen sind in Starter und Pro verfügbar.",
+      "offerDescription": "45 einmalige Transkriptionsminuten sind nach Google-Anmeldung kostenlos; KI-Notizen sind mit Pro verfügbar.",
       "featureList": ["Audio- und Video-Upload", "Mikrofonaufnahme", "Import von YouTube-Untertiteln", "Sprecherkennzeichnung", "Zeitstempel auf Wortebene", "KI-Zusammenfassung", "KI-Kernpunkte", "KI-Aufgaben", "Bearbeitung und Export von Transkripten"],
       "howToName": "So erstellen Sie KI-Notizen mit Scribix",
       "howToDescription": "Fügen Sie eine Aufnahme hinzu, erstellen Sie ein nachvollziehbares Transkript und erzeugen und prüfen Sie strukturierte KI-Notizen im Bezahlplan.",
-      "howToSteps": ["Datei hochladen, aufnehmen oder unterstützte YouTube-URL einfügen", "Transkript erstellen oder importieren", "KI-Notizen mit Starter oder Pro erzeugen", "Notizen anhand des Transkripts prüfen"]
+      "howToSteps": ["Datei hochladen, aufnehmen oder unterstützte YouTube-URL einfügen", "Transkript erstellen oder importieren", "KI-Notizen mit Pro erzeugen", "Notizen anhand des Transkripts prüfen"]
     }
   },
   "Feedback": {

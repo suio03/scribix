@@ -34,7 +34,9 @@ export default async function BillingPage({
   const plans = pricingT.raw("plans") as PlanCopy[];
   const upgradePlans = plans.filter((plan) => plan.id !== "free");
   const featureRows = pricingT.raw("featureRows") as PlanFeatureCopy[];
-  const billingFeatureRows = compactBillingRows(featureRows, billingT);
+  const billingFeatureRows = compactBillingRows(featureRows, billingT).filter(
+    (feature) => feature.key !== "youtubeCaptionImports"
+  );
   const chooseLabels = Object.fromEntries(
     plans.map((plan) => [plan.id, pricingT("chooseLabel", { plan: plan.name })])
   ) as Record<PlanId, string>;
@@ -66,11 +68,13 @@ export default async function BillingPage({
 
       <section className="mt-8">
         <PricingPlans
+          analyticsSource="billing"
           billingLabels={{
             label: pricingT("billingToggleLabel"),
             monthly: pricingT("billingMonthly"),
             yearly: pricingT("billingYearly"),
             yearlyBadge: pricingT("billingYearlyBadge"),
+            yearlyNote: pricingT.raw("billingYearlyNote") as string,
           }}
           bestValue={pricingT("bestValue")}
           checkoutSuccessPath={checkoutSuccessPath}

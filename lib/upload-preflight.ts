@@ -26,7 +26,7 @@ export type PreflightRejection = {
   maxSec?: number;
   tier?: Tier;
   canUpgrade?: boolean;
-  suggestedTier?: "basic" | "pro";
+  suggestedTier?: "pro";
   help?: "extract_audio";
 };
 
@@ -90,12 +90,11 @@ export function validateUploadPreflight(
   return { pipeline: "extracted_audio" };
 }
 
-function tierForDuration(durationSec: number): "basic" | "pro" | null {
-  if (durationSec <= PLANS.basic.maxFileSec) return "basic";
+function tierForDuration(durationSec: number): "pro" | null {
   if (durationSec <= PLANS.pro.maxFileSec) return "pro";
   return null;
 }
 
-function tierForVideoBytes(bytes: number): "basic" | null {
-  return bytes <= PLANS.basic.maxVideoUploadBytes ? "basic" : null;
+function tierForVideoBytes(bytes: number): "pro" | null {
+  return bytes <= PLANS.pro.maxVideoUploadBytes ? "pro" : null;
 }

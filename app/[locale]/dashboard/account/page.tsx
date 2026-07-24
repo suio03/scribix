@@ -6,6 +6,7 @@ import { auth, signOut } from "@/auth";
 import { BillingPortalButton } from "@/app/components/BillingPortalButton";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { quotaMinutesFor, type BillingCycle, type Tier } from "@/lib/plans";
+import { allowancePeriodEndsAt } from "@/lib/quota-period";
 
 export default async function AccountPage() {
   const locale = await getLocale();
@@ -38,7 +39,14 @@ export default async function AccountPage() {
           value={t("usageValue", { used: usedMin, quota: quotaMin })}
         />
         {tier !== "free" && (
-          <Field label={t("periodResets")} value={row ? formatDate(row.period_ends_at, locale) : t("noValue")} />
+          <Field
+            label={t("periodResets")}
+            value={
+              row
+                ? formatDate(allowancePeriodEndsAt(row), locale)
+                : t("noValue")
+            }
+          />
         )}
       </dl>
 

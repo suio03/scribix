@@ -2,6 +2,8 @@ export type PlausibleEvents = {
   tool_visit: { tool_slug: string };
   landing_cta_impression: { tool_slug: string };
   landing_cta_click: { tool_slug: string; signed_in: boolean };
+  pricing_billing_cycle_view: PricingBillingCycleEventProps;
+  pricing_billing_cycle_change: PricingBillingCycleEventProps;
   transcribe_success: {
     tool_slug: string;
     source?: "upload" | "record";
@@ -158,6 +160,13 @@ type UpgradeEventProps = {
   tool_slug?: string;
   source?: "upload" | "record";
   input_type?: "audio" | "video" | "unknown";
+};
+
+type PricingBillingCycleEventProps = {
+  cycle: "monthly" | "yearly";
+  source: "pricing" | "billing";
+  signed_in: boolean;
+  current_tier: "free" | "basic" | "pro";
 };
 
 export const UPLOAD_PIPELINE_VERSION = "2026-07-22.1";

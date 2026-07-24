@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FreePlanButton,
   PaddleCheckoutButton,
 } from "@/app/components/PaddleCheckoutButton";
+import { trackEvent } from "@/lib/analytics";
 import type { PlanFeatureCopy, PricingPlanId } from "@/lib/pricing-feature-rows";
 import type { BillingCycle, Tier } from "@/lib/plans";
 
@@ -16,6 +17,7 @@ export type PlanCopy = {
   price: string;
   cadence: string;
   summary: string;
+  purchaseNote?: string;
   annual?: string;
   annualPrice?: string;
   annualCadence?: string;
@@ -27,7 +29,9 @@ type PricingPlansProps = {
     monthly: string;
     yearly: string;
     yearlyBadge: string;
+    yearlyNote: string;
   };
+  analyticsSource: "pricing" | "billing";
   bestValue: string;
   checkoutSuccessPath: string;
   chooseLabels: Record<PlanId, string>;
@@ -45,6 +49,7 @@ type PricingPlansProps = {
 };
 
 export function PricingPlans({
+  analyticsSource,
   billingLabels,
   bestValue,
   checkoutSuccessPath,
@@ -61,31 +66,58 @@ export function PricingPlans({
   supportUpgradeLabel,
   unavailableLabel,
 }: PricingPlansProps) {
-  const [cycle, setCycle] = useState<BillingCycle>(currentCycle ?? "monthly");
-  const planGridClass = plans.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-3";
+  const initialCycle = currentCycle ?? "yearly";
+  const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
+  const featuredLayout = plans.length === 2;
+  const planGridClass = featuredLayout
+    ? "lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start"
+    : "lg:grid-cols-3";
+
+  useEffect(() => {
+    trackEvent("pricing_billing_cycle_view", {
+      cycle: initialCycle,
+      source: analyticsSource,
+      signed_in: signedIn,
+      current_tier: currentTier,
+    });
+  }, [analyticsSource, currentTier, initialCycle, signedIn]);
+
+  function selectCycle(nextCycle: BillingCycle) {
+    if (nextCycle === cycle) return;
+    setCycle(nextCycle);
+    trackEvent("pricing_billing_cycle_change", {
+      cycle: nextCycle,
+      source: analyticsSource,
+      signed_in: signedIn,
+      current_tier: currentTier,
+    });
+  }
 
   return (
     <div>
-      <div className="mb-6 flex flex-col items-start justify-between gap-3 sm:mb-8 sm:flex-row sm:items-center">
-        <div
-          aria-label={billingLabels.label}
-          className="inline-grid grid-cols-2 border border-line bg-card p-1"
-          role="tablist"
-        >
-          <BillingTab
-            active={cycle === "monthly"}
-            label={billingLabels.monthly}
-            onClick={() => setCycle("monthly")}
-          />
-          <BillingTab
-            active={cycle === "yearly"}
-            label={billingLabels.yearly}
-            onClick={() => setCycle("yearly")}
-          />
+      <div className="mb-8 flex justify-center sm:mb-10">
+        <div className="flex w-full max-w-[420px] flex-col items-center gap-2.5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
+            {billingLabels.label}
+          </p>
+          <div
+            aria-label={billingLabels.label}
+            className="grid w-full grid-cols-2 border border-ink bg-card p-1 shadow-[4px_4px_0_0_var(--accent)]"
+            role="group"
+          >
+            <BillingTab
+              active={cycle === "monthly"}
+              label={billingLabels.monthly}
+              onClick={() => selectCycle("monthly")}
+            />
+            <BillingTab
+              active={cycle === "yearly"}
+              label={billingLabels.yearly}
+              badge={billingLabels.yearlyBadge}
+              onClick={() => selectCycle("yearly")}
+            />
+          </div>
         </div>
-        <p className="border border-accent/25 bg-accent-soft px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
-          {billingLabels.yearlyBadge}
-        </p>
       </div>
 
       <div className={`grid gap-4 ${planGridClass}`}>
@@ -102,11 +134,13 @@ export function PricingPlans({
             dashboardNewPath={dashboardNewPath}
             density={density}
             featureRows={featureRows}
+            featuredLayout={featuredLayout}
             noCreditCard={noCreditCard}
             plan={plan}
             signedIn={signedIn}
             supportUpgradeLabel={supportUpgradeLabel}
             unavailableLabel={unavailableLabel}
+            yearlyNote={billingLabels.yearlyNote}
           />
         ))}
       </div>
@@ -116,24 +150,34 @@ export function PricingPlans({
 
 function BillingTab({
   active,
+  badge,
   label,
   onClick,
 }: {
   active: boolean;
+  badge?: string;
   label: string;
   onClick: () => void;
 }) {
   return (
     <button
-      aria-selected={active}
-      className={`h-10 min-w-28 px-5 text-center text-[14px] font-medium transition ${
+      aria-pressed={active}
+      className={`flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 px-3 text-center text-[14px] font-medium transition sm:min-h-11 sm:flex-row sm:gap-2 sm:px-4 ${
         active ? "bg-ink text-paper" : "text-muted hover:bg-paper hover:text-ink"
       }`}
       onClick={onClick}
-      role="tab"
       type="button"
     >
-      {label}
+      <span>{label}</span>
+      {badge ? (
+        <span
+          className={`whitespace-nowrap px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] ${
+            active ? "bg-accent text-paper" : "bg-accent-soft text-accent"
+          }`}
+        >
+          {badge}
+        </span>
+      ) : null}
     </button>
   );
 }
@@ -149,11 +193,13 @@ function PlanCard({
   dashboardNewPath,
   density,
   featureRows,
+  featuredLayout,
   noCreditCard,
   plan,
   signedIn,
   supportUpgradeLabel,
   unavailableLabel,
+  yearlyNote,
 }: {
   bestValue: string;
   checkoutSuccessPath: string;
@@ -165,14 +211,16 @@ function PlanCard({
   dashboardNewPath: string;
   density: "default" | "compact";
   featureRows: PlanFeatureCopy[];
+  featuredLayout: boolean;
   noCreditCard: string;
   plan: PlanCopy;
   signedIn: boolean;
   supportUpgradeLabel: string;
   unavailableLabel: string;
+  yearlyNote: string;
 }) {
   const primary = plan.id === "pro";
-  const display = planDisplay(plan, cycle);
+  const display = planDisplay(plan, cycle, yearlyNote);
   const secondaryBilling = plan.id !== "free" && display.note?.trim();
 
   return (
@@ -181,7 +229,13 @@ function PlanCard({
         primary
           ? "border-ink bg-ink text-paper shadow-[8px_8px_0_0_var(--accent)]"
           : "border-line bg-card hover:border-ink/35"
-      } ${density === "compact" ? "min-h-[520px]" : "min-h-[590px]"}`}
+      } ${density === "compact" ? "min-h-[520px]" : "min-h-[590px]"} ${
+        featuredLayout
+          ? primary
+            ? "lg:-mt-2 lg:min-h-[570px]"
+            : "lg:mt-6"
+          : ""
+      }`}
     >
       {primary ? (
         <div className="absolute right-5 top-5 inline-flex items-center gap-1.5 bg-accent px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-paper">
@@ -235,8 +289,12 @@ function PlanCard({
           <Spec
             key={row.key}
             density={density}
-            label={row.label}
-            value={row.values[plan.id]}
+            label={cycle === "yearly" ? row.annualLabel ?? row.label : row.label}
+            value={
+              cycle === "yearly"
+                ? row.annualValues?.[plan.id] ?? row.values[plan.id]
+                : row.values[plan.id]
+            }
             primary={primary}
           />
         ))}
@@ -256,6 +314,15 @@ function PlanCard({
         supportUpgradeLabel={supportUpgradeLabel}
         unavailableLabel={unavailableLabel}
       />
+      {plan.purchaseNote ? (
+        <p
+          className={`mt-2 text-center font-mono text-[10px] uppercase tracking-[0.14em] ${
+            primary ? "text-paper/45" : "text-muted"
+          }`}
+        >
+          {plan.purchaseNote}
+        </p>
+      ) : null}
     </article>
   );
 }
@@ -380,7 +447,7 @@ function Spec({
       }`}
     >
       <dt
-        className={`font-mono text-[10px] uppercase leading-[1.35] tracking-[0.12em] ${
+        className={`hyphens-auto font-mono text-[10px] uppercase leading-[1.35] tracking-[0.12em] [overflow-wrap:anywhere] ${
           primary ? "text-paper/45" : "text-muted"
         }`}
       >
@@ -393,7 +460,7 @@ function Spec({
   );
 }
 
-function planDisplay(plan: PlanCopy, cycle: BillingCycle) {
+function planDisplay(plan: PlanCopy, cycle: BillingCycle, yearlyNote: string) {
   if (plan.id === "free" || cycle === "monthly") {
     return {
       price: plan.price,
@@ -405,11 +472,14 @@ function planDisplay(plan: PlanCopy, cycle: BillingCycle) {
   const fallback = splitAnnual(plan.annual);
   const annualPrice = plan.annualPrice ?? fallback.price ?? plan.price;
   const annualCadence = plan.annualCadence ?? fallback.cadence ?? plan.cadence;
+  const savings = annualSavings(plan.price, annualPrice);
 
   return {
     price: monthlyEquivalentPrice(annualPrice) ?? annualPrice,
     cadence: plan.cadence,
-    note: `${annualPrice} ${annualCadence}`,
+    note: savings
+      ? applyPriceTemplate(yearlyNote, annualPrice, savings)
+      : `${annualPrice} ${annualCadence}`,
   };
 }
 
@@ -433,6 +503,35 @@ function monthlyEquivalentPrice(annualPrice: string) {
   return `${prefix}${formatMoney(monthly)}${suffix}`;
 }
 
+function annualSavings(monthlyPrice: string, annualPrice: string) {
+  const monthly = parseMoney(monthlyPrice);
+  const annual = parseMoney(annualPrice);
+  if (!monthly || !annual) return null;
+
+  const savings = monthly.amount * 12 - annual.amount;
+  if (savings <= 0) return null;
+
+  return `${annual.prefix || monthly.prefix}${formatMoney(savings)}${
+    annual.suffix || monthly.suffix
+  }`;
+}
+
+function parseMoney(value: string) {
+  const match = value.trim().match(/^([^0-9-]*)([0-9]+(?:\.[0-9]+)?)(.*)$/);
+  if (!match) return null;
+
+  const [, prefix, amount, suffix] = match;
+  const parsedAmount = Number(amount);
+  if (!Number.isFinite(parsedAmount)) return null;
+
+  return { amount: parsedAmount, prefix, suffix };
+}
+
+function applyPriceTemplate(template: string, price: string, savings: string) {
+  return template.replaceAll("{price}", price).replaceAll("{savings}", savings);
+}
+
 function formatMoney(amount: number) {
-  return String(Math.ceil(amount));
+  if (Number.isInteger(amount)) return String(amount);
+  return amount.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
 }

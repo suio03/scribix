@@ -81,7 +81,7 @@
     "currentPlanTitle": "Forfait actuel",
     "manageBilling": "Gérer la facturation",
     "tierFree": "Gratuit",
-    "tierBasic": "Starter",
+    "tierBasic": "Ancien Starter",
     "tierPro": "Pro",
     "cycleMonthly": "mensuel",
     "cycleYearly": "annuel",
@@ -282,7 +282,7 @@
         "icon": "GraduationCap",
         "title": "Étudiants",
         "audience": "Cours et études",
-        "body": "Transformez un cours de 2 heures en notes consultables. Marquez un moment confus, cliquez sur le mot, réécoutez. Essayez gratuitement, puis un seul mois Starter couvre tout un semestre de cours.",
+        "body": "Transformez un cours de 2 heures en notes consultables. Marquez un passage difficile, cliquez sur le mot et réécoutez. Essayez gratuitement, puis utilisez Pro pour les cours plus longs du semestre.",
         "workflow": [
           "Enregistrement de cours",
           "Notes consultables",
@@ -305,17 +305,18 @@
   "PricingPage": {
     "metadata": {
       "title": "Tarification",
-      "description": "Tarification simple : 45 minutes gratuites à vie, Starter avec 600 minutes par mois ou Pro avec 2 400 minutes par mois.",
+      "description": "Tarification simple de Scribix : commencez avec 45 minutes gratuites à vie, puis passez à Pro pour 2 400 minutes de transcription chaque mois.",
       "ogTitle": "Tarification Scribix",
-      "ogDescription": "Offres Gratuite, Starter et Pro pour la transcription audio et vidéo."
+      "ogDescription": "Offres Gratuite et Pro pour la transcription vidéo et audio."
     },
-    "h1": "Des tarifs simples pour une transcription sérieuse.",
+    "h1": "Un seul forfait. Tout ce qu’il vous faut.",
     "bestValue": "Meilleur choix",
     "annualPrefix": "Annuel",
     "billingToggleLabel": "Intervalle de facturation",
     "billingMonthly": "Mensuel",
     "billingYearly": "Annuel",
-    "billingYearlyBadge": "Économisez jusqu'à 35 %",
+    "billingYearlyBadge": "Économisez 50 %",
+    "billingYearlyNote": "{price} facturés par an · Économisez {savings}",
     "noCreditCard": "Aucune carte bancaire requise",
     "chooseLabel": "Choisir {plan}",
     "currentPlanLabel": "Offre actuelle",
@@ -336,11 +337,11 @@
       },
       {
         "key": "monthlyMinutes",
-        "label": "Minutes mensuelles",
+        "label": "Quota de transcription",
         "values": {
-          "free": "45 à vie",
+          "free": "45 min à vie",
           "starter": "600 min/mois",
-          "pro": "2 400 min/mois"
+          "pro": "40 h/mois (2 400 min)"
         }
       },
       {
@@ -363,11 +364,11 @@
       },
       {
         "key": "maxFileLength",
-        "label": "Durée max. du fichier",
+        "label": "Durée du fichier",
         "values": {
-          "free": "45 min",
-          "starter": "10 heures",
-          "pro": "10 heures"
+          "free": "Jusqu’à 45 min",
+          "starter": "Jusqu’à 10 heures",
+          "pro": "Jusqu’à 10 heures"
         }
       },
       {
@@ -390,11 +391,11 @@
       },
       {
         "key": "accuracyModel",
-        "label": "Modèle de précision",
+        "label": "Modèle de transcription",
         "values": {
           "free": "Standard",
           "starter": "Meilleure précision",
-          "pro": "Meilleure précision"
+          "pro": "Le meilleur disponible"
         }
       },
       {
@@ -443,23 +444,14 @@
         "summary": "Essayez Scribix une fois et vérifiez la qualité des transcriptions avant de payer."
       },
       {
-        "id": "starter",
-        "name": "Starter",
-        "price": "$12",
-        "cadence": "par mois",
-        "summary": "Pour un usage personnel régulier où la limite de minutes reste tangible.",
-        "annual": "$99/an",
-        "annualPrice": "$99",
-        "annualCadence": "par an"
-      },
-      {
         "id": "pro",
         "name": "Pro",
-        "price": "$19",
+        "price": "$20",
         "cadence": "par mois",
-        "summary": "Tarification simple : 45 minutes gratuites à vie, Starter avec 600 minutes par mois ou Pro avec 2 400 minutes par mois.",
-        "annual": "$179/an",
-        "annualPrice": "$179",
+        "summary": "Transcrivez de longs enregistrements, transformez-les en notes IA claires et traduisez-les, le tout dans un seul forfait.",
+        "purchaseNote": "Résiliable à tout moment",
+        "annual": "$120/an",
+        "annualPrice": "$120",
         "annualCadence": "par an"
       }
     ],
@@ -474,15 +466,19 @@
       },
       {
         "question": "Les minutes inutilisées sont-elles reportées ?",
-        "answer": "Les minutes des offres mensuelles sont réinitialisées à chaque cycle de facturation. Les offres annuelles sont prévues pour fournir l'allocation annuelle complète dès le renouvellement."
+        "answer": "Non. Pro inclut 2 400 minutes de transcription chaque mois. Le quota est réinitialisé tous les mois et les minutes inutilisées ne sont pas reportées, même avec la facturation annuelle."
       },
       {
         "question": "Quelle est la durée maximale d'un fichier ?",
-        "answer": "Gratuit prend en charge les fichiers jusqu'à 45 minutes, Starter jusqu'à 1 heure et Pro jusqu'à 10 heures."
+        "answer": "Gratuit prend en charge les fichiers jusqu’à 45 minutes et Pro les fichiers jusqu’à 10 heures."
+      },
+      {
+        "question": "Existe-t-il des limites de taille pour les fichiers envoyés ?",
+        "answer": "Oui. Les vidéos peuvent atteindre 5 Go avec Pro et 2 Go avec Gratuit. Les fichiers audio peuvent atteindre 1 Go. La durée maximale et les minutes mensuelles restantes s’appliquent également."
       },
       {
         "question": "Puis-je changer d'offre plus tard ?",
-        "answer": "Oui. Commencez avec Starter puis passez à Pro lorsque vous avez besoin de fichiers plus longs ou de davantage de minutes."
+        "answer": "Oui. Commencez avec Gratuit, abonnez-vous à Pro lorsque vous en avez besoin, puis gérez ou résiliez votre abonnement depuis votre compte de facturation."
       },
       {
         "question": "Y a-t-il un essai gratuit sur les offres payantes ?",
@@ -491,8 +487,8 @@
     ],
     "aiFeatures": "Notes IA + traduction",
     "included": "Inclus",
-    "paidIncludedTitle": "Inclus dans chaque forfait payant",
-    "paidIncludedDescription": "Les fonctionnalités communes aux forfaits payants sont regroupées ici pour rendre les vraies différences plus faciles à comparer.",
+    "paidIncludedTitle": "Également inclus",
+    "paidIncludedDescription": "Exports illimités · Étiquettes de locuteurs · TXT, DOCX, SRT, VTT, CSV",
     "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
   },
   "FAQ": {
@@ -621,7 +617,7 @@
       "dangerZone": "Zone dangereuse",
       "deleteWarning": "Supprimer définitivement votre compte, vos transcriptions et votre audio. Cette action ne peut pas être annulée.",
       "tierFree": "Gratuit",
-      "tierBasic": "Starter",
+      "tierBasic": "Ancien Starter",
       "tierPro": "Pro",
       "cycleMonthly": "mensuel",
       "cycleYearly": "annuel",
@@ -630,10 +626,10 @@
     },
     "billing": {
       "title": "Facturation",
-      "description": "Comparez les limites des forfaits payants, passez à une offre supérieure ou gérez votre abonnement.",
+      "description": "Choisissez la facturation mensuelle ou annuelle de Pro, ou gérez votre abonnement actuel.",
       "currentPlan": "Plan actuel",
       "choosePlanTitle": "Choisir le bon plan",
-      "choosePlanDescription": "Starter convient à une transcription personnelle régulière. Pro est préférable pour les fichiers plus longs, le traitement prioritaire ou une utilisation mensuelle plus élevée.",
+      "choosePlanDescription": "Pro inclut 2 400 minutes de transcription chaque mois, les notes IA et la traduction.",
       "checkoutOkTitle": "Abonnement actif — bienvenue.",
       "checkoutOkBody": "Votre nouveau plan est actif. L'utilisation et les contrôles d'abonnement sont affichés ci-dessous.",
       "aiFeatures": "Notes IA + traduction",
@@ -694,8 +690,7 @@
       "translationLanguageLabel": "Traduire en",
       "translating": "Traduction…",
       "upgradeTranslationTitle": "Débloquer la traduction IA",
-      "upgradeTranslationBody": "La traduction est incluse dans Starter et Pro. Passez à un forfait supérieur pour traduire les transcriptions terminées dans les langues prises en charge.",
-      "upgradeStarter": "Starter",
+      "upgradeTranslationBody": "La traduction est incluse dans Pro. Passez à Pro pour traduire les transcriptions terminées dans les langues prises en charge.",
       "upgradePro": "Pro",
       "upgradeTranslationModalTitle": "Traduire cette transcription",
       "upgradeTranslationModalBody": "Passez à un forfait supérieur pour traduire les transcriptions terminées dans les langues prises en charge avec une sortie alignée par locuteur.",
@@ -703,18 +698,14 @@
       "upgradeSummaryModalBody": "Passez à un forfait supérieur pour transformer les transcriptions terminées en aperçu, points clés et actions.",
       "upgradeQuotaModalTitle": "Continuez à transcrire",
       "upgradeQuotaModalBody": "Passez à un forfait supérieur pour ajouter plus de minutes de transcription et continuer sans attendre.",
-      "upgradePlanToggle": "Choisir un forfait",
       "upgradeMonthlyCadence": "/mois",
       "upgradeContinue": "Continuer",
       "upgradeComparePlans": "Comparer tous les forfaits",
-      "upgradeProMonthlyDescription": "Pour les fichiers longs, le traitement prioritaire et un volume de transcription plus élevé.",
-      "upgradeProMonthlyBulletMinutes": "{minutes, number} minutes prioritaires par mois",
+      "upgradeProMonthlyPrice": "$20",
+      "upgradeProMonthlyDescription": "Pour un volume de transcription plus important tout au long du mois.",
+      "upgradeProMonthlyBulletMinutes": "{minutes, number} minutes de transcription par mois",
       "upgradeProMonthlyBulletLength": "Transcrivez des fichiers jusqu’à {hours, plural, =1 {# heure} other {# heures}}",
       "upgradeProMonthlyBulletAi": "Inclut la traduction IA et les notes IA",
-      "upgradeStarterMonthlyDescription": "Pour une transcription personnelle régulière avec les outils IA payants débloqués.",
-      "upgradeStarterMonthlyBulletMinutes": "{minutes, number} minutes par mois",
-      "upgradeStarterMonthlyBulletAi": "Inclut la traduction IA et les notes IA",
-      "upgradeStarterMonthlyBulletExports": "Exports de transcription illimités",
       "closeUpgrade": "Fermer la fenêtre de mise à niveau",
       "summaryPanelTitle": "Notes IA",
       "summaryPanelDescription": "Générez une vue d’ensemble concise, les points clés et les actions.",
@@ -725,7 +716,7 @@
       "summaryIdle": "Générez des notes IA quand vous êtes prêt.",
       "summaryError": "La création des notes IA a échoué. Veuillez réessayer.",
       "upgradeSummaryTitle": "Débloquer les notes IA",
-      "upgradeSummaryBody": "Les notes IA sont incluses dans Starter et Pro. Passez à un forfait supérieur pour transformer les transcriptions terminées en notes structurées.",
+      "upgradeSummaryBody": "Les notes IA sont incluses dans Pro. Passez à Pro pour transformer les transcriptions terminées en notes structurées.",
       "moreSoon": "Plus d’options — bientôt disponible",
       "more": "Plus",
       "summarySoon": "Notes IA — bientôt disponibles",
@@ -1254,7 +1245,7 @@
       "issueLabel": "Dossier n° 05 · Prise de notes IA",
       "h1Part1": "L’outil de prise de notes IA pour tous vos enregistrements.",
       "h1Part2": "<accent>De la conversation aux prochaines étapes.</accent>",
-      "description": "Importez un fichier audio ou vidéo, enregistrez avec votre microphone ou collez l’URL d’une vidéo YouTube disposant de sous-titres. Scribix crée une transcription horodatée avec identification des intervenants ; les offres Starter et Pro permettent ensuite de générer une synthèse, les points clés et les actions à mener.",
+      "description": "Importez un fichier audio ou vidéo, enregistrez avec votre microphone ou collez l’URL d’une vidéo YouTube disposant de sous-titres. Scribix crée une transcription horodatée avec identification des intervenants ; Pro permet ensuite de générer une synthèse, les points clés et les actions à mener.",
       "primaryCta": "Commencer avec 45 minutes gratuites",
       "signedInPrimaryCta": "Créer une transcription",
       "secondaryCta": "Voir les tarifs",
@@ -1272,7 +1263,7 @@
       "h2": "Une prise de notes IA qui conserve <accent>la source et l’essentiel.</accent>",
       "intro": "Scribix transforme un enregistrement en deux niveaux d’information : une transcription que vous pouvez vérifier et des notes IA plus courtes pour passer à l’action. La synthèse, les points clés et les actions restent reliés au contexte grâce aux intervenants et aux horodatages.",
       "items": [
-        { "icon": "Sparkles", "title": "Notes IA structurées", "body": "Générez une synthèse, les points clés et les actions à mener à partir d’une transcription terminée avec une offre Starter ou Pro.", "span": "lg:col-span-2" },
+        { "icon": "Sparkles", "title": "Notes IA structurées", "body": "Générez une synthèse, les points clés et les actions à mener à partir d’une transcription terminée avec Pro.", "span": "lg:col-span-2" },
         { "icon": "Users", "title": "Intervenants identifiés", "body": "Scribix sépare les prises de parole lorsque la qualité de l’enregistrement le permet. Vous pouvez ensuite renommer les libellés." },
         { "icon": "Clock", "title": "Des horodatages vérifiables", "body": "L’horodatage mot à mot permet de retrouver le passage exact à l’origine d’une note, d’une citation ou d’un suivi." },
         { "icon": "Files", "title": "Quatre façons d’ajouter un enregistrement", "body": "Importez une vidéo, un fichier audio, enregistrez avec votre microphone ou récupérez une piste de sous-titres disponible depuis une URL YouTube.", "span": "lg:col-span-2" },
@@ -1288,7 +1279,7 @@
       "steps": [
         { "n": "01", "icon": "CloudUpload", "title": "Ajoutez la conversation.", "body": "Importez un fichier audio ou vidéo, enregistrez via votre microphone ou collez l’URL d’une vidéo YouTube avec une piste de sous-titres disponible.", "duration": "Audio · Vidéo · YouTube · Micro" },
         { "n": "02", "icon": "Cpu", "title": "Créez une transcription traçable.", "body": "Scribix transcrit les médias importés ou enregistrés, sépare les intervenants lorsque l’audio le permet et ajoute un horodatage mot à mot. Pour une URL YouTube, Scribix importe la piste de sous-titres choisie.", "duration": "Intervenants + horodatages" },
-        { "n": "03", "icon": "ListChecks", "title": "Générez et relisez les notes.", "body": "Avec Starter ou Pro, générez une synthèse, les points clés et les actions à mener. Vérifiez les informations importantes dans la transcription avant de les partager ou de les utiliser.", "duration": "Synthèse · Points clés · Actions" }
+        { "n": "03", "icon": "ListChecks", "title": "Générez et relisez les notes.", "body": "Avec Pro, générez une synthèse, les points clés et les actions à mener. Vérifiez les informations importantes dans la transcription avant de les partager ou de les utiliser.", "duration": "Synthèse · Points clés · Actions" }
       ]
     },
     "useCases": {
@@ -1318,7 +1309,7 @@
         { "q": "Puis-je utiliser Scribix pour une réunion en présentiel ?", "a": "Oui. Enregistrez la réunion avec le microphone de votre appareil ou importez ensuite un fichier audio ou vidéo. La qualité du résultat dépend notamment du placement du micro, du bruit ambiant et des prises de parole simultanées." },
         { "q": "Scribix rejoint-il les réunions Zoom, Google Meet ou Microsoft Teams ?", "a": "Non. Scribix n’envoie pas de bot dans vos réunions. Ajoutez vous-même un enregistrement en important un fichier, en enregistrant via votre microphone ou en récupérant les sous-titres d’une URL YouTube compatible." },
         { "q": "Que contiennent les notes IA de Scribix ?", "a": "Les notes IA comprennent une synthèse, les points clés et les actions à mener. La transcription terminée comporte aussi des horodatages et, lorsque l’enregistrement le permet, l’identification des intervenants." },
-        { "q": "L’outil de prise de notes IA est-il gratuit ?", "a": "Scribix comprend 45 minutes de transcription utilisables à vie après connexion avec Google, sans carte bancaire. Les synthèses et notes IA structurées sont disponibles avec les offres Starter et Pro." },
+        { "q": "L’outil de prise de notes IA est-il gratuit ?", "a": "Scribix comprend 45 minutes de transcription utilisables à vie après connexion avec Google, sans carte bancaire. Les synthèses et notes IA structurées sont disponibles avec Pro." },
         { "q": "Puis-je créer des notes à partir d’une vidéo YouTube ?", "a": "Oui, si la vidéo dispose d’une piste de sous-titres accessible. Collez l’URL, choisissez la piste, importez-la, puis générez des notes IA avec une offre payante. Sans sous-titres, importez plutôt un fichier multimédia que vous possédez." },
         { "q": "Quelle est la fiabilité de la transcription et des notes IA ?", "a": "Le résultat dépend de la clarté de l’audio, de la distance du microphone, du bruit, des accents, du vocabulaire spécialisé et des voix qui se chevauchent. Vérifiez les noms, chiffres, engagements et citations importants dans l’enregistrement." },
         { "q": "Combien de temps Scribix conserve-t-il mes enregistrements ?", "a": "Les fichiers audio et vidéo importés sont automatiquement supprimés après 14 jours. Les transcriptions restent dans votre compte jusqu’à leur suppression ou la fermeture du compte." },
@@ -1329,7 +1320,7 @@
       "kicker": "À vous de jouer",
       "h2Part1": "Ajoutez l’enregistrement.",
       "h2Part2": "<accent>Repartez avec des notes claires.</accent>",
-      "body": "Commencez avec 45 minutes de transcription gratuites. Passez à Starter ou Pro pour générer une synthèse, les points clés et les actions à mener.",
+      "body": "Commencez avec 45 minutes de transcription gratuites. Passez à Pro pour générer une synthèse, les points clés et les actions à mener.",
       "primaryCta": "Commencer la prise de notes",
       "stats": [
         { "value": "45 min", "label": "Transcription gratuite" },
@@ -1340,11 +1331,11 @@
     "jsonLd": {
       "appName": "Outil de prise de notes IA Scribix",
       "appDescription": "Outil de prise de notes IA qui transforme des fichiers audio et vidéo, des enregistrements micro et des sous-titres YouTube disponibles en transcription traçable et en notes structurées.",
-      "offerDescription": "45 minutes de transcription utilisables à vie après connexion avec Google ; les notes IA sont disponibles avec Starter et Pro.",
+      "offerDescription": "45 minutes de transcription utilisables à vie après connexion avec Google ; les notes IA sont disponibles avec Pro.",
       "featureList": ["Import audio et vidéo", "Enregistrement via le microphone", "Import de sous-titres YouTube", "Identification des intervenants", "Horodatage mot à mot", "Synthèse IA", "Points clés générés par IA", "Actions à mener générées par IA", "Édition et export de la transcription"],
       "howToName": "Comment créer des notes IA avec Scribix",
       "howToDescription": "Ajoutez un enregistrement, créez une transcription traçable, puis générez et vérifiez des notes IA structurées avec une offre payante.",
-      "howToSteps": ["Importer, enregistrer ou coller une URL YouTube compatible", "Créer ou importer la transcription", "Générer des notes IA avec Starter ou Pro", "Vérifier les notes dans la transcription"]
+      "howToSteps": ["Importer, enregistrer ou coller une URL YouTube compatible", "Créer ou importer la transcription", "Générer des notes IA avec Pro", "Vérifier les notes dans la transcription"]
     }
   },
   "Feedback": {

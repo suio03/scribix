@@ -81,7 +81,7 @@
     "currentPlanTitle": "Current plan",
     "manageBilling": "Manage billing",
     "tierFree": "Free",
-    "tierBasic": "Starter",
+    "tierBasic": "Legacy Starter",
     "tierPro": "Pro",
     "cycleMonthly": "monthly",
     "cycleYearly": "yearly",
@@ -282,7 +282,7 @@
         "icon": "GraduationCap",
         "title": "Students",
         "audience": "Lectures & study",
-        "body": "Turn a 2-hour lecture into searchable notes. Mark a confusing moment, click the word, hear it again. Try it free, then a single Starter month covers an entire semester of lectures.",
+        "body": "Turn a 2-hour lecture into searchable notes. Mark a confusing moment, click the word, hear it again. Try it free, then use Pro for longer lectures throughout the semester.",
         "workflow": [
           "Lecture recording",
           "Searchable notes",
@@ -305,17 +305,18 @@
   "PricingPage": {
     "metadata": {
       "title": "Pricing",
-      "description": "Simple Scribix pricing: start with 45 free lifetime minutes, upgrade to Starter for 600 minutes per month, or choose Pro for 2,400 minutes per month.",
+      "description": "Simple Scribix pricing: start with 45 free lifetime minutes, then upgrade to Pro for 2,400 transcription minutes every month.",
       "ogTitle": "Scribix Pricing",
-      "ogDescription": "Free, Starter, and Pro plans for video and audio transcription."
+      "ogDescription": "Free and Pro plans for video and audio transcription."
     },
-    "h1": "Simple pricing for serious transcription.",
+    "h1": "One plan. Everything you need.",
     "bestValue": "Best value",
     "annualPrefix": "Annual",
     "billingToggleLabel": "Billing interval",
     "billingMonthly": "Monthly",
     "billingYearly": "Yearly",
-    "billingYearlyBadge": "Save up to 35%",
+    "billingYearlyBadge": "Save 50%",
+    "billingYearlyNote": "Billed {price} yearly · Save {savings}",
     "noCreditCard": "No credit card required",
     "chooseLabel": "Choose {plan}",
     "currentPlanLabel": "Current plan",
@@ -336,11 +337,11 @@
       },
       {
         "key": "monthlyMinutes",
-        "label": "Monthly minutes",
+        "label": "Transcription allowance",
         "values": {
-          "free": "45 lifetime",
+          "free": "45 min lifetime",
           "starter": "600 min/month",
-          "pro": "2,400 min/month"
+          "pro": "40 hours/month (2,400 min)"
         }
       },
       {
@@ -363,11 +364,11 @@
       },
       {
         "key": "maxFileLength",
-        "label": "Max file length",
+        "label": "File length",
         "values": {
-          "free": "45 min",
-          "starter": "10 hours",
-          "pro": "10 hours"
+          "free": "Up to 45 min",
+          "starter": "Up to 10 hours",
+          "pro": "Up to 10 hours"
         }
       },
       {
@@ -390,11 +391,11 @@
       },
       {
         "key": "accuracyModel",
-        "label": "Accuracy model",
+        "label": "Transcription model",
         "values": {
           "free": "Standard",
           "starter": "Best accuracy",
-          "pro": "Best accuracy"
+          "pro": "Best available"
         }
       },
       {
@@ -443,23 +444,14 @@
         "summary": "Try Scribix once and check transcript quality before paying."
       },
       {
-        "id": "starter",
-        "name": "Starter",
-        "price": "$12",
-        "cadence": "per month",
-        "summary": "For steady personal usage where the minute limit still feels real.",
-        "annual": "$99/year",
-        "annualPrice": "$99",
-        "annualCadence": "per year"
-      },
-      {
         "id": "pro",
         "name": "Pro",
-        "price": "$19",
+        "price": "$20",
         "cadence": "per month",
-        "summary": "Simple Scribix pricing: start with 45 free lifetime minutes, upgrade to Starter for 600 minutes per month, or choose Pro for 2,400 minutes per month.",
-        "annual": "$179/year",
-        "annualPrice": "$179",
+        "summary": "Transcribe long recordings, turn them into clear AI notes, and translate them in one plan.",
+        "purchaseNote": "Cancel anytime",
+        "annual": "$120/year",
+        "annualPrice": "$120",
         "annualCadence": "per year"
       }
     ],
@@ -474,15 +466,19 @@
       },
       {
         "question": "Do unused minutes roll over?",
-        "answer": "Monthly plan minutes reset each billing cycle. Annual plans are intended to provide the full annual allowance upfront at renewal."
+        "answer": "No. Pro includes 2,400 transcription minutes every month. The allowance resets monthly and unused minutes do not roll over, including on the yearly billing option."
       },
       {
         "question": "What is the max file length?",
-        "answer": "Free supports files up to 45 minutes, while Starter and Pro support files up to 10 hours."
+        "answer": "Free supports files up to 45 minutes, while Pro supports files up to 10 hours."
+      },
+      {
+        "question": "Are there upload size limits?",
+        "answer": "Yes. Video uploads can be up to 5 GB on Pro and 2 GB on Free. Audio uploads can be up to 1 GB. File duration and remaining monthly minutes still apply."
       },
       {
         "question": "Can I change plans later?",
-        "answer": "Yes. You can start on Starter and move to Pro when you need longer files or a larger minute allowance."
+        "answer": "Yes. You can start on Free, subscribe to Pro when you need it, and manage or cancel your subscription from your billing account."
       },
       {
         "question": "Is there a free trial on paid plans?",
@@ -491,8 +487,8 @@
     ],
     "aiFeatures": "AI notes + translation",
     "included": "Included",
-    "paidIncludedTitle": "Included in every paid plan",
-    "paidIncludedDescription": "Shared paid-plan capabilities stay out of the comparison cards so the real differences are easier to scan.",
+    "paidIncludedTitle": "Also included",
+    "paidIncludedDescription": "Unlimited exports · Speaker labels · TXT, DOCX, SRT, VTT, CSV",
     "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
   },
   "FAQ": {
@@ -625,7 +621,7 @@
       "dangerZone": "Danger zone",
       "deleteWarning": "Permanently delete your account, transcripts, and audio. This cannot be undone.",
       "tierFree": "Free",
-      "tierBasic": "Starter",
+      "tierBasic": "Legacy Starter",
       "tierPro": "Pro",
       "cycleMonthly": "monthly",
       "cycleYearly": "yearly",
@@ -634,10 +630,10 @@
     },
     "billing": {
       "title": "Billing",
-      "description": "Compare paid plan limits, upgrade, or manage your subscription.",
+      "description": "Choose monthly or yearly Pro billing, or manage your existing subscription.",
       "currentPlan": "Current plan",
       "choosePlanTitle": "Choose the right plan",
-      "choosePlanDescription": "Starter works for steady personal transcription. Pro is better when longer files, priority processing, or heavier monthly usage matter.",
+      "choosePlanDescription": "Pro includes 2,400 transcription minutes every month, AI notes, and translation.",
       "checkoutOkTitle": "Subscription active — welcome aboard.",
       "checkoutOkBody": "Your new plan is live. Usage and subscription controls are shown below.",
       "aiFeatures": "AI notes + translation",
@@ -699,8 +695,7 @@
         "nl": "Dutch"
       },
       "upgradeTranslationTitle": "Unlock AI translation",
-      "upgradeTranslationBody": "Translation is included in Starter and Pro. Upgrade to translate completed transcripts into supported languages.",
-      "upgradeStarter": "Starter",
+      "upgradeTranslationBody": "Translation is included in Pro. Upgrade to translate completed transcripts into supported languages.",
       "upgradePro": "Pro",
       "upgradeTranslationModalTitle": "Translate this transcript",
       "upgradeTranslationModalBody": "Upgrade to translate completed transcripts into supported languages with speaker-aligned output.",
@@ -708,18 +703,14 @@
       "upgradeSummaryModalBody": "Upgrade to turn completed transcripts into an overview, key points, and action items.",
       "upgradeQuotaModalTitle": "Keep transcribing",
       "upgradeQuotaModalBody": "Upgrade to add more transcription minutes and continue without waiting.",
-      "upgradePlanToggle": "Choose plan",
       "upgradeMonthlyCadence": "/month",
       "upgradeContinue": "Continue",
       "upgradeComparePlans": "Compare all plans",
-      "upgradeProMonthlyDescription": "For long files, priority processing, and heavier transcript volume.",
-      "upgradeProMonthlyBulletMinutes": "{minutes, number} priority minutes each month",
+      "upgradeProMonthlyPrice": "$20",
+      "upgradeProMonthlyDescription": "For higher-volume transcription throughout the month.",
+      "upgradeProMonthlyBulletMinutes": "{minutes, number} transcription minutes each month",
       "upgradeProMonthlyBulletLength": "{hours, plural, =1 {Transcribe files up to # hour} other {Transcribe files up to # hours}}",
       "upgradeProMonthlyBulletAi": "Includes AI translation and AI notes",
-      "upgradeStarterMonthlyDescription": "For steady personal transcription with the paid AI tools unlocked.",
-      "upgradeStarterMonthlyBulletMinutes": "{minutes, number} minutes each month",
-      "upgradeStarterMonthlyBulletAi": "Includes AI translation and AI notes",
-      "upgradeStarterMonthlyBulletExports": "Unlimited transcript exports",
       "closeUpgrade": "Close upgrade modal",
       "summaryPanelTitle": "AI notes",
       "summaryPanelDescription": "Generate a concise overview, key points, and action items.",
@@ -730,7 +721,7 @@
       "summaryIdle": "Generate AI notes when you are ready.",
       "summaryError": "AI notes failed. Please try again.",
       "upgradeSummaryTitle": "Unlock AI notes",
-      "upgradeSummaryBody": "AI notes are included in Starter and Pro. Upgrade to turn completed transcripts into structured notes.",
+      "upgradeSummaryBody": "AI notes are included in Pro. Upgrade to turn completed transcripts into structured notes.",
       "summary": "AI Notes",
       "summarySoon": "AI Notes — coming soon",
       "more": "More",
@@ -1257,7 +1248,7 @@
       "issueLabel": "Issue No.05 · AI Note Taker",
       "h1Part1": "AI note taker for every recording.",
       "h1Part2": "<accent>From conversation to clear next steps.</accent>",
-      "description": "Upload a video or audio file, record through your microphone, or paste a YouTube URL with available captions. Scribix creates a speaker-labeled, timestamped transcript; Starter and Pro users can turn it into structured AI notes with an overview, key points, and action items.",
+      "description": "Upload a video or audio file, record through your microphone, or paste a YouTube URL with available captions. Scribix creates a speaker-labeled, timestamped transcript; Pro users can turn it into structured AI notes with an overview, key points, and action items.",
       "primaryCta": "Start with 45 Free Minutes",
       "signedInPrimaryCta": "Create New Transcript",
       "secondaryCta": "View Pricing",
@@ -1290,7 +1281,7 @@
         {
           "icon": "Sparkles",
           "title": "Structured AI notes",
-          "body": "Generate an overview, key points, and action items from a completed transcript on Starter and Pro plans.",
+          "body": "Generate an overview, key points, and action items from a completed transcript with Pro.",
           "span": "lg:col-span-2"
         },
         {
@@ -1345,7 +1336,7 @@
           "n": "03",
           "icon": "ListChecks",
           "title": "Generate and review the notes.",
-          "body": "On Starter and Pro plans, create AI notes with an overview, key points, and action items. Check important details against the transcript before sharing or acting on them.",
+          "body": "With Pro, create AI notes with an overview, key points, and action items. Check important details against the transcript before sharing or acting on them.",
           "duration": "Overview · Key points · Actions"
         }
       ]
@@ -1441,7 +1432,7 @@
         },
         {
           "q": "Is the AI note taker free?",
-          "a": "Scribix includes 45 lifetime transcription minutes with Google sign-in and no credit card. AI summaries and structured notes are available on Starter and Pro plans."
+          "a": "Scribix includes 45 lifetime transcription minutes with Google sign-in and no credit card. AI summaries and structured notes are available with Pro."
         },
         {
           "q": "Can I create notes from a YouTube video?",
@@ -1465,7 +1456,7 @@
       "kicker": "Ready when you are",
       "h2Part1": "Add the recording.",
       "h2Part2": "<accent>Leave with clear notes.</accent>",
-      "body": "Start with 45 free transcription minutes. Upgrade to Starter or Pro when you want structured AI notes with an overview, key points, and action items.",
+      "body": "Start with 45 free transcription minutes. Upgrade to Pro when you want structured AI notes with an overview, key points, and action items.",
       "primaryCta": "Start Taking Notes",
       "stats": [
         {
@@ -1485,7 +1476,7 @@
     "jsonLd": {
       "appName": "Scribix AI Note Taker",
       "appDescription": "AI note-taking tool that turns uploaded audio, video, microphone recordings, and available YouTube captions into traceable transcripts and structured notes.",
-      "offerDescription": "45 lifetime transcription minutes are included with Google sign-in; AI notes are available on Starter and Pro plans.",
+      "offerDescription": "45 lifetime transcription minutes are included with Google sign-in; AI notes are available with Pro.",
       "featureList": [
         "Audio and video upload",
         "Live microphone recording",
@@ -1502,7 +1493,7 @@
       "howToSteps": [
         "Upload, record, or paste a supported YouTube URL",
         "Create or import the transcript",
-        "Generate AI notes on Starter or Pro",
+        "Generate AI notes with Pro",
         "Review the notes against the transcript"
       ]
     }

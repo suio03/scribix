@@ -61,7 +61,13 @@ export async function GET(_: Request, { params }: Params) {
       .run();
     if (claim.meta?.changes) {
       if (row.reserved_minutes && row.reserved_minutes > 0) {
-        await reconcileQuota(env.DB, row.user_id, row.reserved_minutes, 0);
+        await reconcileQuota(
+          env.DB,
+          row.user_id,
+          row.reserved_minutes,
+          0,
+          row.submit_started_at
+        );
       }
       await discordAlert("transcription_failed", {
         stage: "stranded_upload_recovery",

@@ -1,30 +1,14 @@
-// Quota reservation and reconcile. Free tier is a one-time lifetime trial.
+// Quota reservation and reconcile. Free tier is a one-time lifetime trial;
+// yearly Pro receives a fresh allowance each month.
 // All queries run against the D1 binding inside the Worker.
 
-import type { BillingCycle, Tier } from "./plans";
 import { quotaMinutesFor } from "./plans";
+import {
+  maybeResetAllowancePeriod,
+  type ResettableQuotaRow,
+} from "./quota-period";
 
-export type UserQuotaRow = {
-  id: string;
-  tier: Tier;
-  billing_cycle: BillingCycle | null;
-  minutes_used_this_period: number;
-  period_started_at: string;
-  period_ends_at: string;
-};
-
-/**
- * Free tier is a one-time lifetime trial — no resets. This function is a
- * no-op kept in place so callers don't need to change.
- */
-export async function maybeResetFreePeriod(_db: D1Database, user: UserQuotaRow): Promise<UserQuotaRow> {
-  return user;
-}
-
-/** Parses both D1's `YYYY-MM-DD HH:MM:SS` and ISO `YYYY-MM-DDTHH:MM:SS.sssZ`. */
-export function parseDbDate(s: string): Date {
-  return new Date(s.includes("T") ? s : s.replace(" ", "T") + "Z");
-}
+export type UserQuotaRow = ResettableQuotaRow;
 
 /**
  * Atomic reservation per §10.2.
@@ -50,14 +34,15 @@ export async function reserveQuota(
 > {
   const user = await db
     .prepare(
-      `SELECT id, tier, billing_cycle, minutes_used_this_period, period_started_at, period_ends_at
+      `SELECT id, tier, billing_cycle, minutes_used_this_period,
+              youtube_imports_used_this_period, period_started_at, period_ends_at
          FROM users WHERE id = ?1 AND deleted_at IS NULL`
     )
     .bind(userId)
     .first<UserQuotaRow>();
   if (!user) return { error: "user_not_found" };
 
-  const fresh = await maybeResetFreePeriod(db, user);
+  const fresh = await maybeResetAllowancePeriod(db, user);
   const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle);
   const remaining = Math.max(0, cap - fresh.minutes_used_this_period);
   if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
@@ -100,14 +85,15 @@ export async function checkQuota(
 > {
   const user = await db
     .prepare(
-      `SELECT id, tier, billing_cycle, minutes_used_this_period, period_started_at, period_ends_at
+      `SELECT id, tier, billing_cycle, minutes_used_this_period,
+              youtube_imports_used_this_period, period_started_at, period_ends_at
          FROM users WHERE id = ?1 AND deleted_at IS NULL`
     )
     .bind(userId)
     .first<UserQuotaRow>();
   if (!user) return { error: "user_not_found" };
 
-  const fresh = await maybeResetFreePeriod(db, user);
+  const fresh = await maybeResetAllowancePeriod(db, user);
   const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle);
   const remaining = Math.max(0, cap - fresh.minutes_used_this_period);
   if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
@@ -122,13 +108,15 @@ export async function checkQuota(
 /**
  * Webhook-time reconcile. Adjust counter from `reserved` to `actual`.
  * Idempotency is the caller's responsibility (the §9.2 atomic guard ensures
- * this runs at most once per transcript).
+ * this runs at most once per transcript). When `submittedAt` is provided,
+ * an older allowance window cannot refund or charge the current window.
  */
 export async function reconcileQuota(
   db: D1Database,
   userId: string,
   reservedMin: number,
-  actualMin: number
+  actualMin: number,
+  submittedAt?: string | null
 ): Promise<void> {
   const delta = actualMin - reservedMin;
   if (delta === 0) return;
@@ -136,8 +124,10 @@ export async function reconcileQuota(
     .prepare(
       `UPDATE users
           SET minutes_used_this_period = MAX(0, minutes_used_this_period + ?1)
-        WHERE id = ?2 AND deleted_at IS NULL`
+        WHERE id = ?2
+          AND deleted_at IS NULL
+          AND (?3 IS NULL OR julianday(period_started_at) <= julianday(?3))`
     )
-    .bind(delta, userId)
+    .bind(delta, userId, submittedAt ?? null)
     .run();
 }

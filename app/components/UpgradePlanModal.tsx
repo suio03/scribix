@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -8,28 +7,24 @@ import { PLANS, PRICING_DISPLAY } from "@/lib/plans";
 import { PaddleCheckoutButton } from "./PaddleCheckoutButton";
 
 export type UpgradeReason = "translation" | "summary" | "quota" | "duration" | "file_size";
-type UpgradeTier = "basic" | "pro";
 
 export function UpgradePlanModal({
   reason,
   open,
   checkoutSuccessPath,
-  initialTier = "pro",
   onCheckoutStart,
   onClose,
 }: {
   reason: UpgradeReason | null;
   open: boolean;
   checkoutSuccessPath: string;
-  initialTier?: UpgradeTier;
-  onCheckoutStart?: (tier: UpgradeTier) => void;
+  onCheckoutStart?: () => void;
   onClose: () => void;
 }) {
   const t = useTranslations("Dashboard.viewer");
-  const [selectedTier, setSelectedTier] = useState<UpgradeTier>(initialTier);
   if (!open || !reason) return null;
 
-  const selectedPlan = upgradePlanCopy(selectedTier, t);
+  const selectedPlan = upgradePlanCopy(t);
   const copy = upgradeReasonCopy(reason, t);
 
   return (
@@ -62,22 +57,7 @@ export function UpgradePlanModal({
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 rounded-xl bg-ink/5 p-1" aria-label={safeT(t, "upgradePlanToggle", "Choose plan")}>
-          <PlanToggleButton
-            active={selectedTier === "basic"}
-            onClick={() => setSelectedTier("basic")}
-          >
-            {safeT(t, "upgradeStarter", "Starter")}
-          </PlanToggleButton>
-          <PlanToggleButton
-            active={selectedTier === "pro"}
-            onClick={() => setSelectedTier("pro")}
-          >
-            {safeT(t, "upgradePro", "Pro")}
-          </PlanToggleButton>
-        </div>
-
-        <div className="mt-4 rounded-2xl border border-line bg-card p-4">
+        <div className="mt-5 rounded-2xl border border-line bg-card p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h3 className="text-[17px] font-semibold text-ink">{selectedPlan.title}</h3>
@@ -103,11 +83,11 @@ export function UpgradePlanModal({
 
         <div className="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
           <PaddleCheckoutButton
-            tier={selectedTier}
+            tier="pro"
             cycle="monthly"
             signedIn={true}
             checkoutSuccessPath={checkoutSuccessPath}
-            onCheckoutStart={() => onCheckoutStart?.(selectedTier)}
+            onCheckoutStart={onCheckoutStart}
             className="inline-flex h-11 items-center justify-center rounded-xl bg-accent px-5 text-[14px] font-semibold text-paper transition hover:bg-accent/90"
           >
             {safeT(t, "upgradeContinue", "Continue")}
@@ -121,28 +101,6 @@ export function UpgradePlanModal({
         </div>
       </div>
     </div>
-  );
-}
-
-function PlanToggleButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-lg px-3 py-1.5 text-[13px] font-medium transition ${
-        active ? "bg-paper text-ink shadow-sm" : "text-ink/55 hover:text-ink"
-      }`}
-    >
-      {children}
-    </button>
   );
 }
 
@@ -205,53 +163,32 @@ function upgradeReasonCopy(
 }
 
 function upgradePlanCopy(
-  tier: UpgradeTier,
   t: ((key: string) => string) & { has?: (key: string) => boolean }
 ) {
-  const monthlyMinutes = PLANS[tier].monthly.minutesPerCycle;
-  const maxFileHours = PLANS[tier].maxFileSec / 3600;
-
-  if (tier === "pro") {
-    return {
-      title: safeT(t, "upgradePro", "Pro"),
-      price: formatPlanPrice(tier),
-      description: safeT(
-        t,
-        "upgradeProMonthlyDescription",
-        "For long files, priority processing, and heavier transcript volume."
-      ),
-      bullets: [
-        safeTValues(t, "upgradeProMonthlyBulletMinutes", `${formatNumber(monthlyMinutes)} priority minutes each month`, {
-          minutes: monthlyMinutes,
-        }),
-        safeTValues(t, "upgradeProMonthlyBulletLength", `Transcribe files up to ${formatDurationHours(maxFileHours)}`, {
-          hours: maxFileHours,
-        }),
-        safeT(t, "upgradeProMonthlyBulletAi", "Includes AI translation and AI notes"),
-      ],
-    };
-  }
-
+  const monthlyMinutes = PLANS.pro.monthly.minutesPerCycle;
+  const maxFileHours = PLANS.pro.maxFileSec / 3600;
   return {
-    title: safeT(t, "upgradeStarter", "Starter"),
-    price: formatPlanPrice(tier),
+    title: safeT(t, "upgradePro", "Pro"),
+    price: safeT(t, "upgradeProMonthlyPrice", formatProPrice()),
     description: safeT(
       t,
-      "upgradeStarterMonthlyDescription",
-      "For steady personal transcription with the paid AI tools unlocked."
+      "upgradeProMonthlyDescription",
+      "For long files, priority processing, and heavier transcript volume."
     ),
     bullets: [
-      safeTValues(t, "upgradeStarterMonthlyBulletMinutes", `${formatNumber(monthlyMinutes)} minutes each month`, {
+      safeTValues(t, "upgradeProMonthlyBulletMinutes", `${formatNumber(monthlyMinutes)} priority minutes each month`, {
         minutes: monthlyMinutes,
       }),
-      safeT(t, "upgradeStarterMonthlyBulletAi", "Includes AI translation and AI notes"),
-      safeT(t, "upgradeStarterMonthlyBulletExports", "Unlimited transcript exports"),
+      safeTValues(t, "upgradeProMonthlyBulletLength", `Transcribe files up to ${formatDurationHours(maxFileHours)}`, {
+        hours: maxFileHours,
+      }),
+      safeT(t, "upgradeProMonthlyBulletAi", "Includes AI translation and AI notes"),
     ],
   };
 }
 
-function formatPlanPrice(tier: UpgradeTier): string {
-  const price = PRICING_DISPLAY[tier].monthly;
+function formatProPrice(): string {
+  const price = PRICING_DISPLAY.pro.monthly;
   if (price.currency === "USD") return `$${price.amount}`;
   return `${formatNumber(price.amount)} ${price.currency}`;
 }

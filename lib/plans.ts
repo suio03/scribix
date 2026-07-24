@@ -36,7 +36,9 @@ export const PLANS = {
   },
   pro: {
     monthly: { minutesPerCycle: 2400, youtubeImportsPerCycle: 1000 },
-    yearly: { minutesPerCycle: 28800, youtubeImportsPerCycle: 12000 },
+    // Yearly billing receives the same allowance as monthly billing. The
+    // allowance resets monthly and unused usage does not roll over.
+    yearly: { minutesPerCycle: 2400, youtubeImportsPerCycle: 1000 },
     youtubeMaxVideoSec: 10 * 3600,
     maxFileSec: 10 * 3600,
     maxFileBytes: ONE_GIB,
@@ -72,7 +74,7 @@ export const PRICING_DISPLAY = {
     yearly: { amount: 99, currency: "USD" },
   },
   pro: {
-    monthly: { amount: 19, currency: "USD" },
-    yearly: { amount: 179, currency: "USD" },
+    monthly: { amount: 20, currency: "USD" },
+    yearly: { amount: 120, currency: "USD" },
   },
 } as const;

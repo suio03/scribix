@@ -69,10 +69,10 @@ export default async function TermsPage({
 
       <H2>Subscriptions &amp; Billing</H2>
       <p>
-        Paid plans renew automatically until cancelled. Your monthly or annual minute
-        allowance resets at each renewal. Yearly plans receive their full annual allowance
-        upfront. Cancellation is self-service from the account page and takes effect at the
-        end of the current period.
+        Paid plans renew automatically until cancelled. Pro includes 2,400 transcription
+        minutes each month, including when Pro is billed yearly. The allowance resets monthly,
+        and unused minutes do not roll over. Cancellation is self-service from the account page
+        and takes effect at the end of the current billing period.
       </p>
       <p>
         Subscription payments are processed by Paddle. Paddle may appear on your checkout,

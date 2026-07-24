@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   const token = req.headers.get("x-scribix-token");
 
   let row = await env.DB.prepare(
-    `SELECT id, user_id, webhook_token, reserved_minutes, status
+    `SELECT id, user_id, webhook_token, reserved_minutes, submit_started_at, status
        FROM transcripts WHERE aai_transcript_id = ?1`
   )
     .bind(aaiId)
@@ -27,11 +27,12 @@ export async function POST(req: Request) {
       user_id: string;
       webhook_token: string;
       reserved_minutes: number | null;
+      submit_started_at: string | null;
       status: string;
     }>();
   if (!row && token) {
     const candidate = await env.DB.prepare(
-      `SELECT id, user_id, webhook_token, reserved_minutes, status
+      `SELECT id, user_id, webhook_token, reserved_minutes, submit_started_at, status
          FROM transcripts
         WHERE webhook_token = ?1
           AND status = 'uploading'
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
         user_id: string;
         webhook_token: string;
         reserved_minutes: number | null;
+        submit_started_at: string | null;
         status: string;
       }>();
     if (candidate) {
@@ -59,7 +61,7 @@ export async function POST(req: Request) {
       if (claimed.meta?.changes) row = { ...candidate, status: "queued" };
       else {
         row = await env.DB.prepare(
-          `SELECT id, user_id, webhook_token, reserved_minutes, status
+          `SELECT id, user_id, webhook_token, reserved_minutes, submit_started_at, status
              FROM transcripts WHERE aai_transcript_id = ?1`
         )
           .bind(aaiId)
@@ -68,6 +70,7 @@ export async function POST(req: Request) {
             user_id: string;
             webhook_token: string;
             reserved_minutes: number | null;
+            submit_started_at: string | null;
             status: string;
           }>();
       }
@@ -103,6 +106,7 @@ type Row = {
   user_id: string;
   webhook_token: string;
   reserved_minutes: number | null;
+  submit_started_at: string | null;
   status: string;
 };
 
@@ -150,7 +154,13 @@ export async function applyAaiResult(
 
     if (!guard.meta?.changes) return;
 
-    await reconcileQuota(env.DB, row.user_id, row.reserved_minutes ?? 0, actualMin);
+    await reconcileQuota(
+      env.DB,
+      row.user_id,
+      row.reserved_minutes ?? 0,
+      actualMin,
+      row.submit_started_at
+    );
     return;
   }
 
@@ -164,7 +174,13 @@ export async function applyAaiResult(
       .bind(aai.error ?? "aai_error", row.id)
       .run();
     if (!guard.meta?.changes) return;
-    await reconcileQuota(env.DB, row.user_id, row.reserved_minutes ?? 0, 0);
+    await reconcileQuota(
+      env.DB,
+      row.user_id,
+      row.reserved_minutes ?? 0,
+      0,
+      row.submit_started_at
+    );
     await discordAlert("transcription_failed", {
       transcriptId: row.id,
       userId: row.user_id,

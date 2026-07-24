@@ -465,7 +465,8 @@ function youtubeLimitCopy(
   if (tier === "free") {
     return t("limitsFree", { imports, maxHours });
   }
-  const period = billingCycle === "yearly" ? t("periodYear") : t("periodMonth");
+  const period =
+    tier === "basic" && billingCycle === "yearly" ? t("periodYear") : t("periodMonth");
   return t("limitsPaid", { imports, maxHours, period });
 }
 
