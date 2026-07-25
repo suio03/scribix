@@ -12,7 +12,7 @@ the one-time items that are already verified and unchanged.
 - [ ] Worker secrets set via `wrangler secret put` (see manual-setup §7.3).
 - [ ] `wrangler.jsonc` `vars` block has prod URLs.
 - [ ] `NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` has the intended build-time value before deploy, or is intentionally omitted to use the enabled default.
-- [ ] `db:migrate:remote` applied.
+- [ ] `db:migrate:remote` applied; for release `0.21.0+`, confirm `0020_partial_transcripts.sql` is listed as applied.
 - [ ] `npm run deploy:cleanup` deployed the hourly cleanup Worker and its cron is visible in Cloudflare.
 
 ## Webhook URLs
@@ -44,6 +44,15 @@ the one-time items that are already verified and unchanged.
 - [ ] Paddle cancellation marks the subscription canceled without removing
   access before the period end.
 - [ ] Upload a 30 s audio file → row reaches `completed` → transcript renders.
+- [ ] With a Free account whose remaining allowance is shorter than a known file,
+  confirm the modal shows total and real processable minutes before upload;
+  cancel uploads nothing, and partial confirmation processes no more than N.
+- [ ] Upload browser-unsupported-duration audio and video as Free; confirm the
+  modal says the full length is unavailable and the accepted path completes.
+- [ ] Confirm a partial result keeps its scope label in the title, player, and
+  export panel. TXT/DOCX/VTT include the notice; SRT/CSV bodies stay unchanged.
+- [ ] Open the partial upgrade path before upload, complete or close Paddle,
+  and confirm the same file can be selected again without automatic upload.
 - [ ] On a completed transcript, Free opens the AI Notes upgrade flow; Pro and
   grandfathered Starter generate an overview, key points, and action items.
 - [ ] Upload a video just over 1 GiB → multipart completes → AssemblyAI accepts
@@ -51,6 +60,8 @@ the one-time items that are already verified and unchanged.
 - [ ] Test Free rejection over 2 GiB and paid acceptance near the 4.9 billion-byte cap.
 - [ ] Force a metadata/extraction failure → the same file automatically falls
   back to direct video without asking the user to select it again.
+- [ ] Record, pause, wait, and stop without resuming; confirm paused wall-clock
+  time is excluded. Repeat with pause → resume → stop.
 - [ ] Retry multipart complete after it has already succeeded → the endpoint
   confirms the exact-size final object instead of failing or deleting it.
 - [ ] Hit `/ai-note-taker` and at least one localized variant; confirm the

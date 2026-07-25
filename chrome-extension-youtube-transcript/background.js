@@ -1,14 +1,13 @@
 const API_BASE = "https://scribix.io";
 const CLIENT_ID_KEY = "scribixExtensionClientId";
-const LOGIN_CONTEXT_KEY = "scribixLoginContext";
+const AUTH_STORAGE_KEY = "scribixExtensionAuthV1";
 const TRANSCRIPT_CACHE_KEY = "scribixTranscriptCacheV1";
 const MAX_TRANSCRIPT_CACHE_ITEMS = 20;
 const MAX_TRANSCRIPT_CACHE_AGE_MS = 7 * 24 * 60 * 60 * 1000;
-const LOGIN_POLL_INTERVAL_MS = 2000;
-const LOGIN_POLL_ATTEMPTS = 60;
+const ACCESS_TOKEN_REFRESH_MARGIN_MS = 60 * 1000;
 
-let loginPollTimer = null;
-let loginCompletionInProgress = false;
+let refreshPromise = null;
+let signOutPromise = null;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   handleMessage(message, sender)
@@ -22,20 +21,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true;
 });
 
-chrome.tabs.onRemoved.addListener((tabId) => {
-  handleLoginTabRemoved(tabId);
-});
-
 async function handleMessage(message, sender) {
   if (!message || typeof message !== "object") throw new Error("invalid_message");
 
   switch (message.type) {
     case "GET_ACCOUNT":
-      return apiFetch("/api/extension/account", { method: "GET" });
+      return getAccount();
     case "GET_TRANSCRIPT":
       return getTranscript(message);
     case "GET_SUMMARY":
-      return apiFetch("/api/extension/youtube/summary", {
+      return authenticatedApiFetch("/api/extension/youtube/summary", {
         method: "POST",
         body: {
           videoId: message.videoId,
@@ -48,118 +43,99 @@ async function handleMessage(message, sender) {
       await chrome.tabs.create({ url: message.url });
       return { opened: true };
     case "OPEN_LOGIN":
-      return openLogin(message, sender);
-    case "LOGIN_COMPLETE":
-      return completeLogin();
+      return openLogin(sender);
+    case "SIGN_OUT":
+      return signOut();
     default:
       throw new Error("unknown_message");
   }
 }
 
-async function openLogin(message, sender) {
+async function openLogin(sender) {
+  if (signOutPromise) throw new Error("sign_out_in_progress");
+
   const sourceTab = sender && sender.tab ? sender.tab : null;
   const sourceTabId = typeof sourceTab?.id === "number" ? sourceTab.id : null;
   const sourceWindowId = typeof sourceTab?.windowId === "number" ? sourceTab.windowId : null;
-  if (!sourceTabId) throw new Error("missing_source_tab");
+  if (sourceTabId === null) throw new Error("missing_source_tab");
 
-  loginCompletionInProgress = false;
-  stopLoginPoll();
+  const redirectUri = chrome.identity.getRedirectURL("callback");
+  const codeVerifier = randomBase64Url(32);
+  const state = randomBase64Url(32);
+  const codeChallenge = await sha256Base64Url(codeVerifier);
+  const authorizationUrl = new URL(`${API_BASE}/extension-login`);
+  authorizationUrl.searchParams.set("redirectUri", redirectUri);
+  authorizationUrl.searchParams.set("codeChallenge", codeChallenge);
+  authorizationUrl.searchParams.set("state", state);
 
-  const returnUrl = typeof message.returnUrl === "string" ? message.returnUrl : "";
-  const signInUrl = loginUrlWithReturnUrl(message.url, returnUrl);
-  const loginTab = await chrome.tabs.create({ url: signInUrl });
+  const callbackUrl = await launchWebAuthFlow(authorizationUrl.toString());
+  const callback = new URL(callbackUrl);
+  const expected = new URL(redirectUri);
+  if (
+    callback.origin !== expected.origin ||
+    callback.pathname !== expected.pathname ||
+    callback.searchParams.get("state") !== state
+  ) {
+    throw new Error("invalid_login_callback");
+  }
+  const code = callback.searchParams.get("code");
+  if (!code) throw new Error("missing_authorization_code");
 
-  await chrome.storage.local.set({
-    [LOGIN_CONTEXT_KEY]: {
-      sourceTabId,
-      sourceWindowId,
-      loginTabId: loginTab.id ?? null,
-      returnUrl,
-      startedAt: Date.now(),
+  const tokens = await apiFetch("/api/extension/auth/token", {
+    method: "POST",
+    body: {
+      grantType: "authorization_code",
+      code,
+      codeVerifier,
+      redirectUri,
     },
   });
-  startLoginPoll(0);
-  return { opened: true };
-}
-
-async function completeLogin() {
-  const account = await apiFetch("/api/extension/account", { method: "GET" });
-  if (!account || !account.signedIn) return { signedIn: false };
-
-  return finishLogin(account);
-}
-
-async function finishLogin(account) {
-  if (loginCompletionInProgress) return { signedIn: true };
-  loginCompletionInProgress = true;
-  stopLoginPoll();
-
-  const context = await readLoginContext();
-  if (context) {
-    await focusSourceTab(context);
-    await notifySourceTab(context.sourceTabId, account);
-  }
-  await chrome.storage.local.remove(LOGIN_CONTEXT_KEY);
+  await writeAuthTokens(tokens);
+  const account = await getAccount();
+  await focusSourceTab({ sourceTabId, sourceWindowId });
+  await notifySourceTab(sourceTabId, account);
   return { signedIn: true };
 }
 
-async function handleLoginTabRemoved(tabId) {
-  try {
-    const context = await readLoginContext();
-    if (context && context.loginTabId === tabId) {
-      stopLoginPoll();
-      loginCompletionInProgress = false;
-      await chrome.storage.local.remove(LOGIN_CONTEXT_KEY);
-    }
-  } catch {}
+function signOut() {
+  if (signOutPromise) return signOutPromise;
+  signOutPromise = performSignOut().finally(() => {
+    signOutPromise = null;
+  });
+  return signOutPromise;
 }
 
-function loginUrlWithReturnUrl(url, returnUrl) {
-  const base = typeof url === "string" && url ? url : `${API_BASE}/extension-login`;
-  const loginUrl = new URL(base);
-  if (isYouTubeWatchUrl(returnUrl)) {
-    loginUrl.searchParams.set("returnUrl", returnUrl);
-  }
-  return loginUrl.toString();
-}
-
-function isYouTubeWatchUrl(value) {
-  try {
-    const url = new URL(value);
-    const hostAllowed = url.hostname === "youtube.com" || url.hostname === "www.youtube.com";
-    return hostAllowed && url.pathname === "/watch" && url.searchParams.has("v");
-  } catch {
-    return false;
-  }
-}
-
-function startLoginPoll(attempt) {
-  stopLoginPoll();
-  if (attempt >= LOGIN_POLL_ATTEMPTS) return;
-  loginPollTimer = setTimeout(async () => {
+async function performSignOut() {
+  if (refreshPromise) {
     try {
-      const account = await apiFetch("/api/extension/account", { method: "GET" });
-      if (account && account.signedIn) {
-        await finishLogin(account);
-        return;
-      }
+      await refreshPromise;
     } catch {}
-    startLoginPoll(attempt + 1);
-  }, LOGIN_POLL_INTERVAL_MS);
-}
-
-function stopLoginPoll() {
-  if (loginPollTimer) {
-    clearTimeout(loginPollTimer);
-    loginPollTimer = null;
   }
+
+  const tokens = await readAuthTokens();
+  if (tokens) {
+    try {
+      await apiFetch("/api/extension/auth/revoke", {
+        method: "POST",
+        body: { refreshToken: tokens.refreshToken },
+      });
+    } catch {
+      // Signing out locally must still work if revocation cannot reach Scribix.
+    }
+  }
+  await clearAuthTokens();
+  return signedOutAccount();
 }
 
-async function readLoginContext() {
-  const store = await chrome.storage.local.get(LOGIN_CONTEXT_KEY);
-  const context = store[LOGIN_CONTEXT_KEY];
-  if (!context || typeof context.sourceTabId !== "number") return null;
-  return context;
+async function getAccount() {
+  const tokens = await readAuthTokens();
+  if (!tokens) return signedOutAccount();
+  try {
+    return await authenticatedApiFetch("/api/extension/account", { method: "GET" });
+  } catch (error) {
+    if (error && error.status === 401) return signedOutAccount();
+    throw error;
+  }
 }
 
 async function focusSourceTab(context) {
@@ -175,6 +151,19 @@ async function notifySourceTab(tabId, account) {
   try {
     await chrome.tabs.sendMessage(tabId, { type: "ACCOUNT_UPDATED", account });
   } catch {}
+}
+
+function launchWebAuthFlow(url) {
+  return new Promise((resolve, reject) => {
+    chrome.identity.launchWebAuthFlow({ url, interactive: true }, (redirectUrl) => {
+      const runtimeError = chrome.runtime.lastError;
+      if (runtimeError || !redirectUrl) {
+        reject(new Error(runtimeError?.message || "login_cancelled"));
+        return;
+      }
+      resolve(redirectUrl);
+    });
+  });
 }
 
 async function getTranscript(message) {
@@ -201,12 +190,120 @@ async function getTranscript(message) {
   return transcript;
 }
 
+async function authenticatedApiFetch(path, options) {
+  let tokens = await ensureFreshAuthTokens();
+  if (!tokens) throw unauthorizedError();
+
+  try {
+    return await apiFetch(path, { ...options, accessToken: tokens.accessToken });
+  } catch (error) {
+    if (!error || error.status !== 401) throw error;
+    tokens = await refreshAuthTokens(true);
+    if (!tokens) throw unauthorizedError();
+    return apiFetch(path, { ...options, accessToken: tokens.accessToken });
+  }
+}
+
+async function ensureFreshAuthTokens() {
+  if (signOutPromise) return null;
+  const tokens = await readAuthTokens();
+  if (!tokens) return null;
+  if (tokens.accessExpiresAt > Date.now() + ACCESS_TOKEN_REFRESH_MARGIN_MS) {
+    return tokens;
+  }
+  return refreshAuthTokens(false);
+}
+
+async function refreshAuthTokens(force) {
+  if (signOutPromise) return null;
+  if (refreshPromise) return refreshPromise;
+  refreshPromise = (async () => {
+    const tokens = await readAuthTokens();
+    if (!tokens || tokens.refreshExpiresAt <= Date.now()) {
+      await clearAuthTokens();
+      return null;
+    }
+    if (!force && tokens.accessExpiresAt > Date.now() + ACCESS_TOKEN_REFRESH_MARGIN_MS) {
+      return tokens;
+    }
+    try {
+      const refreshed = await apiFetch("/api/extension/auth/token", {
+        method: "POST",
+        body: {
+          grantType: "refresh_token",
+          refreshToken: tokens.refreshToken,
+        },
+      });
+      await writeAuthTokens(refreshed);
+      return refreshed;
+    } catch {
+      await clearAuthTokens();
+      return null;
+    }
+  })();
+  try {
+    return await refreshPromise;
+  } finally {
+    refreshPromise = null;
+  }
+}
+
+async function readAuthTokens() {
+  const store = await chrome.storage.local.get(AUTH_STORAGE_KEY);
+  const tokens = store[AUTH_STORAGE_KEY];
+  if (
+    !tokens ||
+    typeof tokens.accessToken !== "string" ||
+    typeof tokens.accessExpiresAt !== "number" ||
+    typeof tokens.refreshToken !== "string" ||
+    typeof tokens.refreshExpiresAt !== "number"
+  ) {
+    return null;
+  }
+  return tokens;
+}
+
+async function writeAuthTokens(tokens) {
+  if (
+    !tokens ||
+    typeof tokens.accessToken !== "string" ||
+    typeof tokens.accessExpiresAt !== "number" ||
+    typeof tokens.refreshToken !== "string" ||
+    typeof tokens.refreshExpiresAt !== "number"
+  ) {
+    throw new Error("invalid_token_response");
+  }
+  await chrome.storage.local.set({ [AUTH_STORAGE_KEY]: tokens });
+}
+
+async function clearAuthTokens() {
+  await chrome.storage.local.remove(AUTH_STORAGE_KEY);
+}
+
+function signedOutAccount() {
+  return {
+    signedIn: false,
+    paid: false,
+    signInUrl: `${API_BASE}/extension-login`,
+    upgradeUrl: `${API_BASE}/pricing`,
+  };
+}
+
+function unauthorizedError() {
+  const error = new Error("unauthorized");
+  error.status = 401;
+  return error;
+}
+
 async function apiFetch(path, options) {
   const response = await fetch(`${API_BASE}${path}`, {
     method: options.method,
-    credentials: "include",
+    credentials: "omit",
     headers: {
       "content-type": "application/json",
+      ...(options.accessToken
+        ? { authorization: `Bearer ${options.accessToken}` }
+        : {}),
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
@@ -228,6 +325,21 @@ async function apiFetch(path, options) {
   }
 
   return json;
+}
+
+function randomBase64Url(byteLength) {
+  return bytesToBase64Url(crypto.getRandomValues(new Uint8Array(byteLength)));
+}
+
+async function sha256Base64Url(value) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return bytesToBase64Url(new Uint8Array(digest));
+}
+
+function bytesToBase64Url(bytes) {
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 async function getClientId() {

@@ -1,6 +1,14 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
-import { extensionJson, extensionOptions, isChromeExtensionOrigin } from "@/lib/extension-api";
+import {
+  authenticateExtensionRequest,
+  hasAuthorizationHeader,
+} from "@/lib/extension-auth";
+import {
+  extensionJson,
+  extensionOptions,
+  isLegacyChromeExtensionOrigin,
+} from "@/lib/extension-api";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import {
   OPENAI_SUMMARY_MODEL,
@@ -22,17 +30,16 @@ export function OPTIONS(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const origin = req.headers.get("origin")?.trim();
-  if (origin && !isChromeExtensionOrigin(req)) {
-    return extensionJson(req, { error: "extension_origin_required" }, { status: 403 });
-  }
-
-  const session = await auth();
-  if (!session) return extensionJson(req, { error: "unauthorized" }, { status: 401 });
-
   const env = await cf();
-  const user = await getOrCreateCurrentUser(env.DB, session);
-  if (!user) return extensionJson(req, { error: "user_not_found" }, { status: 404 });
+  let user = await authenticateExtensionRequest(env.DB, req);
+  if (!user && hasAuthorizationHeader(req)) {
+    return extensionJson(req, { error: "unauthorized" }, { status: 401 });
+  }
+  if (!user && isLegacyChromeExtensionOrigin(req)) {
+    const session = await auth();
+    user = session ? await getOrCreateCurrentUser(env.DB, session) : null;
+  }
+  if (!user) return extensionJson(req, { error: "unauthorized" }, { status: 401 });
   if (user.tier === "free") {
     return extensionJson(req, { error: "upgrade_required" }, { status: 402 });
   }

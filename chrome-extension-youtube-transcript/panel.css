@@ -157,19 +157,36 @@ svg {
   height: 16px;
 }
 
+.account-button {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--raised);
+  color: var(--ink);
+  cursor: pointer;
+  gap: 7px;
+  min-height: 34px;
+  padding: 3px 10px 3px 3px;
+  font-size: 13px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.account-button:disabled {
+  cursor: default;
+  opacity: 0.62;
+}
+
 .account-avatar {
   display: inline-grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 26px;
+  height: 26px;
   overflow: hidden;
-  align-items: center;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--raised);
+  border-radius: 6px;
+  background: var(--soft);
   color: var(--ink);
-  font-size: 13px;
-  font-weight: 750;
 }
 
 .account-avatar img {
@@ -293,6 +310,7 @@ svg {
 .secondary-button:hover,
 .wide-button:hover,
 .login-button:hover,
+.account-button:hover:not(:disabled),
 .icon-button:hover {
   transform: translateY(-1px);
 }

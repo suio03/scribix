@@ -28,7 +28,8 @@ scripts/setup-worker-secrets.local.sh
 .claude/
 .agent/
 .extension-build/
-scribix-youtube-transcript-extension-*.zip
+scribix-youtube-transcript-*extension-*.zip
+scribix-youtube-transcript-firefox-source-*.zip
 
 # R2 CORS config (per docs/manual-setup.md §0.4)
 r2-cors.json

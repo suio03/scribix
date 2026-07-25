@@ -32,9 +32,15 @@ function loadWranglerVars(path) {
 function validateProductionEnv(vars) {
   requireValue(vars, "NEXT_PUBLIC_APP_URL");
   requireValue(vars, "NEXTAUTH_URL");
+  requireValue(vars, "EDGE_EXTENSION_ID");
   requireValue(vars, "NEXT_PUBLIC_PADDLE_ENV");
   requireValue(vars, "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN");
 
+  if (!/^[a-p]{32}$/.test(vars.EDGE_EXTENSION_ID)) {
+    throw new Error(
+      "Production deploy requires a valid 32-character EDGE_EXTENSION_ID in wrangler.jsonc."
+    );
+  }
   if (vars.NEXT_PUBLIC_PADDLE_ENV !== "production") {
     throw new Error("Production deploy requires NEXT_PUBLIC_PADDLE_ENV=production in wrangler.jsonc.");
   }

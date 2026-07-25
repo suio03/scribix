@@ -23,6 +23,7 @@
   "vars": {
     "NEXT_PUBLIC_APP_URL": "https://scribix.io",
     "NEXTAUTH_URL": "https://scribix.io",
+    "EDGE_EXTENSION_ID": "nojojdfhlbfklhjekkbpccnoclogacfn",
     "ASSEMBLYAI_WEBHOOK_URL": "https://scribix.io/api/webhook/assemblyai",
     "YOUTUBE_CAPTION_SERVICE_URL": "https://yt-caption.scribix.io",
     "NEXT_PUBLIC_PADDLE_ENV": "production",

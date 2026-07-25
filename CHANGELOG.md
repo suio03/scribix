@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.22.0] - 2026-07-25
+
+### Added
+- Added browser-specific Chrome, Microsoft Edge, and Firefox extension builds, store-ready ZIP packaging, and a reproducible Firefox source archive.
+- Added PKCE-based extension authorization with short-lived access tokens, rotating revocable refresh tokens, dedicated auth endpoints, and D1 migration `0021`.
+- Added extension sign-out controls and browser-store publishing, privacy-disclosure, testing, and reviewer guidance.
+
+### Changed
+- Updated extension account and AI summary requests to use bearer-token authentication while retaining a narrowly scoped compatibility path for published Chrome 0.1.2 installations.
+- Restricted credentialed legacy CORS and authorization redirects to published browser identities, including the configured Microsoft Edge extension ID.
+- Updated the extension privacy page, project architecture notes, and release runbooks for Chrome, Edge, Firefox, and the current Free partial-transcript behavior.
+
+### Fixed
+- Generated a Firefox-compatible background script declaration and Gecko manifest metadata while preserving the shared extension source.
+- Removed obsolete login polling and completion code in favor of the browser identity callback flow.
+- Prevented production deployment when the Microsoft Edge extension ID is missing or malformed.
+
+### Removed
+- Removed the obsolete Chrome-only login completion script.
+
 ## [0.21.0] - 2026-07-25
 
 ### Added

@@ -1,6 +1,6 @@
 # 混合视频上传架构（客户端提取 + 原视频直传 + 14 天临时存储）
 
-> 状态：v0.17.0 已于 2026-07-19 合入 `main`；仍需生产/预览环境大文件与 AAI 端到端验证，并配置 Cloudflare cleanup 持续失败告警。不需要 D1 migration。
+> 状态：v0.17.0 已于 2026-07-19 合入 `main`；v0.21.0 于 2026-07-25 通过 migration `0020` 扩展了未知时长与 Free 部分转录状态。仍需生产/预览环境大文件与 AAI 端到端验证，并配置 Cloudflare cleanup 持续失败告警。
 
 ## 背景与目标
 
@@ -24,7 +24,7 @@
 ## 已拍板的产品决策
 
 - Free 视频上限：**2GB**。
-- Basic / Pro 视频上限：**4.9GB**；产品文案可统一显示“最高 5GB”。代码使用明确的安全字节值，不正好卡在上游极限。
+- grandfathered Starter / Pro 视频上限：**4.9GB**；产品文案可统一显示“最高 5GB”。代码使用明确的安全字节值，不正好卡在上游极限。
 - 音频文件上限保持 1GB。
 - 小于等于 1GB 的视频优先在浏览器提取音频。
 - 大于 1GB 的视频直接上传原视频，不运行浏览器提取。
@@ -33,7 +33,7 @@
 - 原视频不再后台转换为 MP3；在 R2 Standard 中临时保存 14 天并直接用于回放。
 - completed media 由现有 cleanup worker 在超过 14 天后删除；cleanup 是媒体到期删除的唯一机制。
 - transcript JSON 和文本不随媒体到期删除。
-- 不新增 `media_extraction_jobs`，本方案不需要 D1 migration。
+- 不新增 `media_extraction_jobs`。基础混合上传不需要后台任务表；v0.21.0 仅通过 migration `0020` 增加源长、处理上限和部分确认字段。
 
 ## 为什么暂不提取音频
 
@@ -75,13 +75,14 @@
 
 当浏览器无法得到 duration 时：
 
-1. 仍允许进入原视频直传。
-2. 服务端使用 `min(套餐单文件时长上限, 用户当前剩余分钟数)` 作为保守预留时长。
-3. 将该预留值按现有协议转换为毫秒：`audio_end_at = reservedMinutes * 60 * 1000`，交给 AAI 硬性限制实际处理范围和成本。
-4. AAI 完成后按返回的真实 `audio_duration` 对预留分钟进行 reconciliation。
-5. 若用户没有剩余额度，在开始 multipart 上传前直接拒绝。
+1. 普通音频和视频上传都可以继续；视频进入原视频直传，浏览器不支持的音频容器走普通单文件上传。`source="record"` 必须携带 Recorder 的权威时长，缺失时服务端返回 `400 invalid_duration`。
+2. Free 用户在任何提取或上传开始前看到“完整长度不可用”和真实剩余分钟数，必须明确选择升级后重新上传，或确认只转录前 N 分钟。
+3. 确认请求携带 `allowPartial: true` 和 `confirmedPartialMin`；服务端最终处理范围不能超过用户确认值，若并发消耗导致额度减少，处理界面显示新的分钟数。
+4. 服务端将最终预留分钟转换为 `audio_end_at = processingLimitSec * 1000`，硬性限制 AAI 处理范围和成本。
+5. 完成后，`resolveAaiDuration` 同时兼容 AAI 返回截断时长或源文件总长：`duration_sec` 始终钳制在处理上限内，可安全判断时才回填 `source_duration_sec`。
+6. 若 `audio_duration` 等于处理上限而源长仍不可判断，结果和导出继续显示 `Partial transcript · First N minutes · Full file length unavailable`，不伪造总长度。
 
-这意味着未知时长的视频可能只转录允许额度内的前半段，但不会绕过套餐上限或耗尽未授权的 AAI 时长。
+因此未知时长不会阻塞可处理的媒体，也不会在 Free 用户未确认时静默消耗全部剩余额度。
 
 ## Phase 1 — 应用侧直传与回放
 
@@ -90,7 +91,7 @@
 `lib/plans.ts`：
 
 - Free `maxVideoUploadBytes` → 2GB。
-- Basic / Pro `maxVideoUploadBytes` → 4.9GB 的明确安全字节值。
+- grandfathered Starter / Pro `maxVideoUploadBytes` → 4.9GB 的明确安全字节值。
 - `maxFileBytes` 保持 1GB。
 
 前端展示值与服务端限制来自同一配置或共享常量，避免 UI 与 API 漂移。产品可以显示“最高 5GB”，不需要展示 4.9GB 的工程安全边界。
@@ -204,6 +205,11 @@ direct_video_processing
 direct_video_transcribe_completed
 direct_video_upload_failed
 direct_video_abandoned
+partial_transcript_offer_shown
+partial_transcript_confirmed
+partial_transcription_started
+partial_transcript_upgrade_clicked
+upload_size_cap_rejected
 transcribe_success
 ```
 
@@ -237,7 +243,7 @@ cleanup worker 使用 structured log 记录扫描、成功删除、删除失败�
 
 ### 已实现 — 上传基础
 
-1. 套餐限制和未知时长 quota 规则。
+1. 套餐限制、未知时长 fallback 和 Free 部分转录确认。
 2. multipart init / part sign / complete / abort。
 3. `/start` R2 HEAD 校验。
 4. 自动 fallback 和 analytics。
@@ -262,13 +268,13 @@ cleanup worker 使用 structured log 记录扫描、成功删除、删除失败�
 
 - 数据确认 direct video 稳定后，评估移除 ffmpeg.wasm 串行 fallback，只保留 WebAudio + 直传。
 - 只有在大视频规模、回放兼容性或成本数据证明有必要时，才重新评估后台 MP3 瘦身。
-- 定价页、升级 CTA 和支付成功分析属于另一个 backlog。
+- 持续观察部分转录确认、升级和大小上限漏斗，再决定是否调整 Free 长文件提示。
 
 ## 验收清单
 
 ### 上传与安全
 
-- Free 超过 2GB 被拒绝；Basic/Pro 超过安全 4.9GB 上限被拒绝。
+- Free 超过 2GB 被拒绝；grandfathered Starter / Pro 超过安全 4.9GB 上限被拒绝。
 - >1GB 视频不运行客户端提取，直接 multipart。
 - metadata / extraction 失败后自动进入 multipart，不要求重新选择文件。
 - 浏览器通过 `File.slice()` 上传固定 100MiB Blob，不把完整视频读入 JS 内存；默认最多并发 2 个 part。
@@ -281,11 +287,14 @@ cleanup worker 使用 structured log 记录扫描、成功删除、删除失败�
 
 ### 时长与 quota
 
-- 已知时长沿用当前时长上限和 quota 行为。
-- 未知时长按套餐上限与剩余额度的较小值 reserve。
+- Free 已知长文件在上传前显示完整分钟数和真实剩余分钟数；未确认时不创建 transcript、不提取、不上传。
+- Free 未知时长音频和视频在上传前显示“完整长度不可用”，确认后才继续。
+- `allowPartial` 缺失时保持严格拒绝，旧客户端不能静默截断 Free 上传。
+- `confirmedPartialMin` 限制最终处理分钟；并发导致实际分钟下降时界面明确提示。
 - AAI `audio_end_at` 与 reserved minutes 一致。
-- `audio_end_at` 继续使用毫秒单位 `reservedMinutes * 60 * 1000`。
-- 完成和失败都能正确 reconciliation。
+- `duration_sec` 不超过 `processing_limit_sec`；AAI 可提供源长时回填 `source_duration_sec`，否则保持未知。
+- 完成和失败都能正确 reconciliation，结算不超过 `reserved_minutes`。
+- 录音暂停时间不计入 duration；`source="record"` 缺失 duration 时 init/start 都返回 400。
 
 ### 转录与回放
 
@@ -294,6 +303,7 @@ cleanup worker 使用 structured log 记录扫描、成功删除、删除失败�
 - 不兼容 codec 不影响转录成功，并显示明确的回放提示。
 - 长媒体 seek 时 signed URL 过期后最多自动刷新一次，并恢复播放位置。
 - 时间戳和 transcript 高亮在 `<video>` 与 `<audio>` 下都保持同步。
+- 部分转录在结果标题、播放器和导出面板持续显示；TXT/DOCX/VTT 带提示，SRT/CSV 文件本体保持兼容。
 
 ### 保留期与清理
 

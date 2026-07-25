@@ -8,6 +8,7 @@ const state = {
   transcript: null,
   summary: null,
   error: null,
+  signingOut: false,
   downloadMenuOpen: false,
   downloadWithTimestamps: true,
   expandedTranscriptGroups: new Set(),
@@ -190,6 +191,7 @@ function render() {
   const app = shadowRoot.querySelector(".scribix-panel");
   if (!app) return;
 
+  // eslint-disable-next-line no-unsanitized/property -- Remote text and URLs are escaped before interpolation.
   app.innerHTML = `
     <header class="panel-header">
       <div class="brand">
@@ -236,6 +238,7 @@ function render() {
   app.querySelector("[data-action='summary']")?.addEventListener("click", generateSummary);
   app.querySelector("[data-action='summary-entry']")?.addEventListener("click", summaryEntry);
   app.querySelector("[data-action='login']")?.addEventListener("click", openLogin);
+  app.querySelector("[data-action='logout']")?.addEventListener("click", signOut);
   app.querySelector("[data-action='upgrade']")?.addEventListener("click", openUpgrade);
   app.querySelectorAll("[data-time]").forEach((button) => {
     button.addEventListener("click", () => seekVideo(Number(button.getAttribute("data-time"))));
@@ -435,7 +438,7 @@ function headerAccountAction() {
   if (!state.account.signedIn) {
     return `<button class="login-button" type="button" data-action="login">${icon("user")} Log In</button>`;
   }
-  return accountAvatarMarkup(state.account);
+  return accountButtonMarkup(state.account);
 }
 
 function summaryEntry() {
@@ -452,11 +455,25 @@ function summaryEntry() {
 }
 
 function openLogin() {
-  const url =
-    state.account && state.account.signInUrl
-      ? state.account.signInUrl
-      : "https://scribix.io/extension-login";
-  sendMessage({ type: "OPEN_LOGIN", url, returnUrl: location.href });
+  sendMessage({ type: "OPEN_LOGIN" });
+}
+
+async function signOut() {
+  if (state.signingOut) return;
+  state.signingOut = true;
+  render();
+
+  const response = await sendMessage({ type: "SIGN_OUT" });
+  state.signingOut = false;
+  if (!response.ok) {
+    await refreshAccount();
+    toast("Could not log out. Try again.");
+    return;
+  }
+
+  state.account = response.result;
+  render();
+  toast("Logged out of Scribix");
 }
 
 function openUpgrade() {
@@ -658,20 +675,21 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;");
 }
 
-function accountAvatarMarkup(account) {
+function accountButtonMarkup(account) {
   const avatarUrl = safeImageUrl(account.avatarUrl);
-  const title = "Signed in to Scribix";
-  if (avatarUrl) {
-    return `
-      <span class="account-avatar" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}">
-        <img src="${escapeHtml(avatarUrl)}" alt="" referrerpolicy="no-referrer">
-      </span>
-    `;
-  }
+  const email = typeof account.email === "string" && account.email.trim()
+    ? account.email.trim()
+    : "Scribix";
+  const title = `Signed in as ${email}. Log out`;
+  const avatar = avatarUrl
+    ? `<span class="account-avatar"><img src="${escapeHtml(avatarUrl)}" alt="" referrerpolicy="no-referrer"></span>`
+    : `<span class="account-avatar fallback">${icon("user")}</span>`;
+
   return `
-    <span class="account-avatar fallback" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}">
-      ${icon("user")}
-    </span>
+    <button class="account-button" type="button" data-action="logout" title="${escapeHtml(title)}" ${state.signingOut ? "disabled" : ""}>
+      ${avatar}
+      <span>${state.signingOut ? "Logging Out..." : "Log Out"}</span>
+    </button>
   `;
 }
 
