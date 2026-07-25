@@ -391,8 +391,13 @@ npx wrangler secret put CLEANUP_KEY --config wrangler.cleanup.jsonc
 ### 7.1 Production deploy
 
 ```sh
-npm run deploy        # opennextjs-cloudflare build && deploy
+npm run deploy        # locale validation + OpenNext build + deploy
 ```
+
+This command validates all six locale files before the OpenNext build. Use the
+package script rather than invoking `opennextjs-cloudflare` directly so locale
+drift and invalid production public configuration cannot bypass the deploy
+gate. `npm run build` and `npm run preview` enforce the same locale check.
 
 ### 7.2 Custom domain
 

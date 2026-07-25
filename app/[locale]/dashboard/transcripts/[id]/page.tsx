@@ -8,6 +8,7 @@ import type { AaiTranscript } from "@/lib/aai";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { parseSpeakerNames } from "@/lib/speaker-names";
 import { TranscriptWorkspace } from "@/app/components/TranscriptWorkspace";
+import { partialTranscriptInfo } from "@/lib/partial-transcript";
 
 type Params = { params: Promise<{ locale: string; id: string }> };
 
@@ -27,7 +28,8 @@ export default async function TranscriptViewerPage({ params }: Params) {
   const row = await env.DB.prepare(
     `SELECT id, user_id, title, status, error, duration_sec, language,
             created_at, completed_at, transcript_r2_key, audio_r2_key,
-            speaker_names_json, source, youtube_url, youtube_video_id, mime_type
+            speaker_names_json, source, youtube_url, youtube_video_id, mime_type,
+            source_duration_sec, processing_limit_sec, partial_requested
        FROM transcripts
       WHERE id = ?1 AND deleted_at IS NULL`
   )
@@ -49,6 +51,9 @@ export default async function TranscriptViewerPage({ params }: Params) {
       youtube_url: string | null;
       youtube_video_id: string | null;
       mime_type: string | null;
+      processing_limit_sec: number | null;
+      source_duration_sec: number | null;
+      partial_requested: number;
     }>();
   if (!row) notFound();
   if (row.user_id !== userId) notFound();
@@ -66,6 +71,12 @@ export default async function TranscriptViewerPage({ params }: Params) {
       : null;
 
   const audioAvailable = Boolean(row.audio_r2_key) && !expired;
+  const partial = partialTranscriptInfo({
+    processedDurationSec: row.duration_sec,
+    sourceDurationSec: row.source_duration_sec,
+    processingLimitSec: row.processing_limit_sec,
+    partialRequested: row.partial_requested === 1,
+  });
   const checkoutSuccessPath = getPathname({
     href: { pathname: "/dashboard", query: { checkout: "ok" } },
     locale,
@@ -85,6 +96,18 @@ export default async function TranscriptViewerPage({ params }: Params) {
             {row.title}
           </h1>
           <p className="mt-1 text-sm text-ink/60">{metaLine(row, t)}</p>
+          {partial ? (
+            <p className="mt-3 inline-flex rounded-full border border-accent/25 bg-accent-soft/55 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.08em] text-accent">
+              {partial.sourceMinutes === null
+                ? t("partialUnknownLabel", {
+                    processedMin: partial.processedMinutes,
+                  })
+                : t("partialLabel", {
+                    processedMin: partial.processedMinutes,
+                    sourceMin: partial.sourceMinutes,
+                  })}
+            </p>
+          ) : null}
         </div>
       </div>
 
@@ -115,6 +138,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
           initialSpeakerNames={parseSpeakerNames(row.speaker_names_json)}
           isPaid={user.tier !== "free"}
           checkoutSuccessPath={checkoutSuccessPath}
+          partialTranscript={partial}
         />
       ) : (
         <p className="mt-8 text-sm text-ink/60">{t("missing")}</p>
@@ -151,11 +175,17 @@ function statusMetaLabel(t: (key: string) => string, status: string): string {
 }
 
 function metaLine(
-  row: { duration_sec: number | null; language: string | null; status: string },
+  row: {
+    duration_sec: number | null;
+    source_duration_sec: number | null;
+    language: string | null;
+    status: string;
+  },
   t: (key: string) => string
 ) {
   const parts: string[] = [];
-  if (row.duration_sec) parts.push(formatDuration(row.duration_sec));
+  const displayDuration = row.source_duration_sec ?? row.duration_sec;
+  if (displayDuration) parts.push(formatDuration(displayDuration));
   if (row.language) parts.push(row.language.toUpperCase());
   parts.push(statusMetaLabel(t, row.status));
   return parts.join(" · ");

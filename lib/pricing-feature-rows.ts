@@ -194,6 +194,7 @@ function pricingValues(
     return {
       minutes: plan.maxFileSec / 60,
       hours: plan.maxFileSec / 3600,
+      freeMinutes: PLANS.free.minutesPerCycle,
     };
   }
   if (key === "maxFileSize") {

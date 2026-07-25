@@ -98,7 +98,7 @@
     "upload": {
       "instruction": "Drop a video or audio file, or click to browse.",
       "button": "Upload File",
-      "specsFree": "Video up to 2 GB · Audio up to 1 GB · Files up to 45 min",
+      "specsFree": "Video up to 2 GB · Audio up to 1 GB · 45 min lifetime",
       "specsPaid": "Video up to 5 GB · Audio up to 1 GB · Limits vary by plan"
     },
     "record": {
@@ -145,7 +145,7 @@
     "number": "02",
     "h2Part1": "Three steps.",
     "h2Part2": "AI transcription with speaker labels.",
-    "uploadLimits": "Free: up to {freeMinutes} min · Paid: up to {paidHours} hr",
+    "uploadLimits": "Free: {freeMinutes} min total · Files up to {paidHours} hr",
     "steps": [
       {
         "title": "Upload your video or audio file.",
@@ -291,7 +291,7 @@
       {
         "label": "File length",
         "values": {
-          "free": "Up to {minutes, number} min",
+          "free": "Long files accepted · first {freeMinutes, number} min total",
           "starter": "Up to {hours, number} hours",
           "pro": "Up to {hours, number} hours"
         }
@@ -382,11 +382,11 @@
       },
       {
         "question": "What is the max file length?",
-        "answer": "Free supports files up to {freeMinutes, number} minutes, while Pro supports files up to {proHours, number} hours."
+        "answer": "Free accepts files up to {proHours, number} hours and transcribes up to your remaining {freeMinutes, number} lifetime minutes. Pro includes a larger monthly allowance."
       },
       {
         "question": "Are there upload size limits?",
-        "answer": "Yes. Video uploads can be up to {proVideoGb, number} GB on Pro and {freeVideoGb, number} GB on Free. Audio uploads can be up to {audioGb, number} GB. File duration and remaining monthly minutes still apply."
+        "answer": "Yes. Video uploads can be up to {proVideoGb, number} GB on Pro and {freeVideoGb, number} GB on Free. Audio uploads can be up to {audioGb, number} GB. The source-duration limit and your remaining plan allowance still apply."
       },
       {
         "question": "Can I change plans later?",
@@ -414,7 +414,7 @@
     "items": [
       {
         "q": "Is Scribix really free for video to text?",
-        "a": "Yes. Google sign-in gives you 45 lifetime transcription minutes with no credit card. Paid plans increase usage and file-length limits."
+        "a": "Yes. Google sign-in gives you 45 lifetime transcription minutes with no credit card. Paid plans add monthly transcription minutes, AI notes, translation, and larger video uploads."
       },
       {
         "q": "What video formats does Scribix support?",
@@ -556,6 +556,8 @@
       "metaQueued": "Queued",
       "metaProcessing": "Processing",
       "metaError": "Error",
+      "partialLabel": "Partial transcript · First {processedMin, number} of {sourceMin, number} minutes",
+      "partialUnknownLabel": "Partial transcript · First {processedMin, number} minutes · Full file length unavailable",
       "tabTranscript": "Transcript",
       "tabSubtitles": "Subtitles",
       "tabTranslation": "Translation",
@@ -688,6 +690,9 @@
       "copying": "Copying…",
       "copied": "Copied",
       "copyFailed": "Copy failed",
+      "partialLabel": "Partial transcript · First {processedMin, number} of {sourceMin, number} minutes",
+      "partialUnknownLabel": "Partial transcript · First {processedMin, number} minutes · Full file length unavailable",
+      "partialCompatibilityNote": "TXT, DOCX, and VTT include this notice. SRT and CSV remain unchanged for compatibility.",
       "share": "Share",
       "shareSoon": "Share — coming soon",
       "comingSummary": "Summary — coming soon",
@@ -729,6 +734,17 @@
       "noQuotaWithCap": "You've used all {capMin} minutes for this period. Upgrade or wait for the next cycle.",
       "noQuota": "You're out of minutes for this period. Upgrade or wait for the next cycle.",
       "insufficientQuota": "This file needs ~{neededMin} min but you only have {remainingMin} min left this period. Upgrade or wait for the next cycle.",
+      "partialTitle": "Use your remaining free minutes",
+      "partialKnownBody": "This file is {totalMin, number} minutes. Transcribe the first {processingMin, number} minutes now, or upgrade for the full file.",
+      "partialUnknownBody": "This browser couldn’t determine the file length. Transcribe up to the first {processingMin, number} minutes, or upgrade for the full file.",
+      "partialFileLength": "File length",
+      "partialLengthUnavailable": "Unavailable",
+      "partialAvailable": "Free minutes available",
+      "partialMinutes": "{minutes, number} minutes",
+      "partialUpgrade": "Upgrade and transcribe the full file",
+      "partialConfirm": "Transcribe the first {minutes, number} minutes",
+      "partialClose": "Close partial transcript options",
+      "partialLimitChanged": "Your available free minutes changed. This transcript will include the first {minutes, number} minutes.",
       "aaiSubmitFailed": "Transcription service is unavailable. Please try again in a moment.",
       "extractionTimeout": "Audio extraction took too long in this browser. Retry, or extract the audio locally and upload that file.",
       "unsupportedMedia": "This media format is not supported. Choose another audio or video file.",

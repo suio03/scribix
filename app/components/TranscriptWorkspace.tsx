@@ -8,6 +8,7 @@ import type { SpeakerNames } from "@/lib/speaker-names";
 import { ExportPanel } from "./ExportPanel";
 import { TranscriptViewer } from "./TranscriptViewer";
 import { speakerToneFor } from "./speakerDisplay";
+import type { PartialTranscriptInfo } from "@/lib/partial-transcript";
 
 type Props = {
   id: string;
@@ -24,6 +25,7 @@ type Props = {
   initialSpeakerNames: SpeakerNames;
   isPaid: boolean;
   checkoutSuccessPath: string;
+  partialTranscript: PartialTranscriptInfo | null;
 };
 
 export function TranscriptWorkspace({
@@ -41,6 +43,7 @@ export function TranscriptWorkspace({
   initialSpeakerNames,
   isPaid,
   checkoutSuccessPath,
+  partialTranscript,
 }: Props) {
   const [speakerNames, setSpeakerNames] = useState<SpeakerNames>(initialSpeakerNames);
   const [speakerModal, setSpeakerModal] = useState<{
@@ -70,12 +73,17 @@ export function TranscriptWorkspace({
           speakers={speakers}
           isPaid={isPaid}
           checkoutSuccessPath={checkoutSuccessPath}
+          partialTranscript={partialTranscript}
           onOpenSpeakerEditor={(speaker) => setSpeakerModal({ open: true, focusSpeaker: speaker })}
         />
       </section>
 
       <aside className="lg:sticky lg:top-6 lg:self-start">
-        <ExportPanel id={id} audioAvailable={audioAvailable} />
+        <ExportPanel
+          id={id}
+          audioAvailable={audioAvailable}
+          partialTranscript={partialTranscript}
+        />
       </aside>
 
       <SpeakerNamesModal

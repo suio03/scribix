@@ -19,6 +19,7 @@ export async function POST(req: Request) {
     isVideo?: boolean;
     directVideo?: boolean;
     source?: string;
+    allowPartial?: boolean;
   };
   try {
     body = await req.json();
@@ -39,13 +40,13 @@ export async function POST(req: Request) {
   if (directVideo && !isVideo) {
     return Response.json({ error: "invalid_direct_video" }, { status: 400 });
   }
-  if (durationSec === null && !directVideo) {
-    return Response.json({ error: "invalid_duration" }, { status: 400 });
-  }
   if (!isAllowedMedia(filename, mime, directVideo)) {
     return Response.json({ error: "unsupported_media" }, { status: 415 });
   }
   const source: "upload" | "record" = body.source === "record" ? "record" : "upload";
+  if (source === "record" && durationSec === null) {
+    return Response.json({ error: "invalid_duration" }, { status: 400 });
+  }
 
   const env = await cf();
   const userRow = await getOrCreateCurrentUser(env.DB, session);
@@ -53,6 +54,21 @@ export async function POST(req: Request) {
   const userId = userRow.id;
 
   const plan = PLANS[userRow.tier];
+  const allowPartial =
+    userRow.tier === "free" &&
+    source === "upload" &&
+    body.allowPartial === true;
+  if (
+    userRow.tier === "free" &&
+    source === "upload" &&
+    durationSec === null &&
+    !allowPartial
+  ) {
+    return Response.json(
+      { error: "partial_confirmation_required" },
+      { status: 409 }
+    );
+  }
 
   // Per-file duration cap. Applies to both audio + video.
   if (durationSec !== null && durationSec > plan.maxFileSec) {
@@ -74,7 +90,10 @@ export async function POST(req: Request) {
 
   // Pre-flight quota check (read-only). Atomic reserve still happens at /start.
   const estimateMin = durationSec === null ? 1 : Math.ceil(durationSec / 60);
-  const quotaCheck = await checkQuota(env.DB, userId, estimateMin);
+  const quotaCheck = await checkQuota(env.DB, userId, estimateMin, {
+    allowPartial,
+    requireFullEstimate: userRow.tier === "free" && source === "upload",
+  });
   if ("error" in quotaCheck) {
     if (quotaCheck.error === "no_quota") {
       return Response.json(
@@ -83,6 +102,8 @@ export async function POST(req: Request) {
           remainingMin: quotaCheck.remainingMin,
           capMin: quotaCheck.capMin,
           tier: userRow.tier,
+          canUpgrade: userRow.tier !== "pro",
+          suggestedTier: "pro",
         },
         { status: 429 }
       );
@@ -95,6 +116,8 @@ export async function POST(req: Request) {
           capMin: quotaCheck.capMin,
           neededMin: estimateMin,
           tier: userRow.tier,
+          canUpgrade: userRow.tier !== "pro",
+          suggestedTier: "pro",
         },
         { status: 402 }
       );
@@ -113,8 +136,9 @@ export async function POST(req: Request) {
 
   await env.DB.prepare(
     `INSERT INTO transcripts
-       (id, user_id, title, status, source, audio_r2_key, filename, mime_type, bytes, speech_model, webhook_token)
-     VALUES (?1, ?2, ?3, 'pending', ?4, ?5, ?6, ?7, ?8, ?9, ?10)`
+       (id, user_id, title, status, source, audio_r2_key, filename, mime_type,
+        bytes, source_duration_sec, speech_model, webhook_token)
+     VALUES (?1, ?2, ?3, 'pending', ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)`
   )
     .bind(
       transcriptId,
@@ -125,6 +149,7 @@ export async function POST(req: Request) {
       filename,
       storedMime,
       bytes,
+      durationSec,
       plan.speechModels[0],
       webhookToken
     )

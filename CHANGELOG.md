@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.21.0] - 2026-07-25
+
+### Added
+- Added explicit Free partial-transcript choices for files longer than the remaining lifetime allowance, using the user's real available minutes.
+- Added persistent partial-transcript labels across transcript results, playback, and exports, plus offer, confirmation, start, upgrade, and size-cap analytics.
+- Added source-duration, processing-boundary, and explicit partial-consent fields through D1 migration `0020`.
+
+### Changed
+- Allowed Free users to upload long audio and video files while processing only the explicitly confirmed range, including browser-unsupported media-duration fallbacks.
+- Updated pricing, upload guidance, FAQs, and partial-transcript UI across all six locales to distinguish the Free lifetime allowance from per-file length.
+- Updated deployment and post-release documentation for locale validation and the latest shipped baselines.
+
+### Fixed
+- Kept quota reservation and settlement within the actual processed range while supporting both observed and documented AssemblyAI duration semantics.
+- Preserved legacy paid and recording quota behavior while preventing unconfirmed Free upload truncation and stale concurrent quota confirmations.
+- Kept SRT and CSV exports format-compatible while adding partial notices to TXT, DOCX, VTT, and the export panel.
+- Enforced Free restrictions for AI Notes and translation reads as well as writes.
+- Rejected recordings without an authoritative duration and excluded paused time from recorded duration calculations.
+
 ## [0.20.1] - 2026-07-25
 
 ### Added

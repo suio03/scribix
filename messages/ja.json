@@ -98,7 +98,7 @@
     "upload": {
       "instruction": "動画または音声ファイルをドラッグ＆ドロップ、またはクリックして参照してください。",
       "button": "ファイルアップロード",
-      "specsFree": "動画は最大2 GB · 音声は最大1 GB · ファイルは最大45分",
+      "specsFree": "動画は最大2 GB · 音声は最大1 GB · 生涯45分",
       "specsPaid": "動画は最大5 GB · 音声は最大1 GB · プラン別の上限"
     },
     "record": {
@@ -145,7 +145,7 @@
     "number": "02",
     "h2Part1": "3 ステップ。",
     "h2Part2": "話者ラベル付きAI文字起こし。",
-    "uploadLimits": "無料：最大{freeMinutes}分 · 有料：最大{paidHours}時間",
+    "uploadLimits": "無料：合計{freeMinutes}分 · ファイルは最大{paidHours}時間",
     "steps": [
       {
         "title": "動画または音声ファイルをアップロード。",
@@ -291,7 +291,7 @@
       {
         "label": "ファイルの長さ",
         "values": {
-          "free": "最大{minutes, number}分",
+          "free": "長時間ファイル対応 · 合計{freeMinutes, number}分まで",
           "starter": "最大{hours, number}時間",
           "pro": "最大{hours, number}時間"
         }
@@ -382,11 +382,11 @@
       },
       {
         "question": "最大ファイル長はどれくらいですか？",
-        "answer": "無料プランは最大{freeMinutes, number}分、Proは最大{proHours, number}時間のファイルに対応します。"
+        "answer": "無料プランは最大{proHours, number}時間のファイルを受け付け、残りの生涯{freeMinutes, number}分まで文字起こしします。Proにはより多い月間枠が含まれます。"
       },
       {
         "question": "アップロードするファイルにサイズ上限はありますか？",
-        "answer": "はい。動画はProで最大{proVideoGb, number} GB、無料プランで最大{freeVideoGb, number} GBです。音声は最大{audioGb, number} GBです。ファイルの長さと残りの月間文字起こし枠も適用されます。"
+        "answer": "はい。動画はProで最大{proVideoGb, number} GB、無料プランで最大{freeVideoGb, number} GBです。音声は最大{audioGb, number} GBです。元ファイルの長さ上限とプランの残り文字起こし枠も適用されます。"
       },
       {
         "question": "後からプランを変更できますか？",
@@ -414,7 +414,7 @@
     "items": [
       {
         "q": "Scribix は動画から文字への変換が本当に無料ですか？",
-        "a": "はい。Googleログインで生涯45分の文字起こしを利用でき、カードは不要です。有料プランでは利用量とファイル長の上限が増えます。"
+        "a": "はい。Googleログインで生涯45分の文字起こしを利用でき、カードは不要です。有料プランでは月間文字起こし枠、AIノート、翻訳、より大きな動画アップロードが追加されます。"
       },
       {
         "q": "Scribix はどの動画形式に対応していますか？",
@@ -556,6 +556,8 @@
       "metaQueued": "キュー待ち",
       "metaProcessing": "処理中",
       "metaError": "エラー",
+      "partialLabel": "部分文字起こし · 全{sourceMin, number}分のうち最初の{processedMin, number}分",
+      "partialUnknownLabel": "部分文字起こし · 最初の{processedMin, number}分 · ファイル全体の長さは不明",
       "tabTranscript": "文字起こし",
       "tabSubtitles": "字幕",
       "tabTranslation": "翻訳",
@@ -688,6 +690,9 @@
       "copying": "コピー中…",
       "copied": "コピーしました",
       "copyFailed": "コピーに失敗しました",
+      "partialLabel": "部分文字起こし · 全{sourceMin, number}分のうち最初の{processedMin, number}分",
+      "partialUnknownLabel": "部分文字起こし · 最初の{processedMin, number}分 · ファイル全体の長さは不明",
+      "partialCompatibilityNote": "TXT、DOCX、VTTにはこの説明が含まれます。互換性のためSRTとCSVは変更されません。",
       "share": "共有",
       "shareSoon": "共有 — 近日公開",
       "comingSummary": "要約 — 近日公開",
@@ -729,6 +734,17 @@
       "noQuotaWithCap": "この期間の {capMin} 分をすべて使用しました。アップグレードするか、次の周期を待ってください。",
       "noQuota": "この期間の分数がなくなりました。アップグレードするか、次の周期を待ってください。",
       "insufficientQuota": "このファイルは ~{neededMin} 分必要ですが、この期間は {remainingMin} 分しか残っていません。アップグレードするか、次の周期を待ってください。",
+      "partialTitle": "残りの無料時間を使う",
+      "partialKnownBody": "このファイルは{totalMin, number}分です。最初の{processingMin, number}分を文字起こしするか、アップグレードして全体を処理できます。",
+      "partialUnknownBody": "このブラウザではファイルの長さを確認できませんでした。最初の最大{processingMin, number}分を文字起こしするか、アップグレードして全体を処理できます。",
+      "partialFileLength": "ファイルの長さ",
+      "partialLengthUnavailable": "確認できません",
+      "partialAvailable": "利用可能な無料時間",
+      "partialMinutes": "{minutes, number}分",
+      "partialUpgrade": "アップグレードしてファイル全体を文字起こし",
+      "partialConfirm": "最初の{minutes, number}分を文字起こし",
+      "partialClose": "部分文字起こしの選択肢を閉じる",
+      "partialLimitChanged": "利用可能な無料分数が変更されました。この文字起こしには最初の{minutes, number}分が含まれます。",
       "aaiSubmitFailed": "文字起こしサービスが利用できません。もう一度お試しください。",
       "extractionTimeout": "このブラウザでの音声抽出に時間がかかりすぎました。再試行するか、ローカルで音声を抽出してそのファイルをアップロードしてください。",
       "unsupportedMedia": "このメディア形式には対応していません。別の音声または動画ファイルを選択してください。",

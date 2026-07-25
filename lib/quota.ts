@@ -7,18 +7,40 @@ import {
   maybeResetAllowancePeriod,
   type ResettableQuotaRow,
 } from "./quota-period";
+import {
+  hasInsufficientQuota,
+  type QuotaPolicy,
+} from "./quota-policy";
 
 export type UserQuotaRow = ResettableQuotaRow;
+
+/**
+ * Never settle more minutes than were reserved for this transcription range.
+ * If AssemblyAI omits the processed duration, keep the reservation rather than
+ * incorrectly refunding completed work.
+ */
+export function settledTranscriptionMinutes(
+  processedDurationSec: number | null | undefined,
+  reservedMin: number
+): number {
+  const safeReservedMin = Math.max(0, Math.ceil(reservedMin));
+  if (
+    typeof processedDurationSec !== "number" ||
+    !Number.isFinite(processedDurationSec) ||
+    processedDurationSec <= 0
+  ) {
+    return safeReservedMin;
+  }
+  return Math.min(Math.ceil(processedDurationSec / 60), safeReservedMin);
+}
 
 /**
  * Atomic reservation per §10.2.
  *
  * - `no_quota`: user has 0 minutes left this period.
- * - `insufficient_quota`: user has some quota but `< estimate/2`. We reject
- *   up-front rather than half-transcribing — the spec's UX call to avoid
- *   silently truncated outputs (audio_end_at would still cap AAI billing).
- * - Otherwise reserve `min(estimate, remaining)`. If remaining < estimate
- *   (but ≥ estimate/2), the AAI submit's `audio_end_at` clips cleanly.
+ * - `insufficient_quota`: strict callers require the full estimate. Legacy
+ *   callers keep the existing half-estimate threshold.
+ * - With `allowPartial`, reserve `min(estimate, remaining)`.
  *
  * `remainingMin` / `capMin` are returned alongside errors so the caller can
  * shape user-facing messages ("X of Y minutes remaining").
@@ -26,7 +48,8 @@ export type UserQuotaRow = ResettableQuotaRow;
 export async function reserveQuota(
   db: D1Database,
   userId: string,
-  estimateMin: number
+  estimateMin: number,
+  options: QuotaPolicy = {}
 ): Promise<
   | { reservedMin: number; remainingMin: number; capMin: number }
   | { error: "no_quota" | "insufficient_quota"; remainingMin: number; capMin: number }
@@ -48,7 +71,7 @@ export async function reserveQuota(
   if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
 
   const wantedMin = Math.max(1, Math.ceil(estimateMin));
-  if (remaining * 2 < wantedMin) {
+  if (hasInsufficientQuota(remaining, wantedMin, options)) {
     return { error: "insufficient_quota", remainingMin: remaining, capMin: cap };
   }
 
@@ -77,7 +100,8 @@ export async function reserveQuota(
 export async function checkQuota(
   db: D1Database,
   userId: string,
-  estimateMin: number
+  estimateMin: number,
+  options: QuotaPolicy = {}
 ): Promise<
   | { ok: true; remainingMin: number; capMin: number }
   | { error: "no_quota" | "insufficient_quota"; remainingMin: number; capMin: number }
@@ -99,7 +123,7 @@ export async function checkQuota(
   if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
 
   const wantedMin = Math.max(1, Math.ceil(estimateMin));
-  if (remaining * 2 < wantedMin) {
+  if (hasInsufficientQuota(remaining, wantedMin, options)) {
     return { error: "insufficient_quota", remainingMin: remaining, capMin: cap };
   }
   return { ok: true, remainingMin: remaining, capMin: cap };

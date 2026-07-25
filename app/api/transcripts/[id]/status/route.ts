@@ -21,7 +21,8 @@ export async function GET(_: Request, { params }: Params) {
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(
     `SELECT id, user_id, webhook_token, reserved_minutes, status, error,
-            aai_transcript_id, created_at, submit_started_at, completed_at
+            processing_limit_sec, aai_transcript_id, created_at,
+            submit_started_at, completed_at
        FROM transcripts
       WHERE id = ?1 AND deleted_at IS NULL`
   )
@@ -31,6 +32,7 @@ export async function GET(_: Request, { params }: Params) {
       user_id: string;
       webhook_token: string;
       reserved_minutes: number | null;
+      processing_limit_sec: number | null;
       status: string;
       error: string | null;
       aai_transcript_id: string | null;

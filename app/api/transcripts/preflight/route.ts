@@ -11,7 +11,10 @@ export async function POST(req: Request) {
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
 
-  let body: Partial<PreflightInput>;
+  let body: Partial<PreflightInput> & {
+    allowPartial?: boolean;
+    source?: "upload" | "record";
+  };
   try {
     body = await req.json();
   } catch {
@@ -55,7 +58,13 @@ export async function POST(req: Request) {
   }
 
   const estimateMin = durationSec === null ? 1 : Math.ceil(durationSec / 60);
-  const quota = await checkQuota(env.DB, user.id, estimateMin);
+  const isFreeUpload = user.tier === "free" && body.source !== "record";
+  const allowPartial = isFreeUpload && body.allowPartial === true;
+  const quota = await checkQuota(env.DB, user.id, estimateMin, {
+    // Free uploads need a read-only quota snapshot so the UI can ask for
+    // consent before any upload starts.
+    allowPartial: isFreeUpload,
+  });
   if ("error" in quota) {
     if (quota.error === "no_quota" || quota.error === "insufficient_quota") {
       return Response.json(
@@ -74,6 +83,14 @@ export async function POST(req: Request) {
     return Response.json({ error: quota.error }, { status: 400 });
   }
 
+  const requiresPartialConfirmation =
+    isFreeUpload &&
+    (durationSec === null || estimateMin > quota.remainingMin);
+  const processableMin =
+    durationSec === null
+      ? quota.remainingMin
+      : Math.min(estimateMin, quota.remainingMin);
+
   return Response.json({
     ok: true,
     pipeline: decision.pipeline,
@@ -81,5 +98,7 @@ export async function POST(req: Request) {
     tier: user.tier,
     remainingMin: quota.remainingMin,
     capMin: quota.capMin,
+    processableMin,
+    requiresPartialConfirmation: requiresPartialConfirmation && !allowPartial,
   });
 }

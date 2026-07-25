@@ -1,6 +1,6 @@
 # Scribix 可靠性、转化与增长修复计划
 
-> 状态：release `0.18.0` 已通过 commit `99bf119` 推送到 `main`；后续修复 release `0.18.1`（commit `30f4b0a`）已统一 Starter 10 小时上限、替换 AAI 废弃模型并拆分 Discord channel。release `0.19.0`（commit `653757c`）新增本地化 AI Note Taker 入口与归因。release `0.20.0`（commit `4b79377`）将新购套餐精简为 Pro 月付 $20 或年付 $120，并为两种周期都提供每月重置的 2,400 分钟额度。以上版本都没有改变上传 pipeline version。生产 D1 migration 已完成；等待确认 Cloudflare 部署结果并开始发布后七天观测
+> 状态：release `0.18.0` 已通过 commit `99bf119` 推送到 `main`；后续修复 release `0.18.1`（commit `30f4b0a`）已统一 Starter 10 小时上限、替换 AAI 废弃模型并拆分 Discord channel。release `0.19.0`（commit `653757c`）新增本地化 AI Note Taker 入口与归因。release `0.20.0`（commit `4b79377`）将新购套餐精简为 Pro 月付 $20 或年付 $120，并为两种周期都提供每月重置的 2,400 分钟额度。release `0.20.1`（commit `36f6c86`）将路由、图标、顺序、价格和配额等结构移出翻译文件，并在 build、preview、deploy 前强制校验六种语言。以上版本都没有改变上传 pipeline version。生产 D1 migration 已完成；等待确认 Cloudflare 部署结果并开始发布后七天观测
 >
 > 2026-07-22 已获授权并完成全部本地修复，生产 D1 migrations `0016–0019` 已应用。Plausible/Bing 后台配置仍需单独执行；2026-07-23 的 `0.19.0` push 已触发部署，但不能代替生产环境验收。
 

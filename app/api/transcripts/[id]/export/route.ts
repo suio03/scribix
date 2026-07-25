@@ -10,6 +10,10 @@ import {
   toVtt,
 } from "@/lib/transcript-format";
 import { parseSpeakerNames } from "@/lib/speaker-names";
+import {
+  partialTranscriptExportLabel,
+  partialTranscriptInfo,
+} from "@/lib/partial-transcript";
 
 type Params = { params: Promise<{ id: string }> };
 type Format = "txt" | "srt" | "vtt" | "csv" | "docx";
@@ -31,7 +35,9 @@ export async function GET(req: Request, { params }: Params) {
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
   const row = await env.DB.prepare(
-    `SELECT user_id, status, title, transcript_r2_key, speaker_names_json
+    `SELECT user_id, status, title, transcript_r2_key, speaker_names_json,
+            duration_sec, source_duration_sec, processing_limit_sec,
+            partial_requested
        FROM transcripts
       WHERE id = ?1 AND deleted_at IS NULL`
   )
@@ -42,6 +48,10 @@ export async function GET(req: Request, { params }: Params) {
       title: string;
       transcript_r2_key: string | null;
       speaker_names_json: string | null;
+      duration_sec: number | null;
+      source_duration_sec: number | null;
+      processing_limit_sec: number | null;
+      partial_requested: number;
     }>();
   if (!row) return Response.json({ error: "not_found" }, { status: 404 });
   if (row.user_id !== user.id) {
@@ -55,6 +65,15 @@ export async function GET(req: Request, { params }: Params) {
   if (!obj) return Response.json({ error: "transcript_missing" }, { status: 410 });
   const aai = (await obj.json()) as AaiTranscript;
   const speakerNames = parseSpeakerNames(row.speaker_names_json);
+  const partial = partialTranscriptInfo({
+    processedDurationSec: row.duration_sec,
+    sourceDurationSec: row.source_duration_sec,
+    processingLimitSec: row.processing_limit_sec,
+    partialRequested: row.partial_requested === 1,
+  });
+  const partialLabel = partial
+    ? partialTranscriptExportLabel(partial)
+    : null;
 
   let body: string | Uint8Array;
   let contentType: string;
@@ -64,7 +83,7 @@ export async function GET(req: Request, { params }: Params) {
       contentType = "application/x-subrip; charset=utf-8";
       break;
     case "vtt":
-      body = toVtt(aai, speakerNames);
+      body = toVtt(aai, speakerNames, partialLabel ?? undefined);
       contentType = "text/vtt; charset=utf-8";
       break;
     case "csv":
@@ -72,12 +91,22 @@ export async function GET(req: Request, { params }: Params) {
       contentType = "text/csv; charset=utf-8";
       break;
     case "docx":
-      body = await toDocx(aai, row.title, withTimestamps, speakerNames);
+      body = await toDocx(
+        aai,
+        row.title,
+        withTimestamps,
+        speakerNames,
+        partialLabel ?? undefined
+      );
       contentType =
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
       break;
     default:
-      body = toTxt(aai, withTimestamps, speakerNames);
+      body = `${partialLabel ? `${partialLabel}\n\n` : ""}${toTxt(
+        aai,
+        withTimestamps,
+        speakerNames
+      )}`;
       contentType = "text/plain; charset=utf-8";
   }
 

@@ -288,6 +288,7 @@ export default async function Mp3ToTextPage({
             copy={copy.upload}
             accept="audio/mpeg,.mp3"
             toolSlug="mp3-to-text"
+            tier={sidebarUsage?.tier}
           />
         </ToolHero>
         <QuickAnswerSection {...copy.quickAnswer} />

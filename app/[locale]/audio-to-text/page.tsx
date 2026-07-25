@@ -286,6 +286,7 @@ export default async function AudioToTextPage({
             signedIn={!!session}
             postSignInPath={postSignInPath}
             copy={copy.upload}
+            tier={sidebarUsage?.tier}
           />
         </ToolHero>
         <QuickAnswerSection {...copy.quickAnswer} />

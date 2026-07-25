@@ -19,6 +19,9 @@ export async function GET(_: Request, { params }: Params) {
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  if (user.tier === "free") {
+    return Response.json({ error: "upgrade_required" }, { status: 402 });
+  }
 
   const row = await readTranscript(env.DB, transcriptId);
   if (!row) return Response.json({ error: "not_found" }, { status: 404 });

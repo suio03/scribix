@@ -11,10 +11,12 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
+import type { PartialTranscriptInfo } from "@/lib/partial-transcript";
 
 type Props = {
   id: string;
   audioAvailable: boolean;
+  partialTranscript: PartialTranscriptInfo | null;
 };
 
 const DOWNLOADS = [
@@ -28,6 +30,7 @@ const DOWNLOADS = [
 export function ExportPanel({
   id,
   audioAvailable,
+  partialTranscript,
 }: Props) {
   const t = useTranslations("Dashboard.exportPanel");
   const [withTimestamps, setWithTimestamps] = useState(true);
@@ -53,6 +56,21 @@ export function ExportPanel({
 
   return (
     <div className="space-y-6 rounded-2xl border border-line bg-paper p-4 sm:p-5">
+      {partialTranscript ? (
+        <div className="rounded-xl border border-accent/25 bg-accent-soft/50 px-3.5 py-3 text-[12px] leading-5 text-accent">
+          <p className="font-semibold">
+            {partialTranscript.sourceMinutes === null
+              ? t("partialUnknownLabel", {
+                  processedMin: partialTranscript.processedMinutes,
+                })
+              : t("partialLabel", {
+                  processedMin: partialTranscript.processedMinutes,
+                  sourceMin: partialTranscript.sourceMinutes,
+                })}
+          </p>
+          <p className="mt-0.5 text-ink/55">{t("partialCompatibilityNote")}</p>
+        </div>
+      ) : null}
       <section>
         <div className="flex items-center justify-between">
           <h3 className="text-[15px] font-semibold text-ink">{t("downloadTitle")}</h3>

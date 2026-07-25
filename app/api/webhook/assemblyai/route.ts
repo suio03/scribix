@@ -1,7 +1,8 @@
 import { getParagraphs, getSentences, getTranscript } from "@/lib/aai";
+import { resolveAaiDuration } from "@/lib/aai-duration";
 import { cf } from "@/lib/cf";
 import { discordAlert } from "@/lib/discord";
-import { reconcileQuota } from "@/lib/quota";
+import { reconcileQuota, settledTranscriptionMinutes } from "@/lib/quota";
 import { R2 } from "@/lib/r2";
 
 export async function POST(req: Request) {
@@ -18,35 +19,23 @@ export async function POST(req: Request) {
   const token = req.headers.get("x-scribix-token");
 
   let row = await env.DB.prepare(
-    `SELECT id, user_id, webhook_token, reserved_minutes, submit_started_at, status
+    `SELECT id, user_id, webhook_token, reserved_minutes, processing_limit_sec,
+            submit_started_at, status
        FROM transcripts WHERE aai_transcript_id = ?1`
   )
     .bind(aaiId)
-    .first<{
-      id: string;
-      user_id: string;
-      webhook_token: string;
-      reserved_minutes: number | null;
-      submit_started_at: string | null;
-      status: string;
-    }>();
+    .first<Row>();
   if (!row && token) {
     const candidate = await env.DB.prepare(
-      `SELECT id, user_id, webhook_token, reserved_minutes, submit_started_at, status
+      `SELECT id, user_id, webhook_token, reserved_minutes, processing_limit_sec,
+              submit_started_at, status
          FROM transcripts
         WHERE webhook_token = ?1
           AND status = 'uploading'
           AND aai_transcript_id IS NULL`
     )
       .bind(token)
-      .first<{
-        id: string;
-        user_id: string;
-        webhook_token: string;
-        reserved_minutes: number | null;
-        submit_started_at: string | null;
-        status: string;
-      }>();
+      .first<Row>();
     if (candidate) {
       const claimed = await env.DB.prepare(
         `UPDATE transcripts
@@ -61,18 +50,12 @@ export async function POST(req: Request) {
       if (claimed.meta?.changes) row = { ...candidate, status: "queued" };
       else {
         row = await env.DB.prepare(
-          `SELECT id, user_id, webhook_token, reserved_minutes, submit_started_at, status
+          `SELECT id, user_id, webhook_token, reserved_minutes, processing_limit_sec,
+                  submit_started_at, status
              FROM transcripts WHERE aai_transcript_id = ?1`
         )
           .bind(aaiId)
-          .first<{
-            id: string;
-            user_id: string;
-            webhook_token: string;
-            reserved_minutes: number | null;
-            submit_started_at: string | null;
-            status: string;
-          }>();
+          .first<Row>();
       }
     }
   }
@@ -106,6 +89,7 @@ type Row = {
   user_id: string;
   webhook_token: string;
   reserved_minutes: number | null;
+  processing_limit_sec: number | null;
   submit_started_at: string | null;
   status: string;
 };
@@ -116,8 +100,34 @@ export async function applyAaiResult(
   aai: Awaited<ReturnType<typeof getTranscript>>
 ): Promise<void> {
   if (aai.status === "completed") {
-    const durationSec = Math.round(aai.audio_duration ?? 0);
-    const actualMin = Math.max(0, Math.ceil(durationSec / 60));
+    const {
+      processedDurationSec,
+      inferredSourceDurationSec,
+      reportedDurationSec,
+    } = resolveAaiDuration(aai.audio_duration, row.processing_limit_sec);
+    const actualMin = settledTranscriptionMinutes(
+      processedDurationSec,
+      row.reserved_minutes ?? 0
+    );
+    if (processedDurationSec === null) {
+      console.warn(JSON.stringify({
+        event: "aai_audio_duration_missing",
+        transcriptId: row.id,
+        reservedMin: row.reserved_minutes ?? 0,
+      }));
+    }
+    if (
+      reportedDurationSec !== null &&
+      inferredSourceDurationSec !== null &&
+      processedDurationSec !== reportedDurationSec
+    ) {
+      console.info(JSON.stringify({
+        event: "aai_audio_duration_includes_source",
+        transcriptId: row.id,
+        reportedDurationSec,
+        processingLimitSec: row.processing_limit_sec,
+      }));
+    }
     const transcriptKey = R2.transcriptKey(row.user_id, row.id);
     const settledModel = aai.speech_model ?? "universal-2";
 
@@ -141,15 +151,23 @@ export async function applyAaiResult(
     const guard = await env.DB.prepare(
       `UPDATE transcripts
           SET status = 'completed',
-              duration_sec = ?1,
-              language = ?2,
-              transcript_r2_key = ?3,
-              speech_model = ?4,
+              duration_sec = COALESCE(?1, duration_sec),
+              source_duration_sec = COALESCE(source_duration_sec, ?2),
+              language = ?3,
+              transcript_r2_key = ?4,
+              speech_model = ?5,
               completed_at = CURRENT_TIMESTAMP
-        WHERE id = ?5
+        WHERE id = ?6
           AND status NOT IN ('completed', 'error')`
     )
-      .bind(durationSec, aai.language_code ?? null, transcriptKey, settledModel, row.id)
+      .bind(
+        processedDurationSec,
+        inferredSourceDurationSec,
+        aai.language_code ?? null,
+        transcriptKey,
+        settledModel,
+        row.id
+      )
       .run();
 
     if (!guard.meta?.changes) return;

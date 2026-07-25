@@ -50,7 +50,7 @@ export async function HowItWorks({
     STEP_DEFINITIONS[namespace],
     `${namespace}.steps`
   );
-  const freeMinutes = PLANS.free.maxFileSec / 60;
+  const freeMinutes = PLANS.free.minutesPerCycle;
   const paidHours = PLANS.pro.maxFileSec / 3600;
 
   return (

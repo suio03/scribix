@@ -21,7 +21,13 @@ import {
 import { useTranslations } from "next-intl";
 import { mergeLocalizedItems } from "@/lib/localized-items";
 import type { BillingCycle, Tier } from "@/lib/plans";
-import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
+import {
+  PartialTranscriptModal,
+  ProgressView,
+  UPLOAD_ACCEPT,
+  UploadErrorHelp,
+  useUpload,
+} from "./Uploader";
 import { Recorder } from "./Recorder";
 import { YouTubeImporter } from "./YouTubeImporter";
 import { markSignInPending } from "./Track";
@@ -218,7 +224,19 @@ function UploadPane({
   const t = useTranslations("Generator.upload");
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
-  const { phase, progress, uploadError, filename, onPick, retry } = useUpload({
+  const {
+    phase,
+    progress,
+    uploadError,
+    filename,
+    onPick,
+    retry,
+    processingLimitNoticeMin,
+    partialOffer,
+    confirmPartial,
+    cancelPartial,
+    trackPartialUpgrade,
+  } = useUpload({
     signedIn,
     postSignInPath,
     checkoutSuccessPath,
@@ -265,6 +283,7 @@ function UploadPane({
           className="hidden"
           onChange={(e) => {
             const f = e.target.files?.[0];
+            e.currentTarget.value = "";
             if (f) onPick(f);
           }}
         />
@@ -303,9 +322,21 @@ function UploadPane({
             />
           </>
         ) : (
-          <ProgressView phase={phase} progress={progress} filename={filename} />
+          <ProgressView
+            phase={phase}
+            progress={progress}
+            filename={filename}
+            processingLimitNoticeMin={processingLimitNoticeMin}
+          />
         )}
       </div>
+      <PartialTranscriptModal
+        offer={partialOffer}
+        checkoutSuccessPath={checkoutSuccessPath}
+        onConfirm={confirmPartial}
+        onCancel={cancelPartial}
+        onUpgrade={trackPartialUpgrade}
+      />
     </div>
   );
 }

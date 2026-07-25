@@ -19,7 +19,9 @@ export const PLANS = {
     minutesPerCycle: 45,
     youtubeImportsPerCycle: FREE_YOUTUBE_IMPORTS_PER_DAY,
     youtubeMaxVideoSec: 2 * 3600,
-    maxFileSec: 45 * 60,
+    // Free users may upload a long source file, but only their remaining
+    // lifetime transcription minutes are processed.
+    maxFileSec: 10 * 3600,
     // Audio remains single-PUT; direct video uses multipart upload.
     maxFileBytes: ONE_GIB,
     maxVideoUploadBytes: 2 * ONE_GIB,

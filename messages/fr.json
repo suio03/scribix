@@ -98,7 +98,7 @@
     "upload": {
       "instruction": "Déposez une vidéo ou un fichier audio, ou cliquez pour parcourir.",
       "button": "Téléverser un fichier",
-      "specsFree": "Vidéo jusqu’à 2 Go · Audio jusqu’à 1 Go · Fichiers jusqu’à 45 min",
+      "specsFree": "Vidéo jusqu’à 2 Go · Audio jusqu’à 1 Go · 45 min à vie",
       "specsPaid": "Vidéo jusqu’à 5 Go · Audio jusqu’à 1 Go · Limites selon l’offre"
     },
     "record": {
@@ -145,7 +145,7 @@
     "number": "02",
     "h2Part1": "Trois étapes.",
     "h2Part2": "Transcription avec identification des locuteurs.",
-    "uploadLimits": "Gratuit : jusqu’à {freeMinutes} min · Payant : jusqu’à {paidHours} h",
+    "uploadLimits": "Gratuit : {freeMinutes} min au total · Fichiers jusqu’à {paidHours} h",
     "steps": [
       {
         "title": "Téléversez votre fichier vidéo ou audio.",
@@ -291,7 +291,7 @@
       {
         "label": "Durée du fichier",
         "values": {
-          "free": "Jusqu’à {minutes, number} min",
+          "free": "Fichiers longs acceptés · {freeMinutes, number} premières min au total",
           "starter": "Jusqu’à {hours, number} heures",
           "pro": "Jusqu’à {hours, number} heures"
         }
@@ -382,11 +382,11 @@
       },
       {
         "question": "Quelle est la durée maximale d'un fichier ?",
-        "answer": "Gratuit prend en charge les fichiers jusqu’à {freeMinutes, number} minutes et Pro les fichiers jusqu’à {proHours, number} heures."
+        "answer": "Gratuit accepte les fichiers jusqu’à {proHours, number} heures et transcrit jusqu’aux {freeMinutes, number} minutes à vie restantes. Pro inclut un quota mensuel plus élevé."
       },
       {
         "question": "Existe-t-il des limites de taille pour les fichiers envoyés ?",
-        "answer": "Oui. Les vidéos peuvent atteindre {proVideoGb, number} Go avec Pro et {freeVideoGb, number} Go avec Gratuit. Les fichiers audio peuvent atteindre {audioGb, number} Go. La durée maximale et les minutes mensuelles restantes s’appliquent également."
+        "answer": "Oui. Les vidéos peuvent atteindre {proVideoGb, number} Go avec Pro et {freeVideoGb, number} Go avec Gratuit. Les fichiers audio peuvent atteindre {audioGb, number} Go. La limite de durée de la source et le quota restant de l’offre s’appliquent également."
       },
       {
         "question": "Puis-je changer d'offre plus tard ?",
@@ -414,7 +414,7 @@
     "items": [
       {
         "q": "Scribix est-il vraiment gratuit pour convertir la vidéo en texte?",
-        "a": "Oui. La connexion Google donne 45 minutes de transcription à vie, sans carte bancaire. Les offres payantes augmentent les limites d’usage et de durée."
+        "a": "Oui. La connexion Google donne 45 minutes de transcription à vie, sans carte bancaire. Les offres payantes ajoutent des minutes mensuelles, des notes IA, la traduction et des vidéos plus volumineuses."
       },
       {
         "q": "Quels formats vidéo Scribix supporte-t-il?",
@@ -556,6 +556,8 @@
       "metaQueued": "En file d'attente",
       "metaProcessing": "Traitement",
       "metaError": "Erreur",
+      "partialLabel": "Transcription partielle · {processedMin, number} premières minutes sur {sourceMin, number}",
+      "partialUnknownLabel": "Transcription partielle · {processedMin, number} premières minutes · Durée totale indisponible",
       "tabTranscript": "Transcription",
       "tabSubtitles": "Sous-titres",
       "tabTranslation": "Traduction",
@@ -688,6 +690,9 @@
       "copying": "Copie…",
       "copied": "Copié",
       "copyFailed": "Échec de la copie",
+      "partialLabel": "Transcription partielle · {processedMin, number} premières minutes sur {sourceMin, number}",
+      "partialUnknownLabel": "Transcription partielle · {processedMin, number} premières minutes · Durée totale indisponible",
+      "partialCompatibilityNote": "TXT, DOCX et VTT incluent cet avis. SRT et CSV restent inchangés pour assurer la compatibilité.",
       "share": "Partager",
       "shareSoon": "Partager — bientôt disponible",
       "comingSummary": "Résumé — bientôt disponible",
@@ -729,6 +734,17 @@
       "noQuotaWithCap": "Vous avez utilisé tous les {capMin} minutes de cette période. Passez à un plan supérieur ou attendez le prochain cycle.",
       "noQuota": "Vous avez épuisé vos minutes pour cette période. Passez à un plan supérieur ou attendez le prochain cycle.",
       "insufficientQuota": "Ce fichier nécessite ~{neededMin} min mais vous n'en avez que {remainingMin} min restant cette période. Passez à un plan supérieur ou attendez le prochain cycle.",
+      "partialTitle": "Utilisez vos minutes gratuites restantes",
+      "partialKnownBody": "Ce fichier dure {totalMin, number} minutes. Transcrivez les {processingMin, number} premières minutes maintenant ou passez à Pro pour le fichier complet.",
+      "partialUnknownBody": "Ce navigateur n’a pas pu déterminer la durée. Transcrivez jusqu’aux {processingMin, number} premières minutes ou passez à Pro pour le fichier complet.",
+      "partialFileLength": "Durée du fichier",
+      "partialLengthUnavailable": "Indisponible",
+      "partialAvailable": "Minutes gratuites disponibles",
+      "partialMinutes": "{minutes, number} minutes",
+      "partialUpgrade": "Passer à Pro et transcrire le fichier complet",
+      "partialConfirm": "Transcrire les {minutes, number} premières minutes",
+      "partialClose": "Fermer les options de transcription partielle",
+      "partialLimitChanged": "Le nombre de minutes gratuites disponibles a changé. Cette transcription comprendra les {minutes, number} premières minutes.",
       "aaiSubmitFailed": "Le service de transcription est indisponible. Veuillez réessayer dans un moment.",
       "extractionTimeout": "L'extraction audio a pris trop de temps dans ce navigateur. Réessayez, ou extrayez l'audio localement et téléversez ce fichier.",
       "unsupportedMedia": "Ce format multimédia n'est pas pris en charge. Choisissez un autre fichier audio ou vidéo.",

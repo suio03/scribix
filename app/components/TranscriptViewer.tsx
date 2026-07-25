@@ -7,6 +7,7 @@ import type { AaiSegment } from "@/lib/aai";
 import { compactCJKSpaces } from "@/lib/transcript-format";
 import { UpgradePlanModal, type UpgradeReason } from "./UpgradePlanModal";
 import { displaySpeakerName, speakerToneFor, type SpeakerNames } from "./speakerDisplay";
+import type { PartialTranscriptInfo } from "@/lib/partial-transcript";
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 2] as const;
 const TRANSLATION_LANGUAGES = ["en", "zh", "es", "fr", "de", "ja", "ko", "pt", "it", "nl"] as const;
@@ -71,6 +72,7 @@ type Props = {
   isPaid: boolean;
   checkoutSuccessPath: string;
   onOpenSpeakerEditor: (speaker?: string) => void;
+  partialTranscript: PartialTranscriptInfo | null;
 };
 
 export function TranscriptViewer({
@@ -88,6 +90,7 @@ export function TranscriptViewer({
   isPaid,
   checkoutSuccessPath,
   onOpenSpeakerEditor,
+  partialTranscript,
 }: Props) {
   const t = useTranslations("Dashboard.viewer");
   const audioRef = useRef<HTMLMediaElement | null>(null);
@@ -272,6 +275,18 @@ export function TranscriptViewer({
 
   return (
     <div className="space-y-6">
+      {partialTranscript ? (
+        <div className="rounded-xl border border-accent/25 bg-accent-soft/50 px-4 py-3 text-[13px] font-medium text-accent">
+          {partialTranscript.sourceMinutes === null
+            ? t("partialUnknownLabel", {
+                processedMin: partialTranscript.processedMinutes,
+              })
+            : t("partialLabel", {
+                processedMin: partialTranscript.processedMinutes,
+                sourceMin: partialTranscript.sourceMinutes,
+              })}
+        </div>
+      ) : null}
       {audioUrl && (
         <AudioPlayer
           ref={audioRef}

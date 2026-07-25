@@ -31,6 +31,18 @@ export type PlausibleEvents = {
   direct_video_processing: DirectVideoEventProps;
   direct_video_transcribe_completed: DirectVideoEventProps;
   direct_video_abandoned: DirectVideoEventProps & { step: UploadFailureStep };
+  partial_transcript_offer_shown: PartialTranscriptEventProps;
+  partial_transcript_confirmed: PartialTranscriptEventProps;
+  partial_transcription_started: PartialTranscriptEventProps;
+  partial_transcript_upgrade_clicked: PartialTranscriptEventProps;
+  upload_size_cap_rejected: {
+    tool_slug: string;
+    source?: "upload" | "record";
+    input_type?: "audio" | "video" | "unknown";
+    file_size_mb: number;
+    error_code: string;
+    suggested_tier?: "pro";
+  };
   transcribe_fail: {
     tool_slug: string;
     source?: "upload" | "record";
@@ -139,6 +151,17 @@ type DirectVideoEventProps = {
   upload_pipeline_version: string;
 };
 
+type PartialTranscriptEventProps = {
+  tool_slug: string;
+  source: "upload";
+  input_type: "audio" | "video" | "unknown";
+  source_duration_sec?: number;
+  remaining_min: number;
+  processing_minutes: number;
+  file_size_mb: number;
+  duration_unknown: boolean;
+};
+
 type UploadFallbackReason =
   | "over_1gb"
   | "cannot_read_metadata"
@@ -169,7 +192,7 @@ type PricingBillingCycleEventProps = {
   current_tier: "free" | "basic" | "pro";
 };
 
-export const UPLOAD_PIPELINE_VERSION = "2026-07-22.1";
+export const UPLOAD_PIPELINE_VERSION = "2026-07-25.1";
 
 declare global {
   interface Window {

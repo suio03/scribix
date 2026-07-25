@@ -105,7 +105,11 @@ export function toSrt(aai: AaiTranscript, speakerNames: SpeakerNames = {}): stri
     .join("\n");
 }
 
-export function toVtt(aai: AaiTranscript, speakerNames: SpeakerNames = {}): string {
+export function toVtt(
+  aai: AaiTranscript,
+  speakerNames: SpeakerNames = {},
+  note?: string
+): string {
   const cues = cuesFromAai(aai);
   const body = cues
     .map((c) => {
@@ -114,7 +118,8 @@ export function toVtt(aai: AaiTranscript, speakerNames: SpeakerNames = {}): stri
       return `${timestamp(c.start, ".")} --> ${timestamp(c.end, ".")}\n${text}\n`;
     })
     .join("\n");
-  return `WEBVTT\n\n${body}`;
+  const noteBlock = note ? `NOTE\n${note}\n\n` : "";
+  return `WEBVTT\n\n${noteBlock}${body}`;
 }
 
 export function toCsv(aai: AaiTranscript, speakerNames: SpeakerNames = {}): string {
@@ -140,7 +145,8 @@ export async function toDocx(
   aai: AaiTranscript,
   title: string,
   withTimestamps = true,
-  speakerNames: SpeakerNames = {}
+  speakerNames: SpeakerNames = {},
+  notice?: string
 ): Promise<Uint8Array> {
   const cues = cuesFromAai(aai);
   const children: Paragraph[] = [
@@ -149,6 +155,16 @@ export async function toDocx(
       children: [new TextRun({ text: title, bold: true })],
     }),
   ];
+  if (notice) {
+    children.push(
+      new Paragraph({
+        spacing: { after: 180 },
+        children: [
+          new TextRun({ text: notice, italics: true, color: "666666", size: 18 }),
+        ],
+      })
+    );
+  }
   if (cues.length === 0) {
     children.push(
       new Paragraph({

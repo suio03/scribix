@@ -15,7 +15,11 @@ export async function POST(req: Request, { params }: Params) {
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
   const { id: transcriptId } = await params;
 
-  let body: { durationSecEstimate?: number };
+  let body: {
+    durationSecEstimate?: number;
+    allowPartial?: boolean;
+    confirmedPartialMin?: number;
+  };
   try {
     body = await req.json();
   } catch {
@@ -33,7 +37,7 @@ export async function POST(req: Request, { params }: Params) {
   const userId = user.id;
 
   const row = await env.DB.prepare(
-    `SELECT t.id, t.user_id, t.status, t.audio_r2_key, t.webhook_token,
+    `SELECT t.id, t.user_id, t.status, t.source, t.audio_r2_key, t.webhook_token,
             t.filename, t.mime_type, t.bytes, t.created_at, u.tier
        FROM transcripts t
        JOIN users u ON u.id = t.user_id
@@ -44,6 +48,7 @@ export async function POST(req: Request, { params }: Params) {
       id: string;
       user_id: string;
       status: string;
+      source: string;
       audio_r2_key: string | null;
       webhook_token: string;
       filename: string | null;
@@ -65,6 +70,29 @@ export async function POST(req: Request, { params }: Params) {
   }
 
   const plan = PLANS[row.tier];
+  if (row.source === "record" && estimate === null) {
+    return Response.json({ error: "invalid_duration" }, { status: 400 });
+  }
+  const allowPartial =
+    row.tier === "free" &&
+    row.source === "upload" &&
+    body.allowPartial === true;
+  const rawConfirmedPartialMin = body.confirmedPartialMin;
+  const confirmedPartialMin =
+    allowPartial && rawConfirmedPartialMin != null
+      ? Number(rawConfirmedPartialMin)
+      : null;
+  if (
+    confirmedPartialMin !== null &&
+    (!Number.isFinite(confirmedPartialMin) ||
+      !Number.isInteger(confirmedPartialMin) ||
+      confirmedPartialMin <= 0)
+  ) {
+    return Response.json(
+      { error: "invalid_partial_limit" },
+      { status: 400 }
+    );
+  }
   if (estimate !== null && estimate > plan.maxFileSec) {
     return Response.json(
       { error: "duration_exceeds_tier", maxSec: plan.maxFileSec, tier: row.tier },
@@ -93,11 +121,24 @@ export async function POST(req: Request, { params }: Params) {
 
   let estimateMin: number;
   if (estimate === null) {
+    if (row.tier === "free" && row.source === "upload" && !allowPartial) {
+      return Response.json(
+        { error: "partial_confirmation_required" },
+        { status: 409 }
+      );
+    }
     const quota = await checkQuota(env.DB, userId, 1);
     if ("error" in quota) {
       if (quota.error === "no_quota") {
         return Response.json(
-          { error: "no_quota", remainingMin: quota.remainingMin, capMin: quota.capMin, tier: row.tier },
+          {
+            error: "no_quota",
+            remainingMin: quota.remainingMin,
+            capMin: quota.capMin,
+            tier: row.tier,
+            canUpgrade: row.tier !== "pro",
+            suggestedTier: "pro",
+          },
           { status: 429 }
         );
       }
@@ -107,8 +148,14 @@ export async function POST(req: Request, { params }: Params) {
   } else {
     estimateMin = Math.ceil(estimate / 60);
   }
+  if (confirmedPartialMin !== null) {
+    estimateMin = Math.min(estimateMin, confirmedPartialMin);
+  }
 
-  const reservation = await reserveQuota(env.DB, userId, estimateMin);
+  const reservation = await reserveQuota(env.DB, userId, estimateMin, {
+    allowPartial,
+    requireFullEstimate: row.tier === "free" && row.source === "upload",
+  });
   if ("error" in reservation) {
     if (reservation.error === "no_quota") {
       return Response.json(
@@ -117,6 +164,8 @@ export async function POST(req: Request, { params }: Params) {
           remainingMin: reservation.remainingMin,
           capMin: reservation.capMin,
           tier: row.tier,
+          canUpgrade: row.tier !== "pro",
+          suggestedTier: "pro",
         },
         { status: 429 }
       );
@@ -129,6 +178,8 @@ export async function POST(req: Request, { params }: Params) {
           capMin: reservation.capMin,
           neededMin: estimateMin,
           tier: row.tier,
+          canUpgrade: row.tier !== "pro",
+          suggestedTier: "pro",
         },
         { status: 402 }
       );
@@ -136,15 +187,20 @@ export async function POST(req: Request, { params }: Params) {
     return Response.json({ error: reservation.error }, { status: 400 });
   }
   const reservedMin = reservation.reservedMin;
+  const processingLimitSec = reservedMin * 60;
 
   // Upload-status sentinel before AAI submit. Either AAI accepts (we move to queued)
   // or we throw, which leaves the row at 'uploading' for inline reconcile to mop up.
   const claimed = await env.DB.prepare(
     `UPDATE transcripts
-        SET status = 'uploading', reserved_minutes = ?1, submit_started_at = CURRENT_TIMESTAMP
-      WHERE id = ?2 AND status = 'pending'`
+        SET status = 'uploading',
+            reserved_minutes = ?1,
+            processing_limit_sec = ?2,
+            partial_requested = ?3,
+            submit_started_at = CURRENT_TIMESTAMP
+      WHERE id = ?4 AND status = 'pending'`
   )
-    .bind(reservedMin, transcriptId)
+    .bind(reservedMin, processingLimitSec, allowPartial ? 1 : 0, transcriptId)
     .run();
   if (!claimed.meta?.changes) {
     await reconcileQuota(env.DB, userId, reservedMin, 0);
@@ -163,7 +219,7 @@ export async function POST(req: Request, { params }: Params) {
       speech_models: plan.speechModels,
       speaker_labels: true,
       language_detection: true,
-      audio_end_at: reservedMin * 60 * 1000,
+      audio_end_at: processingLimitSec * 1000,
       webhook_url: webhookUrl || undefined,
       webhook_auth_header_name: webhookUrl ? "X-Scribix-Token" : undefined,
       webhook_auth_header_value: webhookUrl ? row.webhook_token : undefined,
@@ -203,7 +259,13 @@ export async function POST(req: Request, { params }: Params) {
     const errMsg = err instanceof Error ? err.message : "submit_failed";
     await reconcileQuota(env.DB, userId, reservedMin, 0);
     await env.DB.prepare(
-      `UPDATE transcripts SET status = 'pending', error = ?1, reserved_minutes = 0 WHERE id = ?2`
+      `UPDATE transcripts
+          SET status = 'pending',
+              error = ?1,
+              reserved_minutes = 0,
+              processing_limit_sec = NULL,
+              partial_requested = 0
+        WHERE id = ?2`
     )
       .bind(errMsg, transcriptId)
       .run();
@@ -233,7 +295,11 @@ export async function POST(req: Request, { params }: Params) {
     return Response.json({ error: "persist_failed", aaiId }, { status: 500 });
   }
 
-  return Response.json({ ok: true, status: "queued" });
+  return Response.json({
+    ok: true,
+    status: "queued",
+    processingLimitSec,
+  });
 }
 
 async function persistAaiId(db: D1Database, transcriptId: string, aaiId: string): Promise<boolean> {

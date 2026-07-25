@@ -24,7 +24,8 @@ export function Recorder(props: UseUploadOpts) {
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const startedAtRef = useRef<number>(0);
+  const activeSegmentStartedAtRef = useRef<number | null>(null);
+  const accumulatedRecordingMsRef = useRef(0);
   const cancelRequestedRef = useRef(false);
 
   useEffect(() => () => stopAll(), []);
@@ -39,6 +40,34 @@ export function Recorder(props: UseUploadOpts) {
     streamRef.current = null;
     recRef.current = null;
     chunksRef.current = [];
+    activeSegmentStartedAtRef.current = null;
+    accumulatedRecordingMsRef.current = 0;
+  }
+
+  function activeRecordingMs(now = performance.now()): number {
+    const activeSegmentStartedAt = activeSegmentStartedAtRef.current;
+    const activeSegmentMs =
+      activeSegmentStartedAt === null
+        ? 0
+        : Math.max(0, now - activeSegmentStartedAt);
+    return accumulatedRecordingMsRef.current + activeSegmentMs;
+  }
+
+  function startTimer(rec: MediaRecorder) {
+    if (tickRef.current) clearInterval(tickRef.current);
+    tickRef.current = setInterval(() => {
+      const elapsedSec = Math.min(
+        MAX_RECORDING_SEC,
+        Math.floor(activeRecordingMs() / 1000)
+      );
+      setSeconds(elapsedSec);
+      if (
+        elapsedSec >= MAX_RECORDING_SEC &&
+        rec.state === "recording"
+      ) {
+        rec.stop();
+      }
+    }, 1000);
   }
 
   async function start() {
@@ -73,24 +102,25 @@ export function Recorder(props: UseUploadOpts) {
         const ext = type.includes("mp4") ? "m4a" : "webm";
         const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
         const file = new File([blob], `recording-${ts}.${ext}`, { type });
-        const durationSec = Math.max(1, Math.round((Date.now() - startedAtRef.current) / 1000));
+        const durationSec = Math.max(
+          1,
+          Math.min(
+            MAX_RECORDING_SEC,
+            Math.round(activeRecordingMs() / 1000)
+          )
+        );
         stopAll();
         setRecordedFile(file);
         setRecordedDurationSec(durationSec);
         setPreviewUrl(URL.createObjectURL(file));
         setRecState("reviewing");
       });
-      startedAtRef.current = Date.now();
+      accumulatedRecordingMsRef.current = 0;
+      activeSegmentStartedAtRef.current = performance.now();
       rec.start(1000);
       setRecState("recording");
       setSeconds(0);
-      tickRef.current = setInterval(() => {
-        setSeconds((s) => {
-          const next = s + 1;
-          if (next >= MAX_RECORDING_SEC && rec.state === "recording") rec.stop();
-          return next;
-        });
-      }, 1000);
+      startTimer(rec);
     } catch (err) {
       setRecError(err instanceof Error ? err.message : t("micDenied"));
       stopAll();
@@ -104,25 +134,32 @@ export function Recorder(props: UseUploadOpts) {
 
   function pause() {
     if (recRef.current?.state !== "recording") return;
+    const now = performance.now();
+    const activeSegmentStartedAt = activeSegmentStartedAtRef.current;
+    if (activeSegmentStartedAt !== null) {
+      accumulatedRecordingMsRef.current += Math.max(
+        0,
+        now - activeSegmentStartedAt
+      );
+      activeSegmentStartedAtRef.current = null;
+    }
     recRef.current.pause();
     if (tickRef.current) clearInterval(tickRef.current);
     tickRef.current = null;
+    setSeconds(
+      Math.min(
+        MAX_RECORDING_SEC,
+        Math.floor(accumulatedRecordingMsRef.current / 1000)
+      )
+    );
     setRecState("paused");
   }
 
   function resume() {
     if (recRef.current?.state !== "paused") return;
     recRef.current.resume();
-    startedAtRef.current = Date.now() - seconds * 1000;
-    tickRef.current = setInterval(() => {
-      setSeconds((current) => {
-        const next = current + 1;
-        if (next >= MAX_RECORDING_SEC && recRef.current?.state === "recording") {
-          recRef.current.stop();
-        }
-        return next;
-      });
-    }, 1000);
+    activeSegmentStartedAtRef.current = performance.now();
+    startTimer(recRef.current);
     setRecState("recording");
   }
 

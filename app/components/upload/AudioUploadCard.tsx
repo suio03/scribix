@@ -3,9 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { CloudUpload, FileAudio } from "lucide-react";
-import { ProgressView, UploadErrorHelp, useUpload } from "@/app/components/Uploader";
+import {
+  PartialTranscriptModal,
+  ProgressView,
+  UploadErrorHelp,
+  useUpload,
+} from "@/app/components/Uploader";
 import { markSignInPending } from "@/app/components/Track";
 import { trackEvent } from "@/lib/analytics";
+import type { Tier } from "@/lib/plans";
 
 export type AudioUploadCardCopy = {
   uploadTab: string;
@@ -24,21 +30,37 @@ export function AudioUploadCard({
   copy,
   accept = AUDIO_ACCEPT,
   toolSlug = "audio-to-text",
+  tier = "free",
 }: {
   signedIn: boolean;
   postSignInPath: string;
   copy: AudioUploadCardCopy;
   accept?: string;
   toolSlug?: string;
+  tier?: Tier;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
-  const { phase, progress, uploadError, errorMsg, filename, onPick, retry } = useUpload({
+  const {
+    phase,
+    progress,
+    uploadError,
+    errorMsg,
+    filename,
+    onPick,
+    retry,
+    processingLimitNoticeMin,
+    partialOffer,
+    confirmPartial,
+    cancelPartial,
+    trackPartialUpgrade,
+  } = useUpload({
     signedIn,
     postSignInPath,
     checkoutSuccessPath: postSignInPath,
     audioOnly: true,
     toolSlug,
+    tier,
   });
 
   useEffect(() => {
@@ -56,8 +78,9 @@ export function AudioUploadCard({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-line bg-card shadow-[0_30px_80px_-40px_rgba(14,13,11,0.18)]">
-      <div className="grain" />
+    <>
+      <div className="relative overflow-hidden rounded-3xl border border-line bg-card shadow-[0_30px_80px_-40px_rgba(14,13,11,0.18)]">
+        <div className="grain" />
 
       <div className="relative">
         <div className="flex items-stretch border-b border-line">
@@ -101,6 +124,7 @@ export function AudioUploadCard({
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
+                e.currentTarget.value = "";
                 if (file) onPick(file);
               }}
             />
@@ -139,11 +163,24 @@ export function AudioUploadCard({
                 />
               </>
             ) : (
-              <ProgressView phase={phase} progress={progress} filename={filename} />
+              <ProgressView
+                phase={phase}
+                progress={progress}
+                filename={filename}
+                processingLimitNoticeMin={processingLimitNoticeMin}
+              />
             )}
           </div>
         </div>
       </div>
-    </div>
+      </div>
+      <PartialTranscriptModal
+        offer={partialOffer}
+        checkoutSuccessPath={postSignInPath}
+        onConfirm={confirmPartial}
+        onCancel={cancelPartial}
+        onUpgrade={trackPartialUpgrade}
+      />
+    </>
   );
 }

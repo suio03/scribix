@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { Clock3, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
@@ -119,7 +120,23 @@ type PendingProcessing = {
   fallbackReason?: UploadFallbackReason;
   fileSizeMb: number;
   durationSec?: number;
+  allowPartial?: boolean;
+  partialRemainingMin?: number;
+  partialConfirmedMin?: number;
   startedAt: number;
+};
+
+export type PartialTranscriptOffer = {
+  file: File;
+  source: "upload";
+  inputType: "audio" | "video" | "unknown";
+  durationSecOverride?: number;
+  skipDurationRead: boolean;
+  sourceDurationSec?: number;
+  remainingMin: number;
+  processingMin: number;
+  fileSizeMb: number;
+  toolSlug: string;
 };
 
 const PENDING_PROCESSING_KEY = "scribix:pending_processing";
@@ -137,10 +154,15 @@ export function useUpload({
   const [progress, setProgress] = useState(0);
   const [uploadError, setUploadError] = useState<UploadErrorDetail | null>(null);
   const [filename, setFilename] = useState<string | null>(null);
+  const [partialOffer, setPartialOffer] = useState<PartialTranscriptOffer | null>(null);
+  const [processingLimitNoticeMin, setProcessingLimitNoticeMin] = useState<number | null>(null);
   const lastPickRef = useRef<{
     file: File;
     source: "upload" | "record";
     durationSecOverride?: number;
+    allowPartial?: boolean;
+    skipDurationRead?: boolean;
+    confirmedProcessingMin?: number;
   } | null>(null);
   const recoveryStartedRef = useRef(false);
   const retrySubmitRef = useRef<PendingProcessing | null>(null);
@@ -181,9 +203,21 @@ export function useUpload({
     async (
       file: File,
       source: "upload" | "record" = "upload",
-      durationSecOverride?: number
+      durationSecOverride?: number,
+      allowPartial = false,
+      skipDurationRead = false,
+      confirmedProcessingMin?: number
     ) => {
-      lastPickRef.current = { file, source, durationSecOverride };
+      lastPickRef.current = {
+        file,
+        source,
+        durationSecOverride,
+        allowPartial,
+        skipDurationRead,
+        confirmedProcessingMin,
+      };
+      setPartialOffer(null);
+      setProcessingLimitNoticeMin(null);
       const inputType = getUploadInputType(file);
 
       if (audioOnly && inputType !== "audio") {
@@ -229,11 +263,11 @@ export function useUpload({
         let durationSec = durationSecOverride && durationSecOverride > 0
           ? durationSecOverride
           : undefined;
-        if (!durationSec) {
+        if (!durationSec && !skipDurationRead) {
           try {
             durationSec = await readMediaDuration(file, inputType);
           } catch (error) {
-            if (!isVideo || !DIRECT_VIDEO_ENABLED) throw error;
+            if (source !== "upload" || (isVideo && !DIRECT_VIDEO_ENABLED)) throw error;
           }
         }
         uploadDurationSecEstimate = durationSec;
@@ -248,6 +282,8 @@ export function useUpload({
             mime: browserMediaMime(file, inputType),
             durationSec,
             isVideo,
+            source,
+            allowPartial,
           }),
         });
         if (!preflightRes.ok) {
@@ -268,7 +304,32 @@ export function useUpload({
         const preflight = (await preflightRes.json()) as {
           pipeline: UploadPipeline;
           fallbackReason?: UploadFallbackReason;
+          remainingMin: number;
+          processableMin: number;
+          requiresPartialConfirmation?: boolean;
         };
+        if (
+          preflight.requiresPartialConfirmation &&
+          source === "upload" &&
+          !allowPartial
+        ) {
+          const offer: PartialTranscriptOffer = {
+            file,
+            source,
+            inputType,
+            durationSecOverride: durationSec,
+            skipDurationRead: !durationSec,
+            sourceDurationSec: durationSec,
+            remainingMin: preflight.remainingMin,
+            processingMin: preflight.processableMin,
+            fileSizeMb: fileSizeMb(file.size),
+            toolSlug,
+          };
+          trackEvent("partial_transcript_offer_shown", partialOfferAnalytics(offer));
+          setPartialOffer(offer);
+          setPhase("idle");
+          return;
+        }
         directVideo = preflight.pipeline === "direct_video";
         fallbackReason = preflight.fallbackReason;
 
@@ -336,6 +397,7 @@ export function useUpload({
             isVideo: directVideo,
             directVideo,
             source,
+            allowPartial,
           }),
         });
         if (!initRes.ok) throw await readError(initRes, t);
@@ -396,18 +458,62 @@ export function useUpload({
           fallbackReason,
           fileSizeMb: fileSizeMb(file.size),
           durationSec: uploadDurationSec || undefined,
+          allowPartial,
+          partialRemainingMin: allowPartial
+            ? preflight.remainingMin
+            : undefined,
+          partialConfirmedMin: allowPartial
+            ? confirmedProcessingMin ?? preflight.processableMin
+            : undefined,
           startedAt: uploadStartedAt,
         };
         const startRes = await fetch(`/api/transcripts/${transcriptId}/start`, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ durationSecEstimate: uploadDurationSec }),
+          body: JSON.stringify({
+            durationSecEstimate: uploadDurationSec,
+            allowPartial,
+            confirmedPartialMin: allowPartial
+              ? confirmedProcessingMin ?? preflight.processableMin
+              : undefined,
+          }),
         });
+        const start = startRes.ok
+          ? ((await startRes.json().catch(() => ({}))) as {
+              processingLimitSec?: number;
+            })
+          : {};
         if (!startRes.ok) {
           const startError = await readError(startRes, t);
           if (startError.code !== "aai_submit_uncertain") throw startError;
           console.warn("AAI submit result is uncertain; continuing status recovery.", {
             transcriptId,
+          });
+        }
+        if (allowPartial && startRes.ok) {
+          const processingMin =
+            typeof start.processingLimitSec === "number"
+              ? Math.ceil(start.processingLimitSec / 60)
+              : preflight.processableMin;
+          const confirmedMin =
+            confirmedProcessingMin ?? preflight.processableMin;
+          if (processingMin !== confirmedMin) {
+            setProcessingLimitNoticeMin(processingMin);
+          }
+          trackEvent("partial_transcription_started", {
+            ...partialOfferAnalytics({
+              file,
+              source: "upload",
+              inputType,
+              durationSecOverride,
+              skipDurationRead,
+              sourceDurationSec: durationSec,
+              remainingMin: preflight.remainingMin,
+              processingMin,
+              fileSizeMb: fileSizeMb(file.size),
+              toolSlug,
+            }),
+            processing_minutes: processingMin,
           });
         }
 
@@ -470,6 +576,16 @@ export function useUpload({
             retryable: uploadFailure.retryable,
           }),
         });
+        if (uploadFailure.code === "file_too_large") {
+          trackEvent("upload_size_cap_rejected", {
+            tool_slug: toolSlug,
+            source,
+            input_type: inputType,
+            file_size_mb: fileSizeMb(file.size),
+            error_code: uploadFailure.code,
+            suggested_tier: uploadFailure.suggestedTier,
+          });
+        }
         if (directVideo && directUploadStarted && !directUploadCompleted) {
           trackEvent("direct_video_upload_failed", {
             ...directVideoAnalytics({
@@ -574,10 +690,48 @@ export function useUpload({
       void fetch(`/api/transcripts/${submit.transcriptId}/start`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ durationSecEstimate: submit.durationSec }),
+        body: JSON.stringify({
+          durationSecEstimate: submit.durationSec,
+          allowPartial: submit.allowPartial === true,
+          confirmedPartialMin: submit.allowPartial
+            ? submit.partialConfirmedMin
+            : undefined,
+        }),
       })
         .then(async (response) => {
           if (!response.ok) throw await readError(response, t);
+          const start = (await response.json().catch(() => ({}))) as {
+            processingLimitSec?: number;
+          };
+          if (submit.allowPartial) {
+            const processingMin =
+              typeof start.processingLimitSec === "number"
+                ? Math.ceil(start.processingLimitSec / 60)
+                : submit.partialConfirmedMin;
+            if (processingMin !== undefined) {
+              if (
+                submit.partialConfirmedMin !== undefined &&
+                processingMin !== submit.partialConfirmedMin
+              ) {
+                setProcessingLimitNoticeMin(processingMin);
+              }
+              trackEvent("partial_transcription_started", {
+                tool_slug: submit.toolSlug,
+                source: "upload",
+                input_type: submit.inputType,
+                source_duration_sec: submit.durationSec
+                  ? Math.round(submit.durationSec)
+                  : undefined,
+                remaining_min:
+                  submit.partialRemainingMin ??
+                  submit.partialConfirmedMin ??
+                  processingMin,
+                processing_minutes: processingMin,
+                file_size_mb: submit.fileSizeMb,
+                duration_unknown: !submit.durationSec,
+              });
+            }
+          }
           savePendingProcessing(submit);
           setPhase("polling");
           await pollStatus(submit.transcriptId, t);
@@ -605,8 +759,41 @@ export function useUpload({
     }
     const lastPick = lastPickRef.current;
     if (!lastPick) return;
-    void onPick(lastPick.file, lastPick.source, lastPick.durationSecOverride);
+    void onPick(
+      lastPick.file,
+      lastPick.source,
+      lastPick.durationSecOverride,
+      lastPick.allowPartial,
+      lastPick.skipDurationRead,
+      lastPick.confirmedProcessingMin
+    );
   }, [onPick, router, t]);
+
+  const confirmPartial = useCallback(() => {
+    if (!partialOffer) return;
+    trackEvent("partial_transcript_confirmed", partialOfferAnalytics(partialOffer));
+    void onPick(
+      partialOffer.file,
+      partialOffer.source,
+      partialOffer.durationSecOverride,
+      true,
+      partialOffer.skipDurationRead,
+      partialOffer.processingMin
+    );
+  }, [onPick, partialOffer]);
+
+  const cancelPartial = useCallback(() => {
+    setPartialOffer(null);
+    setPhase("idle");
+  }, []);
+
+  const trackPartialUpgrade = useCallback(() => {
+    if (!partialOffer) return;
+    trackEvent(
+      "partial_transcript_upgrade_clicked",
+      partialOfferAnalytics(partialOffer)
+    );
+  }, [partialOffer]);
 
   return {
     phase,
@@ -616,13 +803,30 @@ export function useUpload({
     filename,
     onPick,
     retry,
+    processingLimitNoticeMin,
+    partialOffer,
+    confirmPartial,
+    cancelPartial,
+    trackPartialUpgrade,
   };
 }
 
 /** Plain, dashboard-styled drag/drop uploader. */
 export function Uploader(props: UseUploadOpts) {
   const t = useTranslations("Dashboard.uploader");
-  const { phase, progress, uploadError, filename, onPick, retry } = useUpload(props);
+  const {
+    phase,
+    progress,
+    uploadError,
+    filename,
+    onPick,
+    retry,
+    processingLimitNoticeMin,
+    partialOffer,
+    confirmPartial,
+    cancelPartial,
+    trackPartialUpgrade,
+  } = useUpload(props);
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const limitCopyKey =
@@ -630,7 +834,8 @@ export function Uploader(props: UseUploadOpts) {
   const videoLimitLabel = (props.tier === "basic" || props.tier === "pro") ? "5 GB" : "2 GB";
 
   return (
-    <div
+    <>
+      <div
       onDragOver={(e) => {
         e.preventDefault();
         setDragOver(true);
@@ -653,6 +858,7 @@ export function Uploader(props: UseUploadOpts) {
         className="hidden"
         onChange={(e) => {
           const f = e.target.files?.[0];
+          e.currentTarget.value = "";
           if (f) onPick(f);
         }}
       />
@@ -676,10 +882,150 @@ export function Uploader(props: UseUploadOpts) {
           />
         </>
       ) : (
-        <ProgressView phase={phase} progress={progress} filename={filename} />
+        <ProgressView
+          phase={phase}
+          progress={progress}
+          filename={filename}
+          processingLimitNoticeMin={processingLimitNoticeMin}
+        />
       )}
+      </div>
+      <PartialTranscriptModal
+        offer={partialOffer}
+        checkoutSuccessPath={
+          props.checkoutSuccessPath ?? props.postSignInPath ?? "/dashboard/new"
+        }
+        onConfirm={confirmPartial}
+        onCancel={cancelPartial}
+        onUpgrade={trackPartialUpgrade}
+      />
+    </>
+  );
+}
+
+export function PartialTranscriptModal({
+  offer,
+  checkoutSuccessPath,
+  onConfirm,
+  onCancel,
+  onUpgrade,
+}: {
+  offer: PartialTranscriptOffer | null;
+  checkoutSuccessPath: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  onUpgrade: () => void;
+}) {
+  const t = useTranslations("Dashboard.uploader");
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
+  useEffect(() => {
+    setUpgradeOpen(false);
+  }, [offer?.file]);
+  if (!offer || typeof document === "undefined") return null;
+
+  const sourceMinutes = offer.sourceDurationSec
+    ? Math.ceil(offer.sourceDurationSec / 60)
+    : null;
+  const dialog = upgradeOpen ? (
+    <UpgradePlanModal
+      reason="quota"
+      open
+      checkoutSuccessPath={checkoutSuccessPath}
+      onCheckoutStart={() => {
+        sessionStorage.setItem("scribix:upgrade_context", JSON.stringify({
+          reason: "quota",
+          error_code: "partial_transcript_upgrade",
+          suggested_tier: "pro",
+          tool_slug: offer.toolSlug,
+        }));
+      }}
+      onClose={() => setUpgradeOpen(false)}
+    />
+  ) : (
+    <div
+      className="fixed inset-0 z-[100] grid place-items-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="partial-transcript-title"
+    >
+      <div className="w-full max-w-[560px] overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_30px_80px_-35px_rgba(14,13,11,0.5)]">
+        <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-5 sm:px-6">
+          <div>
+            <div className="mb-3 inline-grid size-10 place-items-center rounded-xl bg-accent-soft text-accent">
+              <Clock3 size={19} strokeWidth={1.8} />
+            </div>
+            <h2
+              id="partial-transcript-title"
+              className="font-display text-[25px] font-medium tracking-tight text-ink"
+            >
+              {t("partialTitle")}
+            </h2>
+            <p className="mt-2 text-[14px] leading-6 text-ink/62">
+              {sourceMinutes === null
+                ? t("partialUnknownBody", {
+                    processingMin: offer.processingMin,
+                  })
+                : t("partialKnownBody", {
+                    totalMin: sourceMinutes,
+                    processingMin: offer.processingMin,
+                  })}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onCancel}
+            aria-label={t("partialClose")}
+            className="inline-grid size-9 shrink-0 place-items-center rounded-lg text-ink/50 transition hover:bg-ink/5 hover:text-ink"
+          >
+            <X size={17} />
+          </button>
+        </div>
+
+        <div className="grid gap-3 px-5 py-5 sm:grid-cols-2 sm:px-6">
+          <div className="rounded-xl border border-line bg-card px-4 py-3.5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+              {t("partialFileLength")}
+            </p>
+            <p className="mt-1.5 text-[18px] font-semibold text-ink">
+              {sourceMinutes === null
+                ? t("partialLengthUnavailable")
+                : t("partialMinutes", { minutes: sourceMinutes })}
+            </p>
+          </div>
+          <div className="rounded-xl border border-accent/25 bg-accent-soft/45 px-4 py-3.5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+              {t("partialAvailable")}
+            </p>
+            <p className="mt-1.5 text-[18px] font-semibold text-ink">
+              {t("partialMinutes", { minutes: offer.processingMin })}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-2.5 border-t border-line px-5 py-5 sm:grid-cols-2 sm:px-6">
+          <button
+            type="button"
+            onClick={() => {
+              onUpgrade();
+              setUpgradeOpen(true);
+            }}
+            className="rounded-xl border border-line bg-paper px-4 py-3 text-[13px] font-semibold text-ink transition hover:border-ink/35 hover:bg-card"
+          >
+            {t("partialUpgrade")}
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="rounded-xl bg-accent px-4 py-3 text-[13px] font-semibold text-paper transition hover:bg-accent/90"
+          >
+            {t("partialConfirm", { minutes: offer.processingMin })}
+          </button>
+        </div>
+      </div>
     </div>
   );
+
+  return createPortal(dialog, document.body);
 }
 
 export function UploadErrorHelp({
@@ -887,10 +1233,12 @@ export function ProgressView({
   phase,
   progress,
   filename,
+  processingLimitNoticeMin,
 }: {
   phase: UploadPhase;
   progress: number;
   filename: string | null;
+  processingLimitNoticeMin?: number | null;
 }) {
   const t = useTranslations("Dashboard.uploader");
   const label =
@@ -915,6 +1263,14 @@ export function ProgressView({
     <div className="space-y-3">
       {filename && <p className="text-sm text-ink/70">{filename}</p>}
       <p className="text-base font-medium">{label}</p>
+      {processingLimitNoticeMin !== null &&
+      processingLimitNoticeMin !== undefined ? (
+        <p className="text-xs leading-5 text-accent">
+          {t("partialLimitChanged", {
+            minutes: processingLimitNoticeMin,
+          })}
+        </p>
+      ) : null}
       <div className="mx-auto h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-ink/10">
         {bar === null ? (
           <div className="h-full animate-pulse bg-accent" style={{ width: "30%" }} />
@@ -972,10 +1328,17 @@ async function readMediaDuration(
   el.src = url;
   try {
     await new Promise<void>((resolve, reject) => {
-      el.addEventListener("loadedmetadata", () => resolve(), { once: true });
-      el.addEventListener("error", () => reject(new Error("cannot_read_metadata")), {
-        once: true,
-      });
+      const onLoaded = () => {
+        window.clearTimeout(timeoutId);
+        resolve();
+      };
+      const onError = () => {
+        window.clearTimeout(timeoutId);
+        reject(new Error("cannot_read_metadata"));
+      };
+      const timeoutId = window.setTimeout(onError, 10_000);
+      el.addEventListener("loadedmetadata", onLoaded, { once: true });
+      el.addEventListener("error", onError, { once: true });
     });
     if (Number.isFinite(el.duration) && el.duration > 0) return el.duration;
     throw new Error("cannot_read_metadata");
@@ -1182,6 +1545,21 @@ function fileSizeMb(bytes: number): number {
 
 function elapsedSec(startedAt: number): number {
   return Number(((Date.now() - startedAt) / 1000).toFixed(1));
+}
+
+function partialOfferAnalytics(offer: PartialTranscriptOffer) {
+  return {
+    tool_slug: offer.toolSlug,
+    source: offer.source,
+    input_type: offer.inputType,
+    source_duration_sec: offer.sourceDurationSec
+      ? Math.round(offer.sourceDurationSec)
+      : undefined,
+    remaining_min: offer.remainingMin,
+    processing_minutes: offer.processingMin,
+    file_size_mb: offer.fileSizeMb,
+    duration_unknown: !offer.sourceDurationSec,
+  };
 }
 
 function directVideoAnalytics({

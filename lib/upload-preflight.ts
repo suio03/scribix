@@ -50,10 +50,6 @@ export function validateUploadPreflight(
     return { error: "invalid_duration" };
   }
 
-  if (input.durationSec === null && !input.isVideo) {
-    return { error: "invalid_duration" };
-  }
-
   const plan = PLANS[tier];
   if (input.durationSec !== null && input.durationSec > plan.maxFileSec) {
     const suggestedTier = tierForDuration(input.durationSec);
