@@ -18,6 +18,7 @@ import {
   StepsSection,
   ToolHero,
   UseCaseGridSection,
+  mergeItemDefinitions,
   type ComparisonRow,
   type FaqItem,
   type FitListItem,
@@ -26,6 +27,7 @@ import {
   type LandingStep,
   type ProofItem,
   type TableRow,
+  type ToolLandingIcon,
 } from "@/app/components/marketing/ToolLandingSections";
 import {
   AudioUploadCard,
@@ -39,6 +41,53 @@ import { TrackToolVisit } from "@/app/components/Track";
 
 const PATH = "/audio-to-text";
 
+type ProofItemCopy = Omit<ProofItem, "key" | "icon">;
+type LandingStepCopy = Omit<LandingStep, "key" | "n" | "icon">;
+type GridCardCopy = Omit<GridCard, "key" | "icon">;
+type InsightCardCopy = Omit<InsightCard, "key" | "icon" | "link"> & {
+  link?: Omit<NonNullable<InsightCard["link"]>, "href">;
+};
+
+const HERO_PROOF_DEFINITIONS = [
+  { key: "freeMinutes", icon: "BadgeCheck" },
+  { key: "languageDetection", icon: "Globe" },
+  { key: "speakerLabels", icon: "Users" },
+  { key: "privacy", icon: "ShieldCheck" },
+] as const satisfies ReadonlyArray<{ key: string; icon: ToolLandingIcon }>;
+
+const STEP_DEFINITIONS = [
+  { key: "signIn", n: "01", icon: "Lock" },
+  { key: "upload", n: "02", icon: "FileAudio" },
+  { key: "export", n: "03", icon: "Download" },
+] as const satisfies ReadonlyArray<{
+  key: string;
+  n: string;
+  icon: ToolLandingIcon;
+}>;
+
+const USE_CASE_DEFINITIONS = [
+  { key: "interviews", icon: "Users" },
+  { key: "podcasts", icon: "Mic" },
+  { key: "lectures", icon: "Search" },
+  { key: "captions", icon: "Captions" },
+] as const satisfies ReadonlyArray<{ key: string; icon: ToolLandingIcon }>;
+
+const CAPABILITY_DEFINITIONS = [
+  { key: "languageDetection", icon: "Globe" },
+  { key: "speakerLabels", icon: "Users" },
+  { key: "timestamps", icon: "Clock3" },
+  { key: "exports", icon: "Download" },
+] as const satisfies ReadonlyArray<{ key: string; icon: ToolLandingIcon }>;
+
+const INSIGHT_DEFINITIONS = [
+  { key: "quality", icon: "Sparkles" },
+  { key: "privacy", icon: "Lock", linkHref: "/privacy" },
+] as const satisfies ReadonlyArray<{
+  key: string;
+  icon: ToolLandingIcon;
+  linkHref?: string;
+}>;
+
 type AudioToTextCopy = {
   hero: {
     issue: string;
@@ -51,8 +100,7 @@ type AudioToTextCopy = {
     primaryCta: string;
     signedInPrimaryCta: string;
     secondaryCta: string;
-    secondaryHref: string;
-    proof: ProofItem[];
+    proof: ProofItemCopy[];
   };
   upload: AudioUploadCardCopy;
   quickAnswer: {
@@ -72,14 +120,14 @@ type AudioToTextCopy = {
     label: string;
     title: string;
     accentTitle: string;
-    steps: LandingStep[];
+    steps: LandingStepCopy[];
   };
   useCases: {
     number: string;
     label: string;
     title: string;
     accentTitle: string;
-    items: GridCard[];
+    items: GridCardCopy[];
   };
   demo: {
     number: string;
@@ -95,10 +143,10 @@ type AudioToTextCopy = {
     title: string;
     accentTitle: string;
     intro: string;
-    items: GridCard[];
+    items: GridCardCopy[];
   };
   insights: {
-    items: InsightCard[];
+    items: InsightCardCopy[];
   };
   comparison: {
     number: string;
@@ -220,6 +268,12 @@ export default async function AudioToTextPage({
         <ToolHero
           {...copy.hero}
           signedIn={!!session}
+          secondaryHref="/"
+          proof={mergeItemDefinitions(
+            copy.hero.proof,
+            HERO_PROOF_DEFINITIONS,
+            "AudioToText.hero.proof"
+          )}
           description={
             <>
               {copy.hero.descriptionStart}{" "}
@@ -236,11 +290,48 @@ export default async function AudioToTextPage({
         </ToolHero>
         <QuickAnswerSection {...copy.quickAnswer} />
         <OverviewSection {...copy.overview} />
-        <StepsSection {...copy.howItWorks} />
-        <UseCaseGridSection {...copy.useCases} />
+        <StepsSection
+          {...copy.howItWorks}
+          steps={mergeItemDefinitions(
+            copy.howItWorks.steps,
+            STEP_DEFINITIONS,
+            "AudioToText.howItWorks.steps"
+          )}
+        />
+        <UseCaseGridSection
+          {...copy.useCases}
+          items={mergeItemDefinitions(
+            copy.useCases.items,
+            USE_CASE_DEFINITIONS,
+            "AudioToText.useCases.items"
+          )}
+        />
         <DemoTranscriptSection {...copy.demo} />
-        <FeatureGridSection {...copy.capabilities} />
-        <InsightCardsSection {...copy.insights} />
+        <FeatureGridSection
+          {...copy.capabilities}
+          items={mergeItemDefinitions(
+            copy.capabilities.items,
+            CAPABILITY_DEFINITIONS,
+            "AudioToText.capabilities.items"
+          )}
+        />
+        <InsightCardsSection
+          items={mergeItemDefinitions(
+            copy.insights.items,
+            INSIGHT_DEFINITIONS,
+            "AudioToText.insights.items"
+          ).map((item) => {
+            const linkHref =
+              "linkHref" in item ? item.linkHref : undefined;
+            return {
+              ...item,
+              link:
+                item.link && linkHref
+                  ? { ...item.link, href: linkHref }
+                  : undefined,
+            };
+          })}
+        />
         <ApproachComparisonSection {...copy.comparison} />
         <FaqSection {...copy.faq} />
         <FinalToolCta {...copy.finalCta} signedIn={!!session} />

@@ -233,21 +233,24 @@ in production unless actively investigating a caption-service failure.
 
 ## Phase 4 — Paddle payments
 
-Scribix uses Paddle Billing for paid Starter and Pro Unlimited subscriptions. The app
-opens Paddle overlay checkout through Paddle.js and falls back to Paddle's
-hosted checkout URL if Paddle.js is not initialized.
+Scribix uses Paddle Billing. New purchases offer Pro only: $20 monthly or
+$120 yearly. Existing Starter subscriptions remain supported as a grandfathered
+legacy tier. The app opens Paddle overlay checkout through Paddle.js and falls
+back to Paddle's hosted checkout URL if Paddle.js is not initialized.
 
 ### 4.1 Products and prices
 
-Create recurring Paddle prices for:
+Create recurring Paddle prices for new Pro purchases, and retain the existing
+Starter prices for grandfathered subscriptions:
 
-- Starter monthly → `PADDLE_BASIC_MONTHLY_PRICE_ID`
-- Starter yearly → `PADDLE_BASIC_YEARLY_PRICE_ID`
 - Pro monthly → `PADDLE_PRO_MONTHLY_PRICE_ID`
 - Pro yearly → `PADDLE_PRO_YEARLY_PRICE_ID`
+- Legacy Starter monthly → `PADDLE_BASIC_MONTHLY_PRICE_ID`
+- Legacy Starter yearly → `PADDLE_BASIC_YEARLY_PRICE_ID`
 
-Use Paddle price IDs (`pri_...`), not product IDs. Keep the public "Starter"
-name in Paddle/dashboard copy; the app maps it to internal tier `basic`.
+Use Paddle price IDs (`pri_...`), not product IDs. The app maps legacy Starter
+to internal tier `basic`. Do not remove its price IDs while grandfathered
+subscriptions still exist, and do not expose them in new purchase UI.
 
 ### 4.2 Local env
 

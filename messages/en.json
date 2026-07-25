@@ -20,7 +20,6 @@
     "billing": "Billing",
     "pricingBadge": "50% off",
     "freePlan": "Free Plan",
-    "freePlanQuota": "4 / day",
     "usageTitle": "Minutes left",
     "usageRemaining": "{remaining} min left",
     "usageMeter": "{used} / {quota} min used",
@@ -32,52 +31,14 @@
     "language": "Language",
     "docs": "Docs",
     "help": "Help",
-    "nav": [
-      {
-        "label": "Home",
-        "href": "/",
-        "icon": "Home"
-      },
-      {
-        "label": "Audio to Text",
-        "href": "/audio-to-text",
-        "icon": "AudioLines"
-      },
-      {
-        "label": "MP3 to Text",
-        "href": "/mp3-to-text",
-        "icon": "FileAudio"
-      },
-      {
-        "label": "Video to Text",
-        "href": "/#generator",
-        "icon": "Clapperboard"
-      },
-      {
-        "label": "YouTube to Transcript",
-        "href": "/youtube-to-transcript",
-        "icon": "Captions"
-      },
-      {
-        "label": "AI Note Taker",
-        "href": "/ai-note-taker",
-        "icon": "ListChecks"
-      }
-    ],
-    "tools": [
-      {
-        "label": "Summarize",
-        "href": "#features"
-      },
-      {
-        "label": "Translate",
-        "href": "#features"
-      },
-      {
-        "label": "Subtitles (SRT/VTT)",
-        "href": "#features"
-      }
-    ],
+    "navLabels": {
+      "home": "Home",
+      "audioToText": "Audio to Text",
+      "mp3ToText": "MP3 to Text",
+      "videoToText": "Video to Text",
+      "youtubeToTranscript": "YouTube to Transcript",
+      "aiNoteTaker": "AI Note Taker"
+    },
     "currentPlanTitle": "Current plan",
     "manageBilling": "Manage billing",
     "tierFree": "Free",
@@ -105,44 +66,33 @@
     "description": "Scribix turns video and audio files into speaker-labeled text you can review and export. Upload MP4, MOV, WebM, AVI, MP3, WAV, or M4A and get word-level timestamps with <stat>automatic language detection</stat>. <stat>45 minutes free</stat> with Google sign-in and no credit card.",
     "trust": [
       {
-        "label": "45 Free Minutes",
-        "icon": "Target"
+        "label": "45 Free Minutes"
       },
       {
-        "label": "Automatic Language Detection",
-        "icon": "Globe"
+        "label": "Automatic Language Detection"
       },
       {
-        "label": "Up to 1 GB Audio",
-        "icon": "InfinityIcon"
+        "label": "Up to 1 GB Audio"
       },
       {
-        "label": "Speaker Labels",
-        "icon": "Users"
+        "label": "Speaker Labels"
       },
       {
-        "label": "5 Export Formats",
-        "icon": "ShieldCheck"
+        "label": "5 Export Formats"
       }
     ],
     "tabs": [
       {
-        "id": "upload",
         "label": "Upload File",
-        "hint": "Video · Audio",
-        "icon": "Upload"
+        "hint": "Video · Audio"
       },
       {
-        "id": "youtube",
         "label": "YouTube Link",
-        "hint": "Paste URL",
-        "icon": "PlaySquare"
+        "hint": "Paste URL"
       },
       {
-        "id": "record",
         "label": "Record",
-        "hint": "Live audio",
-        "icon": "Mic"
+        "hint": "Live audio"
       }
     ],
     "upload": {
@@ -165,34 +115,26 @@
     "intro": "A video-to-text converter transcribes the spoken audio inside a video into written text. Modern AI speech models identify words, separate speakers, and attach timestamps — producing an editable transcript in minutes instead of hours. Scribix runs the same class of speech model that powers professional transcription suites — sign in with Google to get started and produce output clean enough to publish.",
     "items": [
       {
-        "icon": "Users",
         "title": "Speaker labels for conversations",
-        "body": "Scribix requests speaker diarization during transcription and separates turns when the recording quality supports it. Labels can be renamed afterward.",
-        "span": "lg:col-span-2"
+        "body": "Scribix requests speaker diarization during transcription and separates turns when the recording quality supports it. Labels can be renamed afterward."
       },
       {
-        "icon": "Globe",
         "title": "Automatic language detection",
         "body": "Scribix detects the spoken language automatically so most uploads do not need a language setting."
       },
       {
-        "icon": "Clock",
         "title": "Word-level timestamps",
         "body": "Click any word to play that exact moment. Timestamps export with SRT and VTT subtitles ready for video players."
       },
       {
-        "icon": "FileDown",
         "title": "Five export formats",
-        "body": "TXT, DOCX, SRT, VTT, and CSV — covers documents, captions, spreadsheets, and review workflows without extra conversion.",
-        "span": "lg:col-span-2"
+        "body": "TXT, DOCX, SRT, VTT, and CSV — covers documents, captions, spreadsheets, and review workflows without extra conversion."
       },
       {
-        "icon": "Sparkles",
         "title": "Reviewable transcript output",
         "body": "Results vary with recording quality, noise, accents, vocabulary, and overlapping speech. Speaker labels and timestamps make review faster."
       },
       {
-        "icon": "Lock",
         "title": "Source files deleted after 14 days",
         "body": "Uploaded audio and video are deleted automatically after 14 days. Transcripts remain until you delete them or close your account."
       }
@@ -203,24 +145,18 @@
     "number": "02",
     "h2Part1": "Three steps.",
     "h2Part2": "AI transcription with speaker labels.",
+    "uploadLimits": "Free: up to {freeMinutes} min · Paid: up to {paidHours} hr",
     "steps": [
       {
-        "n": "01",
-        "icon": "CloudUpload",
         "title": "Upload your video or audio file.",
-        "body": "Drag and drop an MP4, MOV, AVI, MKV, WebM, MP3, WAV, or M4A file up to 1 GB. No format conversion needed — Scribix handles every common media container.",
-        "duration": "Up to 1 GB · 6 hours"
+        "body": "Drag and drop an MP4, MOV, AVI, MKV, WebM, MP3, WAV, or M4A file up to 1 GB. No format conversion needed — Scribix handles every common media container."
       },
       {
-        "n": "02",
-        "icon": "Cpu",
         "title": "AI transcribes with speaker labels.",
         "body": "Scribix detects the language, separates speakers when the audio supports it, and adds word-level timestamps. Processing time varies by file and service load.",
         "duration": "Timing varies by file"
       },
       {
-        "n": "03",
-        "icon": "Download",
         "title": "Edit, copy, or export.",
         "body": "Click any word to play that exact moment. Edit inline, then download as TXT, DOCX, SRT, VTT, or CSV — or copy the full transcript into your editor.",
         "duration": "5 export formats"
@@ -235,7 +171,6 @@
     "intro": "From creators repurposing 90 minutes of footage into shorts, to journalists quoting 2-hour interviews accurately — video-to-text is how recorded conversation becomes published work. Scribix is the workhorse behind it.",
     "items": [
       {
-        "icon": "Clapperboard",
         "title": "Video creators",
         "audience": "Long-form to short-form",
         "body": "Generate captions for accessibility, repurpose long videos into blog posts, build searchable episode archives. Word-level timestamps make it trivial to extract viral clips with [12:04 – 12:38] precision.",
@@ -246,7 +181,6 @@
         ]
       },
       {
-        "icon": "Mic",
         "title": "Podcasters & Producers",
         "audience": "Audio + video shows",
         "body": "Convert each episode into show notes, blog content, and SEO-indexed transcripts — the difference between getting found on Google and not. Speaker labels arrive ready to publish.",
@@ -257,7 +191,6 @@
         ]
       },
       {
-        "icon": "Newspaper",
         "title": "Journalists & Interviewers",
         "audience": "Investigative reporting",
         "body": "Transcribe a 90-minute interview while you walk to the next one. Speaker labels mean you can quote sources accurately without re-listening — quote-ready text in a fraction of the time.",
@@ -268,7 +201,6 @@
         ]
       },
       {
-        "icon": "FlaskConical",
         "title": "Researchers & UX",
         "audience": "Focus groups, fieldwork",
         "body": "Run qualitative coding on focus groups, lectures, and field recordings without paying $1.50/min for human transcription. Tag themes, search every word, export to Dovetail or Notion.",
@@ -279,7 +211,6 @@
         ]
       },
       {
-        "icon": "GraduationCap",
         "title": "Students",
         "audience": "Lectures & study",
         "body": "Turn a 2-hour lecture into searchable notes. Mark a confusing moment, click the word, hear it again. Try it free, then use Pro for longer lectures throughout the semester.",
@@ -290,7 +221,6 @@
         ]
       },
       {
-        "icon": "Scale",
         "title": "Legal & Compliance",
         "audience": "Depositions, hearings",
         "body": "Create a timestamped first draft for review. Legal or compliance transcripts must be checked by a qualified person before use.",
@@ -305,7 +235,7 @@
   "PricingPage": {
     "metadata": {
       "title": "Pricing",
-      "description": "Simple Scribix pricing: start with 45 free lifetime minutes, then upgrade to Pro for 2,400 transcription minutes every month.",
+      "description": "Simple Scribix pricing: start with {freeMinutes, number} free lifetime minutes, then upgrade to Pro for {proMinutes, number} transcription minutes every month.",
       "ogTitle": "Scribix Pricing",
       "ogDescription": "Free and Pro plans for video and audio transcription."
     },
@@ -315,7 +245,7 @@
     "billingToggleLabel": "Billing interval",
     "billingMonthly": "Monthly",
     "billingYearly": "Yearly",
-    "billingYearlyBadge": "Save 50%",
+    "billingYearlyBadge": "Save {savingsPercent, number}%",
     "billingYearlyNote": "Billed {price} yearly · Save {savings}",
     "noCreditCard": "No credit card required",
     "chooseLabel": "Choose {plan}",
@@ -327,61 +257,54 @@
     "faqTitle": "Pricing FAQ",
     "featureRows": [
       {
-        "key": "transcriptFiles",
         "label": "Transcript files",
         "values": {
-          "free": "Limited by 45 min total",
-          "starter": "Unlimited files within 600 min",
-          "pro": "Within 2,400 min/month"
+          "free": "Limited by {minutes, number} min total",
+          "starter": "Unlimited files within {minutes, number} min",
+          "pro": "Within {minutes, number} min/month"
         }
       },
       {
-        "key": "monthlyMinutes",
         "label": "Transcription allowance",
         "values": {
-          "free": "45 min lifetime",
-          "starter": "600 min/month",
-          "pro": "40 hours/month (2,400 min)"
+          "free": "{minutes, number} min lifetime",
+          "starter": "{minutes, number} min/month",
+          "pro": "{hours, number} hours/month ({minutes, number} min)"
         }
       },
       {
-        "key": "youtubeCaptionImports",
         "label": "YouTube caption imports",
         "values": {
-          "free": "10/day",
-          "starter": "100/month",
-          "pro": "1,000/month"
+          "free": "{imports, number}/day",
+          "starter": "{imports, number}/month",
+          "pro": "{imports, number}/month"
         }
       },
       {
-        "key": "maxYoutubeCaptionVideo",
         "label": "Max YouTube caption video",
         "values": {
-          "free": "2 hours",
-          "starter": "10 hours",
-          "pro": "10 hours"
+          "free": "{hours, number} hours",
+          "starter": "{hours, number} hours",
+          "pro": "{hours, number} hours"
         }
       },
       {
-        "key": "maxFileLength",
         "label": "File length",
         "values": {
-          "free": "Up to 45 min",
-          "starter": "Up to 10 hours",
-          "pro": "Up to 10 hours"
+          "free": "Up to {minutes, number} min",
+          "starter": "Up to {hours, number} hours",
+          "pro": "Up to {hours, number} hours"
         }
       },
       {
-        "key": "maxFileSize",
         "label": "Max file size",
         "values": {
-          "free": "2 GB video / 1 GB audio",
-          "starter": "5 GB video / 1 GB audio",
-          "pro": "5 GB video / 1 GB audio"
+          "free": "{videoGb, number} GB video / {audioGb, number} GB audio",
+          "starter": "{videoGb, number} GB video / {audioGb, number} GB audio",
+          "pro": "{videoGb, number} GB video / {audioGb, number} GB audio"
         }
       },
       {
-        "key": "processingQueue",
         "label": "Processing queue",
         "values": {
           "free": "Standard",
@@ -390,7 +313,6 @@
         }
       },
       {
-        "key": "accuracyModel",
         "label": "Transcription model",
         "values": {
           "free": "Standard",
@@ -399,7 +321,6 @@
         }
       },
       {
-        "key": "aiTranslation",
         "label": "AI translation",
         "values": {
           "free": "No",
@@ -408,7 +329,6 @@
         }
       },
       {
-        "key": "speakerLabels",
         "label": "Speaker labels",
         "values": {
           "free": "Yes",
@@ -417,7 +337,6 @@
         }
       },
       {
-        "key": "exports",
         "label": "Exports",
         "values": {
           "free": "TXT, DOCX, SRT, VTT, CSV",
@@ -426,7 +345,6 @@
         }
       },
       {
-        "key": "aiSummaries",
         "label": "AI notes",
         "values": {
           "free": "No",
@@ -437,28 +355,22 @@
     ],
     "plans": [
       {
-        "id": "free",
         "name": "Free",
-        "price": "$0",
         "cadence": "one-time",
         "summary": "Try Scribix once and check transcript quality before paying."
       },
       {
-        "id": "pro",
         "name": "Pro",
-        "price": "$20",
         "cadence": "per month",
         "summary": "Transcribe long recordings, turn them into clear AI notes, and translate them in one plan.",
         "purchaseNote": "Cancel anytime",
-        "annual": "$120/year",
-        "annualPrice": "$120",
         "annualCadence": "per year"
       }
     ],
     "faqs": [
       {
         "question": "Can I start for free?",
-        "answer": "Yes. Free includes 45 lifetime minutes so you can test transcript quality before choosing a paid plan."
+        "answer": "Yes. Free includes {freeMinutes, number} lifetime minutes so you can test transcript quality before choosing a paid plan."
       },
       {
         "question": "What counts as transcription minutes?",
@@ -466,15 +378,15 @@
       },
       {
         "question": "Do unused minutes roll over?",
-        "answer": "No. Pro includes 2,400 transcription minutes every month. The allowance resets monthly and unused minutes do not roll over, including on the yearly billing option."
+        "answer": "No. Pro includes {proMinutes, number} transcription minutes every month. The allowance resets monthly and unused minutes do not roll over, including on the yearly billing option."
       },
       {
         "question": "What is the max file length?",
-        "answer": "Free supports files up to 45 minutes, while Pro supports files up to 10 hours."
+        "answer": "Free supports files up to {freeMinutes, number} minutes, while Pro supports files up to {proHours, number} hours."
       },
       {
         "question": "Are there upload size limits?",
-        "answer": "Yes. Video uploads can be up to 5 GB on Pro and 2 GB on Free. Audio uploads can be up to 1 GB. File duration and remaining monthly minutes still apply."
+        "answer": "Yes. Video uploads can be up to {proVideoGb, number} GB on Pro and {freeVideoGb, number} GB on Free. Audio uploads can be up to {audioGb, number} GB. File duration and remaining monthly minutes still apply."
       },
       {
         "question": "Can I change plans later?",
@@ -482,7 +394,7 @@
       },
       {
         "question": "Is there a free trial on paid plans?",
-        "answer": "Paid plans do not include a separate trial. Use the 45 free lifetime minutes to check transcript quality before subscribing."
+        "answer": "Paid plans do not include a separate trial. Use the {freeMinutes, number} free lifetime minutes to check transcript quality before subscribing."
       }
     ],
     "aiFeatures": "AI notes + translation",
@@ -561,20 +473,11 @@
   },
   "Footer": {
     "tagline": "Studio-grade video-to-text for the people who turn recorded conversation into stories.",
-    "legal": [
-      {
-        "label": "Terms of Service",
-        "href": "/terms"
-      },
-      {
-        "label": "Privacy Policy",
-        "href": "/privacy"
-      },
-      {
-        "label": "Refund Policy",
-        "href": "/refunds"
-      }
-    ]
+    "legalLabels": {
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "refunds": "Refund Policy"
+    }
   },
   "Dashboard": {
     "layout": {
@@ -912,22 +815,17 @@
       "primaryCta": "Try 45 Minutes Free",
       "signedInPrimaryCta": "Upload Audio",
       "secondaryCta": "Need video to text?",
-      "secondaryHref": "/",
       "proof": [
         {
-          "icon": "BadgeCheck",
           "label": "45 min free trial"
         },
         {
-          "icon": "Globe",
           "label": "Automatic language detection"
         },
         {
-          "icon": "Users",
           "label": "Speaker labels"
         },
         {
-          "icon": "ShieldCheck",
           "label": "No credit card"
         }
       ]
@@ -1003,22 +901,16 @@
       "accentTitle": "Audio to text.",
       "steps": [
         {
-          "n": "01",
-          "icon": "Lock",
           "title": "Sign in with Google.",
           "body": "Your free trial starts with 45 transcription minutes and no credit card.",
           "meta": "No credit card"
         },
         {
-          "n": "02",
-          "icon": "FileAudio",
           "title": "Upload audio.",
           "body": "Choose an audio file such as MP3, WAV, or M4A.",
           "meta": "Audio upload"
         },
         {
-          "n": "03",
-          "icon": "Download",
           "title": "Review and export.",
           "body": "Check speaker labels and timestamps, then copy or download TXT, DOCX, SRT, VTT, or CSV.",
           "meta": "5 formats"
@@ -1032,25 +924,21 @@
       "accentTitle": "usable text.",
       "items": [
         {
-          "icon": "Users",
           "title": "Interview transcription",
           "who": "Journalists, recruiters, researchers",
           "output": "Timestamped Q&A transcript with speaker labels"
         },
         {
-          "icon": "Mic",
           "title": "Meeting notes",
           "who": "Founders, sales teams, operators",
           "output": "Searchable record of what was said and who said it"
         },
         {
-          "icon": "Search",
           "title": "Lecture review",
           "who": "Students and educators",
           "output": "Study notes that can be searched and quoted"
         },
         {
-          "icon": "Captions",
           "title": "Subtitle prep",
           "who": "Video editors and creators",
           "output": "SRT or VTT captions generated from the audio track"
@@ -1073,22 +961,18 @@
       "intro": "This page is for transcription: upload audio, get text with timestamps and speaker labels, then copy or export it. Summaries, translation, chat, and mind maps are not part of this workflow.",
       "items": [
         {
-          "icon": "Globe",
           "title": "Automatic language detection",
           "body": "Automatic language detection keeps the upload flow simple when your recordings span different speakers or regions."
         },
         {
-          "icon": "Users",
           "title": "Speaker labels",
           "body": "Conversation transcripts are easier to scan when each turn is separated by speaker."
         },
         {
-          "icon": "Clock3",
           "title": "Timestamps",
           "body": "Timestamped text helps you trace quotes, prepare captions, and review important moments."
         },
         {
-          "icon": "Download",
           "title": "Five export formats",
           "body": "Download TXT, DOCX, SRT, VTT, or CSV, or copy the transcript directly from the app."
         }
@@ -1097,7 +981,6 @@
     "insights": {
       "items": [
         {
-          "icon": "Sparkles",
           "title": "How accurate is audio-to-text transcription?",
           "body": [
             "Clear recordings generally produce better transcripts. Quality varies with microphone distance, noise, accents, specialized vocabulary, and overlapping speakers.",
@@ -1105,14 +988,12 @@
           ]
         },
         {
-          "icon": "Lock",
           "title": "Is your audio private?",
           "body": [
             "Scribix uses your uploaded audio only to generate and deliver transcripts for your account. Audio and video files are deleted automatically after 14 days.",
             "Transcripts stay in your account until you delete them or close your account. Read the"
           ],
           "link": {
-            "href": "/privacy",
             "label": "privacy policy",
             "suffix": "."
           }
@@ -1258,23 +1139,18 @@
       "primaryCta": "Start with 45 Free Minutes",
       "signedInPrimaryCta": "Create New Transcript",
       "secondaryCta": "View Pricing",
-      "secondaryHref": "/pricing",
       "trust": [
         {
-          "label": "Audio, Video, YouTube & Mic",
-          "icon": "Upload"
+          "label": "Audio, Video, YouTube & Mic"
         },
         {
-          "label": "Speaker Labels",
-          "icon": "Users"
+          "label": "Speaker Labels"
         },
         {
-          "label": "Word-level Timestamps",
-          "icon": "Clock"
+          "label": "Word-level Timestamps"
         },
         {
-          "label": "AI Notes on Paid Plans",
-          "icon": "Sparkles"
+          "label": "AI Notes on Paid Plans"
         }
       ]
     },
@@ -1285,34 +1161,26 @@
       "intro": "Scribix turns a recording into two useful layers: a transcript you can verify and a shorter set of AI notes you can act on. The notes focus on an overview, key points, and action items, while speaker labels and timestamps keep important moments traceable to the recording.",
       "items": [
         {
-          "icon": "Sparkles",
           "title": "Structured AI notes",
-          "body": "Generate an overview, key points, and action items from a completed transcript with Pro.",
-          "span": "lg:col-span-2"
+          "body": "Generate an overview, key points, and action items from a completed transcript with Pro."
         },
         {
-          "icon": "Users",
           "title": "Speaker-labeled conversations",
           "body": "Scribix separates speaker turns when recording quality supports it, and you can rename the generated labels afterward."
         },
         {
-          "icon": "Clock",
           "title": "Timestamps you can check",
           "body": "Word-level timestamps help you return to the exact moment behind a note, quote, or follow-up."
         },
         {
-          "icon": "Files",
           "title": "Four ways to add a recording",
-          "body": "Upload video, upload audio, record through your microphone, or import an available caption track from a YouTube URL.",
-          "span": "lg:col-span-2"
+          "body": "Upload video, upload audio, record through your microphone, or import an available caption track from a YouTube URL."
         },
         {
-          "icon": "FileDown",
           "title": "Transcript exports",
           "body": "Review and edit the transcript, then copy it or export TXT, DOCX, SRT, VTT, or CSV."
         },
         {
-          "icon": "Lock",
           "title": "Clear retention controls",
           "body": "Uploaded audio and video are deleted automatically after 14 days. Transcripts remain until you delete them or close your account."
         }
@@ -1325,22 +1193,16 @@
       "h2Part2": "From recording to AI notes.",
       "steps": [
         {
-          "n": "01",
-          "icon": "CloudUpload",
           "title": "Add the conversation.",
           "body": "Upload an audio or video file, record live audio through your microphone, or paste a YouTube URL that has an available caption track.",
           "duration": "Audio · Video · YouTube · Mic"
         },
         {
-          "n": "02",
-          "icon": "Cpu",
           "title": "Create a traceable transcript.",
           "body": "Scribix transcribes uploaded or recorded media, adds speaker labels when the audio supports them, and attaches word-level timestamps. YouTube URLs import the selected caption track instead.",
           "duration": "Speakers + timestamps"
         },
         {
-          "n": "03",
-          "icon": "ListChecks",
           "title": "Generate and review the notes.",
           "body": "With Pro, create AI notes with an overview, key points, and action items. Check important details against the transcript before sharing or acting on them.",
           "duration": "Overview · Key points · Actions"
@@ -1355,7 +1217,6 @@
       "intro": "Use Scribix after meetings, interviews, lectures, webinars, podcasts, and research sessions when replaying the full recording would slow down the next step.",
       "items": [
         {
-          "icon": "BriefcaseBusiness",
           "title": "Meeting follow-up",
           "audience": "Founders, operators, project teams",
           "body": "Keep the full discussion searchable, then pull out the main points and follow-up tasks without inviting a bot into the call.",
@@ -1366,7 +1227,6 @@
           ]
         },
         {
-          "icon": "Handshake",
           "title": "Customer and sales calls",
           "audience": "Sales, success, product teams",
           "body": "Review customer language, trace important moments by timestamp, and turn agreed follow-ups into an action list.",
@@ -1377,7 +1237,6 @@
           ]
         },
         {
-          "icon": "GraduationCap",
           "title": "Lectures and study",
           "audience": "Students and educators",
           "body": "Convert a recorded lecture into searchable text and a shorter set of key points for revision.",
@@ -1388,7 +1247,6 @@
           ]
         },
         {
-          "icon": "Newspaper",
           "title": "Interviews and research",
           "audience": "Journalists, recruiters, researchers",
           "body": "Keep speaker turns and timestamps beside the source material, then summarize themes and next steps for analysis.",
@@ -1399,7 +1257,6 @@
           ]
         },
         {
-          "icon": "Mic",
           "title": "Podcasts and webinars",
           "audience": "Creators, marketers, producers",
           "body": "Turn long-form recordings into a transcript plus concise notes for show notes, recaps, and content planning.",
@@ -1543,22 +1400,17 @@
       "primaryCta": "Convert MP3 to Text",
       "signedInPrimaryCta": "Upload MP3",
       "secondaryCta": "Need other audio formats?",
-      "secondaryHref": "/audio-to-text",
       "proof": [
         {
-          "icon": "BadgeCheck",
           "label": "45 min free trial"
         },
         {
-          "icon": "Globe",
           "label": "Automatic language detection"
         },
         {
-          "icon": "Users",
           "label": "Speaker labels"
         },
         {
-          "icon": "ShieldCheck",
           "label": "No credit card"
         }
       ]
@@ -1635,22 +1487,16 @@
       "accentTitle": "MP3 to text.",
       "steps": [
         {
-          "n": "01",
-          "icon": "Lock",
           "title": "Sign in with Google.",
           "body": "Your free trial starts with 45 transcription minutes and no credit card.",
           "meta": "No credit card"
         },
         {
-          "n": "02",
-          "icon": "FileAudio",
           "title": "Upload your MP3.",
           "body": "Choose the MP3 recording you want to convert into text.",
           "meta": "MP3 upload"
         },
         {
-          "n": "03",
-          "icon": "Download",
           "title": "Review and export.",
           "body": "Check speaker labels and timestamps, then copy or download TXT, DOCX, SRT, VTT, or CSV.",
           "meta": "5 formats"
@@ -1664,25 +1510,21 @@
       "accentTitle": "usable text.",
       "items": [
         {
-          "icon": "Mic",
           "title": "Podcast transcripts",
           "who": "Podcasters, producers, creators",
           "output": "Episode transcript for accessibility, search, and repurposing"
         },
         {
-          "icon": "Users",
           "title": "Interview quotes",
           "who": "Journalists, recruiters, researchers",
           "output": "Timestamped Q&A transcript with speaker labels"
         },
         {
-          "icon": "Search",
           "title": "Lecture review",
           "who": "Students, teachers, course teams",
           "output": "Searchable study notes from recorded classes"
         },
         {
-          "icon": "Captions",
           "title": "Subtitle prep",
           "who": "Editors, marketers, accessibility teams",
           "output": "SRT or VTT captions generated from an MP3 track"
@@ -1705,22 +1547,18 @@
       "intro": "This page is for MP3 transcription: upload an MP3, get text with timestamps and speaker labels, then copy or export it. It is intentionally focused on the transcript workflow rather than editing, translation, or summaries.",
       "items": [
         {
-          "icon": "Globe",
           "title": "Automatic language detection",
           "body": "Automatic language detection keeps the upload flow simple when your recordings span different speakers or regions."
         },
         {
-          "icon": "Users",
           "title": "Speaker labels",
           "body": "Conversation transcripts are easier to scan when each turn is separated by speaker."
         },
         {
-          "icon": "Clock3",
           "title": "Timestamps",
           "body": "Timestamped text helps you trace quotes, prepare captions, and review important moments."
         },
         {
-          "icon": "Download",
           "title": "Five export formats",
           "body": "Download TXT, DOCX, SRT, VTT, or CSV, or copy the transcript directly from the app."
         }
@@ -1729,7 +1567,6 @@
     "insights": {
       "items": [
         {
-          "icon": "Sparkles",
           "title": "How accurate is MP3-to-text transcription?",
           "body": [
             "Clear recordings generally produce better transcripts. Quality varies with microphone distance, noise, accents, specialized vocabulary, and overlapping speakers.",
@@ -1737,14 +1574,12 @@
           ]
         },
         {
-          "icon": "Lock",
           "title": "Is your MP3 private?",
           "body": [
             "Scribix uses your uploaded MP3 only to generate and deliver transcripts for your account. Audio and video files are deleted automatically after 14 days.",
             "Transcripts stay in your account until you delete them or close your account. Read the"
           ],
           "link": {
-            "href": "/privacy",
             "label": "privacy policy",
             "suffix": "."
           }
@@ -1895,22 +1730,17 @@
       "descriptionEnd": ". Scribix checks the available captions first and saves the transcript without downloading the YouTube video or audio.",
       "primaryCta": "Paste a YouTube URL",
       "secondaryCta": "Need file transcription?",
-      "secondaryHref": "/",
       "proof": [
         {
-          "icon": "BadgeCheck",
           "label": "10 free imports/day"
         },
         {
-          "icon": "Captions",
           "label": "Caption language picker"
         },
         {
-          "icon": "Download",
           "label": "TXT, DOCX, SRT, VTT, CSV"
         },
         {
-          "icon": "ShieldCheck",
           "label": "No credit card"
         }
       ]
@@ -1983,36 +1813,26 @@
       "accentTitle": "URL to transcript.",
       "steps": [
         {
-          "n": "01",
-          "icon": "Lock",
           "title": "Sign in with Google.",
           "body": "The free plan includes 10 YouTube caption imports per day and no credit card.",
           "meta": "Free plan"
         },
         {
-          "n": "02",
-          "icon": "Search",
           "title": "Paste the YouTube URL.",
           "body": "Copy a YouTube video link and let Scribix check whether caption tracks are available.",
           "meta": "Check captions"
         },
         {
-          "n": "03",
-          "icon": "Captions",
           "title": "Choose the caption track.",
           "body": "Pick the manual or auto-generated caption language you want to import.",
           "meta": "Language picker"
         },
         {
-          "n": "04",
-          "icon": "FileText",
           "title": "Import the transcript.",
           "body": "Scribix saves the selected caption track to your transcript library with timestamps.",
           "meta": "Saved text"
         },
         {
-          "n": "05",
-          "icon": "Download",
           "title": "Review and export.",
           "body": "Copy the text, download TXT, DOCX, SRT, VTT, or CSV, or create an AI summary on a paid plan.",
           "meta": "5 formats"
@@ -2026,31 +1846,26 @@
       "accentTitle": "usable text.",
       "items": [
         {
-          "icon": "Search",
           "title": "Lecture review",
           "who": "Students, teachers, course teams",
           "output": "Searchable study notes from a captioned YouTube lecture"
         },
         {
-          "icon": "Users",
           "title": "Interview research",
           "who": "Journalists, researchers, recruiters",
           "output": "Timestamped quote bank from a public interview or panel"
         },
         {
-          "icon": "Sparkles",
           "title": "Creator repurposing",
           "who": "YouTubers, podcasters, marketers",
           "output": "Blog outline, show notes, captions, and paid AI summary"
         },
         {
-          "icon": "BadgeCheck",
           "title": "Webinar follow-up",
           "who": "Sales, customer success, operations",
           "output": "Written record of a demo, product talk, or customer session"
         },
         {
-          "icon": "Captions",
           "title": "Accessibility workflow",
           "who": "Content teams, educators, nonprofits",
           "output": "Downloadable caption files and readable transcript text"
@@ -2073,22 +1888,18 @@
       "intro": "Scribix focuses the YouTube workflow on caption import. It checks the YouTube URL, lists available caption tracks, labels each track as manual or auto-generated when metadata is available, and imports the selected track into your transcript library.",
       "items": [
         {
-          "icon": "Captions",
           "title": "Caption tracks",
           "body": "Import available YouTube caption tracks instead of downloading the video or audio."
         },
         {
-          "icon": "Globe",
           "title": "Language choice",
           "body": "Choose from the available caption languages before saving the transcript."
         },
         {
-          "icon": "Clock3",
           "title": "Timestamps",
           "body": "Timestamped segments make quotes and review moments easier to trace."
         },
         {
-          "icon": "Download",
           "title": "Five exports",
           "body": "Download TXT, DOCX, SRT, VTT, or CSV, or copy the transcript directly."
         }
@@ -2097,7 +1908,6 @@
     "insights": {
       "items": [
         {
-          "icon": "Sparkles",
           "title": "How accurate is a YouTube transcript?",
           "body": [
             "Accuracy depends on the caption track available for the video. Manual captions are usually cleaner than auto-generated captions, while auto-generated captions can include errors from noise, accents, music, technical terms, crosstalk, or unclear speech.",
@@ -2105,14 +1915,12 @@
           ]
         },
         {
-          "icon": "Lock",
           "title": "Is your YouTube transcript private?",
           "body": [
             "Scribix requires Google sign-in so imported transcripts can be saved to your account. For YouTube URL imports, Scribix imports available captions and does not download the YouTube video or audio.",
             "Your saved transcript stays in your account until you delete it or close your account. Scribix never trains models on user data. Read the"
           ],
           "link": {
-            "href": "/privacy",
             "label": "privacy policy",
             "suffix": "."
           }

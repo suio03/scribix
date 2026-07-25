@@ -19,6 +19,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { mergeLocalizedItems } from "@/lib/localized-items";
 import type { BillingCycle, Tier } from "@/lib/plans";
 import { ProgressView, UPLOAD_ACCEPT, UploadErrorHelp, useUpload } from "./Uploader";
 import { Recorder } from "./Recorder";
@@ -26,43 +27,34 @@ import { YouTubeImporter } from "./YouTubeImporter";
 import { markSignInPending } from "./Track";
 
 type TabId = "upload" | "youtube" | "record";
-type Tab = { id: TabId; label: string; hint: string };
-type TrustIcon =
-  | "Upload"
-  | "Target"
-  | "Globe"
-  | "InfinityIcon"
-  | "Users"
-  | "Clock"
-  | "Sparkles"
-  | "ShieldCheck";
-type TrustItem = { label: string; icon?: TrustIcon };
+type TabCopy = { label: string; hint: string };
+type TrustItemCopy = { label: string };
 type GeneratorNamespace = "Generator" | "AiNoteTaker.hero";
 
-const tabIcons: Record<TabId, LucideIcon> = {
-  upload: Upload,
-  youtube: PlaySquare,
-  record: Mic,
-};
+const TAB_DEFINITIONS = [
+  { id: "upload", icon: Upload },
+  { id: "youtube", icon: PlaySquare },
+  { id: "record", icon: Mic },
+] as const satisfies ReadonlyArray<{ id: TabId; icon: LucideIcon }>;
 
-const trustIcons: LucideIcon[] = [
-  Target,
-  Globe,
-  InfinityIcon,
-  Users,
-  ShieldCheck,
-];
-
-const trustIconByName: Record<TrustIcon, LucideIcon> = {
-  Upload,
-  Target,
-  Globe,
-  InfinityIcon,
-  Users,
-  Clock,
-  Sparkles,
-  ShieldCheck,
-};
+const TRUST_DEFINITIONS = {
+  Generator: [
+    { key: "freeMinutes", icon: Target },
+    { key: "languageDetection", icon: Globe },
+    { key: "audioSize", icon: InfinityIcon },
+    { key: "speakerLabels", icon: Users },
+    { key: "exports", icon: ShieldCheck },
+  ],
+  "AiNoteTaker.hero": [
+    { key: "sources", icon: Upload },
+    { key: "speakerLabels", icon: Users },
+    { key: "timestamps", icon: Clock },
+    { key: "aiNotes", icon: Sparkles },
+  ],
+} satisfies Record<
+  GeneratorNamespace,
+  ReadonlyArray<{ key: string; icon: LucideIcon }>
+>;
 
 export function Generator({
   signedIn,
@@ -83,8 +75,18 @@ export function Generator({
   const generatorT = useTranslations("Generator");
   const [tab, setTab] = useState<TabId>("upload");
 
-  const tabs = generatorT.raw("tabs") as Tab[];
-  const trust = t.raw("trust") as TrustItem[];
+  const tabCopy = generatorT.raw("tabs") as TabCopy[];
+  const tabs = mergeLocalizedItems(
+    tabCopy,
+    TAB_DEFINITIONS,
+    "Generator.tabs"
+  );
+  const trustCopy = t.raw("trust") as TrustItemCopy[];
+  const trust = mergeLocalizedItems(
+    trustCopy,
+    TRUST_DEFINITIONS[namespace],
+    `${namespace}.trust`
+  );
 
   return (
     <section
@@ -120,11 +122,11 @@ export function Generator({
         </p>
 
         <ul className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px]">
-          {trust.map((item, i) => {
-            const Icon = item.icon ? trustIconByName[item.icon] : trustIcons[i];
+          {trust.map((item) => {
+            const Icon = item.icon;
             return (
               <li
-                key={item.label}
+                key={item.key}
                 className="flex items-center gap-2 text-ink/85"
               >
                 <Icon size={16} strokeWidth={1.7} className="text-accent" />
@@ -139,7 +141,7 @@ export function Generator({
           <div className="relative">
             <div className="flex items-stretch border-b border-line">
               {tabs.map((tabItem) => {
-                const Icon = tabIcons[tabItem.id];
+                const Icon = tabItem.icon;
                 const active = tab === tabItem.id;
                 return (
                   <button

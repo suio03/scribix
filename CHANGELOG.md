@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.20.1] - 2026-07-25
+
+### Added
+- Added locale validation for key, type, array-length, ICU-placeholder, and structural-field parity across all six languages.
+- Enforced locale validation before Next.js builds, OpenNext previews, and production deploys.
+
+### Changed
+- Moved navigation, icon, route, ordering, landing-page layout, and pricing structure out of translation JSON and into typed TypeScript backed by canonical plan configuration.
+- Reordered and unified site and dashboard sidebar navigation while preserving one source of truth for external-link icons and behavior.
+- Updated localized product copy and operational guidance for current quotas, Pro-only new purchases, and grandfathered Starter support.
+
+### Fixed
+- Prevented translated content arrays from silently drifting from their TypeScript definitions or rendering empty cards.
+- Corrected stale sidebar quota fallbacks, upload-limit guidance, and inconsistent localized feature-list lengths.
+
+### Removed
+- Removed unused comparison and testimonial components plus obsolete structural and dead translation fields.
+
 ## [0.20.0] - 2026-07-25
 
 ### Added

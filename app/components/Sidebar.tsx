@@ -30,6 +30,7 @@ import Image from "next/image";
 import { signIn, signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { FREE_YOUTUBE_IMPORTS_PER_DAY } from "@/lib/plans";
 import { BillingPortalButton } from "./BillingPortalButton";
 import { useSidebar } from "./SidebarContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -38,13 +39,16 @@ import { ThemeToggle } from "./ThemeToggle";
 import type { SidebarUsage } from "./sidebarUsage";
 
 type NavItem = {
+  key: string;
   label: string;
   href: string;
-  icon?: keyof typeof navIcons;
+  icon: SidebarIcon;
   external?: boolean;
 };
 
 type SidebarIcon = ComponentType<LucideProps>;
+
+type NavItemDefinition = Omit<NavItem, "label">;
 
 function YouTubeIcon({ size = 24, strokeWidth = 2, className, style }: LucideProps) {
   void strokeWidth;
@@ -65,25 +69,80 @@ function YouTubeIcon({ size = 24, strokeWidth = 2, className, style }: LucidePro
   );
 }
 
-const navIcons = {
-  Home,
-  AudioLines,
-  BadgeDollarSign,
-  Captions,
-  Clapperboard,
-  FileAudio,
-  LayoutDashboard,
-  ListChecks,
-  UserRound,
-  YouTubeIcon,
-} satisfies Record<string, SidebarIcon>;
-
 const CHROME_EXTENSION_URL =
   "https://chromewebstore.google.com/detail/youtube-transcript-summar/ighgffaindjodlejiddagjlehmgglgaf";
+
+const SITE_NAV_ITEMS = [
+  { key: "home", href: "/", icon: Home },
+  { key: "audioToText", href: "/audio-to-text", icon: AudioLines },
+  { key: "mp3ToText", href: "/mp3-to-text", icon: FileAudio },
+  { key: "videoToText", href: "/#generator", icon: Clapperboard },
+  { key: "aiNoteTaker", href: "/ai-note-taker", icon: ListChecks },
+  { key: "youtubeToTranscript", href: "/youtube-to-transcript", icon: Captions },
+] as const satisfies readonly NavItemDefinition[];
 
 function activePath(href: string) {
   const path = href.split("#")[0];
   return path || "/";
+}
+
+function SidebarNavItem({
+  item,
+  active = false,
+  isCollapsed,
+  onNavigate,
+}: {
+  item: NavItem;
+  active?: boolean;
+  isCollapsed: boolean;
+  onNavigate: () => void;
+}) {
+  const Icon = item.icon;
+  const collapsedClass = isCollapsed
+    ? "lg:h-10 lg:justify-center lg:px-0"
+    : "";
+  const content = (
+    <>
+      <Icon
+        size={17}
+        strokeWidth={1.6}
+        className={active ? "text-accent" : ""}
+      />
+      <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
+        {item.label}
+      </span>
+    </>
+  );
+
+  return (
+    <li>
+      {item.external ? (
+        <a
+          href={item.href}
+          onClick={onNavigate}
+          title={item.label}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-muted transition hover:bg-paper hover:text-ink ${collapsedClass}`}
+        >
+          {content}
+        </a>
+      ) : (
+        <Link
+          href={item.href}
+          onClick={onNavigate}
+          title={item.label}
+          className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
+            active
+              ? "bg-accent-soft text-ink"
+              : "text-muted hover:bg-paper hover:text-ink"
+          } ${collapsedClass}`}
+        >
+          {content}
+        </Link>
+      )}
+    </li>
+  );
 }
 
 export function Sidebar({
@@ -112,13 +171,19 @@ export function Sidebar({
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
 
-  const nav = t.raw("nav") as NavItem[];
+  const nav: NavItem[] = SITE_NAV_ITEMS.map((item) => ({
+    ...item,
+    label: t(`navLabels.${item.key}`),
+  }));
   const usedMin = Math.max(0, Math.round(usage?.usedMin ?? 0));
   const quotaMin = Math.max(1, Math.round(usage?.quotaMin ?? 45));
   const remainingMin = Math.max(0, quotaMin - usedMin);
   const remainingPercent = Math.min(100, Math.max(0, (remainingMin / quotaMin) * 100));
   const usedYouTubeImports = Math.max(0, Math.round(usage?.usedYouTubeImports ?? 0));
-  const quotaYouTubeImports = Math.max(1, Math.round(usage?.quotaYouTubeImports ?? 5));
+  const quotaYouTubeImports = Math.max(
+    1,
+    Math.round(usage?.quotaYouTubeImports ?? FREE_YOUTUBE_IMPORTS_PER_DAY)
+  );
   const remainingYouTubeImports = Math.max(0, quotaYouTubeImports - usedYouTubeImports);
   const remainingYouTubePercent = Math.min(
     100,
@@ -147,17 +212,36 @@ export function Sidebar({
     }
   };
   const dashboardNav: NavItem[] = [
-    { label: t("myLibrary"), href: "/dashboard", icon: "LayoutDashboard" },
-    { label: t("billing"), href: "/dashboard/billing", icon: "BadgeDollarSign" },
-    { label: t("account"), href: "/dashboard/account", icon: "UserRound" },
+    {
+      key: "dashboard",
+      label: t("myLibrary"),
+      href: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      key: "billing",
+      label: t("billing"),
+      href: "/dashboard/billing",
+      icon: BadgeDollarSign,
+    },
+    {
+      key: "account",
+      label: t("account"),
+      href: "/dashboard/account",
+      icon: UserRound,
+    },
   ];
   const extensionNavItem: NavItem = {
+    key: "browserExtension",
     label: t("browserExtension"),
     href: CHROME_EXTENSION_URL,
-    icon: "YouTubeIcon",
+    icon: YouTubeIcon,
     external: true,
   };
-  const productNav = variant === "dashboard" ? [dashboardNav[0], extensionNavItem, ...dashboardNav.slice(1)] : [...nav, extensionNavItem];
+  const productNav =
+    variant === "dashboard"
+      ? [...dashboardNav, extensionNavItem]
+      : [...nav];
   const isDashboardPathActive = (href: string) => {
     if (href === "/dashboard") {
       return pathname === "/dashboard" || pathname.startsWith("/dashboard/transcripts");
@@ -286,53 +370,18 @@ export function Sidebar({
         <nav className="flex-1 overflow-y-auto px-3 py-3">
           <ul className="space-y-0.5">
             {productNav.map((item) => {
-              const Icon = item.icon ? navIcons[item.icon] : undefined;
               const active =
                 variant === "dashboard"
                   ? isDashboardPathActive(item.href)
                   : !item.href.includes("#") && pathname === activePath(item.href);
               return (
-                <li key={item.label}>
-                  {item.external ? (
-                    <a
-                      href={item.href}
-                      onClick={closeAfterNavigate}
-                      title={item.label}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-muted transition hover:bg-paper hover:text-ink ${
-                        isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""
-                      }`}
-                    >
-                      {Icon ? <Icon size={17} strokeWidth={1.6} /> : null}
-                      <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
-                        {item.label}
-                      </span>
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      onClick={closeAfterNavigate}
-                      title={item.label}
-                      className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
-                        active
-                          ? "bg-accent-soft text-ink"
-                          : "text-muted hover:bg-paper hover:text-ink"
-                      } ${isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""}`}
-                    >
-                      {Icon ? (
-                        <Icon
-                          size={17}
-                          strokeWidth={1.6}
-                          className={active ? "text-accent" : ""}
-                        />
-                      ) : null}
-                      <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
-                        {item.label}
-                      </span>
-                    </Link>
-                  )}
-                </li>
+                <SidebarNavItem
+                  key={item.key}
+                  item={item}
+                  active={active}
+                  isCollapsed={isCollapsed}
+                  onNavigate={closeAfterNavigate}
+                />
               );
             })}
           </ul>
@@ -342,6 +391,11 @@ export function Sidebar({
               <div className="my-3 h-px bg-line" />
 
               <ul className="space-y-0.5">
+                <SidebarNavItem
+                  item={extensionNavItem}
+                  isCollapsed={isCollapsed}
+                  onNavigate={closeAfterNavigate}
+                />
                 <li>
                   <Link
                     href="/dashboard"

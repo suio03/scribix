@@ -9,7 +9,6 @@ import { Header } from "@/app/components/Header";
 import { Partners } from "@/app/components/Partners";
 import {
   PricingPlans,
-  type PlanCopy,
   type PlanId,
 } from "@/app/components/PricingPlans";
 import { Shell } from "@/app/components/Shell";
@@ -18,16 +17,20 @@ import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import type { BillingCycle, Tier } from "@/lib/plans";
+import { PRICING_FACTS } from "@/lib/pricing-facts";
 import {
+  buildPricingFeatureRows,
   compactPricingRows,
   includedPaidRows,
   type PlanFeatureCopy,
 } from "@/lib/pricing-feature-rows";
+import { buildPublicPricingPlans } from "@/lib/pricing-plans";
 
 const SITE = "https://scribix.io";
 const PATH = "/pricing";
 
 type FaqCopy = {
+  key: string;
   question: string;
   answer: string;
 };
@@ -43,7 +46,7 @@ export async function generateMetadata({
 
   return {
     title: t("title"),
-    description: t("description"),
+    description: t("description", PRICING_FACTS),
     alternates: {
       canonical: canonical.toString(),
       languages: pathLanguages(PATH),
@@ -84,8 +87,8 @@ export default async function PricingPage({
   });
   const sidebarUsage = await getSidebarUsage(session);
   const t = await getTranslations("PricingPage");
-  const plans = t.raw("plans") as PlanCopy[];
-  const featureRows = t.raw("featureRows") as PlanFeatureCopy[];
+  const plans = buildPublicPricingPlans(t);
+  const featureRows = buildPricingFeatureRows(t);
   const pricingFeatureRows = compactPricingRows(featureRows, t).filter(
     (feature) => feature.key !== "youtubeCaptionImports"
   );
@@ -93,7 +96,12 @@ export default async function PricingPage({
     (feature) =>
       (feature.key !== "maxFileSize" && feature.key !== "maxYoutubeCaptionVideo")
   );
-  const faqs = t.raw("faqs") as FaqCopy[];
+  const faqCopy = t.raw("faqs") as Array<Omit<FaqCopy, "key">>;
+  const faqs: FaqCopy[] = faqCopy.map((faq, index) => ({
+    key: `faq-${index + 1}`,
+    question: faq.question,
+    answer: t(`faqs.${index}.answer`, PRICING_FACTS),
+  }));
   const chooseLabels = Object.fromEntries(
     plans.map((plan) => [plan.id, t("chooseLabel", { plan: plan.name })])
   ) as Record<PlanId, string>;
@@ -130,7 +138,7 @@ export default async function PricingPage({
                 label: t("billingToggleLabel"),
                 monthly: t("billingMonthly"),
                 yearly: t("billingYearly"),
-                yearlyBadge: t("billingYearlyBadge"),
+                yearlyBadge: t("billingYearlyBadge", PRICING_FACTS),
                 yearlyNote: t.raw("billingYearlyNote") as string,
               }}
               bestValue={t("bestValue")}
@@ -164,7 +172,7 @@ export default async function PricingPage({
             </h2>
             <div className="mt-6 divide-y divide-line border-y border-line">
               {faqs.map((faq) => (
-                <details key={faq.question} className="group">
+                <details key={faq.key} className="group">
                   <summary className="flex items-center justify-between gap-6 py-5 text-[16px] font-medium text-ink">
                     {faq.question}
                     <ChevronDown

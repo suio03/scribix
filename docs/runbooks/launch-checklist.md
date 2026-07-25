@@ -34,15 +34,18 @@ the one-time items that are already verified and unchanged.
 ## Smoke tests on prod
 
 - [ ] Sign in with Google → user row appears in D1.
-- [ ] Paid checkout from `/pricing` opens Paddle overlay for Starter monthly.
+- [ ] `/pricing` and the upgrade modal offer Pro only: yearly is selected by
+  default at **$120/year**, and monthly is available at **$20/month**.
+- [ ] Both Pro billing options open the Paddle overlay with the matching live
+  price ID.
 - [ ] Completed Paddle checkout returns to `/dashboard?checkout=ok`, webhook
   activates the tier, and duplicate webhook delivery is ignored.
 - [ ] `/dashboard/account` opens Paddle Customer Portal for a `ctm_*` customer.
 - [ ] Paddle cancellation marks the subscription canceled without removing
   access before the period end.
 - [ ] Upload a 30 s audio file → row reaches `completed` → transcript renders.
-- [ ] On a completed transcript, Free opens the AI Notes upgrade flow; Starter
-  or Pro generates an overview, key points, and action items.
+- [ ] On a completed transcript, Free opens the AI Notes upgrade flow; Pro and
+  grandfathered Starter generate an overview, key points, and action items.
 - [ ] Upload a video just over 1 GiB → multipart completes → AssemblyAI accepts
   the original video → transcript renders and media playback works.
 - [ ] Test Free rejection over 2 GiB and paid acceptance near the 4.9 billion-byte cap.
@@ -62,8 +65,9 @@ the one-time items that are already verified and unchanged.
 
 - [ ] **Refund policy** — written at `/refunds` with Paddle-aligned 14-day
   refund request wording and no usage-based qualifiers.
-- [ ] **Free-tier recording max length** — confirm 30 min cap matches the
-  Free quota in `Recorder.tsx` and `lib/plans.ts`.
+- [ ] **Free-tier recording max length** — confirm the 30 min recorder cap is
+  still intentional alongside the separate 45 min lifetime allowance in
+  `lib/plans.ts`.
 - [ ] **AAI bulk-delete cadence** — schedule the first run on the 1st Monday
   of the next month and add a calendar reminder
   (see `docs/runbooks/aai-bulk-delete.md`).

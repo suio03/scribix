@@ -2,7 +2,7 @@
 
 Use this runbook for the first seven complete days after the repaired upload pipeline is deployed. The code identifies this release as `upload_pipeline_version=2026-07-22.1`.
 
-Release `0.18.1` (commit `30f4b0a`) remains the upload-pipeline monitoring baseline; it includes the `0.18.0` upload release plus the AssemblyAI model, Starter-limit, and Discord-routing follow-up. Release `0.19.0` (commit `653757c`) adds the localized AI Note Taker experience and attribution without changing `upload_pipeline_version`. Production migrations `0016` through `0019` were applied on 2026-07-22. Confirm the Cloudflare deployment is healthy before treating the next complete Melbourne calendar day as day 1.
+Release `0.18.1` (commit `30f4b0a`) remains the upload-pipeline monitoring baseline; it includes the `0.18.0` upload release plus the AssemblyAI model, Starter-limit, and Discord-routing follow-up. Release `0.19.0` (commit `653757c`) adds the localized AI Note Taker experience and attribution without changing `upload_pipeline_version`. Release `0.20.0` (commit `4b79377`) simplifies new purchases to Pro at $20 monthly or $120 yearly, with 2,400 minutes reset monthly for both billing cycles; it also leaves the upload pipeline version unchanged. Production migrations `0016` through `0019` were applied on 2026-07-22. Confirm the Cloudflare deployment is healthy before treating the next complete Melbourne calendar day as day 1.
 
 ## Prerequisites
 
@@ -69,13 +69,13 @@ Before deployment, and again against production after deployment, verify:
 
 - Signed out: homepage, audio-to-text, MP3, and AI Note Taker entry points return to the same localized tool page after OAuth.
 - Signed in: small audio, small video, and a direct-upload video complete without duplicate transcripts.
-- Free, Starter, and Pro: valid file, duration limit, quota limit, audio-size limit, and video-size limit.
+- Free, grandfathered Starter, and Pro: valid file, duration limit, quota limit, audio-size limit, and video-size limit.
 - Network recovery: interrupt a multipart part and polling, restore the network, and confirm processing resumes without a new transcript.
 - Submit recovery: explicit retryable AAI failure retries safely; ambiguous timeout continues polling without creating a second job, and stale cleanup returns reserved quota.
 - Record: start, pause, resume, preview, discard, upload, permission denial, and unsupported-browser messaging.
 - YouTube: URL survives OAuth, inspect resumes, import does not run automatically, plan limits are correct, and events retain the originating `tool_slug`.
-- AI Notes: Free opens the upgrade flow; Starter and Pro can generate an overview, key points, and action items from a completed transcript.
-- Checkout: completed, closed, and failed paths; completed transaction appears once in the ownership records and no amount is sent to Plausible.
+- AI Notes: Free opens the upgrade flow; Pro and grandfathered Starter can generate an overview, key points, and action items from a completed transcript.
+- Checkout: new purchase UI offers Pro only, defaults to $120 yearly, allows $20 monthly, and sends the matching live price ID. Verify completed, closed, and failed paths; the completed transaction appears once in the ownership records and no amount is sent to Plausible.
 - SEO: `/sitemap.xml`, `/robots.txt`, canonical/hreflang, `/ai-note-taker`, English plus at least one localized page; legal sitemap entries have no localized alternates.
 
 For large-file and paid-plan tests, use dedicated test accounts and non-sensitive media. Avoid real customer files.

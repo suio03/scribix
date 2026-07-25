@@ -1,13 +1,21 @@
-import { getTranslations } from "next-intl/server";
-import NextLink from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "./Logo";
 
-type LegalLink = { label: string; href: string };
+const LEGAL_LINKS = [
+  { key: "terms", href: "/terms" },
+  { key: "privacy", href: "/privacy" },
+  { key: "refunds", href: "/refunds", englishOnly: true },
+] as const;
 
 export async function Footer() {
-  const t = await getTranslations("Footer");
-  const legal = t.raw("legal") as LegalLink[];
+  const [locale, t] = await Promise.all([
+    getLocale(),
+    getTranslations("Footer"),
+  ]);
+  const legal = LEGAL_LINKS.filter(
+    (link) => !("englishOnly" in link) || locale === "en"
+  );
   const year = new Date().getFullYear();
 
   return (
@@ -34,9 +42,9 @@ export async function Footer() {
             <ul className="flex items-center gap-4">
               {legal.map((link) => (
                 <li key={link.href}>
-                  <NextLink href={link.href} className="transition hover:text-ink">
-                    {link.label}
-                  </NextLink>
+                  <Link href={link.href} className="transition hover:text-ink">
+                    {t(`legalLabels.${link.key}`)}
+                  </Link>
                 </li>
               ))}
             </ul>

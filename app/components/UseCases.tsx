@@ -10,46 +10,40 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { mergeLocalizedItems } from "@/lib/localized-items";
 import { SectionLabel } from "./SectionLabel";
 
-type Case = {
+type CaseCopy = {
   title: string;
-  icon?: UseCaseIcon;
   audience: string;
   body: string;
   workflow: string[];
 };
 
-type UseCaseIcon =
-  | "Clapperboard"
-  | "Mic"
-  | "Newspaper"
-  | "FlaskConical"
-  | "GraduationCap"
-  | "Scale"
-  | "BriefcaseBusiness"
-  | "Handshake";
+type UseCasesNamespace = "UseCases" | "AiNoteTaker.useCases";
 
-const icons: LucideIcon[] = [
-  Clapperboard,
-  Mic,
-  Newspaper,
-  FlaskConical,
-  GraduationCap,
-  Scale,
-];
-const iconByName: Record<UseCaseIcon, LucideIcon> = {
-  Clapperboard,
-  Mic,
-  Newspaper,
-  FlaskConical,
-  GraduationCap,
-  Scale,
-  BriefcaseBusiness,
-  Handshake,
+type UseCaseDefinition = {
+  key: string;
+  icon: LucideIcon;
 };
 
-type UseCasesNamespace = "UseCases" | "AiNoteTaker.useCases";
+const USE_CASE_DEFINITIONS = {
+  UseCases: [
+    { key: "creators", icon: Clapperboard },
+    { key: "podcasters", icon: Mic },
+    { key: "journalists", icon: Newspaper },
+    { key: "researchers", icon: FlaskConical },
+    { key: "students", icon: GraduationCap },
+    { key: "legal", icon: Scale },
+  ],
+  "AiNoteTaker.useCases": [
+    { key: "meetings", icon: BriefcaseBusiness },
+    { key: "customerCalls", icon: Handshake },
+    { key: "lectures", icon: GraduationCap },
+    { key: "interviews", icon: Newspaper },
+    { key: "podcasts", icon: Mic },
+  ],
+} satisfies Record<UseCasesNamespace, readonly UseCaseDefinition[]>;
 
 export async function UseCases({
   namespace = "UseCases",
@@ -57,7 +51,12 @@ export async function UseCases({
   namespace?: UseCasesNamespace;
 } = {}) {
   const t = await getTranslations(namespace);
-  const cases = t.raw("items") as Case[];
+  const caseCopy = t.raw("items") as CaseCopy[];
+  const cases = mergeLocalizedItems(
+    caseCopy,
+    USE_CASE_DEFINITIONS[namespace],
+    `${namespace}.items`
+  );
 
   return (
     <section id="use-cases" className="scroll-mt-20 px-4 py-20 sm:px-8 sm:py-28">
@@ -77,11 +76,11 @@ export async function UseCases({
         </div>
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {cases.map((c, i) => {
-            const Icon = c.icon ? iconByName[c.icon] : icons[i];
+          {cases.map((c) => {
+            const Icon = c.icon;
             return (
               <article
-                key={c.title}
+                key={c.key}
                 className="group flex flex-col gap-5 rounded-2xl border border-line bg-card p-6 transition hover:-translate-y-0.5 hover:border-ink/30"
               >
                 <div className="flex items-center justify-between">

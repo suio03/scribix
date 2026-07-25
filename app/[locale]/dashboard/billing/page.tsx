@@ -4,12 +4,16 @@ import { getPathname, redirect } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import {
   PricingPlans,
-  type PlanCopy,
   type PlanId,
 } from "@/app/components/PricingPlans";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import type { Tier } from "@/lib/plans";
-import { compactBillingRows, type PlanFeatureCopy } from "@/lib/pricing-feature-rows";
+import { PRICING_FACTS } from "@/lib/pricing-facts";
+import {
+  buildPricingFeatureRows,
+  compactBillingRows,
+} from "@/lib/pricing-feature-rows";
+import { buildPublicPricingPlans } from "@/lib/pricing-plans";
 
 export default async function BillingPage({
   searchParams,
@@ -31,9 +35,9 @@ export default async function BillingPage({
 
   const tier: Tier = row?.tier ?? "free";
   const cycle = row?.billing_cycle ?? null;
-  const plans = pricingT.raw("plans") as PlanCopy[];
+  const plans = buildPublicPricingPlans(pricingT);
   const upgradePlans = plans.filter((plan) => plan.id !== "free");
-  const featureRows = pricingT.raw("featureRows") as PlanFeatureCopy[];
+  const featureRows = buildPricingFeatureRows(pricingT);
   const billingFeatureRows = compactBillingRows(featureRows, billingT).filter(
     (feature) => feature.key !== "youtubeCaptionImports"
   );
@@ -73,7 +77,7 @@ export default async function BillingPage({
             label: pricingT("billingToggleLabel"),
             monthly: pricingT("billingMonthly"),
             yearly: pricingT("billingYearly"),
-            yearlyBadge: pricingT("billingYearlyBadge"),
+            yearlyBadge: pricingT("billingYearlyBadge", PRICING_FACTS),
             yearlyNote: pricingT.raw("billingYearlyNote") as string,
           }}
           bestValue={pricingT("bestValue")}

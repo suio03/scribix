@@ -23,6 +23,7 @@ import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { SectionLabel } from "@/app/components/SectionLabel";
 import { Waveform } from "@/app/components/Waveform";
+import { mergeLocalizedItems } from "@/lib/localized-items";
 
 export type ToolLandingIcon =
   | "BadgeCheck"
@@ -43,6 +44,7 @@ export type ToolLandingIcon =
   | "X";
 
 export type ProofItem = {
+  key: string;
   icon: ToolLandingIcon;
   label: string;
 };
@@ -58,6 +60,7 @@ export type FitListItem = {
 };
 
 export type LandingStep = {
+  key: string;
   n: string;
   icon: ToolLandingIcon;
   title: string;
@@ -66,6 +69,7 @@ export type LandingStep = {
 };
 
 export type GridCard = {
+  key: string;
   icon: ToolLandingIcon;
   title: string;
   body?: string;
@@ -74,6 +78,7 @@ export type GridCard = {
 };
 
 export type InsightCard = {
+  key: string;
   icon: ToolLandingIcon;
   title: string;
   body: string[];
@@ -94,6 +99,17 @@ export type FaqItem = {
   q: string;
   a: string;
 };
+
+export function mergeItemDefinitions<
+  Copy extends object,
+  Definition extends object,
+>(
+  copy: readonly Copy[],
+  definitions: readonly Definition[],
+  source: string
+): Array<Copy & Definition> {
+  return mergeLocalizedItems(copy, definitions, source);
+}
 
 const icons: Record<ToolLandingIcon, LucideIcon> = {
   BadgeCheck,
@@ -199,7 +215,7 @@ export function ProofRow({ items }: { items: ProofItem[] }) {
       {items.map((item) => {
         const Icon = icons[item.icon];
         return (
-          <li key={item.label} className="flex items-center gap-2 text-ink/85">
+          <li key={item.key} className="flex items-center gap-2 text-ink/85">
             <Icon size={16} strokeWidth={1.7} className="text-accent" />
             <span className="font-medium">{item.label}</span>
           </li>
@@ -338,7 +354,7 @@ export function StepsSection({
           {steps.map((step, i) => {
             const Icon = icons[step.icon];
             return (
-              <article key={step.n} className="relative flex flex-col gap-5 border-t border-line pt-7">
+              <article key={step.key} className="relative flex flex-col gap-5 border-t border-line pt-7">
                 <div className="flex items-center justify-between">
                   <span className="font-display text-[42px] font-medium leading-none tracking-tight tabular text-accent">
                     {step.n}
@@ -393,7 +409,7 @@ export function UseCaseGridSection({
             {items.map((item) => {
               const Icon = icons[item.icon];
               return (
-                <article key={item.title} className="bg-card p-6 transition hover:bg-paper">
+                <article key={item.key} className="bg-card p-6 transition hover:bg-paper">
                   <Icon size={22} strokeWidth={1.5} className="text-accent" />
                   <h3 className="mt-5 font-display text-[23px] font-medium tracking-tight">
                     {item.title}
@@ -494,7 +510,7 @@ export function FeatureGridSection({
           {items.map((item) => {
             const Icon = icons[item.icon];
             return (
-              <article key={item.title} className="bg-card p-6 transition hover:bg-paper">
+              <article key={item.key} className="bg-card p-6 transition hover:bg-paper">
                 <span className="inline-grid size-10 place-items-center rounded-lg border border-line bg-paper text-accent">
                   <Icon size={18} strokeWidth={1.6} />
                 </span>
@@ -518,7 +534,7 @@ export function InsightCardsSection({ items }: { items: InsightCard[] }) {
         {items.map((item) => {
           const Icon = icons[item.icon];
           return (
-            <article key={item.title} className="bg-card p-7 sm:p-9">
+            <article key={item.key} className="bg-card p-7 sm:p-9">
               <Icon size={24} strokeWidth={1.5} className="text-accent" />
               <h2 className="mt-5 font-display text-[31px] font-medium tracking-tight">
                 {item.title}

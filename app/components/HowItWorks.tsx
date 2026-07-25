@@ -6,26 +6,37 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { mergeLocalizedItems } from "@/lib/localized-items";
+import { PLANS } from "@/lib/plans";
 import { SectionLabel } from "./SectionLabel";
 import { Waveform } from "./Waveform";
 
 type Step = {
-  n: string;
-  icon?: "CloudUpload" | "Cpu" | "Download" | "ListChecks";
   title: string;
   body: string;
-  duration: string;
-};
-
-const icons: LucideIcon[] = [CloudUpload, Cpu, Download];
-const iconByName: Record<NonNullable<Step["icon"]>, LucideIcon> = {
-  CloudUpload,
-  Cpu,
-  Download,
-  ListChecks,
+  duration?: string;
 };
 
 type HowItWorksNamespace = "HowItWorks" | "AiNoteTaker.howItWorks";
+
+type StepDefinition = {
+  key: string;
+  number: string;
+  icon: LucideIcon;
+};
+
+const STEP_DEFINITIONS = {
+  HowItWorks: [
+    { key: "upload", number: "01", icon: CloudUpload },
+    { key: "transcribe", number: "02", icon: Cpu },
+    { key: "export", number: "03", icon: Download },
+  ],
+  "AiNoteTaker.howItWorks": [
+    { key: "addConversation", number: "01", icon: CloudUpload },
+    { key: "transcribe", number: "02", icon: Cpu },
+    { key: "generateNotes", number: "03", icon: ListChecks },
+  ],
+} satisfies Record<HowItWorksNamespace, readonly StepDefinition[]>;
 
 export async function HowItWorks({
   namespace = "HowItWorks",
@@ -33,7 +44,14 @@ export async function HowItWorks({
   namespace?: HowItWorksNamespace;
 } = {}) {
   const t = await getTranslations(namespace);
-  const steps = t.raw("steps") as Step[];
+  const stepCopy = t.raw("steps") as Step[];
+  const steps = mergeLocalizedItems(
+    stepCopy,
+    STEP_DEFINITIONS[namespace],
+    `${namespace}.steps`
+  );
+  const freeMinutes = PLANS.free.maxFileSec / 60;
+  const paidHours = PLANS.pro.maxFileSec / 3600;
 
   return (
     <section
@@ -54,15 +72,15 @@ export async function HowItWorks({
 
         <div className="mt-14 grid gap-8 lg:grid-cols-3">
           {steps.map((s, i) => {
-            const Icon = s.icon ? iconByName[s.icon] : icons[i];
+            const Icon = s.icon;
             return (
               <article
-                key={s.n}
+                key={s.key}
                 className="relative flex flex-col gap-5 border-t border-line pt-7"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-display text-[42px] font-medium leading-none tracking-tight tabular text-accent">
-                    {s.n}
+                    {s.number}
                   </span>
                   <Icon size={28} strokeWidth={1.4} className="text-ink/70" />
                 </div>
@@ -78,7 +96,11 @@ export async function HowItWorks({
                     animated={i === 1}
                     className="h-4 text-accent"
                   />
-                  <span>{s.duration}</span>
+                  <span>
+                    {namespace === "HowItWorks" && i === 0
+                      ? t("uploadLimits", { freeMinutes, paidHours })
+                      : s.duration}
+                  </span>
                 </div>
               </article>
             );

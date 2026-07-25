@@ -9,6 +9,7 @@ const env = {
   ...wranglerVars,
 };
 
+run(process.execPath, ["scripts/check-locales.mjs"], env);
 run("npx", ["opennextjs-cloudflare", "build"], env);
 run("npx", ["opennextjs-cloudflare", "deploy"], env);
 

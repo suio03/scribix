@@ -6,22 +6,11 @@ import {
   PaddleCheckoutButton,
 } from "@/app/components/PaddleCheckoutButton";
 import { trackEvent } from "@/lib/analytics";
-import type { PlanFeatureCopy, PricingPlanId } from "@/lib/pricing-feature-rows";
+import type { PlanFeatureCopy } from "@/lib/pricing-feature-rows";
+import type { PlanCopy, PlanId } from "@/lib/pricing-plans";
 import type { BillingCycle, Tier } from "@/lib/plans";
 
-export type PlanId = PricingPlanId;
-
-export type PlanCopy = {
-  id: PlanId;
-  name: string;
-  price: string;
-  cadence: string;
-  summary: string;
-  purchaseNote?: string;
-  annual?: string;
-  annualPrice?: string;
-  annualCadence?: string;
-};
+export type { PlanCopy, PlanId } from "@/lib/pricing-plans";
 
 type PricingPlansProps = {
   billingLabels: {
@@ -469,9 +458,8 @@ function planDisplay(plan: PlanCopy, cycle: BillingCycle, yearlyNote: string) {
     };
   }
 
-  const fallback = splitAnnual(plan.annual);
-  const annualPrice = plan.annualPrice ?? fallback.price ?? plan.price;
-  const annualCadence = plan.annualCadence ?? fallback.cadence ?? plan.cadence;
+  const annualPrice = plan.annualPrice ?? plan.price;
+  const annualCadence = plan.annualCadence ?? plan.cadence;
   const savings = annualSavings(plan.price, annualPrice);
 
   return {
@@ -480,15 +468,6 @@ function planDisplay(plan: PlanCopy, cycle: BillingCycle, yearlyNote: string) {
     note: savings
       ? applyPriceTemplate(yearlyNote, annualPrice, savings)
       : `${annualPrice} ${annualCadence}`,
-  };
-}
-
-function splitAnnual(value: string | undefined) {
-  if (!value) return {};
-  const [price, ...cadenceParts] = value.split("/");
-  return {
-    price,
-    cadence: cadenceParts.length > 0 ? cadenceParts.join("/") : undefined,
   };
 }
 

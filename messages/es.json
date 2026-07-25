@@ -20,7 +20,6 @@
     "billing": "Facturación",
     "pricingBadge": "50% de descuento",
     "freePlan": "Plan gratuito",
-    "freePlanQuota": "4 / día",
     "usageTitle": "Minutos restantes",
     "usageRemaining": "{remaining} min restantes",
     "usageMeter": "{used} / {quota} min usados",
@@ -32,52 +31,14 @@
     "language": "Idioma",
     "docs": "Documentación",
     "help": "Ayuda",
-    "nav": [
-      {
-        "label": "Inicio",
-        "href": "/",
-        "icon": "Home"
-      },
-      {
-        "label": "Audio a texto",
-        "href": "/audio-to-text",
-        "icon": "AudioLines"
-      },
-      {
-        "label": "MP3 a texto",
-        "href": "/mp3-to-text",
-        "icon": "FileAudio"
-      },
-      {
-        "label": "Vídeo a texto",
-        "href": "/#generator",
-        "icon": "Clapperboard"
-      },
-      {
-        "label": "YouTube a texto",
-        "href": "/youtube-to-transcript",
-        "icon": "Captions"
-      },
-      {
-        "label": "Notas con IA",
-        "href": "/ai-note-taker",
-        "icon": "ListChecks"
-      }
-    ],
-    "tools": [
-      {
-        "label": "Resumir",
-        "href": "#features"
-      },
-      {
-        "label": "Traducir",
-        "href": "#features"
-      },
-      {
-        "label": "Subtítulos (SRT/VTT)",
-        "href": "#features"
-      }
-    ],
+    "navLabels": {
+      "home": "Inicio",
+      "audioToText": "Audio a texto",
+      "mp3ToText": "MP3 a texto",
+      "videoToText": "Vídeo a texto",
+      "youtubeToTranscript": "YouTube a texto",
+      "aiNoteTaker": "Notas con IA"
+    },
     "currentPlanTitle": "Plan actual",
     "manageBilling": "Gestionar facturación",
     "tierFree": "Gratis",
@@ -105,44 +66,33 @@
     "description": "Scribix convierte archivos de vídeo y audio en texto con etiquetas de locutor para revisar y exportar. Sube MP4, MOV, WebM, AVI, MP3, WAV o M4A y obtén marcas de tiempo por palabra con <stat>detección automática del idioma</stat>. <stat>45 minutos gratis</stat> con Google y sin tarjeta.",
     "trust": [
       {
-        "label": "45 minutos gratis",
-        "icon": "Target"
+        "label": "45 minutos gratis"
       },
       {
-        "label": "Detección automática",
-        "icon": "Globe"
+        "label": "Detección automática"
       },
       {
-        "label": "Audio hasta 1 GB",
-        "icon": "InfinityIcon"
+        "label": "Audio hasta 1 GB"
       },
       {
-        "label": "Etiquetas de locutor",
-        "icon": "Users"
+        "label": "Etiquetas de locutor"
       },
       {
-        "label": "5 formatos de exportación",
-        "icon": "ShieldCheck"
+        "label": "5 formatos de exportación"
       }
     ],
     "tabs": [
       {
-        "id": "upload",
         "label": "Subir archivo",
-        "hint": "Vídeo · Audio",
-        "icon": "Upload"
+        "hint": "Vídeo · Audio"
       },
       {
-        "id": "youtube",
         "label": "Enlace de YouTube",
-        "hint": "Pegar URL",
-        "icon": "PlaySquare"
+        "hint": "Pegar URL"
       },
       {
-        "id": "record",
         "label": "Grabar",
-        "hint": "Audio en vivo",
-        "icon": "Mic"
+        "hint": "Audio en vivo"
       }
     ],
     "upload": {
@@ -165,34 +115,26 @@
     "intro": "Un conversor de vídeo a texto transcribe el audio hablado dentro de un vídeo en texto escrito. Los modernos modelos de IA de reconocimiento de voz identifican palabras, separan locutores y añaden marcas de tiempo, produciendo un transcript editable en minutos en lugar de horas. Scribix ejecuta la misma clase de modelo de voz que impulsa los suites de transcripción profesionales: inicia sesión con Google para empezar y obtener una salida lo suficientemente limpia como para publicar.",
     "items": [
       {
-        "icon": "Users",
         "title": "Etiquetas de locutor para conversaciones",
-        "body": "Scribix solicita la separación de locutores y distingue los turnos cuando la calidad de la grabación lo permite. Puedes renombrar las etiquetas después.",
-        "span": "lg:col-span-2"
+        "body": "Scribix solicita la separación de locutores y distingue los turnos cuando la calidad de la grabación lo permite. Puedes renombrar las etiquetas después."
       },
       {
-        "icon": "Globe",
         "title": "Detección automática del idioma",
         "body": "Scribix detecta automáticamente el idioma hablado para que la mayoría de archivos no requieran configurarlo."
       },
       {
-        "icon": "Clock",
         "title": "Marcas de tiempo a nivel de palabra",
         "body": "Haz clic en cualquier palabra para reproducir ese momento exacto. Las marcas de tiempo se exportan con subtítulos SRT y VTT listos para reproductores de vídeo."
       },
       {
-        "icon": "FileDown",
         "title": "Cinco formatos de exportación",
-        "body": "TXT, DOCX, SRT, VTT y CSV, cubre documentos, subtítulos, hojas de cálculo y flujos de revisión sin conversión adicional.",
-        "span": "lg:col-span-2"
+        "body": "TXT, DOCX, SRT, VTT y CSV, cubre documentos, subtítulos, hojas de cálculo y flujos de revisión sin conversión adicional."
       },
       {
-        "icon": "Sparkles",
         "title": "Transcripciones revisables",
         "body": "El resultado varía según la grabación, el ruido, el acento, el vocabulario y las voces superpuestas. Las etiquetas y marcas facilitan la revisión."
       },
       {
-        "icon": "Lock",
         "title": "Archivos fuente eliminados tras 14 días",
         "body": "El audio y vídeo subidos se eliminan automáticamente tras 14 días. Las transcripciones permanecen hasta que las elimines o cierres tu cuenta."
       }
@@ -203,24 +145,18 @@
     "number": "02",
     "h2Part1": "Tres pasos.",
     "h2Part2": "Transcripción con etiquetas de locutor.",
+    "uploadLimits": "Gratis: hasta {freeMinutes} min · De pago: hasta {paidHours} h",
     "steps": [
       {
-        "n": "01",
-        "icon": "CloudUpload",
         "title": "Sube tu archivo de vídeo o audio.",
-        "body": "Arrastra y suelta un archivo MP4, MOV, AVI, MKV, WebM, MP3, WAV o M4A de hasta 1 GB. Sin conversión de formato: Scribix maneja los contenedores multimedia comunes.",
-        "duration": "Hasta 1 GB · 6 horas"
+        "body": "Arrastra y suelta un archivo MP4, MOV, AVI, MKV, WebM, MP3, WAV o M4A de hasta 1 GB. Sin conversión de formato: Scribix maneja los contenedores multimedia comunes."
       },
       {
-        "n": "02",
-        "icon": "Cpu",
         "title": "La IA transcribe con etiquetas de locutor.",
         "body": "Scribix detecta el idioma, separa locutores cuando el audio lo permite y añade marcas por palabra. El tiempo depende del archivo y de la carga del servicio.",
         "duration": "El tiempo varía"
       },
       {
-        "n": "03",
-        "icon": "Download",
         "title": "Edita, copia o exporta.",
         "body": "Haz clic en cualquier palabra para reproducir ese momento exacto. Edita inline, luego descarga como TXT, DOCX, SRT, VTT o CSV, o copia el transcript completo en tu editor.",
         "duration": "5 formatos de exportación"
@@ -235,7 +171,6 @@
     "intro": "Desde creadores que reutilizan 90 minutos de metraje en shorts, hasta periodistas que citan entrevistas de 2 horas con precisión, el vídeo a texto convierte conversaciones grabadas en trabajo publicado. Scribix es la herramienta detrás.",
     "items": [
       {
-        "icon": "Clapperboard",
         "title": "Creadores de vídeo",
         "audience": "De formato largo a corto",
         "body": "Genera subtítulos para accesibilidad, reutiliza vídeos largos en publicaciones de blog, construye archivos de episodios buscables. Las marcas de tiempo a nivel de palabra hacen trivial extraer clips virales con precisión [12:04 – 12:38].",
@@ -246,7 +181,6 @@
         ]
       },
       {
-        "icon": "Mic",
         "title": "Podcasters y productores",
         "audience": "Programas de audio y vídeo",
         "body": "Convierte cada episodio en notas del programa, contenido de blog y transcripts indexados por SEO: la diferencia entre ser encontrado en Google y no serlo. Las etiquetas de locutor llegan listas para publicar.",
@@ -257,7 +191,6 @@
         ]
       },
       {
-        "icon": "Newspaper",
         "title": "Periodistas y entrevistadores",
         "audience": "Reportaje investigativo",
         "body": "Transcribe una entrevista de 90 minutos mientras caminas hacia la siguiente. Las etiquetas de locutor significan que puedes citar fuentes con precisión sin re-escuchar: texto listo para citas en una fracción del tiempo.",
@@ -268,7 +201,6 @@
         ]
       },
       {
-        "icon": "FlaskConical",
         "title": "Investigadores y UX",
         "audience": "Grupos focales, trabajo de campo",
         "body": "Ejecuta codificación cualitativa en grupos focales, conferencias y grabaciones de campo sin pagar $1.50/min por transcripción humana. Etiqueta temas, busca en cada palabra, exporta a Dovetail o Notion.",
@@ -279,7 +211,6 @@
         ]
       },
       {
-        "icon": "GraduationCap",
         "title": "Estudiantes",
         "audience": "Conferencias y estudio",
         "body": "Convierte una clase de 2 horas en notas consultables. Marca un momento confuso, haz clic en la palabra y vuelve a escucharlo. Pruébalo gratis y usa Pro para las clases más largas durante el semestre.",
@@ -290,7 +221,6 @@
         ]
       },
       {
-        "icon": "Scale",
         "title": "Legal y cumplimiento",
         "audience": "Declaraciones, audiencias",
         "body": "Crea un primer borrador con marcas de tiempo para revisar. Una persona cualificada debe verificar las transcripciones legales o de cumplimiento antes de usarlas.",
@@ -305,7 +235,7 @@
   "PricingPage": {
     "metadata": {
       "title": "Precios",
-      "description": "Precios simples de Scribix: empieza con 45 minutos gratuitos de por vida y pasa a Pro para obtener 2.400 minutos de transcripción cada mes.",
+      "description": "Precios simples de Scribix: empieza con {freeMinutes, number} minutos gratuitos de por vida y pasa a Pro para obtener {proMinutes, number} minutos de transcripción cada mes.",
       "ogTitle": "Precios de Scribix",
       "ogDescription": "Planes Gratis y Pro para transcripción de vídeo y audio."
     },
@@ -315,7 +245,7 @@
     "billingToggleLabel": "Intervalo de facturación",
     "billingMonthly": "Mensual",
     "billingYearly": "Anual",
-    "billingYearlyBadge": "Ahorra un 50%",
+    "billingYearlyBadge": "Ahorra un {savingsPercent, number}%",
     "billingYearlyNote": "Facturado {price} al año · Ahorra {savings}",
     "noCreditCard": "No requiere tarjeta",
     "chooseLabel": "Elegir {plan}",
@@ -327,61 +257,54 @@
     "faqTitle": "Preguntas sobre precios",
     "featureRows": [
       {
-        "key": "transcriptFiles",
         "label": "Archivos de transcripción",
         "values": {
-          "free": "Limitado a 45 min en total",
-          "starter": "Archivos ilimitados dentro de 600 min",
-          "pro": "Dentro de 2.400 min/mes"
+          "free": "Limitado a {minutes, number} min en total",
+          "starter": "Archivos ilimitados dentro de {minutes, number} min",
+          "pro": "Dentro de {minutes, number} min/mes"
         }
       },
       {
-        "key": "monthlyMinutes",
         "label": "Cupo de transcripción",
         "values": {
-          "free": "45 min de por vida",
-          "starter": "600 min/mes",
-          "pro": "40 horas/mes (2.400 min)"
+          "free": "{minutes, number} min de por vida",
+          "starter": "{minutes, number} min/mes",
+          "pro": "{hours, number} horas/mes ({minutes, number} min)"
         }
       },
       {
-        "key": "youtubeCaptionImports",
         "label": "YouTube caption imports",
         "values": {
-          "free": "10/day",
-          "starter": "100/month",
-          "pro": "1,000/month"
+          "free": "{imports, number}/day",
+          "starter": "{imports, number}/month",
+          "pro": "{imports, number}/month"
         }
       },
       {
-        "key": "maxYoutubeCaptionVideo",
         "label": "Max YouTube caption video",
         "values": {
-          "free": "2 hours",
-          "starter": "10 hours",
-          "pro": "10 hours"
+          "free": "{hours, number} hours",
+          "starter": "{hours, number} hours",
+          "pro": "{hours, number} hours"
         }
       },
       {
-        "key": "maxFileLength",
         "label": "Duración del archivo",
         "values": {
-          "free": "Hasta 45 min",
-          "starter": "Hasta 10 horas",
-          "pro": "Hasta 10 horas"
+          "free": "Hasta {minutes, number} min",
+          "starter": "Hasta {hours, number} horas",
+          "pro": "Hasta {hours, number} horas"
         }
       },
       {
-        "key": "maxFileSize",
         "label": "Tamaño máximo de archivo",
         "values": {
-          "free": "2 GB vídeo / 1 GB audio",
-          "starter": "5 GB vídeo / 1 GB audio",
-          "pro": "5 GB vídeo / 1 GB audio"
+          "free": "{videoGb, number} GB vídeo / {audioGb, number} GB audio",
+          "starter": "{videoGb, number} GB vídeo / {audioGb, number} GB audio",
+          "pro": "{videoGb, number} GB vídeo / {audioGb, number} GB audio"
         }
       },
       {
-        "key": "processingQueue",
         "label": "Cola de procesamiento",
         "values": {
           "free": "Estándar",
@@ -390,7 +313,6 @@
         }
       },
       {
-        "key": "accuracyModel",
         "label": "Modelo de transcripción",
         "values": {
           "free": "Estándar",
@@ -399,7 +321,6 @@
         }
       },
       {
-        "key": "aiTranslation",
         "label": "Traducción con IA",
         "values": {
           "free": "No",
@@ -408,7 +329,6 @@
         }
       },
       {
-        "key": "speakerLabels",
         "label": "Etiquetas de hablante",
         "values": {
           "free": "Sí",
@@ -417,7 +337,6 @@
         }
       },
       {
-        "key": "exports",
         "label": "Exportaciones",
         "values": {
           "free": "TXT, DOCX, SRT, VTT, CSV",
@@ -426,7 +345,6 @@
         }
       },
       {
-        "key": "aiSummaries",
         "label": "Notas con IA",
         "values": {
           "free": "No",
@@ -437,28 +355,22 @@
     ],
     "plans": [
       {
-        "id": "free",
         "name": "Gratis",
-        "price": "$0",
         "cadence": "una vez",
         "summary": "Prueba Scribix una vez y comprueba la calidad de la transcripción antes de pagar."
       },
       {
-        "id": "pro",
         "name": "Pro",
-        "price": "$20",
         "cadence": "al mes",
         "summary": "Transcribe grabaciones largas, conviértelas en notas claras con IA y tradúcelas, todo en un solo plan.",
         "purchaseNote": "Cancela cuando quieras",
-        "annual": "$120/año",
-        "annualPrice": "$120",
         "annualCadence": "al año"
       }
     ],
     "faqs": [
       {
         "question": "¿Puedo empezar gratis?",
-        "answer": "Sí. Gratis incluye 45 minutos de por vida para probar la calidad de la transcripción antes de elegir un plan de pago."
+        "answer": "Sí. Gratis incluye {freeMinutes, number} minutos de por vida para probar la calidad de la transcripción antes de elegir un plan de pago."
       },
       {
         "question": "¿Qué cuenta como minutos de transcripción?",
@@ -466,15 +378,15 @@
       },
       {
         "question": "¿Los minutos no usados se acumulan?",
-        "answer": "No. Pro incluye 2.400 minutos de transcripción cada mes. El cupo se reinicia mensualmente y los minutos no utilizados no se acumulan, incluso con la facturación anual."
+        "answer": "No. Pro incluye {proMinutes, number} minutos de transcripción cada mes. El cupo se reinicia mensualmente y los minutos no utilizados no se acumulan, incluso con la facturación anual."
       },
       {
         "question": "¿Cuál es la duración máxima de archivo?",
-        "answer": "Gratis admite archivos de hasta 45 minutos y Pro admite archivos de hasta 10 horas."
+        "answer": "Gratis admite archivos de hasta {freeMinutes, number} minutos y Pro admite archivos de hasta {proHours, number} horas."
       },
       {
         "question": "¿Hay límites de tamaño para las subidas?",
-        "answer": "Sí. Los vídeos pueden ocupar hasta 5 GB en Pro y 2 GB en Gratis. Los archivos de audio pueden ocupar hasta 1 GB. También se aplican la duración máxima y los minutos mensuales restantes."
+        "answer": "Sí. Los vídeos pueden ocupar hasta {proVideoGb, number} GB en Pro y {freeVideoGb, number} GB en Gratis. Los archivos de audio pueden ocupar hasta {audioGb, number} GB. También se aplican la duración máxima y los minutos mensuales restantes."
       },
       {
         "question": "¿Puedo cambiar de plan más tarde?",
@@ -482,7 +394,7 @@
       },
       {
         "question": "¿Hay prueba gratis en los planes de pago?",
-        "answer": "Los planes de pago no incluyen otra prueba. Usa los 45 minutos gratuitos de por vida para comprobar la calidad antes de suscribirte."
+        "answer": "Los planes de pago no incluyen otra prueba. Usa los {freeMinutes, number} minutos gratuitos de por vida para comprobar la calidad antes de suscribirte."
       }
     ],
     "aiFeatures": "Notas con IA + traducción",
@@ -561,16 +473,11 @@
   },
   "Footer": {
     "tagline": "Vídeo a texto a nivel de estudio para la gente que convierte la conversación grabada en historias.",
-    "legal": [
-      {
-        "label": "Términos de servicio",
-        "href": "/terms"
-      },
-      {
-        "label": "Política de privacidad",
-        "href": "/privacy"
-      }
-    ]
+    "legalLabels": {
+      "terms": "Términos de servicio",
+      "privacy": "Política de privacidad",
+      "refunds": "Política de reembolsos"
+    }
   },
   "Dashboard": {
     "layout": {
@@ -727,7 +634,6 @@
       "more": "Más",
       "summarySoon": "Notas con IA — próximamente",
       "summary": "Notas con IA",
-      "translateSoon": "Traducción — próximamente",
       "translate": "Traducir"
     },
     "rowMenu": {
@@ -909,22 +815,17 @@
       "primaryCta": "Prueba 45 minutos gratis",
       "signedInPrimaryCta": "Subir audio",
       "secondaryCta": "¿Necesitas video a texto?",
-      "secondaryHref": "/",
       "proof": [
         {
-          "icon": "BadgeCheck",
           "label": "45 min gratis"
         },
         {
-          "icon": "Globe",
           "label": "Detección automática del idioma"
         },
         {
-          "icon": "Users",
           "label": "Etiquetas de hablantes"
         },
         {
-          "icon": "ShieldCheck",
           "label": "Sin tarjeta"
         }
       ]
@@ -1000,22 +901,16 @@
       "accentTitle": "Audio a texto.",
       "steps": [
         {
-          "n": "01",
-          "icon": "Lock",
           "title": "Inicia sesión con Google.",
           "body": "Tu prueba gratis empieza con 45 minutos de transcripción y sin tarjeta de crédito.",
           "meta": "Sin tarjeta"
         },
         {
-          "n": "02",
-          "icon": "FileAudio",
           "title": "Sube audio.",
           "body": "Elige un archivo de audio como MP3, WAV o M4A.",
           "meta": "Subida de audio"
         },
         {
-          "n": "03",
-          "icon": "Download",
           "title": "Revisa y exporta.",
           "body": "Comprueba hablantes y marcas de tiempo, luego copia o descarga TXT, DOCX, SRT, VTT o CSV.",
           "meta": "5 formatos"
@@ -1029,25 +924,21 @@
       "accentTitle": "texto útil.",
       "items": [
         {
-          "icon": "Users",
           "title": "Transcripción de entrevistas",
           "who": "Periodistas, reclutadores, investigadores",
           "output": "Transcripción Q&A con marcas de tiempo y hablantes"
         },
         {
-          "icon": "Mic",
           "title": "Notas de reunión",
           "who": "Fundadores, ventas, operaciones",
           "output": "Registro buscable de qué se dijo y quién lo dijo"
         },
         {
-          "icon": "Search",
           "title": "Repaso de clases",
           "who": "Estudiantes y educadores",
           "output": "Notas de estudio que se pueden buscar y citar"
         },
         {
-          "icon": "Captions",
           "title": "Preparar subtítulos",
           "who": "Editores de video y creadores",
           "output": "Subtítulos SRT o VTT generados desde la pista de audio"
@@ -1070,22 +961,18 @@
       "intro": "Esta página es para transcribir: sube audio, obtén texto con marcas de tiempo y hablantes, luego copia o exporta. Resúmenes, traducción, chat y mapas mentales no forman parte de este flujo.",
       "items": [
         {
-          "icon": "Globe",
           "title": "Detección automática del idioma",
           "body": "La detección automática simplifica la subida cuando tus grabaciones incluyen varios hablantes o regiones."
         },
         {
-          "icon": "Users",
           "title": "Hablantes",
           "body": "Las conversaciones son más fáciles de revisar cuando cada intervención está separada por hablante."
         },
         {
-          "icon": "Clock3",
           "title": "Marcas de tiempo",
           "body": "El texto con tiempos ayuda a rastrear citas, preparar subtítulos y revisar momentos importantes."
         },
         {
-          "icon": "Download",
           "title": "Cinco formatos",
           "body": "Descarga TXT, DOCX, SRT, VTT o CSV, o copia la transcripción directamente."
         }
@@ -1094,7 +981,6 @@
     "insights": {
       "items": [
         {
-          "icon": "Sparkles",
           "title": "¿Qué tan precisa es la transcripción de audio a texto?",
           "body": [
             "Las grabaciones claras suelen dar mejores resultados. La calidad varía con la distancia, ruido, acentos, vocabulario y voces superpuestas.",
@@ -1102,14 +988,12 @@
           ]
         },
         {
-          "icon": "Lock",
           "title": "¿Tu audio es privado?",
           "body": [
             "Scribix usa el audio subido solo para generar y entregar transcripciones en tu cuenta. Los archivos de audio y video se eliminan automáticamente después de 14 días.",
             "Las transcripciones permanecen en tu cuenta hasta que las borres o cierres la cuenta. Lee la"
           ],
           "link": {
-            "href": "/privacy",
             "label": "política de privacidad",
             "suffix": "."
           }
@@ -1255,12 +1139,11 @@
       "primaryCta": "Empieza con 45 minutos gratis",
       "signedInPrimaryCta": "Crear una transcripción",
       "secondaryCta": "Ver precios",
-      "secondaryHref": "/pricing",
       "trust": [
-        { "label": "Audio, video, YouTube y micrófono", "icon": "Upload" },
-        { "label": "Etiquetas de hablantes", "icon": "Users" },
-        { "label": "Marcas de tiempo por palabra", "icon": "Clock" },
-        { "label": "Notas con IA en planes de pago", "icon": "Sparkles" }
+        { "label": "Audio, video, YouTube y micrófono" },
+        { "label": "Etiquetas de hablantes" },
+        { "label": "Marcas de tiempo por palabra" },
+        { "label": "Notas con IA en planes de pago" }
       ]
     },
     "features": {
@@ -1269,12 +1152,12 @@
       "h2": "Una IA para tomar notas que conserva <accent>la fuente y lo esencial.</accent>",
       "intro": "Scribix convierte una grabación en dos capas útiles: una transcripción que puedes comprobar y unas notas con IA más breves para actuar. El resumen, los puntos clave y las tareas mantienen su contexto gracias a los hablantes y las marcas de tiempo.",
       "items": [
-        { "icon": "Sparkles", "title": "Notas con IA estructuradas", "body": "Genera un resumen, puntos clave y tareas a partir de una transcripción terminada con Pro.", "span": "lg:col-span-2" },
-        { "icon": "Users", "title": "Conversaciones separadas por hablante", "body": "Scribix separa los turnos cuando la calidad de la grabación lo permite. Después puedes cambiar el nombre de las etiquetas." },
-        { "icon": "Clock", "title": "Marcas de tiempo verificables", "body": "Las marcas por palabra te ayudan a volver al momento exacto que originó una nota, una cita o una tarea." },
-        { "icon": "Files", "title": "Cuatro formas de añadir una grabación", "body": "Sube video, sube audio, graba con el micrófono o importa una pista de subtítulos disponible desde una URL de YouTube.", "span": "lg:col-span-2" },
-        { "icon": "FileDown", "title": "Exportación de transcripciones", "body": "Revisa y edita la transcripción; después cópiala o expórtala como TXT, DOCX, SRT, VTT o CSV." },
-        { "icon": "Lock", "title": "Retención de datos transparente", "body": "Los archivos de audio y video subidos se eliminan automáticamente después de 14 días. Las transcripciones permanecen hasta que las elimines o cierres tu cuenta." }
+        {  "title": "Notas con IA estructuradas", "body": "Genera un resumen, puntos clave y tareas a partir de una transcripción terminada con Pro." },
+        {  "title": "Conversaciones separadas por hablante", "body": "Scribix separa los turnos cuando la calidad de la grabación lo permite. Después puedes cambiar el nombre de las etiquetas." },
+        {  "title": "Marcas de tiempo verificables", "body": "Las marcas por palabra te ayudan a volver al momento exacto que originó una nota, una cita o una tarea." },
+        {  "title": "Cuatro formas de añadir una grabación", "body": "Sube video, sube audio, graba con el micrófono o importa una pista de subtítulos disponible desde una URL de YouTube." },
+        {  "title": "Exportación de transcripciones", "body": "Revisa y edita la transcripción; después cópiala o expórtala como TXT, DOCX, SRT, VTT o CSV." },
+        {  "title": "Retención de datos transparente", "body": "Los archivos de audio y video subidos se eliminan automáticamente después de 14 días. Las transcripciones permanecen hasta que las elimines o cierres tu cuenta." }
       ]
     },
     "howItWorks": {
@@ -1283,9 +1166,9 @@
       "h2Part1": "Tres pasos.",
       "h2Part2": "De la grabación a las notas con IA.",
       "steps": [
-        { "n": "01", "icon": "CloudUpload", "title": "Añade la conversación.", "body": "Sube un archivo de audio o video, graba en directo con el micrófono o pega una URL de YouTube que tenga una pista de subtítulos disponible.", "duration": "Audio · Video · YouTube · Micrófono" },
-        { "n": "02", "icon": "Cpu", "title": "Crea una transcripción rastreable.", "body": "Scribix transcribe el contenido subido o grabado, separa a los hablantes cuando el audio lo permite y añade marcas de tiempo por palabra. En una URL de YouTube, importa la pista de subtítulos elegida.", "duration": "Hablantes + marcas de tiempo" },
-        { "n": "03", "icon": "ListChecks", "title": "Genera y revisa las notas.", "body": "Con Pro, crea un resumen, puntos clave y tareas. Comprueba los datos importantes en la transcripción antes de compartirlos o actuar sobre ellos.", "duration": "Resumen · Puntos clave · Tareas" }
+        {   "title": "Añade la conversación.", "body": "Sube un archivo de audio o video, graba en directo con el micrófono o pega una URL de YouTube que tenga una pista de subtítulos disponible.", "duration": "Audio · Video · YouTube · Micrófono" },
+        {   "title": "Crea una transcripción rastreable.", "body": "Scribix transcribe el contenido subido o grabado, separa a los hablantes cuando el audio lo permite y añade marcas de tiempo por palabra. En una URL de YouTube, importa la pista de subtítulos elegida.", "duration": "Hablantes + marcas de tiempo" },
+        {   "title": "Genera y revisa las notas.", "body": "Con Pro, crea un resumen, puntos clave y tareas. Comprueba los datos importantes en la transcripción antes de compartirlos o actuar sobre ellos.", "duration": "Resumen · Puntos clave · Tareas" }
       ]
     },
     "useCases": {
@@ -1295,11 +1178,11 @@
       "h2Part2": "<accent>un registro realmente útil.</accent>",
       "intro": "Usa Scribix después de reuniones, entrevistas, clases, seminarios web, pódcasts y sesiones de investigación cuando volver a escuchar toda la grabación retrasaría el siguiente paso.",
       "items": [
-        { "icon": "BriefcaseBusiness", "title": "Seguimiento de reuniones", "audience": "Fundadores, operaciones y equipos de proyecto", "body": "Conserva toda la conversación en un formato consultable y extrae los puntos principales y las tareas sin invitar un bot a la llamada.", "workflow": ["Grabación de la reunión", "Transcripción por hablante", "Puntos clave + tareas"] },
-        { "icon": "Handshake", "title": "Llamadas con clientes y ventas", "audience": "Ventas, éxito del cliente y producto", "body": "Revisa las palabras del cliente, vuelve a momentos importantes y convierte los seguimientos acordados en una lista de tareas.", "workflow": ["Llamada grabada", "Evidencia del cliente", "Lista de seguimiento"] },
-        { "icon": "GraduationCap", "title": "Clases y estudio", "audience": "Estudiantes y docentes", "body": "Convierte una clase grabada en texto consultable y en un conjunto más breve de puntos clave para repasar.", "workflow": ["Audio de la clase", "Transcripción con tiempos", "Notas de estudio"] },
-        { "icon": "Newspaper", "title": "Entrevistas e investigación", "audience": "Periodistas, reclutadores e investigadores", "body": "Mantén los hablantes y las marcas de tiempo junto a la fuente y resume temas y próximos pasos para el análisis.", "workflow": ["Entrevista grabada", "Citas rastreables", "Temas + tareas"] },
-        { "icon": "Mic", "title": "Pódcasts y seminarios web", "audience": "Creadores, marketing y producción", "body": "Transforma contenido largo en una transcripción y notas breves para resúmenes, recapitulaciones y planificación de contenidos.", "workflow": ["Episodio o seminario", "Transcripción completa", "Esquema del resumen"] }
+        {  "title": "Seguimiento de reuniones", "audience": "Fundadores, operaciones y equipos de proyecto", "body": "Conserva toda la conversación en un formato consultable y extrae los puntos principales y las tareas sin invitar un bot a la llamada.", "workflow": ["Grabación de la reunión", "Transcripción por hablante", "Puntos clave + tareas"] },
+        {  "title": "Llamadas con clientes y ventas", "audience": "Ventas, éxito del cliente y producto", "body": "Revisa las palabras del cliente, vuelve a momentos importantes y convierte los seguimientos acordados en una lista de tareas.", "workflow": ["Llamada grabada", "Evidencia del cliente", "Lista de seguimiento"] },
+        {  "title": "Clases y estudio", "audience": "Estudiantes y docentes", "body": "Convierte una clase grabada en texto consultable y en un conjunto más breve de puntos clave para repasar.", "workflow": ["Audio de la clase", "Transcripción con tiempos", "Notas de estudio"] },
+        {  "title": "Entrevistas e investigación", "audience": "Periodistas, reclutadores e investigadores", "body": "Mantén los hablantes y las marcas de tiempo junto a la fuente y resume temas y próximos pasos para el análisis.", "workflow": ["Entrevista grabada", "Citas rastreables", "Temas + tareas"] },
+        {  "title": "Pódcasts y seminarios web", "audience": "Creadores, marketing y producción", "body": "Transforma contenido largo en una transcripción y notas breves para resúmenes, recapitulaciones y planificación de contenidos.", "workflow": ["Episodio o seminario", "Transcripción completa", "Esquema del resumen"] }
       ]
     },
     "faq": {
@@ -1383,22 +1266,17 @@
       "primaryCta": "Convertir MP3 a texto",
       "signedInPrimaryCta": "Subir MP3",
       "secondaryCta": "¿Necesitas otros formatos de audio?",
-      "secondaryHref": "/audio-to-text",
       "proof": [
         {
-          "icon": "BadgeCheck",
           "label": "Prueba gratis de 45 min"
         },
         {
-          "icon": "Globe",
           "label": "Detección automática del idioma"
         },
         {
-          "icon": "Users",
           "label": "Etiquetas de hablantes"
         },
         {
-          "icon": "ShieldCheck",
           "label": "Sin tarjeta de crédito"
         }
       ]
@@ -1475,22 +1353,16 @@
       "accentTitle": "MP3 a texto.",
       "steps": [
         {
-          "n": "01",
-          "icon": "Lock",
           "title": "Inicia sesión con Google.",
           "body": "Tu prueba gratis comienza con 45 minutos de transcripción y sin tarjeta de crédito.",
           "meta": "Sin tarjeta"
         },
         {
-          "n": "02",
-          "icon": "FileAudio",
           "title": "Sube tu MP3.",
           "body": "Elige la grabación MP3 que quieres convertir en texto.",
           "meta": "Subida MP3"
         },
         {
-          "n": "03",
-          "icon": "Download",
           "title": "Revisa y exporta.",
           "body": "Comprueba hablantes y marcas de tiempo, luego copia o descarga en TXT, DOCX, SRT, VTT o CSV.",
           "meta": "5 formatos"
@@ -1504,25 +1376,21 @@
       "accentTitle": "texto útil.",
       "items": [
         {
-          "icon": "Mic",
           "title": "Transcripciones de podcasts",
           "who": "Podcasters, productores, creadores",
           "output": "Transcripción de episodio para accesibilidad, búsqueda y reutilización"
         },
         {
-          "icon": "Users",
           "title": "Citas de entrevistas",
           "who": "Periodistas, reclutadores, investigadores",
           "output": "Transcripción de preguntas y respuestas con marcas de tiempo y hablantes"
         },
         {
-          "icon": "Search",
           "title": "Repaso de clases",
           "who": "Estudiantes, docentes, equipos educativos",
           "output": "Apuntes buscables a partir de clases grabadas"
         },
         {
-          "icon": "Captions",
           "title": "Preparación de subtítulos",
           "who": "Editores, marketers, equipos de accesibilidad",
           "output": "Subtítulos SRT o VTT generados desde una pista MP3"
@@ -1545,22 +1413,18 @@
       "intro": "Esta página es para transcripción MP3: sube un MP3, obtén texto con marcas de tiempo y hablantes, y luego cópialo o expórtalo. Está enfocada en el flujo de transcripción, no en edición, traducción o resúmenes.",
       "items": [
         {
-          "icon": "Globe",
           "title": "Detección automática del idioma",
           "body": "La detección automática del idioma simplifica la subida cuando tus grabaciones incluyen distintas regiones o hablantes."
         },
         {
-          "icon": "Users",
           "title": "Etiquetas de hablantes",
           "body": "Las transcripciones de conversaciones son más fáciles de revisar cuando cada turno está separado por hablante."
         },
         {
-          "icon": "Clock3",
           "title": "Marcas de tiempo",
           "body": "El texto con marcas de tiempo ayuda a rastrear citas, preparar subtítulos y revisar momentos importantes."
         },
         {
-          "icon": "Download",
           "title": "Cinco formatos de exportación",
           "body": "Descarga TXT, DOCX, SRT, VTT o CSV, o copia la transcripción directamente desde la app."
         }
@@ -1569,7 +1433,6 @@
     "insights": {
       "items": [
         {
-          "icon": "Sparkles",
           "title": "¿Qué tan precisa es la transcripción de MP3 a texto?",
           "body": [
             "Las grabaciones claras suelen dar mejores resultados. La calidad varía con la distancia, ruido, acentos, vocabulario y voces superpuestas.",
@@ -1577,14 +1440,12 @@
           ]
         },
         {
-          "icon": "Lock",
           "title": "¿Tu MP3 es privado?",
           "body": [
             "Scribix usa tu MP3 subido solo para generar y entregar transcripciones en tu cuenta. Los archivos de audio y video se eliminan automáticamente después de 14 días.",
             "Las transcripciones permanecen en tu cuenta hasta que las elimines o cierres tu cuenta. Lee la"
           ],
           "link": {
-            "href": "/privacy",
             "label": "política de privacidad",
             "suffix": "."
           }
@@ -1696,7 +1557,6 @@
       "featureList": [
         "Subida de archivo MP3",
         "Detección automática de idioma",
-        "Más de 200 idiomas",
         "Etiquetas de hablantes",
         "Transcripciones con marcas de tiempo",
         "Exportación TXT",
@@ -1736,22 +1596,17 @@
       "descriptionEnd": ". Scribix comprueba primero los subtítulos disponibles y guarda la transcripción sin descargar el vídeo ni el audio de YouTube.",
       "primaryCta": "Pegar una URL de YouTube",
       "secondaryCta": "¿Necesitas transcribir un archivo?",
-      "secondaryHref": "/",
       "proof": [
         {
-          "icon": "BadgeCheck",
           "label": "10 importaciones gratis/día"
         },
         {
-          "icon": "Captions",
           "label": "Selector de idioma"
         },
         {
-          "icon": "Download",
           "label": "TXT, DOCX, SRT, VTT, CSV"
         },
         {
-          "icon": "ShieldCheck",
           "label": "Sin tarjeta"
         }
       ]
@@ -1824,36 +1679,26 @@
       "accentTitle": "De URL a texto.",
       "steps": [
         {
-          "n": "01",
-          "icon": "Lock",
           "title": "Inicia sesión con Google.",
           "body": "El plan gratuito incluye 10 importaciones de subtítulos de YouTube al día y no requiere tarjeta.",
           "meta": "Plan gratis"
         },
         {
-          "n": "02",
-          "icon": "Search",
           "title": "Pega la URL de YouTube.",
           "body": "Copia un enlace de vídeo de YouTube y deja que Scribix compruebe si hay pistas de subtítulos disponibles.",
           "meta": "Comprobar"
         },
         {
-          "n": "03",
-          "icon": "Captions",
           "title": "Elige la pista de subtítulos.",
           "body": "Selecciona la pista manual o automática que quieres importar.",
           "meta": "Idioma"
         },
         {
-          "n": "04",
-          "icon": "FileText",
           "title": "Importa la transcripción.",
           "body": "Scribix guarda la pista seleccionada en tu biblioteca con marcas de tiempo.",
           "meta": "Texto guardado"
         },
         {
-          "n": "05",
-          "icon": "Download",
           "title": "Revisa y exporta.",
           "body": "Copia el texto, descarga TXT, DOCX, SRT, VTT o CSV, o crea un resumen de IA con un plan de pago.",
           "meta": "5 formatos"
@@ -1867,31 +1712,26 @@
       "accentTitle": "texto útil.",
       "items": [
         {
-          "icon": "Search",
           "title": "Revisión de clases",
           "who": "Estudiantes, docentes, equipos educativos",
           "output": "Apuntes buscables desde una clase de YouTube subtitulada"
         },
         {
-          "icon": "Users",
           "title": "Investigación de entrevistas",
           "who": "Periodistas, investigadores, reclutadores",
           "output": "Banco de citas con marcas de tiempo desde una entrevista o panel público"
         },
         {
-          "icon": "Sparkles",
           "title": "Reutilización de contenido",
           "who": "YouTubers, podcasters, marketers",
           "output": "Esquema de blog, notas, captions y resumen de IA de pago"
         },
         {
-          "icon": "BadgeCheck",
           "title": "Seguimiento de webinars",
           "who": "Ventas, éxito del cliente, operaciones",
           "output": "Registro escrito de una demo, charla de producto o sesión con clientes"
         },
         {
-          "icon": "Captions",
           "title": "Accesibilidad",
           "who": "Equipos de contenido, docentes, organizaciones",
           "output": "Archivos de subtítulos descargables y texto legible"
@@ -1914,22 +1754,18 @@
       "intro": "Scribix centra el flujo de YouTube en importar subtítulos. Comprueba la URL, lista las pistas disponibles, etiqueta cada pista como manual o automática cuando la metadata existe e importa la pista seleccionada a tu biblioteca.",
       "items": [
         {
-          "icon": "Captions",
           "title": "Pistas de subtítulos",
           "body": "Importa pistas de subtítulos disponibles de YouTube sin descargar el vídeo ni el audio."
         },
         {
-          "icon": "Globe",
           "title": "Elección de idioma",
           "body": "Elige entre los idiomas disponibles antes de guardar la transcripción."
         },
         {
-          "icon": "Clock3",
           "title": "Marcas de tiempo",
           "body": "Los segmentos con tiempo ayudan a rastrear citas y revisar momentos importantes."
         },
         {
-          "icon": "Download",
           "title": "Cinco exportaciones",
           "body": "Descarga TXT, DOCX, SRT, VTT o CSV, o copia la transcripción directamente."
         }
@@ -1938,7 +1774,6 @@
     "insights": {
       "items": [
         {
-          "icon": "Sparkles",
           "title": "¿Qué tan precisa es una transcripción de YouTube?",
           "body": [
             "La precisión depende de la pista de subtítulos disponible para el vídeo. Los subtítulos manuales suelen ser más limpios que los automáticos, que pueden incluir errores por ruido, acentos, música, términos técnicos, voces superpuestas o audio poco claro.",
@@ -1946,14 +1781,12 @@
           ]
         },
         {
-          "icon": "Lock",
           "title": "¿Tu transcripción de YouTube es privada?",
           "body": [
             "Scribix requiere inicio de sesión con Google para guardar las transcripciones importadas en tu cuenta. Para importaciones por URL de YouTube, Scribix importa subtítulos disponibles y no descarga el vídeo ni el audio de YouTube.",
             "Tu transcripción guardada permanece en tu cuenta hasta que la elimines o cierres la cuenta. Scribix nunca entrena modelos con datos de usuarios. Lee la"
           ],
           "link": {
-            "href": "/privacy",
             "label": "política de privacidad",
             "suffix": "."
           }

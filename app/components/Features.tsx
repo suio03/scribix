@@ -9,30 +9,36 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { mergeLocalizedItems } from "@/lib/localized-items";
 import { SectionLabel } from "./SectionLabel";
 
-type FeatureIcon =
-  | "Users"
-  | "Globe"
-  | "Clock"
-  | "FileDown"
-  | "Files"
-  | "Sparkles"
-  | "Lock";
-type Item = { title: string; body: string; span?: string; icon?: FeatureIcon };
+type FeaturesNamespace = "Features" | "AiNoteTaker.features";
 
-const icons: LucideIcon[] = [Users, Globe, Clock, FileDown, Sparkles, Lock];
-const iconByName: Record<FeatureIcon, LucideIcon> = {
-  Users,
-  Globe,
-  Clock,
-  FileDown,
-  Files,
-  Sparkles,
-  Lock,
+type ItemCopy = { title: string; body: string };
+type FeatureDefinition = {
+  key: string;
+  icon: LucideIcon;
+  span?: string;
 };
 
-type FeaturesNamespace = "Features" | "AiNoteTaker.features";
+const FEATURE_DEFINITIONS = {
+  Features: [
+    { key: "speakerLabels", icon: Users, span: "lg:col-span-2" },
+    { key: "languageDetection", icon: Globe },
+    { key: "timestamps", icon: Clock },
+    { key: "exports", icon: FileDown, span: "lg:col-span-2" },
+    { key: "review", icon: Sparkles },
+    { key: "retention", icon: Lock },
+  ],
+  "AiNoteTaker.features": [
+    { key: "structuredNotes", icon: Sparkles, span: "lg:col-span-2" },
+    { key: "speakerLabels", icon: Users },
+    { key: "timestamps", icon: Clock },
+    { key: "sources", icon: Files, span: "lg:col-span-2" },
+    { key: "exports", icon: FileDown },
+    { key: "retention", icon: Lock },
+  ],
+} satisfies Record<FeaturesNamespace, readonly FeatureDefinition[]>;
 
 export async function Features({
   namespace = "Features",
@@ -40,7 +46,12 @@ export async function Features({
   namespace?: FeaturesNamespace;
 } = {}) {
   const t = await getTranslations(namespace);
-  const items = t.raw("items") as Item[];
+  const itemCopy = t.raw("items") as ItemCopy[];
+  const items = mergeLocalizedItems(
+    itemCopy,
+    FEATURE_DEFINITIONS[namespace],
+    `${namespace}.items`
+  );
 
   return (
     <section
@@ -63,10 +74,10 @@ export async function Features({
 
         <div className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
           {items.map((f, i) => {
-            const Icon = f.icon ? iconByName[f.icon] : icons[i];
+            const Icon = f.icon;
             return (
               <article
-                key={f.title}
+                key={f.key}
                 className={`group relative flex flex-col gap-4 bg-card p-7 transition hover:bg-paper ${
                   f.span ?? ""
                 }`}

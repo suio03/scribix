@@ -1,3 +1,7 @@
+import { PLANS } from "@/lib/plans";
+import { marketingGigabytes } from "@/lib/pricing-facts";
+import { assertLocalizedItemCount } from "@/lib/localized-items";
+
 export type PricingPlanId = "free" | "starter" | "pro";
 
 export type PlanFeatureKey =
@@ -23,7 +27,51 @@ export type PlanFeatureCopy = {
   annualValues?: Partial<Record<PricingPlanId, string>>;
 };
 
-type PricingFeatureT = (key: string) => string;
+type PricingFeatureT = {
+  (key: string, values?: Record<string, number>): string;
+  raw(key: string): unknown;
+};
+
+const PRICING_PLAN_IDS = ["free", "starter", "pro"] as const;
+
+const PRICING_FEATURE_KEYS = [
+  "transcriptFiles",
+  "monthlyMinutes",
+  "youtubeCaptionImports",
+  "maxYoutubeCaptionVideo",
+  "maxFileLength",
+  "maxFileSize",
+  "processingQueue",
+  "accuracyModel",
+  "aiTranslation",
+  "speakerLabels",
+  "exports",
+  "aiSummaries",
+] as const satisfies readonly PlanFeatureKey[];
+
+export function buildPricingFeatureRows(
+  t: PricingFeatureT
+): PlanFeatureCopy[] {
+  assertLocalizedItemCount(
+    t.raw("featureRows"),
+    PRICING_FEATURE_KEYS,
+    "PricingPage.featureRows"
+  );
+
+  return PRICING_FEATURE_KEYS.map((key, index) => ({
+    key,
+    label: t(`featureRows.${index}.label`),
+    values: Object.fromEntries(
+      PRICING_PLAN_IDS.map((planId) => [
+        planId,
+        t(
+          `featureRows.${index}.values.${planId}`,
+          pricingValues(key, planId)
+        ),
+      ])
+    ) as Record<PricingPlanId, string>,
+  }));
+}
 
 export function compactPricingRows(
   featureRows: PlanFeatureCopy[],
@@ -115,4 +163,44 @@ function mergeCell(a: string, b: string) {
 
 function featureRowsByKey(featureRows: PlanFeatureCopy[]) {
   return new Map(featureRows.map((row) => [row.key, row]));
+}
+
+function pricingValues(
+  key: PlanFeatureKey,
+  planId: PricingPlanId
+): Record<string, number> {
+  const tier = planId === "starter" ? "basic" : planId;
+  const plan = PLANS[tier];
+  let minutes: number;
+  let imports: number;
+  if (tier === "free") {
+    minutes = PLANS.free.minutesPerCycle;
+    imports = PLANS.free.youtubeImportsPerCycle;
+  } else {
+    minutes = PLANS[tier].monthly.minutesPerCycle;
+    imports = PLANS[tier].monthly.youtubeImportsPerCycle;
+  }
+
+  if (key === "transcriptFiles" || key === "monthlyMinutes") {
+    return { minutes, hours: minutes / 60 };
+  }
+  if (key === "youtubeCaptionImports") {
+    return { imports };
+  }
+  if (key === "maxYoutubeCaptionVideo") {
+    return { hours: plan.youtubeMaxVideoSec / 3600 };
+  }
+  if (key === "maxFileLength") {
+    return {
+      minutes: plan.maxFileSec / 60,
+      hours: plan.maxFileSec / 3600,
+    };
+  }
+  if (key === "maxFileSize") {
+    return {
+      videoGb: marketingGigabytes(plan.maxVideoUploadBytes),
+      audioGb: marketingGigabytes(plan.maxFileBytes),
+    };
+  }
+  return {};
 }

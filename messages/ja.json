@@ -20,7 +20,6 @@
     "billing": "請求",
     "pricingBadge": "50% OFF",
     "freePlan": "フリープラン",
-    "freePlanQuota": "4 / 日",
     "usageTitle": "残り時間",
     "usageRemaining": "残り {remaining} 分",
     "usageMeter": "{used} / {quota} 分使用済み",
@@ -32,52 +31,14 @@
     "language": "言語",
     "docs": "ドキュメント",
     "help": "ヘルプ",
-    "nav": [
-      {
-        "label": "ホーム",
-        "href": "/",
-        "icon": "Home"
-      },
-      {
-        "label": "音声を文字に",
-        "href": "/audio-to-text",
-        "icon": "AudioLines"
-      },
-      {
-        "label": "MP3をテキスト化",
-        "href": "/mp3-to-text",
-        "icon": "FileAudio"
-      },
-      {
-        "label": "動画を文字に",
-        "href": "/#generator",
-        "icon": "Clapperboard"
-      },
-      {
-        "label": "YouTubeをテキスト化",
-        "href": "/youtube-to-transcript",
-        "icon": "Captions"
-      },
-      {
-        "label": "AI議事録",
-        "href": "/ai-note-taker",
-        "icon": "ListChecks"
-      }
-    ],
-    "tools": [
-      {
-        "label": "要約",
-        "href": "#features"
-      },
-      {
-        "label": "翻訳",
-        "href": "#features"
-      },
-      {
-        "label": "字幕（SRT/VTT）",
-        "href": "#features"
-      }
-    ],
+    "navLabels": {
+      "home": "ホーム",
+      "audioToText": "音声を文字に",
+      "mp3ToText": "MP3をテキスト化",
+      "videoToText": "動画を文字に",
+      "youtubeToTranscript": "YouTubeをテキスト化",
+      "aiNoteTaker": "AI議事録"
+    },
     "currentPlanTitle": "現在のプラン",
     "manageBilling": "請求を管理",
     "tierFree": "無料",
@@ -105,44 +66,33 @@
     "description": "Scribixは動画・音声ファイルを、確認・書き出し可能な話者ラベル付きテキストに変換します。MP4、MOV、WebM、AVI、MP3、WAV、M4Aに対応し、単語単位のタイムスタンプと<stat>言語の自動検出</stat>を利用できます。Googleログインで<stat>45分無料</stat>、カード不要です。",
     "trust": [
       {
-        "label": "45分無料",
-        "icon": "Target"
+        "label": "45分無料"
       },
       {
-        "label": "言語を自動検出",
-        "icon": "Globe"
+        "label": "言語を自動検出"
       },
       {
-        "label": "音声は最大1 GB",
-        "icon": "InfinityIcon"
+        "label": "音声は最大1 GB"
       },
       {
-        "label": "話者ラベル",
-        "icon": "Users"
+        "label": "話者ラベル"
       },
       {
-        "label": "5つの書き出し形式",
-        "icon": "ShieldCheck"
+        "label": "5つの書き出し形式"
       }
     ],
     "tabs": [
       {
-        "id": "upload",
         "label": "ファイルアップロード",
-        "hint": "動画 · 音声",
-        "icon": "Upload"
+        "hint": "動画 · 音声"
       },
       {
-        "id": "youtube",
         "label": "YouTube リンク",
-        "hint": "URL を貼り付け",
-        "icon": "PlaySquare"
+        "hint": "URL を貼り付け"
       },
       {
-        "id": "record",
         "label": "録音",
-        "hint": "ライブ音声",
-        "icon": "Mic"
+        "hint": "ライブ音声"
       }
     ],
     "upload": {
@@ -165,34 +115,26 @@
     "intro": "動画から文字起こしツールは、動画内の話された音声をテキストに文字起こしします。最新の AI スピーチモデルは、単語を認識し、話者を分離し、タイムスタンプを付与します。数時間ではなく数分で編集可能な文字起こしを作成します。Scribix は、プロフェッショナルな文字起こしスイートを支える同じレベルのスピーチモデルを実行します — Google でサインインして始めれば、発行可能なほど高品質な出力が得られます。",
     "items": [
       {
-        "icon": "Users",
         "title": "会話の話者ラベル",
-        "body": "Scribixは文字起こし時に話者分離を要求し、録音品質が十分な場合は発話を分けます。ラベルは後から変更できます。",
-        "span": "lg:col-span-2"
+        "body": "Scribixは文字起こし時に話者分離を要求し、録音品質が十分な場合は発話を分けます。ラベルは後から変更できます。"
       },
       {
-        "icon": "Globe",
         "title": "言語の自動検出",
         "body": "Scribixが話されている言語を自動検出するため、多くの場合は言語設定が不要です。"
       },
       {
-        "icon": "Clock",
         "title": "単語レベルのタイムスタンプ",
         "body": "任意の単語をクリックしてその時点を再生できます。タイムスタンプは SRT および VTT 字幕とともにエクスポート、ビデオプレイヤーに対応。"
       },
       {
-        "icon": "FileDown",
         "title": "5 つのエクスポート形式",
-        "body": "TXT、DOCX、SRT、VTT、CSV — ドキュメント、字幕、スプレッドシート、レビュー作業に対応し、追加変換は不要です。",
-        "span": "lg:col-span-2"
+        "body": "TXT、DOCX、SRT、VTT、CSV — ドキュメント、字幕、スプレッドシート、レビュー作業に対応し、追加変換は不要です。"
       },
       {
-        "icon": "Sparkles",
         "title": "確認しやすい文字起こし",
         "body": "結果は録音品質、雑音、アクセント、専門用語、発話の重なりで変わります。話者ラベルとタイムスタンプで確認しやすくなります。"
       },
       {
-        "icon": "Lock",
         "title": "元ファイルは14日後に削除",
         "body": "アップロードした音声・動画は14日後に自動削除されます。文字起こしは削除またはアカウント閉鎖まで残ります。"
       }
@@ -203,24 +145,18 @@
     "number": "02",
     "h2Part1": "3 ステップ。",
     "h2Part2": "話者ラベル付きAI文字起こし。",
+    "uploadLimits": "無料：最大{freeMinutes}分 · 有料：最大{paidHours}時間",
     "steps": [
       {
-        "n": "01",
-        "icon": "CloudUpload",
         "title": "動画または音声ファイルをアップロード。",
-        "body": "最大 1 GB の MP4、MOV、AVI、MKV、WebM、MP3、WAV、M4A ファイルをドラッグ＆ドロップします。形式変換は不要です。Scribix は一般的なメディアコンテナに対応しています。",
-        "duration": "最大 1 GB · 6 時間"
+        "body": "最大 1 GB の MP4、MOV、AVI、MKV、WebM、MP3、WAV、M4A ファイルをドラッグ＆ドロップします。形式変換は不要です。Scribix は一般的なメディアコンテナに対応しています。"
       },
       {
-        "n": "02",
-        "icon": "Cpu",
         "title": "AI が話者ラベル付きで文字起こし。",
         "body": "Scribixは言語を検出し、音声品質が十分な場合は話者を分離して単語単位のタイムスタンプを付けます。処理時間はファイルと混雑状況で変わります。",
         "duration": "処理時間は変動"
       },
       {
-        "n": "03",
-        "icon": "Download",
         "title": "編集、コピー、またはエクスポート。",
         "body": "任意の単語をクリックしてその時点を再生できます。インラインで編集、TXT、DOCX、SRT、VTT、CSV としてダウンロード—またはエディターに文字起こしをコピー。",
         "duration": "5 つのエクスポート形式"
@@ -235,7 +171,6 @@
     "intro": "90 分の映像をショート動画に再利用するクリエイターから、2 時間のインタビューを正確に引用するジャーナリストまで、動画からテキストへの変換は、記録された会話を公開できる成果物に変えます。Scribix はそのためのツールです。",
     "items": [
       {
-        "icon": "Clapperboard",
         "title": "動画クリエイター",
         "audience": "ロングフォーム→ショートフォーム",
         "body": "アクセシビリティのため字幕を生成、ロング動画をブログに転用、エピソードアーカイブを検索可能に。単語レベルのタイムスタンプにより、[12:04 – 12:38] の精度でバイラルクリップ抽出が簡単。",
@@ -246,7 +181,6 @@
         ]
       },
       {
-        "icon": "Mic",
         "title": "ポッドキャスター＆プロデューサー",
         "audience": "音声＋動画番組",
         "body": "各エピソードをショーノート、ブログコンテンツ、SEO インデックス対象の文字起こしに変換—Google で見つかるかどうかの分岐点。話者ラベルは発行可能な状態で到着。",
@@ -257,7 +191,6 @@
         ]
       },
       {
-        "icon": "Newspaper",
         "title": "ジャーナリスト＆インタビュアー",
         "audience": "調査報道",
         "body": "90 分インタビューを次の取材に向かう途中で文字起こし。話者ラベルはソースを再リスニングなしで正確に引用可能—引用可能なテキストが時間の分の一で。",
@@ -268,7 +201,6 @@
         ]
       },
       {
-        "icon": "FlaskConical",
         "title": "研究者＆UX",
         "audience": "フォーカスグループ、フィールドワーク",
         "body": "人間による文字起こしに $1.50/分 を払うことなく、フォーカスグループ、講義、フィールド録音の定性コーディングを実行。テーマをタグ付け、あらゆる単語を検索、Dovetail や Notion にエクスポート。",
@@ -279,7 +211,6 @@
         ]
       },
       {
-        "icon": "GraduationCap",
         "title": "学生",
         "audience": "講義＆学習",
         "body": "2時間の講義を検索できるノートに変換。分かりにくい箇所をマークし、単語をクリックして聞き直せます。まず無料で試し、学期中の長い講義にはProを利用できます。",
@@ -290,7 +221,6 @@
         ]
       },
       {
-        "icon": "Scale",
         "title": "法務＆コンプライアンス",
         "audience": "証言、聴聞会",
         "body": "確認用のタイムスタンプ付き初稿を作成します。法務・コンプライアンス用途では、使用前に有資格者が確認してください。",
@@ -305,7 +235,7 @@
   "PricingPage": {
     "metadata": {
       "title": "料金",
-      "description": "Scribixのシンプルな料金体系：生涯45分の無料枠で始め、Proなら毎月2,400分の文字起こしを利用できます。",
+      "description": "Scribixのシンプルな料金体系：生涯{freeMinutes, number}分の無料枠で始め、Proなら毎月{proMinutes, number}分の文字起こしを利用できます。",
       "ogTitle": "Scribixの料金",
       "ogDescription": "動画・音声文字起こし向けの無料プランとProプラン。"
     },
@@ -315,7 +245,7 @@
     "billingToggleLabel": "請求間隔",
     "billingMonthly": "月額",
     "billingYearly": "年額",
-    "billingYearlyBadge": "50%お得",
+    "billingYearlyBadge": "{savingsPercent, number}%お得",
     "billingYearlyNote": "年額{price}を請求 · {savings}お得",
     "noCreditCard": "クレジットカード不要",
     "chooseLabel": "{plan}を選択",
@@ -327,61 +257,54 @@
     "faqTitle": "料金FAQ",
     "featureRows": [
       {
-        "key": "transcriptFiles",
         "label": "文字起こしファイル",
         "values": {
-          "free": "合計45分まで",
-          "starter": "600分以内ならファイル数無制限",
-          "pro": "月2,400分の範囲内"
+          "free": "合計{minutes, number}分まで",
+          "starter": "{minutes, number}分以内ならファイル数無制限",
+          "pro": "月{minutes, number}分の範囲内"
         }
       },
       {
-        "key": "monthlyMinutes",
         "label": "文字起こし枠",
         "values": {
-          "free": "生涯45分",
-          "starter": "600分/月",
-          "pro": "月40時間（2,400分）"
+          "free": "生涯{minutes, number}分",
+          "starter": "{minutes, number}分/月",
+          "pro": "月{hours, number}時間（{minutes, number}分）"
         }
       },
       {
-        "key": "youtubeCaptionImports",
         "label": "YouTube caption imports",
         "values": {
-          "free": "10/day",
-          "starter": "100/month",
-          "pro": "1,000/month"
+          "free": "{imports, number}/day",
+          "starter": "{imports, number}/month",
+          "pro": "{imports, number}/month"
         }
       },
       {
-        "key": "maxYoutubeCaptionVideo",
         "label": "Max YouTube caption video",
         "values": {
-          "free": "2 hours",
-          "starter": "10 hours",
-          "pro": "10 hours"
+          "free": "{hours, number} hours",
+          "starter": "{hours, number} hours",
+          "pro": "{hours, number} hours"
         }
       },
       {
-        "key": "maxFileLength",
         "label": "ファイルの長さ",
         "values": {
-          "free": "最大45分",
-          "starter": "最大10時間",
-          "pro": "最大10時間"
+          "free": "最大{minutes, number}分",
+          "starter": "最大{hours, number}時間",
+          "pro": "最大{hours, number}時間"
         }
       },
       {
-        "key": "maxFileSize",
         "label": "最大ファイルサイズ",
         "values": {
-          "free": "動画 2 GB / 音声 1 GB",
-          "starter": "動画 5 GB / 音声 1 GB",
-          "pro": "動画 5 GB / 音声 1 GB"
+          "free": "動画 {videoGb, number} GB / 音声 {audioGb, number} GB",
+          "starter": "動画 {videoGb, number} GB / 音声 {audioGb, number} GB",
+          "pro": "動画 {videoGb, number} GB / 音声 {audioGb, number} GB"
         }
       },
       {
-        "key": "processingQueue",
         "label": "処理キュー",
         "values": {
           "free": "標準",
@@ -390,7 +313,6 @@
         }
       },
       {
-        "key": "accuracyModel",
         "label": "文字起こしモデル",
         "values": {
           "free": "標準",
@@ -399,7 +321,6 @@
         }
       },
       {
-        "key": "aiTranslation",
         "label": "AI翻訳",
         "values": {
           "free": "いいえ",
@@ -408,7 +329,6 @@
         }
       },
       {
-        "key": "speakerLabels",
         "label": "話者ラベル",
         "values": {
           "free": "はい",
@@ -417,7 +337,6 @@
         }
       },
       {
-        "key": "exports",
         "label": "エクスポート",
         "values": {
           "free": "TXT, DOCX, SRT, VTT, CSV",
@@ -426,7 +345,6 @@
         }
       },
       {
-        "key": "aiSummaries",
         "label": "AI議事録",
         "values": {
           "free": "いいえ",
@@ -437,28 +355,22 @@
     ],
     "plans": [
       {
-        "id": "free",
         "name": "無料",
-        "price": "$0",
         "cadence": "1回限り",
         "summary": "支払う前に、Scribixを一度試して文字起こし品質を確認できます。"
       },
       {
-        "id": "pro",
         "name": "Pro",
-        "price": "$20",
         "cadence": "月額",
         "summary": "長時間の録音を文字起こしし、分かりやすいAI議事録にまとめ、翻訳までひとつのプランで行えます。",
         "purchaseNote": "いつでも解約可能",
-        "annual": "$120/年",
-        "annualPrice": "$120",
         "annualCadence": "年額"
       }
     ],
     "faqs": [
       {
         "question": "無料で始められますか？",
-        "answer": "はい。無料プランには生涯45分が含まれており、有料プランを選ぶ前に文字起こし品質を確認できます。"
+        "answer": "はい。無料プランには生涯{freeMinutes, number}分が含まれており、有料プランを選ぶ前に文字起こし品質を確認できます。"
       },
       {
         "question": "文字起こし分数には何がカウントされますか？",
@@ -466,15 +378,15 @@
       },
       {
         "question": "未使用の分数は繰り越されますか？",
-        "answer": "いいえ。Proでは毎月2,400分の文字起こし枠が付与されます。年額払いの場合も毎月リセットされ、未使用分は繰り越されません。"
+        "answer": "いいえ。Proでは毎月{proMinutes, number}分の文字起こし枠が付与されます。年額払いの場合も毎月リセットされ、未使用分は繰り越されません。"
       },
       {
         "question": "最大ファイル長はどれくらいですか？",
-        "answer": "無料プランは最大45分、Proは最大10時間のファイルに対応します。"
+        "answer": "無料プランは最大{freeMinutes, number}分、Proは最大{proHours, number}時間のファイルに対応します。"
       },
       {
         "question": "アップロードするファイルにサイズ上限はありますか？",
-        "answer": "はい。動画はProで最大5 GB、無料プランで最大2 GBです。音声は最大1 GBです。ファイルの長さと残りの月間文字起こし枠も適用されます。"
+        "answer": "はい。動画はProで最大{proVideoGb, number} GB、無料プランで最大{freeVideoGb, number} GBです。音声は最大{audioGb, number} GBです。ファイルの長さと残りの月間文字起こし枠も適用されます。"
       },
       {
         "question": "後からプランを変更できますか？",
@@ -482,7 +394,7 @@
       },
       {
         "question": "有料プランに無料トライアルはありますか？",
-        "answer": "有料プランに別の無料期間はありません。生涯45分の無料枠で品質を確認してから登録できます。"
+        "answer": "有料プランに別の無料期間はありません。生涯{freeMinutes, number}分の無料枠で品質を確認してから登録できます。"
       }
     ],
     "aiFeatures": "AI議事録 + 翻訳",
@@ -561,16 +473,11 @@
   },
   "Footer": {
     "tagline": "記録された会話をストーリーに変えるプロたちのためのスタジオグレード動画から文字。",
-    "legal": [
-      {
-        "label": "利用規約",
-        "href": "/terms"
-      },
-      {
-        "label": "プライバシーポリシー",
-        "href": "/privacy"
-      }
-    ]
+    "legalLabels": {
+      "terms": "利用規約",
+      "privacy": "プライバシーポリシー",
+      "refunds": "返金ポリシー"
+    }
   },
   "Dashboard": {
     "layout": {
@@ -727,7 +634,6 @@
       "more": "その他",
       "summarySoon": "AI議事録 — 近日公開",
       "summary": "AI議事録",
-      "translateSoon": "翻訳 — 近日公開",
       "translate": "翻訳"
     },
     "rowMenu": {
@@ -909,22 +815,17 @@
       "primaryCta": "45分無料で試す",
       "signedInPrimaryCta": "音声をアップロード",
       "secondaryCta": "動画をテキスト化したいですか？",
-      "secondaryHref": "/",
       "proof": [
         {
-          "icon": "BadgeCheck",
           "label": "45分無料トライアル"
         },
         {
-          "icon": "Globe",
           "label": "言語の自動検出"
         },
         {
-          "icon": "Users",
           "label": "話者ラベル"
         },
         {
-          "icon": "ShieldCheck",
           "label": "カード不要"
         }
       ]
@@ -1000,22 +901,16 @@
       "accentTitle": "音声をテキストへ。",
       "steps": [
         {
-          "n": "01",
-          "icon": "Lock",
           "title": "Googleでログイン。",
           "body": "無料トライアルは45分の文字起こしから始まり、クレジットカードは不要です。",
           "meta": "カード不要"
         },
         {
-          "n": "02",
-          "icon": "FileAudio",
           "title": "音声をアップロード。",
           "body": "MP3、WAV、M4Aなどの音声ファイルを選択します。",
           "meta": "音声アップロード"
         },
         {
-          "n": "03",
-          "icon": "Download",
           "title": "確認してエクスポート。",
           "body": "話者ラベルとタイムスタンプを確認し、TXT、DOCX、SRT、VTT、CSVでコピーまたはダウンロードします。",
           "meta": "5形式"
@@ -1029,25 +924,21 @@
       "accentTitle": "使えるテキストに。",
       "items": [
         {
-          "icon": "Users",
           "title": "インタビュー文字起こし",
           "who": "ジャーナリスト、採用担当、研究者",
           "output": "話者ラベル付きのタイムスタンプ付きQ&A文字起こし"
         },
         {
-          "icon": "Mic",
           "title": "会議メモ",
           "who": "創業者、営業、運用チーム",
           "output": "誰が何を言ったか検索できる記録"
         },
         {
-          "icon": "Search",
           "title": "講義の復習",
           "who": "学生と教育者",
           "output": "検索して引用できる学習ノート"
         },
         {
-          "icon": "Captions",
           "title": "字幕準備",
           "who": "動画編集者とクリエイター",
           "output": "音声トラックから生成されるSRTまたはVTT字幕"
@@ -1070,22 +961,18 @@
       "intro": "このページは文字起こし用です。音声をアップロードし、タイムスタンプと話者ラベル付きのテキストを取得して、コピーまたはエクスポートします。要約、翻訳、チャット、マインドマップはこのワークフローには含まれません。",
       "items": [
         {
-          "icon": "Globe",
           "title": "言語の自動検出",
           "body": "自動言語検出により、複数の話者や地域が含まれる録音でもアップロードが簡単です。"
         },
         {
-          "icon": "Users",
           "title": "話者ラベル",
           "body": "各発言が話者ごとに分かれるため、会話の文字起こしを読みやすくなります。"
         },
         {
-          "icon": "Clock3",
           "title": "タイムスタンプ",
           "body": "タイムスタンプ付きテキストは、引用の確認、字幕作成、重要な場面の見直しに役立ちます。"
         },
         {
-          "icon": "Download",
           "title": "5つのエクスポート形式",
           "body": "TXT、DOCX、SRT、VTT、CSVでダウンロード、または文字起こしを直接コピーできます。"
         }
@@ -1094,7 +981,6 @@
     "insights": {
       "items": [
         {
-          "icon": "Sparkles",
           "title": "音声文字起こしの精度は？",
           "body": [
             "明瞭な録音ほど良い結果になりやすく、品質は距離、雑音、アクセント、専門用語、発話の重なりで変わります。",
@@ -1102,14 +988,12 @@
           ]
         },
         {
-          "icon": "Lock",
           "title": "音声はプライベートですか？",
           "body": [
             "Scribixは、アップロードされた音声をアカウントの文字起こし生成と提供のためだけに使用します。音声・動画ファイルは14日後に自動削除されます。",
             "文字起こしは、削除するかアカウントを閉じるまで残ります。"
           ],
           "link": {
-            "href": "/privacy",
             "label": "プライバシーポリシー",
             "suffix": "をご確認ください。"
           }
@@ -1217,7 +1101,6 @@
       "featureList": [
         "音声ファイルのアップロード",
         "自動言語検出",
-        "200以上の言語",
         "話者ラベル",
         "タイムスタンプ付き文字起こし",
         "TXTエクスポート",
@@ -1256,12 +1139,11 @@
       "primaryCta": "無料の45分から始める",
       "signedInPrimaryCta": "文字起こしを作成",
       "secondaryCta": "料金を見る",
-      "secondaryHref": "/pricing",
       "trust": [
-        { "label": "音声・動画・YouTube・マイク", "icon": "Upload" },
-        { "label": "発言者ラベル", "icon": "Users" },
-        { "label": "単語単位のタイムスタンプ", "icon": "Clock" },
-        { "label": "有料プランでAI議事録", "icon": "Sparkles" }
+        { "label": "音声・動画・YouTube・マイク" },
+        { "label": "発言者ラベル" },
+        { "label": "単語単位のタイムスタンプ" },
+        { "label": "有料プランでAI議事録" }
       ]
     },
     "features": {
@@ -1270,12 +1152,12 @@
       "h2": "元の発言をたどれる、<accent>実用的なAI議事録。</accent>",
       "intro": "Scribixは録音を、確認できる文字起こしと、行動につなげやすい短いAI議事録に整理します。概要、要点、アクションアイテムをまとめながら、発言者とタイムスタンプで重要な内容を元の録音までたどれます。",
       "items": [
-        { "icon": "Sparkles", "title": "構造化されたAI議事録", "body": "Proでは、完成した文字起こしから概要、要点、アクションアイテムを生成できます。", "span": "lg:col-span-2" },
-        { "icon": "Users", "title": "発言者ごとの文字起こし", "body": "録音品質が十分な場合は発言者の交代を分けて表示します。生成されたラベルは後から変更できます。" },
-        { "icon": "Clock", "title": "確認できるタイムスタンプ", "body": "単語単位のタイムスタンプから、メモや引用、フォローアップの根拠となる箇所へ戻れます。" },
-        { "icon": "Files", "title": "4つの入力方法", "body": "動画または音声のアップロード、マイク録音、YouTube URLから利用可能な字幕トラックの取り込みに対応します。", "span": "lg:col-span-2" },
-        { "icon": "FileDown", "title": "文字起こしの書き出し", "body": "文字起こしを確認・編集し、コピーまたはTXT、DOCX、SRT、VTT、CSVでダウンロードできます。" },
-        { "icon": "Lock", "title": "明確な保存期間", "body": "アップロードした音声・動画は14日後に自動削除されます。文字起こしは、自分で削除するかアカウントを閉鎖するまで保存されます。" }
+        {  "title": "構造化されたAI議事録", "body": "Proでは、完成した文字起こしから概要、要点、アクションアイテムを生成できます。" },
+        {  "title": "発言者ごとの文字起こし", "body": "録音品質が十分な場合は発言者の交代を分けて表示します。生成されたラベルは後から変更できます。" },
+        {  "title": "確認できるタイムスタンプ", "body": "単語単位のタイムスタンプから、メモや引用、フォローアップの根拠となる箇所へ戻れます。" },
+        {  "title": "4つの入力方法", "body": "動画または音声のアップロード、マイク録音、YouTube URLから利用可能な字幕トラックの取り込みに対応します。" },
+        {  "title": "文字起こしの書き出し", "body": "文字起こしを確認・編集し、コピーまたはTXT、DOCX、SRT、VTT、CSVでダウンロードできます。" },
+        {  "title": "明確な保存期間", "body": "アップロードした音声・動画は14日後に自動削除されます。文字起こしは、自分で削除するかアカウントを閉鎖するまで保存されます。" }
       ]
     },
     "howItWorks": {
@@ -1284,9 +1166,9 @@
       "h2Part1": "3ステップ。",
       "h2Part2": "録音からAI議事録まで。",
       "steps": [
-        { "n": "01", "icon": "CloudUpload", "title": "会話を追加します。", "body": "音声・動画ファイルをアップロードするか、マイクで録音します。字幕トラックが利用できるYouTube URLを貼り付けることもできます。", "duration": "音声 · 動画 · YouTube · マイク" },
-        { "n": "02", "icon": "Cpu", "title": "確認可能な文字起こしを作成します。", "body": "アップロードまたは録音したメディアを文字起こしし、音声品質が対応する場合は発言者ラベルと単語単位のタイムスタンプを追加します。YouTube URLでは選択した字幕トラックを取り込みます。", "duration": "発言者 + タイムスタンプ" },
-        { "n": "03", "icon": "ListChecks", "title": "AI議事録を生成して確認します。", "body": "Proで概要、要点、アクションアイテムを生成します。共有や実行の前に、重要な内容を文字起こしと照合してください。", "duration": "概要 · 要点 · アクション" }
+        {   "title": "会話を追加します。", "body": "音声・動画ファイルをアップロードするか、マイクで録音します。字幕トラックが利用できるYouTube URLを貼り付けることもできます。", "duration": "音声 · 動画 · YouTube · マイク" },
+        {   "title": "確認可能な文字起こしを作成します。", "body": "アップロードまたは録音したメディアを文字起こしし、音声品質が対応する場合は発言者ラベルと単語単位のタイムスタンプを追加します。YouTube URLでは選択した字幕トラックを取り込みます。", "duration": "発言者 + タイムスタンプ" },
+        {   "title": "AI議事録を生成して確認します。", "body": "Proで概要、要点、アクションアイテムを生成します。共有や実行の前に、重要な内容を文字起こしと照合してください。", "duration": "概要 · 要点 · アクション" }
       ]
     },
     "useCases": {
@@ -1296,11 +1178,11 @@
       "h2Part2": "<accent>次に使える情報へ。</accent>",
       "intro": "会議、商談、講義、インタビュー、ウェビナー、ポッドキャスト、調査セッションなど、録音全体を聞き直す時間を減らしたい場面で活用できます。",
       "items": [
-        { "icon": "BriefcaseBusiness", "title": "会議のフォローアップ", "audience": "経営者、業務担当、プロジェクトチーム", "body": "会議ボットを参加させず、録音から会話全体を検索可能にし、要点とフォローアップタスクを整理します。", "workflow": ["会議の録音", "発言者付き文字起こし", "要点 + アクション"] },
-        { "icon": "Handshake", "title": "商談・顧客インタビュー", "audience": "営業、カスタマーサクセス、プロダクト", "body": "顧客の言葉を確認し、タイムスタンプから重要な場面に戻り、合意したフォローアップをタスクにまとめます。", "workflow": ["通話録音", "顧客の発言", "フォローアップ一覧"] },
-        { "icon": "GraduationCap", "title": "講義と学習", "audience": "学生、教員", "body": "録音した講義を検索可能な文字起こしと、復習しやすい短い要点に変換します。", "workflow": ["講義音声", "タイムスタンプ付き文字起こし", "学習メモ"] },
-        { "icon": "Newspaper", "title": "取材とリサーチ", "audience": "記者、採用担当、研究者", "body": "発言者とタイムスタンプを元データとともに残し、分析に必要なテーマと次のアクションを整理します。", "workflow": ["インタビュー録音", "確認できる引用", "テーマ + アクション"] },
-        { "icon": "Mic", "title": "ポッドキャストとウェビナー", "audience": "クリエイター、マーケター、制作者", "body": "長時間の録音を、全文の文字起こしと概要作成やコンテンツ企画に使える短いメモへ変換します。", "workflow": ["エピソードまたはウェビナー", "全文文字起こし", "概要の構成"] }
+        {  "title": "会議のフォローアップ", "audience": "経営者、業務担当、プロジェクトチーム", "body": "会議ボットを参加させず、録音から会話全体を検索可能にし、要点とフォローアップタスクを整理します。", "workflow": ["会議の録音", "発言者付き文字起こし", "要点 + アクション"] },
+        {  "title": "商談・顧客インタビュー", "audience": "営業、カスタマーサクセス、プロダクト", "body": "顧客の言葉を確認し、タイムスタンプから重要な場面に戻り、合意したフォローアップをタスクにまとめます。", "workflow": ["通話録音", "顧客の発言", "フォローアップ一覧"] },
+        {  "title": "講義と学習", "audience": "学生、教員", "body": "録音した講義を検索可能な文字起こしと、復習しやすい短い要点に変換します。", "workflow": ["講義音声", "タイムスタンプ付き文字起こし", "学習メモ"] },
+        {  "title": "取材とリサーチ", "audience": "記者、採用担当、研究者", "body": "発言者とタイムスタンプを元データとともに残し、分析に必要なテーマと次のアクションを整理します。", "workflow": ["インタビュー録音", "確認できる引用", "テーマ + アクション"] },
+        {  "title": "ポッドキャストとウェビナー", "audience": "クリエイター、マーケター、制作者", "body": "長時間の録音を、全文の文字起こしと概要作成やコンテンツ企画に使える短いメモへ変換します。", "workflow": ["エピソードまたはウェビナー", "全文文字起こし", "概要の構成"] }
       ]
     },
     "faq": {
@@ -1384,22 +1266,17 @@
       "primaryCta": "MP3をテキストに変換",
       "signedInPrimaryCta": "MP3をアップロード",
       "secondaryCta": "他の音声形式が必要ですか？",
-      "secondaryHref": "/audio-to-text",
       "proof": [
         {
-          "icon": "BadgeCheck",
           "label": "45分の無料トライアル"
         },
         {
-          "icon": "Globe",
           "label": "言語の自動検出"
         },
         {
-          "icon": "Users",
           "label": "話者ラベル"
         },
         {
-          "icon": "ShieldCheck",
           "label": "クレジットカード不要"
         }
       ]
@@ -1476,22 +1353,16 @@
       "accentTitle": "MP3をテキスト化。",
       "steps": [
         {
-          "n": "01",
-          "icon": "Lock",
           "title": "Googleでログイン。",
           "body": "無料トライアルでは45分の文字起こしを利用でき、クレジットカードは不要です。",
           "meta": "カード不要"
         },
         {
-          "n": "02",
-          "icon": "FileAudio",
           "title": "MP3をアップロード。",
           "body": "テキストに変換したいMP3録音を選択します。",
           "meta": "MP3アップロード"
         },
         {
-          "n": "03",
-          "icon": "Download",
           "title": "確認して書き出し。",
           "body": "話者ラベルとタイムスタンプを確認し、TXT、DOCX、SRT、VTT、CSVでコピーまたはダウンロードします。",
           "meta": "5形式"
@@ -1505,25 +1376,21 @@
       "accentTitle": "使えるテキストに。",
       "items": [
         {
-          "icon": "Mic",
           "title": "ポッドキャスト文字起こし",
           "who": "ポッドキャスター、プロデューサー、クリエイター",
           "output": "アクセシビリティ、検索、再利用のためのエピソード文字起こし"
         },
         {
-          "icon": "Users",
           "title": "インタビュー引用",
           "who": "ジャーナリスト、採用担当者、研究者",
           "output": "話者ラベル付きのタイムスタンプ付きQ&A文字起こし"
         },
         {
-          "icon": "Search",
           "title": "講義の復習",
           "who": "学生、教師、教育チーム",
           "output": "録音授業から作る検索可能な学習ノート"
         },
         {
-          "icon": "Captions",
           "title": "字幕準備",
           "who": "編集者、マーケター、アクセシビリティ担当",
           "output": "MP3トラックから生成するSRTまたはVTT字幕"
@@ -1546,22 +1413,18 @@
       "intro": "このページはMP3文字起こし用です。MP3をアップロードし、タイムスタンプと話者ラベル付きのテキストを取得して、コピーまたは書き出せます。編集、翻訳、要約ではなく、文字起こしの流れに絞っています。",
       "items": [
         {
-          "icon": "Globe",
           "title": "言語の自動検出",
           "body": "自動言語検出により、地域や話者が異なる録音でもアップロード操作をシンプルに保てます。"
         },
         {
-          "icon": "Users",
           "title": "話者ラベル",
           "body": "会話の文字起こしは、発話ごとに話者が分かれていると確認しやすくなります。"
         },
         {
-          "icon": "Clock3",
           "title": "タイムスタンプ",
           "body": "タイムスタンプ付きテキストは、引用の確認、字幕作成、重要箇所の見直しに役立ちます。"
         },
         {
-          "icon": "Download",
           "title": "5つの書き出し形式",
           "body": "TXT、DOCX、SRT、VTT、CSVでダウンロード、またはアプリから直接コピーできます。"
         }
@@ -1570,7 +1433,6 @@
     "insights": {
       "items": [
         {
-          "icon": "Sparkles",
           "title": "MP3文字起こしの精度は？",
           "body": [
             "明瞭な録音ほど良い結果になりやすく、品質は距離、雑音、アクセント、専門用語、発話の重なりで変わります。",
@@ -1578,14 +1440,12 @@
           ]
         },
         {
-          "icon": "Lock",
           "title": "MP3は非公開ですか？",
           "body": [
             "Scribixは、アップロードされたMP3をアカウント内で文字起こしを生成・提供するためだけに使用します。音声と動画ファイルは14日後に自動削除されます。",
             "文字起こしは、削除するかアカウントを閉じるまで保存されます。"
           ],
           "link": {
-            "href": "/privacy",
             "label": "プライバシーポリシー",
             "suffix": "をご確認ください。"
           }
@@ -1697,7 +1557,6 @@
       "featureList": [
         "MP3ファイルアップロード",
         "自動言語検出",
-        "200以上の言語",
         "話者ラベル",
         "タイムスタンプ付き文字起こし",
         "TXT書き出し",
@@ -1737,22 +1596,17 @@
       "descriptionEnd": "。Scribixはまず利用可能な字幕を確認し、YouTube動画や音声をダウンロードせずに transcript を保存します。",
       "primaryCta": "YouTube URLを貼り付け",
       "secondaryCta": "ファイルを文字起こしする?",
-      "secondaryHref": "/",
       "proof": [
         {
-          "icon": "BadgeCheck",
           "label": "無料で1日10件"
         },
         {
-          "icon": "Captions",
           "label": "字幕言語を選択"
         },
         {
-          "icon": "Download",
           "label": "TXT, DOCX, SRT, VTT, CSV"
         },
         {
-          "icon": "ShieldCheck",
           "label": "カード不要"
         }
       ]
@@ -1825,36 +1679,26 @@
       "accentTitle": "URLからテキストへ。",
       "steps": [
         {
-          "n": "01",
-          "icon": "Lock",
           "title": "Googleでサインイン。",
           "body": "無料プランではYouTube字幕を1日10件取り込め、カードは不要です。",
           "meta": "無料プラン"
         },
         {
-          "n": "02",
-          "icon": "Search",
           "title": "YouTube URLを貼り付け。",
           "body": "YouTube動画リンクをコピーし、Scribixに利用可能な字幕トラックを確認させます。",
           "meta": "字幕確認"
         },
         {
-          "n": "03",
-          "icon": "Captions",
           "title": "字幕トラックを選択。",
           "body": "取り込みたい手動または自動生成の字幕言語を選びます。",
           "meta": "言語選択"
         },
         {
-          "n": "04",
-          "icon": "FileText",
           "title": "Transcriptを取り込み。",
           "body": "Scribixが選択した字幕トラックをタイムスタンプ付きでライブラリに保存します。",
           "meta": "保存済み"
         },
         {
-          "n": "05",
-          "icon": "Download",
           "title": "確認してエクスポート。",
           "body": "テキストをコピーし、TXT、DOCX、SRT、VTT、CSVをダウンロードするか、有料プランでAI要約を作成します。",
           "meta": "5形式"
@@ -1868,31 +1712,26 @@
       "accentTitle": "使えるテキストに。",
       "items": [
         {
-          "icon": "Search",
           "title": "講義レビュー",
           "who": "学生、教員、コース運営",
           "output": "字幕付きYouTube講義から検索可能な学習ノートを作成"
         },
         {
-          "icon": "Users",
           "title": "インタビュー調査",
           "who": "ジャーナリスト、研究者、採用担当",
           "output": "公開インタビューやパネルからタイムスタンプ付き引用集を作成"
         },
         {
-          "icon": "Sparkles",
           "title": "クリエイター再利用",
           "who": "YouTuber、ポッドキャスター、マーケター",
           "output": "ブログ構成、ショーノート、captions、有料AI要約"
         },
         {
-          "icon": "BadgeCheck",
           "title": "ウェビナー後処理",
           "who": "営業、CS、運用",
           "output": "デモ、製品トーク、顧客セッションの記録"
         },
         {
-          "icon": "Captions",
           "title": "アクセシビリティ",
           "who": "コンテンツチーム、教育者、非営利団体",
           "output": "ダウンロード可能な字幕ファイルと読みやすい transcript"
@@ -1915,22 +1754,18 @@
       "intro": "ScribixのYouTubeフローは字幕取り込みに特化しています。YouTube URLを確認し、利用可能な字幕トラックを一覧表示し、メタデータがある場合は手動/自動生成を示し、選択したトラックを transcript ライブラリに取り込みます。",
       "items": [
         {
-          "icon": "Captions",
           "title": "字幕トラック",
           "body": "YouTube動画や音声をダウンロードせず、利用可能な字幕トラックを取り込みます。"
         },
         {
-          "icon": "Globe",
           "title": "言語選択",
           "body": "保存前に、利用可能な字幕言語から選択できます。"
         },
         {
-          "icon": "Clock3",
           "title": "タイムスタンプ",
           "body": "タイムスタンプ付きセグメントで、引用や重要な場面を追いやすくなります。"
         },
         {
-          "icon": "Download",
           "title": "5つのエクスポート",
           "body": "TXT、DOCX、SRT、VTT、CSVをダウンロードするか、transcriptを直接コピーできます。"
         }
@@ -1939,7 +1774,6 @@
     "insights": {
       "items": [
         {
-          "icon": "Sparkles",
           "title": "YouTube transcript の精度はどのくらいですか?",
           "body": [
             "精度は動画で利用可能な字幕トラックに依存します。手動字幕は通常、自動生成字幕よりきれいですが、自動字幕にはノイズ、アクセント、音楽、専門用語、発話の重なり、不明瞭な音声による誤りが含まれることがあります。",
@@ -1947,14 +1781,12 @@
           ]
         },
         {
-          "icon": "Lock",
           "title": "YouTube transcript は非公開ですか?",
           "body": [
             "Scribixでは、取り込んだ transcript をアカウントに保存するためGoogleサインインが必要です。YouTube URL取り込みでは、Scribixは利用可能な字幕を取り込み、YouTube動画や音声をダウンロードしません。",
             "保存済み transcript は、削除するかアカウントを閉じるまでアカウント内に残ります。Scribixはユーザーデータでモデルを学習しません。詳しくは"
           ],
           "link": {
-            "href": "/privacy",
             "label": "プライバシーポリシー",
             "suffix": "をご覧ください。"
           }

@@ -67,7 +67,8 @@ export function youtubeMaxVideoSecFor(tier: Tier): number {
   return PLANS[tier].youtubeMaxVideoSec;
 }
 
-// Display pricing — keep in sync with the public Starter/Pro pricing model.
+// Display pricing. Pro is the only tier offered to new customers; Basic is
+// retained for grandfathered Starter subscriptions.
 export const PRICING_DISPLAY = {
   basic: {
     monthly: { amount: 12, currency: "USD" },
