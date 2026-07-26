@@ -277,12 +277,12 @@ export function Sidebar({
           onClick={closeMobileSidebarFromEvent}
           onPointerDown={closeMobileSidebarFromEvent}
           onKeyDown={closeMobileSidebarFromKey}
-          className="fixed inset-0 z-40 cursor-default bg-ink/40 backdrop-blur-sm lg:hidden"
+          className="surface-modal-backdrop fixed inset-0 z-40 cursor-default bg-ink/40 backdrop-blur-sm lg:hidden"
         />
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-[268px] flex-col border-r border-line bg-card transition-[transform,width] duration-300 ${
+        className={`sidebar-refresh fixed inset-y-0 left-0 z-50 flex w-[268px] flex-col border-r border-line bg-card transition-[transform,width] duration-300 ${
           isCollapsed ? "lg:w-[72px]" : "lg:w-[268px]"
         } ${
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
@@ -450,7 +450,7 @@ export function Sidebar({
         >
           {signedIn ? (
             <div
-              className={`rounded-xl border border-line bg-paper/70 p-3 ${
+              className={`sidebar-plan-card rounded-xl border border-line bg-paper/70 p-3 ${
                 isCollapsed ? "lg:hidden" : ""
               }`}
             >
@@ -545,7 +545,7 @@ export function Sidebar({
                 {accountOpen ? (
                   <div
                     role="menu"
-                    className={`absolute bottom-full z-40 mb-2 w-[170px] overflow-hidden rounded-lg border border-line bg-card py-1 shadow-lg ${
+                    className={`surface-popover absolute bottom-full z-40 mb-2 w-[170px] overflow-hidden rounded-lg border border-line bg-card py-1 shadow-lg ${
                       isCollapsed ? "left-0 lg:left-0" : "right-0"
                     }`}
                   >

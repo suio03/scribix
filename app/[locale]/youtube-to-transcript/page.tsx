@@ -101,7 +101,6 @@ type YouTubeToTranscriptCopy = {
     issue: string;
     issueLabel: string;
     title: string;
-    accentTitle: string;
     descriptionStart: string;
     stat: string;
     descriptionEnd: string;
@@ -270,8 +269,9 @@ export default async function YouTubeToTranscriptPage({
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="youtube-to-transcript" />
-      <Header showSidebarToggle />
-      <main>
+      <div className="home-refresh landing-refresh tool-landing-refresh">
+        <Header showSidebarToggle />
+        <main>
         <ToolHero
           {...copy.hero}
           signedIn={!!session}
@@ -344,9 +344,10 @@ export default async function YouTubeToTranscriptPage({
         <ApproachComparisonSection {...copy.comparison} />
         <FaqSection {...copy.faq} />
         <FinalToolCta {...copy.finalCta} signedIn={!!session} />
-      </main>
-      <Footer />
-      <Partners />
+        </main>
+        <Footer />
+        <Partners />
+      </div>
     </Shell>
   );
 }

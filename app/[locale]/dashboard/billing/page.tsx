@@ -51,7 +51,7 @@ export default async function BillingPage({
   const dashboardNewPath = getPathname({ href: "/dashboard/new", locale });
 
   return (
-    <main className="mx-auto max-w-[1100px] px-4 py-10 sm:px-8 sm:py-12">
+    <main className="product-surface-refresh billing-refresh mx-auto max-w-[860px] px-4 py-10 sm:px-8 sm:py-12">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-display text-3xl font-semibold tracking-tight">

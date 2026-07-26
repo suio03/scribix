@@ -61,8 +61,7 @@
   "Generator": {
     "issue": "REC · 00:00:00",
     "issueLabel": "Issue №01 · Video to Text",
-    "h1Part1": "Convert video to text.",
-    "h1Part2": "<accent>Free AI transcription.</accent>",
+    "h1": "Convert video to text with AI",
     "description": "Scribix turns video and audio files into speaker-labeled text you can review and export. Upload MP4, MOV, WebM, AVI, MP3, WAV, or M4A and get word-level timestamps with <stat>automatic language detection</stat>. <stat>45 minutes free</stat> with Google sign-in and no credit card.",
     "trust": [
       {
@@ -823,8 +822,7 @@
     "hero": {
       "issue": "REC · 00:00:00",
       "issueLabel": "Issue №02 · Audio to Text",
-      "title": "Convert audio to text.",
-      "accentTitle": "AI transcription.",
+      "title": "Convert audio to text with AI",
       "descriptionStart": "Scribix converts audio files into accurate, speaker-labeled text you can review, copy, and export. Sign in with Google, upload an audio file, and get a transcript with timestamps in",
       "stat": "Automatic language detection",
       "descriptionEnd": ".",
@@ -1149,8 +1147,7 @@
     "hero": {
       "issue": "REC · AI NOTES",
       "issueLabel": "Issue No.05 · AI Note Taker",
-      "h1Part1": "AI note taker for every recording.",
-      "h1Part2": "<accent>From conversation to clear next steps.</accent>",
+      "h1": "AI Note Taker",
       "description": "Upload a video or audio file, record through your microphone, or paste a YouTube URL with available captions. Scribix creates a speaker-labeled, timestamped transcript; Pro users can turn it into structured AI notes with an overview, key points, and action items.",
       "primaryCta": "Start with 45 Free Minutes",
       "signedInPrimaryCta": "Create New Transcript",
@@ -1408,8 +1405,7 @@
     "hero": {
       "issue": "REC · MP3",
       "issueLabel": "Issue №03 · MP3 to Text",
-      "title": "Convert MP3 to text.",
-      "accentTitle": "AI transcription.",
+      "title": "Convert MP3 to text with AI",
       "descriptionStart": "Scribix converts MP3 audio into accurate, speaker-labeled text you can review, copy, and export. Sign in with Google, upload your MP3, and get a timestamped transcript in",
       "stat": "Automatic language detection",
       "descriptionEnd": ".",
@@ -1739,8 +1735,7 @@
     "hero": {
       "issue": "REC · YOUTUBE URL",
       "issueLabel": "Issue No.04 · YouTube to Transcript",
-      "title": "YouTube to transcript.",
-      "accentTitle": "Saved, searchable text.",
+      "title": "YouTube to Transcript",
       "descriptionStart": "Paste a YouTube URL into Scribix and import the video's available caption track as a transcript you can read, search, copy, export, and summarize on paid plans.",
       "stat": "Free with Google sign-in",
       "descriptionEnd": ". Scribix checks the available captions first and saves the transcript without downloading the YouTube video or audio.",

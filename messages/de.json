@@ -61,8 +61,7 @@
   "Generator": {
     "issue": "AUF · 00:00:00",
     "issueLabel": "Ausgabe №01 · Video zu Text",
-    "h1Part1": "Video in Text umwandeln.",
-    "h1Part2": "<accent>Kostenlose KI-Transkription.</accent>",
+    "h1": "Video mit KI in Text umwandeln",
     "description": "Scribix wandelt Video- und Audiodateien in Text mit Sprecherkennzeichnung um, den du prüfen und exportieren kannst. Lade MP4, MOV, WebM, AVI, MP3, WAV oder M4A hoch und erhalte Wort-Zeitstempel mit <stat>automatischer Spracherkennung</stat>. <stat>45 Minuten kostenlos</stat>, ohne Kreditkarte.",
     "trust": [
       {
@@ -823,8 +822,7 @@
     "hero": {
       "issue": "REC · 00:00:00",
       "issueLabel": "Ausgabe №02 · Audio zu Text",
-      "title": "Audio in Text umwandeln.",
-      "accentTitle": "KI-Transkription.",
+      "title": "Audio mit KI in Text umwandeln",
       "descriptionStart": "Scribix wandelt Audiodateien in präzisen Text mit Sprecherlabels um, den du prüfen, kopieren und exportieren kannst. Melde dich mit Google an, lade eine Audiodatei hoch und erhalte ein Transkript mit Zeitstempeln in",
       "stat": "Automatische Spracherkennung",
       "descriptionEnd": ".",
@@ -1149,8 +1147,7 @@
     "hero": {
       "issue": "REC · KI-NOTIZEN",
       "issueLabel": "Ausgabe Nr. 05 · KI-Notizentool",
-      "h1Part1": "Das KI-Notizentool für jede Aufnahme.",
-      "h1Part2": "<accent>Vom Gespräch zu klaren nächsten Schritten.</accent>",
+      "h1": "KI-Notizentool",
       "description": "Laden Sie eine Video- oder Audiodatei hoch, nehmen Sie über Ihr Mikrofon auf oder fügen Sie die URL eines YouTube-Videos mit verfügbaren Untertiteln ein. Scribix erstellt ein Transkript mit Sprecherkennzeichnung und Zeitstempeln; mit Pro entstehen daraus außerdem eine Zusammenfassung, Kernpunkte und Aufgaben.",
       "primaryCta": "Mit 45 Gratisminuten starten",
       "signedInPrimaryCta": "Neues Transkript erstellen",
@@ -1274,8 +1271,7 @@
     "hero": {
       "issue": "REC · MP3",
       "issueLabel": "Issue Nr. 03 · MP3 in Text",
-      "title": "MP3 in Text umwandeln.",
-      "accentTitle": "KI-Transkription.",
+      "title": "MP3 mit KI in Text umwandeln",
       "descriptionStart": "Scribix wandelt MP3-Audio in präzisen, sprechergetrennten Text um, den du prüfen, kopieren und exportieren kannst. Melde dich mit Google an, lade deine MP3 hoch und erhalte ein Transkript mit Zeitstempeln in",
       "stat": "Automatische Spracherkennung",
       "descriptionEnd": ".",
@@ -1605,8 +1601,7 @@
     "hero": {
       "issue": "REC · YOUTUBE-URL",
       "issueLabel": "Ausgabe No.04 · YouTube zu Text",
-      "title": "YouTube zu Text.",
-      "accentTitle": "Gespeicherter, durchsuchbarer Text.",
+      "title": "YouTube in ein Transkript umwandeln",
       "descriptionStart": "Füge eine YouTube-URL in Scribix ein und importiere die verfügbare Untertitelspur des Videos als Transkript, das du lesen, durchsuchen, kopieren, exportieren und mit bezahlten Plänen zusammenfassen kannst.",
       "stat": "Kostenlos mit Google-Anmeldung",
       "descriptionEnd": ". Scribix prüft zuerst die verfügbaren Untertitel und speichert das Transkript, ohne das YouTube-Video oder -Audio herunterzuladen.",

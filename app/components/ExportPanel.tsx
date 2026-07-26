@@ -55,7 +55,7 @@ export function ExportPanel({
   };
 
   return (
-    <div className="space-y-6 rounded-2xl border border-line bg-paper p-4 sm:p-5">
+    <div className="transcript-export-panel space-y-6 rounded-2xl border border-line bg-paper p-4 sm:p-5">
       {partialTranscript ? (
         <div className="rounded-xl border border-accent/25 bg-accent-soft/50 px-3.5 py-3 text-[12px] leading-5 text-accent">
           <p className="font-semibold">
@@ -90,7 +90,7 @@ export function ExportPanel({
                 key={f.format}
                 href={`/api/transcripts/${id}/export?${qs}`}
                 onClick={() => trackEvent("download_click", { format: f.format })}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-[13px] font-medium text-ink/85 transition hover:border-accent/40 hover:bg-accent-soft/40 hover:text-ink"
+                className="transcript-download inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-[13px] font-medium text-ink/85 transition hover:border-accent/40 hover:bg-accent-soft/40 hover:text-ink"
               >
                 <Icon size={16} className="text-ink/60" />
                 {t("downloadFormat", { format: f.label })}
@@ -108,7 +108,7 @@ export function ExportPanel({
           type="button"
           onClick={onCopy}
           disabled={copyState === "busy"}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-3 py-2.5 text-[13px] font-medium text-paper transition hover:bg-accent/90 disabled:opacity-60"
+          className="transcript-copy mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-3 py-2.5 text-[13px] font-medium text-paper transition hover:bg-accent/90 disabled:opacity-60"
         >
           {copyState === "ok" ? <Check size={16} /> : <CopyIcon size={16} />}
           {copyState === "ok"
@@ -127,7 +127,7 @@ export function ExportPanel({
 function AudioDownload({ id, available }: { id: string; available: boolean }) {
   const t = useTranslations("Dashboard.exportPanel");
   const className =
-    "inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-[13px] font-medium transition";
+    "transcript-download inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-[13px] font-medium transition";
   if (!available) {
     return (
       <span
@@ -164,8 +164,8 @@ function Toggle({
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition ${
-        checked ? "bg-accent" : "bg-ink/15"
+      className={`transcript-toggle relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition ${
+        checked ? "transcript-toggle-active bg-accent" : "bg-ink/15"
       }`}
     >
       <span

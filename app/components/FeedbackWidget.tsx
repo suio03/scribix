@@ -106,7 +106,7 @@ export function FeedbackWidget() {
         <div
           role="dialog"
           aria-label={t("dialogLabel")}
-          className="w-[min(360px,calc(100vw-2rem))] rounded-lg border border-line bg-card p-4 shadow-[0_18px_60px_rgba(14,13,11,0.18)] dark:shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
+          className="surface-popover w-[min(360px,calc(100vw-2rem))] rounded-lg border border-line bg-card p-4 shadow-[0_18px_60px_rgba(14,13,11,0.18)] dark:shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
         >
           <div className="flex items-start gap-3">
             <p className="flex-1 text-[14px] leading-6 text-ink">

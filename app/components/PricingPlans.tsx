@@ -57,10 +57,13 @@ export function PricingPlans({
 }: PricingPlansProps) {
   const initialCycle = currentCycle ?? "yearly";
   const [cycle, setCycle] = useState<BillingCycle>(initialCycle);
+  const singlePlanLayout = plans.length === 1;
   const featuredLayout = plans.length === 2;
-  const planGridClass = featuredLayout
-    ? "lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start"
-    : "lg:grid-cols-3";
+  const planGridClass = singlePlanLayout
+    ? ""
+    : featuredLayout
+      ? "lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start"
+      : "lg:grid-cols-3";
 
   useEffect(() => {
     trackEvent("pricing_billing_cycle_view", {
@@ -83,15 +86,17 @@ export function PricingPlans({
   }
 
   return (
-    <div>
-      <div className="mb-8 flex justify-center sm:mb-10">
+    <div
+      className={`pricing-plans ${singlePlanLayout ? "pricing-plans-single" : ""}`}
+    >
+      <div className="pricing-billing-control mb-8 flex justify-center sm:mb-10">
         <div className="flex w-full max-w-[420px] flex-col items-center gap-2.5">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
             {billingLabels.label}
           </p>
           <div
             aria-label={billingLabels.label}
-            className="grid w-full grid-cols-2 border border-ink bg-card p-1 shadow-[4px_4px_0_0_var(--accent)]"
+            className="pricing-billing-switch grid w-full grid-cols-2 border border-ink bg-card p-1 shadow-[4px_4px_0_0_var(--accent)]"
             role="group"
           >
             <BillingTab
@@ -109,7 +114,7 @@ export function PricingPlans({
         </div>
       </div>
 
-      <div className={`grid gap-4 ${planGridClass}`}>
+      <div className={`pricing-plan-grid grid gap-4 ${planGridClass}`}>
         {plans.map((plan) => (
           <PlanCard
             key={plan.id}
@@ -126,6 +131,7 @@ export function PricingPlans({
             featuredLayout={featuredLayout}
             noCreditCard={noCreditCard}
             plan={plan}
+            singlePlanLayout={singlePlanLayout}
             signedIn={signedIn}
             supportUpgradeLabel={supportUpgradeLabel}
             unavailableLabel={unavailableLabel}
@@ -151,8 +157,10 @@ function BillingTab({
   return (
     <button
       aria-pressed={active}
-      className={`flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 px-3 text-center text-[14px] font-medium transition sm:min-h-11 sm:flex-row sm:gap-2 sm:px-4 ${
-        active ? "bg-ink text-paper" : "text-muted hover:bg-paper hover:text-ink"
+      className={`pricing-billing-tab flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 px-3 text-center text-[14px] font-medium transition sm:min-h-11 sm:flex-row sm:gap-2 sm:px-4 ${
+        active
+          ? "pricing-billing-tab-active bg-ink text-paper"
+          : "text-muted hover:bg-paper hover:text-ink"
       }`}
       onClick={onClick}
       type="button"
@@ -185,6 +193,7 @@ function PlanCard({
   featuredLayout,
   noCreditCard,
   plan,
+  singlePlanLayout,
   signedIn,
   supportUpgradeLabel,
   unavailableLabel,
@@ -203,6 +212,7 @@ function PlanCard({
   featuredLayout: boolean;
   noCreditCard: string;
   plan: PlanCopy;
+  singlePlanLayout: boolean;
   signedIn: boolean;
   supportUpgradeLabel: string;
   unavailableLabel: string;
@@ -214,30 +224,33 @@ function PlanCard({
 
   return (
     <article
-      className={`relative flex flex-col border p-6 transition ${
+      className={`pricing-plan-card relative flex flex-col border p-6 transition ${
         primary
-          ? "border-ink bg-ink text-paper shadow-[8px_8px_0_0_var(--accent)]"
-          : "border-line bg-card hover:border-ink/35"
-      } ${density === "compact" ? "min-h-[520px]" : "min-h-[590px]"} ${
-        featuredLayout
+          ? "pricing-plan-card-primary border-ink bg-ink text-paper shadow-[8px_8px_0_0_var(--accent)]"
+          : "pricing-plan-card-secondary border-line bg-card hover:border-ink/35"
+      } ${singlePlanLayout ? "pricing-plan-card-single" : ""} ${
+        density === "compact" ? "min-h-[520px]" : "min-h-[590px]"
+      } ${featuredLayout
           ? primary
             ? "lg:-mt-2 lg:min-h-[570px]"
             : "lg:mt-6"
           : ""
       }`}
     >
-      {primary ? (
-        <div className="absolute right-5 top-5 inline-flex items-center gap-1.5 bg-accent px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-paper">
+      {primary && !singlePlanLayout ? (
+        <div className="pricing-best-value absolute right-5 top-5 inline-flex items-center gap-1.5 bg-accent px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-paper">
           {bestValue}
         </div>
       ) : null}
 
-      <div className={density === "compact" ? "mt-6" : "mt-7"}>
-        <h2 className="font-display text-[31px] font-medium tracking-tight">
+      <div
+        className={`pricing-plan-intro ${density === "compact" ? "mt-6" : "mt-7"}`}
+      >
+        <h2 className="pricing-plan-name font-display text-[31px] font-medium tracking-tight">
           {plan.name}
         </h2>
         <p
-          className={`mt-2 min-h-[54px] text-[14.5px] leading-[1.65] ${
+          className={`pricing-plan-summary mt-2 min-h-[54px] text-[14.5px] leading-[1.65] ${
             primary ? "text-paper/68" : "text-muted"
           }`}
         >
@@ -245,13 +258,15 @@ function PlanCard({
         </p>
       </div>
 
-      <div className={density === "compact" ? "mt-7" : "mt-8"}>
-        <div className="flex flex-wrap items-end gap-x-2 gap-y-1">
-          <span className="whitespace-nowrap font-display text-[56px] font-medium leading-none tracking-tight tabular">
+      <div
+        className={`pricing-plan-price ${density === "compact" ? "mt-7" : "mt-8"}`}
+      >
+        <div className="pricing-plan-price-line flex flex-wrap items-end gap-x-2 gap-y-1">
+          <span className="pricing-plan-price-value whitespace-nowrap font-display text-[56px] font-medium leading-none tracking-tight tabular">
             {display.price}
           </span>
           <span
-            className={`pb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] ${
+            className={`pricing-plan-cadence pb-1.5 font-mono text-[11px] uppercase tracking-[0.16em] ${
               primary ? "text-paper/55" : "text-muted"
             }`}
           >
@@ -259,7 +274,7 @@ function PlanCard({
           </span>
         </div>
         <p
-          className={`mt-2 min-h-4 ${
+          className={`pricing-plan-billing-note mt-2 min-h-4 ${
             secondaryBilling ? "text-[14px]" : "font-mono text-[11px] uppercase tracking-[0.16em]"
           } ${
             primary ? "text-paper/45" : "text-muted"
@@ -270,7 +285,7 @@ function PlanCard({
       </div>
 
       <dl
-        className={`${
+        className={`pricing-plan-features ${
           density === "compact" ? "mt-7" : "mt-8"
         } grid gap-0 border-t border-current/15`}
       >
@@ -305,7 +320,7 @@ function PlanCard({
       />
       {plan.purchaseNote ? (
         <p
-          className={`mt-2 text-center font-mono text-[10px] uppercase tracking-[0.14em] ${
+          className={`pricing-plan-purchase-note mt-2 text-center font-mono text-[10px] uppercase tracking-[0.14em] ${
             primary ? "text-paper/45" : "text-muted"
           }`}
         >
@@ -343,7 +358,7 @@ function PlanAction({
   supportUpgradeLabel: string;
   unavailableLabel: string;
 }) {
-  const baseClass = `mt-auto inline-flex h-12 items-center justify-center gap-2 border px-4 text-[14px] font-medium transition ${
+  const baseClass = `pricing-plan-action mt-auto inline-flex h-12 items-center justify-center gap-2 border px-4 text-[14px] font-medium transition ${
     primary ? "border-paper bg-paper text-ink" : "border-ink bg-ink text-paper"
   }`;
   const planTier = tierForPlan(plan.id);
@@ -431,7 +446,7 @@ function Spec({
 }) {
   return (
     <div
-      className={`grid grid-cols-[minmax(0,112px)_minmax(0,1fr)] gap-3 border-b border-current/10 text-[14px] ${
+      className={`pricing-plan-spec grid grid-cols-[minmax(0,112px)_minmax(0,1fr)] gap-3 border-b border-current/10 text-[14px] ${
         density === "compact" ? "min-h-[48px] py-2.5" : "min-h-[54px] py-3"
       }`}
     >

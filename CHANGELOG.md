@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.23.0] - 2026-07-26
+
+### Changed
+- Refreshed the homepage, converter landing pages, application chrome, pricing, legal, billing, and transcript surfaces with a unified neutral visual system, responsive behavior, and dark-mode styling.
+- Simplified the homepage, audio, MP3, YouTube, and AI Note Taker hero headings to one localized H1 without a forced accent line.
+- Standardized sidebar, upload, modal, popover, transcript, export, and marketing presentation across public and signed-in experiences.
+
+### Fixed
+- Improved the single-plan pricing composition and mobile layouts for landing, upload, and transcript surfaces.
+
 ## [0.22.0] - 2026-07-25
 
 ### Added

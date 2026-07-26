@@ -142,7 +142,7 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
       {menuOpen && menuPosition && createPortal(
         <div
           ref={menuRef}
-          className="fixed z-50 w-32 overflow-hidden rounded-lg border border-line bg-paper shadow-lg"
+          className="surface-popover fixed z-50 w-32 overflow-hidden rounded-lg border border-line bg-paper shadow-lg"
           style={{ right: menuPosition.right, top: menuPosition.top }}
         >
           <button
@@ -176,7 +176,7 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
       )}
       {renameOpen && createPortal(
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
+          className="surface-modal-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
           role="presentation"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget && !busy) setRenameOpen(false);
@@ -186,7 +186,7 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
             role="dialog"
             aria-modal="true"
             aria-labelledby="rename-transcript-title"
-            className="w-full max-w-[420px] overflow-hidden rounded-xl border border-line bg-card shadow-2xl shadow-ink/20"
+            className="surface-modal w-full max-w-[420px] overflow-hidden rounded-xl border border-line bg-card shadow-2xl shadow-ink/20"
             onSubmit={(e) => {
               e.preventDefault();
               void onRename();
@@ -260,7 +260,7 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
       )}
       {confirmOpen && createPortal(
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
+          className="surface-modal-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
           role="presentation"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget && !busy) setConfirmOpen(false);
@@ -271,7 +271,7 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
             aria-modal="true"
             aria-labelledby="delete-transcript-title"
             aria-describedby="delete-transcript-description"
-            className="w-full max-w-[420px] overflow-hidden rounded-xl border border-line bg-card shadow-2xl shadow-ink/20"
+            className="surface-modal w-full max-w-[420px] overflow-hidden rounded-xl border border-line bg-card shadow-2xl shadow-ink/20"
           >
             <div className="flex items-start gap-3 border-b border-line bg-paper/70 px-5 py-4">
               <span className="mt-0.5 inline-grid size-9 shrink-0 place-items-center rounded-full bg-red-500/10 text-red-600">

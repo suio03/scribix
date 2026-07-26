@@ -48,9 +48,11 @@ export default async function DashboardLayout({
           />
         }
       >
-        <Header showSidebarToggle />
-        {children}
-        <FeedbackWidget />
+        <div className="neutral-page-background">
+          <Header showSidebarToggle />
+          {children}
+          <FeedbackWidget />
+        </div>
       </Shell>
     </>
   );

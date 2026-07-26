@@ -93,7 +93,6 @@ type AudioToTextCopy = {
     issue: string;
     issueLabel: string;
     title: string;
-    accentTitle: string;
     descriptionStart: string;
     stat: string;
     descriptionEnd: string;
@@ -263,8 +262,9 @@ export default async function AudioToTextPage({
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="audio-to-text" />
-      <Header showSidebarToggle />
-      <main>
+      <div className="home-refresh landing-refresh tool-landing-refresh">
+        <Header showSidebarToggle />
+        <main>
         <ToolHero
           {...copy.hero}
           signedIn={!!session}
@@ -336,9 +336,10 @@ export default async function AudioToTextPage({
         <ApproachComparisonSection {...copy.comparison} />
         <FaqSection {...copy.faq} />
         <FinalToolCta {...copy.finalCta} signedIn={!!session} />
-      </main>
-      <Footer />
-      <Partners />
+        </main>
+        <Footer />
+        <Partners />
+      </div>
     </Shell>
   );
 }

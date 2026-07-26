@@ -79,12 +79,12 @@ export function AudioUploadCard({
 
   return (
     <>
-      <div className="relative overflow-hidden rounded-3xl border border-line bg-card shadow-[0_30px_80px_-40px_rgba(14,13,11,0.18)]">
+      <div className="audio-upload-card relative overflow-hidden rounded-3xl border border-line bg-card shadow-[0_30px_80px_-40px_rgba(14,13,11,0.18)]">
         <div className="grain" />
 
       <div className="relative">
-        <div className="flex items-stretch border-b border-line">
-          <div className="relative flex flex-1 items-center justify-center gap-2.5 px-4 py-4 text-[14px] text-ink sm:px-6">
+        <div className="audio-upload-tabs flex items-stretch border-b border-line">
+          <div className="audio-upload-tab relative flex flex-1 items-center justify-center gap-2.5 px-4 py-4 text-[14px] text-ink sm:px-6">
             <CloudUpload size={17} strokeWidth={1.6} />
             <span className="font-medium">{copy.uploadTab}</span>
             <span className="hidden font-mono text-[10px] uppercase tracking-[0.15em] text-muted/70 sm:inline">
@@ -94,7 +94,7 @@ export function AudioUploadCard({
           </div>
         </div>
 
-        <div className="p-6 sm:p-10">
+        <div className="audio-upload-panel p-6 sm:p-10">
           <div
             onDragOver={(e) => {
               e.preventDefault();
@@ -113,7 +113,7 @@ export function AudioUploadCard({
               const file = e.dataTransfer.files?.[0];
               if (file) onPick(file);
             }}
-            className={`rounded-2xl border border-dashed bg-paper/40 px-6 py-12 text-center transition sm:py-16 ${
+            className={`audio-upload-dropzone rounded-2xl border border-dashed bg-paper/40 px-6 py-12 text-center transition sm:py-16 ${
               dragOver ? "border-accent bg-accent/5" : "border-line"
             }`}
           >
@@ -132,7 +132,7 @@ export function AudioUploadCard({
             {phase === "idle" || phase === "error" ? (
               <>
                 <div className="mx-auto flex w-fit items-center gap-3">
-                  <span className="inline-grid size-14 place-items-center rounded-xl bg-sage/15 text-sage">
+                  <span className="audio-upload-icon inline-grid size-14 place-items-center rounded-xl bg-sage/15 text-sage">
                     <FileAudio size={26} strokeWidth={1.5} />
                   </span>
                 </div>

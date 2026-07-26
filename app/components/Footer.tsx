@@ -19,7 +19,7 @@ export async function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-line bg-card px-4 pb-10 pt-14 sm:px-8">
+    <footer className="footer-refresh border-t border-line bg-card px-4 pb-10 pt-14 sm:px-8">
       <div className="mx-auto max-w-[1100px]">
         <div className="flex flex-col gap-4">
           <Link href="/" className="inline-flex items-center gap-2.5">

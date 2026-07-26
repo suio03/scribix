@@ -61,8 +61,7 @@
   "Generator": {
     "issue": "REC · 00:00:00",
     "issueLabel": "Issue №01 · 動画から文字へ",
-    "h1Part1": "動画を文字に変換。",
-    "h1Part2": "<accent>無料の AI 文字起こし。</accent>",
+    "h1": "AIで動画をテキストに変換",
     "description": "Scribixは動画・音声ファイルを、確認・書き出し可能な話者ラベル付きテキストに変換します。MP4、MOV、WebM、AVI、MP3、WAV、M4Aに対応し、単語単位のタイムスタンプと<stat>言語の自動検出</stat>を利用できます。Googleログインで<stat>45分無料</stat>、カード不要です。",
     "trust": [
       {
@@ -823,8 +822,7 @@
     "hero": {
       "issue": "REC · 00:00:00",
       "issueLabel": "Issue №02 · 音声をテキスト化",
-      "title": "音声をテキストに変換。",
-      "accentTitle": "AI文字起こし。",
+      "title": "AIで音声をテキストに変換",
       "descriptionStart": "Scribixは音声ファイルを、確認、コピー、エクスポートできる高精度な話者付きテキストに変換します。Googleでログインし、音声ファイルをアップロードすると、タイムスタンプ付きの文字起こしを",
       "stat": "言語の自動検出",
       "descriptionEnd": "で取得できます。",
@@ -1149,8 +1147,7 @@
     "hero": {
       "issue": "REC · AI議事録",
       "issueLabel": "Issue No.05 · AI議事録ツール",
-      "h1Part1": "あらゆる録音を、AI議事録に。",
-      "h1Part2": "<accent>会話から次のアクションまで整理。</accent>",
+      "h1": "AI議事録ツール",
       "description": "動画や音声ファイルのアップロード、マイク録音、字幕が利用できるYouTube URLに対応します。Scribixは発言者とタイムスタンプ付きの文字起こしを作成し、Proでは概要、要点、アクションアイテムをAIで整理できます。",
       "primaryCta": "無料の45分から始める",
       "signedInPrimaryCta": "文字起こしを作成",
@@ -1274,8 +1271,7 @@
     "hero": {
       "issue": "REC · MP3",
       "issueLabel": "Issue No.03 · MP3をテキスト化",
-      "title": "MP3をテキストに変換。",
-      "accentTitle": "AI文字起こし。",
+      "title": "AIでMP3をテキストに変換",
       "descriptionStart": "ScribixはMP3音声を、確認・コピー・書き出しできる高精度な話者ラベル付きテキストに変換します。Googleでログインし、MP3をアップロードすると、タイムスタンプ付きの文字起こしを",
       "stat": "言語の自動検出",
       "descriptionEnd": "で取得できます。",
@@ -1605,8 +1601,7 @@
     "hero": {
       "issue": "REC · YOUTUBE URL",
       "issueLabel": "Issue No.04 · YouTubeをテキスト化",
-      "title": "YouTubeをテキスト化。",
-      "accentTitle": "保存して検索できるテキスト。",
+      "title": "YouTubeを文字起こし",
       "descriptionStart": "ScribixにYouTube URLを貼り付け、動画の利用可能な字幕トラックを、読む、検索する、コピーする、エクスポートする、有料プランで要約するための transcript として取り込みます。",
       "stat": "Googleサインインで無料",
       "descriptionEnd": "。Scribixはまず利用可能な字幕を確認し、YouTube動画や音声をダウンロードせずに transcript を保存します。",

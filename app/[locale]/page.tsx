@@ -89,36 +89,38 @@ export default async function HomePage({
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="home" />
-      <Header showSidebarToggle />
-      <main>
-        <Generator
-          signedIn={!!session}
-          postSignInPath={homePath}
-          tier={sidebarUsage?.tier}
-          billingCycle={sidebarUsage?.billingCycle}
-        />
-        <section className="px-4 pb-8 sm:px-8">
-          <div className="mx-auto max-w-[1100px] border-t border-line pt-5">
-            <p className="text-[14px] leading-[1.6] text-muted">
-              {audioLinkT("prefix")}{" "}
-              <Link
-                href="/audio-to-text"
-                className="font-medium text-ink underline decoration-accent decoration-2 underline-offset-4"
-              >
-                {audioLinkT("link")}
-              </Link>
-              {audioLinkT("suffix")}
-            </p>
-          </div>
-        </section>
-        <Features />
-        <HowItWorks />
-        <UseCases />
-        <FAQ />
-        <FinalCTA />
-      </main>
-      <Footer />
-      <Partners />
+      <div className="home-refresh">
+        <Header showSidebarToggle />
+        <main>
+          <Generator
+            signedIn={!!session}
+            postSignInPath={homePath}
+            tier={sidebarUsage?.tier}
+            billingCycle={sidebarUsage?.billingCycle}
+          />
+          <section className="home-audio-link px-4 sm:px-8">
+            <div className="mx-auto border-t border-line pt-4">
+              <p className="text-[14px] leading-[1.6] text-muted">
+                {audioLinkT("prefix")}{" "}
+                <Link
+                  href="/audio-to-text"
+                  className="font-medium text-ink underline decoration-accent decoration-2 underline-offset-4"
+                >
+                  {audioLinkT("link")}
+                </Link>
+                {audioLinkT("suffix")}
+              </p>
+            </div>
+          </section>
+          <Features />
+          <HowItWorks />
+          <UseCases />
+          <FAQ />
+          <FinalCTA />
+        </main>
+        <Footer />
+        <Partners />
+      </div>
     </Shell>
   );
 }

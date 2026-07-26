@@ -61,8 +61,7 @@
   "Generator": {
     "issue": "REC · 00:00:00",
     "issueLabel": "Problema Nº01 · Vídeo a texto",
-    "h1Part1": "Convierte vídeo a texto.",
-    "h1Part2": "<accent>Transcripción IA gratis.</accent>",
+    "h1": "Convierte vídeo a texto con IA",
     "description": "Scribix convierte archivos de vídeo y audio en texto con etiquetas de locutor para revisar y exportar. Sube MP4, MOV, WebM, AVI, MP3, WAV o M4A y obtén marcas de tiempo por palabra con <stat>detección automática del idioma</stat>. <stat>45 minutos gratis</stat> con Google y sin tarjeta.",
     "trust": [
       {
@@ -823,8 +822,7 @@
     "hero": {
       "issue": "REC · 00:00:00",
       "issueLabel": "Edición №02 · Audio a texto",
-      "title": "Convierte audio a texto.",
-      "accentTitle": "Transcripción IA.",
+      "title": "Convierte audio a texto con IA",
       "descriptionStart": "Scribix convierte archivos de audio en texto preciso, con hablantes, que puedes revisar, copiar y exportar. Inicia sesión con Google, sube un archivo de audio y obtén una transcripción con marcas de tiempo en",
       "stat": "Detección automática del idioma",
       "descriptionEnd": ".",
@@ -1149,8 +1147,7 @@
     "hero": {
       "issue": "REC · NOTAS CON IA",
       "issueLabel": "Edición n.º 05 · IA para tomar notas",
-      "h1Part1": "IA para tomar notas en cada grabación.",
-      "h1Part2": "<accent>De la conversación a los próximos pasos.</accent>",
+      "h1": "IA para tomar notas",
       "description": "Sube un archivo de video o audio, graba con el micrófono o pega la URL de un video de YouTube con subtítulos disponibles. Scribix crea una transcripción con hablantes y marcas de tiempo; con Pro también puedes generar un resumen, puntos clave y tareas.",
       "primaryCta": "Empieza con 45 minutos gratis",
       "signedInPrimaryCta": "Crear una transcripción",
@@ -1274,8 +1271,7 @@
     "hero": {
       "issue": "REC · MP3",
       "issueLabel": "Edición n.º 03 · MP3 a texto",
-      "title": "Convierte MP3 a texto.",
-      "accentTitle": "Transcripción con IA.",
+      "title": "Convierte MP3 a texto con IA",
       "descriptionStart": "Scribix convierte audio MP3 en texto preciso con hablantes, listo para revisar, copiar y exportar. Inicia sesión con Google, sube tu MP3 y obtén una transcripción con marcas de tiempo en",
       "stat": "Detección automática del idioma",
       "descriptionEnd": ".",
@@ -1605,8 +1601,7 @@
     "hero": {
       "issue": "REC · URL DE YOUTUBE",
       "issueLabel": "Issue No.04 · YouTube a texto",
-      "title": "YouTube a texto.",
-      "accentTitle": "Texto guardado y buscable.",
+      "title": "YouTube a transcripción",
       "descriptionStart": "Pega una URL de YouTube en Scribix e importa la pista de subtítulos disponible del vídeo como una transcripción que puedes leer, buscar, copiar, exportar y resumir con planes de pago.",
       "stat": "Gratis con inicio de sesión de Google",
       "descriptionEnd": ". Scribix comprueba primero los subtítulos disponibles y guarda la transcripción sin descargar el vídeo ni el audio de YouTube.",

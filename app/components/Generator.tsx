@@ -100,7 +100,7 @@ export function Generator({
       className="relative scroll-mt-24 px-4 pb-16 pt-12 sm:px-8 sm:pt-16 lg:pt-20"
     >
       <div className="mx-auto max-w-[1100px]">
-        <div className="mb-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
+        <div className="generator-kicker mb-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
           <span className="inline-flex items-center gap-1.5">
             <span className="size-1.5 rounded-full bg-rec rec-dot" />
             {t("issue")}
@@ -110,13 +110,7 @@ export function Generator({
         </div>
 
         <h1 className="font-display text-[44px] font-medium leading-[1.02] tracking-[-0.02em] sm:text-[60px] lg:text-[76px]">
-          {t("h1Part1")}
-          <br />
-          {t.rich("h1Part2", {
-            accent: (chunks) => (
-              <span className="italic text-accent">{chunks}</span>
-            ),
-          })}
+          {t("h1")}
         </h1>
 
         <p className="mt-6 max-w-[58ch] text-[16px] leading-[1.65] text-muted sm:text-[17px]">
@@ -145,7 +139,7 @@ export function Generator({
         <div className="mt-10 overflow-hidden rounded-3xl border border-line bg-card shadow-[0_30px_80px_-40px_rgba(14,13,11,0.18)]">
           <div className="grain" />
           <div className="relative">
-            <div className="flex items-stretch border-b border-line">
+            <div className="generator-tabs flex items-stretch border-b border-line">
               {tabs.map((tabItem) => {
                 const Icon = tabItem.icon;
                 const active = tab === tabItem.id;
@@ -154,8 +148,10 @@ export function Generator({
                     key={tabItem.id}
                     type="button"
                     onClick={() => setTab(tabItem.id)}
-                    className={`group relative flex flex-1 items-center justify-center gap-2.5 px-4 py-4 text-[14px] transition sm:px-6 ${
-                      active ? "text-ink" : "text-muted hover:text-ink"
+                    className={`generator-tab group relative flex flex-1 items-center justify-center gap-2.5 px-4 py-4 text-[14px] transition sm:px-6 ${
+                      active
+                        ? "generator-tab-active text-ink"
+                        : "text-muted hover:text-ink"
                     }`}
                   >
                     <Icon size={17} strokeWidth={1.6} />
@@ -164,14 +160,14 @@ export function Generator({
                       {tabItem.hint}
                     </span>
                     {active && (
-                      <span className="absolute inset-x-4 bottom-0 h-0.5 bg-accent sm:inset-x-6" />
+                      <span className="generator-tab-indicator absolute inset-x-4 bottom-0 h-0.5 bg-accent sm:inset-x-6" />
                     )}
                   </button>
                 );
               })}
             </div>
 
-            <div className="p-6 sm:p-10">
+            <div className="generator-panel p-6 sm:p-10">
               {tab === "upload" && (
                 <UploadPane
                   signedIn={signedIn}
@@ -272,7 +268,7 @@ function UploadPane({
           const file = e.dataTransfer.files?.[0];
           if (file) onPick(file);
         }}
-        className={`rounded-2xl border border-dashed bg-paper/40 px-6 py-12 text-center transition sm:py-16 ${
+        className={`generator-dropzone rounded-2xl border border-dashed bg-paper/40 px-6 py-12 text-center transition sm:py-16 ${
           dragOver ? "border-accent bg-accent/5" : "border-line"
         }`}
       >
@@ -290,7 +286,7 @@ function UploadPane({
 
         {phase === "idle" || phase === "error" ? (
           <>
-            <div className="mx-auto flex w-fit items-center gap-3">
+            <div className="generator-file-icons mx-auto flex w-fit items-center gap-3">
               <span className="inline-grid size-14 place-items-center rounded-xl bg-sage/15 text-sage">
                 <FileVideo size={26} strokeWidth={1.5} />
               </span>

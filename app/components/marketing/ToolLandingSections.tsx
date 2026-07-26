@@ -134,7 +134,6 @@ export function ToolHero({
   issue,
   issueLabel,
   title,
-  accentTitle,
   description,
   primaryCta,
   signedInPrimaryCta,
@@ -147,7 +146,6 @@ export function ToolHero({
   issue: string;
   issueLabel: string;
   title: string;
-  accentTitle: string;
   description: ReactNode;
   primaryCta: string;
   signedInPrimaryCta?: string;
@@ -158,10 +156,10 @@ export function ToolHero({
   children: ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden px-4 pb-16 pt-12 sm:px-8 sm:pb-20 sm:pt-16 lg:pt-20">
+    <section className="tool-landing-hero relative overflow-hidden px-4 pb-16 pt-12 sm:px-8 sm:pb-20 sm:pt-16 lg:pt-20">
       <div className="mx-auto max-w-[1100px]">
         <div>
-          <div className="mb-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
+          <div className="tool-landing-kicker mb-6 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
             <span className="inline-flex items-center gap-1.5">
               <span className="size-1.5 rounded-full bg-rec rec-dot" />
               {issue}
@@ -170,17 +168,15 @@ export function ToolHero({
             <span>{issueLabel}</span>
           </div>
 
-          <h1 className="font-display text-[44px] font-medium leading-[1.02] tracking-[-0.02em] sm:text-[60px] lg:text-[76px]">
+          <h1 className="tool-landing-title font-display text-[44px] font-medium leading-[1.02] tracking-[-0.02em] sm:text-[60px] lg:text-[76px]">
             {title}
-            <br />
-            <span className="italic text-accent">{accentTitle}</span>
           </h1>
 
-          <p className="mt-6 max-w-[58ch] text-[16px] leading-[1.65] text-muted sm:text-[17px]">
+          <p className="tool-landing-description mt-6 max-w-[58ch] text-[16px] leading-[1.65] text-muted sm:text-[17px]">
             {description}
           </p>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          <div className="tool-landing-actions mt-7 flex flex-col gap-3 sm:flex-row">
             <a
               href="#upload"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
@@ -201,7 +197,7 @@ export function ToolHero({
           <ProofRow items={proof} />
         </div>
 
-        <div id="upload" className="mt-10 scroll-mt-24">
+        <div id="upload" className="tool-landing-upload mt-10 scroll-mt-24">
           {children}
         </div>
       </div>
@@ -211,7 +207,7 @@ export function ToolHero({
 
 export function ProofRow({ items }: { items: ProofItem[] }) {
   return (
-    <ul className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px]">
+    <ul className="tool-proof-row mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px]">
       {items.map((item) => {
         const Icon = icons[item.icon];
         return (
@@ -235,7 +231,7 @@ export function QuickAnswerSection({
   body: string;
 }) {
   return (
-    <section className="border-y border-line bg-card/50 px-4 py-10 sm:px-8">
+    <section className="tool-quick-answer border-y border-line bg-card/50 px-4 py-10 sm:px-8">
       <div className="mx-auto grid max-w-[1100px] gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start">
         <div>
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
@@ -265,7 +261,7 @@ export function OverviewSection({
   notBestFor: FitListItem;
 }) {
   return (
-    <section className="px-4 py-20 sm:px-8 sm:py-28">
+    <section className="tool-overview px-4 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-[1100px]">
         <SectionLabel number={number} label={label} />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
@@ -309,7 +305,7 @@ function FitList({
 }) {
   const Icon = icons[icon];
   return (
-    <article className="rounded-2xl border border-line bg-card p-6">
+    <article className="tool-card rounded-2xl border border-line bg-card p-6">
       <h3 className="font-display text-[24px] font-medium tracking-tight">{title}</h3>
       <ul className="mt-5 space-y-3">
         {items.map((item) => (
@@ -343,7 +339,7 @@ export function StepsSection({
   steps: LandingStep[];
 }) {
   return (
-    <section className="border-y border-line bg-card/50 px-4 py-20 sm:px-8 sm:py-28">
+    <section className="tool-steps border-y border-line bg-card/50 px-4 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-[1100px]">
         <SectionLabel number={number} label={label} />
         <h2 className="max-w-[16ch] font-display text-[36px] font-medium leading-[1.05] tracking-[-0.02em] sm:text-[52px]">
@@ -354,9 +350,9 @@ export function StepsSection({
           {steps.map((step, i) => {
             const Icon = icons[step.icon];
             return (
-              <article key={step.key} className="relative flex flex-col gap-5 border-t border-line pt-7">
+              <article key={step.key} className="tool-step-card relative flex flex-col gap-5 border-t border-line pt-7">
                 <div className="flex items-center justify-between">
-                  <span className="font-display text-[42px] font-medium leading-none tracking-tight tabular text-accent">
+                  <span className="tool-step-number font-display text-[42px] font-medium leading-none tracking-tight tabular text-accent">
                     {step.n}
                   </span>
                   <Icon size={28} strokeWidth={1.4} className="text-ink/70" />
@@ -365,7 +361,7 @@ export function StepsSection({
                   {step.title}
                 </h3>
                 <p className="text-[14.5px] leading-[1.65] text-muted">{step.body}</p>
-                <div className="mt-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
+                <div className="tool-step-meta mt-2 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
                   <Waveform
                     bars={i === 1 ? 22 : 14}
                     animated={i === 1}
@@ -396,7 +392,7 @@ export function UseCaseGridSection({
   items: GridCard[];
 }) {
   return (
-    <section className="px-4 py-20 sm:px-8 sm:py-28">
+    <section className="tool-use-cases px-4 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-[1100px]">
         <SectionLabel number={number} label={label} />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
@@ -405,11 +401,11 @@ export function UseCaseGridSection({
               {title} <span className="italic text-accent">{accentTitle}</span>
             </h2>
           </div>
-          <div className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2">
+          <div className="tool-card-grid grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2">
             {items.map((item) => {
               const Icon = icons[item.icon];
               return (
-                <article key={item.key} className="bg-card p-6 transition hover:bg-paper">
+                <article key={item.key} className="tool-card bg-card p-6 transition hover:bg-paper">
                   <Icon size={22} strokeWidth={1.5} className="text-accent" />
                   <h3 className="mt-5 font-display text-[23px] font-medium tracking-tight">
                     {item.title}
@@ -448,7 +444,7 @@ export function DemoTranscriptSection({
   transcript: string;
 }) {
   return (
-    <section className="border-y border-line bg-card/50 px-4 py-20 sm:px-8 sm:py-28">
+    <section className="tool-demo border-y border-line bg-card/50 px-4 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-[1100px]">
         <SectionLabel number={number} label={label} />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:items-start">
@@ -494,7 +490,7 @@ export function FeatureGridSection({
   items: GridCard[];
 }) {
   return (
-    <section className="px-4 py-20 sm:px-8 sm:py-28">
+    <section className="tool-features px-4 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-[1100px]">
         <SectionLabel number={number} label={label} />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end">
@@ -506,11 +502,11 @@ export function FeatureGridSection({
           <p className="text-[16px] leading-[1.7] text-muted">{intro}</p>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+        <div className="tool-card-grid mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
           {items.map((item) => {
             const Icon = icons[item.icon];
             return (
-              <article key={item.key} className="bg-card p-6 transition hover:bg-paper">
+              <article key={item.key} className="tool-card bg-card p-6 transition hover:bg-paper">
                 <span className="inline-grid size-10 place-items-center rounded-lg border border-line bg-paper text-accent">
                   <Icon size={18} strokeWidth={1.6} />
                 </span>
@@ -529,12 +525,12 @@ export function FeatureGridSection({
 
 export function InsightCardsSection({ items }: { items: InsightCard[] }) {
   return (
-    <section className="border-y border-line bg-card/50 px-4 py-20 sm:px-8 sm:py-28">
-      <div className="mx-auto grid max-w-[1100px] gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-2">
+    <section className="tool-insights border-y border-line bg-card/50 px-4 py-20 sm:px-8 sm:py-28">
+      <div className="tool-card-grid mx-auto grid max-w-[1100px] gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-2">
         {items.map((item) => {
           const Icon = icons[item.icon];
           return (
-            <article key={item.key} className="bg-card p-7 sm:p-9">
+            <article key={item.key} className="tool-card bg-card p-7 sm:p-9">
               <Icon size={24} strokeWidth={1.5} className="text-accent" />
               <h2 className="mt-5 font-display text-[31px] font-medium tracking-tight">
                 {item.title}
@@ -578,7 +574,7 @@ export function ApproachComparisonSection({
   rows: ComparisonRow[];
 }) {
   return (
-    <section className="px-4 py-20 sm:px-8 sm:py-28">
+    <section className="tool-comparison px-4 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-[1100px]">
         <SectionLabel number={number} label={label} />
         <h2 className="max-w-[18ch] font-display text-[36px] font-medium leading-[1.05] tracking-[-0.02em] sm:text-[52px]">
@@ -629,7 +625,7 @@ export function FaqSection({
   items: FaqItem[];
 }) {
   return (
-    <section id="faq" className="scroll-mt-20 border-t border-line px-4 py-20 sm:px-8 sm:py-28">
+    <section id="faq" className="tool-faq scroll-mt-20 border-t border-line px-4 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-[1100px]">
         <SectionLabel number={number} label={label} />
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start">
@@ -689,7 +685,7 @@ export function FinalToolCta({
   stats: Array<{ value: string; label: string }>;
 }) {
   return (
-    <section className="px-4 pb-20 sm:px-8">
+    <section className="tool-final-cta px-4 pb-20 sm:px-8">
       <div className="mx-auto max-w-[1100px]">
         <div className="relative overflow-hidden rounded-3xl border border-ink bg-ink p-10 text-paper sm:p-16">
           <div className="grain" />
@@ -722,7 +718,11 @@ export function FinalToolCta({
             </div>
 
             <div className="hidden text-paper/40 lg:block">
-              <Waveform bars={48} animated className="h-44 w-full text-rec" />
+              <Waveform
+                bars={48}
+                animated
+                className="tool-final-waveform h-44 w-full text-rec"
+              />
               <div className="mt-6 grid grid-cols-3 gap-4 border-t border-paper/15 pt-6 font-mono text-[10.5px] uppercase tracking-[0.2em]">
                 {stats.map((stat) => (
                   <div key={stat.label}>

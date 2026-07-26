@@ -943,12 +943,12 @@ export function PartialTranscriptModal({
     />
   ) : (
     <div
-      className="fixed inset-0 z-[100] grid place-items-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
+      className="surface-modal-backdrop fixed inset-0 z-[100] grid place-items-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-labelledby="partial-transcript-title"
     >
-      <div className="w-full max-w-[560px] overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_30px_80px_-35px_rgba(14,13,11,0.5)]">
+      <div className="surface-modal w-full max-w-[560px] overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_30px_80px_-35px_rgba(14,13,11,0.5)]">
         <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-5 sm:px-6">
           <div>
             <div className="mb-3 inline-grid size-10 place-items-center rounded-xl bg-accent-soft text-accent">
@@ -1145,14 +1145,14 @@ export function UploadErrorHelp({
       </div>
       {guideOpen && typeof document !== "undefined" ? createPortal(
         <div
-          className="fixed inset-0 z-[100] grid place-items-center bg-ink/65 px-4 py-6 backdrop-blur-md"
+          className="surface-modal-backdrop fixed inset-0 z-[100] grid place-items-center bg-ink/65 px-4 py-6 backdrop-blur-md"
           role="dialog"
           aria-modal="true"
           aria-labelledby="extract-audio-guide-title"
           onClick={() => setGuideOpen(false)}
         >
           <div
-            className="w-full max-w-xl rounded-2xl border border-line bg-paper p-6 text-left shadow-[0_30px_80px_-35px_rgba(14,13,11,0.45)]"
+            className="surface-modal w-full max-w-xl rounded-2xl border border-line bg-paper p-6 text-left shadow-[0_30px_80px_-35px_rgba(14,13,11,0.45)]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4">

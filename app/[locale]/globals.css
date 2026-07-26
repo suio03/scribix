@@ -142,3 +142,948 @@ details[open] .faq-icon {
 .tabular {
   font-variant-numeric: tabular-nums;
 }
+
+/* Homepage-only visual refresh. Shared product surfaces keep the base theme. */
+.home-refresh {
+  --home-content-width: 68.75rem;
+  --paper: #fafaf8;
+  --card: #ffffff;
+  --ink: #191918;
+  --muted: #686863;
+  --line: #e7e6e1;
+  --accent: #bd5738;
+  --accent-soft: rgba(189, 87, 56, 0.08);
+  --sage: #5f786a;
+  --rec: #bd5738;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.dark .home-refresh {
+  --paper: #111210;
+  --card: #191a17;
+  --ink: #f2f1ec;
+  --muted: #a4a49c;
+  --line: #2d2e29;
+  --accent: #e17a58;
+  --accent-soft: rgba(225, 122, 88, 0.1);
+  --sage: #91aa99;
+  --rec: #e17a58;
+}
+
+/* Shared neutral canvas for authenticated product pages and legal documents. */
+.neutral-page-background {
+  --paper: #fafaf8;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.dark .neutral-page-background {
+  --paper: #111210;
+}
+
+/* Product-page color refresh. Scoped so the rest of Dashboard keeps its current theme. */
+.product-surface-refresh {
+  --paper: #fafaf8;
+  --card: #ffffff;
+  --ink: #191918;
+  --muted: #686863;
+  --line: #e7e6e1;
+  --accent: #bd5738;
+  --accent-soft: rgba(189, 87, 56, 0.07);
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.dark .product-surface-refresh {
+  --paper: #111210;
+  --card: #191a17;
+  --ink: #f2f1ec;
+  --muted: #a4a49c;
+  --line: #2d2e29;
+  --accent: #d17658;
+  --accent-soft: rgba(209, 118, 88, 0.1);
+}
+
+.transcript-detail-refresh .transcript-export-panel {
+  background: var(--card);
+  box-shadow: 0 18px 48px -38px rgba(25, 25, 24, 0.32);
+}
+
+.transcript-detail-refresh .transcript-tabs,
+.transcript-detail-refresh .transcript-audio-player {
+  background: rgba(25, 25, 24, 0.045);
+}
+
+.transcript-detail-refresh .transcript-tab-active {
+  color: var(--ink);
+}
+
+.transcript-detail-refresh .transcript-segment-time {
+  color: var(--muted);
+}
+
+.transcript-detail-refresh .transcript-segment-time-active {
+  color: var(--accent);
+}
+
+.transcript-detail-refresh .transcript-download:hover {
+  border-color: #d5d4ce;
+  background: #f7f7f4;
+}
+
+.transcript-detail-refresh .transcript-copy {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.transcript-detail-refresh .transcript-copy:hover {
+  background: #2d2d2a;
+}
+
+.billing-refresh .pricing-plans-single {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: var(--card);
+  box-shadow: 0 24px 64px -48px rgba(25, 25, 24, 0.34);
+}
+
+.billing-refresh .pricing-plans-single .pricing-billing-control {
+  justify-content: stretch;
+  margin-bottom: 0;
+  padding: 1.25rem 2.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.billing-refresh .pricing-plans-single .pricing-billing-control > div {
+  max-width: none;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.billing-refresh .pricing-plans-single .pricing-billing-control p {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 550;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.billing-refresh .pricing-plans-single .pricing-billing-switch {
+  width: min(100%, 22rem);
+  flex: none;
+  overflow: hidden;
+  border-color: var(--line);
+  border-radius: 0.75rem;
+  background: var(--paper);
+  box-shadow: none;
+}
+
+.billing-refresh .pricing-plans-single .pricing-billing-tab {
+  border-radius: 0.5rem;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-grid {
+  gap: 0;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-card-single {
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-intro {
+  margin-top: 0;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-name,
+.billing-refresh .pricing-plans-single .pricing-plan-price-value {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-name {
+  font-size: 1.75rem;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-summary {
+  min-height: 0;
+  color: var(--muted);
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-price {
+  margin-top: 2rem;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-price-value {
+  font-size: 3.25rem;
+  letter-spacing: -0.04em;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-cadence,
+.billing-refresh .pricing-plans-single .pricing-plan-billing-note,
+.billing-refresh .pricing-plans-single .pricing-plan-purchase-note {
+  color: var(--muted);
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-features {
+  margin-top: 2rem;
+  border-color: var(--line);
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-spec {
+  border-color: var(--line);
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-spec dt {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 550;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-spec dd {
+  color: var(--ink);
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-action {
+  margin-top: 2rem;
+  border-color: var(--ink);
+  border-radius: 0.75rem;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-action:not(:disabled):hover {
+  opacity: 0.86;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-action:disabled {
+  border-color: var(--line);
+  background: rgba(25, 25, 24, 0.055);
+  color: var(--muted);
+  opacity: 1;
+}
+
+.billing-refresh .pricing-plans-single .pricing-plan-purchase-note {
+  font-family: var(--font-sans);
+  letter-spacing: 0.04em;
+}
+
+@media (min-width: 768px) {
+  .billing-refresh .pricing-plans-single .pricing-plan-card-single {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(19rem, 1.1fr);
+    grid-template-areas:
+      "intro features"
+      "price features"
+      "action features"
+      "note features";
+    column-gap: 3rem;
+    padding: 2.5rem;
+  }
+
+  .billing-refresh .pricing-plans-single .pricing-plan-intro {
+    grid-area: intro;
+  }
+
+  .billing-refresh .pricing-plans-single .pricing-plan-price {
+    grid-area: price;
+  }
+
+  .billing-refresh .pricing-plans-single .pricing-plan-features {
+    grid-area: features;
+    align-self: stretch;
+    margin-top: 0;
+    padding-left: 3rem;
+    border-top: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .billing-refresh .pricing-plans-single .pricing-plan-action {
+    grid-area: action;
+  }
+
+  .billing-refresh .pricing-plans-single .pricing-plan-purchase-note {
+    grid-area: note;
+  }
+}
+
+@media (max-width: 639px) {
+  .billing-refresh .pricing-plans-single .pricing-billing-control {
+    padding: 1rem;
+  }
+
+  .billing-refresh .pricing-plans-single .pricing-billing-control > div {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .billing-refresh .pricing-plans-single .pricing-billing-control p {
+    text-align: center;
+  }
+
+  .billing-refresh .pricing-plans-single .pricing-billing-switch {
+    width: 100%;
+  }
+
+  .billing-refresh .pricing-plans-single .pricing-plan-card-single {
+    padding: 1.5rem;
+  }
+}
+
+.dark .transcript-detail-refresh .transcript-download:hover {
+  border-color: #3a3b35;
+  background: #20211e;
+}
+
+.dark .transcript-detail-refresh .transcript-copy:hover {
+  background: #dddcd5;
+}
+
+.dark .billing-refresh .pricing-plans-single {
+  box-shadow: 0 24px 64px -48px rgba(0, 0, 0, 0.85);
+}
+
+.dark .billing-refresh .pricing-plans-single .pricing-plan-action:disabled {
+  background: rgba(242, 241, 236, 0.07);
+}
+
+.home-refresh .font-display,
+.home-refresh .font-mono {
+  font-family: var(--font-sans);
+}
+
+.home-refresh .font-mono {
+  letter-spacing: 0.08em;
+}
+
+.home-refresh .italic {
+  font-style: normal;
+}
+
+.home-refresh .grain {
+  display: none;
+}
+
+.home-refresh main h1,
+.home-refresh main h2,
+.home-refresh main h3 {
+  text-wrap: balance;
+}
+
+.home-refresh main h1,
+.home-refresh main h2 {
+  font-weight: 540;
+  letter-spacing: -0.035em;
+}
+
+.home-refresh main h3 {
+  font-weight: 540;
+  letter-spacing: -0.02em;
+}
+
+.home-refresh main h1 .text-accent,
+.home-refresh main h2 .text-accent {
+  color: inherit;
+}
+
+.home-refresh #generator {
+  padding-top: clamp(3.5rem, 6vw, 5rem);
+  padding-bottom: 2.5rem;
+}
+
+.home-refresh #generator > div,
+.home-refresh .home-audio-link > div,
+.home-refresh #features > div,
+.home-refresh #how > div,
+.home-refresh #use-cases > div,
+.home-refresh #faq > div {
+  max-width: var(--home-content-width);
+}
+
+.home-refresh #generator .generator-kicker {
+  display: none;
+}
+
+.home-refresh #generator .rec-dot {
+  animation: none;
+  background: var(--accent);
+}
+
+.home-refresh #generator h1 {
+  max-width: 24ch;
+  margin-inline: auto;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  font-weight: 540;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.home-refresh #generator h1 + p {
+  max-width: var(--home-content-width);
+  margin: 1.125rem auto 0;
+  color: var(--muted);
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.home-refresh #generator h1 + p .font-mono {
+  color: color-mix(in srgb, var(--ink) 62%, var(--muted));
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.home-refresh #generator ul {
+  justify-content: center;
+  margin-top: 1.75rem;
+  gap: 0.75rem 1.5rem;
+}
+
+.home-refresh #generator ul li {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.home-refresh #generator ul li svg {
+  color: var(--accent);
+}
+
+.home-refresh #generator > div > div:last-child {
+  margin-top: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 16px 48px -38px rgba(25, 25, 24, 0.32);
+}
+
+.home-refresh #generator .generator-tabs {
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+}
+
+.home-refresh #generator .generator-tab {
+  flex: none;
+  min-width: 8.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: 0.625rem;
+}
+
+.home-refresh #generator .generator-tab:hover {
+  background: color-mix(in srgb, var(--paper) 76%, transparent);
+}
+
+.home-refresh #generator .generator-tab-indicator {
+  right: 1rem;
+  bottom: -0.5rem;
+  left: 1rem;
+}
+
+.home-refresh #generator .generator-panel {
+  padding: 1.5rem;
+}
+
+.home-refresh #generator button.rounded-full {
+  border-radius: 9999px;
+}
+
+.home-refresh #generator button span.font-mono {
+  display: none;
+}
+
+.home-refresh #generator .generator-dropzone {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  border-color: transparent;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--paper) 76%, var(--card));
+}
+
+.home-refresh #generator .generator-file-icons {
+  gap: 0.5rem;
+}
+
+.home-refresh #generator .generator-file-icons > span {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.625rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.home-refresh #generator .generator-dropzone p.mt-6 {
+  margin-top: 1rem;
+}
+
+.home-refresh main h2 {
+  font-size: clamp(2rem, 3.5vw, 2.625rem);
+  line-height: 1.12;
+}
+
+.home-refresh .marketing-section-label {
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.home-refresh .marketing-section-label > span:first-child,
+.home-refresh .marketing-section-label > span:nth-child(2) {
+  display: none;
+}
+
+.home-refresh .home-audio-link {
+  padding-bottom: 0;
+}
+
+.home-refresh #features {
+  padding-top: 4rem;
+}
+
+.home-refresh #features > div > div:nth-child(2),
+.home-refresh #use-cases > div > div:nth-child(2) {
+  align-items: start;
+}
+
+.home-refresh #features,
+.home-refresh #how,
+.home-refresh #use-cases,
+.home-refresh #faq {
+  padding-top: clamp(4.5rem, 8vw, 7rem);
+  padding-bottom: clamp(4.5rem, 8vw, 7rem);
+}
+
+.home-refresh #features > div > div:last-child {
+  gap: 1rem;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+.home-refresh #features article {
+  grid-column: span 1 / span 1 !important;
+  min-height: 14rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  box-shadow: 0 18px 44px -38px rgba(25, 25, 24, 0.35);
+}
+
+.home-refresh #features article .font-mono {
+  display: none;
+}
+
+.home-refresh #features article:hover {
+  background: var(--card);
+  border-color: color-mix(in srgb, var(--ink) 20%, var(--line));
+}
+
+.home-refresh #how {
+  background: color-mix(in srgb, var(--card) 72%, var(--paper));
+}
+
+.home-refresh #how article {
+  gap: 1rem;
+  padding: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--card);
+}
+
+.home-refresh #how article > div:first-child span {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+}
+
+.home-refresh #how .marketing-waveform {
+  display: none;
+}
+
+.home-refresh #use-cases article {
+  background: var(--card);
+  box-shadow: 0 18px 44px -40px rgba(25, 25, 24, 0.36);
+}
+
+.home-refresh #use-cases article:hover {
+  transform: none;
+  border-color: color-mix(in srgb, var(--ink) 20%, var(--line));
+}
+
+.home-refresh #faq summary .font-display {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.home-refresh .marketing-final-cta {
+  border-radius: 1.25rem;
+  border-color: var(--ink);
+  background: var(--ink);
+  box-shadow: 0 28px 80px -48px rgba(25, 25, 24, 0.55);
+}
+
+.home-refresh .marketing-final-cta .marketing-final-waveform {
+  display: none;
+}
+
+.home-refresh .marketing-final-cta .rec-dot {
+  animation: none;
+}
+
+.home-refresh footer,
+.home-refresh footer + div {
+  background: var(--card);
+}
+
+/* Shared tool landing pages use the same restrained studio system as home. */
+.tool-landing-refresh .tool-landing-hero {
+  padding-top: clamp(3.5rem, 6vw, 5rem);
+  padding-bottom: 2.5rem;
+}
+
+.tool-landing-refresh .tool-landing-hero > div,
+.tool-landing-refresh .tool-quick-answer > div,
+.tool-landing-refresh .tool-overview > div,
+.tool-landing-refresh .tool-steps > div,
+.tool-landing-refresh .tool-use-cases > div,
+.tool-landing-refresh .tool-demo > div,
+.tool-landing-refresh .tool-features > div,
+.tool-landing-refresh .tool-insights > div,
+.tool-landing-refresh .tool-comparison > div,
+.tool-landing-refresh .tool-faq > div,
+.tool-landing-refresh .tool-final-cta > div {
+  max-width: var(--home-content-width);
+}
+
+.tool-landing-refresh .tool-landing-kicker {
+  display: none;
+}
+
+.tool-landing-refresh .tool-landing-title {
+  max-width: 24ch;
+  margin-inline: auto;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  font-weight: 540;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.tool-landing-refresh .tool-landing-description {
+  max-width: var(--home-content-width);
+  margin: 1.125rem auto 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+  text-align: center;
+}
+
+.tool-landing-refresh .tool-landing-description .font-mono {
+  color: color-mix(in srgb, var(--ink) 62%, var(--muted));
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.tool-landing-refresh .tool-landing-actions,
+.tool-landing-refresh .tool-proof-row {
+  justify-content: center;
+}
+
+.tool-landing-refresh .tool-proof-row {
+  margin-top: 1.75rem;
+  gap: 0.75rem 1.5rem;
+}
+
+.tool-landing-refresh .tool-proof-row li {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.tool-landing-refresh .tool-landing-upload {
+  margin-top: 2rem;
+}
+
+.tool-landing-refresh .audio-upload-card,
+.tool-landing-refresh .youtube-importer {
+  border-radius: 1rem;
+  box-shadow: 0 16px 48px -38px rgba(25, 25, 24, 0.32);
+}
+
+.tool-landing-refresh .audio-upload-tabs {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.tool-landing-refresh .audio-upload-tab {
+  flex: none;
+  min-width: 10rem;
+  padding: 0.625rem 1rem;
+  border-radius: 0.625rem;
+}
+
+.tool-landing-refresh .audio-upload-tab > span.font-mono {
+  display: none;
+}
+
+.tool-landing-refresh .audio-upload-tab > span:last-child {
+  right: 1rem;
+  bottom: -0.5rem;
+  left: 1rem;
+}
+
+.tool-landing-refresh .audio-upload-panel {
+  padding: 1.5rem;
+}
+
+.tool-landing-refresh .audio-upload-dropzone {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  border-color: transparent;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--paper) 76%, var(--card));
+}
+
+.tool-landing-refresh .audio-upload-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.625rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.tool-landing-refresh .audio-upload-dropzone p.mt-6 {
+  margin-top: 1rem;
+}
+
+.tool-landing-refresh .audio-upload-dropzone p.font-mono {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.tool-landing-refresh .youtube-importer {
+  padding: 2rem;
+}
+
+.tool-landing-refresh .youtube-importer > div:first-child > span:first-child {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.tool-landing-refresh .youtube-importer button {
+  border-radius: 9999px;
+}
+
+.tool-landing-refresh .tool-quick-answer {
+  background: var(--paper);
+}
+
+.tool-landing-refresh .tool-overview,
+.tool-landing-refresh .tool-steps,
+.tool-landing-refresh .tool-use-cases,
+.tool-landing-refresh .tool-demo,
+.tool-landing-refresh .tool-features,
+.tool-landing-refresh .tool-insights,
+.tool-landing-refresh .tool-comparison,
+.tool-landing-refresh .tool-faq {
+  padding-top: clamp(4.5rem, 8vw, 7rem);
+  padding-bottom: clamp(4.5rem, 8vw, 7rem);
+}
+
+.tool-landing-refresh .tool-steps,
+.tool-landing-refresh .tool-demo,
+.tool-landing-refresh .tool-insights {
+  background: color-mix(in srgb, var(--card) 72%, var(--paper));
+}
+
+.tool-landing-refresh .tool-features > div > div:nth-child(2) {
+  align-items: start;
+}
+
+.tool-landing-refresh .tool-card-grid {
+  gap: 1rem;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+.tool-landing-refresh .tool-card {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--card);
+  box-shadow: 0 18px 44px -40px rgba(25, 25, 24, 0.36);
+}
+
+.tool-landing-refresh .tool-card:hover {
+  background: var(--card);
+  border-color: color-mix(in srgb, var(--ink) 20%, var(--line));
+}
+
+.tool-landing-refresh .tool-step-card {
+  gap: 1rem;
+  padding: 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--card);
+}
+
+.tool-landing-refresh .tool-step-number {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+}
+
+.tool-landing-refresh .tool-step-meta > :first-child,
+.tool-landing-refresh .tool-final-waveform {
+  display: none;
+}
+
+.tool-landing-refresh .tool-final-cta > div > div {
+  border-radius: 1.25rem;
+  box-shadow: 0 28px 80px -48px rgba(25, 25, 24, 0.55);
+}
+
+.tool-landing-refresh .tool-final-cta .rec-dot {
+  animation: none;
+}
+
+@media (max-width: 639px) {
+  .home-refresh #generator h1 {
+    max-width: 18ch;
+    font-size: 2.125rem;
+  }
+
+  .home-refresh #generator > div > div:last-child {
+    border-radius: 1rem;
+  }
+
+  .home-refresh #generator .generator-panel {
+    padding: 1rem;
+  }
+
+  .home-refresh #generator .generator-dropzone {
+    padding: 2.5rem 1rem;
+  }
+
+  .home-refresh #features article,
+  .home-refresh #how article,
+  .home-refresh #use-cases article {
+    min-height: auto;
+  }
+
+  .tool-landing-refresh .tool-landing-title {
+    max-width: 18ch;
+    font-size: 2.125rem;
+  }
+
+  .tool-landing-refresh .audio-upload-panel,
+  .tool-landing-refresh .youtube-importer {
+    padding: 1rem;
+  }
+
+  .tool-landing-refresh .audio-upload-dropzone {
+    padding: 2.5rem 1rem;
+  }
+}
+
+/* Shared application chrome. Keep navigation and overlays on the same neutral
+   system as the refreshed landing and product surfaces. */
+.sidebar-refresh {
+  --paper: #ffffff;
+  --card: #f5f5f2;
+  --ink: #191918;
+  --muted: #686863;
+  --line: #e3e3dd;
+  --accent: #bd5738;
+  --accent-soft: rgba(189, 87, 56, 0.08);
+  background: var(--card);
+  box-shadow: 12px 0 32px -32px rgba(25, 25, 24, 0.32);
+}
+
+.sidebar-refresh .sidebar-plan-card {
+  background: var(--paper);
+  box-shadow: 0 12px 28px -26px rgba(25, 25, 24, 0.35);
+}
+
+.sidebar-refresh nav .bg-accent-soft {
+  box-shadow: inset 0 0 0 1px rgba(189, 87, 56, 0.08);
+}
+
+.dark .sidebar-refresh {
+  --paper: #191a17;
+  --card: #141512;
+  --ink: #f2f1ec;
+  --muted: #a4a49c;
+  --line: #2d2e29;
+  --accent: #e17a58;
+  --accent-soft: rgba(225, 122, 88, 0.1);
+}
+
+.footer-refresh,
+.home-refresh .footer-refresh,
+.neutral-page-background .footer-refresh,
+.home-refresh .footer-refresh + div {
+  background: #f5f5f2;
+}
+
+.surface-modal-backdrop {
+  background: rgba(20, 20, 19, 0.42);
+  backdrop-filter: blur(7px);
+}
+
+.surface-modal,
+.surface-popover {
+  --paper: #ffffff;
+  --card: #f7f7f4;
+  --ink: #191918;
+  --muted: #686863;
+  --line: #e3e3dd;
+  --accent: #bd5738;
+  --accent-soft: rgba(189, 87, 56, 0.08);
+  --rec: #bd5738;
+  border-color: var(--line);
+  background: var(--paper);
+}
+
+.surface-modal {
+  border-radius: 1rem;
+  box-shadow: 0 30px 80px -34px rgba(20, 20, 19, 0.48);
+}
+
+.surface-popover {
+  border-radius: 0.75rem;
+  box-shadow:
+    0 18px 44px -24px rgba(20, 20, 19, 0.28),
+    0 2px 8px rgba(20, 20, 19, 0.05);
+}
+
+.dark .footer-refresh,
+.dark .home-refresh .footer-refresh,
+.dark .neutral-page-background .footer-refresh,
+.dark .home-refresh .footer-refresh + div {
+  background: #141512;
+}
+
+.dark .surface-modal,
+.dark .surface-popover {
+  --paper: #191a17;
+  --card: #141512;
+  --ink: #f2f1ec;
+  --muted: #a4a49c;
+  --line: #30312c;
+  --accent: #e17a58;
+  --accent-soft: rgba(225, 122, 88, 0.1);
+  --rec: #e17a58;
+}
+
+.dark .surface-modal-backdrop {
+  background: rgba(4, 4, 4, 0.58);
+}

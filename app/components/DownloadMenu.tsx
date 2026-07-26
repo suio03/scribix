@@ -58,7 +58,7 @@ export function DownloadMenu({ id, audioAvailable, variant = "icon" }: Props) {
     <div ref={ref} className="relative inline-flex">
       {trigger}
       {open && (
-        <div className="absolute right-0 top-full z-10 mt-1 w-40 overflow-hidden rounded-lg border border-line bg-paper shadow-lg">
+        <div className="surface-popover absolute right-0 top-full z-10 mt-1 w-40 overflow-hidden rounded-lg border border-line bg-paper shadow-lg">
           {FORMATS.map((f) => (
             <a
               key={f.format}

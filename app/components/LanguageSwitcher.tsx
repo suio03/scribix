@@ -70,7 +70,7 @@ export function LanguageSwitcher({
       {open && (
         <div
           role="menu"
-          className={`absolute z-40 w-[160px] overflow-hidden rounded-lg border border-line bg-card shadow-lg ${
+          className={`surface-popover absolute z-40 w-[160px] overflow-hidden rounded-lg border border-line bg-card shadow-lg ${
             menuPlacement === "top" ? "bottom-full mb-2" : "top-full mt-2"
           } ${menuAlign === "left" ? "left-0" : "right-0"}`}
         >

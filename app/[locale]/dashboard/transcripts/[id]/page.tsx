@@ -83,7 +83,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
   });
 
   return (
-    <main className="mx-auto max-w-[1400px] px-4 py-10 sm:px-8">
+    <main className="product-surface-refresh transcript-detail-refresh mx-auto max-w-[1400px] px-4 py-10 sm:px-8">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <Link

@@ -94,7 +94,7 @@ export async function HowItWorks({
                   <Waveform
                     bars={i === 1 ? 22 : 14}
                     animated={i === 1}
-                    className="h-4 text-accent"
+                    className="marketing-waveform h-4 text-accent"
                   />
                   <span>
                     {namespace === "HowItWorks" && i === 0

@@ -107,8 +107,9 @@ export default async function AiNoteTakerPage({
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="ai-note-taker" />
-      <Header showSidebarToggle />
-      <main>
+      <div className="home-refresh landing-refresh tool-landing-refresh">
+        <Header showSidebarToggle />
+        <main>
         <Generator
           signedIn={!!session}
           postSignInPath={postSignInPath}
@@ -122,9 +123,10 @@ export default async function AiNoteTakerPage({
         <UseCases namespace="AiNoteTaker.useCases" />
         <FAQ namespace="AiNoteTaker.faq" />
         <FinalCTA namespace="AiNoteTaker.finalCta" />
-      </main>
-      <Footer />
-      <Partners />
+        </main>
+        <Footer />
+        <Partners />
+      </div>
     </Shell>
   );
 }

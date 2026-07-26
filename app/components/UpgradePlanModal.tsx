@@ -42,12 +42,12 @@ export function UpgradePlanModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="upgrade-plan-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/35 px-4 py-4 backdrop-blur-sm"
+      className="surface-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-ink/35 px-4 py-4 backdrop-blur-sm"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="max-h-[calc(100vh-2rem)] w-full max-w-[620px] overflow-y-auto rounded-2xl border border-line bg-paper p-5 shadow-[0_30px_80px_-35px_rgba(14,13,11,0.45)] sm:p-6">
+      <div className="surface-modal max-h-[calc(100vh-2rem)] w-full max-w-[620px] overflow-y-auto rounded-2xl border border-line bg-paper p-5 shadow-[0_30px_80px_-35px_rgba(14,13,11,0.45)] sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 id="upgrade-plan-title" className="text-[21px] font-semibold tracking-tight text-ink">

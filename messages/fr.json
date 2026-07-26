@@ -61,8 +61,7 @@
   "Generator": {
     "issue": "ENR · 00:00:00",
     "issueLabel": "Numéro 01 · Vidéo en texte",
-    "h1Part1": "Convertissez une vidéo en texte.",
-    "h1Part2": "<accent>Transcription IA gratuite.</accent>",
+    "h1": "Convertissez une vidéo en texte avec l’IA",
     "description": "Scribix transforme les fichiers vidéo et audio en texte avec identification des locuteurs, prêt à vérifier et exporter. Importez MP4, MOV, WebM, AVI, MP3, WAV ou M4A avec horodatage au mot et <stat>détection automatique de la langue</stat>. <stat>45 minutes offertes</stat>, sans carte bancaire.",
     "trust": [
       {
@@ -823,8 +822,7 @@
     "hero": {
       "issue": "REC · 00:00:00",
       "issueLabel": "Numéro №02 · Audio en texte",
-      "title": "Convertissez l’audio en texte.",
-      "accentTitle": "Transcription IA.",
+      "title": "Convertissez l’audio en texte avec l’IA",
       "descriptionStart": "Scribix convertit les fichiers audio en texte précis, avec locuteurs, que vous pouvez relire, copier et exporter. Connectez-vous avec Google, importez un fichier audio et obtenez une transcription horodatée en",
       "stat": "Détection automatique de la langue",
       "descriptionEnd": ".",
@@ -1149,8 +1147,7 @@
     "hero": {
       "issue": "REC · NOTES IA",
       "issueLabel": "Dossier n° 05 · Prise de notes IA",
-      "h1Part1": "L’outil de prise de notes IA pour tous vos enregistrements.",
-      "h1Part2": "<accent>De la conversation aux prochaines étapes.</accent>",
+      "h1": "Prise de notes IA",
       "description": "Importez un fichier audio ou vidéo, enregistrez avec votre microphone ou collez l’URL d’une vidéo YouTube disposant de sous-titres. Scribix crée une transcription horodatée avec identification des intervenants ; Pro permet ensuite de générer une synthèse, les points clés et les actions à mener.",
       "primaryCta": "Commencer avec 45 minutes gratuites",
       "signedInPrimaryCta": "Créer une transcription",
@@ -1274,8 +1271,7 @@
     "hero": {
       "issue": "REC · MP3",
       "issueLabel": "Dossier n°03 · MP3 en texte",
-      "title": "Convertissez un MP3 en texte.",
-      "accentTitle": "Transcription IA.",
+      "title": "Convertissez un MP3 en texte avec l’IA",
       "descriptionStart": "Scribix convertit les fichiers audio MP3 en texte précis, avec locuteurs, que vous pouvez relire, copier et exporter. Connectez-vous avec Google, importez votre MP3 et obtenez une transcription horodatée en",
       "stat": "Détection automatique de la langue",
       "descriptionEnd": ".",
@@ -1605,8 +1601,7 @@
     "hero": {
       "issue": "REC · URL YOUTUBE",
       "issueLabel": "Numéro No.04 · YouTube en texte",
-      "title": "YouTube en texte.",
-      "accentTitle": "Texte enregistré et consultable.",
+      "title": "YouTube en transcription",
       "descriptionStart": "Collez une URL YouTube dans Scribix et importez la piste de sous-titres disponible de la vidéo sous forme de transcription que vous pouvez lire, rechercher, copier, exporter et résumer avec un plan payant.",
       "stat": "Gratuit avec connexion Google",
       "descriptionEnd": ". Scribix vérifie d’abord les sous-titres disponibles et enregistre la transcription sans télécharger la vidéo ni l’audio YouTube.",

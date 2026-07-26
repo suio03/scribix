@@ -17,7 +17,7 @@ export async function FinalCTA({
   return (
     <section className="px-4 pb-20 sm:px-8">
       <div className="mx-auto max-w-[1100px]">
-        <div className="relative overflow-hidden rounded-3xl border border-ink bg-ink p-10 text-paper sm:p-16">
+        <div className="marketing-final-cta relative overflow-hidden rounded-3xl border border-ink bg-ink p-10 text-paper sm:p-16">
           <div className="grain" />
           <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:items-center">
             <div>
@@ -54,7 +54,11 @@ export async function FinalCTA({
             </div>
 
             <div className="hidden text-paper/40 lg:block">
-              <Waveform bars={48} animated className="h-44 w-full text-rec" />
+              <Waveform
+                bars={48}
+                animated
+                className="marketing-final-waveform h-44 w-full text-rec"
+              />
               <div className="mt-6 grid grid-cols-3 gap-4 border-t border-paper/15 pt-6 font-mono text-[10.5px] uppercase tracking-[0.2em]">
                 {stats.map((s) => (
                   <div key={s.label}>

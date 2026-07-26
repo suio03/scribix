@@ -152,7 +152,11 @@ export function YouTubeImporter({
   const framed = variant === "card";
 
   return (
-    <div className={framed ? "rounded-2xl border border-line bg-card p-6 sm:p-8" : "rise-in"}>
+    <div
+      className={`youtube-importer ${
+        framed ? "rounded-2xl border border-line bg-card p-6 sm:p-8" : "rise-in"
+      }`}
+    >
       <div className="flex items-start gap-3">
         <span className="inline-grid size-11 shrink-0 place-items-center rounded-xl bg-[#ff0000]/10 text-[#cc0000]">
           <PlaySquare size={22} strokeWidth={1.7} />

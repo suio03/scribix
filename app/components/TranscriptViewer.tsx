@@ -274,7 +274,7 @@ export function TranscriptViewer({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="transcript-viewer space-y-6">
       {partialTranscript ? (
         <div className="rounded-xl border border-accent/25 bg-accent-soft/50 px-4 py-3 text-[13px] font-medium text-accent">
           {partialTranscript.sourceMinutes === null
@@ -305,7 +305,7 @@ export function TranscriptViewer({
       ) : null}
 
       <div className="flex items-center justify-between gap-3">
-        <div className="flex w-fit flex-wrap items-center gap-1 rounded-2xl bg-ink/5 p-1">
+        <div className="transcript-tabs flex w-fit flex-wrap items-center gap-1 rounded-2xl bg-ink/5 p-1">
           <TabButton active={tab === "transcript"} onClick={() => setTab("transcript")}>
             {t("tabTranscript")}
           </TabButton>
@@ -441,8 +441,10 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-        active ? "bg-paper text-accent shadow-sm" : "text-ink/60 hover:text-ink"
+      className={`transcript-tab rounded-full px-4 py-1.5 text-sm font-medium transition ${
+        active
+          ? "transcript-tab-active bg-paper text-accent shadow-sm"
+          : "text-ink/60 hover:text-ink"
       }`}
     >
       {children}
@@ -514,7 +516,7 @@ function YouTubeEmbed({ ref, videoId, onTimeUpdate }: YouTubeEmbedProps) {
   );
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-ink">
+    <div className="transcript-media overflow-hidden rounded-2xl border border-line bg-ink">
       <iframe
         ref={ref}
         src={src}
@@ -734,7 +736,7 @@ function SegmentList({
             }`}
           >
             <span className="mr-3 inline-flex items-center gap-2 align-baseline">
-              <span className="inline-block w-12 text-[12px] tabular-nums text-ink/50">
+              <span className="transcript-segment-time inline-block w-12 text-[12px] tabular-nums text-ink/50">
                 {fmtTime(seg.start)}
               </span>
               {speaker ? (
@@ -770,8 +772,10 @@ function SegmentList({
               <button
                 type="button"
                 onClick={() => onSeek(seg.start)}
-                className={`text-[13px] tabular-nums font-medium transition ${
-                  isActive ? "text-accent" : "text-accent/70 hover:text-accent"
+                className={`transcript-segment-time text-[13px] tabular-nums font-medium transition ${
+                  isActive
+                    ? "transcript-segment-time-active text-accent"
+                    : "text-accent/70 hover:text-accent"
                 }`}
               >
                 {fmtTime(seg.start)}
@@ -1005,7 +1009,7 @@ function AudioPlayer({ ref, url, isVideo, onTimeUpdate }: AudioPlayerProps) {
 
   return (
     <div>
-      <div className="flex items-center gap-3 rounded-2xl bg-ink/5 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4">
+      <div className="transcript-audio-player flex items-center gap-3 rounded-2xl bg-ink/5 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4">
         {isVideo ? (
           <video
             ref={ref as React.RefObject<HTMLVideoElement | null>}

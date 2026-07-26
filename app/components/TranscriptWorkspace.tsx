@@ -56,7 +56,7 @@ export function TranscriptWorkspace({
   );
 
   return (
-    <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
+    <div className="transcript-workspace mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
       <section className="min-w-0">
         <TranscriptViewer
           id={id}
@@ -171,12 +171,12 @@ function SpeakerNamesModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="speaker-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/35 px-4 py-4 backdrop-blur-sm sm:py-8"
+      className="surface-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-ink/35 px-4 py-4 backdrop-blur-sm sm:py-8"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="flex max-h-[calc(100vh-2rem)] w-full max-w-[560px] flex-col overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_30px_80px_-35px_rgba(14,13,11,0.45)] sm:max-h-[min(720px,90vh)]">
+      <div className="surface-modal flex max-h-[calc(100vh-2rem)] w-full max-w-[560px] flex-col overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_30px_80px_-35px_rgba(14,13,11,0.45)] sm:max-h-[min(720px,90vh)]">
         <div className="shrink-0 flex items-center justify-between border-b border-line px-5 py-4">
           <div>
             <h2 id="speaker-modal-title" className="text-[17px] font-semibold text-ink">
