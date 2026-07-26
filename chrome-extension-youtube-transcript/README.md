@@ -73,6 +73,7 @@ send Scribix website cookies to extension APIs. The account button in the panel
 revokes the refresh session and clears the local tokens when the user logs out.
 
 The published Chrome callback is fixed to the Chrome Web Store extension ID.
-Firefox uses the callback derived from the manifest Gecko ID. Before production
-Edge login can work, set `EDGE_EXTENSION_ID` in the Scribix deployment to the
-32-character ID assigned by Microsoft Partner Center.
+Firefox uses the callback derived from the manifest Gecko ID. Production Edge
+login requires `EDGE_EXTENSION_ID` in `wrangler.jsonc` to match the
+32-character CRX ID assigned by Microsoft Partner Center. Redeploy Scribix
+after changing that ID.

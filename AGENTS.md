@@ -16,6 +16,8 @@ Scribix is a Next.js App Router project deployed through OpenNext on Cloudflare.
 - `npm run db:migrate:local`: apply D1 migrations locally.
 - `npm run db:migrate:remote`: apply D1 migrations to remote D1.
 - `npm run deploy:cleanup`: deploy the cleanup worker from `wrangler.cleanup.jsonc`.
+- `npm run extension:all:zip`: build production Chrome, Edge, and Firefox extension ZIPs.
+- `npm run extension:firefox:source`: build the human-readable Firefox reviewer source ZIP.
 
 ## Coding Style & Naming Conventions
 

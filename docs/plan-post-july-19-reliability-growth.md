@@ -1,16 +1,14 @@
 # Scribix 可靠性、转化与增长修复计划
 
-> 状态：release `0.18.0` 已通过 commit `99bf119` 推送到 `main`；后续修复 release `0.18.1`（commit `30f4b0a`）已统一 Starter 10 小时上限、替换 AAI 废弃模型并拆分 Discord channel。release `0.19.0`（commit `653757c`）新增本地化 AI Note Taker 入口与归因。release `0.20.0`（commit `4b79377`）将新购套餐精简为 Pro 月付 $20 或年付 $120，并为两种周期都提供每月重置的 2,400 分钟额度。release `0.20.1`（commit `36f6c86`）将路由、图标、顺序、价格和配额等结构移出翻译文件，并在 build、preview、deploy 前强制校验六种语言。release `0.21.0`（commit `1eba679`）新增 Free 明确确认的部分转录、未知时长音频 fallback、持久部分结果标签和录音时长修复，并将上传 pipeline version 更新为 `2026-07-25.1`。生产 D1 migration `0020` 已于 2026-07-25 在本地和远程应用；等待确认 Cloudflare 部署结果并开始发布后七天观测
->
-> 2026-07-22 已获授权并完成全部本地修复，生产 D1 migrations `0016–0019` 已应用；2026-07-25 又应用了 `0020_partial_transcripts.sql`。Plausible/Bing 后台配置仍需单独执行；push 触发部署不能代替生产环境验收。
+> 状态：可靠性与转化修复已通过 release `0.18.0–0.21.0` 上线；`0.21.0`（commit `1eba679`）将上传 pipeline version 更新为 `2026-07-25.1`。release `0.22.0`（commit `2df9770`）增加多浏览器扩展与 token auth，不改变上传 pipeline。生产 D1 migrations `0016–0021` 和 Cloudflare 应用部署已于 2026-07-25 确认完成。Plausible/Bing 后台配置、真实大视频验收和连续七天观测仍需按 runbook 单独执行。
 
-### 1.0 实施进度（2026-07-22）
+### 1.0 当前实施状态（截至 2026-07-26）
 
 - 已完成本地代码：T1、U1–U5、C1–C4、B1–B2、S1–S5、M1。
 - 已完成本地数据准备：支付归属 migration 已在本地 D1 成功应用；tracking repo 已支持 Plausible 完整事件、Bing query/page 拉取和发布后健康报告。
-- 尚需外部执行：确认 Cloudflare 生产部署成功、Plausible goals 配置、Bing Webmaster 验证/API key/sitemap。
-- 生产部署确认后才能完成：U3 的真实大视频端到端验证，以及 M1 的连续七天目标判定。
-- M2 自动验证已通过：生产构建、TypeScript、121 个静态页面生成和补丁空白检查均成功；公开页面已完成英文、西班牙语浏览器烟测。需真实账号、套餐、网络故障、大视频和支付沙箱的场景按 `docs/runbooks/post-release-monitoring.md` 在部署前后验证。
+- 已完成生产部署：D1 migrations `0016–0021` 已应用，release `0.22.0` 已部署至 Cloudflare。
+- 尚需外部执行：Plausible goals 配置、Bing Webmaster 验证/API key/sitemap、U3 真实大视频端到端验证，以及 M1 连续七天目标判定。
+- M2 自动验证已通过：release `0.22.0` 生产构建、TypeScript、130 个静态页面生成和补丁空白检查均成功。真实账号、套餐、网络故障、大视频和支付沙箱场景继续按 `docs/runbooks/post-release-monitoring.md` 验证。
 
 ## 1. 数据背景
 

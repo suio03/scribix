@@ -210,7 +210,7 @@ This is not a percentage rollout flag.
 
 ## Phase 3 — YouTube caption service
 
-The in-app importer and Chrome extension call the dedicated caption service;
+The in-app importer and Chrome, Edge, and Firefox extensions call the dedicated caption service;
 the Scribix Worker does not download YouTube media itself. Configure the service
 base URL and its shared bearer token in `.env.local` and `.dev.vars`:
 
@@ -228,6 +228,23 @@ npx wrangler secret put YOUTUBE_CAPTION_SERVICE_TOKEN
 
 `YOUTUBE_CAPTION_DEBUG=1` enables verbose service diagnostics. Do not enable it
 in production unless actively investigating a caption-service failure.
+
+### 3.1 Browser extension identity
+
+Browser extensions authenticate through `app/api/extension/auth/*` with PKCE.
+Apply migration `0021_extension_auth_tokens.sql` before deploying those routes.
+Chrome uses the fixed published Web Store ID, and Firefox derives its redirect
+from the manifest Gecko ID. Microsoft Edge requires its public Partner Center
+CRX ID in production `wrangler.jsonc`:
+
+```jsonc
+"EDGE_EXTENSION_ID": "your-32-character-edge-extension-id"
+```
+
+The production deploy script rejects a missing or malformed Edge ID. If the
+Partner Center listing changes, update this value and redeploy before testing
+Edge sign-in. Build and publishing instructions live in
+`docs/browser-extension-publishing.md`.
 
 ---
 
@@ -427,6 +444,7 @@ Public/non-secret vars go in `wrangler.jsonc` under `vars`:
 "vars": {
   "NEXT_PUBLIC_APP_URL": "https://scribix.io",
   "NEXTAUTH_URL": "https://scribix.io",
+  "EDGE_EXTENSION_ID": "your-32-character-edge-extension-id",
   "ADMIN_EMAILS": "you@example.com",
   "CLOUDFLARE_ACCOUNT_ID": "abc...",
   "ASSEMBLYAI_WEBHOOK_URL": "https://scribix.io/api/webhook/assemblyai",

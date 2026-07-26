@@ -151,9 +151,9 @@ path.
 2. Enroll that account in the Microsoft Edge program. Choose Individual or
    Company carefully; the account type cannot be changed later.
 3. Create the extension entry and copy its 32-character Edge extension ID.
-4. Set `EDGE_EXTENSION_ID` to that value in the Scribix production environment,
-   deploy migration `0021_extension_auth_tokens.sql` and the application, and
-   verify the Edge login flow.
+4. Confirm `EDGE_EXTENSION_ID` in production matches that value, migration
+   `0021_extension_auth_tokens.sql` is applied, and the current application is
+   deployed before verifying the Edge login flow.
 5. Upload `scribix-youtube-transcript-edge-extension-0.1.3.zip`.
 6. Set public availability and the desired markets.
 7. Complete Properties and Privacy using the canonical information and
@@ -213,13 +213,15 @@ Official references:
 - https://extensionworkshop.com/documentation/develop/firefox-builtin-data-consent/
 - https://extensionworkshop.com/documentation/publish/signing-and-distribution-overview/
 
-## Release checklist
+## Version 0.1.3 status and release checklist
 
-- Apply migration `0021_extension_auth_tokens.sql` remotely and deploy the
-  token-auth API plus updated privacy page before submitting any 0.1.3 package.
-- Set the production `EDGE_EXTENSION_ID` after Partner Center assigns the
-  listing ID and before testing or submitting Edge.
-- Test account status, login completion, transcript generation, all four
+As of 2026-07-26, the Chrome, Edge, and Firefox submissions are in review.
+Production commit `2df9770` is deployed with migration
+`0021_extension_auth_tokens.sql`, the updated privacy page, and the Partner
+Center Edge CRX ID configured.
+
+- After store signing/approval, test account status, login completion,
+  sign-out/revocation, transcript generation, all four
   downloads, quota errors, paid summary, light mode, and dark mode in all three
   browsers.
 - Confirm the production ZIP contents contain no credentials, `.DS_Store`,

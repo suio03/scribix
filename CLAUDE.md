@@ -19,6 +19,8 @@ npm run cf-typegen          # Regenerate cloudflare-env.d.ts after changing wran
 npm run db:migrate:local    # Apply D1 migrations locally
 npm run db:migrate:remote   # Apply D1 migrations to remote D1
 npm run deploy:cleanup      # Deploy the separate cleanup Worker (wrangler.cleanup.jsonc)
+npm run extension:all:zip   # Build production Chrome, Edge, and Firefox extension ZIPs
+npm run extension:firefox:source # Build the Firefox reviewer source ZIP
 ```
 
 There is **no test framework or `npm test`**. Validate changes with `npm run build` plus manual checks of affected flows (upload, record, transcript status/export, billing, auth, localized pages).
@@ -53,7 +55,7 @@ Discord notifications have strict channel ownership: transcription/webhook failu
 
 The in-app YouTube workflow uses `app/components/YouTubeImporter.tsx` plus `app/api/transcripts/youtube/*` routes to inspect available caption tracks, reserve YouTube import quota, import the selected captions, and save a completed transcript row. It does not download YouTube video/audio. Free users get 10 YouTube caption imports per UTC day and a 2-hour YouTube video cap; paid caps come from `lib/plans.ts`.
 
-The Chrome, Edge, and Firefox extension source lives in `chrome-extension-youtube-transcript/`; `scripts/build-extension.mjs` creates browser-specific manifests and packages. New clients authenticate through `app/api/extension/auth/*` using the browser identity API, PKCE, and the 15-minute access/30-day rotating refresh sessions in `lib/extension-auth.ts` and migration `0021`. The published Chrome 0.1.2 origin temporarily retains website-cookie fallback in account and summary routes; all newer clients send bearer tokens and can revoke their refresh session when signing out. The extension also calls `GET /api/extension/account`, `POST /api/extension/youtube/transcript`, and `POST /api/extension/youtube/summary`. Its manifest matches YouTube broadly for SPA navigation, but `content.js` only mounts the panel on desktop `/watch` pages with a video ID. Extension transcript quota is enforced separately in `lib/youtube-extension-quota.ts`.
+The Chrome, Edge, and Firefox extension source lives in `chrome-extension-youtube-transcript/`; `scripts/build-extension.mjs` creates browser-specific manifests and packages. New clients authenticate through `app/api/extension/auth/*` using the browser identity API, PKCE, and the 15-minute access/30-day rotating refresh sessions in `lib/extension-auth.ts` and migration `0021`. The published Chrome 0.1.2 origin temporarily retains website-cookie fallback in account and summary routes; all newer clients send bearer tokens and can revoke their refresh session when signing out. Production Edge authorization requires `EDGE_EXTENSION_ID` in `wrangler.jsonc` to match the Partner Center CRX ID; changing it requires redeployment. The extension also calls `GET /api/extension/account`, `POST /api/extension/youtube/transcript`, and `POST /api/extension/youtube/summary`. Its manifest matches YouTube broadly for SPA navigation, but `content.js` only mounts the panel on desktop `/watch` pages with a video ID. Extension transcript quota is enforced separately in `lib/youtube-extension-quota.ts`. Store packaging, disclosures, and reviewer instructions live in `docs/browser-extension-publishing.md`.
 
 ## Auth
 

@@ -11,8 +11,11 @@ the one-time items that are already verified and unchanged.
 - [ ] Custom domain `scribix.io` attached in Cloudflare Workers.
 - [ ] Worker secrets set via `wrangler secret put` (see manual-setup §7.3).
 - [ ] `wrangler.jsonc` `vars` block has prod URLs.
+- [ ] `EDGE_EXTENSION_ID` matches the current Microsoft Partner Center CRX ID.
 - [ ] `NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` has the intended build-time value before deploy, or is intentionally omitted to use the enabled default.
-- [ ] `db:migrate:remote` applied; for release `0.21.0+`, confirm `0020_partial_transcripts.sql` is listed as applied.
+- [ ] `db:migrate:remote` applied; for release `0.22.0+`, confirm both
+  `0020_partial_transcripts.sql` and `0021_extension_auth_tokens.sql` are listed
+  as applied.
 - [ ] `npm run deploy:cleanup` deployed the hourly cleanup Worker and its cron is visible in Cloudflare.
 
 ## Webhook URLs
@@ -67,6 +70,9 @@ the one-time items that are already verified and unchanged.
 - [ ] Hit `/ai-note-taker` and at least one localized variant; confirm the
   localized navigation entry, canonical/hreflang, upload, record, and YouTube tabs.
 - [ ] Hit `/refunds`, `/terms`, `/privacy` — all 200 OK.
+- [ ] Build and install the Chrome, Edge, and Firefox packages; in each browser,
+  verify account status, PKCE sign-in return, sign-out/revocation, transcript
+  generation, exports, quota errors, and paid AI summary.
 - [ ] Hit `https://scribix.io/sitemap.xml` and `/robots.txt` — both serve.
 - [ ] Soft-delete a transcript → audio + JSON disappear from R2; row hidden.
 - [ ] Soft-delete an account from `/dashboard/account` → user signed out;

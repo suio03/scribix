@@ -2,11 +2,11 @@
 
 Use this runbook for the first seven complete days after the repaired upload pipeline is deployed. The current code identifies this release as `upload_pipeline_version=2026-07-25.1`.
 
-Release `0.18.1` (commit `30f4b0a`) remains the original repaired-upload baseline. Release `0.20.0` (commit `4b79377`) simplified new purchases to Pro with 2,400 minutes reset monthly, and `0.20.1` (commit `36f6c86`) centralized localized application structure. Release `0.21.0` (commit `1eba679`) changes the upload pipeline version and adds explicit Free partial transcription, unknown-duration audio fallback, durable partial-result labels, quota-settlement guards, and recording-duration fixes. Production migrations `0016` through `0019` were applied on 2026-07-22; additive migration `0020_partial_transcripts.sql` was applied locally and remotely on 2026-07-25. Confirm the Cloudflare deployment is healthy before treating the next complete Melbourne calendar day as day 1.
+Release `0.18.1` (commit `30f4b0a`) remains the original repaired-upload baseline. Release `0.20.0` (commit `4b79377`) simplified new purchases to Pro with 2,400 minutes reset monthly, and `0.20.1` (commit `36f6c86`) centralized localized application structure. Release `0.21.0` (commit `1eba679`) changes the upload pipeline version and adds explicit Free partial transcription, unknown-duration audio fallback, durable partial-result labels, quota-settlement guards, and recording-duration fixes. Release `0.22.0` (commit `2df9770`) adds multi-browser extension packaging and token authentication without changing the upload pipeline version. Production migrations `0016` through `0019` were applied on 2026-07-22; additive migrations `0020_partial_transcripts.sql` and `0021_extension_auth_tokens.sql` were applied remotely on 2026-07-25. Confirm the Cloudflare deployment is healthy before treating the next complete Melbourne calendar day as day 1.
 
 ## Prerequisites
 
-- Deploy the application and confirm migrations `0016` through `0020` are applied to the production D1 database.
+- Deploy the application and confirm migrations `0016` through `0021` are applied to the production D1 database.
 - Create the configured Scribix custom events in Plausible. `checkout_completed` is a conversion event; revenue stays in Paddle.
 - Keep `/Users/laughingli/Documents/side-projects/tracking/projects.json` aligned with `lib/analytics.ts`.
 - Add `BING_WEBMASTER_API_KEY` to `tracking/.env.local` after Scribix is verified in Bing Webmaster Tools.
