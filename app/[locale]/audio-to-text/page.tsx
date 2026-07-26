@@ -33,7 +33,6 @@ import {
   AudioUploadCard,
   type AudioUploadCardCopy,
 } from "@/app/components/upload/AudioUploadCard";
-import { Partners } from "@/app/components/Partners";
 import { Shell } from "@/app/components/Shell";
 import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
@@ -338,7 +337,6 @@ export default async function AudioToTextPage({
         <FinalToolCta {...copy.finalCta} signedIn={!!session} />
         </main>
         <Footer />
-        <Partners />
       </div>
     </Shell>
   );

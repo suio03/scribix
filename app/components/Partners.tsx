@@ -13,7 +13,7 @@ export function Partners() {
             alt="Dang.ai"
             width="150"
             height="54"
-            className="block h-auto max-w-[150px]"
+            className="block h-9 w-auto"
           />
         </a>
         <a
@@ -27,7 +27,7 @@ export function Partners() {
             alt="Featured on There's An AI For That"
             width="259"
             height="54"
-            className="block h-auto max-w-[259px]"
+            className="block h-9 w-auto"
           />
         </a>
       </div>

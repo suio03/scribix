@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.23.1] - 2026-07-26
+
+### Changed
+- Restricted partner badges to localized homepages and reduced their displayed size.
+
 ## [0.23.0] - 2026-07-26
 
 ### Changed

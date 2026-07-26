@@ -6,7 +6,6 @@ import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { Footer } from "@/app/components/Footer";
 import { Header } from "@/app/components/Header";
-import { Partners } from "@/app/components/Partners";
 import {
   PricingPlans,
   type PlanId,
@@ -191,7 +190,6 @@ export default async function PricingPage({
         </section>
       </main>
       <Footer />
-      <Partners />
     </Shell>
   );
 }

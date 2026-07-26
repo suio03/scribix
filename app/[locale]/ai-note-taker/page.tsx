@@ -9,7 +9,6 @@ import { Generator } from "@/app/components/Generator";
 import { GoogleOneTap } from "@/app/components/GoogleOneTap";
 import { Header } from "@/app/components/Header";
 import { HowItWorks } from "@/app/components/HowItWorks";
-import { Partners } from "@/app/components/Partners";
 import { Shell } from "@/app/components/Shell";
 import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
@@ -125,7 +124,6 @@ export default async function AiNoteTakerPage({
         <FinalCTA namespace="AiNoteTaker.finalCta" />
         </main>
         <Footer />
-        <Partners />
       </div>
     </Shell>
   );
