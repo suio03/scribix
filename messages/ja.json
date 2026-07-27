@@ -1,11 +1,11 @@
 {
   "SiteMetadata": {
-    "title": "動画をテキストに — 45分無料 | Scribix",
-    "description": "動画や音声を、話者ラベルとタイムスタンプ付きの編集可能なテキストに変換。TXT、DOCX、SRT、VTT、CSVで出力できます。カード不要で45分無料。",
-    "openGraphTitle": "動画・音声をテキストに | Scribix",
-    "openGraphDescription": "メディアをアップロードして、話者ラベルとタイムスタンプ付きの編集可能な文字起こしを作成。",
-    "twitterTitle": "動画・音声をテキストに | Scribix",
-    "twitterDescription": "カード不要でAI文字起こしを45分無料で試せます。"
+    "title": "動画文字起こしツール | Scribix",
+    "description": "MP4、MOV、WebM、AVI動画を、話者識別と単語単位のタイムスタンプ付きで編集可能なテキストに変換。TXT、DOCX、SRT、VTT、CSVで書き出せます。",
+    "openGraphTitle": "動画を編集可能なタイムスタンプ付きテキストに | Scribix",
+    "openGraphDescription": "動画をアップロードして、話者識別と単語単位のタイムスタンプに対応した検索可能な文字起こしを作成できます。",
+    "twitterTitle": "動画を編集可能なタイムスタンプ付きテキストに | Scribix",
+    "twitterDescription": "動画をアップロードして、話者識別と単語単位のタイムスタンプに対応した検索可能な文字起こしを作成できます。"
   },
   "Sidebar": {
     "openNav": "ナビゲーションを開く",
@@ -812,12 +812,12 @@
   },
   "AudioToText": {
     "metadata": {
-      "title": "音声をテキストに変換 — 45分無料 | Scribix",
-      "description": "MP3、WAV、M4Aを話者ラベルとタイムスタンプ付きテキストに変換。TXT、DOCX、SRT、VTT、CSVに書き出し。カード不要で45分無料。",
-      "openGraphTitle": "音声をテキストに変換 — 45分無料 | Scribix",
-      "openGraphDescription": "MP3、WAV、M4Aを話者ラベルとタイムスタンプ付きテキストに変換。TXT、DOCX、SRT、VTT、CSVに書き出し。カード不要で45分無料。",
-      "twitterTitle": "音声をテキストに変換 — 45分無料 | Scribix",
-      "twitterDescription": "MP3、WAV、M4Aを話者ラベルとタイムスタンプ付きテキストに変換。TXT、DOCX、SRT、VTT、CSVに書き出し。カード不要で45分無料。"
+      "title": "音声文字起こしツール | Scribix",
+      "description": "MP3、WAV、M4A音声を、話者識別と単語単位のタイムスタンプ付きで編集可能なテキストに変換。オンラインで確認し、TXT、DOCX、SRT、VTT、CSVで書き出せます。",
+      "openGraphTitle": "音声を編集可能なタイムスタンプ付きテキストに | Scribix",
+      "openGraphDescription": "音声ファイルをアップロードして、話者識別と単語単位のタイムスタンプに対応した検索可能な文字起こしを作成できます。",
+      "twitterTitle": "音声を編集可能なタイムスタンプ付きテキストに | Scribix",
+      "twitterDescription": "音声ファイルをアップロードして、話者識別と単語単位のタイムスタンプに対応した検索可能な文字起こしを作成できます。"
     },
     "hero": {
       "issue": "REC · 00:00:00",
@@ -1137,12 +1137,12 @@
   },
   "AiNoteTaker": {
     "metadata": {
-      "title": "音声・動画対応のAI議事録ツール | Scribix",
-      "description": "音声、動画、マイク録音、字幕付きYouTube動画から、文字起こしと概要・要点・アクションアイテムを含むAI議事録を作成します。",
-      "openGraphTitle": "録音から作るAI議事録ツール | Scribix",
-      "openGraphDescription": "発言者、タイムスタンプ、概要、要点、アクションアイテムを録音から整理します。",
-      "twitterTitle": "音声・動画対応のAI議事録ツール | Scribix",
-      "twitterDescription": "ファイルのアップロード、マイク録音、対応するYouTube URLから、確認しやすい文字起こしとAI議事録を作成できます。"
+      "title": "AI議事録・ノート作成ツール | Scribix",
+      "description": "音声、動画、マイク録音、字幕付きYouTube動画から、要約、重要ポイント、アクション項目、話者、タイムスタンプを含む構造化されたAIノートを作成します。",
+      "openGraphTitle": "録音から構造化されたAIノートを作成 | Scribix",
+      "openGraphDescription": "音声、動画、マイク録音、字幕付きYouTube動画から、確認可能な文字起こし、要約、重要ポイント、アクション項目を作成します。",
+      "twitterTitle": "録音から構造化されたAIノートを作成 | Scribix",
+      "twitterDescription": "音声、動画、マイク録音、字幕付きYouTube動画から、確認可能な文字起こし、要約、重要ポイント、アクション項目を作成します。"
     },
     "hero": {
       "issue": "REC · AI議事録",
@@ -1261,12 +1261,12 @@
   },
   "Mp3ToText": {
     "metadata": {
-      "title": "MP3をテキスト化 | オンラインAI文字起こし",
-      "description": "ScribixでMP3をテキストに変換。MP3をアップロードし、話者ラベルとタイムスタンプ付きの文字起こしを取得して、TXT、DOCX、SRT、VTT、CSVで書き出せます。",
-      "openGraphTitle": "MP3をテキスト化 | オンラインAI文字起こし | Scribix",
-      "openGraphDescription": "MP3をアップロードして、話者ラベル、タイムスタンプ、書き出し機能付きの文字起こしを取得できます。",
-      "twitterTitle": "MP3をテキスト化 | Scribix",
-      "twitterDescription": "MP3音声を、話者ラベル、タイムスタンプ、書き出し機能付きの検索可能な文字起こしに変換します。"
+      "title": "MP3文字起こしツール | Scribix",
+      "description": "MP3ファイルを、言語の自動検出、話者識別、単語単位のタイムスタンプに対応した編集可能なテキストに変換。TXT、DOCX、SRT、VTT、CSVで書き出せます。",
+      "openGraphTitle": "MP3を検索可能なテキストに変換 | Scribix",
+      "openGraphDescription": "MP3をアップロードして、話者識別とタイムスタンプ付きの編集可能な文字起こしを作成し、文書や字幕形式で書き出せます。",
+      "twitterTitle": "MP3を検索可能なテキストに変換 | Scribix",
+      "twitterDescription": "MP3をアップロードして、話者識別とタイムスタンプ付きの編集可能な文字起こしを作成し、文書や字幕形式で書き出せます。"
     },
     "hero": {
       "issue": "REC · MP3",
@@ -1591,12 +1591,12 @@
   },
   "YouTubeToTranscript": {
     "metadata": {
-      "title": "YouTubeをテキスト化 | Scribix",
-      "description": "ScribixにYouTube URLを貼り付け、利用可能な字幕を保存済み transcript として取り込みます。字幕トラックを選び、テキストをコピー、エクスポート、有料プランで要約できます。",
-      "openGraphTitle": "YouTubeをテキスト化 | Scribix",
-      "openGraphDescription": "YouTube URLを貼り付け、利用可能な字幕トラックを取り込み、エクスポートや有料AI要約に使える検索可能な transcript として保存します。",
-      "twitterTitle": "YouTubeをテキスト化 | Scribix",
-      "twitterDescription": "利用可能なYouTube字幕を、検索、コピー、エクスポート、有料プランで要約できる保存済み transcript として取り込みます。"
+      "title": "YouTube文字起こしツール | Scribix",
+      "description": "YouTube URLを貼り付け、利用可能な字幕トラックを検索可能な文字起こしとして保存。言語を選び、テキストをコピーするか、TXT、DOCX、SRT、VTT、CSVで書き出せます。",
+      "openGraphTitle": "YouTube字幕を保存できる文字起こしに変換 | Scribix",
+      "openGraphDescription": "利用可能なYouTube字幕トラックを取り込み、言語を選んで、検索、コピー、書き出し、要約ができる文字起こしとして保存します。",
+      "twitterTitle": "YouTube字幕を保存できる文字起こしに変換 | Scribix",
+      "twitterDescription": "利用可能なYouTube字幕トラックを取り込み、言語を選んで、検索、コピー、書き出し、要約ができる文字起こしとして保存します。"
     },
     "hero": {
       "issue": "REC · YOUTUBE URL",

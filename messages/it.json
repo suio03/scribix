@@ -1,11 +1,11 @@
 {
   "SiteMetadata": {
-    "title": "Video in testo — 45 minuti gratis | Scribix",
-    "description": "Converti video e audio in testo modificabile con relatori, timestamp ed esportazioni TXT, DOCX, SRT, VTT o CSV. Prova 45 minuti gratis senza carta.",
-    "openGraphTitle": "Video e audio in testo | Scribix",
-    "openGraphDescription": "Carica un file multimediale e ottieni una trascrizione modificabile con relatori, timestamp ed esportazioni flessibili.",
-    "twitterTitle": "Video e audio in testo | Scribix",
-    "twitterDescription": "Prova gratis 45 minuti di trascrizione IA. Nessuna carta richiesta."
+    "title": "Convertitore video in testo | Scribix",
+    "description": "Converti video MP4, MOV, WebM e AVI in testo modificabile con riconoscimento dei parlanti e timestamp parola per parola. Rivedi online ed esporta in TXT, DOCX, SRT, VTT o CSV.",
+    "openGraphTitle": "Trasforma i video in testo modificabile con timestamp | Scribix",
+    "openGraphDescription": "Carica un video e ottieni una trascrizione ricercabile con parlanti, timestamp parola per parola e diverse opzioni di esportazione.",
+    "twitterTitle": "Trasforma i video in testo modificabile con timestamp | Scribix",
+    "twitterDescription": "Carica un video e ottieni una trascrizione ricercabile con parlanti, timestamp parola per parola e diverse opzioni di esportazione."
   },
   "Sidebar": {
     "openNav": "Apri navigazione",
@@ -812,12 +812,12 @@
   },
   "AudioToText": {
     "metadata": {
-      "title": "Audio in testo — 45 minuti gratis | Scribix",
-      "description": "Converti MP3, WAV e M4A in testo con relatori e timestamp. Esporta TXT, DOCX, SRT, VTT o CSV. Prova 45 minuti gratis senza carta.",
-      "openGraphTitle": "Audio in testo — 45 minuti gratis | Scribix",
-      "openGraphDescription": "Converti MP3, WAV e M4A in testo con relatori e timestamp. Esporta TXT, DOCX, SRT, VTT o CSV. Prova 45 minuti gratis senza carta.",
-      "twitterTitle": "Audio in testo — 45 minuti gratis | Scribix",
-      "twitterDescription": "Converti MP3, WAV e M4A in testo con relatori e timestamp. Esporta TXT, DOCX, SRT, VTT o CSV. Prova 45 minuti gratis senza carta."
+      "title": "Convertitore audio in testo | Scribix",
+      "description": "Converti file MP3, WAV e M4A in testo modificabile con riconoscimento dei parlanti e timestamp parola per parola. Rivedi online ed esporta in TXT, DOCX, SRT, VTT o CSV.",
+      "openGraphTitle": "Trasforma l’audio in testo modificabile con timestamp | Scribix",
+      "openGraphDescription": "Carica un file audio e ottieni una trascrizione ricercabile con parlanti, timestamp parola per parola e cinque formati di esportazione.",
+      "twitterTitle": "Trasforma l’audio in testo modificabile con timestamp | Scribix",
+      "twitterDescription": "Carica un file audio e ottieni una trascrizione ricercabile con parlanti, timestamp parola per parola e cinque formati di esportazione."
     },
     "hero": {
       "issue": "REC · 00:00:00",
@@ -1137,12 +1137,12 @@
   },
   "AiNoteTaker": {
     "metadata": {
-      "title": "AI per prendere appunti da audio e video | Scribix",
-      "description": "Trasforma audio, video, registrazioni dal microfono e video YouTube con sottotitoli in trascrizioni e appunti AI strutturati.",
-      "openGraphTitle": "AI per prendere appunti dalle registrazioni | Scribix",
-      "openGraphDescription": "Ottieni trascrizione, parlanti, timestamp, riepilogo, punti chiave e attività da audio o video.",
-      "twitterTitle": "AI per prendere appunti da audio e video | Scribix",
-      "twitterDescription": "Carica, registra o incolla un URL YouTube compatibile per ottenere una trascrizione verificabile e appunti AI."
+      "title": "AI per prendere appunti dalle registrazioni | Scribix",
+      "description": "Trasforma audio, video, registrazioni dal microfono e video YouTube con sottotitoli in appunti AI strutturati con riepiloghi, punti chiave, attività, parlanti e timestamp.",
+      "openGraphTitle": "Trasforma le registrazioni in appunti AI strutturati | Scribix",
+      "openGraphDescription": "Crea una trascrizione verificabile, un riepilogo, punti chiave e attività da audio, video, registrazioni dal microfono o video YouTube con sottotitoli.",
+      "twitterTitle": "Trasforma le registrazioni in appunti AI strutturati | Scribix",
+      "twitterDescription": "Crea una trascrizione verificabile, un riepilogo, punti chiave e attività da audio, video, registrazioni dal microfono o video YouTube con sottotitoli."
     },
     "hero": {
       "issue": "REC · APPUNTI AI",
@@ -1261,12 +1261,12 @@
   },
   "Mp3ToText": {
     "metadata": {
-      "title": "MP3 in testo | Trascrizione IA online",
-      "description": "Converti MP3 in testo con Scribix. Carica un MP3, ottieni una trascrizione con parlanti e timestamp, ed esporta in TXT, DOCX, SRT, VTT o CSV.",
-      "openGraphTitle": "MP3 in testo | Trascrizione IA online | Scribix",
-      "openGraphDescription": "Carica un MP3 e ottieni una trascrizione con parlanti, timestamp ed esportazioni.",
-      "twitterTitle": "MP3 in testo | Scribix",
-      "twitterDescription": "Converti audio MP3 in trascrizioni ricercabili con parlanti, timestamp ed esportazioni."
+      "title": "Convertitore MP3 in testo | Scribix",
+      "description": "Converti file MP3 in testo modificabile con rilevamento automatico della lingua, riconoscimento dei parlanti e timestamp parola per parola. Esporta in TXT, DOCX, SRT, VTT o CSV.",
+      "openGraphTitle": "Trasforma gli MP3 in testo ricercabile | Scribix",
+      "openGraphDescription": "Carica un MP3 e ottieni una trascrizione modificabile con parlanti, timestamp ed esportazioni per documenti o sottotitoli.",
+      "twitterTitle": "Trasforma gli MP3 in testo ricercabile | Scribix",
+      "twitterDescription": "Carica un MP3 e ottieni una trascrizione modificabile con parlanti, timestamp ed esportazioni per documenti o sottotitoli."
     },
     "hero": {
       "issue": "REC · MP3",
@@ -1591,12 +1591,12 @@
   },
   "YouTubeToTranscript": {
     "metadata": {
-      "title": "YouTube in testo | Scribix",
-      "description": "Incolla un URL YouTube in Scribix per importare i sottotitoli disponibili come trascrizione salvata. Scegli una traccia, copia il testo, esporta o riassumi con i piani a pagamento.",
-      "openGraphTitle": "YouTube in testo | Scribix",
-      "openGraphDescription": "Incolla un URL YouTube, importa una traccia di sottotitoli disponibile e salva una trascrizione ricercabile con export e riassunti IA nei piani a pagamento.",
-      "twitterTitle": "YouTube in testo | Scribix",
-      "twitterDescription": "Importa i sottotitoli YouTube disponibili come trascrizioni salvate da cercare, copiare, esportare e riassumere con i piani a pagamento."
+      "title": "Generatore di trascrizioni YouTube | Scribix",
+      "description": "Incolla un URL YouTube per importare una traccia di sottotitoli disponibile come trascrizione ricercabile. Scegli la lingua, copia il testo o esporta in TXT, DOCX, SRT, VTT o CSV.",
+      "openGraphTitle": "Trasforma i sottotitoli YouTube in una trascrizione | Scribix",
+      "openGraphDescription": "Importa una traccia di sottotitoli disponibile, scegli la lingua e salva una trascrizione YouTube da cercare, copiare, esportare o riassumere.",
+      "twitterTitle": "Trasforma i sottotitoli YouTube in una trascrizione | Scribix",
+      "twitterDescription": "Importa una traccia di sottotitoli disponibile, scegli la lingua e salva una trascrizione YouTube da cercare, copiare, esportare o riassumere."
     },
     "hero": {
       "issue": "REC · URL YOUTUBE",

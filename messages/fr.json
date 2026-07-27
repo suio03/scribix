@@ -1,11 +1,11 @@
 {
   "SiteMetadata": {
-    "title": "Vidéo en texte — 45 minutes gratuites | Scribix",
-    "description": "Convertissez vidéo et audio en texte modifiable avec locuteurs, horodatages et exports TXT, DOCX, SRT, VTT ou CSV. Essayez 45 minutes sans carte.",
-    "openGraphTitle": "Vidéo et audio en texte | Scribix",
-    "openGraphDescription": "Importez un média et obtenez une transcription modifiable avec locuteurs, horodatages et plusieurs formats d’export.",
-    "twitterTitle": "Vidéo et audio en texte | Scribix",
-    "twitterDescription": "Essayez gratuitement 45 minutes de transcription IA, sans carte bancaire."
+    "title": "Convertisseur vidéo en texte | Scribix",
+    "description": "Convertissez vos vidéos MP4, MOV, WebM et AVI en texte modifiable avec identification des intervenants et horodatage au mot près. Exportez en TXT, DOCX, SRT, VTT ou CSV.",
+    "openGraphTitle": "Transformez vos vidéos en texte horodaté | Scribix",
+    "openGraphDescription": "Importez une vidéo et obtenez une transcription consultable avec intervenants, horodatage au mot près et plusieurs formats d’export.",
+    "twitterTitle": "Transformez vos vidéos en texte horodaté | Scribix",
+    "twitterDescription": "Importez une vidéo et obtenez une transcription consultable avec intervenants, horodatage au mot près et plusieurs formats d’export."
   },
   "Sidebar": {
     "openNav": "Ouvrir la navigation",
@@ -812,12 +812,12 @@
   },
   "AudioToText": {
     "metadata": {
-      "title": "Audio en texte — 45 minutes offertes | Scribix",
-      "description": "Convertissez MP3, WAV et M4A en texte avec locuteurs et horodatage. Exportez TXT, DOCX, SRT, VTT ou CSV. 45 minutes offertes, sans carte.",
-      "openGraphTitle": "Audio en texte — 45 minutes offertes | Scribix",
-      "openGraphDescription": "Convertissez MP3, WAV et M4A en texte avec locuteurs et horodatage. Exportez TXT, DOCX, SRT, VTT ou CSV. 45 minutes offertes, sans carte.",
-      "twitterTitle": "Audio en texte — 45 minutes offertes | Scribix",
-      "twitterDescription": "Convertissez MP3, WAV et M4A en texte avec locuteurs et horodatage. Exportez TXT, DOCX, SRT, VTT ou CSV. 45 minutes offertes, sans carte."
+      "title": "Convertisseur audio en texte | Scribix",
+      "description": "Convertissez vos fichiers MP3, WAV et M4A en texte modifiable avec identification des intervenants et horodatage au mot près. Exportez en TXT, DOCX, SRT, VTT ou CSV.",
+      "openGraphTitle": "Transformez vos fichiers audio en texte horodaté | Scribix",
+      "openGraphDescription": "Importez un fichier audio et obtenez une transcription consultable avec intervenants, horodatage au mot près et cinq formats d’export.",
+      "twitterTitle": "Transformez vos fichiers audio en texte horodaté | Scribix",
+      "twitterDescription": "Importez un fichier audio et obtenez une transcription consultable avec intervenants, horodatage au mot près et cinq formats d’export."
     },
     "hero": {
       "issue": "REC · 00:00:00",
@@ -1137,12 +1137,12 @@
   },
   "AiNoteTaker": {
     "metadata": {
-      "title": "Outil de prise de notes IA pour audio et vidéo | Scribix",
-      "description": "Transformez vos fichiers audio et vidéo, vos enregistrements micro et les vidéos YouTube sous-titrées en transcription et notes IA structurées.",
-      "openGraphTitle": "Outil de prise de notes IA pour vos enregistrements | Scribix",
-      "openGraphDescription": "Retrouvez la transcription, les intervenants, les horodatages, la synthèse, les points clés et les actions à mener.",
-      "twitterTitle": "Outil de prise de notes IA audio et vidéo | Scribix",
-      "twitterDescription": "Importez, enregistrez ou collez une URL YouTube compatible pour obtenir une transcription vérifiable et des notes IA structurées."
+      "title": "Prise de notes IA pour enregistrements | Scribix",
+      "description": "Transformez audio, vidéo, enregistrements micro et vidéos YouTube sous-titrées en notes IA structurées avec synthèse, points clés, actions, intervenants et horodatages.",
+      "openGraphTitle": "Transformez vos enregistrements en notes IA structurées | Scribix",
+      "openGraphDescription": "Créez une transcription vérifiable, une synthèse, des points clés et des actions à partir d’audio, de vidéo, du micro ou de vidéos YouTube sous-titrées.",
+      "twitterTitle": "Transformez vos enregistrements en notes IA structurées | Scribix",
+      "twitterDescription": "Créez une transcription vérifiable, une synthèse, des points clés et des actions à partir d’audio, de vidéo, du micro ou de vidéos YouTube sous-titrées."
     },
     "hero": {
       "issue": "REC · NOTES IA",
@@ -1261,12 +1261,12 @@
   },
   "Mp3ToText": {
     "metadata": {
-      "title": "MP3 en texte | Transcription IA en ligne",
-      "description": "Convertissez un MP3 en texte avec Scribix. Importez un MP3, obtenez une transcription avec locuteurs et horodatages, puis exportez en TXT, DOCX, SRT, VTT ou CSV.",
-      "openGraphTitle": "MP3 en texte | Transcription IA en ligne | Scribix",
-      "openGraphDescription": "Importez un MP3 et obtenez une transcription avec locuteurs, horodatages et exports.",
-      "twitterTitle": "MP3 en texte | Scribix",
-      "twitterDescription": "Convertissez un audio MP3 en transcription consultable avec locuteurs, horodatages et exports."
+      "title": "Convertisseur MP3 en texte | Scribix",
+      "description": "Convertissez vos fichiers MP3 en texte modifiable avec détection automatique de la langue, identification des intervenants et horodatage au mot près. Exportez en TXT, DOCX, SRT, VTT ou CSV.",
+      "openGraphTitle": "Transformez vos MP3 en texte consultable | Scribix",
+      "openGraphDescription": "Importez un MP3 et obtenez une transcription modifiable avec intervenants, horodatages et exports pour documents ou sous-titres.",
+      "twitterTitle": "Transformez vos MP3 en texte consultable | Scribix",
+      "twitterDescription": "Importez un MP3 et obtenez une transcription modifiable avec intervenants, horodatages et exports pour documents ou sous-titres."
     },
     "hero": {
       "issue": "REC · MP3",
@@ -1591,12 +1591,12 @@
   },
   "YouTubeToTranscript": {
     "metadata": {
-      "title": "YouTube en texte | Scribix",
-      "description": "Collez une URL YouTube dans Scribix pour importer les sous-titres disponibles comme transcription enregistrée. Choisissez une piste, copiez le texte, exportez-le ou résumez-le avec un plan payant.",
-      "openGraphTitle": "YouTube en texte | Scribix",
-      "openGraphDescription": "Collez une URL YouTube, importez une piste de sous-titres disponible et enregistrez une transcription consultable avec exports et résumés IA payants.",
-      "twitterTitle": "YouTube en texte | Scribix",
-      "twitterDescription": "Importez les sous-titres YouTube disponibles comme transcriptions enregistrées que vous pouvez rechercher, copier, exporter et résumer avec un plan payant."
+      "title": "Générateur de transcription YouTube | Scribix",
+      "description": "Collez une URL YouTube pour importer une piste de sous-titres disponible comme transcription consultable. Choisissez la langue, copiez le texte ou exportez en TXT, DOCX, SRT, VTT ou CSV.",
+      "openGraphTitle": "Transformez les sous-titres YouTube en transcription | Scribix",
+      "openGraphDescription": "Importez une piste de sous-titres YouTube disponible, choisissez sa langue et enregistrez une transcription à rechercher, copier, exporter ou résumer.",
+      "twitterTitle": "Transformez les sous-titres YouTube en transcription | Scribix",
+      "twitterDescription": "Importez une piste de sous-titres YouTube disponible, choisissez sa langue et enregistrez une transcription à rechercher, copier, exporter ou résumer."
     },
     "hero": {
       "issue": "REC · URL YOUTUBE",

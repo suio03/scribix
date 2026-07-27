@@ -1,11 +1,11 @@
 {
   "SiteMetadata": {
-    "title": "Video to Text — 45 Free Minutes | Scribix",
-    "description": "Convert video and audio to editable text with speaker labels, timestamps, and TXT, DOCX, SRT, VTT, or CSV exports. Try 45 minutes free with no card.",
-    "openGraphTitle": "Video and Audio to Text | Scribix",
-    "openGraphDescription": "Upload media and get an editable transcript with speaker labels, timestamps, and flexible exports.",
-    "twitterTitle": "Video and Audio to Text | Scribix",
-    "twitterDescription": "Try 45 minutes of AI transcription free. No credit card required."
+    "title": "Video to Text Converter | Scribix",
+    "description": "Convert MP4, MOV, WebM, and AVI videos into editable text with speaker labels and word-level timestamps. Review online and export TXT, DOCX, SRT, VTT, or CSV.",
+    "openGraphTitle": "Turn Video into Editable, Timestamped Text | Scribix",
+    "openGraphDescription": "Upload a video and get a searchable, speaker-labeled transcript with word-level timestamps and flexible export options.",
+    "twitterTitle": "Turn Video into Editable, Timestamped Text | Scribix",
+    "twitterDescription": "Upload a video and get a searchable, speaker-labeled transcript with word-level timestamps and flexible export options."
   },
   "Sidebar": {
     "openNav": "Open navigation",
@@ -812,12 +812,12 @@
   },
   "AudioToText": {
     "metadata": {
-      "title": "Audio to Text Converter — 45 Free Minutes | Scribix",
-      "description": "Convert MP3, WAV, and M4A audio to speaker-labeled text with timestamps. Export TXT, DOCX, SRT, VTT, or CSV. Try 45 minutes free with no credit card.",
-      "openGraphTitle": "Audio to Text Converter — 45 Free Minutes | Scribix",
-      "openGraphDescription": "Convert MP3, WAV, and M4A audio to speaker-labeled text with timestamps. Export TXT, DOCX, SRT, VTT, or CSV. Try 45 minutes free with no credit card.",
-      "twitterTitle": "Audio to Text Converter — 45 Free Minutes | Scribix",
-      "twitterDescription": "Convert MP3, WAV, and M4A audio to speaker-labeled text with timestamps. Export TXT, DOCX, SRT, VTT, or CSV. Try 45 minutes free with no credit card."
+      "title": "Audio to Text Converter | Scribix",
+      "description": "Convert MP3, WAV, and M4A audio into editable text with speaker labels and word-level timestamps. Review online and export TXT, DOCX, SRT, VTT, or CSV.",
+      "openGraphTitle": "Turn Audio into Editable, Timestamped Text | Scribix",
+      "openGraphDescription": "Upload an audio file and get a searchable transcript with speaker labels, word-level timestamps, and five export formats.",
+      "twitterTitle": "Turn Audio into Editable, Timestamped Text | Scribix",
+      "twitterDescription": "Upload an audio file and get a searchable transcript with speaker labels, word-level timestamps, and five export formats."
     },
     "hero": {
       "issue": "REC · 00:00:00",
@@ -1137,12 +1137,12 @@
   },
   "AiNoteTaker": {
     "metadata": {
-      "title": "AI Note Taker for Audio, Video & YouTube | Scribix",
-      "description": "Turn audio, video, mic recordings, and captioned YouTube videos into transcripts and AI notes with key points, action items, speakers, and timestamps.",
-      "openGraphTitle": "AI Note Taker for Recorded Conversations | Scribix",
-      "openGraphDescription": "Capture the transcript, speakers, timestamps, summary, key points, and action items from audio or video.",
-      "twitterTitle": "AI Note Taker for Audio and Video | Scribix",
-      "twitterDescription": "Upload, record, or paste a supported YouTube URL. Get a reviewable transcript and structured AI notes."
+      "title": "AI Note Taker for Recordings | Scribix",
+      "description": "Turn audio, video, microphone recordings, and captioned YouTube videos into structured AI notes with summaries, key points, action items, speakers, and timestamps.",
+      "openGraphTitle": "Turn Recordings into Structured AI Notes | Scribix",
+      "openGraphDescription": "Create a reviewable transcript, summary, key points, and action items from audio, video, microphone recordings, or captioned YouTube videos.",
+      "twitterTitle": "Turn Recordings into Structured AI Notes | Scribix",
+      "twitterDescription": "Create a reviewable transcript, summary, key points, and action items from audio, video, microphone recordings, or captioned YouTube videos."
     },
     "hero": {
       "issue": "REC · AI NOTES",
@@ -1395,12 +1395,12 @@
   },
   "Mp3ToText": {
     "metadata": {
-      "title": "MP3 to Text | AI Transcription Online",
-      "description": "Convert MP3 to text with Scribix. Upload an MP3, get speaker-labeled transcripts with timestamps, and export TXT, DOCX, SRT, VTT, or CSV.",
-      "openGraphTitle": "MP3 to Text | AI Transcription Online | Scribix",
-      "openGraphDescription": "Upload an MP3 and get a speaker-labeled transcript with timestamps and exports.",
-      "twitterTitle": "MP3 to Text | Scribix",
-      "twitterDescription": "Convert MP3 audio into searchable transcripts with speaker labels, timestamps, and exports."
+      "title": "MP3 to Text Converter | Scribix",
+      "description": "Convert MP3 files into editable text with automatic language detection, speaker labels, and word-level timestamps. Export TXT, DOCX, SRT, VTT, or CSV.",
+      "openGraphTitle": "Convert MP3 into Searchable Text | Scribix",
+      "openGraphDescription": "Upload an MP3 and get an editable transcript with speaker labels, timestamps, and document or subtitle exports.",
+      "twitterTitle": "Convert MP3 into Searchable Text | Scribix",
+      "twitterDescription": "Upload an MP3 and get an editable transcript with speaker labels, timestamps, and document or subtitle exports."
     },
     "hero": {
       "issue": "REC · MP3",
@@ -1725,12 +1725,12 @@
   },
   "YouTubeToTranscript": {
     "metadata": {
-      "title": "YouTube to Transcript | Scribix",
-      "description": "Paste a YouTube URL into Scribix to import available captions as a saved transcript. Choose a caption track, copy text, export, or summarize on paid plans.",
-      "openGraphTitle": "YouTube to Transcript | Scribix",
-      "openGraphDescription": "Paste a YouTube URL, import an available caption track, and save a searchable transcript with exports and paid AI summaries.",
-      "twitterTitle": "YouTube to Transcript | Scribix",
-      "twitterDescription": "Import available YouTube captions as saved transcripts you can search, copy, export, and summarize on paid plans."
+      "title": "YouTube Transcript Generator | Scribix",
+      "description": "Paste a YouTube URL to import an available caption track as a searchable transcript. Choose a language, copy the text, or export TXT, DOCX, SRT, VTT, or CSV.",
+      "openGraphTitle": "Turn YouTube Captions into a Saved Transcript | Scribix",
+      "openGraphDescription": "Import an available YouTube caption track, choose its language, and save a transcript you can search, copy, export, or summarize.",
+      "twitterTitle": "Turn YouTube Captions into a Saved Transcript | Scribix",
+      "twitterDescription": "Import an available YouTube caption track, choose its language, and save a transcript you can search, copy, export, or summarize."
     },
     "hero": {
       "issue": "REC · YOUTUBE URL",

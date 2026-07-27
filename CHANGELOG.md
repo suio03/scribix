@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.23.2] - 2026-07-27
+
+### Changed
+- Rewrote the Video, Audio, MP3, YouTube, and AI Note Taker metadata around distinct search intent and localized the new titles and descriptions across all six supported languages.
+
+### Fixed
+- Prevented the MP3 and YouTube landing-page titles from appending the Scribix brand twice through inherited metadata templates.
+
 ## [0.23.1] - 2026-07-26
 
 ### Changed

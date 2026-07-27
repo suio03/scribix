@@ -1,11 +1,11 @@
 {
   "SiteMetadata": {
-    "title": "Video zu Text — 45 Minuten kostenlos | Scribix",
-    "description": "Wandle Video und Audio in editierbaren Text mit Sprecherlabels, Zeitstempeln und TXT-, DOCX-, SRT-, VTT- oder CSV-Export um. 45 Minuten ohne Karte testen.",
-    "openGraphTitle": "Video und Audio zu Text | Scribix",
-    "openGraphDescription": "Medien hochladen und ein editierbares Transkript mit Sprecherlabels, Zeitstempeln und flexiblen Exporten erhalten.",
-    "twitterTitle": "Video und Audio zu Text | Scribix",
-    "twitterDescription": "45 Minuten KI-Transkription kostenlos testen. Keine Kreditkarte nötig."
+    "title": "Video in Text umwandeln | Scribix",
+    "description": "Wandle MP4-, MOV-, WebM- und AVI-Videos in editierbaren Text mit Sprechererkennung und Zeitstempeln auf Wortebene um. Online prüfen und als TXT, DOCX, SRT, VTT oder CSV exportieren.",
+    "openGraphTitle": "Videos in editierbaren Text mit Zeitstempeln umwandeln | Scribix",
+    "openGraphDescription": "Lade ein Video hoch und erhalte ein durchsuchbares Transkript mit Sprechererkennung, Zeitstempeln auf Wortebene und flexiblen Exporten.",
+    "twitterTitle": "Videos in editierbaren Text mit Zeitstempeln umwandeln | Scribix",
+    "twitterDescription": "Lade ein Video hoch und erhalte ein durchsuchbares Transkript mit Sprechererkennung, Zeitstempeln auf Wortebene und flexiblen Exporten."
   },
   "Sidebar": {
     "openNav": "Navigation öffnen",
@@ -812,12 +812,12 @@
   },
   "AudioToText": {
     "metadata": {
-      "title": "Audio in Text — 45 Minuten kostenlos | Scribix",
-      "description": "MP3, WAV und M4A in Text mit Sprecherlabels und Zeitstempeln umwandeln. TXT, DOCX, SRT, VTT oder CSV exportieren. 45 Minuten kostenlos.",
-      "openGraphTitle": "Audio in Text — 45 Minuten kostenlos | Scribix",
-      "openGraphDescription": "MP3, WAV und M4A in Text mit Sprecherlabels und Zeitstempeln umwandeln. TXT, DOCX, SRT, VTT oder CSV exportieren. 45 Minuten kostenlos.",
-      "twitterTitle": "Audio in Text — 45 Minuten kostenlos | Scribix",
-      "twitterDescription": "MP3, WAV und M4A in Text mit Sprecherlabels und Zeitstempeln umwandeln. TXT, DOCX, SRT, VTT oder CSV exportieren. 45 Minuten kostenlos."
+      "title": "Audio in Text umwandeln | Scribix",
+      "description": "Wandle MP3-, WAV- und M4A-Audiodateien in editierbaren Text mit Sprechererkennung und Zeitstempeln auf Wortebene um. Online prüfen und als TXT, DOCX, SRT, VTT oder CSV exportieren.",
+      "openGraphTitle": "Audio in editierbaren Text mit Zeitstempeln umwandeln | Scribix",
+      "openGraphDescription": "Lade eine Audiodatei hoch und erhalte ein durchsuchbares Transkript mit Sprechererkennung, Zeitstempeln auf Wortebene und fünf Exportformaten.",
+      "twitterTitle": "Audio in editierbaren Text mit Zeitstempeln umwandeln | Scribix",
+      "twitterDescription": "Lade eine Audiodatei hoch und erhalte ein durchsuchbares Transkript mit Sprechererkennung, Zeitstempeln auf Wortebene und fünf Exportformaten."
     },
     "hero": {
       "issue": "REC · 00:00:00",
@@ -1137,12 +1137,12 @@
   },
   "AiNoteTaker": {
     "metadata": {
-      "title": "KI-Notizentool für Audio und Video | Scribix",
-      "description": "Verwandeln Sie Audio, Video, Mikrofonaufnahmen und YouTube-Videos mit Untertiteln in Transkripte und strukturierte KI-Notizen.",
-      "openGraphTitle": "KI-Notizentool für aufgezeichnete Gespräche | Scribix",
-      "openGraphDescription": "Erfassen Sie Transkript, Sprecher, Zeitstempel, Zusammenfassung, Kernpunkte und Aufgaben aus Audio oder Video.",
-      "twitterTitle": "KI-Notizentool für Audio und Video | Scribix",
-      "twitterDescription": "Datei hochladen, aufnehmen oder eine unterstützte YouTube-URL einfügen und ein prüfbares Transkript mit KI-Notizen erhalten."
+      "title": "KI-Notizassistent für Aufnahmen | Scribix",
+      "description": "Verwandle Audio, Video, Mikrofonaufnahmen und YouTube-Videos mit Untertiteln in strukturierte KI-Notizen mit Zusammenfassungen, Kernpunkten, Aufgaben, Sprechern und Zeitstempeln.",
+      "openGraphTitle": "Aufnahmen in strukturierte KI-Notizen verwandeln | Scribix",
+      "openGraphDescription": "Erstelle aus Audio, Video, Mikrofonaufnahmen oder YouTube-Videos mit Untertiteln ein prüfbares Transkript, eine Zusammenfassung, Kernpunkte und Aufgaben.",
+      "twitterTitle": "Aufnahmen in strukturierte KI-Notizen verwandeln | Scribix",
+      "twitterDescription": "Erstelle aus Audio, Video, Mikrofonaufnahmen oder YouTube-Videos mit Untertiteln ein prüfbares Transkript, eine Zusammenfassung, Kernpunkte und Aufgaben."
     },
     "hero": {
       "issue": "REC · KI-NOTIZEN",
@@ -1261,12 +1261,12 @@
   },
   "Mp3ToText": {
     "metadata": {
-      "title": "MP3 in Text | KI-Transkription online",
-      "description": "Wandle MP3 mit Scribix in Text um. Lade eine MP3 hoch, erhalte ein Transkript mit Sprecherlabels und Zeitstempeln und exportiere als TXT, DOCX, SRT, VTT oder CSV.",
-      "openGraphTitle": "MP3 in Text | KI-Transkription online | Scribix",
-      "openGraphDescription": "Lade eine MP3 hoch und erhalte ein Transkript mit Sprecherlabels, Zeitstempeln und Exporten.",
-      "twitterTitle": "MP3 in Text | Scribix",
-      "twitterDescription": "Wandle MP3-Audio in durchsuchbare Transkripte mit Sprecherlabels, Zeitstempeln und Exporten um."
+      "title": "MP3 in Text umwandeln | Scribix",
+      "description": "Wandle MP3-Dateien mit automatischer Spracherkennung, Sprechererkennung und Zeitstempeln auf Wortebene in editierbaren Text um. Als TXT, DOCX, SRT, VTT oder CSV exportieren.",
+      "openGraphTitle": "MP3 in durchsuchbaren Text umwandeln | Scribix",
+      "openGraphDescription": "Lade eine MP3 hoch und erhalte ein editierbares Transkript mit Sprechererkennung, Zeitstempeln und Exporten für Dokumente oder Untertitel.",
+      "twitterTitle": "MP3 in durchsuchbaren Text umwandeln | Scribix",
+      "twitterDescription": "Lade eine MP3 hoch und erhalte ein editierbares Transkript mit Sprechererkennung, Zeitstempeln und Exporten für Dokumente oder Untertitel."
     },
     "hero": {
       "issue": "REC · MP3",
@@ -1591,12 +1591,12 @@
   },
   "YouTubeToTranscript": {
     "metadata": {
-      "title": "YouTube zu Text | Scribix",
-      "description": "Füge eine YouTube-URL in Scribix ein, um verfügbare Untertitel als gespeichertes Transkript zu importieren. Wähle eine Spur, kopiere Text, exportiere oder fasse mit einem bezahlten Plan zusammen.",
-      "openGraphTitle": "YouTube zu Text | Scribix",
-      "openGraphDescription": "Füge eine YouTube-URL ein, importiere eine verfügbare Untertitelspur und speichere ein durchsuchbares Transkript mit Exporten und KI-Zusammenfassungen in bezahlten Plänen.",
-      "twitterTitle": "YouTube zu Text | Scribix",
-      "twitterDescription": "Importiere verfügbare YouTube-Untertitel als gespeicherte Transkripte, die du durchsuchen, kopieren, exportieren und mit bezahlten Plänen zusammenfassen kannst."
+      "title": "YouTube-Transkript erstellen | Scribix",
+      "description": "Füge eine YouTube-URL ein und importiere eine verfügbare Untertitelspur als durchsuchbares Transkript. Sprache wählen, Text kopieren oder als TXT, DOCX, SRT, VTT oder CSV exportieren.",
+      "openGraphTitle": "YouTube-Untertitel als Transkript speichern | Scribix",
+      "openGraphDescription": "Importiere eine verfügbare Untertitelspur, wähle die Sprache und speichere ein YouTube-Transkript zum Durchsuchen, Kopieren, Exportieren oder Zusammenfassen.",
+      "twitterTitle": "YouTube-Untertitel als Transkript speichern | Scribix",
+      "twitterDescription": "Importiere eine verfügbare Untertitelspur, wähle die Sprache und speichere ein YouTube-Transkript zum Durchsuchen, Kopieren, Exportieren oder Zusammenfassen."
     },
     "hero": {
       "issue": "REC · YOUTUBE-URL",
