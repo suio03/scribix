@@ -1008,11 +1008,6 @@ details[open] .faq-icon {
   box-shadow: 12px 0 32px -32px rgba(25, 25, 24, 0.32);
 }
 
-.sidebar-refresh .sidebar-plan-card {
-  background: var(--paper);
-  box-shadow: 0 12px 28px -26px rgba(25, 25, 24, 0.35);
-}
-
 .sidebar-refresh nav .bg-accent-soft {
   box-shadow: inset 0 0 0 1px rgba(189, 87, 56, 0.08);
 }

@@ -21,6 +21,7 @@ import {
   LayoutDashboard,
   ListChecks,
   LogIn,
+  LogOut,
   Plus,
   UserRound,
   X,
@@ -170,6 +171,7 @@ export function Sidebar({
   const { isOpen, isCollapsed, setOpen, setCollapsed } = useSidebar();
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
+  const accountButtonRef = useRef<HTMLButtonElement>(null);
 
   const nav: NavItem[] = SITE_NAV_ITEMS.map((item) => ({
     ...item,
@@ -178,17 +180,12 @@ export function Sidebar({
   const usedMin = Math.max(0, Math.round(usage?.usedMin ?? 0));
   const quotaMin = Math.max(1, Math.round(usage?.quotaMin ?? 45));
   const remainingMin = Math.max(0, quotaMin - usedMin);
-  const remainingPercent = Math.min(100, Math.max(0, (remainingMin / quotaMin) * 100));
   const usedYouTubeImports = Math.max(0, Math.round(usage?.usedYouTubeImports ?? 0));
   const quotaYouTubeImports = Math.max(
     1,
     Math.round(usage?.quotaYouTubeImports ?? FREE_YOUTUBE_IMPORTS_PER_DAY)
   );
   const remainingYouTubeImports = Math.max(0, quotaYouTubeImports - usedYouTubeImports);
-  const remainingYouTubePercent = Math.min(
-    100,
-    Math.max(0, (remainingYouTubeImports / quotaYouTubeImports) * 100)
-  );
   const closeMobileSidebar = () => {
     setAccountOpen(false);
     setOpen(false);
@@ -257,7 +254,9 @@ export function Sidebar({
       }
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setAccountOpen(false);
+      if (event.key !== "Escape") return;
+      setAccountOpen(false);
+      accountButtonRef.current?.focus();
     };
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
@@ -444,65 +443,10 @@ export function Sidebar({
         </nav>
 
         <div
-          className={`space-y-3 border-t border-line px-4 py-3 ${
+          className={`border-t border-line px-4 py-3 ${
             isCollapsed ? "lg:px-3" : ""
           }`}
         >
-          {signedIn ? (
-            <div
-              className={`sidebar-plan-card rounded-xl border border-line bg-paper/70 p-3 ${
-                isCollapsed ? "lg:hidden" : ""
-              }`}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                    {t("currentPlanTitle")}
-                  </p>
-                  <p className="mt-1 break-words text-[13px] font-semibold leading-tight text-ink">
-                    {sidebarPlanLabel(t, usage)}
-                  </p>
-                </div>
-                {usage?.canManageBilling ? (
-                  <BillingPortalButton
-                    className="shrink-0 rounded-full border border-line px-2.5 py-1 text-[11px] font-medium text-ink transition hover:border-ink/35 hover:bg-card disabled:cursor-wait disabled:opacity-60"
-                    label={t("manageBilling")}
-                    openingLabel={billingPortalT("opening")}
-                    errorLabel={billingPortalT("genericError")}
-                  />
-                ) : (
-                  <Link
-                    href="/dashboard/billing"
-                    onClick={closeAfterNavigate}
-                    className="shrink-0 rounded-full border border-line px-2.5 py-1 text-[11px] font-medium text-ink transition hover:border-ink/35 hover:bg-card"
-                  >
-                    {usage?.tier === "free" ? t("upgradePlan") : t("manageBilling")}
-                  </Link>
-                )}
-              </div>
-
-              <div className="mt-3 space-y-2.5">
-                <UsageMeter
-                  label={t("usageTitle")}
-                  value={t("usageRemaining", { remaining: remainingMin })}
-                  meterLabel={t("usageMeter", { used: usedMin, quota: quotaMin })}
-                  percent={remainingPercent}
-                  tone="accent"
-                />
-                <UsageMeter
-                  label={t("youtubeUsageTitle")}
-                  value={t("youtubeUsageRemaining", { remaining: remainingYouTubeImports })}
-                  meterLabel={t("youtubeUsageMeter", {
-                    used: usedYouTubeImports,
-                    quota: quotaYouTubeImports,
-                  })}
-                  percent={remainingYouTubePercent}
-                  tone="ink"
-                />
-              </div>
-            </div>
-          ) : null}
-
           <div
             className={`flex items-center justify-between gap-2 ${
               isCollapsed ? "lg:flex-col" : ""
@@ -519,24 +463,25 @@ export function Sidebar({
             {signedIn ? (
               <div ref={accountRef} className="relative">
                 <button
+                  ref={accountButtonRef}
                   type="button"
                   onClick={() => setAccountOpen((open) => !open)}
                   aria-label={t("accountMenu")}
                   aria-expanded={accountOpen}
-                  aria-haspopup="menu"
+                  aria-haspopup="dialog"
                   title={userLabel ?? t("accountMenu")}
-                  className="inline-grid size-9 place-items-center overflow-hidden rounded-full border border-line text-[13px] font-medium text-ink transition hover:bg-paper"
+                  className="inline-grid size-11 touch-manipulation place-items-center overflow-hidden rounded-full border border-line bg-paper text-[13px] font-medium text-ink transition hover:border-ink/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 focus-visible:ring-offset-2 focus-visible:ring-offset-card"
                 >
                   {userImage ? (
                     <Image
                       src={userImage}
                       alt=""
-                      width={28}
-                      height={28}
+                      width={36}
+                      height={36}
                       className="rounded-full"
                     />
                   ) : (
-                    <span className="grid size-7 place-items-center rounded-full bg-ink/10 text-[12px]">
+                    <span className="grid size-9 place-items-center rounded-full bg-ink/10 text-[12px]">
                       {(userLabel ?? "?")[0]?.toUpperCase()}
                     </span>
                   )}
@@ -544,19 +489,70 @@ export function Sidebar({
 
                 {accountOpen ? (
                   <div
-                    role="menu"
-                    className={`surface-popover absolute bottom-full z-40 mb-2 w-[170px] overflow-hidden rounded-lg border border-line bg-card py-1 shadow-lg ${
-                      isCollapsed ? "left-0 lg:left-0" : "right-0"
+                    role="dialog"
+                    aria-label={t("accountMenu")}
+                    className={`surface-popover absolute bottom-full z-40 mb-3 w-[244px] overflow-hidden rounded-2xl border border-line bg-paper p-2 ${
+                      isCollapsed
+                        ? "right-0 lg:bottom-0 lg:left-full lg:right-auto lg:mb-0 lg:ml-3"
+                        : "right-0"
                     }`}
                   >
+                    <div className="px-2 pb-2 pt-1.5">
+                      {userLabel ? (
+                        <p className="truncate text-[13px] font-semibold text-ink">
+                          {userLabel}
+                        </p>
+                      ) : null}
+                      <p className={`${userLabel ? "mt-0.5" : ""} text-[11px] text-muted`}>
+                        {t("currentPlanTitle")} · {sidebarPlanLabel(t, usage)}
+                      </p>
+                    </div>
+
+                    <div className="grid gap-px overflow-hidden rounded-xl border border-line bg-line">
+                      <AccountUsageStat
+                        label={t("usageTitle")}
+                        value={t("usageRemaining", { remaining: remainingMin })}
+                      />
+                      <AccountUsageStat
+                        label={t("youtubeUsageTitle")}
+                        value={t("youtubeUsageRemaining", {
+                          remaining: remainingYouTubeImports,
+                        })}
+                      />
+                    </div>
+
+                    <div className="mt-2">
+                      {usage?.canManageBilling ? (
+                        <BillingPortalButton
+                          className="min-h-10 w-full rounded-xl bg-ink px-3 py-2 text-[12px] font-semibold text-paper transition hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35 disabled:cursor-wait disabled:opacity-60"
+                          label={t("manageBilling")}
+                          openingLabel={billingPortalT("opening")}
+                          errorLabel={billingPortalT("genericError")}
+                        />
+                      ) : (
+                        <Link
+                          href="/dashboard/billing"
+                          onClick={() => {
+                            setAccountOpen(false);
+                            closeAfterNavigate();
+                          }}
+                          className="flex min-h-10 items-center justify-center rounded-xl bg-ink px-3 py-2 text-[12px] font-semibold text-paper transition hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35"
+                        >
+                          {usage?.tier === "free" ? t("upgradePlan") : t("manageBilling")}
+                        </Link>
+                      )}
+                    </div>
+
+                    <div className="my-2 h-px bg-line" />
                     <Link
                       href="/dashboard/account"
                       onClick={() => {
                         setAccountOpen(false);
                         closeAfterNavigate();
                       }}
-                      className="block px-3 py-2 text-[13px] font-medium text-muted transition hover:bg-paper hover:text-ink"
+                      className="flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium text-muted transition hover:bg-card hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35"
                     >
+                      <UserRound size={15} strokeWidth={1.7} />
                       {t("account")}
                     </Link>
                     <Link
@@ -565,25 +561,17 @@ export function Sidebar({
                         setAccountOpen(false);
                         closeAfterNavigate();
                       }}
-                      className="block px-3 py-2 text-[13px] font-medium text-muted transition hover:bg-paper hover:text-ink"
+                      className="flex min-h-10 items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium text-muted transition hover:bg-card hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35"
                     >
+                      <LayoutDashboard size={15} strokeWidth={1.7} />
                       {t("myLibrary")}
-                    </Link>
-                    <Link
-                      href="/dashboard/billing"
-                      onClick={() => {
-                        setAccountOpen(false);
-                        closeAfterNavigate();
-                      }}
-                      className="block px-3 py-2 text-[13px] font-medium text-muted transition hover:bg-paper hover:text-ink"
-                    >
-                      {t("billing")}
                     </Link>
                     <button
                       type="button"
                       onClick={() => signOut({ redirectTo: signOutRedirect })}
-                      className="block w-full px-3 py-2 text-left text-[13px] font-medium text-muted transition hover:bg-paper hover:text-ink"
+                      className="flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] font-medium text-muted transition hover:bg-card hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35"
                     >
+                      <LogOut size={15} strokeWidth={1.7} />
                       {t("signOut")}
                     </button>
                   </div>
@@ -609,34 +597,21 @@ export function Sidebar({
   );
 }
 
-function UsageMeter({
+function AccountUsageStat({
   label,
-  meterLabel,
-  percent,
-  tone,
   value,
 }: {
   label: string;
-  meterLabel: string;
-  percent: number;
-  tone: "accent" | "ink";
   value: string;
 }) {
   return (
-    <div>
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="text-[12px] font-medium text-muted">{label}</span>
-        <span className="font-mono text-[11px] tabular text-ink">{value}</span>
-      </div>
-      <div
-        className="mt-1.5 h-1 overflow-hidden rounded-full bg-line"
-        aria-label={meterLabel}
-      >
-        <div
-          className={`h-full rounded-full ${tone === "accent" ? "bg-accent" : "bg-ink/70"}`}
-          style={{ width: `${percent}%` }}
-        />
-      </div>
+    <div className="flex min-h-10 min-w-0 items-center justify-between gap-3 bg-card px-3 py-2">
+      <p className="min-w-0 text-[10px] font-medium uppercase tracking-[0.08em] text-muted">
+        {label}
+      </p>
+      <p className="shrink-0 whitespace-nowrap font-mono text-[11px] tabular-nums text-ink">
+        {value}
+      </p>
     </div>
   );
 }
