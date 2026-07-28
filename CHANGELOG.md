@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.23.4] - 2026-07-28
+
+### Added
+- Added a localized Chrome and Firefox store picker to the sidebar YouTube Extension entry, with theme-aware browser icons and a hidden Edge configuration for its future launch.
+
 ## [0.23.3] - 2026-07-28
 
 ### Added

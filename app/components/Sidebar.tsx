@@ -17,6 +17,7 @@ import {
   Clapperboard,
   ChevronLeft,
   ChevronRight,
+  ExternalLink,
   FileAudio,
   LayoutDashboard,
   ListChecks,
@@ -30,6 +31,7 @@ import {
 import Image from "next/image";
 import { signIn, signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import { createPortal } from "react-dom";
 import { Link, usePathname } from "@/i18n/navigation";
 import { FREE_YOUTUBE_IMPORTS_PER_DAY } from "@/lib/plans";
 import { BillingPortalButton } from "./BillingPortalButton";
@@ -44,7 +46,6 @@ type NavItem = {
   label: string;
   href: string;
   icon: SidebarIcon;
-  external?: boolean;
 };
 
 type SidebarIcon = ComponentType<LucideProps>;
@@ -70,8 +71,58 @@ function YouTubeIcon({ size = 24, strokeWidth = 2, className, style }: LucidePro
   );
 }
 
+function ChromeIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29zm13.342 2.166a5.446 5.446 0 0 1 1.45 7.09l.002.001h-.002l-5.344 9.257c.206.01.413.016.621.016 6.627 0 12-5.373 12-12 0-1.54-.29-3.011-.818-4.364zM12 16.364a4.364 4.364 0 1 1 0-8.728 4.364 4.364 0 0 1 0 8.728Z" />
+    </svg>
+  );
+}
+
+function FirefoxIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M22.778 8.048c-.505-1.215-1.53-2.528-2.333-2.943.654 1.283 1.033 2.57 1.177 3.53l.002.02c-1.314-3.278-3.544-4.6-5.366-7.477-.091-.147-.184-.292-.273-.446a3.545 3.545 0 0 1-.13-.24 2.118 2.118 0 0 1-.172-.46.03.03 0 0 0-.027-.03.038.038 0 0 0-.021 0l-.006.001a.037.037 0 0 0-.01.005L15.624 0c-2.585 1.515-3.657 4.168-3.932 5.856a6.197 6.197 0 0 0-2.305.587.297.297 0 0 0-.147.37c.057.162.24.24.396.17a5.622 5.622 0 0 1 2.008-.523l.067-.005a5.847 5.847 0 0 1 1.957.222l.095.03a5.816 5.816 0 0 1 .616.228c.08.036.16.073.238.112l.107.055a5.835 5.835 0 0 1 .368.211 5.953 5.953 0 0 1 2.034 2.104c-.62-.437-1.733-.868-2.803-.681 4.183 2.09 3.06 9.292-2.737 9.02a5.164 5.164 0 0 1-1.513-.292 4.42 4.42 0 0 1-.538-.232c-1.42-.735-2.593-2.121-2.74-3.806 0 0 .537-2 3.845-2 .357 0 1.38-.998 1.398-1.287-.005-.095-2.029-.9-2.817-1.677-.422-.416-.622-.616-.8-.767a3.47 3.47 0 0 0-.301-.227 5.388 5.388 0 0 1-.032-2.842c-1.195.544-2.124 1.403-2.8 2.163h-.006c-.46-.584-.428-2.51-.402-2.913-.006-.025-.343.176-.389.206-.406.29-.787.616-1.136.974-.397.403-.76.839-1.085 1.303a9.816 9.816 0 0 0-1.562 3.52c-.003.013-.11.487-.19 1.073-.013.09-.026.181-.037.272a7.8 7.8 0 0 0-.069.667l-.002.034-.023.387-.001.06C.386 18.795 5.593 24 12.016 24c5.752 0 10.527-4.176 11.463-9.661.02-.149.035-.298.052-.448.232-1.994-.025-4.09-.753-5.844Z" />
+    </svg>
+  );
+}
+
 const CHROME_EXTENSION_URL =
   "https://chromewebstore.google.com/detail/youtube-transcript-summar/ighgffaindjodlejiddagjlehmgglgaf";
+const FIREFOX_EXTENSION_URL =
+  "https://addons.mozilla.org/en-US/firefox/addon/scribix-youtube-transcript/";
+
+const EXTENSION_STORES = [
+  {
+    key: "chrome",
+    labelKey: "chromeExtensionStore",
+    href: CHROME_EXTENSION_URL,
+    icon: ChromeIcon,
+    visible: true,
+  },
+  {
+    key: "firefox",
+    labelKey: "firefoxExtensionStore",
+    href: FIREFOX_EXTENSION_URL,
+    icon: FirefoxIcon,
+    visible: true,
+  },
+  {
+    key: "edge",
+    labelKey: "edgeExtensionStore",
+    visible: false,
+  },
+] as const;
 
 const SITE_NAV_ITEMS = [
   { key: "home", href: "/", icon: Home },
@@ -117,31 +168,185 @@ function SidebarNavItem({
 
   return (
     <li>
-      {item.external ? (
-        <a
-          href={item.href}
-          onClick={onNavigate}
-          title={item.label}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] text-muted transition hover:bg-paper hover:text-ink ${collapsedClass}`}
-        >
-          {content}
-        </a>
-      ) : (
-        <Link
-          href={item.href}
-          onClick={onNavigate}
-          title={item.label}
-          className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
-            active
-              ? "bg-accent-soft text-ink"
-              : "text-muted hover:bg-paper hover:text-ink"
-          } ${collapsedClass}`}
-        >
-          {content}
-        </Link>
-      )}
+      <Link
+        href={item.href}
+        onClick={onNavigate}
+        title={item.label}
+        className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition ${
+          active
+            ? "bg-accent-soft text-ink"
+            : "text-muted hover:bg-paper hover:text-ink"
+        } ${collapsedClass}`}
+      >
+        {content}
+      </Link>
+    </li>
+  );
+}
+
+function ExtensionMenu({
+  isCollapsed,
+  onNavigate,
+}: {
+  isCollapsed: boolean;
+  onNavigate: () => void;
+}) {
+  const t = useTranslations("Sidebar");
+  const [open, setOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const visibleStores = EXTENSION_STORES.filter((store) => store.visible);
+
+  const updateMenuPosition = () => {
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+    const rect = trigger.getBoundingClientRect();
+    const menuWidth = 244;
+    const menuHeight = menuRef.current?.offsetHeight ?? 154;
+    const gap = 10;
+    const viewportPadding = 12;
+    const canOpenRight =
+      rect.right + gap + menuWidth <= window.innerWidth - viewportPadding;
+    const left = canOpenRight
+      ? rect.right + gap
+      : Math.max(
+          viewportPadding,
+          Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - viewportPadding)
+        );
+    const top = Math.max(
+      viewportPadding,
+      Math.min(rect.top, window.innerHeight - menuHeight - viewportPadding)
+    );
+    setMenuPosition({ left, top });
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (triggerRef.current?.contains(target) || menuRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      triggerRef.current?.focus();
+    };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    updateMenuPosition();
+    window.addEventListener("resize", updateMenuPosition);
+    window.addEventListener("scroll", updateMenuPosition, true);
+    return () => {
+      window.removeEventListener("resize", updateMenuPosition);
+      window.removeEventListener("scroll", updateMenuPosition, true);
+    };
+  }, [open]);
+
+  return (
+    <li>
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => {
+          updateMenuPosition();
+          setOpen((current) => !current);
+        }}
+        title={t("browserExtension")}
+        aria-label={t("browserExtension")}
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[14px] transition ${
+          open
+            ? "bg-accent-soft text-ink"
+            : "text-muted hover:bg-paper hover:text-ink"
+        } ${isCollapsed ? "lg:h-10 lg:justify-center lg:px-0" : ""}`}
+      >
+        <YouTubeIcon
+          size={17}
+          strokeWidth={1.6}
+          className={open ? "text-accent" : ""}
+        />
+        <span className={`font-medium ${isCollapsed ? "lg:hidden" : ""}`}>
+          {t("browserExtension")}
+        </span>
+        <ChevronRight
+          size={14}
+          strokeWidth={1.7}
+          className={`ml-auto transition-transform ${
+            open ? "text-ink" : "text-muted"
+          } ${isCollapsed ? "lg:hidden" : ""}`}
+          aria-hidden="true"
+        />
+      </button>
+
+      {open && menuPosition
+        ? createPortal(
+            <div
+              ref={menuRef}
+              role="dialog"
+              aria-label={t("browserExtension")}
+              className="surface-popover fixed z-[70] w-[244px] overflow-hidden rounded-2xl border border-line bg-paper p-2"
+              style={{
+                left: menuPosition.left,
+                top: menuPosition.top,
+                transformOrigin: "left top",
+              }}
+            >
+              <div className="px-2 pb-2 pt-1.5">
+                <p className="text-[13px] font-semibold text-ink">
+                  {t("browserExtension")}
+                </p>
+                <p className="mt-0.5 text-[11px] leading-4 text-muted">
+                  {t("extensionMenuHint")}
+                </p>
+              </div>
+
+              <div className="space-y-0.5">
+                {visibleStores.map((store) => {
+                  const storeLabel = t(store.labelKey);
+                  const StoreIcon = store.icon;
+                  return (
+                    <a
+                      key={store.key}
+                      href={store.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={t("openExtensionStore", { store: storeLabel })}
+                      onClick={() => {
+                        setOpen(false);
+                        onNavigate();
+                      }}
+                      className="group/store flex min-h-11 items-center gap-3 rounded-xl px-2.5 py-2 text-[13px] font-medium text-muted transition hover:bg-card hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35"
+                    >
+                      <StoreIcon className="size-[17px] shrink-0" />
+                      <span className="min-w-0 flex-1 truncate">{storeLabel}</span>
+                      <ExternalLink
+                        size={14}
+                        strokeWidth={1.6}
+                        className="shrink-0 opacity-55 transition group-hover/store:opacity-100"
+                        aria-hidden="true"
+                      />
+                    </a>
+                  );
+                })}
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
     </li>
   );
 }
@@ -228,17 +433,10 @@ export function Sidebar({
       icon: UserRound,
     },
   ];
-  const extensionNavItem: NavItem = {
-    key: "browserExtension",
-    label: t("browserExtension"),
-    href: CHROME_EXTENSION_URL,
-    icon: YouTubeIcon,
-    external: true,
-  };
   const productNav =
     variant === "dashboard"
-      ? [...dashboardNav, extensionNavItem]
-      : [...nav];
+      ? dashboardNav
+      : nav;
   const isDashboardPathActive = (href: string) => {
     if (href === "/dashboard") {
       return pathname === "/dashboard" || pathname.startsWith("/dashboard/transcripts");
@@ -383,6 +581,12 @@ export function Sidebar({
                 />
               );
             })}
+            {variant === "dashboard" ? (
+              <ExtensionMenu
+                isCollapsed={isCollapsed}
+                onNavigate={closeAfterNavigate}
+              />
+            ) : null}
           </ul>
 
           {variant === "site" ? (
@@ -390,8 +594,7 @@ export function Sidebar({
               <div className="my-3 h-px bg-line" />
 
               <ul className="space-y-0.5">
-                <SidebarNavItem
-                  item={extensionNavItem}
+                <ExtensionMenu
                   isCollapsed={isCollapsed}
                   onNavigate={closeAfterNavigate}
                 />
