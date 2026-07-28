@@ -30,6 +30,20 @@ export function Partners() {
             className="block h-9 w-auto"
           />
         </a>
+        <a
+          href="https://startupfa.me/s/scribix?utm_source=scribix.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Scribix featured on Startup Fame"
+        >
+          <img
+            src="https://startupfa.me/badges/featured-badge-small.webp"
+            alt="Scribix - Featured on Startup Fame"
+            width="224"
+            height="36"
+            className="block h-9 w-auto"
+          />
+        </a>
       </div>
     </div>
   );

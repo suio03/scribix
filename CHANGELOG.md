@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.23.3] - 2026-07-28
+
+### Added
+- Added a Startup Fame badge to the homepage partner section.
+
+### Changed
+- Moved usage details into the account menu for a more compact sidebar.
+
 ## [0.23.2] - 2026-07-27
 
 ### Changed
