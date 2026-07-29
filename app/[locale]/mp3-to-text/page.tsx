@@ -3,9 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/auth";
 import { getPathname } from "@/i18n/navigation";
 import { languageAlternates, urlFor } from "@/lib/metadata-url";
-import { Footer } from "@/app/components/Footer";
 import { GoogleOneTap } from "@/app/components/GoogleOneTap";
-import { Header } from "@/app/components/Header";
+import { LandingChrome } from "@/app/components/LandingChrome";
 import {
   ApproachComparisonSection,
   DemoTranscriptSection,
@@ -261,85 +260,91 @@ export default async function Mp3ToTextPage({
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="mp3-to-text" />
-      <div className="home-refresh landing-refresh tool-landing-refresh">
-        <Header showSidebarToggle />
-        <main>
-        <ToolHero
-          {...copy.hero}
-          signedIn={!!session}
-          secondaryHref="/audio-to-text"
-          proof={mergeItemDefinitions(
-            copy.hero.proof,
-            HERO_PROOF_DEFINITIONS,
-            "Mp3ToText.hero.proof"
-          )}
-          description={
-            <>
-              {copy.hero.descriptionStart}{" "}
-              <span className="font-mono tabular text-ink">{copy.hero.stat}</span>
-              {copy.hero.descriptionEnd}
-            </>
-          }
-        >
-          <AudioUploadCard
+      <LandingChrome
+        signedIn={!!session}
+        className="landing-refresh tool-landing-refresh"
+        primary={
+          <ToolHero
+            {...copy.hero}
             signedIn={!!session}
-            postSignInPath={postSignInPath}
-            copy={copy.upload}
-            accept="audio/mpeg,.mp3"
-            toolSlug="mp3-to-text"
-            tier={sidebarUsage?.tier}
-          />
-        </ToolHero>
-        <QuickAnswerSection {...copy.quickAnswer} />
-        <OverviewSection {...copy.overview} />
-        <StepsSection
-          {...copy.howItWorks}
-          steps={mergeItemDefinitions(
-            copy.howItWorks.steps,
-            STEP_DEFINITIONS,
-            "Mp3ToText.howItWorks.steps"
-          )}
-        />
-        <UseCaseGridSection
-          {...copy.useCases}
-          items={mergeItemDefinitions(
-            copy.useCases.items,
-            USE_CASE_DEFINITIONS,
-            "Mp3ToText.useCases.items"
-          )}
-        />
-        <DemoTranscriptSection {...copy.demo} />
-        <FeatureGridSection
-          {...copy.capabilities}
-          items={mergeItemDefinitions(
-            copy.capabilities.items,
-            CAPABILITY_DEFINITIONS,
-            "Mp3ToText.capabilities.items"
-          )}
-        />
-        <InsightCardsSection
-          items={mergeItemDefinitions(
-            copy.insights.items,
-            INSIGHT_DEFINITIONS,
-            "Mp3ToText.insights.items"
-          ).map((item) => {
-            const linkHref =
-              "linkHref" in item ? item.linkHref : undefined;
-            return {
-              ...item,
-              link:
-                item.link && linkHref
-                  ? { ...item.link, href: linkHref }
-                  : undefined,
-            };
-          })}
-        />
-        <ApproachComparisonSection {...copy.comparison} />
-        <FaqSection {...copy.faq} />
-        <FinalToolCta {...copy.finalCta} signedIn={!!session} />
-        </main>
-        <Footer />
-      </div>
+            secondaryHref="/audio-to-text"
+            proof={mergeItemDefinitions(
+              copy.hero.proof,
+              HERO_PROOF_DEFINITIONS,
+              "Mp3ToText.hero.proof"
+            )}
+            description={
+              <>
+                {copy.hero.descriptionStart}{" "}
+                <span className="font-mono tabular text-ink">
+                  {copy.hero.stat}
+                </span>
+                {copy.hero.descriptionEnd}
+              </>
+            }
+          >
+            <AudioUploadCard
+              signedIn={!!session}
+              postSignInPath={postSignInPath}
+              copy={copy.upload}
+              accept="audio/mpeg,.mp3"
+              toolSlug="mp3-to-text"
+              tier={sidebarUsage?.tier}
+            />
+          </ToolHero>
+        }
+        marketing={
+          <>
+            <QuickAnswerSection {...copy.quickAnswer} />
+            <OverviewSection {...copy.overview} />
+            <StepsSection
+              {...copy.howItWorks}
+              steps={mergeItemDefinitions(
+                copy.howItWorks.steps,
+                STEP_DEFINITIONS,
+                "Mp3ToText.howItWorks.steps"
+              )}
+            />
+            <UseCaseGridSection
+              {...copy.useCases}
+              items={mergeItemDefinitions(
+                copy.useCases.items,
+                USE_CASE_DEFINITIONS,
+                "Mp3ToText.useCases.items"
+              )}
+            />
+            <DemoTranscriptSection {...copy.demo} />
+            <FeatureGridSection
+              {...copy.capabilities}
+              items={mergeItemDefinitions(
+                copy.capabilities.items,
+                CAPABILITY_DEFINITIONS,
+                "Mp3ToText.capabilities.items"
+              )}
+            />
+            <InsightCardsSection
+              items={mergeItemDefinitions(
+                copy.insights.items,
+                INSIGHT_DEFINITIONS,
+                "Mp3ToText.insights.items"
+              ).map((item) => {
+                const linkHref =
+                  "linkHref" in item ? item.linkHref : undefined;
+                return {
+                  ...item,
+                  link:
+                    item.link && linkHref
+                      ? { ...item.link, href: linkHref }
+                      : undefined,
+                };
+              })}
+            />
+            <ApproachComparisonSection {...copy.comparison} />
+            <FaqSection {...copy.faq} />
+            <FinalToolCta {...copy.finalCta} signedIn={!!session} />
+          </>
+        }
+      />
     </Shell>
   );
 }

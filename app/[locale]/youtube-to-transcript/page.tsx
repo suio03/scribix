@@ -3,9 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/auth";
 import { getPathname } from "@/i18n/navigation";
 import { languageAlternates, urlFor } from "@/lib/metadata-url";
-import { Footer } from "@/app/components/Footer";
 import { GoogleOneTap } from "@/app/components/GoogleOneTap";
-import { Header } from "@/app/components/Header";
+import { LandingChrome } from "@/app/components/LandingChrome";
 import {
   ApproachComparisonSection,
   DemoTranscriptSection,
@@ -268,84 +267,90 @@ export default async function YouTubeToTranscriptPage({
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="youtube-to-transcript" />
-      <div className="home-refresh landing-refresh tool-landing-refresh">
-        <Header showSidebarToggle />
-        <main>
-        <ToolHero
-          {...copy.hero}
-          signedIn={!!session}
-          secondaryHref="/"
-          proof={mergeItemDefinitions(
-            copy.hero.proof,
-            HERO_PROOF_DEFINITIONS,
-            "YouTubeToTranscript.hero.proof"
-          )}
-          description={
-            <>
-              {copy.hero.descriptionStart}{" "}
-              <span className="font-mono tabular text-ink">{copy.hero.stat}</span>
-              {copy.hero.descriptionEnd}
-            </>
-          }
-        >
-          <YouTubeImporter
+      <LandingChrome
+        signedIn={!!session}
+        className="landing-refresh tool-landing-refresh"
+        primary={
+          <ToolHero
+            {...copy.hero}
             signedIn={!!session}
-            postSignInPath={toolPath}
-            tier={sidebarUsage?.tier ?? "free"}
-            billingCycle={sidebarUsage?.billingCycle ?? null}
-            toolSlug="youtube-to-transcript"
-          />
-        </ToolHero>
-        <QuickAnswerSection {...copy.quickAnswer} />
-        <OverviewSection {...copy.overview} />
-        <StepsSection
-          {...copy.howItWorks}
-          steps={mergeItemDefinitions(
-            copy.howItWorks.steps,
-            STEP_DEFINITIONS,
-            "YouTubeToTranscript.howItWorks.steps"
-          )}
-        />
-        <UseCaseGridSection
-          {...copy.useCases}
-          items={mergeItemDefinitions(
-            copy.useCases.items,
-            USE_CASE_DEFINITIONS,
-            "YouTubeToTranscript.useCases.items"
-          )}
-        />
-        <DemoTranscriptSection {...copy.demo} />
-        <FeatureGridSection
-          {...copy.capabilities}
-          items={mergeItemDefinitions(
-            copy.capabilities.items,
-            CAPABILITY_DEFINITIONS,
-            "YouTubeToTranscript.capabilities.items"
-          )}
-        />
-        <InsightCardsSection
-          items={mergeItemDefinitions(
-            copy.insights.items,
-            INSIGHT_DEFINITIONS,
-            "YouTubeToTranscript.insights.items"
-          ).map((item) => {
-            const linkHref =
-              "linkHref" in item ? item.linkHref : undefined;
-            return {
-              ...item,
-              link:
-                item.link && linkHref
-                  ? { ...item.link, href: linkHref }
-                  : undefined,
-            };
-          })}
-        />
-        <ApproachComparisonSection {...copy.comparison} />
-        <FaqSection {...copy.faq} />
-        <FinalToolCta {...copy.finalCta} signedIn={!!session} />
-        </main>
-        <Footer />
-      </div>
+            secondaryHref="/"
+            proof={mergeItemDefinitions(
+              copy.hero.proof,
+              HERO_PROOF_DEFINITIONS,
+              "YouTubeToTranscript.hero.proof"
+            )}
+            description={
+              <>
+                {copy.hero.descriptionStart}{" "}
+                <span className="font-mono tabular text-ink">
+                  {copy.hero.stat}
+                </span>
+                {copy.hero.descriptionEnd}
+              </>
+            }
+          >
+            <YouTubeImporter
+              signedIn={!!session}
+              postSignInPath={toolPath}
+              tier={sidebarUsage?.tier ?? "free"}
+              billingCycle={sidebarUsage?.billingCycle ?? null}
+              toolSlug="youtube-to-transcript"
+            />
+          </ToolHero>
+        }
+        marketing={
+          <>
+            <QuickAnswerSection {...copy.quickAnswer} />
+            <OverviewSection {...copy.overview} />
+            <StepsSection
+              {...copy.howItWorks}
+              steps={mergeItemDefinitions(
+                copy.howItWorks.steps,
+                STEP_DEFINITIONS,
+                "YouTubeToTranscript.howItWorks.steps"
+              )}
+            />
+            <UseCaseGridSection
+              {...copy.useCases}
+              items={mergeItemDefinitions(
+                copy.useCases.items,
+                USE_CASE_DEFINITIONS,
+                "YouTubeToTranscript.useCases.items"
+              )}
+            />
+            <DemoTranscriptSection {...copy.demo} />
+            <FeatureGridSection
+              {...copy.capabilities}
+              items={mergeItemDefinitions(
+                copy.capabilities.items,
+                CAPABILITY_DEFINITIONS,
+                "YouTubeToTranscript.capabilities.items"
+              )}
+            />
+            <InsightCardsSection
+              items={mergeItemDefinitions(
+                copy.insights.items,
+                INSIGHT_DEFINITIONS,
+                "YouTubeToTranscript.insights.items"
+              ).map((item) => {
+                const linkHref =
+                  "linkHref" in item ? item.linkHref : undefined;
+                return {
+                  ...item,
+                  link:
+                    item.link && linkHref
+                      ? { ...item.link, href: linkHref }
+                      : undefined,
+                };
+              })}
+            />
+            <ApproachComparisonSection {...copy.comparison} />
+            <FaqSection {...copy.faq} />
+            <FinalToolCta {...copy.finalCta} signedIn={!!session} />
+          </>
+        }
+      />
     </Shell>
   );
 }

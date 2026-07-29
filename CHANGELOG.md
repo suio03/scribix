@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.23.5] - 2026-07-29
+
+### Added
+- Added a phased implementation plan for Collections and the Transcript AI Workspace.
+
+### Changed
+- Simplified signed-in home and tool landing pages to keep the primary tool visible while hiding SEO onboarding content and using a compact footer pinned to the bottom of short pages.
+- Centralized landing-page authentication presentation, marketing-content gating, and footer behavior in a shared `LandingChrome` component.
+- Updated browser-extension publishing guidance and launch checks for the public Chrome and Firefox listings while keeping Edge hidden until its store listing is available.
+
 ## [0.23.4] - 2026-07-28
 
 ### Added

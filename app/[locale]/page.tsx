@@ -4,14 +4,13 @@ import { getPathname, Link } from "@/i18n/navigation";
 import { Shell } from "../components/Shell";
 import { Sidebar } from "../components/Sidebar";
 import { getSidebarUsage } from "../components/sidebarUsage";
-import { Header } from "../components/Header";
 import { Generator } from "../components/Generator";
+import { LandingChrome } from "../components/LandingChrome";
 import { Features } from "../components/Features";
 import { HowItWorks } from "../components/HowItWorks";
 import { UseCases } from "../components/UseCases";
 import { FAQ } from "../components/FAQ";
 import { FinalCTA } from "../components/FinalCTA";
-import { Footer } from "../components/Footer";
 import { GoogleOneTap } from "../components/GoogleOneTap";
 import { Partners } from "../components/Partners";
 import { TrackToolVisit } from "../components/Track";
@@ -89,38 +88,41 @@ export default async function HomePage({
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="home" />
-      <div className="home-refresh">
-        <Header showSidebarToggle />
-        <main>
+      <LandingChrome
+        signedIn={!!session}
+        primary={
           <Generator
             signedIn={!!session}
             postSignInPath={homePath}
             tier={sidebarUsage?.tier}
             billingCycle={sidebarUsage?.billingCycle}
           />
-          <section className="home-audio-link px-4 sm:px-8">
-            <div className="mx-auto border-t border-line pt-4">
-              <p className="text-[14px] leading-[1.6] text-muted">
-                {audioLinkT("prefix")}{" "}
-                <Link
-                  href="/audio-to-text"
-                  className="font-medium text-ink underline decoration-accent decoration-2 underline-offset-4"
-                >
-                  {audioLinkT("link")}
-                </Link>
-                {audioLinkT("suffix")}
-              </p>
-            </div>
-          </section>
-          <Features />
-          <HowItWorks />
-          <UseCases />
-          <FAQ />
-          <FinalCTA />
-        </main>
-        <Footer />
-        <Partners />
-      </div>
+        }
+        marketing={
+          <>
+            <section className="home-audio-link px-4 sm:px-8">
+              <div className="mx-auto border-t border-line pt-4">
+                <p className="text-[14px] leading-[1.6] text-muted">
+                  {audioLinkT("prefix")}{" "}
+                  <Link
+                    href="/audio-to-text"
+                    className="font-medium text-ink underline decoration-accent decoration-2 underline-offset-4"
+                  >
+                    {audioLinkT("link")}
+                  </Link>
+                  {audioLinkT("suffix")}
+                </p>
+              </div>
+            </section>
+            <Features />
+            <HowItWorks />
+            <UseCases />
+            <FAQ />
+            <FinalCTA />
+          </>
+        }
+        publicFooterExtra={<Partners />}
+      />
     </Shell>
   );
 }

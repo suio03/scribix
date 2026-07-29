@@ -4,11 +4,10 @@ import { auth } from "@/auth";
 import { FAQ } from "@/app/components/FAQ";
 import { Features } from "@/app/components/Features";
 import { FinalCTA } from "@/app/components/FinalCTA";
-import { Footer } from "@/app/components/Footer";
 import { Generator } from "@/app/components/Generator";
 import { GoogleOneTap } from "@/app/components/GoogleOneTap";
-import { Header } from "@/app/components/Header";
 import { HowItWorks } from "@/app/components/HowItWorks";
+import { LandingChrome } from "@/app/components/LandingChrome";
 import { Shell } from "@/app/components/Shell";
 import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
@@ -106,25 +105,29 @@ export default async function AiNoteTakerPage({
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
       ) : null}
       <TrackToolVisit slug="ai-note-taker" />
-      <div className="home-refresh landing-refresh tool-landing-refresh">
-        <Header showSidebarToggle />
-        <main>
-        <Generator
-          signedIn={!!session}
-          postSignInPath={postSignInPath}
-          tier={sidebarUsage?.tier}
-          billingCycle={sidebarUsage?.billingCycle}
-          namespace="AiNoteTaker.hero"
-          toolSlug="ai-note-taker"
-        />
-        <Features namespace="AiNoteTaker.features" />
-        <HowItWorks namespace="AiNoteTaker.howItWorks" />
-        <UseCases namespace="AiNoteTaker.useCases" />
-        <FAQ namespace="AiNoteTaker.faq" />
-        <FinalCTA namespace="AiNoteTaker.finalCta" />
-        </main>
-        <Footer />
-      </div>
+      <LandingChrome
+        signedIn={!!session}
+        className="landing-refresh tool-landing-refresh"
+        primary={
+          <Generator
+            signedIn={!!session}
+            postSignInPath={postSignInPath}
+            tier={sidebarUsage?.tier}
+            billingCycle={sidebarUsage?.billingCycle}
+            namespace="AiNoteTaker.hero"
+            toolSlug="ai-note-taker"
+          />
+        }
+        marketing={
+          <>
+            <Features namespace="AiNoteTaker.features" />
+            <HowItWorks namespace="AiNoteTaker.howItWorks" />
+            <UseCases namespace="AiNoteTaker.useCases" />
+            <FAQ namespace="AiNoteTaker.faq" />
+            <FinalCTA namespace="AiNoteTaker.finalCta" />
+          </>
+        }
+      />
     </Shell>
   );
 }

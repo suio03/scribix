@@ -1,7 +1,8 @@
 # Browser Extension Publishing
 
-This runbook covers the public Microsoft Edge Add-ons and Firefox Add-ons (AMO)
-submissions for version `0.1.3` of **YouTube Transcript & Summary Generator**.
+This runbook covers the Chrome Web Store, Microsoft Edge Add-ons, and Firefox
+Add-ons (AMO) releases for version `0.1.3` of **YouTube Transcript & Summary
+Generator**.
 
 ## Build artifacts
 
@@ -213,12 +214,22 @@ Official references:
 - https://extensionworkshop.com/documentation/develop/firefox-builtin-data-consent/
 - https://extensionworkshop.com/documentation/publish/signing-and-distribution-overview/
 
-## Version 0.1.3 status and release checklist
+## Version 0.1.3 distribution status and release checklist
 
-As of 2026-07-26, the Chrome, Edge, and Firefox submissions are in review.
-Production commit `2df9770` is deployed with migration
-`0021_extension_auth_tokens.sql`, the updated privacy page, and the Partner
-Center Edge CRX ID configured.
+As of 2026-07-28, Chrome and Firefox are published:
+
+- Chrome Web Store:
+  `https://chromewebstore.google.com/detail/youtube-transcript-summar/ighgffaindjodlejiddagjlehmgglgaf`
+- Firefox Add-ons:
+  `https://addons.mozilla.org/firefox/addon/scribix-youtube-transcript/`
+
+The Edge package and production identity configuration are ready, but the Edge
+listing is not public. The localized website sidebar therefore exposes Chrome
+and Firefox from one **YouTube Extension** picker while keeping the typed Edge
+entry hidden until its public store URL is confirmed. Website release `0.23.4`
+(commit `de39200`) implements that picker. Production commit `2df9770` remains
+the extension-auth baseline with migration `0021_extension_auth_tokens.sql`,
+the updated privacy page, and the Partner Center Edge CRX ID configured.
 
 - After store signing/approval, test account status, login completion,
   sign-out/revocation, transcript generation, all four

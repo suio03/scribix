@@ -8,7 +8,7 @@ const LEGAL_LINKS = [
   { key: "refunds", href: "/refunds", englishOnly: true },
 ] as const;
 
-export async function Footer() {
+export async function Footer({ compact = false }: { compact?: boolean }) {
   const [locale, t] = await Promise.all([
     getLocale(),
     getTranslations("Footer"),
@@ -17,6 +17,25 @@ export async function Footer() {
     (link) => !("englishOnly" in link) || locale === "en"
   );
   const year = new Date().getFullYear();
+
+  if (compact) {
+    return (
+      <footer className="footer-refresh border-t border-line bg-card px-4 py-6 sm:px-8">
+        <div className="mx-auto flex max-w-[1100px] flex-col gap-3 text-[12.5px] text-muted sm:flex-row sm:items-center sm:justify-between">
+          <p>© {year} CENDRO LABS PTY LTD.</p>
+          <ul className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            {legal.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="transition hover:text-ink">
+                  {t(`legalLabels.${link.key}`)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer className="footer-refresh border-t border-line bg-card px-4 pb-10 pt-14 sm:px-8">
