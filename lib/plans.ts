@@ -8,6 +8,8 @@ export type Tier = "free" | "basic" | "pro";
 export type BillingCycle = "monthly" | "yearly";
 
 export const FREE_YOUTUBE_IMPORTS_PER_DAY = 10;
+export const AI_CHAT_QUESTION_CHAR_LIMIT = 4_000;
+export const AI_CHAT_HISTORY_PAGE_SIZE = 200;
 export const ONE_GIB = 1024 * 1024 * 1024;
 // Stay below AssemblyAI's advertised 5 GB URL-ingest ceiling even if it is
 // enforced using decimal bytes rather than GiB.
@@ -17,6 +19,7 @@ export const PLANS = {
   free: {
     // Free transcript minutes are lifetime; YouTube caption imports reset daily.
     minutesPerCycle: 45,
+    aiQuestionsLifetime: 3,
     youtubeImportsPerCycle: FREE_YOUTUBE_IMPORTS_PER_DAY,
     youtubeMaxVideoSec: 2 * 3600,
     // Free users may upload a long source file, but only their remaining
@@ -28,6 +31,8 @@ export const PLANS = {
     speechModels: ["universal-2"] as const,
   },
   basic: {
+    // Grandfathered Basic users receive the same one-time Ask AI trial as Free.
+    aiQuestionsLifetime: 3,
     monthly: { minutesPerCycle: 600, youtubeImportsPerCycle: 100 },
     yearly: { minutesPerCycle: 7200, youtubeImportsPerCycle: 1200 },
     youtubeMaxVideoSec: 10 * 3600,
@@ -41,6 +46,7 @@ export const PLANS = {
     // Yearly billing receives the same allowance as monthly billing. The
     // allowance resets monthly and unused usage does not roll over.
     yearly: { minutesPerCycle: 2400, youtubeImportsPerCycle: 1000 },
+    aiQuestionsPerCycle: 300,
     youtubeMaxVideoSec: 10 * 3600,
     maxFileSec: 10 * 3600,
     maxFileBytes: ONE_GIB,
@@ -67,6 +73,15 @@ export function youtubeImportsFor(tier: Tier, cycle: BillingCycle | null | undef
 
 export function youtubeMaxVideoSecFor(tier: Tier): number {
   return PLANS[tier].youtubeMaxVideoSec;
+}
+
+export function aiQuestionsFor(
+  tier: Tier,
+  _cycle: BillingCycle | null | undefined
+): number {
+  return tier === "pro"
+    ? PLANS.pro.aiQuestionsPerCycle
+    : PLANS[tier].aiQuestionsLifetime;
 }
 
 // Display pricing. Pro is the only tier offered to new customers; Basic is

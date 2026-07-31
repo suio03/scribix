@@ -130,6 +130,10 @@ export async function summarizeTranscriptWithOpenAI(
 }
 
 function transcriptToSummaryInput(transcript: AaiTranscript): string {
+  return limitSummaryInput(transcriptToOpenAIInput(transcript));
+}
+
+export function transcriptToOpenAIInput(transcript: AaiTranscript): string {
   const segments =
     transcript.utterances?.length
       ? transcript.utterances
@@ -143,7 +147,7 @@ function transcriptToSummaryInput(transcript: AaiTranscript): string {
     ? segments.map(formatSegmentForSummary).join("\n")
     : transcript.text ?? "";
 
-  return limitSummaryInput(text);
+  return text.replace(/\r\n/g, "\n").replace(/[ \t]+/g, " ").trim();
 }
 
 function formatSegmentForSummary(segment: AaiSegment): string {
@@ -153,10 +157,9 @@ function formatSegmentForSummary(segment: AaiSegment): string {
 }
 
 function limitSummaryInput(text: string): string {
-  const normalized = text.replace(/\r\n/g, "\n").replace(/[ \t]+/g, " ").trim();
-  if (normalized.length <= SUMMARY_INPUT_CHAR_LIMIT) return normalized;
+  if (text.length <= SUMMARY_INPUT_CHAR_LIMIT) return text;
   return [
-    normalized.slice(0, SUMMARY_INPUT_CHAR_LIMIT),
+    text.slice(0, SUMMARY_INPUT_CHAR_LIMIT),
     "",
     "[Transcript truncated because it exceeded the summary input limit.]",
   ].join("\n");

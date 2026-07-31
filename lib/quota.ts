@@ -58,7 +58,8 @@ export async function reserveQuota(
   const user = await db
     .prepare(
       `SELECT id, tier, billing_cycle, minutes_used_this_period,
-              youtube_imports_used_this_period, period_started_at, period_ends_at
+              youtube_imports_used_this_period, ai_questions_used_this_period,
+              period_started_at, period_ends_at
          FROM users WHERE id = ?1 AND deleted_at IS NULL`
     )
     .bind(userId)
@@ -110,7 +111,8 @@ export async function checkQuota(
   const user = await db
     .prepare(
       `SELECT id, tier, billing_cycle, minutes_used_this_period,
-              youtube_imports_used_this_period, period_started_at, period_ends_at
+              youtube_imports_used_this_period, ai_questions_used_this_period,
+              period_started_at, period_ends_at
          FROM users WHERE id = ?1 AND deleted_at IS NULL`
     )
     .bind(userId)

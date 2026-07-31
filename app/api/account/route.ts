@@ -43,6 +43,15 @@ export async function DELETE() {
 
   await env.DB.batch([
     env.DB.prepare(
+      `DELETE FROM ai_chat_messages WHERE user_id = ?1`
+    ).bind(userId),
+    env.DB.prepare(
+      `UPDATE ai_usage_events
+          SET user_id = NULL,
+              transcript_id = NULL
+        WHERE user_id = ?1`
+    ).bind(userId),
+    env.DB.prepare(
       `UPDATE transcripts SET deleted_at = CURRENT_TIMESTAMP
         WHERE user_id = ?1 AND deleted_at IS NULL`
     ).bind(userId),

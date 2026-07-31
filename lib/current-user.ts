@@ -14,6 +14,8 @@ export type CurrentUserRow = {
   subscription_id: string | null;
   minutes_used_this_period: number;
   youtube_imports_used_this_period: number;
+  ai_questions_used_this_period: number;
+  ai_free_questions_used: number;
   period_started_at: string;
   period_ends_at: string;
 };
@@ -21,7 +23,9 @@ export type CurrentUserRow = {
 const CURRENT_USER_SELECT = `
   SELECT id, email, full_name, avatar_url, tier, billing_cycle, subscription_status,
          customer_id, subscription_id, minutes_used_this_period,
-         youtube_imports_used_this_period, period_started_at, period_ends_at
+         youtube_imports_used_this_period, ai_questions_used_this_period,
+         ai_free_questions_used,
+         period_started_at, period_ends_at
     FROM users
    WHERE deleted_at IS NULL
 `;

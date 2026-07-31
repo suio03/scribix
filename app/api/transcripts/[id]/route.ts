@@ -90,6 +90,13 @@ export async function DELETE(_: Request, { params }: Params) {
       .bind(transcriptId),
     env.DB.prepare(`DELETE FROM transcript_summaries WHERE transcript_id = ?1`)
       .bind(transcriptId),
+    env.DB.prepare(`DELETE FROM ai_chat_messages WHERE transcript_id = ?1`)
+      .bind(transcriptId),
+    env.DB.prepare(
+      `UPDATE ai_usage_events
+          SET transcript_id = NULL
+        WHERE transcript_id = ?1`
+    ).bind(transcriptId),
     env.DB.prepare(`UPDATE transcripts SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?1`)
       .bind(transcriptId),
   ]);

@@ -137,6 +137,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
           youtubeVideoId={row.source === "youtube" ? row.youtube_video_id : null}
           initialSpeakerNames={parseSpeakerNames(row.speaker_names_json)}
           isPaid={user.tier !== "free"}
+          isPro={user.tier === "pro"}
           checkoutSuccessPath={checkoutSuccessPath}
           partialTranscript={partial}
         />

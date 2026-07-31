@@ -24,7 +24,7 @@ export default async function PrivacyPage({
   setRequestLocale(locale);
 
   return (
-    <LegalShell title="Privacy Policy" updated="July 25, 2026">
+    <LegalShell title="Privacy Policy" updated="July 31, 2026">
       <p>
         This policy describes what data CENDRO LABS PTY LTD collects when operating
         Scribix, how we use it, and the choices you have. Plain-English summary first;
@@ -46,6 +46,11 @@ export default async function PrivacyPage({
           so we can retrieve available captions. Paid AI summaries also send the caption text
           to Scribix for summary generation.
         </li>
+        <li>
+          When you use Ask AI, Scribix sends the transcript, your question, and recent
+          conversation context to OpenAI. Scribix saves the conversation until you clear it,
+          delete the transcript, or delete your account.
+        </li>
         <li>We don&apos;t sell your data.</li>
         <li>
           You can delete any transcript at any time. You can delete your whole account from
@@ -65,7 +70,8 @@ export default async function PrivacyPage({
         <li>
           <strong>Content:</strong> audio and video files you upload or record, YouTube URLs
           you ask Scribix to process, available YouTube caption text, and the transcripts and
-          summaries produced from them.
+          summaries produced from them. This also includes the questions and answers you save
+          through Ask AI.
         </li>
         <li>
           <strong>Subscription:</strong> billing status, billing cycle, and current plan.
@@ -73,8 +79,12 @@ export default async function PrivacyPage({
         </li>
         <li>
           <strong>Usage:</strong> minutes consumed in the current billing period, file size,
+          Ask AI questions consumed from your plan allowance or one-time free trial,
           browser-extension quota identifiers, IP-based abuse-prevention data, and basic logs
-          needed to operate the service (timestamps and request status).
+          needed to operate the service (timestamps and request status). For AI features, we
+          also record the feature, model, request outcome, input, cached input, output, and
+          reasoning token counts, and the applicable provider price used to estimate cost.
+          These cost records do not contain transcript text, questions, or answers.
         </li>
       </ul>
 
@@ -82,7 +92,8 @@ export default async function PrivacyPage({
       <ul className="ml-5 list-disc space-y-2">
         <li>To operate the service: store your files, run transcription, return results.</li>
         <li>
-          To retrieve available YouTube captions and generate a summary when you request one.
+          To retrieve available YouTube captions, generate a summary, or answer questions
+          about a transcript when you request those features.
         </li>
         <li>To enforce usage limits and process billing.</li>
         <li>To debug, monitor for abuse, and improve reliability.</li>
@@ -94,7 +105,8 @@ export default async function PrivacyPage({
         We use service providers to run Scribix: Cloudflare for hosting, D1 database, and
         R2 file storage; AssemblyAI for transcription processing; Google and NextAuth for
         sign-in; Paddle for subscription checkout, billing, tax, invoices, and payment
-        management; OpenAI for paid AI summary generation; Google Analytics, Microsoft
+        management; OpenAI for paid AI summary generation and transcript question answering;
+        Google Analytics, Microsoft
         Clarity, and Plausible-compatible analytics served from actone.app for product
         analytics and reliability monitoring.
       </p>
@@ -128,6 +140,18 @@ export default async function PrivacyPage({
           <strong>Transcripts:</strong> kept until you delete them or your account.
         </li>
         <li>
+          <strong>Ask AI conversations:</strong> kept until you clear the conversation,
+          delete its transcript, or delete your account. Clearing a conversation does not
+          restore used question allowance.
+        </li>
+        <li>
+          <strong>AI cost records:</strong> token counts, model, feature, request outcome,
+          and the applicable provider price are retained for aggregate cost analysis. When
+          you delete a transcript, its identifier is removed from these records. When you
+          delete your account, both the account and transcript identifiers are removed. The
+          records do not contain your transcript text, questions, or answers.
+        </li>
+        <li>
           <strong>Browser-extension cache:</strong> up to 20 transcripts are cached locally
           for up to seven days. Generated summaries may be cached securely by Scribix to
           return repeat requests without processing the same caption text again.
@@ -142,8 +166,8 @@ export default async function PrivacyPage({
       <H2>Your Rights</H2>
       <p>
         You can access your data via the dashboard, export transcripts as TXT/SRT/VTT, and
-        delete any transcript or your entire account. If you live somewhere with stronger
-        rights (GDPR, CCPA, etc.), email us at{" "}
+        clear an Ask AI conversation, delete any transcript, or delete your entire account.
+        If you live somewhere with stronger rights (GDPR, CCPA, etc.), email us at{" "}
         <a className="underline underline-offset-4 hover:text-accent" href="mailto:hello@scribix.io">
           hello@scribix.io
         </a>{" "}

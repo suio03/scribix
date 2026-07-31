@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.25.0] - 2026-08-01
+
+### Added
+- Added transcript-grounded Ask AI conversations with multilingual starter questions, persisted message history, clear controls, and partial-answer warnings.
+- Added lifetime Free and Basic Ask AI allowances, billing-period Pro allowances, and D1 migrations `0022` through `0024` for chat messages, quota counters, and AI token/cost usage events.
+
+### Changed
+- Reworked the transcript detail experience into a responsive transcript and AI workspace with AI Notes, Ask AI, and modal-based exports.
+- Updated localized plan, upgrade, privacy, and quota messaging for Ask AI across all six supported languages.
+
+### Fixed
+- Preserved usable text when an AI response reaches its output limit, guarded quota checks before transcript downloads, and kept usage-accounting failures out of the answer path.
+- Deleted private chat content with transcript or account deletion while retaining anonymized usage records for cost analysis.
+
+### Removed
+- Removed superseded hybrid video upload and post-July reliability planning documents.
+
 ## [0.24.0] - 2026-07-31
 
 ### Added

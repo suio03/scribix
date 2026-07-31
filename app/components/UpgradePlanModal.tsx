@@ -10,7 +10,13 @@ import {
 } from "@/lib/plans";
 import { PaddleCheckoutButton } from "./PaddleCheckoutButton";
 
-export type UpgradeReason = "translation" | "summary" | "quota" | "duration" | "file_size";
+export type UpgradeReason =
+  | "translation"
+  | "summary"
+  | "chat"
+  | "quota"
+  | "duration"
+  | "file_size";
 
 export function UpgradePlanModal({
   reason,
@@ -204,6 +210,18 @@ function upgradeReasonCopy(
     };
   }
 
+  if (reason === "chat") {
+    return {
+      title: safeT(t, "upgradeChatModalTitle", "Ask this transcript"),
+      body: safeTValues(
+        t,
+        "upgradeChatModalBody",
+        `Upgrade to Pro for ${formatNumber(PLANS.pro.aiQuestionsPerCycle)} Ask AI questions each allowance period.`,
+        { count: PLANS.pro.aiQuestionsPerCycle }
+      ),
+    };
+  }
+
   if (reason === "quota") {
     return {
       title: safeT(t, "upgradeQuotaModalTitle", "Keep transcribing"),
@@ -266,7 +284,7 @@ function upgradePlanCopy(
       safeTValues(t, "upgradeProMonthlyBulletLength", `Transcribe files up to ${formatDurationHours(maxFileHours)}`, {
         hours: maxFileHours,
       }),
-      safeT(t, "upgradeProMonthlyBulletAi", "Includes AI translation and AI notes"),
+      safeT(t, "upgradeProMonthlyBulletAi", "Includes Ask AI, AI translation, and AI notes"),
     ],
   };
 }

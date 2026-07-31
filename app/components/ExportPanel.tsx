@@ -17,6 +17,7 @@ type Props = {
   id: string;
   audioAvailable: boolean;
   partialTranscript: PartialTranscriptInfo | null;
+  embedded?: boolean;
 };
 
 const DOWNLOADS = [
@@ -31,6 +32,7 @@ export function ExportPanel({
   id,
   audioAvailable,
   partialTranscript,
+  embedded = false,
 }: Props) {
   const t = useTranslations("Dashboard.exportPanel");
   const [withTimestamps, setWithTimestamps] = useState(true);
@@ -55,7 +57,11 @@ export function ExportPanel({
   };
 
   return (
-    <div className="transcript-export-panel space-y-6 rounded-2xl border border-line bg-paper p-4 sm:p-5">
+    <div
+      className={`transcript-export-panel space-y-6 ${
+        embedded ? "" : "rounded-2xl border border-line bg-paper p-4 sm:p-5"
+      }`}
+    >
       {partialTranscript ? (
         <div className="rounded-xl border border-accent/25 bg-accent-soft/50 px-3.5 py-3 text-[12px] leading-5 text-accent">
           <p className="font-semibold">

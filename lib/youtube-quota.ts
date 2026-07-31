@@ -85,7 +85,7 @@ async function readYouTubeQuotaUser(
     .prepare(
       `SELECT id, tier, billing_cycle, minutes_used_this_period,
               youtube_imports_used_this_period, youtube_imports_period_started_at,
-              period_started_at, period_ends_at
+              ai_questions_used_this_period, period_started_at, period_ends_at
          FROM users
         WHERE id = ?1
           AND deleted_at IS NULL`

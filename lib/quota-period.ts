@@ -6,6 +6,7 @@ export type ResettableQuotaRow = {
   billing_cycle: BillingCycle | null;
   minutes_used_this_period: number;
   youtube_imports_used_this_period: number;
+  ai_questions_used_this_period: number;
   period_started_at: string;
   period_ends_at: string;
 };
@@ -39,6 +40,7 @@ export async function maybeResetAllowancePeriod<T extends ResettableQuotaRow>(
       `UPDATE users
           SET minutes_used_this_period = 0,
               youtube_imports_used_this_period = 0,
+              ai_questions_used_this_period = 0,
               period_started_at = ?1
         WHERE id = ?2
           AND deleted_at IS NULL
@@ -54,6 +56,7 @@ export async function maybeResetAllowancePeriod<T extends ResettableQuotaRow>(
       ...user,
       minutes_used_this_period: 0,
       youtube_imports_used_this_period: 0,
+      ai_questions_used_this_period: 0,
       period_started_at: nextStart,
     };
   }
@@ -61,7 +64,8 @@ export async function maybeResetAllowancePeriod<T extends ResettableQuotaRow>(
   const fresh = await db
     .prepare(
       `SELECT id, tier, billing_cycle, minutes_used_this_period,
-              youtube_imports_used_this_period, period_started_at, period_ends_at
+              youtube_imports_used_this_period, ai_questions_used_this_period,
+              period_started_at, period_ends_at
          FROM users
         WHERE id = ?1
           AND deleted_at IS NULL`

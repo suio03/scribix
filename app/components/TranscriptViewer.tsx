@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Languages, MoreVertical, Pause, Play, Sparkles, Users, Volume2, VolumeX } from "lucide-react";
+import { Download, Languages, MessageCircle, Pause, Play, Sparkles, Users, Volume2, VolumeX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { AaiSegment } from "@/lib/aai";
 import { compactCJKSpaces } from "@/lib/transcript-format";
 import { UpgradePlanModal, type UpgradeReason } from "./UpgradePlanModal";
+import { TranscriptChatPanel } from "./TranscriptChatPanel";
 import { displaySpeakerName, speakerToneFor, type SpeakerNames } from "./speakerDisplay";
 import type { PartialTranscriptInfo } from "@/lib/partial-transcript";
 
@@ -13,7 +14,8 @@ const SPEEDS = [0.75, 1, 1.25, 1.5, 2] as const;
 const TRANSLATION_LANGUAGES = ["en", "zh", "es", "fr", "de", "ja", "ko", "pt", "it", "nl"] as const;
 let youtubeIframeApiPromise: Promise<YouTubeApi> | null = null;
 
-type Tab = "transcript" | "subtitles" | "translation" | "summary";
+type ContentTab = "transcript" | "subtitles" | "translation";
+type AiTab = "chat" | "summary";
 type TranslationLang = (typeof TRANSLATION_LANGUAGES)[number];
 type TranslationState = "idle" | "loading" | "processing" | "ready" | "error";
 type SummaryState = "idle" | "loading" | "processing" | "ready" | "error";
@@ -70,7 +72,9 @@ type Props = {
   speakerNames: SpeakerNames;
   speakers: string[];
   isPaid: boolean;
+  isPro: boolean;
   checkoutSuccessPath: string;
+  onOpenExport: () => void;
   onOpenSpeakerEditor: (speaker?: string) => void;
   partialTranscript: PartialTranscriptInfo | null;
 };
@@ -88,18 +92,22 @@ export function TranscriptViewer({
   speakerNames,
   speakers,
   isPaid,
+  isPro,
   checkoutSuccessPath,
+  onOpenExport,
   onOpenSpeakerEditor,
   partialTranscript,
 }: Props) {
   const t = useTranslations("Dashboard.viewer");
+  const exportT = useTranslations("Dashboard.exportPanel");
   const audioRef = useRef<HTMLMediaElement | null>(null);
   const youtubeFrameRef = useRef<HTMLIFrameElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const summaryPollTimerRef = useRef<number | null>(null);
   const requestRef = useRef(0);
   const summaryRequestRef = useRef(0);
-  const [tab, setTab] = useState<Tab>("transcript");
+  const [contentTab, setContentTab] = useState<ContentTab>("transcript");
+  const [aiTab, setAiTab] = useState<AiTab>("chat");
   const [currentMs, setCurrentMs] = useState(0);
   const [translationLang, setTranslationLang] = useState<TranslationLang>(() =>
     firstTargetLanguage(sourceLanguage)
@@ -144,7 +152,7 @@ export function TranscriptViewer({
     [sourceTranslationLang]
   );
   const translationSegments = translation?.utterances ?? [];
-  const segments = tab === "transcript" ? transcriptSegments : sentences;
+  const segments = contentTab === "transcript" ? transcriptSegments : sentences;
   const hasSegments = segments.length > 0;
   const speakerLabel = (speaker: string) =>
     displaySpeakerName(speaker, speakerNames, (id) => t("speakerLabel", { speaker: id }));
@@ -164,21 +172,21 @@ export function TranscriptViewer({
   }, [availableTranslationLanguages, translationLang]);
 
   useEffect(() => {
-    if (translationEnabled || tab !== "translation") return;
-    setTab("transcript");
+    if (translationEnabled || contentTab !== "translation") return;
+    setContentTab("transcript");
     setTranslation(null);
     setTranslationState("idle");
-  }, [tab, translationEnabled]);
+  }, [contentTab, translationEnabled]);
 
   useEffect(() => {
-    if (!translationEnabled || tab !== "translation" || !isPaid) return;
+    if (!translationEnabled || contentTab !== "translation" || !isPaid) return;
     void loadTranslation("GET");
-  }, [isPaid, tab, translationEnabled, translationLang]);
+  }, [contentTab, isPaid, translationEnabled, translationLang]);
 
   useEffect(() => {
-    if (tab !== "summary" || !isPaid) return;
+    if (aiTab !== "summary" || !isPaid) return;
     void loadSummary("GET");
-  }, [isPaid, tab]);
+  }, [aiTab, isPaid]);
 
   async function loadTranslation(method: "GET" | "POST") {
     if (!isPaid) {
@@ -274,149 +282,194 @@ export function TranscriptViewer({
   }
 
   return (
-    <div className="transcript-viewer space-y-6">
-      {partialTranscript ? (
-        <div className="rounded-xl border border-accent/25 bg-accent-soft/50 px-4 py-3 text-[13px] font-medium text-accent">
-          {partialTranscript.sourceMinutes === null
-            ? t("partialUnknownLabel", {
-                processedMin: partialTranscript.processedMinutes,
-              })
-            : t("partialLabel", {
-                processedMin: partialTranscript.processedMinutes,
-                sourceMin: partialTranscript.sourceMinutes,
-              })}
-        </div>
-      ) : null}
-      {audioUrl && (
-        <AudioPlayer
-          ref={audioRef}
-          url={audioUrl}
-          isVideo={mediaMime?.startsWith("video/") === true}
-          onTimeUpdate={setCurrentMs}
-        />
-      )}
+    <>
+      <div className="transcript-viewer overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_24px_70px_-48px_rgba(14,13,11,0.32)] lg:grid lg:h-[calc(100dvh-14.5rem)] lg:min-h-[640px] lg:grid-cols-2 lg:divide-x lg:divide-line">
+        <section className="flex min-h-0 flex-col bg-paper">
+          <div className="shrink-0 space-y-4 border-b border-line p-4 sm:p-5">
+            {partialTranscript ? (
+              <div className="rounded-xl border border-accent/25 bg-accent-soft/50 px-4 py-3 text-[13px] font-medium text-accent">
+                {partialTranscript.sourceMinutes === null
+                  ? t("partialUnknownLabel", {
+                      processedMin: partialTranscript.processedMinutes,
+                    })
+                  : t("partialLabel", {
+                      processedMin: partialTranscript.processedMinutes,
+                      sourceMin: partialTranscript.sourceMinutes,
+                    })}
+              </div>
+            ) : null}
+            {audioUrl ? (
+              <AudioPlayer
+                ref={audioRef}
+                url={audioUrl}
+                isVideo={mediaMime?.startsWith("video/") === true}
+                onTimeUpdate={setCurrentMs}
+              />
+            ) : null}
 
-      {youtubeVideoId ? (
-        <YouTubeEmbed
-          ref={youtubeFrameRef}
-          videoId={youtubeVideoId}
-          onTimeUpdate={setCurrentMs}
-        />
-      ) : null}
+            {youtubeVideoId ? (
+              <YouTubeEmbed
+                ref={youtubeFrameRef}
+                videoId={youtubeVideoId}
+                onTimeUpdate={setCurrentMs}
+              />
+            ) : null}
 
-      <div className="flex items-center justify-between gap-3">
-        <div className="transcript-tabs flex w-fit flex-wrap items-center gap-1 rounded-2xl bg-ink/5 p-1">
-          <TabButton active={tab === "transcript"} onClick={() => setTab("transcript")}>
-            {t("tabTranscript")}
-          </TabButton>
-          <TabButton active={tab === "subtitles"} onClick={() => setTab("subtitles")}>
-            {t("tabSubtitles")}
-          </TabButton>
-          {translationEnabled ? (
-            <TabButton
-              active={tab === "translation"}
-              onClick={() => {
-                if (!isPaid) {
-                  setUpgradeModal("translation");
-                  return;
-                }
-                setTab("translation");
-              }}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                {safeT(t, "tabTranslation", "Translation")}
-                {!isPaid ? (
-                  <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-accent">
-                    {safeT(t, "proBadge", "Pro")}
-                  </span>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="transcript-tabs flex w-fit max-w-full flex-wrap items-center gap-1 rounded-xl bg-ink/5 p-1">
+                <TabButton
+                  active={contentTab === "transcript"}
+                  onClick={() => setContentTab("transcript")}
+                >
+                  {t("tabTranscript")}
+                </TabButton>
+                <TabButton
+                  active={contentTab === "subtitles"}
+                  onClick={() => setContentTab("subtitles")}
+                >
+                  {t("tabSubtitles")}
+                </TabButton>
+                {translationEnabled ? (
+                  <TabButton
+                    active={contentTab === "translation"}
+                    onClick={() => {
+                      if (!isPaid) {
+                        setUpgradeModal("translation");
+                        return;
+                      }
+                      setContentTab("translation");
+                    }}
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      {safeT(t, "tabTranslation", "Translation")}
+                      {!isPaid ? (
+                        <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-accent">
+                          {safeT(t, "proBadge", "Pro")}
+                        </span>
+                      ) : null}
+                    </span>
+                  </TabButton>
                 ) : null}
-              </span>
-            </TabButton>
-          ) : null}
-          <TabButton
-            active={tab === "summary"}
-            onClick={() => {
-              if (!isPaid) {
-                setUpgradeModal("summary");
-                return;
-              }
-              setTab("summary");
-            }}
-          >
-            <span className="inline-flex items-center gap-1.5">
-              {safeT(t, "tabSummary", "AI Notes")}
-              {!isPaid ? (
-                <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-accent">
-                  {safeT(t, "proBadge", "Pro")}
-                </span>
-              ) : null}
-            </span>
-          </TabButton>
-        </div>
-        <div className="flex items-center gap-1">
-          {speakers.length > 0 ? (
-            <button
-              type="button"
-              onClick={() => onOpenSpeakerEditor()}
-              title={t("editSpeakersTitle")}
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium text-ink/65 transition hover:bg-ink/5 hover:text-ink"
-            >
-              <Users size={14} />
-              {t("speakersCount", { count: speakers.length })}
-            </button>
-          ) : null}
-          <button
-            type="button"
-            disabled
-            title={t("moreSoon")}
-            aria-label={t("more")}
-            className="rounded-md p-1.5 text-ink/40 opacity-70 cursor-not-allowed"
-          >
-            <MoreVertical size={16} />
-          </button>
-        </div>
-      </div>
+              </div>
+              <div className="flex items-center justify-end gap-1.5">
+                {speakers.length > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => onOpenSpeakerEditor()}
+                    title={t("editSpeakersTitle")}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium text-ink/60 transition hover:bg-ink/5 hover:text-ink"
+                  >
+                    <Users size={14} />
+                    <span className="hidden 2xl:inline">
+                      {t("speakersCount", { count: speakers.length })}
+                    </span>
+                  </button>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={onOpenExport}
+                  className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-card px-3 text-[12px] font-semibold text-ink/75 transition hover:border-accent/35 hover:bg-accent-soft/45 hover:text-ink"
+                >
+                  <Download size={14} />
+                  {exportT("tabExport")}
+                </button>
+              </div>
+            </div>
+          </div>
 
-      {translationEnabled && tab === "translation" ? (
-        <TranslationPanel
-          lang={translationLang}
-          languages={availableTranslationLanguages}
-          state={translationState}
-          text={translation?.text ?? ""}
-          segments={translationSegments}
-          currentMs={currentMs}
-          onChangeLang={(lang) => {
-            if (pollTimerRef.current) window.clearTimeout(pollTimerRef.current);
-            setTranslationLang(lang);
-            setTranslation(null);
-            setTranslationState("idle");
-          }}
-          onTranslate={() => loadTranslation("POST")}
-          onSeek={seekTo}
-          speakerLabel={speakerLabel}
-          onOpenSpeakerEditor={onOpenSpeakerEditor}
-        />
-      ) : tab === "summary" ? (
-        <SummaryPanel
-          state={summaryState}
-          summary={summary?.summary ?? ""}
-          error={summaryError}
-          onGenerate={() => loadSummary("POST")}
-        />
-      ) : hasSegments ? (
-        <SegmentList
-          segments={segments}
-          currentMs={currentMs}
-          onSeek={seekTo}
-          dense={tab === "subtitles"}
-          speakerLabel={speakerLabel}
-          onOpenSpeakerEditor={onOpenSpeakerEditor}
-        />
-      ) : (
-        <p className="whitespace-pre-wrap text-base leading-relaxed">
-          {compactCJKSpaces(fallbackText)}
-        </p>
-      )}
+          <div className="max-h-[70dvh] min-h-[420px] overflow-y-auto overscroll-contain p-4 sm:p-5 lg:min-h-0 lg:max-h-none lg:flex-1">
+            {translationEnabled && contentTab === "translation" ? (
+              <TranslationPanel
+                lang={translationLang}
+                languages={availableTranslationLanguages}
+                state={translationState}
+                text={translation?.text ?? ""}
+                segments={translationSegments}
+                currentMs={currentMs}
+                onChangeLang={(lang) => {
+                  if (pollTimerRef.current) window.clearTimeout(pollTimerRef.current);
+                  setTranslationLang(lang);
+                  setTranslation(null);
+                  setTranslationState("idle");
+                }}
+                onTranslate={() => loadTranslation("POST")}
+                onSeek={seekTo}
+                speakerLabel={speakerLabel}
+                onOpenSpeakerEditor={onOpenSpeakerEditor}
+              />
+            ) : hasSegments ? (
+              <SegmentList
+                segments={segments}
+                currentMs={currentMs}
+                onSeek={seekTo}
+                dense={contentTab === "subtitles"}
+                speakerLabel={speakerLabel}
+                onOpenSpeakerEditor={onOpenSpeakerEditor}
+              />
+            ) : (
+              <p className="whitespace-pre-wrap text-base leading-relaxed">
+                {compactCJKSpaces(fallbackText)}
+              </p>
+            )}
+          </div>
+        </section>
+
+        <aside className="mt-6 flex min-h-[620px] flex-col border-t border-line bg-card/55 lg:mt-0 lg:min-h-0 lg:border-t-0">
+          <div className="shrink-0 border-b border-line bg-paper/90 px-4 py-3.5 sm:px-5">
+            <div className="flex w-fit items-center gap-1 rounded-xl bg-ink/5 p-1">
+              <TabButton
+                active={aiTab === "chat"}
+                onClick={() => setAiTab("chat")}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <MessageCircle size={14} />
+                  {t("tabChat")}
+                </span>
+              </TabButton>
+              <TabButton
+                active={aiTab === "summary"}
+                onClick={() => {
+                  if (!isPaid) {
+                    setUpgradeModal("summary");
+                    return;
+                  }
+                  setAiTab("summary");
+                }}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <Sparkles size={14} />
+                  {safeT(t, "tabSummary", "AI Notes")}
+                  {!isPaid ? (
+                    <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-accent">
+                      {safeT(t, "proBadge", "Pro")}
+                    </span>
+                  ) : null}
+                </span>
+              </TabButton>
+            </div>
+          </div>
+
+          <div className="min-h-0 flex-1">
+            {aiTab === "chat" ? (
+              <TranscriptChatPanel
+                id={id}
+                canUpgrade={!isPro}
+                fillHeight
+                onUpgrade={() => setUpgradeModal("chat")}
+              />
+            ) : (
+              <div className="h-full overflow-y-auto overscroll-contain p-4 sm:p-5">
+                <SummaryPanel
+                  state={summaryState}
+                  summary={summary?.summary ?? ""}
+                  error={summaryError}
+                  onGenerate={() => loadSummary("POST")}
+                />
+              </div>
+            )}
+          </div>
+        </aside>
+      </div>
 
       <UpgradePlanModal
         reason={upgradeModal}
@@ -424,7 +477,7 @@ export function TranscriptViewer({
         checkoutSuccessPath={checkoutSuccessPath}
         onClose={() => setUpgradeModal(null)}
       />
-    </div>
+    </>
   );
 }
 

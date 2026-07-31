@@ -24,6 +24,7 @@ type Props = {
   youtubeVideoId: string | null;
   initialSpeakerNames: SpeakerNames;
   isPaid: boolean;
+  isPro: boolean;
   checkoutSuccessPath: string;
   partialTranscript: PartialTranscriptInfo | null;
 };
@@ -42,9 +43,11 @@ export function TranscriptWorkspace({
   youtubeVideoId,
   initialSpeakerNames,
   isPaid,
+  isPro,
   checkoutSuccessPath,
   partialTranscript,
 }: Props) {
+  const [exportOpen, setExportOpen] = useState(false);
   const [speakerNames, setSpeakerNames] = useState<SpeakerNames>(initialSpeakerNames);
   const [speakerModal, setSpeakerModal] = useState<{
     open: boolean;
@@ -56,35 +59,35 @@ export function TranscriptWorkspace({
   );
 
   return (
-    <div className="transcript-workspace mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
-      <section className="min-w-0">
-        <TranscriptViewer
-          id={id}
-          audioUrl={audioUrl}
-          mediaMime={mediaMime}
-          utterances={utterances}
-          paragraphs={paragraphs}
-          sentences={sentences}
-          fallbackText={fallbackText}
-          sourceLanguage={sourceLanguage}
-          youtubeUrl={youtubeUrl}
-          youtubeVideoId={youtubeVideoId}
-          speakerNames={speakerNames}
-          speakers={speakers}
-          isPaid={isPaid}
-          checkoutSuccessPath={checkoutSuccessPath}
-          partialTranscript={partialTranscript}
-          onOpenSpeakerEditor={(speaker) => setSpeakerModal({ open: true, focusSpeaker: speaker })}
-        />
-      </section>
+    <div className="transcript-workspace mt-8">
+      <TranscriptViewer
+        id={id}
+        audioUrl={audioUrl}
+        mediaMime={mediaMime}
+        utterances={utterances}
+        paragraphs={paragraphs}
+        sentences={sentences}
+        fallbackText={fallbackText}
+        sourceLanguage={sourceLanguage}
+        youtubeUrl={youtubeUrl}
+        youtubeVideoId={youtubeVideoId}
+        speakerNames={speakerNames}
+        speakers={speakers}
+        isPaid={isPaid}
+        isPro={isPro}
+        checkoutSuccessPath={checkoutSuccessPath}
+        partialTranscript={partialTranscript}
+        onOpenExport={() => setExportOpen(true)}
+        onOpenSpeakerEditor={(speaker) => setSpeakerModal({ open: true, focusSpeaker: speaker })}
+      />
 
-      <aside className="lg:sticky lg:top-6 lg:self-start">
-        <ExportPanel
-          id={id}
-          audioAvailable={audioAvailable}
-          partialTranscript={partialTranscript}
-        />
-      </aside>
+      <ExportModal
+        id={id}
+        audioAvailable={audioAvailable}
+        open={exportOpen}
+        partialTranscript={partialTranscript}
+        onClose={() => setExportOpen(false)}
+      />
 
       <SpeakerNamesModal
         id={id}
@@ -95,6 +98,77 @@ export function TranscriptWorkspace({
         onClose={() => setSpeakerModal({ open: false })}
         onSave={setSpeakerNames}
       />
+    </div>
+  );
+}
+
+function ExportModal({
+  id,
+  audioAvailable,
+  open,
+  partialTranscript,
+  onClose,
+}: {
+  id: string;
+  audioAvailable: boolean;
+  open: boolean;
+  partialTranscript: PartialTranscriptInfo | null;
+  onClose: () => void;
+}) {
+  const t = useTranslations("Dashboard.exportPanel");
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    closeRef.current?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose, open]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="export-modal-title"
+      className="surface-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-ink/35 px-4 py-4 backdrop-blur-sm sm:py-8"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className="surface-modal flex max-h-[calc(100dvh-2rem)] w-full max-w-[600px] flex-col overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_30px_80px_-35px_rgba(14,13,11,0.45)] sm:max-h-[min(760px,90dvh)]">
+        <div className="flex shrink-0 items-center justify-between border-b border-line px-5 py-4">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+              {t("tabExport")}
+            </p>
+            <h2 id="export-modal-title" className="mt-1 text-[18px] font-semibold text-ink">
+              {t("downloadTitle")}
+            </h2>
+          </div>
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            aria-label={t("closeExport")}
+            className="inline-grid size-9 place-items-center rounded-lg text-ink/55 transition hover:bg-ink/5 hover:text-ink"
+          >
+            <X size={17} />
+          </button>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
+          <ExportPanel
+            id={id}
+            audioAvailable={audioAvailable}
+            partialTranscript={partialTranscript}
+            embedded
+          />
+        </div>
+      </div>
     </div>
   );
 }
