@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { CheckCircle2, Link2, Loader2, PlaySquare } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
@@ -12,7 +11,7 @@ import {
   type Tier,
 } from "@/lib/plans";
 import { trackEvent } from "@/lib/analytics";
-import { markSignInPending } from "./Track";
+import { useLoginModal } from "./LoginModal";
 
 type YouTubeTrack = {
   id: string;
@@ -49,6 +48,7 @@ export function YouTubeImporter({
 }) {
   const t = useTranslations("Dashboard.youtube");
   const router = useRouter();
+  const { openLogin } = useLoginModal();
   const [url, setUrl] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [result, setResult] = useState<InspectResult | null>(null);
@@ -76,8 +76,7 @@ export function YouTubeImporter({
     const requestedUrl = (urlOverride ?? url).trim();
     if (!signedIn) {
       saveYouTubeOAuthUrl(requestedUrl, postSignInPath);
-      markSignInPending();
-      await signIn("google", { redirectTo: postSignInPath });
+      openLogin(postSignInPath);
       return;
     }
 

@@ -57,6 +57,21 @@
     "youtubeUsageRemaining": "{remaining} imports left",
     "youtubeUsageMeter": "{used} / {quota} YouTube imports used"
   },
+  "LoginModal": {
+    "close": "Close sign-in",
+    "eyebrow": "Free to get started",
+    "title": "Welcome to Scribix",
+    "description": "Sign in to turn recordings into accurate, speaker-labeled transcripts you can review and export.",
+    "benefitTitle": "45 free transcription minutes",
+    "benefitBody": "No credit card required. Use them whenever you need.",
+    "continueWithGoogle": "Continue with Google",
+    "signingIn": "Connecting to Google…",
+    "error": "We couldn't start Google sign-in. Please try again.",
+    "secure": "Secure",
+    "private": "Private",
+    "dataControl": "Your data stays yours",
+    "agreement": "By continuing, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+  },
   "Header": {
     "tryFree": "Try Free",
     "expandSidebar": "Open sidebar",

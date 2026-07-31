@@ -57,6 +57,21 @@
     "youtubeUsageRemaining": "残り {remaining} 件",
     "youtubeUsageMeter": "YouTube インポート {used} / {quota} 件使用"
   },
+  "LoginModal": {
+    "close": "ログイン画面を閉じる",
+    "eyebrow": "無料で始められます",
+    "title": "Scribixへようこそ",
+    "description": "ログインすると、録音を話者ラベル付きの高精度な文字起こしに変換し、確認・書き出しできます。",
+    "benefitTitle": "45分の文字起こしが無料",
+    "benefitBody": "クレジットカードは不要です。必要なときにいつでも使えます。",
+    "continueWithGoogle": "Googleで続ける",
+    "signingIn": "Googleに接続しています…",
+    "error": "Googleログインを開始できませんでした。もう一度お試しください。",
+    "secure": "安全",
+    "private": "非公開",
+    "dataControl": "データはあなたのもの",
+    "agreement": "続行すると、<terms>利用規約</terms>および<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
+  },
   "Header": {
     "tryFree": "無料で試す",
     "expandSidebar": "サイドバーを開く",

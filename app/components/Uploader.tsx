@@ -4,14 +4,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Clock3, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { trackEvent, UPLOAD_PIPELINE_VERSION } from "@/lib/analytics";
 import { AUDIO_EXTENSIONS, VIDEO_EXTENSIONS } from "@/lib/media-upload";
 import { PLANS, type Tier } from "@/lib/plans";
 import type { UploadFallbackReason, UploadPipeline } from "@/lib/upload-preflight";
+import { useLoginModal } from "./LoginModal";
 import { UpgradePlanModal } from "./UpgradePlanModal";
-import { markSignInPending } from "./Track";
 
 const DEFAULT_TOOL_SLUG = "transcribe";
 
@@ -150,6 +149,7 @@ export function useUpload({
 }: UseUploadOpts) {
   const t = useTranslations("Dashboard.uploader");
   const router = useRouter();
+  const { openLogin } = useLoginModal();
   const [phase, setPhase] = useState<UploadPhase>("idle");
   const [progress, setProgress] = useState(0);
   const [uploadError, setUploadError] = useState<UploadErrorDetail | null>(null);
@@ -237,8 +237,7 @@ export function useUpload({
       }
 
       if (!signedIn) {
-        markSignInPending();
-        await signIn("google", { redirectTo: postSignInPath });
+        openLogin(postSignInPath);
         return;
       }
       setUploadError(null);
@@ -621,7 +620,7 @@ export function useUpload({
         setUploadError(uploadFailure);
       }
     },
-    [router, signedIn, postSignInPath, audioOnly, tier, toolSlug, t]
+    [router, signedIn, postSignInPath, audioOnly, tier, toolSlug, t, openLogin]
   );
 
   useEffect(() => {

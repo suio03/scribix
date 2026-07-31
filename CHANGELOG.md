@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.24.0] - 2026-07-31
+
+### Added
+- Added a localized, responsive Google sign-in modal with free-minute messaging, trust details, legal links, loading feedback, and accessible keyboard and focus behavior.
+
+### Changed
+- Routed sidebar, new-transcript, upload, drag-and-drop, recording, and YouTube import authentication through the shared modal while preserving each flow's post-sign-in destination and analytics.
+
 ## [0.23.5] - 2026-07-29
 
 ### Added

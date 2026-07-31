@@ -57,6 +57,21 @@
     "youtubeUsageRemaining": "{remaining} Importe übrig",
     "youtubeUsageMeter": "{used} / {quota} YouTube-Importe genutzt"
   },
+  "LoginModal": {
+    "close": "Anmeldung schließen",
+    "eyebrow": "Kostenlos starten",
+    "title": "Willkommen bei Scribix",
+    "description": "Melde dich an und verwandle Aufnahmen in präzise Transkripte mit Sprecherkennzeichnung, die du prüfen und exportieren kannst.",
+    "benefitTitle": "45 kostenlose Transkriptionsminuten",
+    "benefitBody": "Keine Kreditkarte erforderlich. Nutze sie, wann immer du möchtest.",
+    "continueWithGoogle": "Weiter mit Google",
+    "signingIn": "Verbindung mit Google…",
+    "error": "Die Google-Anmeldung konnte nicht gestartet werden. Bitte versuche es erneut.",
+    "secure": "Sicher",
+    "private": "Privat",
+    "dataControl": "Deine Daten bleiben deine",
+    "agreement": "Wenn du fortfährst, stimmst du unseren <terms>Nutzungsbedingungen</terms> und unserer <privacy>Datenschutzerklärung</privacy> zu."
+  },
   "Header": {
     "tryFree": "Kostenlos testen",
     "expandSidebar": "Seitenleiste öffnen",

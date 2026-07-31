@@ -57,6 +57,21 @@
     "youtubeUsageRemaining": "{remaining} importazioni rimaste",
     "youtubeUsageMeter": "{used} / {quota} importazioni YouTube usate"
   },
+  "LoginModal": {
+    "close": "Chiudi accesso",
+    "eyebrow": "Inizia gratuitamente",
+    "title": "Benvenuto su Scribix",
+    "description": "Accedi per trasformare le registrazioni in trascrizioni precise, con riconoscimento dei parlanti, pronte da rivedere ed esportare.",
+    "benefitTitle": "45 minuti di trascrizione gratuiti",
+    "benefitBody": "Nessuna carta di credito richiesta. Usali quando vuoi.",
+    "continueWithGoogle": "Continua con Google",
+    "signingIn": "Connessione a Google…",
+    "error": "Non è stato possibile avviare l’accesso con Google. Riprova.",
+    "secure": "Sicuro",
+    "private": "Privato",
+    "dataControl": "I tuoi dati restano tuoi",
+    "agreement": "Continuando, accetti i nostri <terms>Termini di servizio</terms> e la nostra <privacy>Informativa sulla privacy</privacy>."
+  },
   "Header": {
     "tryFree": "Prova Gratis",
     "expandSidebar": "Apri sidebar",

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { signIn } from "next-auth/react";
 import {
   Upload,
   PlaySquare,
@@ -30,7 +29,7 @@ import {
 } from "./Uploader";
 import { Recorder } from "./Recorder";
 import { YouTubeImporter } from "./YouTubeImporter";
-import { markSignInPending } from "./Track";
+import { useLoginModal } from "./LoginModal";
 
 type TabId = "upload" | "youtube" | "record";
 type TabCopy = { label: string; hint: string };
@@ -218,6 +217,7 @@ function UploadPane({
   toolSlug: string;
 }) {
   const t = useTranslations("Generator.upload");
+  const { openLogin } = useLoginModal();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const {
@@ -240,10 +240,9 @@ function UploadPane({
     toolSlug,
   });
 
-  const chooseFile = async () => {
+  const chooseFile = () => {
     if (!signedIn) {
-      markSignInPending();
-      await signIn("google", { redirectTo: postSignInPath });
+      openLogin(postSignInPath);
       return;
     }
     inputRef.current?.click();
@@ -261,8 +260,7 @@ function UploadPane({
           e.preventDefault();
           setDragOver(false);
           if (!signedIn) {
-            markSignInPending();
-            void signIn("google", { redirectTo: postSignInPath });
+            openLogin(postSignInPath);
             return;
           }
           const file = e.dataTransfer.files?.[0];
@@ -300,7 +298,7 @@ function UploadPane({
             </p>
             <button
               type="button"
-              onClick={() => void chooseFile()}
+              onClick={chooseFile}
               className="group mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
             >
               <CloudUpload
@@ -313,7 +311,7 @@ function UploadPane({
             <UploadErrorHelp
               error={uploadError}
               onRetry={retry}
-              onChooseFile={() => void chooseFile()}
+              onChooseFile={chooseFile}
               checkoutSuccessPath={checkoutSuccessPath}
             />
           </>

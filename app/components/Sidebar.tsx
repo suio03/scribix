@@ -29,7 +29,7 @@ import {
   type LucideProps,
 } from "lucide-react";
 import Image from "next/image";
-import { signIn, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -37,6 +37,7 @@ import { FREE_YOUTUBE_IMPORTS_PER_DAY } from "@/lib/plans";
 import { BillingPortalButton } from "./BillingPortalButton";
 import { useSidebar } from "./SidebarContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useLoginModal } from "./LoginModal";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import type { SidebarUsage } from "./sidebarUsage";
@@ -373,6 +374,7 @@ export function Sidebar({
   const t = useTranslations("Sidebar");
   const billingPortalT = useTranslations("Dashboard.billingPortal");
   const pathname = usePathname();
+  const { openLogin } = useLoginModal();
   const { isOpen, isCollapsed, setOpen, setCollapsed } = useSidebar();
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
@@ -549,7 +551,7 @@ export function Sidebar({
               type="button"
               onClick={() => {
                 closeAfterNavigate();
-                signIn("google", { redirectTo: newTranscriptRedirect });
+                openLogin(newTranscriptRedirect);
               }}
               title={t("newTranscript")}
               className={`flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-paper transition hover:opacity-90 ${
@@ -783,7 +785,7 @@ export function Sidebar({
             ) : (
               <button
                 type="button"
-                onClick={() => signIn("google", { redirectTo: signInRedirect })}
+                onClick={() => openLogin(signInRedirect)}
                 title={t("signIn")}
                 className={`inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-[13px] font-medium text-ink transition hover:bg-paper ${
                   isCollapsed ? "lg:size-9 lg:justify-center lg:px-0 lg:py-0" : ""

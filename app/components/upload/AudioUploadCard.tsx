@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { signIn } from "next-auth/react";
 import { CloudUpload, FileAudio } from "lucide-react";
 import {
   PartialTranscriptModal,
@@ -9,7 +8,7 @@ import {
   UploadErrorHelp,
   useUpload,
 } from "@/app/components/Uploader";
-import { markSignInPending } from "@/app/components/Track";
+import { useLoginModal } from "@/app/components/LoginModal";
 import { trackEvent } from "@/lib/analytics";
 import type { Tier } from "@/lib/plans";
 
@@ -39,6 +38,7 @@ export function AudioUploadCard({
   toolSlug?: string;
   tier?: Tier;
 }) {
+  const { openLogin } = useLoginModal();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const {
@@ -67,11 +67,10 @@ export function AudioUploadCard({
     trackEvent("landing_cta_impression", { tool_slug: toolSlug });
   }, [toolSlug]);
 
-  const chooseFile = async () => {
+  const chooseFile = () => {
     trackEvent("landing_cta_click", { tool_slug: toolSlug, signed_in: signedIn });
     if (!signedIn) {
-      markSignInPending();
-      await signIn("google", { redirectTo: postSignInPath });
+      openLogin(postSignInPath);
       return;
     }
     inputRef.current?.click();
@@ -106,8 +105,7 @@ export function AudioUploadCard({
               setDragOver(false);
               trackEvent("landing_cta_click", { tool_slug: toolSlug, signed_in: signedIn });
               if (!signedIn) {
-                markSignInPending();
-                void signIn("google", { redirectTo: postSignInPath });
+                openLogin(postSignInPath);
                 return;
               }
               const file = e.dataTransfer.files?.[0];
@@ -142,7 +140,7 @@ export function AudioUploadCard({
                 </p>
                 <button
                   type="button"
-                  onClick={() => void chooseFile()}
+                  onClick={chooseFile}
                   className="group mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
                 >
                   <CloudUpload
@@ -158,7 +156,7 @@ export function AudioUploadCard({
                 <UploadErrorHelp
                   error={uploadError}
                   onRetry={retry}
-                  onChooseFile={() => void chooseFile()}
+                  onChooseFile={chooseFile}
                   checkoutSuccessPath={postSignInPath}
                 />
               </>

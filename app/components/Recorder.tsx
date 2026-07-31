@@ -2,10 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Mic, Pause, Play, Square, Trash2, Upload } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { ProgressView, UploadErrorHelp, useUpload, type UseUploadOpts } from "./Uploader";
-import { markSignInPending } from "./Track";
+import { useLoginModal } from "./LoginModal";
 
 const MAX_RECORDING_SEC = 30 * 60;
 
@@ -13,6 +12,7 @@ type RecState = "idle" | "recording" | "paused" | "reviewing";
 
 export function Recorder(props: UseUploadOpts) {
   const t = useTranslations("Dashboard.recorder");
+  const { openLogin } = useLoginModal();
   const { phase, progress, uploadError, errorMsg, filename, onPick, retry } = useUpload(props);
   const [recState, setRecState] = useState<RecState>("idle");
   const [seconds, setSeconds] = useState(0);
@@ -73,8 +73,7 @@ export function Recorder(props: UseUploadOpts) {
   async function start() {
     setRecError(null);
     if (!props.signedIn) {
-      markSignInPending();
-      await signIn("google", { redirectTo: props.postSignInPath ?? "/dashboard/new" });
+      openLogin(props.postSignInPath ?? "/dashboard/new");
       return;
     }
     try {
