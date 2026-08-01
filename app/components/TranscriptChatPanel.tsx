@@ -14,9 +14,15 @@ import {
 } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import {
+  trackEvent,
+  type AskAiQuestionSource,
+  type AskAiTranscriptSource,
+} from "@/lib/analytics";
+import {
   AI_CHAT_HISTORY_PAGE_SIZE,
   AI_CHAT_QUESTION_CHAR_LIMIT,
   PLANS,
+  type Tier,
 } from "@/lib/plans";
 
 type ChatMessage = {
@@ -58,11 +64,15 @@ export function TranscriptChatPanel({
   canUpgrade,
   fillHeight = false,
   onUpgrade,
+  planTier,
+  transcriptSource,
 }: {
   id: string;
   canUpgrade: boolean;
   fillHeight?: boolean;
   onUpgrade: () => void;
+  planTier: Tier;
+  transcriptSource: AskAiTranscriptSource;
 }) {
   const t = useTranslations("Dashboard.viewer");
   const format = useFormatter();
@@ -142,6 +152,8 @@ export function TranscriptChatPanel({
 
   async function sendQuestion(questionOverride?: string) {
     const submittedQuestion = (questionOverride ?? question).trim();
+    const questionSource: AskAiQuestionSource =
+      questionOverride === undefined ? "typed" : "starter";
     if (
       loading ||
       sending ||
@@ -156,6 +168,13 @@ export function TranscriptChatPanel({
     setQuestion(submittedQuestion);
     setSending(true);
     setError(null);
+    const analyticsContext = {
+      plan_tier: planTier,
+      question_source: questionSource,
+      transcript_source: transcriptSource,
+    } as const;
+    trackEvent("ask_ai_question_submitted", analyticsContext);
+    let failureTracked = false;
 
     try {
       const response = await fetch(`/api/transcripts/${id}/chat`, {
@@ -165,7 +184,14 @@ export function TranscriptChatPanel({
       });
       const payload = (await readJson(response)) as (ChatResponse & ErrorPayload) | null;
       if (!response.ok || !payload?.answer) {
+        const errorCode = chatErrorCode(response, payload?.error);
+        trackEvent("ask_ai_answer_failed", {
+          ...analyticsContext,
+          error_code: errorCode,
+        });
+        failureTracked = true;
         if (payload?.error === "ai_quota_exceeded") {
+          trackEvent("ask_ai_quota_reached", analyticsContext);
           setUsed(payload.cap ?? cap);
           setResetAt(payload.resetAt ?? null);
         }
@@ -197,7 +223,22 @@ export function TranscriptChatPanel({
       setTranscriptTruncated((current) => current || payload.transcriptTruncated);
       setHistoryTruncated((current) => current || payload.historyTruncated);
       setQuestion("");
+      trackEvent("ask_ai_answer_succeeded", {
+        ...analyticsContext,
+        answer_truncated: payload.answerTruncated,
+        transcript_truncated: payload.transcriptTruncated,
+        history_truncated: payload.historyTruncated,
+      });
+      if (payload.remaining === 0) {
+        trackEvent("ask_ai_quota_reached", analyticsContext);
+      }
     } catch (sendError) {
+      if (!failureTracked) {
+        trackEvent("ask_ai_answer_failed", {
+          ...analyticsContext,
+          error_code: "network_error",
+        });
+      }
       setError(sendError instanceof Error ? sendError.message : t("chatError"));
     } finally {
       setSending(false);
@@ -219,6 +260,10 @@ export function TranscriptChatPanel({
       setHasOlder(false);
       setAnswerTruncated(false);
       setHistoryTruncated(false);
+      trackEvent("ask_ai_chat_cleared", {
+        plan_tier: planTier,
+        transcript_source: transcriptSource,
+      });
     } catch (clearError) {
       setError(clearError instanceof Error ? clearError.message : t("chatClearError"));
     } finally {
@@ -366,7 +411,13 @@ export function TranscriptChatPanel({
             {canUpgrade ? (
               <button
                 type="button"
-                onClick={onUpgrade}
+                onClick={() => {
+                  trackEvent("ask_ai_upgrade_clicked", {
+                    plan_tier: planTier,
+                    transcript_source: transcriptSource,
+                  });
+                  onUpgrade();
+                }}
                 className="rounded-lg bg-accent px-3 py-1.5 text-[12px] font-semibold text-white transition hover:bg-accent/90"
               >
                 {t("chatUpgrade")}
@@ -427,6 +478,11 @@ export function TranscriptChatPanel({
       </div>
     </div>
   );
+}
+
+function chatErrorCode(response: Response, providerCode?: string): string {
+  if (providerCode) return providerCode;
+  return response.ok ? "invalid_response" : `http_${response.status}`;
 }
 
 function ChatBubble({ message }: { message: ChatMessage }) {

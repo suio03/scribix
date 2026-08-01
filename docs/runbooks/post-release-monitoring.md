@@ -2,12 +2,15 @@
 
 Use this runbook for the first seven complete days after the repaired upload pipeline is deployed. The current code identifies this release as `upload_pipeline_version=2026-07-25.1`.
 
-Release `0.18.1` (commit `30f4b0a`) remains the original repaired-upload baseline. Release `0.20.0` (commit `4b79377`) simplified new purchases to Pro with 2,400 minutes reset monthly, and `0.20.1` (commit `36f6c86`) centralized localized application structure. Release `0.21.0` (commit `1eba679`) changes the upload pipeline version and adds explicit Free partial transcription, unknown-duration audio fallback, durable partial-result labels, quota-settlement guards, and recording-duration fixes. Release `0.22.0` (commit `2df9770`) adds multi-browser extension packaging and token authentication without changing the upload pipeline version. Production migrations `0016` through `0019` were applied on 2026-07-22; additive migrations `0020_partial_transcripts.sql` and `0021_extension_auth_tokens.sql` were applied remotely on 2026-07-25. Confirm the Cloudflare deployment is healthy before treating the next complete Melbourne calendar day as day 1.
+Release `0.25.0` (commit `f6c1ca9`) adds transcript Ask AI, tiered question allowances, and AI token/cost accounting without changing the upload pipeline version. Production D1 is migrated through `0024_ai_usage_events.sql` as of 2026-08-01. Confirm the Cloudflare deployment is healthy before treating the next complete Melbourne calendar day as day 1.
 
 ## Prerequisites
 
-- Deploy the application and confirm migrations `0016` through `0021` are applied to the production D1 database.
+- Deploy the application and confirm migrations `0016` through `0024` are applied to the production D1 database.
 - Create the configured Scribix custom events in Plausible. `checkout_completed` is a conversion event; revenue stays in Paddle.
+- Include `ask_ai_question_submitted`, `ask_ai_answer_succeeded`,
+  `ask_ai_answer_failed`, `ask_ai_quota_reached`, `ask_ai_upgrade_clicked`, and
+  `ask_ai_chat_cleared`; Ask AI deliberately has no opened event.
 - Keep `/Users/laughingli/Documents/side-projects/tracking/projects.json` aligned with `lib/analytics.ts`.
 - Add `BING_WEBMASTER_API_KEY` to `tracking/.env.local` after Scribix is verified in Bing Webmaster Tools.
 
@@ -44,10 +47,31 @@ Record these results once per day:
 | Partial confirm → transcription started | ≥95% | Any sustained gap after excluding submit-uncertain recovery |
 | Checkout opened → completed | Directional until volume grows | A client completion without a ledger match |
 | Direct upload P50/P90 | Establish baseline | P90 grows by >50% for two days |
+| Ask AI submitted → success | Establish baseline | Outcomes no longer reconcile with submitted questions |
+| Ask AI quota → upgrade click | Establish baseline | Event properties contain content or identifiers |
 
 Also review `transcribe_fail` by `error_type`, `error_code`, `step`, `tool_slug`, `upload_mode`, `fallback_reason`, `retryable`, and `upload_pipeline_version`. Keep business-limit rejections separate from technical failures. Build the Free partial funnel from `partial_transcript_offer_shown`, `partial_transcript_confirmed`, `partial_transcription_started`, and `partial_transcript_upgrade_clicked`; segment unknown duration with `duration_unknown`, and inspect `upload_size_cap_rejected` separately from quota decisions.
 
 For the AI Note Taker landing page, segment `tool_visit`, transcription events, and YouTube inspect/import events by `tool_slug=ai-note-taker`. Treat missing `tool_slug` as an instrumentation defect rather than zero conversion.
+
+## Ask AI cost check
+
+Use the retained usage ledger for cost and cache analysis; it intentionally does
+not contain question, answer, or transcript text:
+
+```bash
+npx wrangler d1 execute scribix-db --remote --command "SELECT date(created_at) AS day, plan_tier, model, COUNT(*) AS requests, SUM(input_tokens) AS input_tokens, SUM(cached_input_tokens) AS cached_input_tokens, ROUND(100.0 * SUM(cached_input_tokens) / NULLIF(SUM(input_tokens), 0), 2) AS cached_input_pct, SUM(output_tokens) AS output_tokens, ROUND(SUM(estimated_total_cost_microusd) / 1000000.0, 6) AS estimated_usd FROM ai_usage_events WHERE feature = 'transcript_chat' GROUP BY day, plan_tier, model ORDER BY day DESC, plan_tier, model"
+```
+
+Treat `cached_input_tokens = 0` as a cache miss, not an instrumentation failure.
+Compare cost per successful question and per plan before changing allowances or
+pricing; keep failed rows visible because provider failures can still report
+billable token usage.
+
+In Plausible, segment Ask AI by `plan_tier`, `question_source`, and
+`transcript_source`; use truncation flags and stable `error_code` for reliability.
+Do not add user/transcript IDs, titles, language text, questions, answers, or
+token counts to client analytics.
 
 ## Payment ownership checks
 
@@ -81,6 +105,11 @@ Before deployment, and again against production after deployment, verify:
 - Record: start, pause, stop-while-paused, resume, preview, discard, upload, permission denial, and unsupported-browser messaging; paused wall-clock time must not increase the uploaded duration.
 - YouTube: URL survives OAuth, inspect resumes, import does not run automatically, plan limits are correct, and events retain the originating `tool_slug`.
 - AI Notes and translation: Free read and generation requests return the upgrade boundary; Pro and grandfathered Starter retain access.
+- Ask AI: a starter and follow-up answer from the current transcript, persisted
+  history survives refresh, clearing removes messages without refunding quota,
+  Free/grandfathered Starter (`basic`) and Pro boundaries behave as configured,
+  and `ai_usage_events` records input/cached/output tokens plus estimated cost
+  without prompt content.
 - Checkout: new purchase UI offers Pro only, defaults to $120 yearly, allows $20 monthly, and sends the matching live price ID. Verify completed, closed, and failed paths; the completed transaction appears once in the ownership records and no amount is sent to Plausible.
 - SEO: `/sitemap.xml`, `/robots.txt`, canonical/hreflang, `/ai-note-taker`, English plus at least one localized page; legal sitemap entries have no localized alternates.
 

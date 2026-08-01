@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.25.1] - 2026-08-01
+
+### Added
+- Added anonymous Ask AI product events for submitted questions, answer outcomes, quota transitions, upgrade clicks, and cleared conversations, segmented only by safe plan, source, truncation, and error metadata.
+
+### Changed
+- Updated Ask AI setup, architecture, launch, and monitoring guidance with production smoke checks plus token, cache, and estimated-cost queries.
+
+### Fixed
+- Isolated Plausible and Clarity failures so third-party analytics cannot interrupt the Chat request or other measured product actions.
+
 ## [0.25.0] - 2026-08-01
 
 ### Added

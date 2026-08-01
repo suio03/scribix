@@ -5,6 +5,7 @@ import { getPathname, Link } from "@/i18n/navigation";
 import { redirect } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
+import type { AskAiTranscriptSource } from "@/lib/analytics";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { parseSpeakerNames } from "@/lib/speaker-names";
 import { TranscriptWorkspace } from "@/app/components/TranscriptWorkspace";
@@ -47,7 +48,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
       transcript_r2_key: string | null;
       audio_r2_key: string | null;
       speaker_names_json: string | null;
-      source: string | null;
+      source: "upload" | "record" | "youtube" | null;
       youtube_url: string | null;
       youtube_video_id: string | null;
       mime_type: string | null;
@@ -138,6 +139,8 @@ export default async function TranscriptViewerPage({ params }: Params) {
           initialSpeakerNames={parseSpeakerNames(row.speaker_names_json)}
           isPaid={user.tier !== "free"}
           isPro={user.tier === "pro"}
+          planTier={user.tier}
+          transcriptSource={analyticsTranscriptSource(row.source)}
           checkoutSuccessPath={checkoutSuccessPath}
           partialTranscript={partial}
         />
@@ -146,6 +149,14 @@ export default async function TranscriptViewerPage({ params }: Params) {
       )}
     </main>
   );
+}
+
+function analyticsTranscriptSource(
+  source: "upload" | "record" | "youtube" | null
+): AskAiTranscriptSource {
+  if (source === "youtube") return "youtube";
+  if (source === "record") return "recording";
+  return "upload";
 }
 
 const AUDIO_TTL_MS = 14 * 24 * 60 * 60 * 1000;

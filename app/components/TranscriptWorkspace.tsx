@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { AaiSegment } from "@/lib/aai";
+import type { AskAiTranscriptSource } from "@/lib/analytics";
+import type { Tier } from "@/lib/plans";
 import type { SpeakerNames } from "@/lib/speaker-names";
 import { ExportPanel } from "./ExportPanel";
 import { TranscriptViewer } from "./TranscriptViewer";
@@ -25,6 +27,8 @@ type Props = {
   initialSpeakerNames: SpeakerNames;
   isPaid: boolean;
   isPro: boolean;
+  planTier: Tier;
+  transcriptSource: AskAiTranscriptSource;
   checkoutSuccessPath: string;
   partialTranscript: PartialTranscriptInfo | null;
 };
@@ -44,6 +48,8 @@ export function TranscriptWorkspace({
   initialSpeakerNames,
   isPaid,
   isPro,
+  planTier,
+  transcriptSource,
   checkoutSuccessPath,
   partialTranscript,
 }: Props) {
@@ -75,6 +81,8 @@ export function TranscriptWorkspace({
         speakers={speakers}
         isPaid={isPaid}
         isPro={isPro}
+        planTier={planTier}
+        transcriptSource={transcriptSource}
         checkoutSuccessPath={checkoutSuccessPath}
         partialTranscript={partialTranscript}
         onOpenExport={() => setExportOpen(true)}

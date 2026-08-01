@@ -13,8 +13,8 @@ the one-time items that are already verified and unchanged.
 - [ ] `wrangler.jsonc` `vars` block has prod URLs.
 - [ ] `EDGE_EXTENSION_ID` matches the current Microsoft Partner Center CRX ID.
 - [ ] `NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` has the intended build-time value before deploy, or is intentionally omitted to use the enabled default.
-- [ ] `db:migrate:remote` applied; for release `0.22.0+`, confirm both
-  `0020_partial_transcripts.sql` and `0021_extension_auth_tokens.sql` are listed
+- [ ] `db:migrate:remote` applied; for release `0.25.0+`, confirm migrations
+  `0020_partial_transcripts.sql` through `0024_ai_usage_events.sql` are listed
   as applied.
 - [ ] `npm run deploy:cleanup` deployed the hourly cleanup Worker and its cron is visible in Cloudflare.
 
@@ -58,6 +58,24 @@ the one-time items that are already verified and unchanged.
   and confirm the same file can be selected again without automatic upload.
 - [ ] On a completed transcript, Free opens the AI Notes upgrade flow; Pro and
   grandfathered Starter generate an overview, key points, and action items.
+- [ ] On a completed transcript, Ask AI opens by default beside the transcript;
+  a starter sends immediately, a custom follow-up survives refresh, and clearing
+  the conversation removes messages without restoring allowance.
+- [ ] Free/grandfathered Starter (`basic`) Ask AI stops after 3 lifetime
+  questions; Pro stops at 300 for the current allowance period and shows its
+  reset date. A controlled provider failure refunds the reserved question.
+- [ ] Ask a supported fact, an absent fact, and a transcript containing an
+  embedded instruction. Answers stay grounded, absent facts are identified as
+  missing, and transcript text cannot override the system instructions.
+- [ ] Confirm a successful Ask AI request creates one `ai_usage_events` row with
+  input, cached-input, output, total token, and estimated-cost fields. A zero
+  cached-input value is valid because cache hits are best effort.
+- [ ] Confirm Plausible receives `ask_ai_question_submitted` followed by exactly
+  one answer outcome. Verify starter/typed, plan, transcript source, truncation,
+  and error properties without IDs, titles, questions, answers, or transcript text.
+- [ ] Confirm `ask_ai_quota_reached`, `ask_ai_upgrade_clicked`, and
+  `ask_ai_chat_cleared` fire only on the corresponding transition or action;
+  loading the default Ask AI panel must not emit an opened event.
 - [ ] Upload a video just over 1 GiB → multipart completes → AssemblyAI accepts
   the original video → transcript renders and media playback works.
 - [ ] Test Free rejection over 2 GiB and paid acceptance near the 4.9 billion-byte cap.
@@ -77,9 +95,11 @@ the one-time items that are already verified and unchanged.
   verify account status, PKCE sign-in return, sign-out/revocation, transcript
   generation, exports, quota errors, and paid AI summary.
 - [ ] Hit `https://scribix.io/sitemap.xml` and `/robots.txt` — both serve.
-- [ ] Soft-delete a transcript → audio + JSON disappear from R2; row hidden.
+- [ ] Soft-delete a transcript → audio + JSON and `ai_chat_messages` disappear;
+  row is hidden and matching usage rows retain cost data with `transcript_id=NULL`.
 - [ ] Soft-delete an account from `/dashboard/account` → user signed out;
-  D1 row marked `deleted_at`.
+  D1 row is marked `deleted_at`, private chat messages are deleted, and retained
+  usage rows have identifying IDs cleared.
 
 ## §16 open items (resolve before announcing)
 
@@ -115,3 +135,7 @@ the one-time items that are already verified and unchanged.
 - [ ] Watch the Discord error and checkout channels for the first hour after
   announcing.
 - [ ] First failed transcription should fire a `transcription_failed` alert.
+- [ ] Review Ask AI success/failure logs and aggregate `ai_usage_events` token,
+  cache, and estimated-cost fields without inspecting user question content.
+- [ ] Compare `ask_ai_question_submitted` with success/failure outcomes and
+  review starter-vs-typed plus quota-to-upgrade behavior in Plausible.

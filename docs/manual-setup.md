@@ -174,7 +174,7 @@ For deployed environments, set the same secret on the Worker:
 npx wrangler secret put ASSEMBLYAI_API_KEY
 ```
 
-### 2.3 OpenAI API key for AI Notes (blocking)
+### 2.3 OpenAI API key for AI Notes and Ask AI (blocking)
 
 1. https://platform.openai.com/api-keys → **Create new secret key**.
 2. Copy the key.
@@ -187,6 +187,10 @@ For deployed environments, set the same secret on the Worker:
 ```sh
 npx wrangler secret put OPENAI_API_KEY
 ```
+
+The same key serves paid AI Notes and transcript Ask AI. Ask AI messages,
+allowance counters, and token/cost usage events require D1 migrations `0022`
+through `0024`; the Phase 0 migration commands apply them automatically.
 
 ### 2.4 Direct-video build switch
 
@@ -459,7 +463,10 @@ Public/non-secret vars go in `wrangler.jsonc` under `vars`:
 }
 ```
 
-### 7.4 First-time prod migration
+### 7.4 Production migrations
+
+Run this before every deployment that introduces unapplied migrations, not only
+the first production setup:
 
 ```sh
 npm run db:migrate:remote
@@ -484,7 +491,7 @@ ASSEMBLYAI_WEBHOOK_URL=http://localhost:3000/api/webhook/assemblyai
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED=true
 
-# OpenAI (AI Notes)
+# OpenAI (AI Notes + transcript Ask AI)
 OPENAI_API_KEY=
 
 # R2 presign (Phase 2)

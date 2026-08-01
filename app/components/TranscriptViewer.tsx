@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, Languages, MessageCircle, Pause, Play, Sparkles, Users, Volume2, VolumeX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { AaiSegment } from "@/lib/aai";
+import type { AskAiTranscriptSource } from "@/lib/analytics";
+import type { Tier } from "@/lib/plans";
 import { compactCJKSpaces } from "@/lib/transcript-format";
 import { UpgradePlanModal, type UpgradeReason } from "./UpgradePlanModal";
 import { TranscriptChatPanel } from "./TranscriptChatPanel";
@@ -73,6 +75,8 @@ type Props = {
   speakers: string[];
   isPaid: boolean;
   isPro: boolean;
+  planTier: Tier;
+  transcriptSource: AskAiTranscriptSource;
   checkoutSuccessPath: string;
   onOpenExport: () => void;
   onOpenSpeakerEditor: (speaker?: string) => void;
@@ -93,6 +97,8 @@ export function TranscriptViewer({
   speakers,
   isPaid,
   isPro,
+  planTier,
+  transcriptSource,
   checkoutSuccessPath,
   onOpenExport,
   onOpenSpeakerEditor,
@@ -456,6 +462,8 @@ export function TranscriptViewer({
                 canUpgrade={!isPro}
                 fillHeight
                 onUpgrade={() => setUpgradeModal("chat")}
+                planTier={planTier}
+                transcriptSource={transcriptSource}
               />
             ) : (
               <div className="h-full overflow-y-auto overscroll-contain p-4 sm:p-5">

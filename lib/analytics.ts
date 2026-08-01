@@ -1,3 +1,8 @@
+import type { Tier } from "@/lib/plans";
+
+export type AskAiQuestionSource = "starter" | "typed";
+export type AskAiTranscriptSource = "upload" | "recording" | "youtube";
+
 export type PlausibleEvents = {
   tool_visit: { tool_slug: string };
   landing_cta_impression: { tool_slug: string };
@@ -86,6 +91,18 @@ export type PlausibleEvents = {
     error_type: "technical" | "product_limit" | "quota" | "auth" | "user_input";
     error_code: string;
   };
+  ask_ai_question_submitted: AskAiQuestionEventProps;
+  ask_ai_answer_succeeded: AskAiQuestionEventProps & {
+    answer_truncated: boolean;
+    transcript_truncated: boolean;
+    history_truncated: boolean;
+  };
+  ask_ai_answer_failed: AskAiQuestionEventProps & {
+    error_code: string;
+  };
+  ask_ai_quota_reached: AskAiQuestionEventProps;
+  ask_ai_upgrade_clicked: AskAiContextEventProps;
+  ask_ai_chat_cleared: AskAiContextEventProps;
   signin_success: { method?: string };
   download_click: { format: string };
   checkout_click: {
@@ -140,6 +157,15 @@ export type PlausibleEvents = {
     error_message?: string;
     paddle_status?: number;
   };
+};
+
+type AskAiContextEventProps = {
+  plan_tier: Tier;
+  transcript_source: AskAiTranscriptSource;
+};
+
+type AskAiQuestionEventProps = AskAiContextEventProps & {
+  question_source: AskAiQuestionSource;
 };
 
 type DirectVideoEventProps = {
@@ -240,6 +266,17 @@ export function trackEvent<K extends keyof PlausibleEvents>(
 ) {
   if (typeof window === "undefined") return;
 
-  window.plausible?.(eventName, { props: props ?? ({} as PlausibleEvents[K]) });
-  sendToClarity(eventName, props);
+  try {
+    window.plausible?.(eventName, {
+      props: props ?? ({} as PlausibleEvents[K]),
+    });
+  } catch {
+    // Analytics must never block the product action being measured.
+  }
+
+  try {
+    sendToClarity(eventName, props);
+  } catch {
+    // Keep each analytics sink independent and best effort.
+  }
 }

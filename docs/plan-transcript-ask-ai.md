@@ -1,6 +1,6 @@
 # Scribix Transcript Ask AI 实施计划（极简 v1）
 
-> 状态：本地实现完成；待登录态质量手测、Remote D1 migration 与生产部署
+> 状态：v1 已于 2026-08-01 合并并推送到 `main`（`f6c1ca9`）；Remote D1 migrations `0022`–`0024` 已应用，待确认生产部署健康并完成登录态冒烟测试
 > 创建日期：2026-07-31
 > 本期范围：所有用户对当前 Transcript 提问并得到回答；Free / grandfathered Basic 各有终身 3 次体验额度
 > 完整版设计（citations、多 Chat、rolling summary、Collection 预留）已归档，等 v1 有真实使用数据后再按需回补
@@ -22,8 +22,8 @@
 - `ai_chat_requests` 表、reservation 状态机、幂等 request id、过期恢复任务。
 - Collection 预留字段、embedding、向量检索。要做 Collection 时再单独建表。
 - Structured Output schema。回答就是文本。
-- 精细化 `prompt_cache_key` 与 content version hash（自动 prompt caching 可能命中；缓存是 best effort，不进成本模型）。
-- 独立 eval harness、bucket 化 analytics 事件。用结构化 `console.info` 日志观察，和现有 Summary 一致。
+- transcript content version hash 与跨版本缓存失效策略。v1 已使用不含用户内容的稳定 `prompt_cache_key`；自动缓存仍是 best effort。
+- 独立 eval harness 与复杂 bucket 化分析。v1 只记录匿名的提交、结果、额度、升级和清空漏斗，不记录任何用户内容或 ID。
 - 流式输出。
 - Credits、AI Add-on、按量计费。
 
@@ -35,7 +35,7 @@
 - 模型 `gpt-5.4-nano`，`reasoning.effort: "none"`，`store: false`。
 - Summary 继续用 `gpt-5-nano`，本项目不动。
 
-## 4. 数据模型：一张表 + 两列
+## 4. 数据模型：聊天表、用量表 + 两列
 
 ### 4.1 新表 `ai_chat_messages`
 
@@ -81,12 +81,18 @@ Pro 周期计数器必须同步改以下**五处**，漏一个额度就会永久
 - 删除 Transcript（`app/api/transcripts/[id]/route.ts` 的 `DELETE`）：在现有 `env.DB.batch([...])` 里加一条 `DELETE FROM ai_chat_messages WHERE transcript_id = ?1`，和 `transcript_summaries` / `transcript_translations` 并列。
 - 删除 Account（`app/api/account/route.ts`）：当前只做 soft delete，**不清理关联表**。这里需要新增一条 `DELETE FROM ai_chat_messages WHERE user_id = ?1`（chat 内容是隐私敏感的，必须硬删）。这是新行为，不是复用。
 
+### 4.4 通用 AI 用量账本
+
+Migration `0024_ai_usage_events.sql` 新增 `ai_usage_events`，按请求保存 model、状态、input / cached input / output / reasoning / total tokens、当时单价和预估费用。它不保存问题、回答或 transcript 原文。
+
+清空对话不删除用量记录；删除 Transcript 或 Account 时只清空用量记录中的关联 ID，保留匿名化成本历史。用量写入是 best effort，记账失败不得让已经生成的回答失败。
+
 ## 5. API：一个 route 文件
 
 `app/api/transcripts/[id]/chat/route.ts`
 
 - `GET` → 最近 200 条 `{ messages, hasOlder, used, cap, resetAt }`
-- `POST { question }` → 预扣额度、调 OpenAI、成功后 batch 保存 user / assistant 两条 message，返回 `{ answer, remaining }`
+- `POST { question }` → 预扣额度、调 OpenAI、成功后 batch 保存 user / assistant 两条 message，返回 `{ answer, used, cap, remaining, resetAt, answerTruncated, transcriptTruncated, historyTruncated }`
 - `DELETE` → 清空该 Transcript 的对话
 
 每个 handler 的开头照抄 `app/api/transcripts/[id]/summary/route.ts:14-33` 的模式：`auth()` → `getOrCreateCurrentUser` → 读 transcript 行 → 校验 `user_id` → 校验 `status === "completed"`。
@@ -203,6 +209,8 @@ Transcript 页面采用双栏工作区：
 - [x] `aiQuestionsFor(tier, cycle)` 返回 Free / Basic 3、Pro 300
 - [x] `lib/openai-chat.ts`
 - [x] `app/api/transcripts/[id]/chat/route.ts`
+- [x] `ai_usage_events` 通用 token / cached token / 成本账本
+- [x] 匿名 `ask_ai_*` 产品漏斗：提交、成功、失败、额度、升级、清空
 - [x] Transcript 删除 + Account 删除的 cleanup
 - [x] 本地 migrations
 - [ ] 登录态手测：Free / Basic 终身 3 次、Pro 周期 300 次、额度扣减与失败回退
@@ -217,6 +225,7 @@ Transcript 页面采用双栏工作区：
 ### 步骤 3：发布门
 
 - [x] `npm run check-locales`
+- [x] `npx tsc --noEmit`
 - [x] `npm run build`
 - [ ] 手测：音频 / 视频 / YouTube 三种来源的 Transcript
 - [ ] 手测：删除对话、删除 Transcript、删除账号后 chat 内容确实没了
@@ -228,7 +237,10 @@ Transcript 页面采用双栏工作区：
   - 超出最近 N 轮窗口的历史追问 → 行为可预期，不假装记得。
 - [x] 更新 Privacy 页面：说明问题与 Transcript 会发给 OpenAI、Scribix 保存对话、用户可删除
 - [x] 日志确认：模型、input tokens、`usage.input_tokens_details.cached_tokens`、output tokens、延迟、错误 code 有记录（不记录问题、回答、transcript 原文）。`lib/openai-summary.ts` 现有的 `OpenAIResponse` 类型里没有 `input_tokens_details`，新 client 要加上，否则算不出真实成本和缓存命中率。
-- [ ] Remote D1 migration 与生产部署需要单独明确授权
+- [x] Plausible / Clarity 事件只发送 `plan_tier`、`question_source`、`transcript_source`、截断标志和稳定 `error_code`；不发送 user/transcript ID、标题、问题或回答
+- [x] Remote D1 migrations `0022`–`0024` 已于 2026-08-01 应用
+- [x] `0.25.0` 已提交并推送到 `origin/main`（`f6c1ca9`）
+- [ ] 确认自动生产部署健康，并完成生产登录态冒烟测试
 
 ## 10. 上线后再看
 
@@ -249,9 +261,9 @@ Transcript 页面采用双栏工作区：
 
 缓存是 best effort（TTL 只有几分钟到一小时量级，跨天提问必然 miss），不能当成本模型的兜底。v1 先靠日志观察每用户成本 P95 与缓存命中率，异常再加每周期成本上限。价格实施前以官方 pricing 页为准。
 
-## 11. 实施前需要核对
+## 11. 实施前核对结果
 
-`gpt-5.4-nano` 的定价、最大输入、`reasoning.effort: "none"` 支持情况必须在写代码前核对官方文档——模型选型不成立的话整个成本假设作废。
+`gpt-5.4-nano` 的定价、最大输入和 `reasoning.effort: "none"` 支持情况已在 2026-08-01 对照官方文档核对。实际计费常量记录在 `lib/ai-usage.ts`，日后调整模型时必须同步核对并更新定价快照。
 
 - https://developers.openai.com/api/docs/models/gpt-5.4-nano
 - https://developers.openai.com/api/docs/pricing
