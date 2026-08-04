@@ -44,6 +44,20 @@ export function Partners() {
             className="block h-9 w-auto"
           />
         </a>
+        <a
+          href="https://fazier.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Scribix launched on Fazier"
+        >
+          <img
+            src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=neutral"
+            alt="Fazier badge"
+            width="120"
+            height="36"
+            className="block h-9 w-auto"
+          />
+        </a>
       </div>
     </div>
   );

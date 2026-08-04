@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.25.2] - 2026-08-04
+
+### Added
+- Added a Fazier launch badge to the partner section on localized public homepages.
+
+### Changed
+- Updated the Ask AI implementation plan and post-release runbook to reference the current `0.25.1` production baseline.
+
 ## [0.25.1] - 2026-08-01
 
 ### Added

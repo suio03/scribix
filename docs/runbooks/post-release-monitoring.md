@@ -2,7 +2,7 @@
 
 Use this runbook for the first seven complete days after the repaired upload pipeline is deployed. The current code identifies this release as `upload_pipeline_version=2026-07-25.1`.
 
-Release `0.25.0` (commit `f6c1ca9`) adds transcript Ask AI, tiered question allowances, and AI token/cost accounting without changing the upload pipeline version. Production D1 is migrated through `0024_ai_usage_events.sql` as of 2026-08-01. Confirm the Cloudflare deployment is healthy before treating the next complete Melbourne calendar day as day 1.
+Release `0.25.1` (commit `776de74`) is the current transcript Ask AI baseline, including tiered question allowances, AI token/cost accounting, and anonymous product-funnel events without changing the upload pipeline version. Production D1 is migrated through `0024_ai_usage_events.sql` as of 2026-08-01. Confirm the Cloudflare deployment is healthy before treating the next complete Melbourne calendar day as day 1.
 
 ## Prerequisites
 

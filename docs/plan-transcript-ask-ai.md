@@ -1,6 +1,6 @@
 # Scribix Transcript Ask AI 实施计划（极简 v1）
 
-> 状态：v1 已于 2026-08-01 合并并推送到 `main`（`f6c1ca9`）；Remote D1 migrations `0022`–`0024` 已应用，待确认生产部署健康并完成登录态冒烟测试
+> 状态：核心 v1 与匿名产品漏斗已于 2026-08-01 推送到 `main`（`0.25.1`，`776de74`）；Remote D1 migrations `0022`–`0024` 已应用，待确认生产部署健康并完成登录态冒烟测试
 > 创建日期：2026-07-31
 > 本期范围：所有用户对当前 Transcript 提问并得到回答；Free / grandfathered Basic 各有终身 3 次体验额度
 > 完整版设计（citations、多 Chat、rolling summary、Collection 预留）已归档，等 v1 有真实使用数据后再按需回补
@@ -239,7 +239,7 @@ Transcript 页面采用双栏工作区：
 - [x] 日志确认：模型、input tokens、`usage.input_tokens_details.cached_tokens`、output tokens、延迟、错误 code 有记录（不记录问题、回答、transcript 原文）。`lib/openai-summary.ts` 现有的 `OpenAIResponse` 类型里没有 `input_tokens_details`，新 client 要加上，否则算不出真实成本和缓存命中率。
 - [x] Plausible / Clarity 事件只发送 `plan_tier`、`question_source`、`transcript_source`、截断标志和稳定 `error_code`；不发送 user/transcript ID、标题、问题或回答
 - [x] Remote D1 migrations `0022`–`0024` 已于 2026-08-01 应用
-- [x] `0.25.0` 已提交并推送到 `origin/main`（`f6c1ca9`）
+- [x] 核心 `0.25.0` 与 analytics follow-up `0.25.1` 已提交并推送到 `origin/main`（当前基线 `776de74`）
 - [ ] 确认自动生产部署健康，并完成生产登录态冒烟测试
 
 ## 10. 上线后再看
