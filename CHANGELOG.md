@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.26.0] - 2026-08-06
+
+### Added
+- Added the published Microsoft Edge Add-ons listing to the sidebar YouTube Extension store picker.
+
+### Changed
+- Updated the YouTube, Chrome, Firefox, and Edge sidebar icons to use their official brand colors.
+
 ## [0.25.2] - 2026-08-04
 
 ### Added
