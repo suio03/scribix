@@ -8,6 +8,7 @@ const outputDirectory = mkdtempSync(join(tmpdir(), "scribix-video-workspace-cont
 const tsc = resolve(root, "node_modules/.bin/tsc");
 const sources = [
   "lib/video-workspace/contracts.ts",
+  "lib/video-workspace/candidate-generation.ts",
   "lib/video-workspace/validation.ts",
   "lib/video-workspace/source-policy.ts",
   "lib/video-workspace/r2-keys.ts",

@@ -9,6 +9,7 @@ import type { AskAiTranscriptSource } from "@/lib/analytics";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { parseSpeakerNames } from "@/lib/speaker-names";
 import { TranscriptWorkspace } from "@/app/components/TranscriptWorkspace";
+import { CreateVideoProjectButton } from "@/app/components/CreateVideoProjectButton";
 import { partialTranscriptInfo } from "@/lib/partial-transcript";
 
 type Params = { params: Promise<{ locale: string; id: string }> };
@@ -110,6 +111,11 @@ export default async function TranscriptViewerPage({ params }: Params) {
             </p>
           ) : null}
         </div>
+        {row.status === "completed" &&
+        row.audio_r2_key &&
+        row.mime_type?.startsWith("video/") ? (
+          <CreateVideoProjectButton transcriptId={row.id} />
+        ) : null}
       </div>
 
       {row.status === "completed" && expired ? (

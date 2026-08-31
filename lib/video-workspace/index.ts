@@ -1,4 +1,6 @@
 export * from "./asset-access";
+export * from "./candidate-generation";
+export * from "./candidates";
 export * from "./contracts";
 export * from "./lifecycle";
 export * from "./ownership";

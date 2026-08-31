@@ -82,6 +82,7 @@ export async function hardDeleteVideoProjects(
         WHERE user_id = ?1 AND id IN (${placeholders})`
     ),
     bind(`DELETE FROM render_jobs WHERE user_id = ?1 AND project_id IN (${placeholders})`),
+    bind(`DELETE FROM clip_candidate_feedback_events WHERE user_id = ?1 AND project_id IN (${placeholders})`),
     bind(`DELETE FROM clip_candidates WHERE user_id = ?1 AND project_id IN (${placeholders})`),
     bind(`DELETE FROM project_versions WHERE user_id = ?1 AND project_id IN (${placeholders})`),
     bind(`DELETE FROM media_assets WHERE user_id = ?1 AND project_id IN (${placeholders})`),
@@ -100,6 +101,7 @@ export function accountVideoWorkspaceDeleteStatements(
         WHERE user_id = ?1`
     ).bind(userId),
     db.prepare(`DELETE FROM render_jobs WHERE user_id = ?1`).bind(userId),
+    db.prepare(`DELETE FROM clip_candidate_feedback_events WHERE user_id = ?1`).bind(userId),
     db.prepare(`DELETE FROM clip_candidates WHERE user_id = ?1`).bind(userId),
     db.prepare(`DELETE FROM project_versions WHERE user_id = ?1`).bind(userId),
     db.prepare(`DELETE FROM media_assets WHERE user_id = ?1`).bind(userId),

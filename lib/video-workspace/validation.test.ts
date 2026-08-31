@@ -21,6 +21,12 @@ import {
 } from "./validation";
 import { checkSourcePolicy } from "./source-policy";
 import { VideoWorkspaceR2 } from "./r2-keys";
+import {
+  CandidateGenerationError,
+  alignAndValidateCandidateSet,
+  buildCandidateAnalysisInput,
+  parseProviderCandidateSet,
+} from "./candidate-generation";
 
 const edl: Edl = {
   schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION,
@@ -148,6 +154,71 @@ test("validates structured candidate output against source time", () => {
   assert.equal(result.success, true);
 });
 
+test("candidate generation aligns every range to real word boundaries", () => {
+  const analysis = buildCandidateAnalysisInput(candidateTranscriptFixture(), 120_000);
+  assert.match(analysis.text, /10000-10800:word10/);
+  const provider = parseProviderCandidateSet({
+    candidates: [
+      {
+        theme: "Two useful moments",
+        hook: "The first important idea",
+        reason: "Two non-contiguous excerpts form a complete explanation.",
+        score: 0.91,
+        segments: [
+          { startMs: 10_240, endMs: 20_190 },
+          { startMs: 40_210, endMs: 50_220 },
+        ],
+      },
+    ],
+  });
+  const result = alignAndValidateCandidateSet(
+    provider,
+    analysis.words,
+    analysis.sourceDurationMs,
+    () => "candidate_aligned"
+  );
+  assert.equal(result.candidates.length, 1);
+  assert.equal(result.candidates[0].segments.length, 2);
+  const starts = new Set(analysis.words.map((word) => word.startMs));
+  const ends = new Set(analysis.words.map((word) => word.endMs));
+  for (const segment of result.candidates[0].segments) {
+    assert.equal(starts.has(segment.startMs), true);
+    assert.equal(ends.has(segment.endMs), true);
+  }
+});
+
+test("candidate generation removes invalid and highly duplicated ranges", () => {
+  const analysis = buildCandidateAnalysisInput(candidateTranscriptFixture(), 120_000);
+  const provider = parseProviderCandidateSet({
+    candidates: [
+      providerCandidate(0.95, 10_000, 31_000),
+      providerCandidate(0.8, 10_300, 30_800),
+      providerCandidate(0.7, 115_000, 130_000),
+    ],
+  });
+  let nextId = 0;
+  const result = alignAndValidateCandidateSet(
+    provider,
+    analysis.words,
+    analysis.sourceDurationMs,
+    () => `candidate_${nextId += 1}`
+  );
+  assert.equal(result.candidates.length, 1);
+  assert.equal(result.candidates[0].score, 0.95);
+});
+
+test("provider candidate parsing rejects unknown fields before persistence", () => {
+  assert.throws(
+    () => parseProviderCandidateSet({
+      candidates: [{
+        ...providerCandidate(0.8, 10_000, 30_000),
+        shellCommand: "ffmpeg -i secret",
+      }],
+    }),
+    CandidateGenerationError
+  );
+});
+
 test("media assets reject path traversal object keys", () => {
   const result = validateMediaAsset({
     schemaVersion: 1,
@@ -246,3 +317,31 @@ test("video workspace R2 keys are deterministic and reject unsafe segments", () 
   assert.throws(() => VideoWorkspaceR2.coverKey("../other", "project_01", "render_01"));
   assert.throws(() => VideoWorkspaceR2.brandAssetKey("user_01", "asset_01", "../png"));
 });
+
+function candidateTranscriptFixture() {
+  const words = Array.from({ length: 120 }, (_, index) => ({
+    text: `word${index}`,
+    start: index * 1_000,
+    end: index * 1_000 + 800,
+    speaker: "A",
+  }));
+  return {
+    words,
+    utterances: Array.from({ length: 12 }, (_, index) => ({
+      text: words.slice(index * 10, index * 10 + 10).map((word) => word.text).join(" "),
+      start: index * 10_000,
+      end: index * 10_000 + 9_800,
+      speaker: "A",
+    })),
+  };
+}
+
+function providerCandidate(score: number, startMs: number, endMs: number) {
+  return {
+    theme: `Candidate ${score}`,
+    hook: "A strong opening line",
+    reason: "The excerpt is complete and understandable by itself.",
+    score,
+    segments: [{ startMs, endMs }],
+  };
+}

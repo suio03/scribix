@@ -422,6 +422,18 @@ export function validateCandidateSet(
   if (!Array.isArray(value.candidates)) {
     issues.push(issue("$.candidates", "invalid_type", "Expected an array."));
   } else {
+    if (
+      value.candidates.length === 0 ||
+      value.candidates.length > VIDEO_WORKSPACE_LIMITS.maxCandidates
+    ) {
+      issues.push(
+        issue(
+          "$.candidates",
+          "candidate_count",
+          `Expected 1 to ${VIDEO_WORKSPACE_LIMITS.maxCandidates} candidates.`
+        )
+      );
+    }
     const ids = new Set<string>();
     value.candidates.forEach((candidate, index) => {
       validateCandidate(candidate, `$.candidates[${index}]`, issues, context);

@@ -1,6 +1,6 @@
 # Scribix AI 短视频工作台 V1 实施计划
 
-> 状态：实施中（M0 已提交，M1 进行中）
+> 状态：实施中（M0、M1 已提交，M2 已实现待提交）
 > 创建日期：2026-08-31  
 > 当前范围：长视频对话内容 → 候选 clips → 浏览器编辑预览 → Cloud 最终成片  
 > 明确不做：社交账号连接、内容日历、定时发布和多平台分发
@@ -635,12 +635,12 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 
 ### M1. 数据、原视频与生命周期
 
-- [ ] 新增 video project、version、asset、job 和 brand template migrations。
-- [ ] 扩展 R2 key helpers。
-- [ ] Clip workflow 强制直接上传原始视频；保留现有 transcript-only 流程。
-- [ ] 明确 source object 与现有 `audio_r2_key` 的迁移/引用关系。
-- [ ] 扩展 transcript 删除、账号删除和 cleanup worker。
-- [ ] 增加 signed GET/PUT 与 ownership helpers。
+- [x] 新增 video project、version、asset、job 和 brand template migrations。
+- [x] 扩展 R2 key helpers。
+- [x] Clip workflow 强制直接上传原始视频；保留现有 transcript-only 流程。
+- [x] 明确 source object 与现有 `audio_r2_key` 的迁移/引用关系。
+- [x] 扩展 transcript 删除、账号删除和 cleanup worker。
+- [x] 增加 signed GET/PUT 与 ownership helpers。
 
 完成标准：
 
@@ -650,11 +650,11 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 
 ### M2. AI Candidate 生成
 
-- [ ] 从 transcript 构建受控 AI 输入。
-- [ ] 定义结构化 candidate 输出 schema。
-- [ ] 实现 timestamp 对齐、越界校验、去重和总时长限制。
-- [ ] 保存候选、rank、reason 和 segments。
-- [ ] 实现候选列表 UI、重新生成和用户反馈事件。
+- [x] 从 transcript 构建受控 AI 输入。
+- [x] 定义结构化 candidate 输出 schema。
+- [x] 实现 timestamp 对齐、越界校验、去重和总时长限制。
+- [x] 保存候选、rank、reason 和 segments。
+- [x] 实现候选列表 UI、重新生成和用户反馈事件。
 
 完成标准：
 

@@ -1,6 +1,7 @@
 export const VIDEO_WORKSPACE_SCHEMA_VERSION = 1 as const;
 
 export const VIDEO_WORKSPACE_LIMITS = {
+  maxCandidates: 5,
   maxSegments: 20,
   minSegmentDurationMs: 250,
   maxSegmentDurationMs: 180_000,
