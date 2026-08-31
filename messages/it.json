@@ -759,6 +759,10 @@
           "brand": { "title": "Brand", "template": "Layout brand", "none": "Nessuna sovrimpressione", "corner": "Marchio ad angolo", "signature": "Linea firma", "logo": "Logo", "noLogo": "Nessun logo", "customLogo": "Logo personalizzato {number}", "accent": "Accento", "position": "Posizione logo", "topLeft": "In alto a sinistra", "topRight": "In alto a destra", "bottomLeft": "In basso a sinistra", "bottomRight": "In basso a destra", "scale": "Dimensione logo", "uploadLogo": "Carica PNG, JPEG o WebP" },
           "audio": { "title": "Audio", "gain": "Volume", "fadeIn": "Dissolvenza in entrata (ms)", "fadeOut": "Dissolvenza in uscita (ms)", "normalize": "Normalizza il volume nel render finale", "normalizeNote": "Il browser mostra volume e dissolvenze; la normalizzazione viene applicata dal renderer cloud." },
           "cover": { "title": "Copertina", "time": "Fotogramma timeline", "note": "Il renderer finale estrae la copertina da questo punto esatto della timeline completata." }
+        },
+        "finalRender": {
+          "eyebrow": "Esportazione cloud", "title": "Renderizza il video finale", "description": "Crea una versione immutabile dalla sorgente originale, non dai proxy di anteprima.", "generate": "Genera video", "rendering": "Rendering…", "saveFirst": "Attendi il salvataggio della modifica corrente.", "failed": "Impossibile completare la richiesta di rendering.", "video": "Video", "cover": "Copertina", "cancel": "Annulla", "retry": "Riprova",
+          "status": { "draft": "Bozza", "queued": "In coda", "preparing": "Preparazione", "running": "Rendering", "uploading": "Caricamento", "completed": "Pronto", "failed": "Non riuscito", "canceled": "Annullato" }
         }
       }
     },

@@ -14,8 +14,9 @@ export type ProviderJobState =
   | "failed";
 
 export interface VideoRenderProvider {
-  submitPreview(job: PreviewProviderJob): Promise<string>;
+  submit(job: PreviewProviderJob, kind: "preview" | "final"): Promise<string>;
   describe(providerJobIds: string[]): Promise<Map<string, ProviderJobState>>;
+  cancel(providerJobId: string): Promise<void>;
 }
 
 type AwsBatchConfig = {
@@ -40,10 +41,10 @@ export class AwsBatchRenderProvider implements VideoRenderProvider {
     });
   }
 
-  async submitPreview(job: PreviewProviderJob): Promise<string> {
+  async submit(job: PreviewProviderJob, kind: "preview" | "final"): Promise<string> {
     const response = await this.client.fetch(this.request("/v1/submitjob", {
       jobDefinition: this.config.jobDefinition,
-      jobName: `scribix-preview-${safeJobName(job.jobId)}`,
+      jobName: `scribix-${kind}-${safeJobName(job.jobId)}`,
       jobQueue: this.config.jobQueue,
       containerOverrides: {
         environment: [
@@ -54,14 +55,24 @@ export class AwsBatchRenderProvider implements VideoRenderProvider {
       },
       propagateTags: true,
       retryStrategy: { attempts: 1 },
-      tags: { workload: "video-preview", application: "scribix" },
-      timeout: { attemptDurationSeconds: 30 * 60 },
+      tags: { workload: `video-${kind}`, application: "scribix" },
+      timeout: { attemptDurationSeconds: kind === "final" ? 60 * 60 : 30 * 60 },
     }));
     const body = await response.json() as { jobId?: string };
     if (!response.ok || !body.jobId) {
       throw new Error(`aws_batch_submit_${response.status}`);
     }
     return body.jobId;
+  }
+
+  async cancel(providerJobId: string): Promise<void> {
+    const response = await this.client.fetch(this.request("/v1/terminatejob", {
+      jobId: providerJobId,
+      reason: "Canceled by Scribix user",
+    }));
+    if (!response.ok && response.status !== 404) {
+      throw new Error(`aws_batch_cancel_${response.status}`);
+    }
   }
 
   async describe(providerJobIds: string[]): Promise<Map<string, ProviderJobState>> {

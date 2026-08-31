@@ -1,6 +1,6 @@
 # Scribix AI 短视频工作台 V1 实施计划
 
-> 状态：实施中（M0–M4 已提交，M5 已完成本地实现与验证，待提交）
+> 状态：实施中（M0–M5 已提交，M6 已完成本地实现与验证，待提交）
 > 创建日期：2026-08-31  
 > 当前范围：长视频对话内容 → 候选 clips → 浏览器编辑预览 → Cloud 最终成片  
 > 明确不做：社交账号连接、内容日历、定时发布和多平台分发
@@ -718,13 +718,17 @@ secrets，详见 `docs/video-workspace/m3-preview-proxy.md`。未执行 remote m
 
 ### M6. Final Cloud Renderer
 
-- [ ] 实现 final render job 和不可变 version snapshot。
-- [ ] 从原视频进行多 segment seek、trim 和 concat。
-- [ ] 实现 crop/scale、动态字幕、品牌 overlay 和音频链。
-- [ ] 输出最终 1080 × 1920 H.264/AAC MP4。
-- [ ] 生成封面图片。
-- [ ] 实现 `ffprobe` 输出校验、R2 上传和结果回调。
-- [ ] 实现取消、重试、超时和幂等行为。
+- [x] 实现 final render job 和不可变 version snapshot。
+- [x] 从原视频进行多 segment seek、trim 和 concat。
+- [x] 实现 crop/scale、动态字幕、品牌 overlay 和音频链。
+- [x] 输出最终 1080 × 1920 H.264/AAC MP4。
+- [x] 生成封面图片。
+- [x] 实现 `ffprobe` 输出校验、R2 上传和结果回调。
+- [x] 实现取消、重试、超时和幂等行为。
+
+本地实现、任务协议、API 与部署边界详见
+`docs/video-workspace/m6-final-render.md`。远程 migration、镜像发布和 AWS Batch
+job definition 更新在全部里程碑完成后统一执行。
 
 完成标准：
 

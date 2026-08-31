@@ -759,6 +759,10 @@
           "brand": { "title": "Marke", "template": "Markenlayout", "none": "Keine Markeneinblendung", "corner": "Eckmarke", "signature": "Signaturlinie", "logo": "Logo", "noLogo": "Kein Logo", "customLogo": "Eigenes Logo {number}", "accent": "Akzent", "position": "Logo-Position", "topLeft": "Oben links", "topRight": "Oben rechts", "bottomLeft": "Unten links", "bottomRight": "Unten rechts", "scale": "Logo-Größe", "uploadLogo": "PNG, JPEG oder WebP hochladen" },
           "audio": { "title": "Audio", "gain": "Lautstärke", "fadeIn": "Einblenden (ms)", "fadeOut": "Ausblenden (ms)", "normalize": "Lautheit im finalen Render normalisieren", "normalizeNote": "Der Browser zeigt Lautstärke und Blenden; die Normalisierung erfolgt im Cloud-Renderer." },
           "cover": { "title": "Cover", "time": "Timeline-Bild", "note": "Der finale Renderer erzeugt das Cover genau an diesem Punkt der fertigen Timeline." }
+        },
+        "finalRender": {
+          "eyebrow": "Cloud-Export", "title": "Finales Video rendern", "description": "Erstellt eine unveränderliche Version aus der Originalquelle – nicht aus den Vorschau-Proxys.", "generate": "Video erzeugen", "rendering": "Wird gerendert…", "saveFirst": "Warte, bis die aktuelle Bearbeitung gespeichert ist.", "failed": "Der Render-Auftrag konnte nicht abgeschlossen werden.", "video": "Video", "cover": "Cover", "cancel": "Abbrechen", "retry": "Erneut versuchen",
+          "status": { "draft": "Entwurf", "queued": "In Warteschlange", "preparing": "Vorbereitung", "running": "Rendering", "uploading": "Upload", "completed": "Bereit", "failed": "Fehlgeschlagen", "canceled": "Abgebrochen" }
         }
       }
     },

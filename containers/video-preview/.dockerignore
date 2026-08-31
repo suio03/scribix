@@ -1,4 +1,5 @@
 *
 !preview-render.mjs
+!final-render.mjs
 !worker.mjs
 !Dockerfile

@@ -1,6 +1,7 @@
 import { cf } from "@/lib/cf";
 import { bearerToken, verifyScopedJobToken } from "@/lib/video-workspace/job-auth";
 import { leasePreviewJob } from "@/lib/video-workspace/internal-jobs";
+import { leaseFinalJob, renderJobKind } from "@/lib/video-workspace/final-internal-jobs";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -10,7 +11,10 @@ export async function POST(request: Request, { params }: Params) {
   if (!await authorized(request, env.VIDEO_WORKER_SIGNING_SECRET, id)) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
-  const result = await leasePreviewJob(env.DB, id);
+  const kind = await renderJobKind(env.DB, id);
+  const result = kind === "final"
+    ? await leaseFinalJob(env.DB, id)
+    : await leasePreviewJob(env.DB, id);
   if (!result.ok) {
     const status = result.error === "job_not_found" ? 404 : 409;
     return Response.json({ error: result.error }, { status });

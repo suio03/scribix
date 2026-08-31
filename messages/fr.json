@@ -759,6 +759,10 @@
           "brand": { "title": "Marque", "template": "Disposition de marque", "none": "Aucune superposition", "corner": "Marque d’angle", "signature": "Ligne signature", "logo": "Logo", "noLogo": "Aucun logo", "customLogo": "Logo personnalisé {number}", "accent": "Accent", "position": "Position du logo", "topLeft": "En haut à gauche", "topRight": "En haut à droite", "bottomLeft": "En bas à gauche", "bottomRight": "En bas à droite", "scale": "Taille du logo", "uploadLogo": "Importer PNG, JPEG ou WebP" },
           "audio": { "title": "Audio", "gain": "Volume", "fadeIn": "Fondu d’entrée (ms)", "fadeOut": "Fondu de sortie (ms)", "normalize": "Normaliser le volume du rendu final", "normalizeNote": "Le navigateur prévisualise le volume et les fondus ; le moteur cloud applique la normalisation." },
           "cover": { "title": "Couverture", "time": "Image de la timeline", "note": "Le moteur final extrait la couverture à ce point exact de la timeline terminée." }
+        },
+        "finalRender": {
+          "eyebrow": "Export cloud", "title": "Générer la vidéo finale", "description": "Crée une version immuable depuis la source originale, jamais depuis les proxies d’aperçu.", "generate": "Générer la vidéo", "rendering": "Rendu en cours…", "saveFirst": "Attendez la fin de l’enregistrement du montage.", "failed": "La demande de rendu n’a pas pu aboutir.", "video": "Vidéo", "cover": "Couverture", "cancel": "Annuler", "retry": "Réessayer",
+          "status": { "draft": "Brouillon", "queued": "En attente", "preparing": "Préparation", "running": "Rendu", "uploading": "Envoi", "completed": "Prêt", "failed": "Échec", "canceled": "Annulé" }
         }
       }
     },

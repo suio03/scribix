@@ -17,12 +17,15 @@ interface Env {
 
 type DispatchJobRow = {
   id: string;
+  kind: "preview" | "final";
   status: string;
   provider_job_id: string | null;
 };
 
 type ReconcileJobRow = DispatchJobRow & {
   output_asset_id: string;
+  cover_asset_id: string | null;
+  updated_at: string;
 };
 
 const MAX_DISPATCH_ATTEMPTS = 5;
@@ -81,7 +84,6 @@ async function dispatchJob(
         SET status = 'preparing', provider = 'aws-batch', attempt = attempt + 1,
             error_code = NULL, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?1
-        AND kind = 'preview'
         AND status = 'queued'
         AND provider_job_id IS NULL`
   )
@@ -89,25 +91,34 @@ async function dispatchJob(
     .run();
   if (!claimed.meta?.changes) {
     const current = await env.DB.prepare(
-      `SELECT id, status, provider_job_id FROM render_jobs WHERE id = ?1 AND kind = 'preview'`
+      `SELECT id, kind, status, provider_job_id FROM render_jobs WHERE id = ?1`
     )
       .bind(jobId)
       .first<DispatchJobRow>();
     if (!current) return "ignored";
+    if (current.status === "canceled" && current.provider_job_id) {
+      await provider.cancel(current.provider_job_id);
+      return "ignored";
+    }
     return current.status === "queued" ? "retry" : "ignored";
   }
 
+  const claimedJob = await env.DB.prepare(
+    `SELECT id, kind, status, provider_job_id FROM render_jobs WHERE id = ?1`
+  )
+    .bind(jobId)
+    .first<DispatchJobRow>();
+  if (!claimedJob) return "ignored";
   const jobToken = await createScopedJobToken(env.VIDEO_WORKER_SIGNING_SECRET, jobId);
-  const providerJobId = await provider.submitPreview({
+  const providerJobId = await provider.submit({
     jobId,
     jobToken,
     internalBaseUrl: env.SCRIBIX_INTERNAL_URL.replace(/\/$/, ""),
-  });
+  }, claimedJob.kind);
   const updated = await env.DB.prepare(
     `UPDATE render_jobs
         SET provider_job_id = ?1, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?2
-        AND kind = 'preview'
         AND status = 'preparing'
         AND provider_job_id IS NULL`
   )
@@ -119,6 +130,16 @@ async function dispatchJob(
       jobId,
       providerJobId,
     }));
+    await provider.cancel(providerJobId);
+    await env.DB.prepare(
+      `UPDATE render_jobs
+          SET status = 'queued', provider = NULL, queued_at = CURRENT_TIMESTAMP,
+              updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?1 AND status = 'preparing' AND provider_job_id IS NULL`
+    )
+      .bind(jobId)
+      .run();
+    return "retry";
   }
   return "submitted";
 }
@@ -127,8 +148,7 @@ async function reconcileJobs(env: Env): Promise<void> {
   const staleUndispatched = await env.DB.prepare(
     `SELECT id
        FROM render_jobs
-      WHERE kind = 'preview'
-        AND provider_job_id IS NULL
+      WHERE provider_job_id IS NULL
         AND (
           (status = 'queued' AND queued_at < datetime('now', '-2 minutes'))
           OR (status = 'preparing' AND updated_at < datetime('now', '-5 minutes'))
@@ -152,10 +172,9 @@ async function reconcileJobs(env: Env): Promise<void> {
   }
 
   const active = await env.DB.prepare(
-    `SELECT id, status, provider_job_id, output_asset_id
+    `SELECT id, kind, status, provider_job_id, output_asset_id, cover_asset_id, updated_at
        FROM render_jobs
-      WHERE kind = 'preview'
-        AND provider = 'aws-batch'
+      WHERE provider = 'aws-batch'
         AND provider_job_id IS NOT NULL
         AND status IN ('preparing', 'running', 'uploading')
       ORDER BY updated_at ASC
@@ -168,7 +187,7 @@ async function reconcileJobs(env: Env): Promise<void> {
   for (const job of active.results) {
     const state = job.provider_job_id ? states.get(job.provider_job_id) : undefined;
     if (!state) continue;
-    if (state === "failed" || state === "succeeded") {
+    if (state === "failed" || (state === "succeeded" && staleTimestamp(job.updated_at, 2 * 60 * 1000))) {
       await failReconciledJob(
         env.DB,
         job,
@@ -176,6 +195,10 @@ async function reconcileJobs(env: Env): Promise<void> {
       );
       continue;
     }
+    // A successful provider job should be completed by its signed callback. Do
+    // not refresh updated_at here: it is the recovery clock when that callback
+    // never arrives.
+    if (state === "succeeded") continue;
     const status = state === "running" ? "running" : "preparing";
     await env.DB.prepare(
       `UPDATE render_jobs
@@ -194,20 +217,26 @@ async function markDispatchError(
   jobId: string,
   permanent: boolean
 ): Promise<void> {
+  const current = await db.prepare(
+    `SELECT status FROM render_jobs WHERE id = ?1`
+  )
+    .bind(jobId)
+    .first<{ status: string }>();
+  if (current?.status === "canceled") return;
   if (!permanent) {
     await db.prepare(
       `UPDATE render_jobs
           SET status = 'queued', provider = NULL, provider_job_id = NULL,
               error_code = NULL, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?1 AND kind = 'preview' AND status = 'preparing'`
+        WHERE id = ?1 AND status = 'preparing'`
     )
       .bind(jobId)
       .run();
     return;
   }
   const job = await db.prepare(
-    `SELECT id, status, provider_job_id, output_asset_id
-       FROM render_jobs WHERE id = ?1 AND kind = 'preview'`
+    `SELECT id, kind, status, provider_job_id, output_asset_id, cover_asset_id, updated_at
+       FROM render_jobs WHERE id = ?1`
   )
     .bind(jobId)
     .first<ReconcileJobRow>();
@@ -222,13 +251,13 @@ async function failReconciledJob(
   await db.batch([
     db.prepare(
       `UPDATE media_assets SET status = 'failed'
-        WHERE id = ?1 AND status <> 'ready'`
-    ).bind(job.output_asset_id),
+        WHERE id IN (?1, ?2) AND status <> 'ready'`
+    ).bind(job.output_asset_id, job.cover_asset_id),
     db.prepare(
       `UPDATE render_jobs
           SET status = 'failed', error_code = ?1,
               completed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?2 AND status <> 'completed'`
+        WHERE id = ?2 AND status NOT IN ('completed', 'canceled')`
     ).bind(errorCode, job.id),
   ]);
 }
@@ -256,4 +285,9 @@ function validMessage(value: unknown): value is RenderDispatchMessage {
 
 function retryDelaySeconds(attempt: number): number {
   return Math.min(300, 15 * 2 ** Math.max(0, attempt - 1));
+}
+
+function staleTimestamp(value: string, ageMs: number): boolean {
+  const timestamp = Date.parse(value.includes("T") ? value : `${value.replace(" ", "T")}Z`);
+  return Number.isFinite(timestamp) && timestamp < Date.now() - ageMs;
 }

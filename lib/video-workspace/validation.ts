@@ -559,7 +559,7 @@ export function validateRenderJob(input: unknown): ContractResult<RenderJob> {
     "schemaVersion", "id", "userId", "projectId", "projectVersionId",
     "candidateId", "segmentIndex", "segmentId", "sourceStartMs", "sourceEndMs",
     "proxySourceStartMs", "proxySourceEndMs", "proxyVersion", "kind", "provider",
-    "providerJobId", "status", "attempt", "idempotencyKey", "outputAssetId", "errorCode",
+    "providerJobId", "status", "attempt", "idempotencyKey", "outputAssetId", "coverAssetId", "errorCode",
   ], "$", issues);
   requireSchemaVersion(value.schemaVersion, issues);
   for (const key of ["id", "userId", "projectId", "idempotencyKey"] as const) {
@@ -631,11 +631,18 @@ export function validateRenderJob(input: unknown): ContractResult<RenderJob> {
   const status = requireEnum(value.status, RENDER_JOB_STATUSES, "$.status", issues);
   requireInteger(value.attempt, "$.attempt", issues, 0, 20);
   requireNullableStableId(value.outputAssetId, "$.outputAssetId", issues);
+  requireNullableStableId(value.coverAssetId, "$.coverAssetId", issues);
   const errorCode = value.errorCode === null
     ? null
     : requireEnum(value.errorCode, RENDER_ERROR_CODES, "$.errorCode", issues);
   if (status === "completed" && value.outputAssetId === null) {
     issues.push(issue("$.outputAssetId", "missing_output", "A completed job must reference its output asset."));
+  }
+  if (kind === "final" && status === "completed" && value.coverAssetId === null) {
+    issues.push(issue("$.coverAssetId", "missing_cover", "A completed final job must reference its cover asset."));
+  }
+  if (kind === "preview" && value.coverAssetId !== null) {
+    issues.push(issue("$.coverAssetId", "unexpected_cover", "Preview jobs do not produce cover assets."));
   }
   if (status === "failed" && errorCode === null) {
     issues.push(issue("$.errorCode", "missing_error", "A failed job must include a stable error code."));

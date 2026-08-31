@@ -763,6 +763,10 @@
           },
           "audio": { "title": "Audio", "gain": "Volume", "fadeIn": "Fade in (ms)", "fadeOut": "Fade out (ms)", "normalize": "Normalize loudness in the final render", "normalizeNote": "The browser previews volume and fades; normalization is applied by the cloud renderer." },
           "cover": { "title": "Cover", "time": "Timeline frame", "note": "The final renderer extracts the cover from this exact point in the finished timeline." }
+        },
+        "finalRender": {
+          "eyebrow": "Cloud export", "title": "Render the final video", "description": "Creates a new immutable version from the original source—not the preview proxies.", "generate": "Generate video", "rendering": "Rendering…", "saveFirst": "Wait for the current edit to finish saving.", "failed": "The render request could not be completed.", "video": "Video", "cover": "Cover", "cancel": "Cancel", "retry": "Retry",
+          "status": { "draft": "Draft", "queued": "Queued", "preparing": "Preparing", "running": "Rendering", "uploading": "Uploading", "completed": "Ready", "failed": "Failed", "canceled": "Canceled" }
         }
       }
     },

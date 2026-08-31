@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 
 export function validateLease(value) {
-  if (!value || value.schemaVersion !== 1 || typeof value.jobId !== "string") {
+  if (!value || value.schemaVersion !== 1 || value.kind !== "preview" || typeof value.jobId !== "string") {
     throw renderError("invalid_render_spec");
   }
   if (!httpUrl(value.sourceUrl) || !httpUrl(value.outputUrl)) {

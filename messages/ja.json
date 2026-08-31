@@ -759,6 +759,10 @@
           "brand": { "title": "ブランド", "template": "ブランドレイアウト", "none": "ブランド表示なし", "corner": "コーナーマーク", "signature": "シグネチャーライン", "logo": "ロゴ", "noLogo": "ロゴなし", "customLogo": "カスタムロゴ {number}", "accent": "アクセント", "position": "ロゴ位置", "topLeft": "左上", "topRight": "右上", "bottomLeft": "左下", "bottomRight": "右下", "scale": "ロゴサイズ", "uploadLogo": "PNG、JPEG、WebP をアップロード" },
           "audio": { "title": "音声", "gain": "音量", "fadeIn": "フェードイン（ms）", "fadeOut": "フェードアウト（ms）", "normalize": "最終レンダーでラウドネスを正規化", "normalizeNote": "ブラウザでは音量とフェードを確認し、正規化はクラウドレンダラーが適用します。" },
           "cover": { "title": "カバー", "time": "タイムラインのフレーム", "note": "完成タイムラインのこの時点から最終レンダラーがカバーを抽出します。" }
+        },
+        "finalRender": {
+          "eyebrow": "クラウド書き出し", "title": "最終動画をレンダー", "description": "プレビューではなく元動画から変更不能な新しいバージョンを作成します。", "generate": "動画を生成", "rendering": "レンダー中…", "saveFirst": "現在の編集内容が保存されるまでお待ちください。", "failed": "レンダー要求を完了できませんでした。", "video": "動画", "cover": "カバー", "cancel": "キャンセル", "retry": "再試行",
+          "status": { "draft": "下書き", "queued": "待機中", "preparing": "準備中", "running": "レンダー中", "uploading": "アップロード中", "completed": "準備完了", "failed": "失敗", "canceled": "キャンセル済み" }
         }
       }
     },

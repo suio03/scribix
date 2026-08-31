@@ -759,6 +759,10 @@
           "brand": { "title": "Marca", "template": "Diseño de marca", "none": "Sin capa de marca", "corner": "Marca en esquina", "signature": "Línea de firma", "logo": "Logotipo", "noLogo": "Sin logotipo", "customLogo": "Logotipo personalizado {number}", "accent": "Acento", "position": "Posición del logotipo", "topLeft": "Arriba izquierda", "topRight": "Arriba derecha", "bottomLeft": "Abajo izquierda", "bottomRight": "Abajo derecha", "scale": "Tamaño del logotipo", "uploadLogo": "Subir PNG, JPEG o WebP" },
           "audio": { "title": "Audio", "gain": "Volumen", "fadeIn": "Fundido de entrada (ms)", "fadeOut": "Fundido de salida (ms)", "normalize": "Normalizar volumen en el render final", "normalizeNote": "El navegador previsualiza volumen y fundidos; el renderizador cloud aplica la normalización." },
           "cover": { "title": "Portada", "time": "Fotograma de la línea de tiempo", "note": "El renderizador final extrae la portada de este punto exacto de la línea de tiempo terminada." }
+        },
+        "finalRender": {
+          "eyebrow": "Exportación cloud", "title": "Renderizar el vídeo final", "description": "Crea una versión inmutable desde la fuente original, no desde las vistas previas.", "generate": "Generar vídeo", "rendering": "Renderizando…", "saveFirst": "Espera a que termine de guardarse la edición.", "failed": "No se pudo completar la solicitud de renderizado.", "video": "Vídeo", "cover": "Portada", "cancel": "Cancelar", "retry": "Reintentar",
+          "status": { "draft": "Borrador", "queued": "En cola", "preparing": "Preparando", "running": "Renderizando", "uploading": "Subiendo", "completed": "Listo", "failed": "Falló", "canceled": "Cancelado" }
         }
       }
     },

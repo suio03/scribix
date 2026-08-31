@@ -42,6 +42,7 @@ export type OwnedRenderJob = {
   scope_key: string;
   status: string;
   output_asset_id: string | null;
+  cover_asset_id: string | null;
   error_code: string | null;
 };
 
@@ -108,7 +109,8 @@ export async function ownedRenderJob(
   return db.prepare(
     `SELECT j.id, j.user_id, j.project_id, j.project_version_id, j.candidate_id,
             j.segment_index, j.segment_id, j.kind,
-            j.preset_id, j.scope_key, j.status, j.output_asset_id, j.error_code
+            j.preset_id, j.scope_key, j.status, j.output_asset_id,
+            j.cover_asset_id, j.error_code
        FROM render_jobs j
        JOIN video_projects p
          ON p.id = j.project_id AND p.user_id = j.user_id

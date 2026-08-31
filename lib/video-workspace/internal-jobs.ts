@@ -75,6 +75,7 @@ export async function leasePreviewJob(
     lease: {
       schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION,
       jobId,
+      kind: "preview",
       sourceUrl,
       outputUrl,
       urlsExpireInSec: PREVIEW_PROXY_URL_TTL_SECONDS,

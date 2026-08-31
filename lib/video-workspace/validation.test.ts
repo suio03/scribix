@@ -305,6 +305,7 @@ test("job state and dispatch contracts remain deterministic", () => {
     attempt: 1,
     idempotencyKey: "version_01-final-vertical-1080p-v1",
     outputAssetId: "asset_01",
+    coverAssetId: "cover_01",
     errorCode: null,
   });
   assert.equal(completed.success, true);
@@ -330,6 +331,7 @@ test("job state and dispatch contracts remain deterministic", () => {
     attempt: 0,
     idempotencyKey: "preview-project-candidate-0-v1",
     outputAssetId: "asset_02",
+    coverAssetId: null,
     errorCode: null,
   });
   assert.equal(preview.success, true);

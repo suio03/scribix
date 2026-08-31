@@ -16,6 +16,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { VideoStyleControls } from "@/app/components/VideoStyleControls";
+import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
 import type { EditorWorkspace } from "@/lib/video-workspace/editor";
 import type { Edl, EdlSegment, RenderSpec } from "@/lib/video-workspace/contracts";
 import {
@@ -446,6 +447,13 @@ export function VideoClipEditor({
             assets={workspace.assets}
             onChange={updateRenderSpec}
             onAssetsChange={(assets) => setWorkspace((current) => current ? { ...current, assets } : current)}
+          />
+          <FinalRenderPanel
+            projectId={projectId}
+            candidateId={candidateId}
+            revision={revision}
+            disabled={saveState !== "saved"}
+            onConflict={() => setSaveState("conflict")}
           />
         </div>
       </div>

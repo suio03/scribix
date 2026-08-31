@@ -8,6 +8,7 @@
     "test:video-workspace": "node scripts/test-video-workspace-contracts.mjs",
     "prototype:video-workspace": "node scripts/video-workspace/ffmpeg-prototype.mjs",
     "test:video-preview": "node scripts/video-workspace/test-preview-render.mjs",
+    "test:video-final": "node scripts/video-workspace/test-final-render.mjs",
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",

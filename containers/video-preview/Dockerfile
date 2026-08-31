@@ -7,10 +7,11 @@ RUN apt-get update \
     ca-certificates \
     ffmpeg="${FFMPEG_VERSION}" \
   && rm -rf /var/lib/apt/lists/* \
-  && ffmpeg -hide_banner -encoders 2>/dev/null | grep -q libx264
+  && ffmpeg -hide_banner -encoders 2>/dev/null | grep -q libx264 \
+  && ffmpeg -hide_banner -filters 2>/dev/null | grep -q subtitles
 
 WORKDIR /app
-COPY --chown=node:node preview-render.mjs worker.mjs ./
+COPY --chown=node:node preview-render.mjs final-render.mjs worker.mjs ./
 
 USER node
 ENTRYPOINT ["node", "/app/worker.mjs"]
