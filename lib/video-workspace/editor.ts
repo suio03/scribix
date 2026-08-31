@@ -1,6 +1,8 @@
 import type { AaiTranscript } from "@/lib/aai";
 import { newId } from "@/lib/ids";
+import { presignGet } from "@/lib/r2";
 import { presignOwnedAssetGet } from "./asset-access";
+import { listBrandAssets, type EditorBrandAsset } from "./brand-assets";
 import {
   FINAL_VIDEO_PRESET,
   PREVIEW_PROXY_URL_TTL_SECONDS,
@@ -42,6 +44,7 @@ export type EditorWorkspace = {
   words: TranscriptWordBoundary[];
   previewStatus: "not_requested" | "queued" | "processing" | "ready" | "failed";
   proxies: ProxyTimelineSource[];
+  assets: EditorBrandAsset[];
 };
 
 export type EditorLoadResult =
@@ -117,14 +120,16 @@ export async function loadEditorWorkspace(
       )
     : null;
   const edl = restored?.edl ?? candidateEdl;
-  const renderSpec = restored?.renderSpec ?? defaultRenderSpec(edl);
-  const [preview, transcriptObject] = await Promise.all([
+  let renderSpec = restored?.renderSpec ?? defaultRenderSpec(edl);
+  const [preview, transcriptObject, assets] = await Promise.all([
     candidatePreview(db, userId, projectId, candidateId),
     bucket.get(project.transcript_r2_key),
+    listBrandAssets(db, userId, projectId, presignGet),
   ]);
   if (!transcriptObject) return { ok: false, error: "transcript_not_ready" };
   const transcript = (await transcriptObject.json()) as AaiTranscript;
   const words = relevantWords(transcript, edl);
+  if (!restored) renderSpec = defaultRenderSpec(edl, words);
   const proxies = preview
     ? await Promise.all(preview.segments.map(async (segment) => {
         if (segment.jobStatus !== "completed" || segment.assetStatus !== "ready") {
@@ -162,6 +167,7 @@ export async function loadEditorWorkspace(
       words,
       previewStatus: preview?.status ?? "not_requested",
       proxies: proxies.filter((proxy): proxy is ProxyTimelineSource => proxy !== null),
+      assets,
     },
   };
 }
@@ -208,6 +214,15 @@ export async function saveProjectDraft(
   const renderSpecResult = validateRenderSpec(renderSpecInput, edlResult.data);
   if (!renderSpecResult.success) {
     return { ok: false, error: "invalid_render_spec", issues: renderSpecResult.issues };
+  }
+  const assetIssue = await renderAssetIssue(
+    db,
+    userId,
+    projectId,
+    renderSpecResult.data
+  );
+  if (assetIssue) {
+    return { ok: false, error: "invalid_render_spec", issues: [assetIssue] };
   }
   if (!Number.isInteger(expectedRevision) || expectedRevision < 0) {
     return { ok: false, error: "draft_conflict", revision: project.draft_revision };
@@ -324,7 +339,10 @@ export function edlFromCandidate(segments: CandidateSegment[]): Edl {
   };
 }
 
-export function defaultRenderSpec(edl: Edl): RenderSpec {
+export function defaultRenderSpec(
+  edl: Edl,
+  words: TranscriptWordBoundary[] = []
+): RenderSpec {
   return {
     schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION,
     outputPresetId: FINAL_VIDEO_PRESET.id,
@@ -344,11 +362,45 @@ export function defaultRenderSpec(edl: Edl): RenderSpec {
       textColor: "#FFFFFF",
       highlightColor: "#FFD600",
       positionY: 0.78,
+      maxCharsPerLine: 22,
+      maxLines: 2,
+      cues: captionCues(edl, words),
     },
-    brand: { templateId: null, logoAssetId: null },
+    brand: {
+      templateId: null,
+      logoAssetId: null,
+      accentColor: "#FF5A1F",
+      logoPosition: "top-right",
+      logoScale: 0.16,
+    },
     audio: { gainDb: 0, normalize: true, fadeInMs: 0, fadeOutMs: 250 },
     coverTimelineMs: Math.min(4_800, Math.max(0, edlTimelineDurationMs(edl) - 1)),
   };
+}
+
+function captionCues(edl: Edl, words: TranscriptWordBoundary[]): RenderSpec["captions"]["cues"] {
+  const cues: RenderSpec["captions"]["cues"] = [];
+  for (const segment of [...edl.segments].sort((left, right) => left.order - right.order)) {
+    const segmentWords = words.filter((word) => (
+      word.endMs > segment.sourceStartMs && word.startMs < segment.sourceEndMs
+    ));
+    for (let index = 0; index < segmentWords.length; index += 6) {
+      const group = segmentWords.slice(index, index + 6);
+      if (group.length === 0) continue;
+      cues.push({
+        id: `cue_${cues.length}`,
+        segmentId: segment.id,
+        sourceStartMs: Math.max(segment.sourceStartMs, group[0].startMs),
+        sourceEndMs: Math.min(segment.sourceEndMs, group.at(-1)?.endMs ?? group[0].endMs),
+        words: group.map((word) => ({
+          text: word.text,
+          sourceStartMs: Math.max(segment.sourceStartMs, word.startMs),
+          sourceEndMs: Math.min(segment.sourceEndMs, word.endMs),
+        })),
+      });
+    }
+  }
+  return cues;
 }
 
 function editorProject(
@@ -468,6 +520,43 @@ async function nextProjectVersion(
     .bind(projectId, userId)
     .first<{ next_version: number }>();
   return row?.next_version ?? 1;
+}
+
+async function renderAssetIssue(
+  db: D1Database,
+  userId: string,
+  projectId: string,
+  renderSpec: RenderSpec
+): Promise<ContractIssue | null> {
+  const requested = [
+    renderSpec.captions.fontAssetId
+      ? { id: renderSpec.captions.fontAssetId, kind: "font", path: "$.captions.fontAssetId" }
+      : null,
+    renderSpec.brand.logoAssetId
+      ? { id: renderSpec.brand.logoAssetId, kind: "logo", path: "$.brand.logoAssetId" }
+      : null,
+  ].filter((asset): asset is { id: string; kind: "font" | "logo"; path: string } => asset !== null);
+  for (const asset of requested) {
+    const owned = await db.prepare(
+      `SELECT id FROM media_assets
+        WHERE id = ?1
+          AND user_id = ?2
+          AND project_id = ?3
+          AND kind = ?4
+          AND status = 'ready'
+          AND deleted_at IS NULL`
+    )
+      .bind(asset.id, userId, projectId, asset.kind)
+      .first<{ id: string }>();
+    if (!owned) {
+      return {
+        path: asset.path,
+        code: "asset_not_owned",
+        message: "Render assets must be ready and owned by this project.",
+      };
+    }
+  }
+  return null;
 }
 
 function sourceExpired(expiresAt: string | null): boolean {

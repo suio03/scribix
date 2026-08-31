@@ -1,6 +1,8 @@
 import {
+  BRAND_TEMPLATE_IDS,
   CAPTION_TEMPLATE_IDS,
   FINAL_VIDEO_PRESET,
+  LOGO_POSITIONS,
   MEDIA_ASSET_KINDS,
   MEDIA_ASSET_STATUSES,
   RENDER_ERROR_CODES,
@@ -344,7 +346,7 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
 
   const captions = requireObject(value.captions, "$.captions", issues);
   if (captions) {
-    hasOnlyKeys(captions, ["templateId", "fontAssetId", "textColor", "highlightColor", "positionY"], "$.captions", issues);
+    hasOnlyKeys(captions, ["templateId", "fontAssetId", "textColor", "highlightColor", "positionY", "maxCharsPerLine", "maxLines", "cues"], "$.captions", issues);
     requireEnum(captions.templateId, CAPTION_TEMPLATE_IDS, "$.captions.templateId", issues);
     requireNullableStableId(captions.fontAssetId, "$.captions.fontAssetId", issues);
     for (const colorKey of ["textColor", "highlightColor"] as const) {
@@ -354,13 +356,24 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
       }
     }
     requireNumber(captions.positionY, "$.captions.positionY", issues, 0, 1);
+    requireInteger(captions.maxCharsPerLine, "$.captions.maxCharsPerLine", issues, 8, 42);
+    requireInteger(captions.maxLines, "$.captions.maxLines", issues, 1, 3);
+    validateCaptionCues(captions.cues, edl, issues);
   }
 
   const brand = requireObject(value.brand, "$.brand", issues);
   if (brand) {
-    hasOnlyKeys(brand, ["templateId", "logoAssetId"], "$.brand", issues);
-    requireNullableStableId(brand.templateId, "$.brand.templateId", issues);
+    hasOnlyKeys(brand, ["templateId", "logoAssetId", "accentColor", "logoPosition", "logoScale"], "$.brand", issues);
+    if (brand.templateId !== null) {
+      requireEnum(brand.templateId, BRAND_TEMPLATE_IDS, "$.brand.templateId", issues);
+    }
     requireNullableStableId(brand.logoAssetId, "$.brand.logoAssetId", issues);
+    const accentColor = requireString(brand.accentColor, "$.brand.accentColor", issues, { maxLength: 7 });
+    if (accentColor !== null && !HEX_COLOR.test(accentColor)) {
+      issues.push(issue("$.brand.accentColor", "invalid_color", "Expected a six-digit hex color."));
+    }
+    requireEnum(brand.logoPosition, LOGO_POSITIONS, "$.brand.logoPosition", issues);
+    requireNumber(brand.logoScale, "$.brand.logoScale", issues, 0.05, 0.4);
   }
 
   const audio = requireObject(value.audio, "$.audio", issues);
@@ -377,6 +390,59 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
   return issues.length > 0
     ? { success: false, issues }
     : { success: true, data: input as RenderSpec };
+}
+
+function validateCaptionCues(input: unknown, edl: Edl, issues: ContractIssue[]): void {
+  if (!Array.isArray(input)) {
+    issues.push(issue("$.captions.cues", "invalid_type", "Expected an array."));
+    return;
+  }
+  if (input.length > 500) {
+    issues.push(issue("$.captions.cues", "too_many_cues", "Captions cannot exceed 500 cues."));
+  }
+  const segments = new Map(edl.segments.map((segment) => [segment.id, segment]));
+  const cueIds = new Set<string>();
+  input.forEach((raw, cueIndex) => {
+    const path = `$.captions.cues[${cueIndex}]`;
+    const cue = requireObject(raw, path, issues);
+    if (!cue) return;
+    hasOnlyKeys(cue, ["id", "segmentId", "sourceStartMs", "sourceEndMs", "words"], path, issues);
+    const id = requireStableId(cue.id, `${path}.id`, issues);
+    const segmentId = requireStableId(cue.segmentId, `${path}.segmentId`, issues);
+    if (id && cueIds.has(id)) issues.push(issue(`${path}.id`, "duplicate_id", "Caption cue IDs must be unique."));
+    if (id) cueIds.add(id);
+    const segment = segmentId ? segments.get(segmentId) : undefined;
+    if (segmentId && !segment) issues.push(issue(`${path}.segmentId`, "unknown_segment", "Caption cue must reference an EDL segment."));
+    const min = segment?.sourceStartMs ?? 0;
+    const max = segment?.sourceEndMs ?? VIDEO_WORKSPACE_LIMITS.maxSourceDurationMs;
+    const startMs = requireInteger(cue.sourceStartMs, `${path}.sourceStartMs`, issues, min, max);
+    const endMs = requireInteger(cue.sourceEndMs, `${path}.sourceEndMs`, issues, min, max);
+    if (startMs !== null && endMs !== null && endMs <= startMs) {
+      issues.push(issue(path, "invalid_range", "Caption cue end must be after its start."));
+    }
+    if (!Array.isArray(cue.words) || cue.words.length === 0 || cue.words.length > 20) {
+      issues.push(issue(`${path}.words`, "word_count", "Caption cues require 1 to 20 words."));
+      return;
+    }
+    cue.words.forEach((rawWord, wordIndex) => {
+      const wordPath = `${path}.words[${wordIndex}]`;
+      const word = requireObject(rawWord, wordPath, issues);
+      if (!word) return;
+      hasOnlyKeys(word, ["text", "sourceStartMs", "sourceEndMs"], wordPath, issues);
+      requireString(word.text, `${wordPath}.text`, issues, { maxLength: 80 });
+      const wordStart = requireInteger(word.sourceStartMs, `${wordPath}.sourceStartMs`, issues, min, max);
+      const wordEnd = requireInteger(word.sourceEndMs, `${wordPath}.sourceEndMs`, issues, min, max);
+      if (wordStart !== null && wordEnd !== null && wordEnd <= wordStart) {
+        issues.push(issue(wordPath, "invalid_range", "Caption word end must be after its start."));
+      }
+      if (
+        startMs !== null && endMs !== null && wordStart !== null && wordEnd !== null &&
+        (wordStart < startMs || wordEnd > endMs)
+      ) {
+        issues.push(issue(wordPath, "outside_cue", "Caption words must stay inside their cue."));
+      }
+    });
+  });
 }
 
 function validateCandidate(

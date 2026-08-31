@@ -751,6 +751,14 @@
           "saving": "Guardando…",
           "error": "Error al guardar",
           "conflict": "Conflicto de borrador"
+        },
+        "style": {
+          "uploadFailed": "No se pudo subir el recurso. Usa un archivo compatible de menos de 5 MB.",
+          "framing": { "title": "Encuadre", "cut": "Corte {number}", "horizontal": "Enfoque horizontal", "vertical": "Enfoque vertical", "zoom": "Zoom" },
+          "captions": { "title": "Subtítulos", "template": "Estilo de movimiento", "karaoke": "Impacto karaoke", "boxed": "Caja editorial", "minimal": "Minimalista", "font": "Tipografía", "defaultFont": "Predeterminada de Scribix", "customFont": "Fuente personalizada {number}", "textColor": "Texto", "highlightColor": "Resaltado", "position": "Posición vertical", "lineWidth": "Caracteres por línea", "lines": "Líneas máximas", "uploadFont": "Subir TTF u OTF", "correction": "Corregir texto de la transcripción", "cue": "Subtítulo {number}" },
+          "brand": { "title": "Marca", "template": "Diseño de marca", "none": "Sin capa de marca", "corner": "Marca en esquina", "signature": "Línea de firma", "logo": "Logotipo", "noLogo": "Sin logotipo", "customLogo": "Logotipo personalizado {number}", "accent": "Acento", "position": "Posición del logotipo", "topLeft": "Arriba izquierda", "topRight": "Arriba derecha", "bottomLeft": "Abajo izquierda", "bottomRight": "Abajo derecha", "scale": "Tamaño del logotipo", "uploadLogo": "Subir PNG, JPEG o WebP" },
+          "audio": { "title": "Audio", "gain": "Volumen", "fadeIn": "Fundido de entrada (ms)", "fadeOut": "Fundido de salida (ms)", "normalize": "Normalizar volumen en el render final", "normalizeNote": "El navegador previsualiza volumen y fundidos; el renderizador cloud aplica la normalización." },
+          "cover": { "title": "Portada", "time": "Fotograma de la línea de tiempo", "note": "El renderizador final extrae la portada de este punto exacto de la línea de tiempo terminada." }
         }
       }
     },

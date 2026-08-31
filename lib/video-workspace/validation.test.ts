@@ -55,8 +55,17 @@ const renderSpec: RenderSpec = {
     textColor: "#FFFFFF",
     highlightColor: "#FFD600",
     positionY: 0.78,
+    maxCharsPerLine: 22,
+    maxLines: 2,
+    cues: [],
   },
-  brand: { templateId: "brand_01", logoAssetId: "logo_01" },
+  brand: {
+    templateId: "corner-v1",
+    logoAssetId: "logo_01",
+    accentColor: "#FF5A1F",
+    logoPosition: "top-right",
+    logoScale: 0.16,
+  },
   audio: { gainDb: 0, normalize: true, fadeInMs: 0, fadeOutMs: 250 },
   coverTimelineMs: 4_800,
 };
@@ -130,6 +139,41 @@ test("requires every EDL segment and a cover point inside the timeline", () => {
   if (!result.success) {
     assert.ok(result.issues.some((item) => item.code === "missing_segment"));
     assert.ok(result.issues.some((item) => item.path === "$.coverTimelineMs"));
+  }
+});
+
+test("caption cues stay source-aligned and renderer templates remain controlled", () => {
+  const valid = {
+    ...renderSpec,
+    captions: {
+      ...renderSpec.captions,
+      templateId: "boxed-v1",
+      cues: [{
+        id: "cue_0",
+        segmentId: "seg_01",
+        sourceStartMs: 120_000,
+        sourceEndMs: 121_000,
+        words: [{ text: "Hello", sourceStartMs: 120_000, sourceEndMs: 121_000 }],
+      }],
+    },
+  };
+  assert.equal(validateRenderSpec(valid, edl).success, true);
+  const invalid = {
+    ...valid,
+    captions: {
+      ...valid.captions,
+      cues: [{
+        ...valid.captions.cues[0],
+        sourceStartMs: 119_000,
+      }],
+    },
+    brand: { ...valid.brand, templateId: "../../filters" },
+  };
+  const result = validateRenderSpec(invalid, edl);
+  assert.equal(result.success, false);
+  if (!result.success) {
+    assert.ok(result.issues.some((item) => item.path.endsWith("sourceStartMs")));
+    assert.ok(result.issues.some((item) => item.path === "$.brand.templateId"));
   }
 });
 

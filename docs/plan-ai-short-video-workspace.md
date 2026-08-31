@@ -1,6 +1,6 @@
 # Scribix AI 短视频工作台 V1 实施计划
 
-> 状态：实施中（M0–M3 已提交，M4 已完成本地实现与验证，待提交）
+> 状态：实施中（M0–M4 已提交，M5 已完成本地实现与验证，待提交）
 > 创建日期：2026-08-31  
 > 当前范围：长视频对话内容 → 候选 clips → 浏览器编辑预览 → Cloud 最终成片  
 > 明确不做：社交账号连接、内容日历、定时发布和多平台分发
@@ -700,12 +700,15 @@ secrets，详见 `docs/video-workspace/m3-preview-proxy.md`。未执行 remote m
 
 ### M5. 画面、字幕、品牌和音频 UI
 
-- [ ] 实现每个 segment 的 9:16 crop/zoom 设置。
-- [ ] 实现字幕文本校正、断行、位置和动态模板选择。
-- [ ] 实现 Logo、字体、颜色和品牌模板。
-- [ ] 实现音量和已确认的 V1 音频处理控制。
-- [ ] 实现封面 timeline scrubber 与时间点选择。
-- [ ] 为每个模板实现 Browser Preview adapter。
+- [x] 实现每个 segment 的 9:16 crop/zoom 设置。
+- [x] 实现字幕文本校正、断行、位置和动态模板选择。
+- [x] 实现 Logo、字体、颜色和品牌模板。
+- [x] 实现音量和已确认的 V1 音频处理控制。
+- [x] 实现封面 timeline scrubber 与时间点选择。
+- [x] 为每个模板实现 Browser Preview adapter。
+
+浏览器适配器、受控 Render Spec 字段和品牌资产上传约束详见
+`docs/video-workspace/m5-browser-preview.md`。
 
 完成标准：
 

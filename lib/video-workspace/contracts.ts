@@ -34,8 +34,14 @@ export const PREVIEW_PROXY_AUTO_CANDIDATES = 3 as const;
 export const PREVIEW_PROXY_RETENTION_DAYS = 7 as const;
 export const PREVIEW_PROXY_URL_TTL_SECONDS = 15 * 60;
 
-export const CAPTION_TEMPLATE_IDS = ["karaoke-v1"] as const;
+export const CAPTION_TEMPLATE_IDS = ["karaoke-v1", "boxed-v1", "minimal-v1"] as const;
 export type CaptionTemplateId = (typeof CAPTION_TEMPLATE_IDS)[number];
+
+export const BRAND_TEMPLATE_IDS = ["corner-v1", "signature-v1"] as const;
+export type BrandTemplateId = (typeof BRAND_TEMPLATE_IDS)[number];
+
+export const LOGO_POSITIONS = ["top-left", "top-right", "bottom-left", "bottom-right"] as const;
+export type LogoPosition = (typeof LOGO_POSITIONS)[number];
 
 export const MEDIA_ASSET_KINDS = [
   "source",
@@ -103,6 +109,20 @@ export type CropSpec = {
   zoom: number;
 };
 
+export type CaptionWord = {
+  text: string;
+  sourceStartMs: number;
+  sourceEndMs: number;
+};
+
+export type CaptionCue = {
+  id: string;
+  segmentId: string;
+  sourceStartMs: number;
+  sourceEndMs: number;
+  words: CaptionWord[];
+};
+
 export type RenderSpec = {
   schemaVersion: typeof VIDEO_WORKSPACE_SCHEMA_VERSION;
   outputPresetId: typeof FINAL_VIDEO_PRESET.id;
@@ -119,10 +139,16 @@ export type RenderSpec = {
     textColor: string;
     highlightColor: string;
     positionY: number;
+    maxCharsPerLine: number;
+    maxLines: number;
+    cues: CaptionCue[];
   };
   brand: {
-    templateId: string | null;
+    templateId: BrandTemplateId | null;
     logoAssetId: string | null;
+    accentColor: string;
+    logoPosition: LogoPosition;
+    logoScale: number;
   };
   audio: {
     gainDb: number;

@@ -751,6 +751,14 @@
           "saving": "保存中…",
           "error": "保存に失敗しました",
           "conflict": "下書きの競合"
+        },
+        "style": {
+          "uploadFailed": "アセットをアップロードできませんでした。5 MB 未満の対応ファイルを使用してください。",
+          "framing": { "title": "フレーミング", "cut": "カット {number}", "horizontal": "水平方向", "vertical": "垂直方向", "zoom": "ズーム" },
+          "captions": { "title": "字幕", "template": "モーションスタイル", "karaoke": "カラオケ強調", "boxed": "エディトリアルボックス", "minimal": "静かなミニマル", "font": "書体", "defaultFont": "Scribix 標準", "customFont": "カスタムフォント {number}", "textColor": "文字", "highlightColor": "ハイライト", "position": "垂直位置", "lineWidth": "1 行の文字数", "lines": "最大行数", "uploadFont": "TTF または OTF をアップロード", "correction": "文字起こしを修正", "cue": "字幕 {number}" },
+          "brand": { "title": "ブランド", "template": "ブランドレイアウト", "none": "ブランド表示なし", "corner": "コーナーマーク", "signature": "シグネチャーライン", "logo": "ロゴ", "noLogo": "ロゴなし", "customLogo": "カスタムロゴ {number}", "accent": "アクセント", "position": "ロゴ位置", "topLeft": "左上", "topRight": "右上", "bottomLeft": "左下", "bottomRight": "右下", "scale": "ロゴサイズ", "uploadLogo": "PNG、JPEG、WebP をアップロード" },
+          "audio": { "title": "音声", "gain": "音量", "fadeIn": "フェードイン（ms）", "fadeOut": "フェードアウト（ms）", "normalize": "最終レンダーでラウドネスを正規化", "normalizeNote": "ブラウザでは音量とフェードを確認し、正規化はクラウドレンダラーが適用します。" },
+          "cover": { "title": "カバー", "time": "タイムラインのフレーム", "note": "完成タイムラインのこの時点から最終レンダラーがカバーを抽出します。" }
         }
       }
     },

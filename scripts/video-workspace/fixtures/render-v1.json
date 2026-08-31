@@ -39,11 +39,17 @@
       "fontAssetId": null,
       "textColor": "#FFFFFF",
       "highlightColor": "#FFD600",
-      "positionY": 0.78
+      "positionY": 0.78,
+      "maxCharsPerLine": 22,
+      "maxLines": 2,
+      "cues": []
     },
     "brand": {
-      "templateId": "brand-fixture",
-      "logoAssetId": "logo-fixture"
+      "templateId": "corner-v1",
+      "logoAssetId": "logo-fixture",
+      "accentColor": "#FF5A1F",
+      "logoPosition": "top-right",
+      "logoScale": 0.16
     },
     "audio": {
       "gainDb": 0,

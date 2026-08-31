@@ -751,6 +751,18 @@
           "saving": "Saving…",
           "error": "Save failed",
           "conflict": "Draft conflict"
+        },
+        "style": {
+          "uploadFailed": "The asset could not be uploaded. Use a supported file under 5 MB.",
+          "framing": { "title": "Framing", "cut": "Cut {number}", "horizontal": "Horizontal focus", "vertical": "Vertical focus", "zoom": "Zoom" },
+          "captions": {
+            "title": "Captions", "template": "Motion style", "karaoke": "Karaoke punch", "boxed": "Editorial box", "minimal": "Quiet minimal", "font": "Typeface", "defaultFont": "Scribix default", "customFont": "Custom font {number}", "textColor": "Text", "highlightColor": "Highlight", "position": "Vertical position", "lineWidth": "Characters per line", "lines": "Maximum lines", "uploadFont": "Upload TTF or OTF", "correction": "Correct transcript text", "cue": "Caption cue {number}"
+          },
+          "brand": {
+            "title": "Brand", "template": "Brand layout", "none": "No brand overlay", "corner": "Corner mark", "signature": "Signature line", "logo": "Logo", "noLogo": "No logo", "customLogo": "Custom logo {number}", "accent": "Accent", "position": "Logo position", "topLeft": "Top left", "topRight": "Top right", "bottomLeft": "Bottom left", "bottomRight": "Bottom right", "scale": "Logo size", "uploadLogo": "Upload PNG, JPEG or WebP"
+          },
+          "audio": { "title": "Audio", "gain": "Volume", "fadeIn": "Fade in (ms)", "fadeOut": "Fade out (ms)", "normalize": "Normalize loudness in the final render", "normalizeNote": "The browser previews volume and fades; normalization is applied by the cloud renderer." },
+          "cover": { "title": "Cover", "time": "Timeline frame", "note": "The final renderer extracts the cover from this exact point in the finished timeline." }
         }
       }
     },

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { VideoStyleControls } from "@/app/components/VideoStyleControls";
 import type { EditorWorkspace } from "@/lib/video-workspace/editor";
 import type { Edl, EdlSegment, RenderSpec } from "@/lib/video-workspace/contracts";
 import {
@@ -87,7 +88,7 @@ export function VideoClipEditor({
 
   useEffect(() => {
     if (!edl || !renderSpec || !signature || signature === lastSavedRef.current) return;
-    if (saveState === "conflict") return;
+    if (saveState === "saving" || saveState === "error" || saveState === "conflict") return;
     setSaveState("dirty");
     const timer = window.setTimeout(async () => {
       setSaveState("saving");
@@ -192,8 +193,46 @@ export function VideoClipEditor({
 
   const updateEdl = useCallback((updater: (current: Edl) => Edl) => {
     setEdl((current) => current ? updater(current) : current);
+    setSaveState((current) => current === "conflict" ? current : "dirty");
     setSnapshotVersion(null);
   }, []);
+
+  const updateRenderSpec = useCallback((next: RenderSpec) => {
+    setRenderSpec(next);
+    setSaveState((current) => current === "conflict" ? current : "dirty");
+    setSnapshotVersion(null);
+  }, []);
+
+  useEffect(() => {
+    if (!edl) return;
+    setRenderSpec((current) => {
+      if (!current) return current;
+      const segments = new Map(edl.segments.map((segment) => [segment.id, segment]));
+      const cues = current.captions.cues.flatMap((cue) => {
+        const segment = segments.get(cue.segmentId);
+        if (!segment) return [];
+        const words = cue.words.flatMap((word) => {
+          const sourceStartMs = Math.max(word.sourceStartMs, segment.sourceStartMs);
+          const sourceEndMs = Math.min(word.sourceEndMs, segment.sourceEndMs);
+          return sourceEndMs > sourceStartMs ? [{ ...word, sourceStartMs, sourceEndMs }] : [];
+        });
+        if (words.length === 0) return [];
+        return [{
+          ...cue,
+          sourceStartMs: words[0].sourceStartMs,
+          sourceEndMs: words.at(-1)?.sourceEndMs ?? words[0].sourceEndMs,
+          words,
+        }];
+      });
+      return cues.length === current.captions.cues.length && cues.every((cue, index) => (
+        cue.sourceStartMs === current.captions.cues[index].sourceStartMs &&
+        cue.sourceEndMs === current.captions.cues[index].sourceEndMs &&
+        cue.words.length === current.captions.cues[index].words.length
+      ))
+        ? current
+        : { ...current, captions: { ...current.captions, cues } };
+    });
+  }, [edl]);
 
   const updateBoundary = useCallback((
     segmentId: string,
@@ -238,8 +277,13 @@ export function VideoClipEditor({
     setRenderSpec({
       ...renderSpec,
       segments: nextSegmentSpecs,
+      captions: {
+        ...renderSpec.captions,
+        cues: renderSpec.captions.cues.filter((cue) => cue.segmentId !== segmentId),
+      },
       coverTimelineMs: Math.min(renderSpec.coverTimelineMs, Math.max(0, durationMs - 1)),
     });
+    setSaveState((current) => current === "conflict" ? current : "dirty");
     setSnapshotVersion(null);
   }, [edl, renderSpec]);
 
@@ -343,11 +387,16 @@ export function VideoClipEditor({
 
       <div className="grid gap-6 lg:grid-cols-[minmax(270px,0.8fr)_minmax(0,1.2fr)]">
         <div>
-          <ContinuousProxyPlayer timeline={timeline} labels={{
+          <ContinuousProxyPlayer
+            timeline={timeline}
+            renderSpec={renderSpec}
+            assets={workspace.assets}
+            labels={{
             play: t("play"),
             pause: t("pause"),
             previewMissing: t("previewMissing"),
-          }} />
+            }}
+          />
           <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.1em] text-ink/45">
             <span>{t("continuousTimeline")}</span>
             <span>{formatDuration(totalDuration)}</span>
@@ -390,6 +439,14 @@ export function VideoClipEditor({
                 onRemove={removeSegment}
               />
             ))}
+          <VideoStyleControls
+            projectId={projectId}
+            edl={edl}
+            renderSpec={renderSpec}
+            assets={workspace.assets}
+            onChange={updateRenderSpec}
+            onAssetsChange={(assets) => setWorkspace((current) => current ? { ...current, assets } : current)}
+          />
         </div>
       </div>
     </section>
@@ -511,18 +568,27 @@ function BoundaryInput({
 
 function ContinuousProxyPlayer({
   timeline,
+  renderSpec,
+  assets,
   labels,
 }: {
   timeline: TimelineSegment[];
+  renderSpec: RenderSpec;
+  assets: EditorWorkspace["assets"];
   labels: { play: string; pause: string; previewMissing: string };
 }) {
   const videos = [useRef<HTMLVideoElement>(null), useRef<HTMLVideoElement>(null)];
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeSlot, setActiveSlot] = useState<0 | 1>(0);
   const [timelineMs, setTimelineMs] = useState(0);
+  const [sourceMs, setSourceMs] = useState(timeline[0]?.sourceStartMs ?? 0);
   const [playing, setPlaying] = useState(false);
   const switchingRef = useRef(false);
   const durationMs = timelineDurationMs(timeline);
+  const activeSegment = timeline[activeIndex];
+  const activeCrop = activeSegment
+    ? renderSpec.segments[activeSegment.id]?.crop
+    : undefined;
   const slot0Index = activeSlot === 0 ? activeIndex : activeIndex + 1;
   const slot1Index = activeSlot === 1 ? activeIndex : activeIndex + 1;
 
@@ -541,10 +607,25 @@ function ContinuousProxyPlayer({
     if (!video || !segment) return;
     const localMs = Math.max(0, timelineMs - segment.timelineStartMs);
     const seek = (segment.proxyStartMs + localMs) / 1000;
+    setSourceMs(segment.sourceStartMs + localMs);
     if (Number.isFinite(video.duration)) video.currentTime = seek;
     if (playing) void video.play().catch(() => setPlaying(false));
     switchingRef.current = false;
   }, [activeIndex, activeSlot, playing, timeline]);
+
+  useEffect(() => {
+    const gain = Math.min(1, 10 ** (renderSpec.audio.gainDb / 20));
+    const fadeIn = renderSpec.audio.fadeInMs > 0
+      ? Math.min(1, timelineMs / renderSpec.audio.fadeInMs)
+      : 1;
+    const remainingMs = Math.max(0, durationMs - timelineMs);
+    const fadeOut = renderSpec.audio.fadeOutMs > 0
+      ? Math.min(1, remainingMs / renderSpec.audio.fadeOutMs)
+      : 1;
+    for (const video of videos) {
+      if (video.current) video.current.volume = Math.max(0, Math.min(1, gain * fadeIn * fadeOut));
+    }
+  }, [durationMs, renderSpec.audio, timelineMs]);
 
   const seekTimeline = (valueMs: number) => {
     const position = timelineSegmentAt(timeline, valueMs);
@@ -554,11 +635,18 @@ function ContinuousProxyPlayer({
       setActiveIndex(position.index);
     }
     setTimelineMs(valueMs);
+    setSourceMs(position.segment.sourceStartMs + position.localMs);
     const video = videos[activeSlot].current;
     if (video && position.index === activeIndex) {
       video.currentTime = (position.segment.proxyStartMs + position.localMs) / 1000;
     }
   };
+
+  useEffect(() => {
+    seekTimeline(renderSpec.coverTimelineMs);
+    // The cover control is an explicit seek request; other style edits do not move playback.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [renderSpec.coverTimelineMs]);
 
   const advance = () => {
     if (switchingRef.current) return;
@@ -582,6 +670,7 @@ function ContinuousProxyPlayer({
     const segment = timeline[activeIndex];
     if (!video || !segment) return;
     const sourceMs = segment.proxySourceStartMs + video.currentTime * 1000;
+    setSourceMs(sourceMs);
     const nextTimelineMs = segment.timelineStartMs + sourceMs - segment.sourceStartMs;
     if (nextTimelineMs >= segment.timelineEndMs - 30) {
       advance();
@@ -596,6 +685,7 @@ function ContinuousProxyPlayer({
     const segment = timeline[activeIndex];
     if (!video || !segment) return;
     const localMs = Math.max(0, timelineMs - segment.timelineStartMs);
+    setSourceMs(segment.sourceStartMs + localMs);
     video.currentTime = (segment.proxyStartMs + localMs) / 1000;
     if (playing) void video.play().catch(() => setPlaying(false));
   };
@@ -617,10 +707,10 @@ function ContinuousProxyPlayer({
   };
 
   if (timeline.length === 0) {
-    return <div className="grid aspect-[9/12] max-h-[520px] place-items-center rounded-xl bg-ink px-6 text-center text-[12px] text-paper/55">{labels.previewMissing}</div>;
+    return <div className="grid aspect-[9/16] max-h-[620px] place-items-center rounded-xl bg-ink px-6 text-center text-[12px] text-paper/55">{labels.previewMissing}</div>;
   }
   return (
-    <div className="relative mx-auto aspect-[9/12] max-h-[520px] overflow-hidden rounded-xl bg-black shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
+    <div className="relative mx-auto aspect-[9/16] max-h-[620px] overflow-hidden rounded-xl bg-black [container-type:inline-size] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
       <video
         ref={videos[0]}
         src={timeline[slot0Index]?.proxyUrl}
@@ -629,7 +719,11 @@ function ContinuousProxyPlayer({
         onLoadedMetadata={() => onLoadedMetadata(0)}
         onTimeUpdate={() => onTimeUpdate(0)}
         onEnded={advance}
-        className={`absolute inset-0 size-full object-contain ${activeSlot === 0 ? "opacity-100" : "opacity-0"}`}
+        style={{
+          objectPosition: `${(activeCrop?.x ?? 0.5) * 100}% ${(activeCrop?.y ?? 0.5) * 100}%`,
+          transform: `scale(${activeCrop?.zoom ?? 1})`,
+        }}
+        className={`absolute inset-0 size-full object-cover ${activeSlot === 0 ? "opacity-100" : "opacity-0"}`}
       />
       <video
         ref={videos[1]}
@@ -639,8 +733,20 @@ function ContinuousProxyPlayer({
         onLoadedMetadata={() => onLoadedMetadata(1)}
         onTimeUpdate={() => onTimeUpdate(1)}
         onEnded={advance}
-        className={`absolute inset-0 size-full object-contain ${activeSlot === 1 ? "opacity-100" : "opacity-0"}`}
+        style={{
+          objectPosition: `${(activeCrop?.x ?? 0.5) * 100}% ${(activeCrop?.y ?? 0.5) * 100}%`,
+          transform: `scale(${activeCrop?.zoom ?? 1})`,
+        }}
+        className={`absolute inset-0 size-full object-cover ${activeSlot === 1 ? "opacity-100" : "opacity-0"}`}
       />
+      {activeSegment ? (
+        <PreviewOverlays
+          segmentId={activeSegment.id}
+          sourceMs={sourceMs}
+          renderSpec={renderSpec}
+          assets={assets}
+        />
+      ) : null}
       <button
         type="button"
         onClick={toggle}
@@ -664,6 +770,90 @@ function ContinuousProxyPlayer({
           <span>{formatTimestamp(durationMs)}</span>
         </div>
       </div>
+    </div>
+  );
+}
+
+function PreviewOverlays({
+  segmentId,
+  sourceMs,
+  renderSpec,
+  assets,
+}: {
+  segmentId: string;
+  sourceMs: number;
+  renderSpec: RenderSpec;
+  assets: EditorWorkspace["assets"];
+}) {
+  const cue = renderSpec.captions.cues.find((item) => (
+    item.segmentId === segmentId &&
+    sourceMs >= item.sourceStartMs &&
+    sourceMs < item.sourceEndMs
+  ));
+  const logo = assets.find((asset) => (
+    asset.kind === "logo" && asset.id === renderSpec.brand.logoAssetId
+  ));
+  const font = assets.find((asset) => (
+    asset.kind === "font" && asset.id === renderSpec.captions.fontAssetId
+  ));
+  const fontFamily = font ? `scribix-font-${font.id}` : undefined;
+  const logoPosition = {
+    "top-left": "left-[6%] top-[6%]",
+    "top-right": "right-[6%] top-[6%]",
+    "bottom-left": "bottom-[8%] left-[6%]",
+    "bottom-right": "bottom-[8%] right-[6%]",
+  }[renderSpec.brand.logoPosition];
+  const captionClass = renderSpec.captions.templateId === "boxed-v1"
+    ? "rounded-lg bg-black/75 px-3 py-2 shadow-lg"
+    : renderSpec.captions.templateId === "minimal-v1"
+      ? "font-medium drop-shadow-[0_2px_3px_rgba(0,0,0,0.95)]"
+      : "font-black uppercase drop-shadow-[0_3px_3px_rgba(0,0,0,0.95)]";
+  return (
+    <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
+      {font ? <style>{`@font-face{font-family:"${fontFamily}";src:url("${font.url}") format("truetype");font-display:swap;}`}</style> : null}
+      <div className="absolute inset-[5%] rounded-md border border-dashed border-white/20" />
+      {renderSpec.brand.templateId === "signature-v1" ? (
+        <div className="absolute inset-x-0 bottom-0 h-[1.2%]" style={{ backgroundColor: renderSpec.brand.accentColor }} />
+      ) : null}
+      {renderSpec.brand.templateId && logo ? (
+        // The URL is server-signed for this owned asset; alt is decorative in the video canvas.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={logo.url}
+          alt=""
+          className={`absolute max-h-[16%] object-contain ${logoPosition}`}
+          style={{ width: `${renderSpec.brand.logoScale * 100}%` }}
+        />
+      ) : null}
+      {cue ? (
+        <div
+          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(14px,3.8cqw,28px)] leading-[1.12]"
+          style={{
+            top: `${renderSpec.captions.positionY * 100}%`,
+            color: renderSpec.captions.textColor,
+            fontFamily,
+            maxWidth: `min(88%, ${renderSpec.captions.maxCharsPerLine}ch)`,
+            display: "-webkit-box",
+            WebkitLineClamp: renderSpec.captions.maxLines,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          <span className={captionClass}>
+            {cue.words.map((word, index) => {
+              const active = sourceMs >= word.sourceStartMs && sourceMs < word.sourceEndMs;
+              return (
+                <span
+                  key={`${word.sourceStartMs}-${index}`}
+                  style={{ color: active ? renderSpec.captions.highlightColor : undefined }}
+                >
+                  {index > 0 ? " " : ""}{word.text}
+                </span>
+              );
+            })}
+          </span>
+        </div>
+      ) : null}
     </div>
   );
 }
