@@ -216,20 +216,21 @@ Official references:
 
 ## Version 0.1.3 distribution status and release checklist
 
-As of 2026-07-28, Chrome and Firefox are published:
+As of 2026-08-06, Chrome, Edge, and Firefox are published:
 
 - Chrome Web Store:
   `https://chromewebstore.google.com/detail/youtube-transcript-summar/ighgffaindjodlejiddagjlehmgglgaf`
+- Microsoft Edge Add-ons:
+  `https://microsoftedge.microsoft.com/addons/detail/youtube-transcript-summ/nojojdfhlbfklhjekkbpccnoclogacfn`
 - Firefox Add-ons:
   `https://addons.mozilla.org/firefox/addon/scribix-youtube-transcript/`
 
-The Edge package and production identity configuration are ready, but the Edge
-listing is not public. The localized website sidebar therefore exposes Chrome
-and Firefox from one **YouTube Extension** picker while keeping the typed Edge
-entry hidden until its public store URL is confirmed. Website release `0.23.4`
-(commit `de39200`) implements that picker. Production commit `2df9770` remains
-the extension-auth baseline with migration `0021_extension_auth_tokens.sql`,
-the updated privacy page, and the Partner Center Edge CRX ID configured.
+The localized website sidebar exposes all three public listings from one
+**YouTube Extension** picker. Website release `0.26.0` (commit `bf25ecb`) adds
+the Edge listing and official brand-colored icons. Production commit `2df9770`
+remains the extension-auth baseline with migration
+`0021_extension_auth_tokens.sql`, the updated privacy page, and the Partner
+Center Edge CRX ID configured.
 
 - After store signing/approval, test account status, login completion,
   sign-out/revocation, transcript generation, all four

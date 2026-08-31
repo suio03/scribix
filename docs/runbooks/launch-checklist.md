@@ -88,8 +88,8 @@ the one-time items that are already verified and unchanged.
 - [ ] Hit `/ai-note-taker` and at least one localized variant; confirm the
   localized navigation entry, canonical/hreflang, upload, record, and YouTube tabs.
 - [ ] Open the localized sidebar YouTube Extension picker in expanded,
-  collapsed, and mobile layouts; confirm Chrome and Firefox open their public
-  stores in new tabs and Edge remains hidden until its listing is public.
+  collapsed, and mobile layouts; confirm Chrome, Edge, and Firefox open their
+  public stores in new tabs and display their official brand-colored icons.
 - [ ] Hit `/refunds`, `/terms`, `/privacy` — all 200 OK.
 - [ ] Build and install the Chrome, Edge, and Firefox packages; in each browser,
   verify account status, PKCE sign-in return, sign-out/revocation, transcript
