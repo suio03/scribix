@@ -11,6 +11,7 @@ import { parseSpeakerNames } from "@/lib/speaker-names";
 import { TranscriptWorkspace } from "@/app/components/TranscriptWorkspace";
 import { CreateVideoProjectButton } from "@/app/components/CreateVideoProjectButton";
 import { partialTranscriptInfo } from "@/lib/partial-transcript";
+import { videoWorkspaceEnabledForUser } from "@/lib/video-workspace/rollout";
 
 type Params = { params: Promise<{ locale: string; id: string }> };
 
@@ -113,7 +114,8 @@ export default async function TranscriptViewerPage({ params }: Params) {
         </div>
         {row.status === "completed" &&
         row.audio_r2_key &&
-        row.mime_type?.startsWith("video/") ? (
+        row.mime_type?.startsWith("video/") &&
+        videoWorkspaceEnabledForUser(userId, env) ? (
           <CreateVideoProjectButton transcriptId={row.id} />
         ) : null}
       </div>

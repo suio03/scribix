@@ -7,6 +7,7 @@ import {
   type PreflightInput,
 } from "@/lib/upload-preflight";
 import { videoSourceStorageForUser } from "@/lib/video-workspace/retention";
+import { videoWorkspaceEnabledForUser } from "@/lib/video-workspace/rollout";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -48,6 +49,9 @@ export async function POST(req: Request) {
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  if (workflow === "video_clips" && !videoWorkspaceEnabledForUser(user.id, env)) {
+    return Response.json({ error: "video_workspace_not_enabled" }, { status: 404 });
+  }
 
   const input: PreflightInput = {
     filename: body.filename,

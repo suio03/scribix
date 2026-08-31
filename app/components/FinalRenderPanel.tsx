@@ -4,6 +4,7 @@ import { Download, Film, Image as ImageIcon, Loader2, RefreshCw, X } from "lucid
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { FinalRenderSummary } from "@/lib/video-workspace/final-jobs";
+import { trackVideoWorkspaceEvent } from "@/app/components/video-event-client";
 
 const ACTIVE = new Set(["queued", "preparing", "running", "uploading"]);
 
@@ -24,6 +25,7 @@ export function FinalRenderPanel({
   const [renders, setRenders] = useState<FinalRenderSummary[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<"generic" | "limit" | null>(null);
+  const [externalEditReports, setExternalEditReports] = useState<Set<string>>(() => new Set());
   const active = useMemo(() => renders.some((render) => ACTIVE.has(render.status)), [renders]);
 
   const refresh = useCallback(async () => {
@@ -101,6 +103,25 @@ export function FinalRenderPanel({
     }
   };
 
+  const trackDownload = (render: FinalRenderSummary, assetKind: "video" | "cover") => {
+    trackVideoWorkspaceEvent(projectId, {
+      eventName: "render_downloaded",
+      eventKey: `render-download:${render.id}:${assetKind}`,
+      renderJobId: render.id,
+      properties: { assetKind },
+    });
+  };
+
+  const reportExternalEdit = (render: FinalRenderSummary) => {
+    trackVideoWorkspaceEvent(projectId, {
+      eventName: "external_edit_required",
+      eventKey: `external-edit:${render.id}`,
+      renderJobId: render.id,
+      properties: { reason: "other" },
+    });
+    setExternalEditReports((current) => new Set(current).add(render.id));
+  };
+
   return (
     <section className="rounded-xl border border-ink bg-ink p-4 text-paper">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -130,8 +151,16 @@ export function FinalRenderPanel({
               <span className="ml-auto font-mono text-paper/35">#{render.attempt}</span>
               {render.status === "completed" && render.videoUrl && render.coverUrl ? (
                 <>
-                  <a href={render.videoUrl} download className="inline-flex items-center gap-1 rounded-full bg-paper px-2.5 py-1 font-semibold text-ink"><Download size={11} />{t("video")}</a>
-                  <a href={render.coverUrl} download className="inline-flex items-center gap-1 rounded-full border border-paper/25 px-2.5 py-1 font-semibold text-paper"><ImageIcon size={11} />{t("cover")}</a>
+                  <a href={render.videoUrl} download onClick={() => trackDownload(render, "video")} className="inline-flex items-center gap-1 rounded-full bg-paper px-2.5 py-1 font-semibold text-ink"><Download size={11} />{t("video")}</a>
+                  <a href={render.coverUrl} download onClick={() => trackDownload(render, "cover")} className="inline-flex items-center gap-1 rounded-full border border-paper/25 px-2.5 py-1 font-semibold text-paper"><ImageIcon size={11} />{t("cover")}</a>
+                  <button
+                    type="button"
+                    disabled={externalEditReports.has(render.id)}
+                    onClick={() => reportExternalEdit(render)}
+                    className="text-paper/45 underline decoration-paper/20 underline-offset-2 hover:text-paper disabled:no-underline"
+                  >
+                    {externalEditReports.has(render.id) ? t("externalEditRecorded") : t("externalEdit")}
+                  </button>
                 </>
               ) : null}
               {ACTIVE.has(render.status) ? (

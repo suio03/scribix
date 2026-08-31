@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "suite": "render-benchmark-v1",
+  "cases": [
+    { "id": "landscape-audio-karaoke-center", "source": "landscape-audio", "template": "karaoke-v1", "brand": "signature-v1", "position": "top-right", "x": 0.5, "y": 0.5, "zoom": 1, "segments": 1 },
+    { "id": "landscape-audio-boxed-left", "source": "landscape-audio", "template": "boxed-v1", "brand": "corner-v1", "position": "top-left", "x": 0.1, "y": 0.5, "zoom": 1.2, "segments": 2 },
+    { "id": "landscape-audio-minimal-right", "source": "landscape-audio", "template": "minimal-v1", "brand": "signature-v1", "position": "bottom-right", "x": 0.9, "y": 0.5, "zoom": 1.6, "segments": 1 },
+    { "id": "landscape-audio-karaoke-zoom", "source": "landscape-audio", "template": "karaoke-v1", "brand": "corner-v1", "position": "bottom-left", "x": 0.35, "y": 0.65, "zoom": 2, "segments": 2 },
+    { "id": "landscape-silent-boxed-center", "source": "landscape-silent", "template": "boxed-v1", "brand": "signature-v1", "position": "top-right", "x": 0.5, "y": 0.5, "zoom": 1, "segments": 2 },
+    { "id": "landscape-silent-minimal-left", "source": "landscape-silent", "template": "minimal-v1", "brand": "corner-v1", "position": "top-left", "x": 0, "y": 0.4, "zoom": 1.3, "segments": 1 },
+    { "id": "landscape-silent-karaoke-right", "source": "landscape-silent", "template": "karaoke-v1", "brand": "signature-v1", "position": "bottom-right", "x": 1, "y": 0.6, "zoom": 1.8, "segments": 2 },
+    { "id": "landscape-silent-boxed-zoom", "source": "landscape-silent", "template": "boxed-v1", "brand": "corner-v1", "position": "bottom-left", "x": 0.7, "y": 0.3, "zoom": 2.4, "segments": 1 },
+    { "id": "portrait-audio-minimal-center", "source": "portrait-audio", "template": "minimal-v1", "brand": "signature-v1", "position": "top-right", "x": 0.5, "y": 0.5, "zoom": 1, "segments": 1 },
+    { "id": "portrait-audio-karaoke-top", "source": "portrait-audio", "template": "karaoke-v1", "brand": "corner-v1", "position": "top-left", "x": 0.5, "y": 0.1, "zoom": 1.2, "segments": 2 },
+    { "id": "portrait-audio-boxed-bottom", "source": "portrait-audio", "template": "boxed-v1", "brand": "signature-v1", "position": "bottom-right", "x": 0.5, "y": 0.9, "zoom": 1.5, "segments": 1 },
+    { "id": "portrait-audio-minimal-zoom", "source": "portrait-audio", "template": "minimal-v1", "brand": "corner-v1", "position": "bottom-left", "x": 0.3, "y": 0.7, "zoom": 2, "segments": 2 },
+    { "id": "portrait-silent-karaoke-center", "source": "portrait-silent", "template": "karaoke-v1", "brand": "signature-v1", "position": "top-right", "x": 0.5, "y": 0.5, "zoom": 1, "segments": 2 },
+    { "id": "portrait-silent-boxed-top", "source": "portrait-silent", "template": "boxed-v1", "brand": "corner-v1", "position": "top-left", "x": 0.4, "y": 0, "zoom": 1.4, "segments": 1 },
+    { "id": "portrait-silent-minimal-bottom", "source": "portrait-silent", "template": "minimal-v1", "brand": "signature-v1", "position": "bottom-right", "x": 0.6, "y": 1, "zoom": 1.7, "segments": 2 },
+    { "id": "portrait-silent-karaoke-zoom", "source": "portrait-silent", "template": "karaoke-v1", "brand": "corner-v1", "position": "bottom-left", "x": 0.8, "y": 0.2, "zoom": 2.2, "segments": 1 },
+    { "id": "square-audio-boxed-center", "source": "square-audio", "template": "boxed-v1", "brand": "signature-v1", "position": "top-right", "x": 0.5, "y": 0.5, "zoom": 1, "segments": 1 },
+    { "id": "square-audio-minimal-left", "source": "square-audio", "template": "minimal-v1", "brand": "corner-v1", "position": "top-left", "x": 0.1, "y": 0.5, "zoom": 1.2, "segments": 2 },
+    { "id": "square-audio-karaoke-right", "source": "square-audio", "template": "karaoke-v1", "brand": "signature-v1", "position": "bottom-right", "x": 0.9, "y": 0.5, "zoom": 1.6, "segments": 1 },
+    { "id": "square-audio-boxed-zoom", "source": "square-audio", "template": "boxed-v1", "brand": "corner-v1", "position": "bottom-left", "x": 0.25, "y": 0.75, "zoom": 2, "segments": 2 },
+    { "id": "square-silent-minimal-center", "source": "square-silent", "template": "minimal-v1", "brand": "signature-v1", "position": "top-right", "x": 0.5, "y": 0.5, "zoom": 1, "segments": 2 },
+    { "id": "square-silent-karaoke-left", "source": "square-silent", "template": "karaoke-v1", "brand": "corner-v1", "position": "top-left", "x": 0, "y": 0.4, "zoom": 1.3, "segments": 1 },
+    { "id": "square-silent-boxed-right", "source": "square-silent", "template": "boxed-v1", "brand": "signature-v1", "position": "bottom-right", "x": 1, "y": 0.6, "zoom": 1.8, "segments": 2 },
+    { "id": "square-silent-minimal-zoom", "source": "square-silent", "template": "minimal-v1", "brand": "corner-v1", "position": "bottom-left", "x": 0.65, "y": 0.35, "zoom": 2.4, "segments": 1 }
+  ]
+}

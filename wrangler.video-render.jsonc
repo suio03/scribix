@@ -13,8 +13,8 @@
     // Configure the four VIDEO_RENDER_* cost variables in the deployed Worker
     // using current ap-southeast-2 rates; see docs/video-workspace/m8-operations.md.
     "AWS_REGION": "ap-southeast-2",
-    "AWS_BATCH_JOB_QUEUE": "scribix-video-preview",
-    "AWS_BATCH_JOB_DEFINITION": "scribix-video-preview:1",
+    "AWS_BATCH_JOB_QUEUE": "scribix-video-render",
+    "AWS_BATCH_JOB_DEFINITION": "scribix-video-render:1",
     "SCRIBIX_INTERNAL_URL": "https://scribix.io"
   },
 

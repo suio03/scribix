@@ -10,6 +10,7 @@ import {
   createVideoProjectForTranscript,
   deletePendingVideoProjectRecords,
 } from "@/lib/video-workspace/projects";
+import { videoWorkspaceEnabledForUser } from "@/lib/video-workspace/rollout";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -64,6 +65,9 @@ export async function POST(req: Request) {
   const userRow = await getOrCreateCurrentUser(env.DB, session);
   if (!userRow) return Response.json({ error: "user_not_found" }, { status: 404 });
   const userId = userRow.id;
+  if (workflow === "video_clips" && !videoWorkspaceEnabledForUser(userId, env)) {
+    return Response.json({ error: "video_workspace_not_enabled" }, { status: 404 });
+  }
 
   const plan = PLANS[userRow.tier];
   const allowPartial =

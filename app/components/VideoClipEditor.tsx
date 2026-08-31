@@ -17,6 +17,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { VideoStyleControls } from "@/app/components/VideoStyleControls";
 import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
+import { trackVideoWorkspaceEvent } from "@/app/components/video-event-client";
 import type { EditorWorkspace } from "@/lib/video-workspace/editor";
 import type { Edl, EdlSegment, RenderSpec } from "@/lib/video-workspace/contracts";
 import {
@@ -66,6 +67,20 @@ export function VideoClipEditor({
   const [proxyRefreshIds, setProxyRefreshIds] = useState<string[]>([]);
   const lastSavedRef = useRef("");
   const proxyRequestRef = useRef(new Map<string, string>());
+  const eventSessionRef = useRef<string | null>(null);
+  const editorStartedAtRef = useRef(0);
+
+  useEffect(() => {
+    const sessionId = crypto.randomUUID();
+    eventSessionRef.current = sessionId;
+    editorStartedAtRef.current = Date.now();
+    trackVideoWorkspaceEvent(projectId, {
+      eventName: "editor_opened",
+      eventKey: `editor-opened:${sessionId}`,
+      candidateId,
+      properties: {},
+    });
+  }, [candidateId, projectId]);
 
   useEffect(() => {
     let active = true;
@@ -126,8 +141,21 @@ export function VideoClipEditor({
           return;
         }
         lastSavedRef.current = signature;
-        setRevision(payload.revision as number);
+        const savedRevision = payload.revision as number;
+        setRevision(savedRevision);
         setSaveState("saved");
+        if (eventSessionRef.current) {
+          trackVideoWorkspaceEvent(projectId, {
+            eventName: "edit_saved",
+            eventKey: `edit-saved:${eventSessionRef.current}:${savedRevision}`,
+            candidateId,
+            properties: {
+              elapsedMs: Math.min(6 * 60 * 60 * 1000, Date.now() - editorStartedAtRef.current),
+              revision: savedRevision,
+              segmentCount: edl.segments.length,
+            },
+          });
+        }
       } catch {
         setSaveState("error");
       }

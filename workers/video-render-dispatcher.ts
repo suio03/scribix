@@ -1,5 +1,6 @@
 import { VIDEO_WORKSPACE_SCHEMA_VERSION, type RenderDispatchMessage } from "../lib/video-workspace/contracts";
 import { createScopedJobToken } from "../lib/video-workspace/job-auth";
+import { recordServerRenderEvent } from "../lib/video-workspace/events";
 import {
   estimateRenderCost,
   parseRenderCostRates,
@@ -382,6 +383,9 @@ async function failReconciledJob(
         WHERE id = ?2 AND status NOT IN ('completed', 'canceled')`
     ).bind(errorCode, job.id),
   ]);
+  if (job.kind === "final") {
+    await recordServerRenderEvent(db, job.id, "render_failed").catch(() => undefined);
+  }
 }
 
 function providerFor(env: Env): VideoRenderProvider {

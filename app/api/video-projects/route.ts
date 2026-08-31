@@ -3,6 +3,7 @@ import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { createVideoProjectForTranscript } from "@/lib/video-workspace/projects";
 import { videoSourceStorageForUser } from "@/lib/video-workspace/retention";
+import { videoWorkspaceEnabledForUser } from "@/lib/video-workspace/rollout";
 
 export async function GET() {
   const session = await auth();
@@ -45,6 +46,9 @@ export async function POST(req: Request) {
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  if (!videoWorkspaceEnabledForUser(user.id, env)) {
+    return Response.json({ error: "video_workspace_not_enabled" }, { status: 404 });
+  }
   const result = await createVideoProjectForTranscript(env.DB, user.id, body.transcriptId, user.tier);
   if (!result.ok) {
     const status = result.error === "transcript_not_found"

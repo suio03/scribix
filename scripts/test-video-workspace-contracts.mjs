@@ -17,12 +17,16 @@ const sources = [
   "lib/video-workspace/presentation.ts",
   "lib/video-workspace/operations.ts",
   "lib/video-workspace/asset-content.ts",
+  "lib/video-workspace/events.ts",
+  "lib/video-workspace/rollout.ts",
   "lib/video-workspace/validation.test.ts",
   "lib/video-workspace/job-auth.test.ts",
   "lib/video-workspace/timeline.test.ts",
   "lib/video-workspace/presentation.test.ts",
   "lib/video-workspace/operations.test.ts",
   "lib/video-workspace/asset-content.test.ts",
+  "lib/video-workspace/events.test.ts",
+  "lib/video-workspace/rollout.test.ts",
 ];
 
 try {
@@ -38,6 +42,8 @@ try {
       "es2022",
       "--esModuleInterop",
       "--skipLibCheck",
+      "--types",
+      "node,@cloudflare/workers-types",
       "--outDir",
       outputDirectory,
     ],
@@ -54,6 +60,8 @@ try {
     join(outputDirectory, "presentation.test.js"),
     join(outputDirectory, "operations.test.js"),
     join(outputDirectory, "asset-content.test.js"),
+    join(outputDirectory, "events.test.js"),
+    join(outputDirectory, "rollout.test.js"),
   ];
   const run = spawnSync(process.execPath, ["--test", ...testFiles], {
     cwd: root,

@@ -8,6 +8,7 @@ import {
 } from "./contracts";
 import { snapshotProjectDraft } from "./editor";
 import { VideoWorkspaceR2 } from "./r2-keys";
+import { recordServerRenderEvent } from "./events";
 
 const IDEMPOTENCY_KEY = /^[A-Za-z0-9][A-Za-z0-9:_-]{7,127}$/;
 
@@ -204,6 +205,7 @@ export async function createFinalRender(
     if (raced.project_id !== projectId) return { ok: false, error: "idempotency_conflict" };
     return { ok: true, render: await finalRenderSummary(db, userId, raced.id), existing: true };
   }
+  await recordServerRenderEvent(db, jobId, "render_requested").catch(() => undefined);
   await queue.send({ schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION, jobId });
   return { ok: true, render: await finalRenderSummary(db, userId, jobId), existing: false };
 }

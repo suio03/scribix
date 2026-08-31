@@ -11,6 +11,7 @@ import {
   type RenderErrorCode,
 } from "./contracts";
 import { validateEdl, validateRenderSpec } from "./validation";
+import { recordServerRenderEvent } from "./events";
 
 type FinalJobRow = {
   id: string;
@@ -231,6 +232,7 @@ export async function recordFinalJobResult(
           AND deleted_at IS NULL`
     ).bind(job.project_id, job.user_id, jobId),
   ]);
+  await recordServerRenderEvent(db, jobId, "render_completed").catch(() => undefined);
   return { ok: true };
 }
 
@@ -308,6 +310,7 @@ async function failFinalJob(db: D1Database, jobId: string, errorCode: RenderErro
           AND deleted_at IS NULL`
     ).bind(jobId),
   ]);
+  await recordServerRenderEvent(db, jobId, "render_failed").catch(() => undefined);
 }
 
 function sourceExpired(expiresAt: string | null): boolean {

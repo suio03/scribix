@@ -12,6 +12,7 @@
     "test:video-consistency": "node scripts/video-workspace/test-presentation-consistency.mjs",
     "test:video-visual-parity": "node scripts/video-workspace/test-visual-parity.mjs",
     "test:video-security": "node scripts/video-workspace/test-security-controls.mjs",
+    "benchmark:video-render": "node scripts/video-workspace/run-render-benchmark.mjs",
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",

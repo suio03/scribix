@@ -761,7 +761,7 @@
           "cover": { "title": "Copertina", "time": "Fotogramma timeline", "note": "Il renderer finale estrae la copertina da questo punto esatto della timeline completata." }
         },
         "finalRender": {
-          "eyebrow": "Esportazione cloud", "title": "Renderizza il video finale", "description": "Crea una versione immutabile dalla sorgente originale, non dai proxy di anteprima.", "generate": "Genera video", "rendering": "Rendering…", "saveFirst": "Attendi il salvataggio della modifica corrente.", "failed": "Impossibile completare la richiesta di rendering.", "limit": "Hai raggiunto il limite di rendering. Attendi il termine di uno attivo o riprova domani.", "video": "Video", "cover": "Copertina", "cancel": "Annulla", "retry": "Riprova",
+          "eyebrow": "Esportazione cloud", "title": "Renderizza il video finale", "description": "Crea una versione immutabile dalla sorgente originale, non dai proxy di anteprima.", "generate": "Genera video", "rendering": "Rendering…", "saveFirst": "Attendi il salvataggio della modifica corrente.", "failed": "Impossibile completare la richiesta di rendering.", "limit": "Hai raggiunto il limite di rendering. Attendi il termine di uno attivo o riprova domani.", "video": "Video", "cover": "Copertina", "cancel": "Annulla", "retry": "Riprova", "externalEdit": "Richiede ancora modifiche esterne", "externalEditRecorded": "Feedback registrato",
           "status": { "draft": "Bozza", "queued": "In coda", "preparing": "Preparazione", "running": "Rendering", "uploading": "Caricamento", "completed": "Pronto", "failed": "Non riuscito", "canceled": "Annullato" }
         }
       }
