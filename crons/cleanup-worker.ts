@@ -13,6 +13,7 @@
 //      and NULLs `audio_r2_key`. Transcript JSON is preserved forever.
 //   6. Deletes expired video-project sources when no render job is active,
 //      while preserving project versions and completed output assets.
+//   7. Deletes seven-day preview proxies when their segment job is no longer active.
 //
 // Deployed separately from the Next app via `wrangler.cleanup.jsonc`. Shares
 // the same D1 + R2 bindings.
@@ -59,6 +60,13 @@ type ExpiredVideoSourceRow = {
   user_id: string;
   project_id: string;
   transcript_id: string;
+  r2_key: string;
+};
+
+type ExpiredPreviewProxyRow = {
+  asset_id: string;
+  user_id: string;
+  project_id: string;
   r2_key: string;
 };
 
@@ -286,6 +294,56 @@ async function sweepExpiredVideoSources(env: Env, nowIso: string): Promise<Sweep
   return stats;
 }
 
+async function sweepExpiredPreviewProxies(env: Env, nowIso: string): Promise<SweepStats> {
+  const rows = await env.DB.prepare(
+    `SELECT a.id AS asset_id, a.user_id, a.project_id, a.r2_key
+       FROM media_assets a
+      WHERE a.kind = 'preview_proxy'
+        AND a.status IN ('pending', 'uploading', 'ready', 'failed')
+        AND a.deleted_at IS NULL
+        AND a.r2_key IS NOT NULL
+        AND a.expires_at IS NOT NULL
+        AND a.expires_at <= ?1
+        AND NOT EXISTS (
+          SELECT 1 FROM render_jobs j
+           WHERE j.output_asset_id = a.id
+             AND j.user_id = a.user_id
+             AND j.status IN ('queued', 'preparing', 'running', 'uploading')
+        )`
+  )
+    .bind(nowIso)
+    .all<ExpiredPreviewProxyRow>();
+
+  const stats: SweepStats = { scanned: rows.results.length, deleted: 0, failed: 0, retry: 0 };
+  for (const proxy of rows.results) {
+    try {
+      await env.SCRIBIX_MEDIA.delete(proxy.r2_key);
+      await env.DB.prepare(
+        `UPDATE media_assets
+            SET status = 'deleted', r2_key = NULL, deleted_at = CURRENT_TIMESTAMP
+          WHERE id = ?1
+            AND user_id = ?2
+            AND kind = 'preview_proxy'
+            AND status NOT IN ('deleted')`
+      )
+        .bind(proxy.asset_id, proxy.user_id)
+        .run();
+      stats.deleted += 1;
+    } catch (error) {
+      stats.failed += 1;
+      stats.retry += 1;
+      console.error(JSON.stringify({
+        event: "cleanup_expired_preview_proxy_failed",
+        projectId: proxy.project_id,
+        assetId: proxy.asset_id,
+        errorCategory: cleanupErrorCategory(error),
+        error: error instanceof Error ? error.message.slice(0, 200) : "unknown",
+      }));
+    }
+  }
+  return stats;
+}
+
 function cleanupErrorCategory(error: unknown): string {
   if (error instanceof Error && /auth|forbidden|unauthorized/i.test(error.message)) return "auth";
   if (error instanceof Error && /timeout|network|fetch/i.test(error.message)) return "network";
@@ -297,14 +355,16 @@ function isoCutoff(msAgo: number): string {
 }
 
 async function runCleanup(env: Env): Promise<void> {
+  const nowIso = new Date().toISOString().replace("T", " ").slice(0, 19);
   const preSubmit = await sweepExpiredRows(env, PRE_SUBMIT_STATUSES, isoCutoff(PENDING_TTL_MS), true);
   const inFlight = await sweepExpiredRows(env, IN_FLIGHT_STATUSES, isoCutoff(IN_FLIGHT_TTL_MS), true);
   const failed = await sweepExpiredRows(env, FAILED_STATUSES, isoCutoff(FAILED_TTL_MS), false);
   const legacyDeleted = await sweepLegacySoftDeleted(env);
   const expiredVideoSources = await sweepExpiredVideoSources(
     env,
-    new Date().toISOString().replace("T", " ").slice(0, 19)
+    nowIso
   );
+  const expiredPreviewProxies = await sweepExpiredPreviewProxies(env, nowIso);
   const expired = await sweepExpiredAudio(env, isoCutoff(AUDIO_TTL_MS));
   const sweeps = {
     preSubmit,
@@ -312,6 +372,7 @@ async function runCleanup(env: Env): Promise<void> {
     failed,
     legacyDeleted,
     expiredVideoSources,
+    expiredPreviewProxies,
     expiredMedia: expired,
   };
   const totals = Object.values(sweeps).reduce(

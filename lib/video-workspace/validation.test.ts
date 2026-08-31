@@ -246,6 +246,14 @@ test("job state and dispatch contracts remain deterministic", () => {
     userId: "user_01",
     projectId: "project_01",
     projectVersionId: "version_01",
+    candidateId: null,
+    segmentIndex: null,
+    segmentId: null,
+    sourceStartMs: null,
+    sourceEndMs: null,
+    proxySourceStartMs: null,
+    proxySourceEndMs: null,
+    proxyVersion: null,
     kind: "final",
     provider: "aws-batch",
     providerJobId: "provider_01",
@@ -256,6 +264,31 @@ test("job state and dispatch contracts remain deterministic", () => {
     errorCode: null,
   });
   assert.equal(completed.success, true);
+
+  const preview = validateRenderJob({
+    schemaVersion: 1,
+    id: "job_02",
+    userId: "user_01",
+    projectId: "project_01",
+    projectVersionId: null,
+    candidateId: "candidate_01",
+    segmentIndex: 0,
+    segmentId: "s0",
+    sourceStartMs: 10_000,
+    sourceEndMs: 35_000,
+    proxySourceStartMs: 5_000,
+    proxySourceEndMs: 40_000,
+    proxyVersion: 1,
+    kind: "preview",
+    provider: null,
+    providerJobId: null,
+    status: "queued",
+    attempt: 0,
+    idempotencyKey: "preview-project-candidate-0-v1",
+    outputAssetId: "asset_02",
+    errorCode: null,
+  });
+  assert.equal(preview.success, true);
 
   const dispatch = validateRenderDispatchMessage({ schemaVersion: 1, jobId: "job_01" });
   assert.equal(dispatch.success, true);

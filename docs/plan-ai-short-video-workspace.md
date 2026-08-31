@@ -1,6 +1,6 @@
 # Scribix AI 短视频工作台 V1 实施计划
 
-> 状态：实施中（M0、M1 已提交，M2 已实现待提交）
+> 状态：实施中（M0–M2 已提交，M3 已完成本地实现与验证，待云端资源发布）
 > 创建日期：2026-08-31  
 > 当前范围：长视频对话内容 → 候选 clips → 浏览器编辑预览 → Cloud 最终成片  
 > 明确不做：社交账号连接、内容日历、定时发布和多平台分发
@@ -61,7 +61,7 @@
 - 已确认：原视频 Free 保存 7 天/5 GiB、Basic 30 天/25 GiB、Pro 90 天/100 GiB；到期后保留 transcript、EDL、Render Spec 和成片，重新渲染要求重新上传匹配的原视频。
 - 第一版是否只接受桌面浏览器编辑。建议优先桌面 Chrome/Edge，移动端先支持查看结果和下载。
 - 是否保留 AI 标题、描述和 Hashtags。当前建议交给已有分发平台，Scribix 只保留 clip 的内部名称/主题。
-- Cloud 执行供应商最终选择。当前推荐基线是 AWS Batch + Fargate On-Demand；Render Job 协议必须保持供应商无关。
+- 已确认：Cloud 执行供应商采用 AWS Batch + Fargate On-Demand；Render Job 协议保持供应商无关。
 
 ## 4. 用户流程
 
@@ -665,11 +665,15 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 ### M3. Preview Proxy Pipeline
 
 - [ ] 构建并发布受控 FFmpeg container。
-- [ ] 实现 preview job API、dispatcher、provider adapter、callback 和 reconciliation。
-- [ ] 生成带 handles 的单 segment 720p proxies。
-- [ ] 自动生成前三候选，其余懒生成。
-- [ ] 超出 handles 时支持单 segment 重建。
-- [ ] 扩展 cleanup worker 清理到期 proxies。
+- [x] 实现 preview job API、dispatcher、provider adapter、callback 和 reconciliation。
+- [x] 生成带 handles 的单 segment 720p proxies。
+- [x] 自动生成前三候选，其余懒生成。
+- [x] 超出 handles 时支持单 segment 重建。
+- [x] 扩展 cleanup worker 清理到期 proxies。
+
+本地状态：container 已成功构建并通过 FFmpeg fixture；“发布”保持未完成，需先创建
+Cloudflare Queue、ECR、AWS Batch compute environment/job queue/job definition 和最小权限
+secrets，详见 `docs/video-workspace/m3-preview-proxy.md`。未执行 remote migration 或 deployment。
 
 完成标准：
 

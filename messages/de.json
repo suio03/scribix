@@ -711,7 +711,15 @@
       "rejected": "Verworfen",
       "requestFailed": "Die Anfrage konnte nicht abgeschlossen werden. Die bisherige Auswahl bleibt unverändert; versuchen Sie es erneut.",
       "replaceConfirm": "Neu generieren und die aktuelle Auswahl ersetzen? Ihr Feedback bleibt gespeichert.",
-      "previewPending": "Die Wiedergabe folgt in der Vorschauphase. Diese Auswahl enthält derzeit nur geprüfte Quellbereiche."
+      "previewPending": "Die ersten drei Vorschauen werden automatisch erstellt. Weitere Kandidaten erzeugen nur bei Bedarf ihre Segmente.",
+      "previewNotReady": "Vorschau noch nicht erstellt",
+      "previewPrepare": "Vorschau erstellen",
+      "previewProcessing": "Leichte Vorschau wird erstellt…",
+      "previewFailed": "Vorschau fehlgeschlagen; der Kandidat bleibt erhalten",
+      "previewRetry": "Vorschau erneut versuchen",
+      "previewLoading": "Sichere Vorschau wird geladen…",
+      "previewUnavailable": "Die Vorschau konnte nicht geladen werden. Versuchen Sie es erneut.",
+      "previewSegment": "Segment {number}"
     },
     "rowMenu": {
       "more": "Weitere Aktionen",

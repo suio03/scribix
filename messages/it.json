@@ -711,7 +711,15 @@
       "rejected": "Scartata",
       "requestFailed": "Impossibile completare la richiesta. La selezione precedente non è cambiata; riprova.",
       "replaceConfirm": "Rigenerare e sostituire la selezione attuale? Il feedback resterà registrato.",
-      "previewPending": "La riproduzione arriverà nella fase di anteprima. Per ora sono salvati solo gli intervalli sorgente convalidati."
+      "previewPending": "Le prime tre anteprime vengono preparate automaticamente. Gli altri candidati generano solo i segmenti che apri.",
+      "previewNotReady": "Anteprima non generata",
+      "previewPrepare": "Prepara anteprima",
+      "previewProcessing": "Preparazione anteprima leggera…",
+      "previewFailed": "L’anteprima non è riuscita, ma il candidato resta disponibile",
+      "previewRetry": "Riprova anteprima",
+      "previewLoading": "Caricamento anteprima sicura…",
+      "previewUnavailable": "Impossibile caricare l’anteprima. Riprova.",
+      "previewSegment": "Segmento {number}"
     },
     "rowMenu": {
       "more": "Altre azioni",

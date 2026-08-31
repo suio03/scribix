@@ -17,6 +17,10 @@ import {
   listClipCandidates,
   replaceClipCandidates,
 } from "@/lib/video-workspace/candidates";
+import {
+  listCandidatePreviews,
+  queueAutomaticCandidatePreviews,
+} from "@/lib/video-workspace/preview-jobs";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -35,14 +39,14 @@ type CandidateProjectRow = {
 export async function GET(_: Request, { params }: Params) {
   const context = await candidateContext(params);
   if (context instanceof Response) return context;
-  const candidates = await listClipCandidates(
-    context.env.DB,
-    context.user.id,
-    context.project.id
-  );
+  const [candidates, previews] = await Promise.all([
+    listClipCandidates(context.env.DB, context.user.id, context.project.id),
+    listCandidatePreviews(context.env.DB, context.user.id, context.project.id),
+  ]);
   return Response.json({
     status: effectiveProjectStatus(context.project),
     candidates,
+    previews,
   });
 }
 
@@ -111,6 +115,22 @@ export async function POST(_: Request, { params }: Params) {
     );
     await replaceClipCandidates(env.DB, user.id, project.id, candidateSet);
     const candidates = await listClipCandidates(env.DB, user.id, project.id);
+    try {
+      await queueAutomaticCandidatePreviews(
+        env.DB,
+        env.VIDEO_RENDER_QUEUE,
+        user.id,
+        project.id
+      );
+    } catch (error) {
+      console.error(JSON.stringify({
+        event: "video_preview_auto_queue_failed",
+        requestId,
+        projectId: project.id,
+        error: error instanceof Error ? error.name : "unknown",
+      }));
+    }
+    const previews = await listCandidatePreviews(env.DB, user.id, project.id);
     await recordUsageBestEffort({
       db: env.DB,
       requestId,
@@ -124,6 +144,7 @@ export async function POST(_: Request, { params }: Params) {
     return Response.json({
       status: "candidates_ready",
       candidates,
+      previews,
       transcriptTruncated: analysisInput.truncated,
     });
   } catch (error) {

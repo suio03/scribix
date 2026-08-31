@@ -1,0 +1,48 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "scribix-video-render-dispatcher",
+  "main": "workers/video-render-dispatcher.ts",
+  "compatibility_date": "2025-03-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "observability": {
+    "enabled": true
+  },
+
+  "vars": {
+    "AWS_REGION": "ap-southeast-2",
+    "AWS_BATCH_JOB_QUEUE": "scribix-video-preview",
+    "AWS_BATCH_JOB_DEFINITION": "scribix-video-preview:1",
+    "SCRIBIX_INTERNAL_URL": "https://scribix.io"
+  },
+
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "scribix-db",
+      "database_id": "c031ef5c-899a-426a-897a-279e011be78d"
+    }
+  ],
+
+  "queues": {
+    "producers": [
+      {
+        "binding": "VIDEO_RENDER_QUEUE",
+        "queue": "scribix-video-render"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "scribix-video-render",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5,
+        "max_retries": 5,
+        "dead_letter_queue": "scribix-video-render-dlq"
+      }
+    ]
+  }
+}

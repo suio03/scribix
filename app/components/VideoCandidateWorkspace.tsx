@@ -1,9 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Clock3, Loader2, RefreshCw, Sparkles, ThumbsDown } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  Clock3,
+  Film,
+  Loader2,
+  RefreshCw,
+  Sparkles,
+  ThumbsDown,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { StoredClipCandidate } from "@/lib/video-workspace/candidates";
+import type { CandidatePreview } from "@/lib/video-workspace/preview-jobs";
 
 type ProjectStatus = "draft" | "analyzing" | "candidates_ready" | "failed" | string;
 
@@ -11,17 +21,24 @@ export function VideoCandidateWorkspace({
   projectId,
   initialStatus,
   initialCandidates,
+  initialPreviews,
 }: {
   projectId: string;
   initialStatus: ProjectStatus;
   initialCandidates: StoredClipCandidate[];
+  initialPreviews: CandidatePreview[];
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
   const [status, setStatus] = useState<ProjectStatus>(initialStatus);
   const [candidates, setCandidates] = useState(initialCandidates);
+  const [previews, setPreviews] = useState(initialPreviews);
   const [error, setError] = useState(false);
   const [feedbackBusy, setFeedbackBusy] = useState<string | null>(null);
+  const [previewBusy, setPreviewBusy] = useState<string | null>(null);
   const generating = status === "analyzing";
+  const previewsActive = previews.some((preview) => (
+    preview.status === "queued" || preview.status === "processing"
+  ));
 
   useEffect(() => {
     if (!generating) return;
@@ -32,10 +49,12 @@ export function VideoCandidateWorkspace({
         const payload = (await response.json()) as {
           status?: string;
           candidates?: StoredClipCandidate[];
+          previews?: CandidatePreview[];
         };
         if (payload.status && payload.status !== "analyzing") {
           setStatus(payload.status);
           if (payload.candidates) setCandidates(payload.candidates);
+          if (payload.previews) setPreviews(payload.previews);
         }
       } catch {
         // Polling is best effort; the active POST owns user-visible errors.
@@ -43,6 +62,21 @@ export function VideoCandidateWorkspace({
     }, 3_000);
     return () => window.clearInterval(poll);
   }, [generating, projectId]);
+
+  useEffect(() => {
+    if (!previewsActive) return;
+    const poll = window.setInterval(async () => {
+      try {
+        const response = await fetch(`/api/video-projects/${projectId}/candidates`);
+        if (!response.ok) return;
+        const payload = (await response.json()) as { previews?: CandidatePreview[] };
+        if (payload.previews) setPreviews(payload.previews);
+      } catch {
+        // Reconciliation continues server-side if this browser is closed.
+      }
+    }, 4_000);
+    return () => window.clearInterval(poll);
+  }, [previewsActive, projectId]);
 
   const generate = async () => {
     if (generating) return;
@@ -56,13 +90,37 @@ export function VideoCandidateWorkspace({
       const payload = (await response.json()) as {
         status?: string;
         candidates?: StoredClipCandidate[];
+        previews?: CandidatePreview[];
       };
       if (!response.ok || !payload.candidates) throw new Error("candidate_generation_failed");
       setCandidates(payload.candidates);
+      setPreviews(payload.previews ?? []);
       setStatus(payload.status ?? "candidates_ready");
     } catch {
       setStatus(candidates.length > 0 ? "candidates_ready" : "failed");
       setError(true);
+    }
+  };
+
+  const requestPreview = async (candidateId: string) => {
+    if (previewBusy) return;
+    setPreviewBusy(candidateId);
+    setError(false);
+    try {
+      const response = await fetch(
+        `/api/video-projects/${projectId}/candidates/${candidateId}/previews`,
+        { method: "POST" }
+      );
+      const payload = (await response.json()) as { preview?: CandidatePreview | null };
+      if (!response.ok || !payload.preview) throw new Error("preview_queue_failed");
+      setPreviews((current) => [
+        ...current.filter((preview) => preview.candidateId !== candidateId),
+        payload.preview as CandidatePreview,
+      ]);
+    } catch {
+      setError(true);
+    } finally {
+      setPreviewBusy(null);
     }
   };
 
@@ -153,10 +211,14 @@ export function VideoCandidateWorkspace({
           {candidates.map((candidate, index) => (
             <CandidateCard
               key={candidate.id}
+              projectId={projectId}
               candidate={candidate}
               displayRank={index + 1}
               busy={feedbackBusy === candidate.id}
+              previewBusy={previewBusy === candidate.id}
+              preview={previews.find((preview) => preview.candidateId === candidate.id) ?? null}
               onFeedback={sendFeedback}
+              onRequestPreview={requestPreview}
             />
           ))}
           <p className="px-1 pt-2 text-[12px] leading-5 text-ink/45">
@@ -169,15 +231,23 @@ export function VideoCandidateWorkspace({
 }
 
 function CandidateCard({
+  projectId,
   candidate,
   displayRank,
   busy,
+  previewBusy,
+  preview,
   onFeedback,
+  onRequestPreview,
 }: {
+  projectId: string;
   candidate: StoredClipCandidate;
   displayRank: number;
   busy: boolean;
+  previewBusy: boolean;
+  preview: CandidatePreview | null;
   onFeedback: (candidateId: string, feedback: "accepted" | "rejected") => Promise<void>;
+  onRequestPreview: (candidateId: string) => Promise<void>;
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
   const durationMs = candidate.segments.reduce(
@@ -223,6 +293,13 @@ function CandidateCard({
               </span>
             ))}
           </div>
+          <PreviewPanel
+            projectId={projectId}
+            candidateId={candidate.id}
+            preview={preview}
+            busy={previewBusy}
+            onRequest={onRequestPreview}
+          />
         </div>
 
         <div className="flex items-center gap-2 border-t border-line px-5 py-4 md:flex-col md:items-stretch md:justify-center md:border-l md:border-t-0 md:px-5">
@@ -258,6 +335,145 @@ function CandidateCard({
       </div>
     </article>
   );
+}
+
+function PreviewPanel({
+  projectId,
+  candidateId,
+  preview,
+  busy,
+  onRequest,
+}: {
+  projectId: string;
+  candidateId: string;
+  preview: CandidatePreview | null;
+  busy: boolean;
+  onRequest: (candidateId: string) => Promise<void>;
+}) {
+  const t = useTranslations("Dashboard.videoCandidates");
+  if (preview?.status === "ready") {
+    return <ReadyPreview projectId={projectId} candidateId={candidateId} />;
+  }
+  const processing = preview?.status === "queued" || preview?.status === "processing";
+  const failed = preview?.status === "failed";
+  return (
+    <div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-line bg-paper/70 px-4 py-3">
+      <div className="flex min-w-0 items-center gap-2.5 text-[12px] text-ink/55">
+        {processing ? (
+          <Loader2 size={14} className="shrink-0 animate-spin text-accent" />
+        ) : failed ? (
+          <AlertCircle size={14} className="shrink-0 text-red-600" />
+        ) : (
+          <Film size={14} className="shrink-0 text-accent" />
+        )}
+        <span>{processing ? t("previewProcessing") : failed ? t("previewFailed") : t("previewNotReady")}</span>
+      </div>
+      {!processing ? (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void onRequest(candidateId)}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-ink/15 bg-card px-3 py-1.5 text-[11px] font-medium text-ink transition hover:border-ink/35 disabled:opacity-50"
+        >
+          {busy ? <Loader2 size={12} className="animate-spin" /> : <Film size={12} />}
+          {failed ? t("previewRetry") : t("previewPrepare")}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function ReadyPreview({
+  projectId,
+  candidateId,
+}: {
+  projectId: string;
+  candidateId: string;
+}) {
+  const t = useTranslations("Dashboard.videoCandidates");
+  const [segments, setSegments] = useState<Array<{
+    segmentIndex: number;
+    url: string | null;
+  }> | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [reload, setReload] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    fetchCandidatePreview(projectId, candidateId)
+      .then((next) => {
+        if (active) setSegments(next);
+      })
+      .catch(() => {
+        if (active) setFailed(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, [candidateId, projectId, reload]);
+
+  if (failed) {
+    return (
+      <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[12px] text-red-700">
+        <span>{t("previewUnavailable")}</span>
+        <button
+          type="button"
+          onClick={() => {
+            setFailed(false);
+            setSegments(null);
+            setReload((value) => value + 1);
+          }}
+          className="shrink-0 font-medium underline decoration-red-300 underline-offset-4"
+        >
+          {t("previewRetry")}
+        </button>
+      </div>
+    );
+  }
+  if (!segments) {
+    return (
+      <div className="mt-5 flex items-center gap-2 text-[12px] text-ink/45">
+        <Loader2 size={13} className="animate-spin" />
+        {t("previewLoading")}
+      </div>
+    );
+  }
+  return (
+    <div className="mt-5 grid gap-3 sm:grid-cols-2">
+      {segments.map((segment) => segment.url ? (
+        <figure key={segment.segmentIndex} className="overflow-hidden rounded-xl border border-line bg-ink">
+          <video
+            controls
+            preload="metadata"
+            playsInline
+            src={segment.url}
+            className="aspect-video w-full bg-black object-contain"
+          />
+          <figcaption className="bg-ink px-3 py-2 font-mono text-[9px] uppercase tracking-[0.12em] text-paper/55">
+            {t("previewSegment", { number: segment.segmentIndex + 1 })}
+          </figcaption>
+        </figure>
+      ) : null)}
+    </div>
+  );
+}
+
+async function fetchCandidatePreview(projectId: string, candidateId: string): Promise<Array<{
+  segmentIndex: number;
+  url: string | null;
+}>> {
+  const response = await fetch(
+    `/api/video-projects/${projectId}/candidates/${candidateId}/previews`
+  );
+  if (!response.ok) throw new Error("preview_fetch_failed");
+  const payload = await response.json() as {
+    segments?: Array<{ segmentIndex: number; url: string | null }>;
+  };
+  const segments = payload.segments ?? [];
+  if (segments.length === 0 || segments.some((segment) => !segment.url)) {
+    throw new Error("preview_url_missing");
+  }
+  return segments;
 }
 
 function CandidateSkeleton({ label }: { label: string }) {

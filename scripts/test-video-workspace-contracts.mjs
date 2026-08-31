@@ -12,7 +12,9 @@ const sources = [
   "lib/video-workspace/validation.ts",
   "lib/video-workspace/source-policy.ts",
   "lib/video-workspace/r2-keys.ts",
+  "lib/video-workspace/job-auth.ts",
   "lib/video-workspace/validation.test.ts",
+  "lib/video-workspace/job-auth.test.ts",
 ];
 
 try {
@@ -37,8 +39,11 @@ try {
   if (compile.stderr) process.stderr.write(compile.stderr);
   if (compile.status !== 0) process.exit(compile.status ?? 1);
 
-  const testFile = join(outputDirectory, "validation.test.js");
-  const run = spawnSync(process.execPath, ["--test", testFile], {
+  const testFiles = [
+    join(outputDirectory, "validation.test.js"),
+    join(outputDirectory, "job-auth.test.js"),
+  ];
+  const run = spawnSync(process.execPath, ["--test", ...testFiles], {
     cwd: root,
     encoding: "utf8",
     stdio: "inherit",

@@ -711,7 +711,15 @@
       "rejected": "Écarté",
       "requestFailed": "La demande n’a pas abouti. La sélection précédente reste inchangée ; réessayez.",
       "replaceConfirm": "Régénérer et remplacer la sélection actuelle ? Vos retours resteront enregistrés.",
-      "previewPending": "La lecture arrivera à l’étape de prévisualisation. Pour l’instant, seuls les intervalles source validés sont enregistrés."
+      "previewPending": "Les trois premiers aperçus sont préparés automatiquement. Les autres candidats ne génèrent que les segments ouverts.",
+      "previewNotReady": "Aperçu non généré",
+      "previewPrepare": "Préparer l’aperçu",
+      "previewProcessing": "Préparation de l’aperçu léger…",
+      "previewFailed": "L’aperçu a échoué sans affecter ce candidat",
+      "previewRetry": "Réessayer l’aperçu",
+      "previewLoading": "Chargement de l’aperçu sécurisé…",
+      "previewUnavailable": "Impossible de charger l’aperçu. Réessayez.",
+      "previewSegment": "Segment {number}"
     },
     "rowMenu": {
       "more": "Plus d'actions",

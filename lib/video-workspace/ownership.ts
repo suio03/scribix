@@ -31,7 +31,10 @@ export type OwnedRenderJob = {
   id: string;
   user_id: string;
   project_id: string;
-  project_version_id: string;
+  project_version_id: string | null;
+  candidate_id: string | null;
+  segment_index: number | null;
+  segment_id: string | null;
   kind: string;
   preset_id: string;
   scope_key: string;
@@ -100,7 +103,8 @@ export async function ownedRenderJob(
   userId: string
 ): Promise<OwnedRenderJob | null> {
   return db.prepare(
-    `SELECT j.id, j.user_id, j.project_id, j.project_version_id, j.kind,
+    `SELECT j.id, j.user_id, j.project_id, j.project_version_id, j.candidate_id,
+            j.segment_index, j.segment_id, j.kind,
             j.preset_id, j.scope_key, j.status, j.output_asset_id, j.error_code
        FROM render_jobs j
        JOIN video_projects p

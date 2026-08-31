@@ -711,7 +711,15 @@
       "rejected": "Descartado",
       "requestFailed": "No se pudo completar la solicitud. La selección anterior no ha cambiado; inténtalo de nuevo.",
       "replaceConfirm": "¿Volver a generar y reemplazar la selección actual? Tus comentarios seguirán registrados.",
-      "previewPending": "La reproducción llegará en la fase de vista previa. Por ahora, la selección solo guarda intervalos validados."
+      "previewPending": "Las tres primeras vistas previas se preparan automáticamente. Los demás candidatos solo generan los segmentos que abras.",
+      "previewNotReady": "Vista previa sin generar",
+      "previewPrepare": "Preparar vista previa",
+      "previewProcessing": "Preparando vista previa ligera…",
+      "previewFailed": "La vista previa falló sin afectar al candidato",
+      "previewRetry": "Reintentar vista previa",
+      "previewLoading": "Cargando vista previa segura…",
+      "previewUnavailable": "No se pudo cargar la vista previa. Inténtalo de nuevo.",
+      "previewSegment": "Segmento {number}"
     },
     "rowMenu": {
       "more": "Más acciones",

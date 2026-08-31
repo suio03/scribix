@@ -30,6 +30,10 @@ export const PREVIEW_PROXY_PRESET = {
   handleDurationMs: 5_000,
 } as const;
 
+export const PREVIEW_PROXY_AUTO_CANDIDATES = 3 as const;
+export const PREVIEW_PROXY_RETENTION_DAYS = 7 as const;
+export const PREVIEW_PROXY_URL_TTL_SECONDS = 15 * 60;
+
 export const CAPTION_TEMPLATE_IDS = ["karaoke-v1"] as const;
 export type CaptionTemplateId = (typeof CAPTION_TEMPLATE_IDS)[number];
 
@@ -170,9 +174,17 @@ export type RenderJob = {
   id: string;
   userId: string;
   projectId: string;
-  projectVersionId: string;
+  projectVersionId: string | null;
+  candidateId: string | null;
+  segmentIndex: number | null;
+  segmentId: string | null;
+  sourceStartMs: number | null;
+  sourceEndMs: number | null;
+  proxySourceStartMs: number | null;
+  proxySourceEndMs: number | null;
+  proxyVersion: number | null;
   kind: RenderJobKind;
-  provider: string;
+  provider: string | null;
   providerJobId: string | null;
   status: RenderJobStatus;
   attempt: number;
@@ -184,6 +196,40 @@ export type RenderJob = {
 export type RenderDispatchMessage = {
   schemaVersion: typeof VIDEO_WORKSPACE_SCHEMA_VERSION;
   jobId: string;
+};
+
+export type PreviewJobLease = {
+  schemaVersion: typeof VIDEO_WORKSPACE_SCHEMA_VERSION;
+  jobId: string;
+  sourceUrl: string;
+  outputUrl: string;
+  urlsExpireInSec: number;
+  segment: {
+    id: string;
+    index: number;
+    sourceStartMs: number;
+    sourceEndMs: number;
+    proxySourceStartMs: number;
+    proxySourceEndMs: number;
+  };
+  preset: typeof PREVIEW_PROXY_PRESET;
+};
+
+export type PreviewJobResult = {
+  status: "completed";
+  output: {
+    bytes: number;
+    durationMs: number;
+    width: number;
+    height: number;
+    videoCodec: "h264";
+    audioCodec: "aac" | null;
+  };
+};
+
+export type PreviewJobFailure = {
+  status: "failed";
+  errorCode: RenderErrorCode;
 };
 
 export function edlTimelineDurationMs(edl: Edl): number {

@@ -1,6 +1,6 @@
 # AI 短视频工作台 M2 候选生成
 
-> 状态：已实现，待提交  
+> 状态：已提交（`fac1911`）
 > Migration：`0026_clip_candidate_feedback.sql`
 
 ## 范围

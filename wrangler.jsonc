@@ -51,5 +51,14 @@
       "bucket_name": "scribix-media",
       "remote": true
     }
-  ]
+  ],
+
+  "queues": {
+    "producers": [
+      {
+        "binding": "VIDEO_RENDER_QUEUE",
+        "queue": "scribix-video-render"
+      }
+    ]
+  }
 }

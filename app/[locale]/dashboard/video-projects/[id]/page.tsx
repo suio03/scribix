@@ -6,6 +6,7 @@ import { Link, redirect } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { listClipCandidates } from "@/lib/video-workspace/candidates";
+import { listCandidatePreviews } from "@/lib/video-workspace/preview-jobs";
 
 type Params = { params: Promise<{ locale: string; id: string }> };
 
@@ -46,8 +47,9 @@ export default async function VideoProjectPage({ params }: Params) {
     }>();
   if (!project) notFound();
 
-  const [candidates, t] = await Promise.all([
+  const [candidates, previews, t] = await Promise.all([
     listClipCandidates(env.DB, user.id, project.id),
+    listCandidatePreviews(env.DB, user.id, project.id),
     getTranslations("Dashboard.videoCandidates"),
   ]);
 
@@ -71,6 +73,7 @@ export default async function VideoProjectPage({ params }: Params) {
         projectId={project.id}
         initialStatus={project.status}
         initialCandidates={candidates}
+        initialPreviews={previews}
       />
     </main>
   );

@@ -489,14 +489,79 @@ export function validateRenderJob(input: unknown): ContractResult<RenderJob> {
   const issues: ContractIssue[] = [];
   const value = requireObject(input, "$", issues);
   if (!value) return { success: false, issues };
-  hasOnlyKeys(value, ["schemaVersion", "id", "userId", "projectId", "projectVersionId", "kind", "provider", "providerJobId", "status", "attempt", "idempotencyKey", "outputAssetId", "errorCode"], "$", issues);
+  hasOnlyKeys(value, [
+    "schemaVersion", "id", "userId", "projectId", "projectVersionId",
+    "candidateId", "segmentIndex", "segmentId", "sourceStartMs", "sourceEndMs",
+    "proxySourceStartMs", "proxySourceEndMs", "proxyVersion", "kind", "provider",
+    "providerJobId", "status", "attempt", "idempotencyKey", "outputAssetId", "errorCode",
+  ], "$", issues);
   requireSchemaVersion(value.schemaVersion, issues);
-  for (const key of ["id", "userId", "projectId", "projectVersionId", "idempotencyKey"] as const) {
+  for (const key of ["id", "userId", "projectId", "idempotencyKey"] as const) {
     requireStableId(value[key], `$.${key}`, issues);
   }
-  requireEnum(value.kind, RENDER_JOB_KINDS, "$.kind", issues);
-  requireStableId(value.provider, "$.provider", issues);
+  const kind = requireEnum(value.kind, RENDER_JOB_KINDS, "$.kind", issues);
+  requireNullableStableId(value.projectVersionId, "$.projectVersionId", issues);
+  requireNullableStableId(value.candidateId, "$.candidateId", issues);
+  requireNullableStableId(value.segmentId, "$.segmentId", issues);
+  requireNullableStableId(value.provider, "$.provider", issues);
   requireNullableStableId(value.providerJobId, "$.providerJobId", issues);
+  for (const [key, max] of [
+    ["segmentIndex", VIDEO_WORKSPACE_LIMITS.maxSegments - 1],
+    ["sourceStartMs", VIDEO_WORKSPACE_LIMITS.maxSourceDurationMs],
+    ["sourceEndMs", VIDEO_WORKSPACE_LIMITS.maxSourceDurationMs],
+    ["proxySourceStartMs", VIDEO_WORKSPACE_LIMITS.maxSourceDurationMs],
+    ["proxySourceEndMs", VIDEO_WORKSPACE_LIMITS.maxSourceDurationMs],
+    ["proxyVersion", 10_000],
+  ] as const) {
+    if (value[key] !== null) requireInteger(value[key], `$.${key}`, issues, key === "proxyVersion" ? 1 : 0, max);
+  }
+  if (kind === "preview") {
+    for (const key of [
+      "candidateId", "segmentIndex", "segmentId", "sourceStartMs", "sourceEndMs",
+      "proxySourceStartMs", "proxySourceEndMs", "proxyVersion",
+    ] as const) {
+      if (value[key] === null) {
+        issues.push(issue(`$.${key}`, "missing_preview_field", "Preview jobs require a segment snapshot."));
+      }
+    }
+    if (value.projectVersionId !== null) {
+      issues.push(issue("$.projectVersionId", "unexpected_project_version", "Preview jobs are created before immutable versions."));
+    }
+    if (
+      typeof value.sourceStartMs === "number" &&
+      typeof value.sourceEndMs === "number" &&
+      value.sourceStartMs >= value.sourceEndMs
+    ) {
+      issues.push(issue("$.sourceEndMs", "invalid_range", "The segment end must follow its start."));
+    }
+    if (
+      typeof value.proxySourceStartMs === "number" &&
+      typeof value.sourceStartMs === "number" &&
+      value.proxySourceStartMs > value.sourceStartMs
+    ) {
+      issues.push(issue("$.proxySourceStartMs", "invalid_handle", "The proxy must begin before the selected segment."));
+    }
+    if (
+      typeof value.proxySourceEndMs === "number" &&
+      typeof value.sourceEndMs === "number" &&
+      value.proxySourceEndMs < value.sourceEndMs
+    ) {
+      issues.push(issue("$.proxySourceEndMs", "invalid_handle", "The proxy must end after the selected segment."));
+    }
+  }
+  if (kind === "final") {
+    if (value.projectVersionId === null) {
+      issues.push(issue("$.projectVersionId", "missing_project_version", "Final jobs require an immutable project version."));
+    }
+    for (const key of [
+      "candidateId", "segmentIndex", "segmentId", "sourceStartMs", "sourceEndMs",
+      "proxySourceStartMs", "proxySourceEndMs", "proxyVersion",
+    ] as const) {
+      if (value[key] !== null) {
+        issues.push(issue(`$.${key}`, "unexpected_preview_field", "Final jobs do not carry preview segment fields."));
+      }
+    }
+  }
   const status = requireEnum(value.status, RENDER_JOB_STATUSES, "$.status", issues);
   requireInteger(value.attempt, "$.attempt", issues, 0, 20);
   requireNullableStableId(value.outputAssetId, "$.outputAssetId", issues);

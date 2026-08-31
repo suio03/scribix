@@ -711,7 +711,15 @@
       "rejected": "Dismissed",
       "requestFailed": "The request could not be completed. Your previous shortlist is unchanged; please try again.",
       "replaceConfirm": "Regenerate and replace the current shortlist? Your feedback will remain recorded.",
-      "previewPending": "Candidate playback arrives in the preview stage. For now, this shortlist records validated source ranges only."
+      "previewPending": "The first three previews are prepared automatically. Open any other candidate to generate only the segments you need.",
+      "previewNotReady": "Preview not generated",
+      "previewPrepare": "Prepare preview",
+      "previewProcessing": "Preparing lightweight preview…",
+      "previewFailed": "Preview failed without affecting this candidate",
+      "previewRetry": "Retry preview",
+      "previewLoading": "Loading secure preview…",
+      "previewUnavailable": "The preview URL could not be loaded. Please try again.",
+      "previewSegment": "Segment {number}"
     },
     "rowMenu": {
       "more": "More actions",
