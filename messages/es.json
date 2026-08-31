@@ -719,7 +719,40 @@
       "previewRetry": "Reintentar vista previa",
       "previewLoading": "Cargando vista previa segura…",
       "previewUnavailable": "No se pudo cargar la vista previa. Inténtalo de nuevo.",
-      "previewSegment": "Segmento {number}"
+      "previewSegment": "Segmento {number}",
+      "editor": {
+        "loadFailed": "No se pudo cargar el editor.",
+        "reload": "Recargar",
+        "loading": "Restaurando tu edición…",
+        "eyebrow": "Editor de clip continuo",
+        "title": "Da forma a la historia",
+        "saveVersion": "Guardar versión",
+        "versionSaved": "Versión {version} guardada",
+        "play": "Reproducir vista previa continua",
+        "pause": "Pausar vista previa",
+        "previewMissing": "Cada segmento restante necesita una vista previa lista para la reproducción continua.",
+        "continuousTimeline": "Línea de tiempo virtual",
+        "proxyRefreshing": "Este corte salió de los márgenes actuales. Se está preparando un reemplazo; la edición ya está guardada.",
+        "segment": "Corte {number}",
+        "sourceRange": "Fuente",
+        "start": "Inicio (segundos)",
+        "end": "Fin (segundos)",
+        "previousWord": "Límite de palabra anterior",
+        "nextWord": "Límite de palabra siguiente",
+        "moveEarlier": "Mover corte antes",
+        "moveLater": "Mover corte después",
+        "remove": "Eliminar corte",
+        "insideHandles": "Vista previa instantánea · dentro de los márgenes",
+        "outsideHandles": "Se requiere nueva vista previa · la edición sigue guardada",
+        "conflictReload": "Hay un borrador más reciente · recargar",
+        "saveState": {
+          "saved": "Todos los cambios guardados",
+          "dirty": "Cambios pendientes",
+          "saving": "Guardando…",
+          "error": "Error al guardar",
+          "conflict": "Conflicto de borrador"
+        }
+      }
     },
     "rowMenu": {
       "more": "Más acciones",

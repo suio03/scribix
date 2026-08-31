@@ -13,8 +13,10 @@ const sources = [
   "lib/video-workspace/source-policy.ts",
   "lib/video-workspace/r2-keys.ts",
   "lib/video-workspace/job-auth.ts",
+  "lib/video-workspace/timeline.ts",
   "lib/video-workspace/validation.test.ts",
   "lib/video-workspace/job-auth.test.ts",
+  "lib/video-workspace/timeline.test.ts",
 ];
 
 try {
@@ -42,6 +44,7 @@ try {
   const testFiles = [
     join(outputDirectory, "validation.test.js"),
     join(outputDirectory, "job-auth.test.js"),
+    join(outputDirectory, "timeline.test.js"),
   ];
   const run = spawnSync(process.execPath, ["--test", ...testFiles], {
     cwd: root,

@@ -719,7 +719,40 @@
       "previewRetry": "Vorschau erneut versuchen",
       "previewLoading": "Sichere Vorschau wird geladen…",
       "previewUnavailable": "Die Vorschau konnte nicht geladen werden. Versuchen Sie es erneut.",
-      "previewSegment": "Segment {number}"
+      "previewSegment": "Segment {number}",
+      "editor": {
+        "loadFailed": "Der Editor konnte nicht geladen werden.",
+        "reload": "Neu laden",
+        "loading": "Bearbeitung wird wiederhergestellt…",
+        "eyebrow": "Durchgehender Clip-Editor",
+        "title": "Geschichte gestalten",
+        "saveVersion": "Version speichern",
+        "versionSaved": "Version {version} gespeichert",
+        "play": "Durchgehende Vorschau abspielen",
+        "pause": "Vorschau pausieren",
+        "previewMissing": "Für die durchgehende Wiedergabe benötigt jeder verbleibende Abschnitt eine fertige Vorschau.",
+        "continuousTimeline": "Virtuelle Timeline",
+        "proxyRefreshing": "Dieser Schnitt liegt außerhalb der Vorschaugrenzen. Ein Ersatz wird vorbereitet; die Bearbeitung ist bereits gespeichert.",
+        "segment": "Schnitt {number}",
+        "sourceRange": "Quelle",
+        "start": "Start (Sekunden)",
+        "end": "Ende (Sekunden)",
+        "previousWord": "Vorherige Wortgrenze",
+        "nextWord": "Nächste Wortgrenze",
+        "moveEarlier": "Schnitt nach vorn verschieben",
+        "moveLater": "Schnitt nach hinten verschieben",
+        "remove": "Schnitt entfernen",
+        "insideHandles": "Sofortige Vorschau · innerhalb der Proxy-Grenzen",
+        "outsideHandles": "Neue Vorschau nötig · Bearbeitung bleibt gespeichert",
+        "conflictReload": "Neuerer Entwurf gefunden · neu laden",
+        "saveState": {
+          "saved": "Alle Änderungen gespeichert",
+          "dirty": "Änderungen ausstehend",
+          "saving": "Wird gespeichert…",
+          "error": "Speichern fehlgeschlagen",
+          "conflict": "Entwurfskonflikt"
+        }
+      }
     },
     "rowMenu": {
       "more": "Weitere Aktionen",

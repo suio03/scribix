@@ -1,6 +1,6 @@
 # Scribix AI 短视频工作台 V1 实施计划
 
-> 状态：实施中（M0–M2 已提交，M3 已完成本地实现与验证，待云端资源发布）
+> 状态：实施中（M0–M3 已提交，M4 已完成本地实现与验证，待提交）
 > 创建日期：2026-08-31  
 > 当前范围：长视频对话内容 → 候选 clips → 浏览器编辑预览 → Cloud 最终成片  
 > 明确不做：社交账号连接、内容日历、定时发布和多平台分发
@@ -683,11 +683,14 @@ secrets，详见 `docs/video-workspace/m3-preview-proxy.md`。未执行 remote m
 
 ### M4. 虚拟时间线与内容编辑
 
-- [ ] 实现 source/proxy/timeline 三套时间映射。
-- [ ] 实现多 segment 连续播放和下一段预加载。
-- [ ] 实现调整起止时间、删除、排序和总时长提示。
-- [ ] 实现 transcript/word boundary 对齐操作。
-- [ ] 实现 project draft autosave 和 version snapshot。
+- [x] 实现 source/proxy/timeline 三套时间映射。
+- [x] 实现多 segment 连续播放和下一段预加载。
+- [x] 实现调整起止时间、删除、排序和总时长提示。
+- [x] 实现 transcript/word boundary 对齐操作。
+- [x] 实现 project draft autosave 和 version snapshot。
+
+本地实现详见 `docs/video-workspace/m4-timeline-editor.md`。远程 migration 与 deployment
+在全部里程碑完成后统一执行。
 
 完成标准：
 

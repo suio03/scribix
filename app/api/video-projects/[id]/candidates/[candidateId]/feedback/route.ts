@@ -33,10 +33,32 @@ export async function POST(req: Request, { params }: Params) {
     .first<{ id: string; status: string }>();
   if (!candidate) return Response.json({ error: "not_found" }, { status: 404 });
   if (candidate.status === feedback) {
+    if (feedback === "accepted") {
+      await env.DB.prepare(
+        `UPDATE clip_candidates
+            SET status = 'suggested'
+          WHERE project_id = ?1
+            AND user_id = ?2
+            AND id <> ?3
+            AND status = 'accepted'`
+      )
+        .bind(projectId, user.id, candidateId)
+        .run();
+    }
     return Response.json({ ok: true, status: feedback, recorded: false });
   }
 
   await env.DB.batch([
+    ...(feedback === "accepted"
+      ? [env.DB.prepare(
+          `UPDATE clip_candidates
+              SET status = 'suggested'
+            WHERE project_id = ?1
+              AND user_id = ?2
+              AND id <> ?3
+              AND status = 'accepted'`
+        ).bind(projectId, user.id, candidateId)]
+      : []),
     env.DB.prepare(
       `UPDATE clip_candidates
           SET status = ?1
@@ -49,7 +71,12 @@ export async function POST(req: Request, { params }: Params) {
     ).bind(newId(), user.id, projectId, candidateId, feedback),
   ]);
 
-  return Response.json({ ok: true, status: feedback, recorded: true });
+  return Response.json({
+    ok: true,
+    status: feedback,
+    recorded: true,
+    exclusive: feedback === "accepted",
+  });
 }
 
 async function readFeedback(

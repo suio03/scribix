@@ -12,6 +12,7 @@ import {
   ThumbsDown,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { VideoClipEditor } from "@/app/components/VideoClipEditor";
 import type { StoredClipCandidate } from "@/lib/video-workspace/candidates";
 import type { CandidatePreview } from "@/lib/video-workspace/preview-jobs";
 
@@ -141,9 +142,13 @@ export function VideoCandidateWorkspace({
         }
       );
       if (!response.ok) throw new Error("feedback_failed");
-      setCandidates((current) => current.map((candidate) =>
-        candidate.id === candidateId ? { ...candidate, status: feedback } : candidate
-      ));
+      setCandidates((current) => current.map((candidate) => {
+        if (candidate.id === candidateId) return { ...candidate, status: feedback };
+        if (feedback === "accepted" && candidate.status === "accepted") {
+          return { ...candidate, status: "suggested" };
+        }
+        return candidate;
+      }));
     } catch {
       setError(true);
     } finally {
@@ -333,6 +338,9 @@ function CandidateCard({
           </button>
         </div>
       </div>
+      {accepted ? (
+        <VideoClipEditor projectId={projectId} candidateId={candidate.id} />
+      ) : null}
     </article>
   );
 }

@@ -719,7 +719,40 @@
       "previewRetry": "Riprova anteprima",
       "previewLoading": "Caricamento anteprima sicura…",
       "previewUnavailable": "Impossibile caricare l’anteprima. Riprova.",
-      "previewSegment": "Segmento {number}"
+      "previewSegment": "Segmento {number}",
+      "editor": {
+        "loadFailed": "Impossibile caricare l’editor.",
+        "reload": "Ricarica",
+        "loading": "Ripristino della modifica…",
+        "eyebrow": "Editor clip continuo",
+        "title": "Dai forma alla storia",
+        "saveVersion": "Salva versione",
+        "versionSaved": "Versione {version} salvata",
+        "play": "Riproduci anteprima continua",
+        "pause": "Metti in pausa l’anteprima",
+        "previewMissing": "Ogni segmento rimasto richiede un’anteprima pronta per la riproduzione continua.",
+        "continuousTimeline": "Timeline virtuale",
+        "proxyRefreshing": "Questo taglio supera i margini correnti. È in preparazione un sostituto; la modifica è già salvata.",
+        "segment": "Taglio {number}",
+        "sourceRange": "Sorgente",
+        "start": "Inizio (secondi)",
+        "end": "Fine (secondi)",
+        "previousWord": "Limite parola precedente",
+        "nextWord": "Limite parola successiva",
+        "moveEarlier": "Sposta il taglio prima",
+        "moveLater": "Sposta il taglio dopo",
+        "remove": "Rimuovi taglio",
+        "insideHandles": "Anteprima immediata · entro i margini proxy",
+        "outsideHandles": "Serve una nuova anteprima · la modifica resta salvata",
+        "conflictReload": "Trovata una bozza più recente · ricarica",
+        "saveState": {
+          "saved": "Tutte le modifiche salvate",
+          "dirty": "Modifiche in sospeso",
+          "saving": "Salvataggio…",
+          "error": "Salvataggio non riuscito",
+          "conflict": "Conflitto bozza"
+        }
+      }
     },
     "rowMenu": {
       "more": "Altre azioni",

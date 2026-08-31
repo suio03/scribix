@@ -719,7 +719,40 @@
       "previewRetry": "Retry preview",
       "previewLoading": "Loading secure preview…",
       "previewUnavailable": "The preview URL could not be loaded. Please try again.",
-      "previewSegment": "Segment {number}"
+      "previewSegment": "Segment {number}",
+      "editor": {
+        "loadFailed": "The editor could not be loaded.",
+        "reload": "Reload",
+        "loading": "Restoring your edit…",
+        "eyebrow": "Continuous clip editor",
+        "title": "Shape the story",
+        "saveVersion": "Save version",
+        "versionSaved": "Version {version} saved",
+        "play": "Play continuous preview",
+        "pause": "Pause preview",
+        "previewMissing": "Every remaining segment needs a ready preview before continuous playback is available.",
+        "continuousTimeline": "Virtual timeline",
+        "proxyRefreshing": "This cut moved beyond the current preview handles. A replacement segment is being prepared; the edit is already saved.",
+        "segment": "Cut {number}",
+        "sourceRange": "Source",
+        "start": "Start (seconds)",
+        "end": "End (seconds)",
+        "previousWord": "Previous word boundary",
+        "nextWord": "Next word boundary",
+        "moveEarlier": "Move cut earlier",
+        "moveLater": "Move cut later",
+        "remove": "Remove cut",
+        "insideHandles": "Instant preview · inside proxy handles",
+        "outsideHandles": "New preview required · edit remains saved",
+        "conflictReload": "Newer draft found · reload",
+        "saveState": {
+          "saved": "All changes saved",
+          "dirty": "Changes pending",
+          "saving": "Saving…",
+          "error": "Save failed",
+          "conflict": "Draft conflict"
+        }
+      }
     },
     "rowMenu": {
       "more": "More actions",

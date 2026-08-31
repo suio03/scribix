@@ -6,6 +6,8 @@ export type OwnedVideoProject = {
   status: string;
   draft_edl_json: string | null;
   draft_render_spec_json: string | null;
+  draft_candidate_id: string | null;
+  draft_revision: number;
   active_project_version_id: string | null;
   created_at: string;
   updated_at: string;
@@ -50,7 +52,8 @@ export async function ownedVideoProject(
 ): Promise<OwnedVideoProject | null> {
   return db.prepare(
     `SELECT id, user_id, transcript_id, source_asset_id, status,
-            draft_edl_json, draft_render_spec_json, active_project_version_id,
+            draft_edl_json, draft_render_spec_json, draft_candidate_id,
+            draft_revision, active_project_version_id,
             created_at, updated_at
        FROM video_projects
       WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL`

@@ -719,7 +719,40 @@
       "previewRetry": "Réessayer l’aperçu",
       "previewLoading": "Chargement de l’aperçu sécurisé…",
       "previewUnavailable": "Impossible de charger l’aperçu. Réessayez.",
-      "previewSegment": "Segment {number}"
+      "previewSegment": "Segment {number}",
+      "editor": {
+        "loadFailed": "Impossible de charger l’éditeur.",
+        "reload": "Recharger",
+        "loading": "Restauration de votre montage…",
+        "eyebrow": "Éditeur de clip continu",
+        "title": "Façonner l’histoire",
+        "saveVersion": "Enregistrer la version",
+        "versionSaved": "Version {version} enregistrée",
+        "play": "Lire l’aperçu continu",
+        "pause": "Mettre l’aperçu en pause",
+        "previewMissing": "Chaque segment restant doit avoir un aperçu prêt pour la lecture continue.",
+        "continuousTimeline": "Timeline virtuelle",
+        "proxyRefreshing": "Cette coupe dépasse les marges actuelles. Un remplacement est en préparation ; le montage est déjà enregistré.",
+        "segment": "Coupe {number}",
+        "sourceRange": "Source",
+        "start": "Début (secondes)",
+        "end": "Fin (secondes)",
+        "previousWord": "Limite du mot précédent",
+        "nextWord": "Limite du mot suivant",
+        "moveEarlier": "Déplacer la coupe avant",
+        "moveLater": "Déplacer la coupe après",
+        "remove": "Supprimer la coupe",
+        "insideHandles": "Aperçu instantané · dans les marges du proxy",
+        "outsideHandles": "Nouvel aperçu requis · le montage reste enregistré",
+        "conflictReload": "Brouillon plus récent détecté · recharger",
+        "saveState": {
+          "saved": "Toutes les modifications sont enregistrées",
+          "dirty": "Modifications en attente",
+          "saving": "Enregistrement…",
+          "error": "Échec de l’enregistrement",
+          "conflict": "Conflit de brouillon"
+        }
+      }
     },
     "rowMenu": {
       "more": "Plus d'actions",
