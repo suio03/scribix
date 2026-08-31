@@ -70,7 +70,7 @@ libass 的 FFmpeg build；在该镜像通过 ASS 路径前，字幕 parity 仍�
 - [x] Browser/renderer 合同排除任意 shell/filter/path 输入。
 - [ ] 固定并验证包含 libass 的生产 FFmpeg 镜像。
 - [ ] 准备并跑完 20–30 条真实输入基准，包括损坏文件和 VFR。
-- [ ] 确认产品层的音频范围、source retention、首发设备范围、AI 元数据边界和首选 provider。
+- [ ] 确认剩余产品项：首发设备范围、AI 元数据边界和首选 provider。
 
 ## 尚待产品确认
 
@@ -79,8 +79,9 @@ libass 的 FFmpeg build；在该镜像通过 ASS 路径前，字幕 parity 仍�
 - 编辑器首发桌面 Chrome/Edge；移动端只查看和下载。
 - AI 只保存 clip 内部名称/主题，不生成面向社交平台的描述和 hashtags。
 - Job contract 保持 provider-neutral；AWS Batch + Fargate On-Demand 作为首个实现目标。
-- Source retention 需要结合套餐和重新上传/重新渲染规则单独确认。
 
 已确认：
 
 - V1 音频只做 gain、响度标准化、降噪和淡入淡出，不做背景音乐或时间线音效素材。
+- Source retention：Free 7 天/5 GiB，Basic 30 天/25 GiB，Pro 90 天/100 GiB；
+  到期后保留项目和成片，重新渲染需重新上传匹配的 source。

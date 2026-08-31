@@ -27,6 +27,14 @@ export async function POST(req: Request, { params }: Params) {
   const key = upload.row.audio_r2_key!;
   const expectedBytes = upload.row.bytes!;
 
+  const markSourceReady = () => env.DB.prepare(
+    `UPDATE media_assets
+        SET status = 'ready'
+      WHERE user_id = ?1 AND r2_key = ?2 AND kind = 'source' AND status = 'uploading'`
+  )
+    .bind(user.id, key)
+    .run();
+
   const completedObjectMatches = async () => {
     try {
       const object = await env.SCRIBIX_MEDIA.head(key);
@@ -44,6 +52,7 @@ export async function POST(req: Request, { params }: Params) {
     // CompleteMultipartUpload consumes the upload ID. If its response was lost,
     // a retry cannot list the parts, but the final object is already usable.
     if (await completedObjectMatches()) {
+      await markSourceReady();
       return Response.json({ ok: true, alreadyCompleted: true });
     }
     console.error("multipart list failed", { transcriptId: id, error });
@@ -70,10 +79,12 @@ export async function POST(req: Request, { params }: Params) {
     // R2 may have committed the object even when the client did not receive the
     // completion response. Treat an exact-size final object as success.
     if (await completedObjectMatches()) {
+      await markSourceReady();
       return Response.json({ ok: true, alreadyCompleted: true });
     }
     console.error("multipart complete failed", { transcriptId: id, error });
     return Response.json({ error: "multipart_complete_failed" }, { status: 502 });
   }
+  await markSourceReady();
   return Response.json({ ok: true });
 }

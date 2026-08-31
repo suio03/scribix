@@ -28,6 +28,8 @@ export const PLANS = {
     // Audio remains single-PUT; direct video uses multipart upload.
     maxFileBytes: ONE_GIB,
     maxVideoUploadBytes: 2 * ONE_GIB,
+    videoSourceRetentionDays: 7,
+    maxVideoSourceStorageBytes: 5 * ONE_GIB,
     speechModels: ["universal-2"] as const,
   },
   basic: {
@@ -39,6 +41,8 @@ export const PLANS = {
     maxFileSec: 10 * 3600,
     maxFileBytes: ONE_GIB,
     maxVideoUploadBytes: PAID_VIDEO_UPLOAD_BYTES,
+    videoSourceRetentionDays: 30,
+    maxVideoSourceStorageBytes: 25 * ONE_GIB,
     speechModels: ["universal-3-5-pro", "universal-2"] as const,
   },
   pro: {
@@ -51,6 +55,8 @@ export const PLANS = {
     maxFileSec: 10 * 3600,
     maxFileBytes: ONE_GIB,
     maxVideoUploadBytes: PAID_VIDEO_UPLOAD_BYTES,
+    videoSourceRetentionDays: 90,
+    maxVideoSourceStorageBytes: 100 * ONE_GIB,
     speechModels: ["universal-3-5-pro", "universal-2"] as const,
   },
 } as const;

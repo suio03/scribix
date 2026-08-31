@@ -6,6 +6,10 @@ import { isAllowedMedia, mediaExtension, MULTIPART_PART_BYTES } from "@/lib/medi
 import { PLANS } from "@/lib/plans";
 import { checkQuota } from "@/lib/quota";
 import { createMultipartUpload, presignPut, R2 } from "@/lib/r2";
+import {
+  createVideoProjectForTranscript,
+  deletePendingVideoProjectRecords,
+} from "@/lib/video-workspace/projects";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -20,6 +24,7 @@ export async function POST(req: Request) {
     directVideo?: boolean;
     source?: string;
     allowPartial?: boolean;
+    workflow?: "transcript" | "video_clips";
   };
   try {
     body = await req.json();
@@ -30,8 +35,12 @@ export async function POST(req: Request) {
   if (!filename || typeof bytes !== "number" || !mime) {
     return Response.json({ error: "missing_fields" }, { status: 400 });
   }
-  const directVideo = body.directVideo === true;
   const isVideo = body.isVideo === true;
+  if (body.workflow !== undefined && body.workflow !== "transcript" && body.workflow !== "video_clips") {
+    return Response.json({ error: "invalid_workflow" }, { status: 400 });
+  }
+  const workflow = body.workflow ?? "transcript";
+  const directVideo = workflow === "video_clips" || body.directVideo === true;
   const rawDuration = body.durationSec;
   const durationSec = rawDuration == null ? null : Number(rawDuration);
   if (durationSec !== null && (!Number.isFinite(durationSec) || durationSec <= 0)) {
@@ -44,6 +53,9 @@ export async function POST(req: Request) {
     return Response.json({ error: "unsupported_media" }, { status: 415 });
   }
   const source: "upload" | "record" = body.source === "record" ? "record" : "upload";
+  if (workflow === "video_clips" && (!isVideo || source !== "upload")) {
+    return Response.json({ error: "video_clip_source_required" }, { status: 400 });
+  }
   if (source === "record" && durationSec === null) {
     return Response.json({ error: "invalid_duration" }, { status: 400 });
   }
@@ -155,16 +167,47 @@ export async function POST(req: Request) {
     )
     .run();
 
+  let projectId: string | null = null;
+  if (workflow === "video_clips") {
+    try {
+      const project = await createVideoProjectForTranscript(env.DB, userId, transcriptId, userRow.tier, {
+        allowPending: true,
+      });
+      if (project.ok) {
+        projectId = project.projectId;
+      } else if (project.error === "video_source_storage_limit") {
+        await env.DB.prepare(`DELETE FROM transcripts WHERE id = ?1 AND status = 'pending'`)
+          .bind(transcriptId)
+          .run();
+        return Response.json({ error: project.error, ...project.storage }, { status: 413 });
+      }
+    } catch (error) {
+      console.error(JSON.stringify({
+        event: "video_project_init_failed",
+        transcriptId,
+        error: error instanceof Error ? error.message.slice(0, 200) : "unknown",
+      }));
+    }
+    if (!projectId) {
+      await env.DB.prepare(`DELETE FROM transcripts WHERE id = ?1 AND status = 'pending'`)
+        .bind(transcriptId)
+        .run();
+      return Response.json({ error: "video_project_init_failed" }, { status: 500 });
+    }
+  }
+
   if (directVideo) {
     try {
       const uploadId = await createMultipartUpload(audioKey, storedMime);
       return Response.json({
         transcriptId,
+        projectId,
         uploadId,
         partSize: MULTIPART_PART_BYTES,
         uploadMode: "multipart",
       });
     } catch (error) {
+      if (projectId) await deletePendingVideoProjectRecords(env.DB, projectId, userId);
       await env.DB.prepare(`DELETE FROM transcripts WHERE id = ?1 AND status = 'pending'`)
         .bind(transcriptId)
         .run();

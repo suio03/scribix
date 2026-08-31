@@ -8,6 +8,10 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import {
+  accountVideoWorkspaceDeleteStatements,
+  deleteVideoWorkspaceObjects,
+} from "@/lib/video-workspace/lifecycle";
 
 export async function DELETE() {
   const session = await auth();
@@ -31,17 +35,22 @@ export async function DELETE() {
     if (r.audio_r2_key) keys.push(r.audio_r2_key);
     if (r.transcript_r2_key) keys.push(r.transcript_r2_key);
   }
+  const workspaceAssets = await env.DB.prepare(
+    `SELECT r2_key FROM media_assets WHERE user_id = ?1 AND r2_key IS NOT NULL`
+  )
+    .bind(userId)
+    .all<{ r2_key: string }>();
+  keys.push(...workspaceAssets.results.map((asset) => asset.r2_key));
 
   // R2 first, soft-delete second. If a delete call throws mid-way the rows
   // stay visible to a retry, which can re-select the same keys (R2 delete is
   // idempotent on already-missing keys). Reversing the order would orphan
   // transcript JSON forever, since the next select filters deleted_at IS NULL.
   // R2 binding accepts a string[] of up to 1000 keys per call.
-  for (let i = 0; i < keys.length; i += 1000) {
-    await env.SCRIBIX_MEDIA.delete(keys.slice(i, i + 1000));
-  }
+  await deleteVideoWorkspaceObjects(env.SCRIBIX_MEDIA, keys);
 
   await env.DB.batch([
+    ...accountVideoWorkspaceDeleteStatements(env.DB, userId),
     env.DB.prepare(
       `DELETE FROM ai_chat_messages WHERE user_id = ?1`
     ).bind(userId),

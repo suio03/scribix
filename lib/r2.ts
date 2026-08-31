@@ -5,6 +5,7 @@
 // Required env: CLOUDFLARE_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY.
 
 import { AwsClient } from "aws4fetch";
+import { VideoWorkspaceR2 } from "@/lib/video-workspace/r2-keys";
 
 const BUCKET = "scribix-media";
 
@@ -167,5 +168,10 @@ export const R2 = {
     `users/${userId}/${transcriptId}/summary.json`,
   extensionYoutubeSummaryKey: (userId: string, cacheKey: string) =>
     `users/${userId}/extension/youtube-summaries/${cacheKey}.json`,
+  videoProjectPrefix: VideoWorkspaceR2.projectPrefix,
+  previewProxyKey: VideoWorkspaceR2.previewProxyKey,
+  finalVideoKey: VideoWorkspaceR2.finalVideoKey,
+  coverKey: VideoWorkspaceR2.coverKey,
+  brandAssetKey: VideoWorkspaceR2.brandAssetKey,
   bucket: BUCKET,
 };

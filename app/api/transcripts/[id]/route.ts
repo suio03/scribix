@@ -3,6 +3,11 @@ import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { R2 } from "@/lib/r2";
 import { sanitizeSpeakerNames } from "@/lib/speaker-names";
+import {
+  deleteVideoWorkspaceObjects,
+  hardDeleteVideoProjects,
+  videoWorkspaceDeletionForTranscript,
+} from "@/lib/video-workspace/lifecycle";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -67,10 +72,19 @@ export async function DELETE(_: Request, { params }: Params) {
     return Response.json({ error: "forbidden" }, { status: 403 });
   }
 
+  const workspaceDeletion = await videoWorkspaceDeletionForTranscript(
+    env.DB,
+    user.id,
+    transcriptId
+  );
+
   try {
     await Promise.all([
-      row.audio_r2_key ? env.SCRIBIX_MEDIA.delete(row.audio_r2_key) : null,
-      row.transcript_r2_key ? env.SCRIBIX_MEDIA.delete(row.transcript_r2_key) : null,
+      deleteVideoWorkspaceObjects(env.SCRIBIX_MEDIA, [
+        ...workspaceDeletion.r2Keys,
+        ...(row.audio_r2_key ? [row.audio_r2_key] : []),
+        ...(row.transcript_r2_key ? [row.transcript_r2_key] : []),
+      ]),
       deleteTranslationObjects(env, user.id, transcriptId),
       env.SCRIBIX_MEDIA.delete(R2.summaryKey(user.id, transcriptId)),
     ]);
@@ -84,6 +98,8 @@ export async function DELETE(_: Request, { params }: Params) {
     }));
     return Response.json({ error: "delete_failed" }, { status: 502 });
   }
+
+  await hardDeleteVideoProjects(env.DB, user.id, workspaceDeletion.projectIds);
 
   await env.DB.batch([
     env.DB.prepare(`DELETE FROM transcript_translations WHERE transcript_id = ?1`)

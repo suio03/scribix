@@ -6,6 +6,7 @@ import {
   validateUploadPreflight,
   type PreflightInput,
 } from "@/lib/upload-preflight";
+import { videoSourceStorageForUser } from "@/lib/video-workspace/retention";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -14,6 +15,7 @@ export async function POST(req: Request) {
   let body: Partial<PreflightInput> & {
     allowPartial?: boolean;
     source?: "upload" | "record";
+    workflow?: "transcript" | "video_clips";
   };
   try {
     body = await req.json();
@@ -32,6 +34,13 @@ export async function POST(req: Request) {
     typeof body.isVideo !== "boolean"
   ) {
     return Response.json({ error: "missing_fields" }, { status: 400 });
+  }
+  if (body.workflow !== undefined && body.workflow !== "transcript" && body.workflow !== "video_clips") {
+    return Response.json({ error: "invalid_workflow" }, { status: 400 });
+  }
+  const workflow = body.workflow ?? "transcript";
+  if (workflow === "video_clips" && (!body.isVideo || body.source === "record")) {
+    return Response.json({ error: "video_clip_source_required" }, { status: 400 });
   }
 
   const rawDuration = body.durationSec;
@@ -55,6 +64,23 @@ export async function POST(req: Request) {
       ? 400
       : 413;
     return Response.json(decision, { status });
+  }
+
+  let sourceStorage = null;
+  if (workflow === "video_clips") {
+    sourceStorage = await videoSourceStorageForUser(env.DB, user.id, user.tier);
+    if (body.bytes > sourceStorage.availableBytes) {
+      return Response.json(
+        {
+          error: "video_source_storage_limit",
+          usedBytes: sourceStorage.usedBytes,
+          limitBytes: sourceStorage.limitBytes,
+          requiredBytes: body.bytes,
+          retentionDays: sourceStorage.retentionDays,
+        },
+        { status: 413 }
+      );
+    }
   }
 
   const estimateMin = durationSec === null ? 1 : Math.ceil(durationSec / 60);
@@ -93,12 +119,13 @@ export async function POST(req: Request) {
 
   return Response.json({
     ok: true,
-    pipeline: decision.pipeline,
-    fallbackReason: decision.fallbackReason,
+    pipeline: workflow === "video_clips" ? "direct_video" : decision.pipeline,
+    fallbackReason: workflow === "video_clips" ? undefined : decision.fallbackReason,
     tier: user.tier,
     remainingMin: quota.remainingMin,
     capMin: quota.capMin,
     processableMin,
     requiresPartialConfirmation: requiresPartialConfirmation && !allowPartial,
+    sourceStorage,
   });
 }

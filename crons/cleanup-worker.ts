@@ -11,9 +11,17 @@
 //      cleanup.
 //   5. For `completed` rows older than 14d, deletes the R2 audio object
 //      and NULLs `audio_r2_key`. Transcript JSON is preserved forever.
+//   6. Deletes expired video-project sources when no render job is active,
+//      while preserving project versions and completed output assets.
 //
 // Deployed separately from the Next app via `wrangler.cleanup.jsonc`. Shares
 // the same D1 + R2 bindings.
+
+import {
+  deleteVideoWorkspaceObjects,
+  hardDeleteVideoProjects,
+  videoWorkspaceDeletionForTranscript,
+} from "../lib/video-workspace/lifecycle";
 
 interface Env {
   DB: D1Database;
@@ -46,6 +54,14 @@ type CleanupRow = {
 
 type SweepStats = { scanned: number; deleted: number; failed: number; retry: number };
 
+type ExpiredVideoSourceRow = {
+  asset_id: string;
+  user_id: string;
+  project_id: string;
+  transcript_id: string;
+  r2_key: string;
+};
+
 async function deleteR2(
   bucket: R2Bucket,
   row: CleanupRow,
@@ -63,6 +79,23 @@ async function deleteR2(
       status: row.status,
       errorCategory: cleanupErrorCategory(e),
       error: e instanceof Error ? e.message.slice(0, 200) : "unknown",
+    }));
+    return false;
+  }
+}
+
+async function deleteVideoWorkspace(env: Env, row: CleanupRow): Promise<boolean> {
+  try {
+    const deletion = await videoWorkspaceDeletionForTranscript(env.DB, row.user_id, row.id);
+    await deleteVideoWorkspaceObjects(env.SCRIBIX_MEDIA, deletion.r2Keys);
+    await hardDeleteVideoProjects(env.DB, row.user_id, deletion.projectIds);
+    return true;
+  } catch (error) {
+    console.error(JSON.stringify({
+      event: "cleanup_video_workspace_delete_failed",
+      transcriptId: row.id,
+      errorCategory: cleanupErrorCategory(error),
+      error: error instanceof Error ? error.message.slice(0, 200) : "unknown",
     }));
     return false;
   }
@@ -89,6 +122,11 @@ async function sweepExpiredRows(
     const audioDeleted = await deleteR2(env.SCRIBIX_MEDIA, r, r.audio_r2_key);
     const transcriptDeleted = await deleteR2(env.SCRIBIX_MEDIA, r, r.transcript_r2_key);
     if (!audioDeleted || !transcriptDeleted) {
+      stats.failed += 1;
+      stats.retry += 1;
+      continue;
+    }
+    if (!(await deleteVideoWorkspace(env, r))) {
       stats.failed += 1;
       stats.retry += 1;
       continue;
@@ -141,6 +179,11 @@ async function sweepLegacySoftDeleted(env: Env): Promise<SweepStats> {
       stats.retry += 1;
       continue;
     }
+    if (!(await deleteVideoWorkspace(env, r))) {
+      stats.failed += 1;
+      stats.retry += 1;
+      continue;
+    }
     await env.DB.prepare(`DELETE FROM transcripts WHERE id = ?1`).bind(r.id).run();
     stats.deleted += 1;
   }
@@ -154,6 +197,17 @@ async function sweepExpiredAudio(env: Env, cutoffIso: string): Promise<SweepStat
       WHERE status = 'completed'
         AND deleted_at IS NULL
         AND audio_r2_key IS NOT NULL
+        AND NOT EXISTS (
+          SELECT 1
+            FROM media_assets a
+            JOIN video_projects p
+              ON p.id = a.project_id AND p.user_id = a.user_id
+           WHERE a.user_id = transcripts.user_id
+             AND a.r2_key = transcripts.audio_r2_key
+             AND a.kind = 'source'
+             AND a.deleted_at IS NULL
+             AND p.deleted_at IS NULL
+        )
         AND created_at < ?1`
   ).bind(cutoffIso).all<CleanupRow>();
 
@@ -168,6 +222,66 @@ async function sweepExpiredAudio(env: Env, cutoffIso: string): Promise<SweepStat
       .bind(r.id)
       .run();
     stats.deleted += 1;
+  }
+  return stats;
+}
+
+async function sweepExpiredVideoSources(env: Env, nowIso: string): Promise<SweepStats> {
+  const rows = await env.DB.prepare(
+    `SELECT a.id AS asset_id, a.user_id, a.project_id, p.transcript_id, a.r2_key
+       FROM media_assets a
+       JOIN video_projects p
+         ON p.id = a.project_id AND p.user_id = a.user_id
+      WHERE a.kind = 'source'
+        AND a.status = 'ready'
+        AND a.deleted_at IS NULL
+        AND a.r2_key IS NOT NULL
+        AND a.expires_at IS NOT NULL
+        AND a.expires_at <= ?1
+        AND p.deleted_at IS NULL
+        AND NOT EXISTS (
+          SELECT 1 FROM render_jobs j
+           WHERE j.project_id = p.id
+             AND j.user_id = p.user_id
+             AND j.status IN ('queued', 'preparing', 'running', 'uploading')
+        )`
+  )
+    .bind(nowIso)
+    .all<ExpiredVideoSourceRow>();
+
+  const stats: SweepStats = { scanned: rows.results.length, deleted: 0, failed: 0, retry: 0 };
+  for (const source of rows.results) {
+    try {
+      await env.SCRIBIX_MEDIA.delete(source.r2_key);
+      await env.DB.batch([
+        env.DB.prepare(
+          `UPDATE video_projects
+              SET source_asset_id = NULL, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?1 AND user_id = ?2 AND source_asset_id = ?3`
+        ).bind(source.project_id, source.user_id, source.asset_id),
+        env.DB.prepare(
+          `UPDATE transcripts
+              SET audio_r2_key = NULL
+            WHERE id = ?1 AND user_id = ?2 AND audio_r2_key = ?3`
+        ).bind(source.transcript_id, source.user_id, source.r2_key),
+        env.DB.prepare(
+          `UPDATE media_assets
+              SET status = 'deleted', r2_key = NULL, deleted_at = CURRENT_TIMESTAMP
+            WHERE id = ?1 AND user_id = ?2 AND status = 'ready'`
+        ).bind(source.asset_id, source.user_id),
+      ]);
+      stats.deleted += 1;
+    } catch (error) {
+      stats.failed += 1;
+      stats.retry += 1;
+      console.error(JSON.stringify({
+        event: "cleanup_expired_video_source_failed",
+        projectId: source.project_id,
+        assetId: source.asset_id,
+        errorCategory: cleanupErrorCategory(error),
+        error: error instanceof Error ? error.message.slice(0, 200) : "unknown",
+      }));
+    }
   }
   return stats;
 }
@@ -187,8 +301,19 @@ async function runCleanup(env: Env): Promise<void> {
   const inFlight = await sweepExpiredRows(env, IN_FLIGHT_STATUSES, isoCutoff(IN_FLIGHT_TTL_MS), true);
   const failed = await sweepExpiredRows(env, FAILED_STATUSES, isoCutoff(FAILED_TTL_MS), false);
   const legacyDeleted = await sweepLegacySoftDeleted(env);
+  const expiredVideoSources = await sweepExpiredVideoSources(
+    env,
+    new Date().toISOString().replace("T", " ").slice(0, 19)
+  );
   const expired = await sweepExpiredAudio(env, isoCutoff(AUDIO_TTL_MS));
-  const sweeps = { preSubmit, inFlight, failed, legacyDeleted, expiredMedia: expired };
+  const sweeps = {
+    preSubmit,
+    inFlight,
+    failed,
+    legacyDeleted,
+    expiredVideoSources,
+    expiredMedia: expired,
+  };
   const totals = Object.values(sweeps).reduce(
     (total, stats) => ({
       scanned: total.scanned + stats.scanned,

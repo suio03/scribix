@@ -20,6 +20,7 @@ import {
   validateRenderSpec,
 } from "./validation";
 import { checkSourcePolicy } from "./source-policy";
+import { VideoWorkspaceR2 } from "./r2-keys";
 
 const edl: Edl = {
   schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION,
@@ -231,4 +232,17 @@ test("source policy returns stable failures for bad and unsupported media", () =
     }),
     { supported: false, errorCode: "invalid_source", reason: "invalid_duration" }
   );
+});
+
+test("video workspace R2 keys are deterministic and reject unsafe segments", () => {
+  assert.equal(
+    VideoWorkspaceR2.previewProxyKey("user_01", "project_01", "candidate_01", "seg_01", 2),
+    "users/user_01/video-projects/project_01/proxies/candidate_01/seg_01-2.mp4"
+  );
+  assert.equal(
+    VideoWorkspaceR2.finalVideoKey("user_01", "project_01", "render_01"),
+    "users/user_01/video-projects/project_01/renders/render_01/final-9x16.mp4"
+  );
+  assert.throws(() => VideoWorkspaceR2.coverKey("../other", "project_01", "render_01"));
+  assert.throws(() => VideoWorkspaceR2.brandAssetKey("user_01", "asset_01", "../png"));
 });

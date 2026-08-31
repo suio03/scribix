@@ -10,6 +10,7 @@ const sources = [
   "lib/video-workspace/contracts.ts",
   "lib/video-workspace/validation.ts",
   "lib/video-workspace/source-policy.ts",
+  "lib/video-workspace/r2-keys.ts",
   "lib/video-workspace/validation.test.ts",
 ];
 
