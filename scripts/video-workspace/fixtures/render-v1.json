@@ -1,0 +1,56 @@
+{
+  "sourceDurationMs": 8000,
+  "edl": {
+    "schemaVersion": 1,
+    "segments": [
+      {
+        "id": "seg_01",
+        "sourceStartMs": 500,
+        "sourceEndMs": 2500,
+        "order": 0
+      },
+      {
+        "id": "seg_02",
+        "sourceStartMs": 4000,
+        "sourceEndMs": 6500,
+        "order": 1
+      }
+    ]
+  },
+  "renderSpec": {
+    "schemaVersion": 1,
+    "outputPresetId": "vertical-1080p-v1",
+    "canvas": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "backgroundColor": "#000000"
+    },
+    "segments": {
+      "seg_01": {
+        "crop": { "x": 0.2, "y": 0.5, "zoom": 1 }
+      },
+      "seg_02": {
+        "crop": { "x": 0.8, "y": 0.5, "zoom": 1.2 }
+      }
+    },
+    "captions": {
+      "templateId": "karaoke-v1",
+      "fontAssetId": null,
+      "textColor": "#FFFFFF",
+      "highlightColor": "#FFD600",
+      "positionY": 0.78
+    },
+    "brand": {
+      "templateId": "brand-fixture",
+      "logoAssetId": "logo-fixture"
+    },
+    "audio": {
+      "gainDb": 0,
+      "normalize": true,
+      "fadeInMs": 100,
+      "fadeOutMs": 250
+    },
+    "coverTimelineMs": 1200
+  }
+}
