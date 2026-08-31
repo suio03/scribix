@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "timelineMs": 1600,
+  "source": { "width": 1920, "height": 1080, "durationMs": 4000 },
+  "crop": { "x": 0.25, "y": 0.6, "zoom": 1.2 },
+  "captionTemplates": ["karaoke-v1", "boxed-v1", "minimal-v1"],
+  "caption": {
+    "positionY": 0.72,
+    "maxCharsPerLine": 15,
+    "maxLines": 2,
+    "textColor": "#ffffff",
+    "highlightColor": "#ff5a1f"
+  },
+  "brand": {
+    "templateId": "signature-v1",
+    "accentColor": "#ff5a1f",
+    "logoPosition": "top-right",
+    "logoScale": 0.16
+  },
+  "golden": {
+    "minimumGeometrySsim": 0.97,
+    "allowedDifferences": [
+      "editor safe-area guide",
+      "playback controls",
+      "browser and libass font rasterization"
+    ]
+  }
+}

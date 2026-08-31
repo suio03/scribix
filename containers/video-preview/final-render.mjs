@@ -57,12 +57,11 @@ export async function renderFinal({
   for (const [index, segment] of segments.entries()) {
     const crop = lease.renderSpec.segments[segment.id]?.crop;
     if (!crop) throw renderError("invalid_render_spec");
-    const scaledWidth = even(Math.ceil(1080 * crop.zoom));
-    const scaledHeight = even(Math.ceil(1920 * crop.zoom));
+    const geometry = coverCropGeometry(source.width, source.height, crop);
     filters.push(
       `[${index}:v:0]setpts=PTS-STARTPTS,` +
-      `scale=${scaledWidth}:${scaledHeight}:force_original_aspect_ratio=increase,` +
-      `crop=1080:1920:(iw-1080)*${decimal(crop.x)}:(ih-1920)*${decimal(crop.y)},` +
+      `scale=${geometry.width}:${geometry.height},` +
+      `crop=1080:1920:${geometry.cropX}:${geometry.cropY},` +
       `setsar=1,fps=30,format=yuv420p[v${index}]`
     );
     const duration = seconds(segment.sourceEndMs - segment.sourceStartMs);
@@ -179,11 +178,35 @@ export function buildAss(edl, renderSpec, customFontName = null) {
     const segment = segmentById.get(cue.segmentId);
     const timelineStart = timelineStarts.get(cue.segmentId);
     if (!segment || timelineStart === undefined) return [];
-    const startMs = timelineStart + cue.sourceStartMs - segment.sourceStartMs;
-    const endMs = timelineStart + cue.sourceEndMs - segment.sourceStartMs;
-    const text = wrapAssWords(cue.words, captions.maxCharsPerLine, captions.maxLines);
     const positionY = Math.round(1920 * captions.positionY);
-    return [`Dialogue: 0,${assTime(startMs)},${assTime(endMs)},Default,,0,0,0,,{\\an5\\pos(540,${positionY})}${text}`];
+    const boundaries = [...new Set([
+      cue.sourceStartMs,
+      cue.sourceEndMs,
+      ...cue.words.flatMap((word) => [
+        Math.max(cue.sourceStartMs, word.sourceStartMs),
+        Math.min(cue.sourceEndMs, word.sourceEndMs),
+      ]),
+    ])].filter((value) => value >= cue.sourceStartMs && value <= cue.sourceEndMs)
+      .sort((left, right) => left - right);
+    return boundaries.slice(0, -1).flatMap((sourceStartMs, index) => {
+      const sourceEndMs = boundaries[index + 1];
+      if (sourceEndMs <= sourceStartMs) return [];
+      const sampleMs = sourceStartMs + (sourceEndMs - sourceStartMs) / 2;
+      const activeIndex = cue.words.findIndex(
+        (word) => sampleMs >= word.sourceStartMs && sampleMs < word.sourceEndMs
+      );
+      const startMs = timelineStart + sourceStartMs - segment.sourceStartMs;
+      const endMs = timelineStart + sourceEndMs - segment.sourceStartMs;
+      const text = wrapAssWords(
+        cue.words,
+        captions.maxCharsPerLine,
+        captions.maxLines,
+        activeIndex,
+        captions.highlightColor,
+        style.uppercase
+      );
+      return [`Dialogue: 0,${assTime(startMs)},${assTime(endMs)},Default,,0,0,0,,{\\an5\\pos(540,${positionY})}${text}`];
+    });
   });
   return `${header}\n${events.join("\n")}\n`;
 }
@@ -239,38 +262,61 @@ function decodeUtf16Be(bytes) {
   return String.fromCharCode(...codeUnits);
 }
 
-function wrapAssWords(words, maxCharsPerLine, maxLines) {
+export function wrapAssWords(
+  words,
+  maxCharsPerLine,
+  maxLines,
+  activeIndex = -1,
+  highlightColor = "#ffffff",
+  uppercase = false
+) {
   const lines = [[]];
   let lineLength = 0;
-  for (const word of words) {
-    const escaped = escapeAss(word.text);
-    const nextLength = lineLength + (lineLength > 0 ? 1 : 0) + escaped.length;
+  for (const [index, word] of words.entries()) {
+    const text = uppercase ? word.text.toLocaleUpperCase("en-US") : word.text;
+    const escaped = escapeAss(text);
+    const length = [...text].length;
+    const nextLength = lineLength + (lineLength > 0 ? 1 : 0) + length;
     if (nextLength > maxCharsPerLine && lines.length < maxLines) {
       lines.push([]);
       lineLength = 0;
     }
-    const centiseconds = Math.max(1, Math.round((word.sourceEndMs - word.sourceStartMs) / 10));
-    lines.at(-1).push(`{\\kf${centiseconds}}${escaped}`);
-    lineLength += (lineLength > 0 ? 1 : 0) + escaped.length;
+    const color = index === activeIndex ? `{\\c${assColor(highlightColor)}}` : "{\\c}";
+    lines.at(-1).push(`${color}${escaped}`);
+    lineLength += (lineLength > 0 ? 1 : 0) + length;
   }
   return lines.map((line) => line.join(" ")).join("\\N");
 }
 
-function captionStyle(templateId) {
+export function captionStyle(templateId) {
   if (templateId === "boxed-v1") {
-    return { fontSize: 72, bold: -1, borderStyle: 3, outline: 0, shadow: 0 };
+    return { fontSize: 72, bold: -1, borderStyle: 3, outline: 0, shadow: 0, uppercase: false };
   }
   if (templateId === "minimal-v1") {
-    return { fontSize: 68, bold: 0, borderStyle: 1, outline: 3, shadow: 1 };
+    return { fontSize: 68, bold: 0, borderStyle: 1, outline: 3, shadow: 1, uppercase: false };
   }
-  return { fontSize: 82, bold: -1, borderStyle: 1, outline: 5, shadow: 2 };
+  return { fontSize: 82, bold: -1, borderStyle: 1, outline: 5, shadow: 2, uppercase: true };
 }
 
-function logoOverlay(position) {
+export function logoOverlay(position) {
   if (position === "top-left") return { x: "65", y: "115" };
   if (position === "bottom-left") return { x: "65", y: "H-h-154" };
   if (position === "bottom-right") return { x: "W-w-65", y: "H-h-154" };
   return { x: "W-w-65", y: "115" };
+}
+
+export function coverCropGeometry(sourceWidth, sourceHeight, crop) {
+  const targetWidth = even(Math.ceil(1080 * crop.zoom));
+  const targetHeight = even(Math.ceil(1920 * crop.zoom));
+  const scale = Math.max(targetWidth / sourceWidth, targetHeight / sourceHeight);
+  const width = even(Math.ceil(sourceWidth * scale));
+  const height = even(Math.ceil(sourceHeight * scale));
+  return {
+    width,
+    height,
+    cropX: Math.round((width - 1080) * crop.x),
+    cropY: Math.round((height - 1920) * crop.y),
+  };
 }
 
 function assTime(valueMs) {

@@ -9,6 +9,8 @@
     "prototype:video-workspace": "node scripts/video-workspace/ffmpeg-prototype.mjs",
     "test:video-preview": "node scripts/video-workspace/test-preview-render.mjs",
     "test:video-final": "node scripts/video-workspace/test-final-render.mjs",
+    "test:video-consistency": "node scripts/video-workspace/test-presentation-consistency.mjs",
+    "test:video-visual-parity": "node scripts/video-workspace/test-visual-parity.mjs",
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",

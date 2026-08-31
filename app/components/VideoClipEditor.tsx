@@ -20,6 +20,18 @@ import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
 import type { EditorWorkspace } from "@/lib/video-workspace/editor";
 import type { Edl, EdlSegment, RenderSpec } from "@/lib/video-workspace/contracts";
 import {
+  VIDEO_LOGO_BOTTOM_PX,
+  VIDEO_LOGO_SIDE_PX,
+  VIDEO_LOGO_TOP_PX,
+  VIDEO_SIGNATURE_HEIGHT_PX,
+  activeCaptionWordIndex,
+  browserCropStyle,
+  captionVisualStyle,
+  coverCropBox,
+  logoWidthPx,
+  wrapCaptionWordIndexes,
+} from "@/lib/video-workspace/presentation";
+import {
   buildTimelineSegments,
   nextWordEnd,
   nextWordStart,
@@ -591,6 +603,10 @@ function ContinuousProxyPlayer({
   const [timelineMs, setTimelineMs] = useState(0);
   const [sourceMs, setSourceMs] = useState(timeline[0]?.sourceStartMs ?? 0);
   const [playing, setPlaying] = useState(false);
+  const [videoDimensions, setVideoDimensions] = useState<Array<{
+    width: number;
+    height: number;
+  } | null>>([null, null]);
   const switchingRef = useRef(false);
   const durationMs = timelineDurationMs(timeline);
   const activeSegment = timeline[activeIndex];
@@ -688,8 +704,13 @@ function ContinuousProxyPlayer({
   };
 
   const onLoadedMetadata = (slot: 0 | 1) => {
-    if (slot !== activeSlot) return;
     const video = videos[slot].current;
+    if (video?.videoWidth && video.videoHeight) {
+      setVideoDimensions((current) => current.map((value, index) => (
+        index === slot ? { width: video.videoWidth, height: video.videoHeight } : value
+      )));
+    }
+    if (slot !== activeSlot) return;
     const segment = timeline[activeIndex];
     if (!video || !segment) return;
     const localMs = Math.max(0, timelineMs - segment.timelineStartMs);
@@ -717,6 +738,20 @@ function ContinuousProxyPlayer({
   if (timeline.length === 0) {
     return <div className="grid aspect-[9/16] max-h-[620px] place-items-center rounded-xl bg-ink px-6 text-center text-[12px] text-paper/55">{labels.previewMissing}</div>;
   }
+  const mediaStyle = (slot: 0 | 1) => {
+    const dimensions = videoDimensions[slot];
+    if (!dimensions || !activeCrop) {
+      return {
+        width: "100%",
+        height: "100%",
+        left: "0%",
+        top: "0%",
+        objectFit: "cover" as const,
+        objectPosition: `${(activeCrop?.x ?? 0.5) * 100}% ${(activeCrop?.y ?? 0.5) * 100}%`,
+      };
+    }
+    return browserCropStyle(coverCropBox(dimensions.width, dimensions.height, activeCrop));
+  };
   return (
     <div className="relative mx-auto aspect-[9/16] max-h-[620px] overflow-hidden rounded-xl bg-black [container-type:inline-size] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
       <video
@@ -727,11 +762,8 @@ function ContinuousProxyPlayer({
         onLoadedMetadata={() => onLoadedMetadata(0)}
         onTimeUpdate={() => onTimeUpdate(0)}
         onEnded={advance}
-        style={{
-          objectPosition: `${(activeCrop?.x ?? 0.5) * 100}% ${(activeCrop?.y ?? 0.5) * 100}%`,
-          transform: `scale(${activeCrop?.zoom ?? 1})`,
-        }}
-        className={`absolute inset-0 size-full object-cover ${activeSlot === 0 ? "opacity-100" : "opacity-0"}`}
+        style={mediaStyle(0)}
+        className={`absolute object-fill ${activeSlot === 0 ? "opacity-100" : "opacity-0"}`}
       />
       <video
         ref={videos[1]}
@@ -741,11 +773,8 @@ function ContinuousProxyPlayer({
         onLoadedMetadata={() => onLoadedMetadata(1)}
         onTimeUpdate={() => onTimeUpdate(1)}
         onEnded={advance}
-        style={{
-          objectPosition: `${(activeCrop?.x ?? 0.5) * 100}% ${(activeCrop?.y ?? 0.5) * 100}%`,
-          transform: `scale(${activeCrop?.zoom ?? 1})`,
-        }}
-        className={`absolute inset-0 size-full object-cover ${activeSlot === 1 ? "opacity-100" : "opacity-0"}`}
+        style={mediaStyle(1)}
+        className={`absolute object-fill ${activeSlot === 1 ? "opacity-100" : "opacity-0"}`}
       />
       {activeSegment ? (
         <PreviewOverlays
@@ -805,23 +834,37 @@ function PreviewOverlays({
     asset.kind === "font" && asset.id === renderSpec.captions.fontAssetId
   ));
   const fontFamily = font ? `scribix-font-${font.id}` : undefined;
-  const logoPosition = {
-    "top-left": "left-[6%] top-[6%]",
-    "top-right": "right-[6%] top-[6%]",
-    "bottom-left": "bottom-[8%] left-[6%]",
-    "bottom-right": "bottom-[8%] right-[6%]",
-  }[renderSpec.brand.logoPosition];
-  const captionClass = renderSpec.captions.templateId === "boxed-v1"
-    ? "rounded-lg bg-black/75 px-3 py-2 shadow-lg"
-    : renderSpec.captions.templateId === "minimal-v1"
-      ? "font-medium drop-shadow-[0_2px_3px_rgba(0,0,0,0.95)]"
-      : "font-black uppercase drop-shadow-[0_3px_3px_rgba(0,0,0,0.95)]";
+  const captionStyle = captionVisualStyle(renderSpec.captions.templateId);
+  const captionLines = cue
+    ? wrapCaptionWordIndexes(
+        cue.words,
+        renderSpec.captions.maxCharsPerLine,
+        renderSpec.captions.maxLines
+      )
+    : [];
+  const activeWordIndex = cue ? activeCaptionWordIndex(cue.words, sourceMs) : null;
+  const logoPosition = renderSpec.brand.logoPosition;
+  const logoStyle = {
+    width: `${logoWidthPx(renderSpec.brand.logoScale) / 10.8}%`,
+    ...(logoPosition.endsWith("left")
+      ? { left: `${VIDEO_LOGO_SIDE_PX / 10.8}%` }
+      : { right: `${VIDEO_LOGO_SIDE_PX / 10.8}%` }),
+    ...(logoPosition.startsWith("top")
+      ? { top: `${VIDEO_LOGO_TOP_PX / 19.2}%` }
+      : { bottom: `${VIDEO_LOGO_BOTTOM_PX / 19.2}%` }),
+  };
   return (
     <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
       {font ? <style>{`@font-face{font-family:"${fontFamily}";src:url("${font.url}") format("truetype");font-display:swap;}`}</style> : null}
       <div className="absolute inset-[5%] rounded-md border border-dashed border-white/20" />
       {renderSpec.brand.templateId === "signature-v1" ? (
-        <div className="absolute inset-x-0 bottom-0 h-[1.2%]" style={{ backgroundColor: renderSpec.brand.accentColor }} />
+        <div
+          className="absolute inset-x-0 bottom-0"
+          style={{
+            backgroundColor: renderSpec.brand.accentColor,
+            height: `${VIDEO_SIGNATURE_HEIGHT_PX / 19.2}%`,
+          }}
+        />
       ) : null}
       {renderSpec.brand.templateId && logo ? (
         // The URL is server-signed for this owned asset; alt is decorative in the video canvas.
@@ -829,36 +872,49 @@ function PreviewOverlays({
         <img
           src={logo.url}
           alt=""
-          className={`absolute max-h-[16%] object-contain ${logoPosition}`}
-          style={{ width: `${renderSpec.brand.logoScale * 100}%` }}
+          className="absolute max-h-[16%] object-contain"
+          style={logoStyle}
         />
       ) : null}
       {cue ? (
         <div
-          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-[clamp(14px,3.8cqw,28px)] leading-[1.12]"
+          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-center leading-[1.12]"
           style={{
             top: `${renderSpec.captions.positionY * 100}%`,
             color: renderSpec.captions.textColor,
             fontFamily,
-            maxWidth: `min(88%, ${renderSpec.captions.maxCharsPerLine}ch)`,
-            display: "-webkit-box",
-            WebkitLineClamp: renderSpec.captions.maxLines,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
+            width: "90%",
+            fontSize: `${captionStyle.fontSize / 10.8}cqw`,
+            fontWeight: captionStyle.fontWeight,
+            textTransform: captionStyle.uppercase ? "uppercase" : "none",
+            WebkitTextStroke: captionStyle.outline > 0
+              ? `${captionStyle.outline / 10.8}cqw rgba(0,0,0,0.8)`
+              : undefined,
+            textShadow: captionStyle.shadow > 0
+              ? `0 ${captionStyle.shadow / 10.8}cqw ${captionStyle.shadow / 5.4}cqw rgba(0,0,0,0.95)`
+              : undefined,
           }}
         >
-          <span className={captionClass}>
-            {cue.words.map((word, index) => {
-              const active = sourceMs >= word.sourceStartMs && sourceMs < word.sourceEndMs;
-              return (
-                <span
-                  key={`${word.sourceStartMs}-${index}`}
-                  style={{ color: active ? renderSpec.captions.highlightColor : undefined }}
-                >
-                  {index > 0 ? " " : ""}{word.text}
-                </span>
-              );
-            })}
+          <span className={captionStyle.boxed ? "inline-block rounded-lg bg-black/75 px-[2.2%] py-[1.2%]" : undefined}>
+            {captionLines.map((line, lineIndex) => (
+              <span key={lineIndex} className="block">
+                {line.map((wordIndex, indexInLine) => {
+                  const word = cue.words[wordIndex];
+                  return (
+                    <span
+                      key={`${word.sourceStartMs}-${wordIndex}`}
+                      style={{
+                        color: activeWordIndex === wordIndex
+                          ? renderSpec.captions.highlightColor
+                          : undefined,
+                      }}
+                    >
+                      {indexInLine > 0 ? " " : ""}{word.text}
+                    </span>
+                  );
+                })}
+              </span>
+            ))}
           </span>
         </div>
       ) : null}

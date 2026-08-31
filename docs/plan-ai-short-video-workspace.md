@@ -1,6 +1,6 @@
 # Scribix AI 短视频工作台 V1 实施计划
 
-> 状态：实施中（M0–M5 已提交，M6 已完成本地实现与验证，待提交）
+> 状态：实施中（M0–M6 已提交，M7 已完成本地实现与验证，待提交）
 > 创建日期：2026-08-31  
 > 当前范围：长视频对话内容 → 候选 clips → 浏览器编辑预览 → Cloud 最终成片  
 > 明确不做：社交账号连接、内容日历、定时发布和多平台分发
@@ -738,11 +738,14 @@ job definition 更新在全部里程碑完成后统一执行。
 
 ### M7. Preview/Render 一致性验证
 
-- [ ] 建立固定 Render Spec fixtures。
-- [ ] 截取 Browser Preview 与 Final Render 的相同时间点截图。
-- [ ] 对比 crop、Logo、字幕位置、颜色、断行和 word highlight。
-- [ ] 验证音画时长、segment 边界和字幕 timing。
-- [ ] 为模板变更加 screenshot/golden regression。
+- [x] 建立固定 Render Spec fixtures。
+- [x] 截取 Browser Preview 与 Final Render 的相同时间点截图。
+- [x] 对比 crop、Logo、字幕位置、颜色、断行和 word highlight。
+- [x] 验证音画时长、segment 边界和字幕 timing。
+- [x] 为模板变更加 screenshot/golden regression。
+
+共享呈现契约、同帧截图对比和允许差异详见
+`docs/video-workspace/m7-preview-render-consistency.md`。
 
 完成标准：
 
