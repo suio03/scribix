@@ -571,7 +571,10 @@ async function resetFailedPreviewJob(
     `UPDATE render_jobs
         SET status = 'queued', provider = NULL, provider_job_id = NULL,
             error_code = NULL, queued_at = CURRENT_TIMESTAMP,
-            started_at = NULL, completed_at = NULL,
+            provider_submitted_at = NULL, started_at = NULL,
+            upload_started_at = NULL, completed_at = NULL,
+            billable_duration_ms = NULL, estimated_cost_microusd = NULL,
+            cost_model = NULL,
             updated_at = CURRENT_TIMESTAMP
       WHERE id = ?1 AND user_id = ?2 AND status = 'failed'`
   )

@@ -1,0 +1,23 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SubmitOnlyToScribixRenderQueue",
+      "Effect": "Allow",
+      "Action": "batch:SubmitJob",
+      "Resource": [
+        "arn:aws:batch:REGION:ACCOUNT_ID:job-queue/scribix-video-render",
+        "arn:aws:batch:REGION:ACCOUNT_ID:job-definition/scribix-video-render:*"
+      ]
+    },
+    {
+      "Sid": "ReadAndStopSubmittedJobs",
+      "Effect": "Allow",
+      "Action": [
+        "batch:DescribeJobs",
+        "batch:TerminateJob"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

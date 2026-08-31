@@ -1,6 +1,6 @@
 # Scribix AI 短视频工作台 V1 实施计划
 
-> 状态：实施中（M0–M6 已提交，M7 已完成本地实现与验证，待提交）
+> 状态：实施中（M0–M7 已提交，M8 已完成本地实现与验证，待提交）
 > 创建日期：2026-08-31  
 > 当前范围：长视频对话内容 → 候选 clips → 浏览器编辑预览 → Cloud 最终成片  
 > 明确不做：社交账号连接、内容日历、定时发布和多平台分发
@@ -754,12 +754,15 @@ job definition 更新在全部里程碑完成后统一执行。
 
 ### M8. 安全、监控与成本控制
 
-- [ ] 最小权限 IAM、短期签名 URL、callback 签名和镜像扫描。
-- [ ] 日志脱敏和稳定 error categories。
-- [ ] Job queue depth、p50/p95 start/render/total latency、成功率和重试率监控。
-- [ ] 单用户并发、文件大小、总输出时长和资源上限。
-- [ ] 孤儿 asset/job reconciliation。
-- [ ] 记录每次成功 render 的成本估算。
+- [x] 最小权限 IAM、短期签名 URL、callback 签名和镜像扫描。
+- [x] 日志脱敏和稳定 error categories。
+- [x] Job queue depth、p50/p95 start/render/total latency、成功率和重试率监控。
+- [x] 单用户并发、文件大小、总输出时长和资源上限。
+- [x] 孤儿 asset/job reconciliation。
+- [x] 记录每次成功 render 的成本估算。
+
+安全控制、监控事件、告警建议、成本模型和待启用的外部控制详见
+`docs/video-workspace/m8-operations.md`。
 
 完成标准：
 

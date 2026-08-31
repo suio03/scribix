@@ -139,7 +139,9 @@ export async function leaseFinalJob(
 
 export async function markFinalJobUploading(db: D1Database, jobId: string): Promise<boolean> {
   const result = await db.prepare(
-    `UPDATE render_jobs SET status = 'uploading', updated_at = CURRENT_TIMESTAMP
+    `UPDATE render_jobs
+        SET status = 'uploading', upload_started_at = COALESCE(upload_started_at, CURRENT_TIMESTAMP),
+            updated_at = CURRENT_TIMESTAMP
       WHERE id = ?1 AND kind = 'final' AND status IN ('running', 'uploading')`
   )
     .bind(jobId)

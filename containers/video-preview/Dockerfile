@@ -1,4 +1,4 @@
-FROM node:22.15.0-bookworm-slim
+FROM node:22.15.0-bookworm-slim@sha256:557e52a0fcb928ee113df7e1fb5d4f60c1341dbda53f55e3d815ca10807efdce
 
 ARG FFMPEG_VERSION="7:5.1.9-0+deb12u1"
 

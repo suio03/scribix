@@ -1,4 +1,5 @@
 import { AwsClient } from "aws4fetch";
+import { RENDER_COMPUTE_PROFILES } from "../lib/video-workspace/operations";
 
 export type PreviewProviderJob = {
   jobId: string;
@@ -42,11 +43,16 @@ export class AwsBatchRenderProvider implements VideoRenderProvider {
   }
 
   async submit(job: PreviewProviderJob, kind: "preview" | "final"): Promise<string> {
+    const profile = RENDER_COMPUTE_PROFILES[kind];
     const response = await this.client.fetch(this.request("/v1/submitjob", {
       jobDefinition: this.config.jobDefinition,
       jobName: `scribix-${kind}-${safeJobName(job.jobId)}`,
       jobQueue: this.config.jobQueue,
       containerOverrides: {
+        resourceRequirements: [
+          { type: "VCPU", value: String(profile.vCpu) },
+          { type: "MEMORY", value: String(profile.memoryGb * 1024) },
+        ],
         environment: [
           { name: "SCRIBIX_JOB_ID", value: job.jobId },
           { name: "SCRIBIX_JOB_TOKEN", value: job.jobToken },

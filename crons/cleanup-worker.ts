@@ -14,6 +14,7 @@
 //   6. Deletes expired video-project sources when no render job is active,
 //      while preserving project versions and completed output assets.
 //   7. Deletes seven-day preview proxies when their segment job is no longer active.
+//   8. Removes abandoned workspace uploads that have no owning render job.
 //
 // Deployed separately from the Next app via `wrangler.cleanup.jsonc`. Shares
 // the same D1 + R2 bindings.
@@ -70,6 +71,14 @@ type ExpiredPreviewProxyRow = {
   r2_key: string;
 };
 
+type OrphanVideoAssetRow = {
+  asset_id: string;
+  user_id: string;
+  project_id: string | null;
+  kind: string;
+  r2_key: string;
+};
+
 async function deleteR2(
   bucket: R2Bucket,
   row: CleanupRow,
@@ -83,7 +92,7 @@ async function deleteR2(
     console.error(JSON.stringify({
       event: "cleanup_r2_delete_failed",
       transcriptId: row.id,
-      r2Key: key,
+      objectKind: key.startsWith("video-workspace/") ? "video_workspace" : "transcript_media",
       status: row.status,
       errorCategory: cleanupErrorCategory(e),
       error: e instanceof Error ? e.message.slice(0, 200) : "unknown",
@@ -344,6 +353,52 @@ async function sweepExpiredPreviewProxies(env: Env, nowIso: string): Promise<Swe
   return stats;
 }
 
+async function sweepOrphanVideoAssets(env: Env): Promise<SweepStats> {
+  const rows = await env.DB.prepare(
+    `SELECT a.id AS asset_id, a.user_id, a.project_id, a.kind, a.r2_key
+       FROM media_assets a
+      WHERE a.kind IN ('preview_proxy', 'final_video', 'cover', 'logo', 'font')
+        AND a.status IN ('pending', 'uploading', 'failed')
+        AND a.deleted_at IS NULL
+        AND a.r2_key IS NOT NULL
+        AND (
+          (a.status IN ('pending', 'uploading') AND a.created_at < datetime('now', '-1 day'))
+          OR (a.status = 'failed' AND a.created_at < datetime('now', '-7 days'))
+        )
+        AND NOT EXISTS (
+          SELECT 1 FROM render_jobs j
+           WHERE j.output_asset_id = a.id OR j.cover_asset_id = a.id
+        )
+      ORDER BY a.created_at ASC
+      LIMIT 200`
+  ).all<OrphanVideoAssetRow>();
+  const stats: SweepStats = { scanned: rows.results.length, deleted: 0, failed: 0, retry: 0 };
+  for (const asset of rows.results) {
+    try {
+      await env.SCRIBIX_MEDIA.delete(asset.r2_key);
+      const updated = await env.DB.prepare(
+        `UPDATE media_assets
+            SET status = 'deleted', r2_key = NULL, deleted_at = CURRENT_TIMESTAMP
+          WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL
+            AND status IN ('pending', 'uploading', 'failed')`
+      )
+        .bind(asset.asset_id, asset.user_id)
+        .run();
+      if (updated.meta?.changes) stats.deleted += 1;
+    } catch (error) {
+      stats.failed += 1;
+      stats.retry += 1;
+      console.error(JSON.stringify({
+        event: "cleanup_orphan_video_asset_failed",
+        assetId: asset.asset_id,
+        assetKind: asset.kind,
+        errorCategory: cleanupErrorCategory(error),
+      }));
+    }
+  }
+  return stats;
+}
+
 function cleanupErrorCategory(error: unknown): string {
   if (error instanceof Error && /auth|forbidden|unauthorized/i.test(error.message)) return "auth";
   if (error instanceof Error && /timeout|network|fetch/i.test(error.message)) return "network";
@@ -365,6 +420,7 @@ async function runCleanup(env: Env): Promise<void> {
     nowIso
   );
   const expiredPreviewProxies = await sweepExpiredPreviewProxies(env, nowIso);
+  const orphanVideoAssets = await sweepOrphanVideoAssets(env);
   const expired = await sweepExpiredAudio(env, isoCutoff(AUDIO_TTL_MS));
   const sweeps = {
     preSubmit,
@@ -373,6 +429,7 @@ async function runCleanup(env: Env): Promise<void> {
     legacyDeleted,
     expiredVideoSources,
     expiredPreviewProxies,
+    orphanVideoAssets,
     expiredMedia: expired,
   };
   const totals = Object.values(sweeps).reduce(

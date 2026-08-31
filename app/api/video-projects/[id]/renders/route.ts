@@ -42,6 +42,8 @@ export async function POST(request: Request, { params }: Params) {
       ? 404
       : result.error === "source_video_missing"
         ? 410
+        : result.error === "render_concurrency_limit" || result.error === "render_daily_limit"
+          ? 429
         : result.error === "draft_conflict" || result.error === "idempotency_conflict"
           ? 409
           : 400;

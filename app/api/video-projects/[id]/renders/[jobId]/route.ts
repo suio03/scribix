@@ -32,7 +32,13 @@ export async function POST(_: Request, { params }: Params) {
   );
   return result.ok
     ? Response.json(result, { status: 202 })
-    : Response.json(result, { status: result.error === "job_not_found" ? 404 : 409 });
+    : Response.json(result, {
+        status: result.error === "job_not_found"
+          ? 404
+          : result.error === "render_concurrency_limit"
+            ? 429
+            : 409,
+      });
 }
 
 async function contextFor(params: Params["params"]): Promise<

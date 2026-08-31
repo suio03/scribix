@@ -761,7 +761,7 @@
           "cover": { "title": "Cover", "time": "Timeline-Bild", "note": "Der finale Renderer erzeugt das Cover genau an diesem Punkt der fertigen Timeline." }
         },
         "finalRender": {
-          "eyebrow": "Cloud-Export", "title": "Finales Video rendern", "description": "Erstellt eine unveränderliche Version aus der Originalquelle – nicht aus den Vorschau-Proxys.", "generate": "Video erzeugen", "rendering": "Wird gerendert…", "saveFirst": "Warte, bis die aktuelle Bearbeitung gespeichert ist.", "failed": "Der Render-Auftrag konnte nicht abgeschlossen werden.", "video": "Video", "cover": "Cover", "cancel": "Abbrechen", "retry": "Erneut versuchen",
+          "eyebrow": "Cloud-Export", "title": "Finales Video rendern", "description": "Erstellt eine unveränderliche Version aus der Originalquelle – nicht aus den Vorschau-Proxys.", "generate": "Video erzeugen", "rendering": "Wird gerendert…", "saveFirst": "Warte, bis die aktuelle Bearbeitung gespeichert ist.", "failed": "Der Render-Auftrag konnte nicht abgeschlossen werden.", "limit": "Dein Render-Limit ist erreicht. Warte auf einen aktiven Render oder versuche es morgen erneut.", "video": "Video", "cover": "Cover", "cancel": "Abbrechen", "retry": "Erneut versuchen",
           "status": { "draft": "Entwurf", "queued": "In Warteschlange", "preparing": "Vorbereitung", "running": "Rendering", "uploading": "Upload", "completed": "Bereit", "failed": "Fehlgeschlagen", "canceled": "Abgebrochen" }
         }
       }

@@ -1,5 +1,11 @@
 import { VIDEO_WORKSPACE_SCHEMA_VERSION, type RenderDispatchMessage } from "../lib/video-workspace/contracts";
 import { createScopedJobToken } from "../lib/video-workspace/job-auth";
+import {
+  estimateRenderCost,
+  parseRenderCostRates,
+  percentile,
+  renderErrorCategory,
+} from "../lib/video-workspace/operations";
 import { AwsBatchRenderProvider, type VideoRenderProvider } from "./video-render-provider";
 
 interface Env {
@@ -13,6 +19,10 @@ interface Env {
   AWS_BATCH_JOB_DEFINITION: string;
   SCRIBIX_INTERNAL_URL: string;
   VIDEO_WORKER_SIGNING_SECRET: string;
+  VIDEO_RENDER_VCPU_MICROUSD_PER_HOUR?: string;
+  VIDEO_RENDER_MEMORY_GB_MICROUSD_PER_HOUR?: string;
+  VIDEO_RENDER_PER_JOB_MICROUSD?: string;
+  VIDEO_RENDER_COST_MODEL?: string;
 }
 
 type DispatchJobRow = {
@@ -70,7 +80,7 @@ export default {
     env: Env,
     ctx: ExecutionContext
   ): Promise<void> {
-    ctx.waitUntil(reconcileJobs(env));
+    ctx.waitUntil(runScheduledOperations(env));
   },
 };
 
@@ -115,15 +125,22 @@ async function dispatchJob(
     jobToken,
     internalBaseUrl: env.SCRIBIX_INTERNAL_URL.replace(/\/$/, ""),
   }, claimedJob.kind);
-  const updated = await env.DB.prepare(
-    `UPDATE render_jobs
-        SET provider_job_id = ?1, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?2
-        AND status = 'preparing'
-        AND provider_job_id IS NULL`
-  )
-    .bind(providerJobId, jobId)
-    .run();
+  let updated: D1Result;
+  try {
+    updated = await env.DB.prepare(
+      `UPDATE render_jobs
+          SET provider_job_id = ?1, provider_submitted_at = CURRENT_TIMESTAMP,
+              updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?2
+          AND status = 'preparing'
+          AND provider_job_id IS NULL`
+    )
+      .bind(providerJobId, jobId)
+      .run();
+  } catch (error) {
+    await provider.cancel(providerJobId).catch(() => undefined);
+    throw error;
+  }
   if (!updated.meta?.changes) {
     console.error(JSON.stringify({
       event: "video_dispatch_provider_job_unattached",
@@ -186,7 +203,12 @@ async function reconcileJobs(env: Env): Promise<void> {
   );
   for (const job of active.results) {
     const state = job.provider_job_id ? states.get(job.provider_job_id) : undefined;
-    if (!state) continue;
+    if (!state) {
+      if (staleTimestamp(job.updated_at, 15 * 60 * 1000)) {
+        await failReconciledJob(env.DB, job, "provider_unavailable");
+      }
+      continue;
+    }
     if (state === "failed" || (state === "succeeded" && staleTimestamp(job.updated_at, 2 * 60 * 1000))) {
       await failReconciledJob(
         env.DB,
@@ -210,6 +232,106 @@ async function reconcileJobs(env: Env): Promise<void> {
       .bind(status, job.id)
       .run();
   }
+}
+
+async function runScheduledOperations(env: Env): Promise<void> {
+  await reconcileJobs(env);
+  await recordRenderCosts(env);
+  await emitRenderMetrics(env.DB);
+}
+
+async function recordRenderCosts(env: Env): Promise<void> {
+  const rates = parseRenderCostRates(env);
+  if (!rates) {
+    console.warn(JSON.stringify({ event: "video_render_cost_rates_missing" }));
+    return;
+  }
+  const rows = await env.DB.prepare(
+    `SELECT id, kind,
+            CAST((julianday(completed_at) - julianday(provider_submitted_at)) * 86400000 AS INTEGER) AS duration_ms
+       FROM render_jobs
+      WHERE status = 'completed'
+        AND provider_submitted_at IS NOT NULL
+        AND completed_at IS NOT NULL
+        AND estimated_cost_microusd IS NULL
+      ORDER BY completed_at ASC
+      LIMIT 100`
+  ).all<{ id: string; kind: "preview" | "final"; duration_ms: number }>();
+  for (const row of rows.results) {
+    const billableDurationMs = Math.max(1_000, Math.round(row.duration_ms));
+    const estimatedCostMicrousd = estimateRenderCost(row.kind, billableDurationMs, rates);
+    await env.DB.prepare(
+      `UPDATE render_jobs
+          SET billable_duration_ms = ?1, estimated_cost_microusd = ?2,
+              cost_model = ?3, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?4 AND status = 'completed' AND estimated_cost_microusd IS NULL`
+    )
+      .bind(billableDurationMs, estimatedCostMicrousd, rates.model, row.id)
+      .run();
+  }
+  if (rows.results.length > 0) {
+    console.log(JSON.stringify({ event: "video_render_costs_recorded", count: rows.results.length, model: rates.model }));
+  }
+}
+
+type MetricJobRow = {
+  kind: "preview" | "final";
+  status: string;
+  attempt: number;
+  error_code: string | null;
+  queued_at: string | null;
+  started_at: string | null;
+  upload_started_at: string | null;
+  completed_at: string | null;
+  estimated_cost_microusd: number | null;
+};
+
+async function emitRenderMetrics(db: D1Database): Promise<void> {
+  const [recent, active] = await Promise.all([
+    db.prepare(
+      `SELECT kind, status, attempt, error_code, queued_at, started_at,
+              upload_started_at, completed_at, estimated_cost_microusd
+         FROM render_jobs
+        WHERE created_at >= datetime('now', '-1 day')
+        ORDER BY created_at DESC
+        LIMIT 1000`
+    ).all<MetricJobRow>(),
+    db.prepare(
+      `SELECT status, COUNT(*) AS count
+         FROM render_jobs
+        WHERE status IN ('queued', 'preparing', 'running', 'uploading')
+        GROUP BY status`
+    ).all<{ status: string; count: number }>(),
+  ]);
+  const terminal = recent.results.filter((job) => ["completed", "failed"].includes(job.status));
+  const completed = terminal.filter((job) => job.status === "completed");
+  const startLatency = completed.flatMap((job) => durationBetween(job.queued_at, job.started_at));
+  const renderLatency = completed.flatMap((job) => (
+    durationBetween(job.started_at, job.upload_started_at ?? job.completed_at)
+  ));
+  const totalLatency = completed.flatMap((job) => durationBetween(job.queued_at, job.completed_at));
+  const errorCategories = terminal.reduce<Record<string, number>>((counts, job) => {
+    const category = renderErrorCategory(job.error_code as Parameters<typeof renderErrorCategory>[0]);
+    if (category !== "none") counts[category] = (counts[category] ?? 0) + 1;
+    return counts;
+  }, {});
+  console.log(JSON.stringify({
+    event: "video_render_metrics",
+    window: "24h",
+    sampleSize: recent.results.length,
+    queueDepth: Object.fromEntries(active.results.map((row) => [row.status, row.count])),
+    completed: completed.length,
+    failed: terminal.length - completed.length,
+    successRate: terminal.length > 0 ? completed.length / terminal.length : null,
+    retryRate: terminal.length > 0
+      ? terminal.filter((job) => job.attempt > 1).length / terminal.length
+      : null,
+    startLatencyMs: { p50: percentile(startLatency, 0.5), p95: percentile(startLatency, 0.95) },
+    renderLatencyMs: { p50: percentile(renderLatency, 0.5), p95: percentile(renderLatency, 0.95) },
+    totalLatencyMs: { p50: percentile(totalLatency, 0.5), p95: percentile(totalLatency, 0.95) },
+    estimatedCostMicrousd: completed.reduce((sum, job) => sum + (job.estimated_cost_microusd ?? 0), 0),
+    errorCategories,
+  }));
 }
 
 async function markDispatchError(
@@ -290,4 +412,17 @@ function retryDelaySeconds(attempt: number): number {
 function staleTimestamp(value: string, ageMs: number): boolean {
   const timestamp = Date.parse(value.includes("T") ? value : `${value.replace(" ", "T")}Z`);
   return Number.isFinite(timestamp) && timestamp < Date.now() - ageMs;
+}
+
+function durationBetween(start: string | null, end: string | null): number[] {
+  if (!start || !end) return [];
+  const startMs = sqliteTimestamp(start);
+  const endMs = sqliteTimestamp(end);
+  return Number.isFinite(startMs) && Number.isFinite(endMs) && endMs >= startMs
+    ? [endMs - startMs]
+    : [];
+}
+
+function sqliteTimestamp(value: string): number {
+  return Date.parse(value.includes("T") ? value : `${value.replace(" ", "T")}Z`);
 }

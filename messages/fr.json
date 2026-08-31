@@ -761,7 +761,7 @@
           "cover": { "title": "Couverture", "time": "Image de la timeline", "note": "Le moteur final extrait la couverture à ce point exact de la timeline terminée." }
         },
         "finalRender": {
-          "eyebrow": "Export cloud", "title": "Générer la vidéo finale", "description": "Crée une version immuable depuis la source originale, jamais depuis les proxies d’aperçu.", "generate": "Générer la vidéo", "rendering": "Rendu en cours…", "saveFirst": "Attendez la fin de l’enregistrement du montage.", "failed": "La demande de rendu n’a pas pu aboutir.", "video": "Vidéo", "cover": "Couverture", "cancel": "Annuler", "retry": "Réessayer",
+          "eyebrow": "Export cloud", "title": "Générer la vidéo finale", "description": "Crée une version immuable depuis la source originale, jamais depuis les proxies d’aperçu.", "generate": "Générer la vidéo", "rendering": "Rendu en cours…", "saveFirst": "Attendez la fin de l’enregistrement du montage.", "failed": "La demande de rendu n’a pas pu aboutir.", "limit": "Votre limite de rendu est atteinte. Attendez la fin d’un rendu actif ou réessayez demain.", "video": "Vidéo", "cover": "Couverture", "cancel": "Annuler", "retry": "Réessayer",
           "status": { "draft": "Brouillon", "queued": "En attente", "preparing": "Préparation", "running": "Rendu", "uploading": "Envoi", "completed": "Prêt", "failed": "Échec", "canceled": "Annulé" }
         }
       }

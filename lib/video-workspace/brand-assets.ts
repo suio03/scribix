@@ -1,6 +1,7 @@
 import { newId } from "@/lib/ids";
 import { presignPut } from "@/lib/r2";
 import { VideoWorkspaceR2 } from "./r2-keys";
+import { validBrandAssetHeader } from "./asset-content";
 
 export const BRAND_ASSET_MAX_BYTES = 5 * 1024 * 1024;
 
@@ -106,10 +107,10 @@ export async function completeBrandAssetUpload(
   assetId: string
 ): Promise<
   | { ok: true }
-  | { ok: false; error: "asset_not_found" | "asset_missing" | "asset_size_mismatch" }
+  | { ok: false; error: "asset_not_found" | "asset_missing" | "asset_size_mismatch" | "invalid_asset_content" }
 > {
   const asset = await db.prepare(
-    `SELECT id, r2_key, bytes
+    `SELECT id, kind, r2_key, mime_type, bytes
        FROM media_assets
       WHERE id = ?1
         AND user_id = ?2
@@ -119,12 +120,33 @@ export async function completeBrandAssetUpload(
         AND deleted_at IS NULL`
   )
     .bind(assetId, userId, projectId)
-    .first<{ id: string; r2_key: string; bytes: number }>();
+    .first<{
+      id: string;
+      kind: BrandAssetKind;
+      r2_key: string;
+      mime_type: string;
+      bytes: number;
+    }>();
   if (!asset) return { ok: false, error: "asset_not_found" };
   const object = await bucket.head(asset.r2_key);
   if (!object) return { ok: false, error: "asset_missing" };
   if (object.size !== asset.bytes || object.size > BRAND_ASSET_MAX_BYTES) {
     return { ok: false, error: "asset_size_mismatch" };
+  }
+  const headerObject = await bucket.get(asset.r2_key, { range: { offset: 0, length: 16 } });
+  const header = headerObject
+    ? new Uint8Array(await headerObject.arrayBuffer())
+    : new Uint8Array();
+  if (!validBrandAssetHeader(asset.kind, asset.mime_type, header)) {
+    await bucket.delete(asset.r2_key);
+    await db.prepare(
+      `UPDATE media_assets
+          SET status = 'failed', r2_key = NULL
+        WHERE id = ?1 AND user_id = ?2 AND status = 'uploading'`
+    )
+      .bind(assetId, userId)
+      .run();
+    return { ok: false, error: "invalid_asset_content" };
   }
   await db.prepare(
     `UPDATE media_assets

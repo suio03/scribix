@@ -23,7 +23,7 @@ export function FinalRenderPanel({
   const t = useTranslations("Dashboard.videoCandidates.editor.finalRender");
   const [renders, setRenders] = useState<FinalRenderSummary[]>([]);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<"generic" | "limit" | null>(null);
   const active = useMemo(() => renders.some((render) => ACTIVE.has(render.status)), [renders]);
 
   const refresh = useCallback(async () => {
@@ -34,13 +34,13 @@ export function FinalRenderPanel({
   }, [projectId]);
 
   useEffect(() => {
-    void refresh().catch(() => setError(true));
+    void refresh().catch(() => setError("generic"));
   }, [refresh]);
 
   useEffect(() => {
     if (!active) return;
     const poll = window.setInterval(() => {
-      void refresh().catch(() => setError(true));
+      void refresh().catch(() => setError("generic"));
     }, 4_000);
     return () => window.clearInterval(poll);
   }, [active, refresh]);
@@ -48,7 +48,7 @@ export function FinalRenderPanel({
   const start = async () => {
     if (busy || disabled) return;
     setBusy(true);
-    setError(false);
+    setError(null);
     try {
       const response = await fetch(`/api/video-projects/${projectId}/renders`, {
         method: "POST",
@@ -63,14 +63,18 @@ export function FinalRenderPanel({
         onConflict();
         return;
       }
-      const payload = await response.json() as { render?: FinalRenderSummary };
+      const payload = await response.json() as { render?: FinalRenderSummary; error?: string };
+      if (response.status === 429) {
+        setError("limit");
+        return;
+      }
       if (!response.ok || !payload.render) throw new Error("render_create_failed");
       setRenders((current) => [
         payload.render as FinalRenderSummary,
         ...current.filter((render) => render.id !== payload.render?.id),
       ]);
     } catch {
-      setError(true);
+      setError("generic");
     } finally {
       setBusy(false);
     }
@@ -78,16 +82,20 @@ export function FinalRenderPanel({
 
   const mutate = async (render: FinalRenderSummary, method: "POST" | "DELETE") => {
     setBusy(true);
-    setError(false);
+    setError(null);
     try {
       const response = await fetch(
         `/api/video-projects/${projectId}/renders/${render.id}`,
         { method }
       );
+      if (response.status === 429) {
+        setError("limit");
+        return;
+      }
       if (!response.ok) throw new Error("render_update_failed");
       await refresh();
     } catch {
-      setError(true);
+      setError("generic");
     } finally {
       setBusy(false);
     }
@@ -112,7 +120,7 @@ export function FinalRenderPanel({
         </button>
       </div>
       {disabled ? <p className="mt-3 text-[10px] text-amber-300">{t("saveFirst")}</p> : null}
-      {error ? <p className="mt-3 text-[10px] text-red-300">{t("failed")}</p> : null}
+      {error ? <p className="mt-3 text-[10px] text-red-300">{t(error === "limit" ? "limit" : "failed")}</p> : null}
       {renders.length > 0 ? (
         <div className="mt-4 space-y-2 border-t border-paper/15 pt-4">
           {renders.slice(0, 4).map((render) => (

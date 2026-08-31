@@ -2,6 +2,7 @@ import { newId } from "@/lib/ids";
 import { presignGet } from "@/lib/r2";
 import {
   FINAL_VIDEO_PRESET,
+  VIDEO_WORKSPACE_LIMITS,
   VIDEO_WORKSPACE_SCHEMA_VERSION,
   type RenderDispatchMessage,
 } from "./contracts";
@@ -47,7 +48,9 @@ export type CreateFinalRenderResult =
         | "draft_missing"
         | "draft_conflict"
         | "invalid_idempotency_key"
-        | "idempotency_conflict";
+        | "idempotency_conflict"
+        | "render_concurrency_limit"
+        | "render_daily_limit";
       revision?: number;
     };
 
@@ -84,6 +87,22 @@ export async function createFinalRender(
   }
   if (project.draft_revision !== expectedRevision) {
     return { ok: false, error: "draft_conflict", revision: project.draft_revision };
+  }
+
+  const usage = await db.prepare(
+    `SELECT
+       SUM(CASE WHEN status IN ('queued', 'preparing', 'running', 'uploading') THEN 1 ELSE 0 END) AS active_jobs,
+       SUM(CASE WHEN created_at >= datetime('now', '-1 day') THEN 1 ELSE 0 END) AS daily_jobs
+       FROM render_jobs
+      WHERE user_id = ?1 AND kind = 'final'`
+  )
+    .bind(userId)
+    .first<{ active_jobs: number | null; daily_jobs: number | null }>();
+  if ((usage?.active_jobs ?? 0) >= VIDEO_WORKSPACE_LIMITS.maxActiveFinalJobsPerUser) {
+    return { ok: false, error: "render_concurrency_limit" };
+  }
+  if ((usage?.daily_jobs ?? 0) >= VIDEO_WORKSPACE_LIMITS.maxFinalJobsPerUserPerDay) {
+    return { ok: false, error: "render_daily_limit" };
   }
 
   let projectVersionId = project.active_project_version_id;
@@ -177,7 +196,11 @@ export async function createFinalRender(
     ]);
   } catch (error) {
     const raced = await finalJobByIdempotency(db, userId, idempotencyKey);
-    if (!raced) throw error;
+    if (!raced) {
+      const limit = databaseLimitError(error);
+      if (limit) return { ok: false, error: limit };
+      throw error;
+    }
     if (raced.project_id !== projectId) return { ok: false, error: "idempotency_conflict" };
     return { ok: true, render: await finalRenderSummary(db, userId, raced.id), existing: true };
   }
@@ -259,35 +282,50 @@ export async function retryFinalRender(
   userId: string,
   projectId: string,
   jobId: string
-): Promise<{ ok: true } | { ok: false; error: "job_not_found" | "job_not_retryable" }> {
+): Promise<{
+  ok: true;
+} | {
+  ok: false;
+  error: "job_not_found" | "job_not_retryable" | "render_concurrency_limit";
+}> {
   const job = await ownedFinalJob(db, userId, projectId, jobId);
   if (!job) return { ok: false, error: "job_not_found" };
   if (!["failed", "canceled"].includes(job.status)) {
     return { ok: false, error: "job_not_retryable" };
   }
-  await db.batch([
-    db.prepare(
-      `UPDATE render_jobs
+  try {
+    await db.batch([
+      db.prepare(
+        `UPDATE render_jobs
           SET status = 'queued', provider = NULL, provider_job_id = NULL,
               error_code = NULL, queued_at = CURRENT_TIMESTAMP,
-              started_at = NULL, completed_at = NULL, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?1 AND user_id = ?2 AND status IN ('failed', 'canceled')`
-    ).bind(jobId, userId),
-    db.prepare(
-      `UPDATE media_assets
+              provider_submitted_at = NULL, started_at = NULL,
+              upload_started_at = NULL, completed_at = NULL,
+              billable_duration_ms = NULL, estimated_cost_microusd = NULL,
+              cost_model = NULL, updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?1 AND user_id = ?2 AND status IN ('failed', 'canceled')`
+      ).bind(jobId, userId),
+      db.prepare(
+        `UPDATE media_assets
           SET status = 'pending', bytes = NULL, duration_ms = NULL,
               width = NULL, height = NULL, deleted_at = NULL
-        WHERE id IN (?1, ?2) AND user_id = ?3`
-    ).bind(job.output_asset_id, job.cover_asset_id, userId),
-    db.prepare(
-      `UPDATE video_projects SET status = 'rendering', updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?1 AND user_id = ?2
+          WHERE id IN (?1, ?2) AND user_id = ?3`
+      ).bind(job.output_asset_id, job.cover_asset_id, userId),
+      db.prepare(
+        `UPDATE video_projects SET status = 'rendering', updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?1 AND user_id = ?2
           AND active_project_version_id = (
             SELECT project_version_id FROM render_jobs WHERE id = ?3
           )
           AND deleted_at IS NULL`
-    ).bind(projectId, userId, jobId),
-  ]);
+      ).bind(projectId, userId, jobId),
+    ]);
+  } catch (error) {
+    if (databaseLimitError(error) === "render_concurrency_limit") {
+      return { ok: false, error: "render_concurrency_limit" };
+    }
+    throw error;
+  }
   await queue.send({ schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION, jobId });
   return { ok: true };
 }
@@ -413,4 +451,13 @@ function sourceExpired(expiresAt: string | null): boolean {
   const value = expiresAt.includes("T") ? expiresAt : `${expiresAt.replace(" ", "T")}Z`;
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) && timestamp <= Date.now();
+}
+
+function databaseLimitError(
+  error: unknown
+): "render_concurrency_limit" | "render_daily_limit" | null {
+  const message = error instanceof Error ? error.message : String(error);
+  if (message.includes("render_concurrency_limit")) return "render_concurrency_limit";
+  if (message.includes("render_daily_limit")) return "render_daily_limit";
+  return null;
 }

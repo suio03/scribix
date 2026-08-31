@@ -7,6 +7,8 @@ export const VIDEO_WORKSPACE_LIMITS = {
   maxSegmentDurationMs: 180_000,
   maxTimelineDurationMs: 180_000,
   maxSourceDurationMs: 12 * 60 * 60 * 1000,
+  maxActiveFinalJobsPerUser: 2,
+  maxFinalJobsPerUserPerDay: 20,
 } as const;
 
 export const FINAL_VIDEO_PRESET = {
