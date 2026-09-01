@@ -192,23 +192,13 @@ The same key serves paid AI Notes and transcript Ask AI. Ask AI messages,
 allowance counters, and token/cost usage events require D1 migrations `0022`
 through `0024`; the Phase 0 migration commands apply them automatically.
 
-### 2.4 Direct-video build switch
+### 2.4 Video source uploads
 
-`NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` controls the browser fallback from
-audio extraction to original-video multipart upload. It defaults to enabled.
-This is a build-time client variable, so changing only a deployed Worker
-runtime variable has no effect.
-
-For local development, set it in `.env.local` before starting Next.js:
-
-```sh
-NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED=true
-```
-
-For explicit production control, add it to `wrangler.jsonc` `vars`; absence
-means enabled. `npm run deploy` loads those vars into the OpenNext build. To use
-the emergency kill switch, set it to `"false"` and run a fresh build/deploy.
-This is not a percentage rollout flag.
+New video uploads always use multipart original-video upload. The source counts
+against the plan's video storage allowance, creates a dormant video workspace
+project, and remains available until that plan's source-retention deadline.
+Audio files keep the single-upload transcription path. There is no browser-side
+audio-extraction fallback for video files.
 
 ---
 
@@ -452,7 +442,6 @@ Public/non-secret vars go in `wrangler.jsonc` under `vars`:
   "ADMIN_EMAILS": "you@example.com",
   "CLOUDFLARE_ACCOUNT_ID": "abc...",
   "ASSEMBLYAI_WEBHOOK_URL": "https://scribix.io/api/webhook/assemblyai",
-  "NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED": "true",
   "YOUTUBE_CAPTION_SERVICE_URL": "https://your-caption-service.example.com",
   "NEXT_PUBLIC_PADDLE_ENV": "production",
   "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN": "live_...",
@@ -489,8 +478,6 @@ GOOGLE_SECRET=
 ASSEMBLYAI_API_KEY=
 ASSEMBLYAI_WEBHOOK_URL=http://localhost:3000/api/webhook/assemblyai
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED=true
-
 # OpenAI (AI Notes + transcript Ask AI)
 OPENAI_API_KEY=
 

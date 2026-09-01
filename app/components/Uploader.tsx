@@ -10,15 +10,13 @@ import { AUDIO_EXTENSIONS, VIDEO_EXTENSIONS } from "@/lib/media-upload";
 import { PLANS, type Tier } from "@/lib/plans";
 import type { UploadFallbackReason, UploadPipeline } from "@/lib/upload-preflight";
 import { useLoginModal } from "./LoginModal";
-import { UpgradePlanModal } from "./UpgradePlanModal";
+import { UpgradePlanModal, type UpgradeReason } from "./UpgradePlanModal";
 
 const DEFAULT_TOOL_SLUG = "transcribe";
 
 type UploaderT = ReturnType<typeof useTranslations<"Dashboard.uploader">>;
 
 const ACCEPT = "audio/*,video/*";
-// Build-time kill switch: changing it requires rebuilding and redeploying the client bundle.
-const DIRECT_VIDEO_ENABLED = process.env.NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED !== "false";
 
 export type UploadPhase =
   | "idle"
@@ -31,15 +29,17 @@ export type UploadPhase =
 
 type UploadErrorType = "technical" | "product_limit" | "quota" | "auth";
 type UploadHelp = "extract_audio";
-type UpgradeReason = "quota" | "duration" | "file_size";
-
+type UploadUpgradeReason = Extract<
+  UpgradeReason,
+  "quota" | "duration" | "file_size" | "video_storage"
+>;
 export type UploadErrorDetail = {
   message: string;
   code: string;
   type: UploadErrorType;
   help?: UploadHelp;
   retryable?: boolean;
-  upgradeReason?: UpgradeReason;
+  upgradeReason?: UploadUpgradeReason;
   suggestedTier?: "pro";
   canUpgrade?: boolean;
 };
@@ -57,7 +57,7 @@ class UploadFlowError extends Error {
     opts: {
       help?: UploadHelp;
       retryable?: boolean;
-      upgradeReason?: UpgradeReason;
+      upgradeReason?: UploadUpgradeReason;
       suggestedTier?: "pro";
       canUpgrade?: boolean;
     } = {}
@@ -73,7 +73,7 @@ class UploadFlowError extends Error {
     this.canUpgrade = opts.canUpgrade;
   }
 
-  upgradeReason?: UpgradeReason;
+  upgradeReason?: UploadUpgradeReason;
   suggestedTier?: "pro";
   canUpgrade?: boolean;
 }
@@ -259,6 +259,7 @@ export function useUpload({
 
       try {
         const isVideo = inputType === "video";
+        const workflow = isVideo ? "video_clips" : "transcript";
         let durationSec = durationSecOverride && durationSecOverride > 0
           ? durationSecOverride
           : undefined;
@@ -266,7 +267,7 @@ export function useUpload({
           try {
             durationSec = await readMediaDuration(file, inputType);
           } catch (error) {
-            if (source !== "upload" || (isVideo && !DIRECT_VIDEO_ENABLED)) throw error;
+            if (source !== "upload") throw error;
           }
         }
         uploadDurationSecEstimate = durationSec;
@@ -283,6 +284,7 @@ export function useUpload({
             isVideo,
             source,
             allowPartial,
+            workflow,
           }),
         });
         if (!preflightRes.ok) {
@@ -329,41 +331,13 @@ export function useUpload({
           setPhase("idle");
           return;
         }
-        directVideo = preflight.pipeline === "direct_video";
+        directVideo = isVideo || preflight.pipeline === "direct_video";
         fallbackReason = preflight.fallbackReason;
 
-        let uploadBody: Blob = file;
-        let uploadFilename = file.name;
-        let uploadMime = browserMediaMime(file, inputType);
-        let uploadDurationSec = durationSec;
-
-        if (isVideo) {
-          if (!directVideo) {
-            step = "extracting audio";
-            setPhase("extracting");
-            setProgress(0);
-            try {
-              const { extractAudioFromVideo } = await import("@/lib/audio-extractor");
-              const { blob, durationSec: extractedDurationSec } = await extractAudioFromVideo(
-                file,
-                (p) => setProgress(p)
-              );
-              const ext = blob.type === "audio/wav" ? "wav" : "mp3";
-              uploadBody = blob;
-              uploadFilename = `${file.name.replace(/\.[^.]+$/, "")}.${ext}`;
-              uploadMime = blob.type || (ext === "wav" ? "audio/wav" : "audio/mpeg");
-              uploadDurationSec = extractedDurationSec || durationSec;
-            } catch (error) {
-              if (!DIRECT_VIDEO_ENABLED) throw error;
-              directVideo = true;
-              fallbackReason = extractionFallbackReason(error);
-              uploadBody = file;
-              uploadFilename = file.name;
-              uploadMime = browserMediaMime(file, inputType);
-              uploadDurationSec = durationSec;
-            }
-          }
-        }
+        const uploadBody: Blob = file;
+        const uploadFilename = file.name;
+        const uploadMime = browserMediaMime(file, inputType);
+        const uploadDurationSec = durationSec;
         uploadBytes = uploadBody.size;
         uploadDurationSecEstimate = uploadDurationSec || undefined;
 
@@ -397,6 +371,7 @@ export function useUpload({
             directVideo,
             source,
             allowPartial,
+            workflow,
           }),
         });
         if (!initRes.ok) throw await readError(initRes, t);
@@ -1531,13 +1506,6 @@ async function abortMultipart(transcriptId: string, uploadId: string): Promise<v
   }
 }
 
-function extractionFallbackReason(error: unknown): UploadFallbackReason {
-  const message = error instanceof Error ? error.message : "";
-  return message === "extraction_timeout" || message === "webaudio_timeout"
-    ? "extraction_timeout"
-    : "extraction_failed";
-}
-
 function fileSizeMb(bytes: number): number {
   return Number((bytes / (1024 * 1024)).toFixed(2));
 }
@@ -1762,7 +1730,7 @@ function makeUploadError(
   opts: {
     help?: UploadHelp;
     retryable?: boolean;
-    upgradeReason?: UpgradeReason;
+    upgradeReason?: UploadUpgradeReason;
     suggestedTier?: "pro";
     canUpgrade?: boolean;
   } = {}
@@ -1901,6 +1869,17 @@ async function readError(res: Response, t: UploaderT): Promise<UploadFlowError> 
           canUpgrade: j.canUpgrade,
           suggestedTier: j.suggestedTier,
         });
+      case "video_source_storage_limit":
+        return new UploadFlowError(
+          "video_source_storage_limit",
+          j.canUpgrade ? t("videoSourceStorageLimit") : t("videoSourceStorageLimitMax"),
+          "product_limit",
+          {
+            upgradeReason: "video_storage",
+            canUpgrade: j.canUpgrade,
+            suggestedTier: j.suggestedTier,
+          }
+        );
       case "aai_submit_failed":
         return new UploadFlowError("aai_submit_failed", t("aaiSubmitFailed"), "technical", {
           retryable: true,

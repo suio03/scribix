@@ -1,7 +1,8 @@
-import { isAllowedMedia } from "@/lib/media-upload";
-import { ONE_GIB, PLANS, type Tier } from "@/lib/plans";
+import { isAllowedMedia } from "./media-upload";
+import { ONE_GIB, PLANS, type Tier } from "./plans";
 
 export type UploadPipeline = "extracted_audio" | "direct_video";
+export type UploadWorkflow = "transcript" | "video_clips";
 export type UploadFallbackReason =
   | "over_1gb"
   | "cannot_read_metadata"
@@ -83,7 +84,7 @@ export function validateUploadPreflight(
   if (input.bytes > ONE_GIB) {
     return { pipeline: "direct_video", fallbackReason: "over_1gb" };
   }
-  return { pipeline: "extracted_audio" };
+  return { pipeline: "direct_video" };
 }
 
 function tierForDuration(durationSec: number): "pro" | null {

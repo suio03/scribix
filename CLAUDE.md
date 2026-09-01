@@ -75,7 +75,7 @@ next-intl with locales `["en", "fr", "es", "it", "ja", "de"]`, `defaultLocale: "
 
 ## Cleanup Worker
 
-`crons/cleanup-worker.ts` is a **separate** scheduled Worker (deployed via `wrangler.cleanup.jsonc`, sharing the same D1 + R2 bindings). Hourly it hard-deletes stale `pending`/`uploading` and in-flight rows (>24h), refunding any outstanding reservation atomically before deletion; deletes `error`/`failed` rows (>7d); and deletes completed audio/video media >14d while preserving transcript JSON. Every path deletes referenced R2 objects before clearing keys or deleting D1 rows; failures retain the reference for the next hourly retry. The bucket lifecycle only aborts incomplete multipart uploads after 7 days and must not expire the shared `users/` prefix.
+`crons/cleanup-worker.ts` is a **separate** scheduled Worker (deployed via `wrangler.cleanup.jsonc`, sharing the same D1 + R2 bindings). Hourly it hard-deletes stale `pending`/`uploading` and in-flight rows (>24h), refunding any outstanding reservation atomically before deletion; deletes `error`/`failed` rows (>7d); deletes completed non-video audio after 14 days; and deletes retained video sources at their plan-specific 7/30/90-day expiry while preserving transcript JSON. Every path deletes referenced R2 objects before clearing keys or deleting D1 rows; failures retain the reference for the next hourly retry. The bucket lifecycle only aborts incomplete multipart uploads after 7 days and must not expire the shared `users/` prefix.
 
 ## Conventions
 
@@ -83,7 +83,7 @@ next-intl with locales `["en", "fr", "es", "it", "ja", "de"]`, `defaultLocale: "
 - Route handlers export HTTP-method functions from `route.ts`. Add `"use client"` only where browser APIs/hooks require it.
 - Cloudflare bindings: `DB` (D1), `SCRIBIX_MEDIA` (R2), `ASSETS`. Reach them via `await cf()`. After changing `wrangler.jsonc` bindings, run `npm run cf-typegen`.
 - R2 object key layout is `users/{userId}/{transcriptId}`. R2 presigning uses `aws4fetch` against the S3-compatible endpoint (the Workers R2 binding can't presign) — requires `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`.
-- `NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` is a build-time kill switch, not a runtime rollout control. It defaults to enabled; setting it to `false` only takes effect after rebuilding and redeploying.
+- New video uploads always retain the original source and create a dormant video workspace project. Audio uploads keep the single-upload transcription path.
 - Treat `wrangler.jsonc`, `wrangler.cleanup.jsonc`, `migrations/`, and `cloudflare-env.d.ts` as deployment-sensitive. Document required remote migrations in PRs. Never commit secrets (`worker-secrets.env`, `.dev.vars`).
 - Commits: short imperative, Conventional Commit prefixes (`feat:`, `fix:`). `CHANGELOG.md` is maintained per release.
 

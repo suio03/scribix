@@ -26,9 +26,9 @@ transcripts.audio_r2_key
           └── media_assets(kind = source).r2_key
 ```
 
-创建 `video_clips` workflow 时，preflight 强制选择 `direct_video`，init 同时建立 transcript、
-project 和 uploading source asset。multipart 完成后 source asset 标记为 ready。已有 completed
-视频 transcript 也可通过 `POST /api/video-projects` 幂等创建项目。
+所有新视频上传都会解析为 `video_clips` workflow：preflight 强制选择 `direct_video`，init 同时
+建立 transcript、dormant project 和 uploading source asset。multipart 完成后 source asset 标记为
+ready。已有 completed 视频 transcript 也可通过 `POST /api/video-projects` 幂等创建项目。
 
 每个未删除 transcript 当前只允许一个 video project；一个项目内部通过多个 candidates 和
 versions 产生多条短视频方案。
@@ -55,8 +55,8 @@ versions 产生多条短视频方案。
 
 这些值定义在 `lib/plans.ts`，是套餐事实的单一来源。Preflight 会在上传前返回当前
 `usedBytes`、`limitBytes`、`requiredBytes` 和 `retentionDays`；创建 source asset 时再用带
-容量条件的单条 INSERT 原子校验，避免并发上传同时越过上限。Transcript-only 上传不读取
-或占用这组 video workspace 容量。
+容量条件的单条 INSERT 原子校验，避免并发上传同时越过上限。容量不足时整次视频上传被阻止，
+Free/Basic 用户会看到升级入口；不会静默退回只上传音频。音频文件不读取或占用这组容量。
 
 Source 到期时，cleanup worker 会等待活跃 preview/final job 结束，再删除 R2 原视频、清空
 transcript 的旧 `audio_r2_key` 和 project 的 `source_asset_id`。Transcript、EDL、Render Spec、

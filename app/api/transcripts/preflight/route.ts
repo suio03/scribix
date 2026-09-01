@@ -5,8 +5,13 @@ import { checkQuota } from "@/lib/quota";
 import {
   validateUploadPreflight,
   type PreflightInput,
+  type UploadWorkflow,
 } from "@/lib/upload-preflight";
 import { videoSourceStorageForUser } from "@/lib/video-workspace/retention";
+import {
+  resolveUploadWorkflow,
+  videoSourceStorageUpgradeFor,
+} from "@/lib/video-workspace/upload-policy";
 import { videoWorkspaceEnabledForUser } from "@/lib/video-workspace/rollout";
 
 export async function POST(req: Request) {
@@ -16,7 +21,7 @@ export async function POST(req: Request) {
   let body: Partial<PreflightInput> & {
     allowPartial?: boolean;
     source?: "upload" | "record";
-    workflow?: "transcript" | "video_clips";
+    workflow?: UploadWorkflow;
   };
   try {
     body = await req.json();
@@ -39,7 +44,7 @@ export async function POST(req: Request) {
   if (body.workflow !== undefined && body.workflow !== "transcript" && body.workflow !== "video_clips") {
     return Response.json({ error: "invalid_workflow" }, { status: 400 });
   }
-  const workflow = body.workflow ?? "transcript";
+  const workflow = resolveUploadWorkflow(body.workflow, body.isVideo);
   if (workflow === "video_clips" && (!body.isVideo || body.source === "record")) {
     return Response.json({ error: "video_clip_source_required" }, { status: 400 });
   }
@@ -81,6 +86,7 @@ export async function POST(req: Request) {
           limitBytes: sourceStorage.limitBytes,
           requiredBytes: body.bytes,
           retentionDays: sourceStorage.retentionDays,
+          ...videoSourceStorageUpgradeFor(user.tier),
         },
         { status: 413 }
       );

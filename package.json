@@ -33,9 +33,6 @@
     "deploy:video-render": "wrangler deploy -c wrangler.video-render.jsonc"
   },
   "dependencies": {
-    "@ffmpeg/core": "^0.12.10",
-    "@ffmpeg/ffmpeg": "^0.12.15",
-    "@ffmpeg/util": "^0.12.2",
     "@paddle/paddle-js": "^1.6.4",
     "aws4fetch": "^1.0.20",
     "docx": "^9.6.1",

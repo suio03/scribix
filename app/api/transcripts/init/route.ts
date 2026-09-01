@@ -3,6 +3,7 @@ import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { newId, newWebhookToken } from "@/lib/ids";
 import { isAllowedMedia, mediaExtension, MULTIPART_PART_BYTES } from "@/lib/media-upload";
+import type { UploadWorkflow } from "@/lib/upload-preflight";
 import { PLANS } from "@/lib/plans";
 import { checkQuota } from "@/lib/quota";
 import { createMultipartUpload, presignPut, R2 } from "@/lib/r2";
@@ -11,6 +12,10 @@ import {
   deletePendingVideoProjectRecords,
 } from "@/lib/video-workspace/projects";
 import { videoWorkspaceEnabledForUser } from "@/lib/video-workspace/rollout";
+import {
+  resolveUploadWorkflow,
+  videoSourceStorageUpgradeFor,
+} from "@/lib/video-workspace/upload-policy";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -25,7 +30,7 @@ export async function POST(req: Request) {
     directVideo?: boolean;
     source?: string;
     allowPartial?: boolean;
-    workflow?: "transcript" | "video_clips";
+    workflow?: UploadWorkflow;
   };
   try {
     body = await req.json();
@@ -40,7 +45,7 @@ export async function POST(req: Request) {
   if (body.workflow !== undefined && body.workflow !== "transcript" && body.workflow !== "video_clips") {
     return Response.json({ error: "invalid_workflow" }, { status: 400 });
   }
-  const workflow = body.workflow ?? "transcript";
+  const workflow = resolveUploadWorkflow(body.workflow, isVideo);
   const directVideo = workflow === "video_clips" || body.directVideo === true;
   const rawDuration = body.durationSec;
   const durationSec = rawDuration == null ? null : Number(rawDuration);
@@ -94,8 +99,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // Per-file size cap. Keep audio and browser-side video extraction under the
-  // same public 1 GB ceiling.
+  // Audio and retained source videos use their plan-specific per-file caps.
   const sizeCap = isVideo ? plan.maxVideoUploadBytes : plan.maxFileBytes;
   if (bytes > sizeCap) {
     return Response.json(
@@ -183,7 +187,11 @@ export async function POST(req: Request) {
         await env.DB.prepare(`DELETE FROM transcripts WHERE id = ?1 AND status = 'pending'`)
           .bind(transcriptId)
           .run();
-        return Response.json({ error: project.error, ...project.storage }, { status: 413 });
+        return Response.json({
+          error: project.error,
+          ...project.storage,
+          ...videoSourceStorageUpgradeFor(userRow.tier),
+        }, { status: 413 });
       }
     } catch (error) {
       console.error(JSON.stringify({

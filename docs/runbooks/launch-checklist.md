@@ -12,7 +12,7 @@ the one-time items that are already verified and unchanged.
 - [ ] Worker secrets set via `wrangler secret put` (see manual-setup §7.3).
 - [ ] `wrangler.jsonc` `vars` block has prod URLs.
 - [ ] `EDGE_EXTENSION_ID` matches the current Microsoft Partner Center CRX ID.
-- [ ] `NEXT_PUBLIC_DIRECT_VIDEO_UPLOAD_ENABLED` has the intended build-time value before deploy, or is intentionally omitted to use the enabled default.
+- [ ] A real video upload creates a retained source asset and a reusable video workspace project.
 - [ ] `db:migrate:remote` applied; for release `0.25.0+`, confirm migrations
   `0020_partial_transcripts.sql` through `0024_ai_usage_events.sql` are listed
   as applied.

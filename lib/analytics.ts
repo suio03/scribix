@@ -203,7 +203,7 @@ type UploadFailureStep =
   | "polling";
 
 type UpgradeEventProps = {
-  reason: "quota" | "duration" | "file_size";
+  reason: "quota" | "duration" | "file_size" | "video_storage";
   error_code: string;
   suggested_tier?: "basic" | "pro";
   tool_slug?: string;

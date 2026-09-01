@@ -16,7 +16,8 @@ export type UpgradeReason =
   | "chat"
   | "quota"
   | "duration"
-  | "file_size";
+  | "file_size"
+  | "video_storage";
 
 export function UpgradePlanModal({
   reason,
@@ -251,6 +252,17 @@ function upgradeReasonCopy(
         t,
         "upgradeFileSizeModalBody",
         "Paid plans support larger direct video uploads. Audio files still have a 1 GB limit."
+      ),
+    };
+  }
+
+  if (reason === "video_storage") {
+    return {
+      title: safeT(t, "upgradeVideoStorageModalTitle", "Keep your source videos"),
+      body: safeT(
+        t,
+        "upgradeVideoStorageModalBody",
+        "Upgrade to retain more source-video storage and keep creating clips without re-uploading."
       ),
     };
   }

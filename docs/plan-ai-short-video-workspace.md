@@ -139,7 +139,7 @@ Cloud 从原始视频一次渲染最终 MP4
 ### 6.1 Original Source
 
 - 浏览器直接 multipart 上传到 R2，不经过 Next.js/Worker 请求体。
-- Clip workflow 必须上传并保留原始视频；不能继续只上传浏览器提取的音频。
+- 所有新视频上传都必须上传并保留原始视频；不能继续只上传浏览器提取的音频。音频文件继续使用 transcript-only 流程。
 - 现有 `audio_r2_key` 已经可能指向直接上传的视频，字段语义不够清晰；实施数据模型时必须决定是迁移为通用 source media 命名，还是由 video project 显式引用现有对象。
 - 原视频过期后 transcript、EDL 和 Render Spec 可以保留，但再次渲染必须要求用户重新上传匹配的源文件。
 
@@ -637,7 +637,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 
 - [x] 新增 video project、version、asset、job 和 brand template migrations。
 - [x] 扩展 R2 key helpers。
-- [x] Clip workflow 强制直接上传原始视频；保留现有 transcript-only 流程。
+- [x] 所有新视频强制直接上传原始视频并建立 dormant video project；音频文件保留 transcript-only 流程。
 - [x] 明确 source object 与现有 `audio_r2_key` 的迁移/引用关系。
 - [x] 扩展 transcript 删除、账号删除和 cleanup worker。
 - [x] 增加 signed GET/PUT 与 ownership helpers。
