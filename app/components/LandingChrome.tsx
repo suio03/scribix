@@ -8,6 +8,7 @@ type LandingChromeProps = {
   marketing: ReactNode;
   className?: string;
   publicFooterExtra?: ReactNode;
+  showMarketingWhenSignedIn?: boolean;
 };
 
 export function LandingChrome({
@@ -16,11 +17,13 @@ export function LandingChrome({
   marketing,
   className,
   publicFooterExtra,
+  showMarketingWhenSignedIn = false,
 }: LandingChromeProps) {
+  const showMarketing = !signedIn || showMarketingWhenSignedIn;
   const layoutClassName = [
     "home-refresh",
     className,
-    signedIn ? "flex flex-col" : null,
+    signedIn && !showMarketing ? "flex flex-col" : null,
   ]
     .filter(Boolean)
     .join(" ");
@@ -28,12 +31,12 @@ export function LandingChrome({
   return (
     <div className={layoutClassName}>
       <Header showSidebarToggle />
-      <main className={signedIn ? "flex-1" : undefined}>
+      <main className={signedIn && !showMarketing ? "flex-1" : undefined}>
         {primary}
-        {signedIn ? null : marketing}
+        {showMarketing ? marketing : null}
       </main>
-      <Footer compact={signedIn} />
-      {signedIn ? null : publicFooterExtra}
+      <Footer compact={signedIn && !showMarketing} />
+      {showMarketing ? publicFooterExtra : null}
     </div>
   );
 }

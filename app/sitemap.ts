@@ -3,16 +3,24 @@ import { routing } from "@/i18n/routing";
 import { languageAlternates, urlFor } from "@/lib/metadata-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const homeContentModified = new Date("2026-09-01T00:00:00.000Z");
   const coreContentModified = new Date("2026-07-22T00:00:00.000Z");
   const aiNoteTakerModified = new Date("2026-07-23T00:00:00.000Z");
   const legalContentModified = new Date("2026-05-01T00:00:00.000Z");
   const entries: MetadataRoute.Sitemap = [
     {
       url: urlFor(routing.defaultLocale, "").href,
-      lastModified: coreContentModified,
+      lastModified: homeContentModified,
       changeFrequency: "weekly",
       priority: 1,
       alternates: { languages: languageAlternates("") },
+    },
+    {
+      url: urlFor(routing.defaultLocale, "/video-to-text").href,
+      lastModified: homeContentModified,
+      changeFrequency: "weekly",
+      priority: 0.9,
+      alternates: { languages: languageAlternates("/video-to-text") },
     },
     {
       url: urlFor(routing.defaultLocale, "/audio-to-text").href,

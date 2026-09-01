@@ -1,55 +1,57 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/auth";
-import { getPathname, Link } from "@/i18n/navigation";
+import { getPathname } from "@/i18n/navigation";
 import { Shell } from "../components/Shell";
 import { Sidebar } from "../components/Sidebar";
 import { getSidebarUsage } from "../components/sidebarUsage";
-import { Generator } from "../components/Generator";
 import { LandingChrome } from "../components/LandingChrome";
-import { Features } from "../components/Features";
-import { HowItWorks } from "../components/HowItWorks";
-import { UseCases } from "../components/UseCases";
-import { FAQ } from "../components/FAQ";
-import { FinalCTA } from "../components/FinalCTA";
 import { GoogleOneTap } from "../components/GoogleOneTap";
 import { Partners } from "../components/Partners";
 import { TrackToolVisit } from "../components/Track";
+import { VideoHomeHero } from "../components/VideoHomeHero";
+import { VideoHomeMarketing } from "../components/VideoHomeMarketing";
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://scribix.io/#org",
-      name: "Scribix",
-      url: "https://scribix.io",
-      logo: "https://scribix.io/icon.svg",
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://scribix.io/#site",
-      url: "https://scribix.io",
-      name: "Scribix",
-      publisher: { "@id": "https://scribix.io/#org" },
-    },
-    {
-      "@type": "SoftwareApplication",
-      name: "Scribix",
-      applicationCategory: "BusinessApplication",
-      operatingSystem: "Web",
-      url: "https://scribix.io",
-      description:
-        "Convert video or audio to text with speaker labels, word-level timestamps, automatic language detection, and TXT, DOCX, SRT, VTT, or CSV export.",
-      offers: {
-        "@type": "AggregateOffer",
-        priceCurrency: "USD",
-        lowPrice: "0",
-        highPrice: "20",
-        offerCount: 3,
+const SITE_URL = "https://scribix.io";
+
+function buildJsonLd(locale: string, pageUrl: string, description: string) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${SITE_URL}/#org`,
+        name: "Scribix",
+        url: SITE_URL,
+        logo: `${SITE_URL}/icon.svg`,
       },
-    },
-  ],
-};
+      {
+        "@type": "WebSite",
+        "@id": `${pageUrl}#site`,
+        url: pageUrl,
+        name: "Scribix",
+        inLanguage: locale,
+        publisher: { "@id": `${SITE_URL}/#org` },
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": `${pageUrl}#software`,
+        name: "Scribix",
+        applicationCategory: "MultimediaApplication",
+        operatingSystem: "Web",
+        url: pageUrl,
+        inLanguage: locale,
+        description,
+        offers: {
+          "@type": "AggregateOffer",
+          priceCurrency: "USD",
+          lowPrice: "0",
+          highPrice: "20",
+          offerCount: 3,
+        },
+      },
+    ],
+  };
+}
 
 export default async function HomePage({
   params,
@@ -59,12 +61,16 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const session = await auth();
+  const [session, metadata] = await Promise.all([
+    auth(),
+    getTranslations({ locale, namespace: "SiteMetadata" }),
+  ]);
   const postSignInPath = getPathname({ href: "/dashboard/new", locale });
   const homePath = getPathname({ href: "/", locale });
   const dashboardPath = getPathname({ href: "/dashboard", locale });
-  const audioLinkT = await getTranslations("HomeAudioToTextLink");
   const sidebarUsage = await getSidebarUsage(session);
+  const pageUrl = new URL(homePath, SITE_URL).toString();
+  const jsonLd = buildJsonLd(locale, pageUrl, metadata("description"));
 
   return (
     <Shell
@@ -91,37 +97,15 @@ export default async function HomePage({
       <LandingChrome
         signedIn={!!session}
         primary={
-          <Generator
+          <VideoHomeHero
             signedIn={!!session}
-            postSignInPath={homePath}
-            tier={sidebarUsage?.tier}
-            billingCycle={sidebarUsage?.billingCycle}
+            postSignInPath={postSignInPath}
+            tier={sidebarUsage?.tier ?? "free"}
           />
         }
-        marketing={
-          <>
-            <section className="home-audio-link px-4 sm:px-8">
-              <div className="mx-auto border-t border-line pt-4">
-                <p className="text-[14px] leading-[1.6] text-muted">
-                  {audioLinkT("prefix")}{" "}
-                  <Link
-                    href="/audio-to-text"
-                    className="font-medium text-ink underline decoration-accent decoration-2 underline-offset-4"
-                  >
-                    {audioLinkT("link")}
-                  </Link>
-                  {audioLinkT("suffix")}
-                </p>
-              </div>
-            </section>
-            <Features />
-            <HowItWorks />
-            <UseCases />
-            <FAQ />
-            <FinalCTA />
-          </>
-        }
+        marketing={<VideoHomeMarketing />}
         publicFooterExtra={<Partners />}
+        showMarketingWhenSignedIn
       />
     </Shell>
   );

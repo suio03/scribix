@@ -1,11 +1,100 @@
 {
   "SiteMetadata": {
-    "title": "Video in Text umwandeln | Scribix",
-    "description": "Wandle MP4-, MOV-, WebM- und AVI-Videos in editierbaren Text mit Sprechererkennung und Zeitstempeln auf Wortebene um. Online prüfen und als TXT, DOCX, SRT, VTT oder CSV exportieren.",
-    "openGraphTitle": "Videos in editierbaren Text mit Zeitstempeln umwandeln | Scribix",
-    "openGraphDescription": "Lade ein Video hoch und erhalte ein durchsuchbares Transkript mit Sprechererkennung, Zeitstempeln auf Wortebene und flexiblen Exporten.",
-    "twitterTitle": "Videos in editierbaren Text mit Zeitstempeln umwandeln | Scribix",
-    "twitterDescription": "Lade ein Video hoch und erhalte ein durchsuchbares Transkript mit Sprechererkennung, Zeitstempeln auf Wortebene und flexiblen Exporten."
+    "title": "KI-Video-Clipper: Lange Videos in Shorts umwandeln | Scribix",
+    "description": "KI-Video-Clipper für Podcasts, Interviews, Webinare und Talking-Head-Videos. Finde eigenständige Momente, bearbeite Untertitel und exportiere MP4-Clips.",
+    "openGraphTitle": "KI-Video-Clipper für veröffentlichungsfertige Shorts | Scribix",
+    "openGraphDescription": "Lade ein langes Video hoch, finde mit KI eigenständige Momente, verfeinere Schnitt, Untertitel und 9:16-Ausschnitt und exportiere ein fertiges MP4.",
+    "twitterTitle": "Lange Videos in veröffentlichungsfertige Shorts umwandeln | Scribix",
+    "twitterDescription": "KI-Video-Clipping, transkriptgenauer Schnitt, dynamische Untertitel, 9:16-Ausschnitt und finaler MP4-Export in einem Workspace."
+  },
+  "VideoToText": {
+    "metadata": {
+      "title": "Video in Text umwandeln | Scribix",
+      "description": "Wandle MP4-, MOV-, WebM- und AVI-Videos in editierbaren Text mit Sprechererkennung und Zeitstempeln auf Wortebene um. Online prüfen und als TXT, DOCX, SRT, VTT oder CSV exportieren.",
+      "openGraphTitle": "Videos in editierbaren Text mit Zeitstempeln umwandeln | Scribix",
+      "openGraphDescription": "Lade ein Video hoch und erhalte ein durchsuchbares Transkript mit Sprechererkennung, Zeitstempeln auf Wortebene und flexiblen Exporten.",
+      "twitterTitle": "Videos in editierbaren Text mit Zeitstempeln umwandeln | Scribix",
+      "twitterDescription": "Lade ein Video hoch und erhalte ein durchsuchbares Transkript mit Sprechererkennung, Zeitstempeln auf Wortebene und flexiblen Exporten."
+    }
+  },
+  "VideoHome": {
+    "hero": {
+      "eyebrow": "KI-Video-Clipper",
+      "headline": "Verwandle lange Videos in <accent>veröffentlichungsfertige Shorts.</accent>",
+      "description": "Scribix ist ein KI-Video-Clipper für Podcasts, Interviews, Webinare und Talking-Head-Videos. Er findet eigenständige Gesprächsmomente und lässt dich jeden Clip vor dem Export präzise bearbeiten.",
+      "primaryCta": "Video kostenlos hochladen",
+      "secondaryCta": "So funktioniert es",
+      "ctaNote": "Starte mit 45 Transkriptionsminuten. Keine Kreditkarte erforderlich.",
+      "trust": ["Eigenständige Clips per KI", "Präzise Schnitte nach Transkript", "Dynamische Untertitel und 9:16", "Finales MP4 in 1080 × 1920"],
+      "previewLabel": "Scribix Clip-Workspace",
+      "previewProject": "Gründerinterview — Folge 12",
+      "previewSource": "Quelle · 01:24:18",
+      "previewCandidatesLabel": "KI-Clipkandidaten",
+      "previewCandidates": [
+        {"title": "Der Fehler, der unser Produkt veränderte", "duration": "00:42", "score": "94%"},
+        {"title": "Warum kleine Teams schneller sind", "duration": "00:36", "score": "89%"},
+        {"title": "Kunden besser zuhören", "duration": "00:51", "score": "86%"}
+      ],
+      "previewSelected": "Ausgewählt",
+      "previewCaption": "DIE LEKTION WAR, <mark>FRÜHER ZUZUHÖREN</mark>",
+      "previewFormat": "Vertikale Vorschau",
+      "previewLength": "00:42 / 00:42",
+      "previewEdit": "Schnitt",
+      "previewCaptions": "Untertitel",
+      "previewExport": "Export",
+      "dropTitle": "Langes Video hier ablegen",
+      "dropMeta": "MP4, MOV, WebM, AVI oder MKV",
+      "videoOnly": "Wähle eine Videodatei, um das KI-Video-Clipping zu starten."
+    },
+    "workflow": {
+      "label": "Langes Video zu kurzen Clips",
+      "title": "Vom langen Video zum fertigen Short – in einem klaren Workflow.",
+      "intro": "Behalte den Kontext des gesamten Gesprächs und arbeite nur an den Momenten, die eine Veröffentlichung verdienen. Scribix verbindet KI-Video-Clipping, transkriptbasierten Schnitt und Rendering.",
+      "steps": [
+        {"title": "Originalvideo hochladen", "body": "Füge das vollständige Interview, den Podcast, das Webinar oder Talking-Head-Video hinzu. Scribix bewahrt die Quelle für das Rendering in voller Qualität auf."},
+        {"title": "KI-Clips prüfen", "body": "Die KI nutzt Transkript, Sprecherwechsel und Wortzeitstempel, um eigenständige Clips mit Hook, Thema, Bewertung und Begründung vorzuschlagen."},
+        {"title": "Die Geschichte formen", "body": "Kürze und sortiere Segmente, passe den 9:16-Ausschnitt an, korrigiere Untertitel, wende dein Branding an und wähle das Titelbild."},
+        {"title": "Rendern und herunterladen", "body": "Erzeuge aus der Originalquelle ein fertiges 1080 × 1920 MP4 samt Titelbild, bereit für deine Veröffentlichungsplattform."}
+      ]
+    },
+    "features": {
+      "label": "KI-Clipping-Workspace",
+      "title": "Genug Kontrolle, um den Short fertigzustellen – nicht nur zu finden.",
+      "intro": "Der KI-Video-Clipper liefert einen starken ersten Schnitt. Im Editor bleiben die kreativen Entscheidungen bei dir, ohne eine komplexe Profi-Timeline vorauszusetzen.",
+      "items": [
+        {"title": "Sortierte, eigenständige Clips", "body": "Vergleiche vorgeschlagene Momente mit Hook, Thema, Timing und Begründung, bevor du einen Clip weiterbearbeitest."},
+        {"title": "Transkriptgenaue Timeline", "body": "Passe Start und Ende an, entferne Abschnitte und ordne getrennte Momente anhand genauer Wortzeitstempel neu."},
+        {"title": "Dynamische Untertitel", "body": "Korrigiere Wörter und steuere Stil, Zeilenlänge, Position, Farbe und Hervorhebung der Untertitel."},
+        {"title": "Vertikaler Bildausschnitt", "body": "Lege Position und Zoom pro Segment fest und sieh die fertige 9:16-Komposition direkt im Browser."},
+        {"title": "Wiederverwendbares Branding", "body": "Nutze Logo, Schrift, Akzentfarbe und einen konsistenten visuellen Stil für alle Clips."},
+        {"title": "Cloud-Render in voller Qualität", "body": "Erzeuge das finale MP4 aus dem Original statt aus der komprimierten Vorschau – mit normalisiertem Audio und Titelbild."}
+      ]
+    },
+    "audiences": {
+      "label": "Für regelmäßige Veröffentlichungen",
+      "title": "Für Teams mit mehr gutem Material als Schnittzeit.",
+      "intro": "Scribix ist für gesprochene Langvideos gemacht, in denen vollständige Shorts bereits im Gespräch stecken und nur gefunden und fertiggestellt werden müssen.",
+      "items": [
+        {"label": "Langformat zu Kurzformat", "title": "Videocreator", "body": "Verwandle Interviews, Erklärvideos und Creator-Content in einen stetigen Strom vertikaler Clips, ohne jeden Schnitt neu aufzubauen."},
+        {"label": "Video- und Audioshows", "title": "Podcaster und Producer", "body": "Finde vollständige, überzeugende Momente in langen Folgen und ergänze Untertitel und Bildausschnitte für Short-Form-Feeds."},
+        {"label": "Content Operations", "title": "Marketing- und Medienteams", "body": "Mache aus Webinaren, Kundengeschichten und Gründerinterviews gebrandete Social Assets in einem prüfbaren Workflow."}
+      ]
+    },
+    "secondaryTools": {"label": "Du brauchst nur das Transkript?", "audio": "Audio zu Text", "youtube": "YouTube-Transkript", "notes": "KI-Notizen"},
+    "faq": {
+      "label": "FAQ",
+      "title": "Was du vor dem ersten Clip wissen solltest.",
+      "contactPrefix": "Noch eine Frage? Schreib an",
+      "items": [
+        {"q": "Wie wählt der KI-Video-Clipper passende Momente aus?", "a": "Scribix analysiert Transkript, Sprecherwechsel und Wortzeitstempel, um eigenständige Momente mit Hook und klarem Thema vorzuschlagen. V1 analysiert nicht jedes Bild des gesamten Videos."},
+        {"q": "Kann ich die KI-Vorschläge ändern?", "a": "Ja. Du kannst Segmentgrenzen und Reihenfolge ändern, Segmente entfernen, Untertitel korrigieren, den vertikalen Ausschnitt anpassen, Branding anwenden, Audio bearbeiten und ein Titelbild wählen."},
+        {"q": "Was exportiert Scribix?", "a": "Der Kurzvideo-Workflow erzeugt ein 1080 × 1920 H.264 MP4 mit AAC-Audio sowie ein Titelbild. Diese Dateien kannst du über deine bevorzugte Plattform veröffentlichen."},
+        {"q": "Wie lange wird mein Originalvideo gespeichert?", "a": "Je nach Plan: 7 Tage bei Free, 30 Tage beim bisherigen Basic und 90 Tage bei Pro. Transkript, Schnittentscheidungen und fertige Renderings können danach erhalten bleiben."},
+        {"q": "Welche Videos kann ich hochladen?", "a": "Scribix akzeptiert gängige Formate wie MP4, MOV, WebM, AVI und MKV. Uploadgröße, Transkriptionsminuten und Videospeicher hängen vom Plan ab."},
+        {"q": "Kann ich Scribix weiterhin nur für Transkription nutzen?", "a": "Ja. Audio-zu-Text, YouTube-Transkripte, KI-Notizen, Transkriptbearbeitung sowie Text- und Untertitelexporte bleiben als eigene Werkzeuge verfügbar."}
+      ]
+    },
+    "final": {"kicker": "Die kurzen Clips stecken schon im langen Video", "title": "Ein langes Video hochladen. Mit einem fertigen Short weitergehen.", "body": "Nutze KI-Video-Clipping, um eigenständige Momente zu finden, triff die wichtigen kreativen Entscheidungen und rendere ein vertikales MP4 für dein Publikum.", "cta": "Video kostenlos hochladen"}
   },
   "Sidebar": {
     "openNav": "Navigation öffnen",
@@ -154,8 +243,8 @@
         "body": "Das Ergebnis hängt von Aufnahmequalität, Geräuschen, Akzenten, Fachbegriffen und überlappender Sprache ab. Sprecherlabels und Zeitstempel erleichtern die Prüfung."
       },
       {
-        "title": "Quelldateien nach 14 Tagen gelöscht",
-        "body": "Hochgeladene Audio- und Videodateien werden nach 14 Tagen automatisch gelöscht. Transkripte bleiben bis zur Löschung oder Kontoschließung erhalten."
+        "title": "Quellaufbewahrung nach Tarif",
+        "body": "Wie lange Originalvideos gespeichert werden, hängt vom Tarif ab und wird vor dem Upload angezeigt. Für Audio gilt die reguläre Aufbewahrungsfrist. Transkripte bleiben bis zur Löschung oder Kontoschließung erhalten."
       }
     ]
   },
@@ -457,7 +546,7 @@
       },
       {
         "q": "Sind meine Daten sicher, wenn ich ein Video hochlade?",
-        "a": "Hochgeladene Audio- und Videodateien werden nach 14 Tagen automatisch gelöscht. Transkripte bleiben bis zur Löschung oder Kontoschließung erhalten. Details stehen in der Datenschutzrichtlinie."
+        "a": "Wie lange Originalvideos gespeichert werden, hängt vom Tarif ab und wird vor dem Upload angezeigt. Für Audio gilt die reguläre Aufbewahrungsfrist. Transkripte bleiben bis zur Löschung oder Kontoschließung erhalten."
       },
       {
         "q": "Worauf kann ich das Transkript exportieren?",
@@ -491,7 +580,7 @@
     ]
   },
   "Footer": {
-    "tagline": "Studio-Qualität Video-zu-Text für Menschen, die aufgezeichnete Gespräche in Geschichten verwandeln.",
+    "tagline": "Verwandle lange Gespräche mit KI-gestütztem Schnitt in fertige Kurzvideos zum Veröffentlichen.",
     "legalLabels": {
       "terms": "Servicebedingungen",
       "privacy": "Datenschutzrichtlinie",

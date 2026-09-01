@@ -1,11 +1,187 @@
 {
   "SiteMetadata": {
-    "title": "Video to Text Converter | Scribix",
-    "description": "Convert MP4, MOV, WebM, and AVI videos into editable text with speaker labels and word-level timestamps. Review online and export TXT, DOCX, SRT, VTT, or CSV.",
-    "openGraphTitle": "Turn Video into Editable, Timestamped Text | Scribix",
-    "openGraphDescription": "Upload a video and get a searchable, speaker-labeled transcript with word-level timestamps and flexible export options.",
-    "twitterTitle": "Turn Video into Editable, Timestamped Text | Scribix",
-    "twitterDescription": "Upload a video and get a searchable, speaker-labeled transcript with word-level timestamps and flexible export options."
+    "title": "AI Video Clipper: Turn Long Videos into Shorts | Scribix",
+    "description": "AI video clipper for podcasts, interviews, webinars, and talking-head videos. Find complete moments, edit captions and 9:16 framing, and export MP4 clips.",
+    "openGraphTitle": "AI Video Clipper for Publish-Ready Shorts | Scribix",
+    "openGraphDescription": "Upload a long video, let AI find complete moments, refine the cut, captions, and vertical framing, then export a polished MP4.",
+    "twitterTitle": "Turn Long Videos into Publish-Ready Shorts | Scribix",
+    "twitterDescription": "AI video clipping, transcript-precise edits, dynamic captions, 9:16 framing, and final MP4 export in one workspace."
+  },
+  "VideoToText": {
+    "metadata": {
+      "title": "Video to Text Converter | Scribix",
+      "description": "Convert MP4, MOV, WebM, and AVI videos into editable text with speaker labels and word-level timestamps. Review online and export TXT, DOCX, SRT, VTT, or CSV.",
+      "openGraphTitle": "Turn Video into Editable, Timestamped Text | Scribix",
+      "openGraphDescription": "Upload a video and get a searchable, speaker-labeled transcript with word-level timestamps and flexible export options.",
+      "twitterTitle": "Turn Video into Editable, Timestamped Text | Scribix",
+      "twitterDescription": "Upload a video and get a searchable, speaker-labeled transcript with word-level timestamps and flexible export options."
+    }
+  },
+  "VideoHome": {
+    "hero": {
+      "eyebrow": "AI video clipper",
+      "headline": "Turn long videos into <accent>publish-ready shorts.</accent>",
+      "description": "Scribix is an AI video clipper for podcasts, interviews, webinars, and talking-head videos. It finds complete moments in the conversation, then lets you refine every clip before export.",
+      "primaryCta": "Upload a video free",
+      "secondaryCta": "See how it works",
+      "ctaNote": "Start with 45 transcription minutes. No credit card required.",
+      "trust": [
+        "AI-selected, self-contained clips",
+        "Precise transcript-based cuts",
+        "Dynamic captions and 9:16 framing",
+        "Final 1080 × 1920 MP4"
+      ],
+      "previewLabel": "Scribix clip workspace",
+      "previewProject": "Founder interview — Episode 12",
+      "previewSource": "Source · 01:24:18",
+      "previewCandidatesLabel": "AI clip candidates",
+      "previewCandidates": [
+        {
+          "title": "The mistake that changed our product",
+          "duration": "00:42",
+          "score": "94%"
+        },
+        {
+          "title": "Why small teams move faster",
+          "duration": "00:36",
+          "score": "89%"
+        },
+        {
+          "title": "A better way to hear customers",
+          "duration": "00:51",
+          "score": "86%"
+        }
+      ],
+      "previewSelected": "Selected",
+      "previewCaption": "THE LESSON WAS TO <mark>LISTEN EARLIER</mark>",
+      "previewFormat": "Vertical preview",
+      "previewLength": "00:42 / 00:42",
+      "previewEdit": "Edit",
+      "previewCaptions": "Captions",
+      "previewExport": "Export",
+      "dropTitle": "Drop a long video here",
+      "dropMeta": "MP4, MOV, WebM, AVI or MKV",
+      "videoOnly": "Choose a video file to start AI video clipping."
+    },
+    "workflow": {
+      "label": "Long video to short clips",
+      "title": "From long video to finished short—in one focused workflow.",
+      "intro": "Keep the context of the full conversation while working only on the moments worth publishing. Scribix combines AI video clipping, transcript-based editing, and final rendering in one place.",
+      "steps": [
+        {
+          "title": "Upload the original video",
+          "body": "Add the full interview, podcast, webinar, or talking-head recording. Scribix securely retains the source so the final video can be rendered at full quality."
+        },
+        {
+          "title": "Review AI-selected clips",
+          "body": "AI uses the transcript, speaker turns, and word-level timestamps to propose self-contained clips, with a hook, theme, score, and reason for each suggestion."
+        },
+        {
+          "title": "Shape the final story",
+          "body": "Trim and reorder segments, refine the 9:16 crop, correct captions, apply brand styling, adjust audio, and choose the cover frame."
+        },
+        {
+          "title": "Render and download",
+          "body": "Generate a polished 1080 × 1920 MP4 and cover image from the original source, ready to upload to your publishing platform."
+        }
+      ]
+    },
+    "features": {
+      "label": "AI clipping workspace",
+      "title": "Enough control to finish the short—not just find it.",
+      "intro": "The AI video clipper gives you a strong first cut. The editor keeps the creative decisions in your hands, without forcing you into a full professional timeline.",
+      "items": [
+        {
+          "title": "Ranked, self-contained clips",
+          "body": "Compare multiple suggested moments with hooks, themes, timing, and clear reasons before choosing what to develop."
+        },
+        {
+          "title": "Transcript-precise timeline",
+          "body": "Adjust start and end points, remove sections, and reorder non-contiguous moments using word-level timing."
+        },
+        {
+          "title": "Dynamic captions",
+          "body": "Correct the words, choose a caption treatment, and control line length, position, color, and emphasis."
+        },
+        {
+          "title": "Vertical reframing",
+          "body": "Set crop position and zoom for every segment while previewing the final 9:16 composition in the browser."
+        },
+        {
+          "title": "Reusable brand styling",
+          "body": "Apply your logo, font, accent color, and a consistent visual treatment across clips."
+        },
+        {
+          "title": "Full-quality cloud render",
+          "body": "Create the final MP4 from the original video rather than a compressed browser preview, with normalized audio and a cover image."
+        }
+      ]
+    },
+    "audiences": {
+      "label": "Built for repeat publishing",
+      "title": "For teams with more good footage than editing time.",
+      "intro": "Scribix is built for spoken long-form video where complete short clips are already inside the conversation—they just need to be found and finished.",
+      "items": [
+        {
+          "label": "Long-form to short-form",
+          "title": "Video creators",
+          "body": "Turn long interviews, explainers, and creator videos into a steady stream of vertical clips without rebuilding every edit from scratch."
+        },
+        {
+          "label": "Video and audio shows",
+          "title": "Podcasters and producers",
+          "body": "Turn podcast episodes and interviews into complete, compelling clips with captions and framing suited to short-form feeds."
+        },
+        {
+          "label": "Content operations",
+          "title": "Marketing and media teams",
+          "body": "Move from recorded webinars, customer stories, and founder conversations to branded social assets in one reviewable workflow."
+        }
+      ]
+    },
+    "secondaryTools": {
+      "label": "Need the transcript without a video edit?",
+      "audio": "Audio to text",
+      "youtube": "YouTube transcript",
+      "notes": "AI note taker"
+    },
+    "faq": {
+      "label": "FAQ",
+      "title": "What to know before your first clip.",
+      "contactPrefix": "Still have a question? Email",
+      "items": [
+        {
+          "q": "How does the AI video clipper choose moments?",
+          "a": "Scribix analyzes the transcript, speaker turns, and word-level timestamps to suggest self-contained moments with a hook and clear theme. V1 does not analyze every frame of the full source video."
+        },
+        {
+          "q": "Can I change the clips AI suggests?",
+          "a": "Yes. You can change segment boundaries and order, remove segments, correct caption text, adjust the vertical crop, apply brand styling, tune audio, and select a cover frame."
+        },
+        {
+          "q": "What does Scribix export?",
+          "a": "The short-video workflow produces a 1080 × 1920 H.264 MP4 with AAC audio, plus a cover image. You download these files and publish them through your preferred platform."
+        },
+        {
+          "q": "How long is my original video stored?",
+          "a": "Original video retention depends on your plan: 7 days on Free, 30 days on legacy Basic, and 90 days on Pro. Transcripts, edit decisions, and completed renders can remain after the original expires."
+        },
+        {
+          "q": "Which source videos can I upload?",
+          "a": "Scribix accepts common formats including MP4, MOV, WebM, AVI, and MKV. Upload limits, transcription minutes, and retained video storage depend on your plan."
+        },
+        {
+          "q": "Can I still use Scribix only for transcription?",
+          "a": "Yes. Audio-to-text, YouTube transcript, AI notes, transcript editing, and text or subtitle exports remain available as dedicated tools."
+        }
+      ]
+    },
+    "final": {
+      "kicker": "The short clips are already in your long video",
+      "title": "Upload one long video. Leave with a finished short.",
+      "body": "Use AI video clipping to find complete moments, make the creative decisions that matter, and render a vertical MP4 ready for your audience.",
+      "cta": "Upload a video free"
+    }
   },
   "Sidebar": {
     "openNav": "Open navigation",
@@ -154,8 +330,8 @@
         "body": "Results vary with recording quality, noise, accents, vocabulary, and overlapping speech. Speaker labels and timestamps make review faster."
       },
       {
-        "title": "Source files deleted after 14 days",
-        "body": "Uploaded audio and video are deleted automatically after 14 days. Transcripts remain until you delete them or close your account."
+        "title": "Plan-based source retention",
+        "body": "Original video retention depends on your plan and is shown before upload. Audio follows the standard source-file retention period. Transcripts remain until you delete them or close your account."
       }
     ]
   },
@@ -457,7 +633,7 @@
       },
       {
         "q": "Is my data secure when I upload a video?",
-        "a": "Uploaded audio and video are deleted automatically after 14 days. Transcripts remain until you delete them or close your account. See the privacy policy for details."
+        "a": "Original video retention depends on your plan and is shown before upload. Audio follows the standard source-file retention period. Transcripts remain until you delete them or close your account."
       },
       {
         "q": "What can I export the transcript as?",
@@ -491,7 +667,7 @@
     ]
   },
   "Footer": {
-    "tagline": "Studio-grade video-to-text for the people who turn recorded conversation into stories.",
+    "tagline": "Turn long conversations into polished, publish-ready short videos with AI-assisted editing.",
     "legalLabels": {
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",

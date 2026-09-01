@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Scribix — Studio-grade Transcription";
+export const alt = "Scribix AI Video Clipper — Turn long videos into publish-ready shorts";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -63,7 +63,7 @@ export default async function Image() {
             textTransform: "uppercase",
           }}
         >
-          Studio-grade Transcription
+          AI video clipper
         </div>
 
         <div
@@ -77,7 +77,7 @@ export default async function Image() {
             opacity: 0.7,
           }}
         >
-          Audio &middot; Video &middot; AI Transcription
+          Long Video &middot; Editable Clips &middot; Vertical MP4
         </div>
       </div>
     ),

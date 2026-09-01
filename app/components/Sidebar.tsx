@@ -180,7 +180,7 @@ const SITE_NAV_ITEMS = [
   { key: "home", href: "/", icon: Home },
   { key: "audioToText", href: "/audio-to-text", icon: AudioLines },
   { key: "mp3ToText", href: "/mp3-to-text", icon: FileAudio },
-  { key: "videoToText", href: "/#generator", icon: Clapperboard },
+  { key: "videoToText", href: "/video-to-text", icon: Clapperboard },
   { key: "aiNoteTaker", href: "/ai-note-taker", icon: ListChecks },
   { key: "youtubeToTranscript", href: "/youtube-to-transcript", icon: Captions },
 ] as const satisfies readonly NavItemDefinition[];

@@ -68,12 +68,12 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-function homeLanguages(): Record<string, URL> {
-  const languages: Record<string, URL> = {
-    "x-default": metadataUrlFor(routing.defaultLocale, ""),
+function homeLanguages(): Record<string, string> {
+  const languages: Record<string, string> = {
+    "x-default": metadataUrlFor(routing.defaultLocale, "").toString(),
   };
   for (const locale of routing.locales) {
-    languages[locale] = metadataUrlFor(locale, "");
+    languages[locale] = metadataUrlFor(locale, "").toString();
   }
   return languages;
 }

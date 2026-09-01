@@ -743,6 +743,163 @@ details[open] .faq-icon {
   background: var(--card);
 }
 
+/* Video-first home: a working studio window replaces the old transcript form. */
+.home-refresh .home-video-hero {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 3%, transparent), transparent 42%),
+    var(--paper);
+}
+
+.home-refresh .home-video-hero h1 {
+  max-width: 12ch;
+  margin: 0;
+  font-size: clamp(3rem, 6vw, 4.75rem);
+  font-weight: 650;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  text-align: left;
+}
+
+.home-refresh .home-hero-accent {
+  display: block;
+  color: var(--accent);
+}
+
+.home-hero-orbit {
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, var(--accent) 12%, transparent);
+  border-radius: 9999px;
+}
+
+.home-hero-orbit-one {
+  top: -22rem;
+  right: -10rem;
+  width: 48rem;
+  height: 48rem;
+}
+
+.home-hero-orbit-two {
+  top: -10rem;
+  right: 2rem;
+  width: 24rem;
+  height: 24rem;
+}
+
+.home-product-window {
+  isolation: isolate;
+}
+
+.home-preview-stage {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.home-preview-frame::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  content: "";
+  pointer-events: none;
+}
+
+.home-workflow-step::before {
+  position: absolute;
+  top: 0.25rem;
+  left: -0.25rem;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 9999px;
+  background: var(--accent);
+  content: "";
+}
+
+.home-feature-card {
+  box-shadow: 0 22px 54px -46px rgba(25, 25, 24, 0.42);
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.home-feature-card::after {
+  position: absolute;
+  right: -3rem;
+  bottom: -4rem;
+  width: 9rem;
+  height: 9rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 10%, transparent);
+  border-radius: 9999px;
+  content: "";
+  transition: transform 240ms ease;
+}
+
+.home-feature-card:hover {
+  transform: translateY(-0.2rem);
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+  box-shadow: 0 30px 65px -48px rgba(25, 25, 24, 0.56);
+}
+
+.home-feature-card:hover::after {
+  transform: scale(1.12);
+}
+
+.home-video-final {
+  background:
+    linear-gradient(125deg, color-mix(in srgb, var(--accent) 7%, var(--card)), var(--card) 55%);
+}
+
+.home-final-ring {
+  position: absolute;
+  top: 50%;
+  right: -8rem;
+  width: 31rem;
+  height: 31rem;
+  transform: translateY(-50%);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: 9999px;
+  box-shadow:
+    0 0 0 4rem color-mix(in srgb, var(--accent) 3%, transparent),
+    0 0 0 8rem color-mix(in srgb, var(--accent) 2%, transparent);
+}
+
+.dark .home-feature-card {
+  box-shadow: 0 22px 54px -46px rgba(0, 0, 0, 0.85);
+}
+
+@media (max-width: 639px) {
+  .home-refresh .home-video-hero h1 {
+    font-size: clamp(2.85rem, 14vw, 4rem);
+  }
+
+  .home-product-window {
+    border-radius: 1.1rem;
+  }
+
+  .home-preview-stage {
+    min-height: 25rem;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .home-final-ring {
+    right: -20rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-refresh .rise-in,
+  .home-refresh .rec-dot,
+  .home-refresh .wave-bar {
+    animation: none;
+  }
+
+  .home-feature-card,
+  .home-feature-card::after {
+    transition: none;
+  }
+}
+
 /* Shared tool landing pages use the same restrained studio system as home. */
 .tool-landing-refresh .tool-landing-hero {
   padding-top: clamp(3.5rem, 6vw, 5rem);

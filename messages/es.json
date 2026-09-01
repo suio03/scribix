@@ -1,11 +1,100 @@
 {
   "SiteMetadata": {
-    "title": "Convertidor de vídeo a texto | Scribix",
-    "description": "Convierte vídeos MP4, MOV, WebM y AVI en texto editable con identificación de hablantes y marcas de tiempo por palabra. Revisa online y exporta en TXT, DOCX, SRT, VTT o CSV.",
-    "openGraphTitle": "Convierte vídeos en texto editable con marcas de tiempo | Scribix",
-    "openGraphDescription": "Sube un vídeo y obtén una transcripción buscable con hablantes, marcas de tiempo por palabra y varias opciones de exportación.",
-    "twitterTitle": "Convierte vídeos en texto editable con marcas de tiempo | Scribix",
-    "twitterDescription": "Sube un vídeo y obtén una transcripción buscable con hablantes, marcas de tiempo por palabra y varias opciones de exportación."
+    "title": "Generador de clips con IA: vídeos largos a shorts | Scribix",
+    "description": "Generador de clips con IA para podcasts, entrevistas, webinars y vídeos hablados. Encuentra momentos completos, ajusta subtítulos y exporta MP4.",
+    "openGraphTitle": "Generador de clips con IA para shorts listos | Scribix",
+    "openGraphDescription": "Sube un vídeo largo, deja que la IA encuentre momentos completos, ajusta el corte, los subtítulos y el formato 9:16 y exporta un MP4 terminado.",
+    "twitterTitle": "Convierte vídeos largos en shorts listos para publicar | Scribix",
+    "twitterDescription": "Clips con IA, edición precisa desde la transcripción, subtítulos dinámicos, formato 9:16 y exportación MP4 en un solo espacio."
+  },
+  "VideoToText": {
+    "metadata": {
+      "title": "Convertidor de vídeo a texto | Scribix",
+      "description": "Convierte vídeos MP4, MOV, WebM y AVI en texto editable con identificación de hablantes y marcas de tiempo por palabra. Revisa online y exporta en TXT, DOCX, SRT, VTT o CSV.",
+      "openGraphTitle": "Convierte vídeos en texto editable con marcas de tiempo | Scribix",
+      "openGraphDescription": "Sube un vídeo y obtén una transcripción buscable con hablantes, marcas de tiempo por palabra y varias opciones de exportación.",
+      "twitterTitle": "Convierte vídeos en texto editable con marcas de tiempo | Scribix",
+      "twitterDescription": "Sube un vídeo y obtén una transcripción buscable con hablantes, marcas de tiempo por palabra y varias opciones de exportación."
+    }
+  },
+  "VideoHome": {
+    "hero": {
+      "eyebrow": "Generador de clips con IA",
+      "headline": "Convierte vídeos largos en <accent>shorts listos para publicar.</accent>",
+      "description": "Scribix es un generador de clips con IA para podcasts, entrevistas, webinars y vídeos hablados. Encuentra momentos completos en la conversación y te permite ajustar cada clip antes de exportarlo.",
+      "primaryCta": "Sube un vídeo gratis",
+      "secondaryCta": "Cómo funciona",
+      "ctaNote": "Empieza con 45 minutos de transcripción. Sin tarjeta de crédito.",
+      "trust": ["Clips completos seleccionados por IA", "Cortes precisos desde la transcripción", "Subtítulos dinámicos y formato 9:16", "MP4 final de 1080 × 1920"],
+      "previewLabel": "Espacio de clips Scribix",
+      "previewProject": "Entrevista al fundador — Episodio 12",
+      "previewSource": "Fuente · 01:24:18",
+      "previewCandidatesLabel": "Clips candidatos de IA",
+      "previewCandidates": [
+        {"title": "El error que cambió nuestro producto", "duration": "00:42", "score": "94%"},
+        {"title": "Por qué los equipos pequeños avanzan más rápido", "duration": "00:36", "score": "89%"},
+        {"title": "Una forma mejor de escuchar al cliente", "duration": "00:51", "score": "86%"}
+      ],
+      "previewSelected": "Elegido",
+      "previewCaption": "LA LECCIÓN FUE <mark>ESCUCHAR ANTES</mark>",
+      "previewFormat": "Vista vertical",
+      "previewLength": "00:42 / 00:42",
+      "previewEdit": "Editar",
+      "previewCaptions": "Subtítulos",
+      "previewExport": "Exportar",
+      "dropTitle": "Suelta aquí un vídeo largo",
+      "dropMeta": "MP4, MOV, WebM, AVI o MKV",
+      "videoOnly": "Elige un archivo de vídeo para generar clips con IA."
+    },
+    "workflow": {
+      "label": "De vídeo largo a clips cortos",
+      "title": "Del vídeo largo al short terminado, en un único flujo.",
+      "intro": "Conserva el contexto de toda la conversación y trabaja solo en los momentos que merece la pena publicar. Scribix une generación de clips con IA, edición desde la transcripción y renderizado final.",
+      "steps": [
+        {"title": "Sube el vídeo original", "body": "Añade la entrevista, podcast, webinar o grabación completa. Scribix conserva la fuente de forma segura para renderizar el resultado con toda su calidad."},
+        {"title": "Revisa los clips elegidos por la IA", "body": "La IA usa la transcripción, los turnos de palabra y las marcas de tiempo para proponer clips completos con gancho, tema, puntuación y motivo."},
+        {"title": "Da forma a la historia", "body": "Recorta y reordena segmentos, ajusta el encuadre 9:16, corrige subtítulos, aplica tu marca, mejora el audio y elige la portada."},
+        {"title": "Renderiza y descarga", "body": "Genera desde el original un MP4 de 1080 × 1920 y una portada, listos para subir a tu plataforma de publicación."}
+      ]
+    },
+    "features": {
+      "label": "Espacio de clips con IA",
+      "title": "Control suficiente para terminar el short, no solo encontrarlo.",
+      "intro": "El generador de clips con IA te da un primer corte sólido. El editor deja las decisiones creativas en tus manos sin obligarte a usar una línea de tiempo profesional compleja.",
+      "items": [
+        {"title": "Clips completos ordenados", "body": "Compara momentos sugeridos con gancho, tema, duración y motivos claros antes de elegir cuál desarrollar."},
+        {"title": "Línea de tiempo precisa", "body": "Ajusta inicios y finales, elimina secciones y reordena momentos separados usando tiempos exactos por palabra."},
+        {"title": "Subtítulos dinámicos", "body": "Corrige el texto y controla tratamiento, longitud de línea, posición, color y énfasis."},
+        {"title": "Reencuadre vertical", "body": "Define posición y zoom para cada segmento mientras previsualizas la composición 9:16 final en el navegador."},
+        {"title": "Estilo de marca reutilizable", "body": "Aplica logotipo, tipografía, color de acento y un tratamiento visual coherente a todos tus clips."},
+        {"title": "Renderizado en la nube", "body": "Crea el MP4 final desde el vídeo original, no desde una vista comprimida, con audio normalizado y portada."}
+      ]
+    },
+    "audiences": {
+      "label": "Para publicar con frecuencia",
+      "title": "Para equipos con más buen material que tiempo de edición.",
+      "intro": "Scribix está pensado para vídeos hablados de larga duración en los que ya existen clips completos: solo hay que encontrarlos y terminarlos.",
+      "items": [
+        {"label": "Del largo al corto", "title": "Creadores de vídeo", "body": "Convierte entrevistas, explicaciones y vídeos de creador en un flujo continuo de clips verticales sin rehacer cada edición desde cero."},
+        {"label": "Programas de vídeo y audio", "title": "Podcasters y productores", "body": "Encuentra momentos completos en episodios largos y añade subtítulos y encuadres adecuados para feeds de vídeo corto."},
+        {"label": "Operaciones de contenido", "title": "Equipos de marketing y medios", "body": "Convierte webinars, historias de clientes y charlas de fundadores en piezas sociales de marca mediante un flujo revisable."}
+      ]
+    },
+    "secondaryTools": {"label": "¿Solo necesitas la transcripción?", "audio": "Audio a texto", "youtube": "Transcripción de YouTube", "notes": "Notas con IA"},
+    "faq": {
+      "label": "Preguntas frecuentes",
+      "title": "Lo que debes saber antes de tu primer clip.",
+      "contactPrefix": "¿Aún tienes dudas? Escribe a",
+      "items": [
+        {"q": "¿Cómo elige los momentos el generador de clips con IA?", "a": "Scribix analiza la transcripción, los turnos de habla y los tiempos por palabra para proponer momentos completos con gancho y tema claro. La V1 no analiza cada fotograma del vídeo entero."},
+        {"q": "¿Puedo cambiar los clips que sugiere la IA?", "a": "Sí. Puedes cambiar límites y orden, eliminar segmentos, corregir subtítulos, ajustar el recorte vertical, aplicar tu marca, editar el audio y elegir una portada."},
+        {"q": "¿Qué exporta Scribix?", "a": "El flujo genera un MP4 H.264 de 1080 × 1920 con audio AAC y una imagen de portada. Descarga los archivos y publícalos en la plataforma que prefieras."},
+        {"q": "¿Cuánto tiempo se guarda mi vídeo original?", "a": "Depende del plan: 7 días en Free, 30 días en Basic heredado y 90 días en Pro. La transcripción, las decisiones de edición y los renders terminados pueden conservarse después."},
+        {"q": "¿Qué vídeos puedo subir?", "a": "Scribix acepta formatos habituales como MP4, MOV, WebM, AVI y MKV. El tamaño, los minutos y el almacenamiento dependen del plan."},
+        {"q": "¿Puedo seguir usando Scribix solo para transcribir?", "a": "Sí. Audio a texto, transcripción de YouTube, notas con IA, edición de transcripciones y exportaciones de texto o subtítulos siguen disponibles como herramientas específicas."}
+      ]
+    },
+    "final": {"kicker": "Los clips cortos ya están en tu vídeo largo", "title": "Sube un vídeo largo. Termina con un short listo.", "body": "Usa la IA para encontrar momentos completos, toma las decisiones creativas importantes y renderiza un MP4 vertical listo para tu audiencia.", "cta": "Sube un vídeo gratis"}
   },
   "Sidebar": {
     "openNav": "Abrir navegación",
@@ -154,8 +243,8 @@
         "body": "El resultado varía según la grabación, el ruido, el acento, el vocabulario y las voces superpuestas. Las etiquetas y marcas facilitan la revisión."
       },
       {
-        "title": "Archivos fuente eliminados tras 14 días",
-        "body": "El audio y vídeo subidos se eliminan automáticamente tras 14 días. Las transcripciones permanecen hasta que las elimines o cierres tu cuenta."
+        "title": "Retención de fuentes según el plan",
+        "body": "La conservación del vídeo original depende de tu plan y se muestra antes de subirlo. El audio sigue el periodo habitual de conservación. Las transcripciones permanecen hasta que las elimines o cierres tu cuenta."
       }
     ]
   },
@@ -457,7 +546,7 @@
       },
       {
         "q": "¿Están seguros mis datos cuando subo un vídeo?",
-        "a": "El audio y vídeo subidos se eliminan automáticamente tras 14 días. Las transcripciones permanecen hasta que las elimines o cierres la cuenta. Consulta la política de privacidad."
+        "a": "La conservación del vídeo original depende de tu plan y se muestra antes de subirlo. El audio sigue el periodo habitual de conservación. Las transcripciones permanecen hasta que las elimines o cierres la cuenta."
       },
       {
         "q": "¿Como qué puedo exportar el transcript?",
@@ -491,7 +580,7 @@
     ]
   },
   "Footer": {
-    "tagline": "Vídeo a texto a nivel de estudio para la gente que convierte la conversación grabada en historias.",
+    "tagline": "Convierte conversaciones largas en vídeos cortos pulidos y listos para publicar con edición asistida por IA.",
     "legalLabels": {
       "terms": "Términos de servicio",
       "privacy": "Política de privacidad",
