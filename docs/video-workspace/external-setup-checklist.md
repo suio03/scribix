@@ -38,7 +38,7 @@
 
 价格变量使用 AWS `ap-southeast-2` 当日官方费率，不把价格或凭证提交到仓库。主 Worker 继续需要用于 R2 签名的既有 `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`，其 token 只授予 `scribix-media` object read/write，不授予账户级管理权限。
 
-保持 `VIDEO_WORKSPACE_ROLLOUT_PERCENT=0`，仅在 smoke test 前把内部 user ID 加入 `VIDEO_WORKSPACE_PILOT_USER_IDS`。
+默认保持 `VIDEO_WORKSPACE_ROLLOUT_PERCENT=100`。仓库未准备完成前不要部署到生产；百分比和 `VIDEO_WORKSPACE_PILOT_USER_IDS` 只作为以后需要灰度或紧急止损时的控制手段。
 
 ## 3. AWS ECR 与镜像
 
@@ -58,7 +58,7 @@
 
 ## 5. 部署与观测
 
-按以下顺序：D1 migrations → ECR/Batch → Queue/DLQ → 主 Next/OpenNext app → video-render dispatcher → cleanup worker。不要在 schema 或 Batch 尚未就绪时打开 rollout。
+按以下顺序：D1 migrations → ECR/Batch → Queue/DLQ → 主 Next/OpenNext app → video-render dispatcher → cleanup worker。默认 rollout 为 100%，因此 schema、Batch 和其他依赖未就绪时不要部署主应用。
 
 配置并验证：
 
@@ -72,4 +72,4 @@
 
 使用 allowlist 内部账号依次验证：横屏有声、竖屏静音、多 segment、三个字幕模板、Logo/字体、取消、重试、重复 idempotency key、源过期、视频/封面下载、账户删除。确认 Final Render 只读取 original source。
 
-随后按 `m9-pilot-rollout.md` 邀请 5–10 位真实 talking-head/podcast 用户。开放前由负责人确认隐私说明、AWS/转录处理披露、7/30/90 天源保留、5/25/100 GiB 存储额度、render 使用量/成本转嫁规则与套餐文案。达到阶段阈值后再从 0% 提升至 5%，不得直接全量开放。
+随后按 `m9-pilot-rollout.md` 验证真实 talking-head/podcast 用户流程。生产部署前由负责人确认隐私说明、AWS/转录处理披露、7/30/90 天源保留、5/25/100 GiB 存储额度、render 使用量/成本转嫁规则与套餐文案；确认完成后以默认 100% 上线。

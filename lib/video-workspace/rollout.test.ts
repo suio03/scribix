@@ -18,4 +18,5 @@ test("video workspace rollout is stable, bounded, and pilot-overridable", () => 
     VIDEO_WORKSPACE_ROLLOUT_PERCENT: "100",
     VIDEO_WORKSPACE_PILOT_USER_IDS: "",
   }), true);
+  assert.equal(videoWorkspaceEnabledForUser(userId), true);
 });

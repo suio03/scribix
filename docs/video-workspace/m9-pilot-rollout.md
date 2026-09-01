@@ -24,15 +24,14 @@ npm run benchmark:video-render
 
 ## 渐进开放
 
-生产默认 `VIDEO_WORKSPACE_ROLLOUT_PERCENT=0`。`VIDEO_WORKSPACE_PILOT_USER_IDS` 接受逗号分隔的内部 user IDs，并覆盖百分比开关。未配置或非法值在 production 中 fail closed。
+所有环境默认 `VIDEO_WORKSPACE_ROLLOUT_PERCENT=100`，未配置时也按 100% 开放，不区分本地与生产。`VIDEO_WORKSPACE_PILOT_USER_IDS` 和百分比开关仍然保留，可在故障止损或以后需要小范围放量时使用；非法百分比值会 fail closed。
 
 建议阶段：
 
-1. 只加入内部账号，完成 production smoke test。
-2. 邀请 5–10 位 talking-head/podcast 用户，将其 ID 加入 pilot allowlist。
-3. 指标满足阈值后设为 5%，观察至少 72 小时。
-4. 依次提高到 25%、50%、100%；每阶段至少覆盖 30 个 terminal final jobs。
-5. 出现重大错误时把百分比设回 0 并清空 allowlist。开关只阻止新建项目，已有项目仍可完成、下载和删除，避免用户数据被困住。
+1. 在本地和预发布环境以 100% 完成内部 smoke test。
+2. 只有在外部依赖、隐私、套餐和成本规则全部准备好后才部署到生产。
+3. 生产部署后保持 100%，持续观察真实 render 成功率、延迟、下载率和成本。
+4. 出现重大错误时把百分比设为 0 并清空 allowlist。开关只阻止新建项目，已有项目仍可完成、下载和删除，避免用户数据被困住。
 
 ## 指标与隐私
 

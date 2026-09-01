@@ -21,7 +21,7 @@
   },
 
   "vars": {
-    "VIDEO_WORKSPACE_ROLLOUT_PERCENT": "0",
+    "VIDEO_WORKSPACE_ROLLOUT_PERCENT": "100",
     "VIDEO_WORKSPACE_PILOT_USER_IDS": "",
     "NEXT_PUBLIC_APP_URL": "https://scribix.io",
     "NEXTAUTH_URL": "https://scribix.io",
