@@ -29,7 +29,8 @@ export default async function VideoProjectPage({ params }: Params) {
               THEN 'failed'
               ELSE p.status
             END AS status,
-            p.transcript_id, t.title, a.duration_ms AS source_duration_ms
+            p.transcript_id, p.draft_candidate_id, t.title,
+            a.duration_ms AS source_duration_ms
        FROM video_projects p
        JOIN transcripts t
          ON t.id = p.transcript_id AND t.user_id = p.user_id
@@ -45,6 +46,7 @@ export default async function VideoProjectPage({ params }: Params) {
       id: string;
       status: string;
       transcript_id: string;
+      draft_candidate_id: string | null;
       title: string;
       source_duration_ms: number | null;
     }>();
@@ -72,27 +74,13 @@ export default async function VideoProjectPage({ params }: Params) {
           {project.title}
         </h1>
       </div>
-      <nav aria-label={t("workflow.label")} className="mt-7 overflow-x-auto border-y border-line py-3">
-        <ol className="flex min-w-max items-center gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-ink/45">
-          <li>
-            <Link href={`/dashboard/transcripts/${project.transcript_id}`} className="transition hover:text-ink">
-              <span className="mr-1 text-ink/25">01</span>{t("workflow.transcript")}
-            </Link>
-          </li>
-          <li aria-hidden="true" className="h-px w-7 bg-line" />
-          <li><a href="#clips" className="text-accent"><span className="mr-1 text-accent/45">02</span>{t("workflow.clips")}</a></li>
-          <li aria-hidden="true" className="h-px w-7 bg-line" />
-          <li><a href="#editor" className="transition hover:text-ink"><span className="mr-1 text-ink/25">03</span>{t("workflow.editor")}</a></li>
-          <li aria-hidden="true" className="h-px w-7 bg-line" />
-          <li><a href="#exports" className="transition hover:text-ink"><span className="mr-1 text-ink/25">04</span>{t("workflow.exports")}</a></li>
-        </ol>
-      </nav>
       <VideoCandidateWorkspace
         projectId={project.id}
         initialStatus={project.status}
         sourceDurationMs={project.source_duration_ms}
         initialCandidates={candidates}
         initialPreviews={previews}
+        initialSelectedCandidateId={project.draft_candidate_id}
       />
     </main>
   );

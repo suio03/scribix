@@ -4,7 +4,7 @@
 
 ## 1. Cloudflare D1 与 R2
 
-1. 先备份生产 D1，再确认待执行 migrations 为 `0025`–`0032`，运行 `npm run db:migrate:remote`。
+1. 先备份生产 D1，再确认待执行 migrations 为 `0025`–`0033`，运行 `npm run db:migrate:remote`。
 2. migration 后执行 `PRAGMA foreign_key_check`，确认无结果；检查两个 `render_jobs_final_*` triggers 存在。
 3. `scribix-media` 保持 private。为浏览器直传配置 CORS，只允许实际产品 origin：
 

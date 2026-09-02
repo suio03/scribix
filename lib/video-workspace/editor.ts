@@ -34,6 +34,9 @@ type EditorCandidateRow = {
   theme: string;
   segments_json: string;
   status: string;
+  draft_revision: number;
+  draft_edl_json: string | null;
+  draft_render_spec_json: string | null;
 };
 
 export type EditorWorkspace = {
@@ -115,13 +118,18 @@ export async function loadEditorWorkspace(
   if (!candidateSegments) return { ok: false, error: "invalid_candidate" };
 
   const candidateEdl = edlFromCandidate(candidateSegments);
-  const restored = project.draft_candidate_id === candidateId
-    ? parseStoredDraft(
-        project.draft_edl_json,
-        project.draft_render_spec_json,
-        project.source_duration_ms
-      )
-    : null;
+  const restored = parseStoredDraft(
+    candidate.draft_edl_json,
+    candidate.draft_render_spec_json,
+    project.source_duration_ms
+  );
+  const activeDraft = Boolean(
+    restored &&
+    project.draft_candidate_id === candidateId &&
+    project.draft_revision === candidate.draft_revision &&
+    project.draft_edl_json === candidate.draft_edl_json &&
+    project.draft_render_spec_json === candidate.draft_render_spec_json
+  );
   const edl = restored?.edl ?? candidateEdl;
   let renderSpec = restored?.renderSpec ?? defaultRenderSpec(edl);
   const [preview, transcriptObject, assets] = await Promise.all([
@@ -163,8 +171,8 @@ export async function loadEditorWorkspace(
     workspace: {
       candidateId,
       clipTitle: candidate.theme,
-      revision: project.draft_revision,
-      restoredDraft: Boolean(restored),
+      revision: candidate.draft_revision,
+      restoredDraft: activeDraft,
       sourceDurationMs: project.source_duration_ms,
       edl,
       renderSpec,
@@ -229,35 +237,55 @@ export async function saveProjectDraft(
     return { ok: false, error: "invalid_render_spec", issues: [assetIssue] };
   }
   if (!Number.isInteger(expectedRevision) || expectedRevision < 0) {
-    return { ok: false, error: "draft_conflict", revision: project.draft_revision };
+    return { ok: false, error: "draft_conflict", revision: candidate.draft_revision };
   }
-  const saved = await db.prepare(
-    `UPDATE video_projects
-        SET draft_candidate_id = ?1,
-            draft_edl_json = ?2,
-            draft_render_spec_json = ?3,
-            draft_revision = draft_revision + 1,
-            status = 'editing',
-            updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?4
-        AND user_id = ?5
-        AND draft_revision = ?6
-        AND deleted_at IS NULL`
-  )
-    .bind(
-      candidateId,
-      JSON.stringify(edlResult.data),
-      JSON.stringify(renderSpecResult.data),
-      projectId,
-      userId,
-      expectedRevision
-    )
-    .run();
-  if (!saved.meta?.changes) {
-    const current = await editorProject(db, userId, projectId);
+  const edlJson = JSON.stringify(edlResult.data);
+  const renderSpecJson = JSON.stringify(renderSpecResult.data);
+  const nextRevision = expectedRevision + 1;
+  const saved = await db.batch([
+    db.prepare(
+      `UPDATE clip_candidates
+          SET draft_edl_json = ?1,
+              draft_render_spec_json = ?2,
+              draft_revision = draft_revision + 1
+        WHERE id = ?3
+          AND project_id = ?4
+          AND user_id = ?5
+          AND draft_revision = ?6
+          AND status <> 'deleted'`
+    ).bind(edlJson, renderSpecJson, candidateId, projectId, userId, expectedRevision),
+    db.prepare(
+      `UPDATE video_projects
+          SET draft_candidate_id = ?1,
+              draft_edl_json = (
+                SELECT draft_edl_json FROM clip_candidates
+                 WHERE id = ?1 AND project_id = ?2 AND user_id = ?3
+              ),
+              draft_render_spec_json = (
+                SELECT draft_render_spec_json FROM clip_candidates
+                 WHERE id = ?1 AND project_id = ?2 AND user_id = ?3
+              ),
+              draft_revision = (
+                SELECT draft_revision FROM clip_candidates
+                 WHERE id = ?1 AND project_id = ?2 AND user_id = ?3
+              ),
+              status = 'editing',
+              updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?2
+          AND user_id = ?3
+          AND deleted_at IS NULL
+          AND EXISTS (
+            SELECT 1 FROM clip_candidates
+             WHERE id = ?1 AND project_id = ?2 AND user_id = ?3
+               AND draft_revision = ?4
+          )`
+    ).bind(candidateId, projectId, userId, nextRevision),
+  ]);
+  if (!saved[0].meta?.changes || !saved[1].meta?.changes) {
+    const current = await editorCandidate(db, userId, projectId, candidateId);
     return { ok: false, error: "draft_conflict", revision: current?.draft_revision };
   }
-  return { ok: true, revision: expectedRevision + 1 };
+  return { ok: true, revision: nextRevision };
 }
 
 export async function snapshotProjectDraft(
@@ -291,8 +319,9 @@ export async function snapshotProjectDraft(
     const results = await db.batch([
       db.prepare(
         `INSERT INTO project_versions
-           (id, user_id, project_id, version, edl_json, render_spec_json, created_by)
-         SELECT ?1, user_id, id, ?2, draft_edl_json, draft_render_spec_json, ?3
+           (id, user_id, project_id, candidate_id, version, edl_json,
+            render_spec_json, created_by)
+         SELECT ?1, user_id, id, ?5, ?2, draft_edl_json, draft_render_spec_json, ?3
            FROM video_projects
           WHERE id = ?4
             AND user_id = ?3
@@ -439,7 +468,8 @@ function editorCandidate(
   candidateId: string
 ): Promise<EditorCandidateRow | null> {
   return db.prepare(
-    `SELECT id, theme, segments_json, status
+    `SELECT id, theme, segments_json, status, draft_revision,
+            draft_edl_json, draft_render_spec_json
        FROM clip_candidates
       WHERE id = ?1
         AND user_id = ?2

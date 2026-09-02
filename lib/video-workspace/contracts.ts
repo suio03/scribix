@@ -34,7 +34,7 @@ export const PREVIEW_PROXY_PRESET = {
   handleDurationMs: 5_000,
 } as const;
 
-export const PREVIEW_PROXY_AUTO_CANDIDATES = 3 as const;
+export const PREVIEW_PROXY_AUTO_CANDIDATES = VIDEO_WORKSPACE_LIMITS.maxCandidates;
 export const PREVIEW_PROXY_RETENTION_DAYS = 7 as const;
 export const PREVIEW_PROXY_URL_TTL_SECONDS = 15 * 60;
 export const FINAL_RENDER_URL_TTL_SECONDS = 60 * 60;

@@ -1,6 +1,6 @@
 # M4 Virtual Timeline Editor
 
-M4 turns one accepted AI candidate into a persistent, transcript-aligned draft. It does not render a new video: the browser composes the existing per-segment proxies into a continuous virtual timeline and saves source-time EDL changes.
+M4 turns any selected AI candidate into its own persistent, transcript-aligned draft. The top gallery selects one clip at a time; the browser composes that clip's existing per-segment proxies into a continuous virtual timeline and saves source-time EDL changes without overwriting edits made to another candidate.
 
 ## Time model
 
@@ -33,7 +33,7 @@ M4 turns one accepted AI candidate into a persistent, transcript-aligned draft. 
 - rejects stale revisions instead of silently snapshotting another tab's changes;
 - updates `active_project_version_id` for M6 final rendering.
 
-Migration `0028_video_editor_drafts.sql` adds `draft_candidate_id` and `draft_revision`. Migration `0032_clip_candidate_origin.sql` distinguishes AI recommendations from the direct original-source editor entry. Both must be applied remotely before deploying the current editor.
+Migration `0028_video_editor_drafts.sql` adds the active project draft mirror. Migration `0032_clip_candidate_origin.sql` distinguishes AI recommendations from the direct original-source editor entry. Migration `0033_candidate_drafts.sql` stores an independent draft on every candidate and records candidate ownership on immutable project versions. All must be applied remotely before deploying the current editor.
 
 ## Editing behavior
 

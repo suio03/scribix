@@ -804,6 +804,7 @@
       "manualEyebrow": "Source originale",
       "manualTitle": "Montez votre propre extrait",
       "manualBody": "Cette timeline part du fichier original importé. Ajustez les repères source et limitez la vidéo courte finale à 60 secondes.",
+      "clipLabel": "Clip {number}",
       "score": "{score}% adapté",
       "accept": "Utiliser ce clip",
       "accepted": "Sélectionné",
@@ -811,7 +812,7 @@
       "rejected": "Écarté",
       "requestFailed": "La demande n’a pas abouti. La sélection précédente reste inchangée ; réessayez.",
       "replaceConfirm": "Régénérer et remplacer la sélection actuelle ? Vos retours resteront enregistrés.",
-      "previewPending": "Les trois premiers aperçus sont préparés automatiquement. Les autres candidats ne génèrent que les segments ouverts.",
+      "previewPending": "Les aperçus sont préparés dans l’ordre afin que plusieurs clips ne se disputent pas la capacité de rendu.",
       "previewNotReady": "Aperçu non généré",
       "previewPrepare": "Préparer l’aperçu",
       "previewProcessing": "Préparation de l’aperçu léger…",
@@ -856,6 +857,7 @@
           "conflict": "Conflit de brouillon"
         },
         "style": {
+          "advanced": "Options avancées",
           "uploadFailed": "Impossible d’importer la ressource. Utilisez un fichier compatible de moins de 5 Mo.",
           "framing": { "title": "Cadrage", "cut": "Coupe {number}", "automatic": "Suivi automatique", "manual": "Cadrage fixe", "automaticNote": "Le rendu final suit le visage principal. Si le suivi est incertain, l’image entière reste visible sur un fond flouté.", "manualNote": "Ces réglages utilisent un cadrage fixe pendant tout le clip.", "useAutomatic": "Utiliser le cadrage automatique", "horizontal": "Point horizontal", "vertical": "Point vertical", "zoom": "Zoom" },
           "captions": { "title": "Sous-titres", "enabled": "Afficher les sous-titres", "template": "Style animé", "karaoke": "Impact karaoké", "boxed": "Encadré éditorial", "minimal": "Minimal discret", "font": "Police", "defaultFont": "Police Scribix", "customFont": "Police personnalisée {number}", "textColor": "Texte", "highlightColor": "Surbrillance", "position": "Position verticale", "lineWidth": "Caractères par ligne", "lines": "Nombre maximal de lignes", "uploadFont": "Importer TTF ou OTF", "correction": "Corriger le texte", "cue": "Sous-titre {number}" },
@@ -864,6 +866,7 @@
           "cover": { "title": "Couverture", "time": "Image de la timeline", "note": "Le moteur final extrait la couverture à ce point exact de la timeline terminée." }
         },
         "finalRender": {
+          "history": "Historique des exports",
           "eyebrow": "Export cloud", "title": "Générer la vidéo finale", "description": "Crée une version immuable depuis la source originale, jamais depuis les proxies d’aperçu.", "generate": "Générer la vidéo", "rendering": "Rendu en cours…", "saveFirst": "Attendez la fin de l’enregistrement du montage.", "failed": "La demande de rendu n’a pas pu aboutir.", "limit": "Votre limite de rendu est atteinte. Attendez la fin d’un rendu actif ou réessayez demain.", "video": "Vidéo", "cover": "Couverture", "cancel": "Annuler", "retry": "Réessayer", "externalEdit": "Nécessite encore un montage externe", "externalEditRecorded": "Avis enregistré",
           "status": { "draft": "Brouillon", "queued": "En attente", "preparing": "Préparation", "running": "Rendu", "uploading": "Envoi", "completed": "Prêt", "failed": "Échec", "canceled": "Annulé" }
         }

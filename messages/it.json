@@ -804,6 +804,7 @@
       "manualEyebrow": "Sorgente originale",
       "manualTitle": "Modifica il tuo taglio",
       "manualBody": "Questa timeline parte dall’originale caricato. Regola i timestamp sorgente e mantieni il video breve finale entro 60 secondi.",
+      "clipLabel": "Clip {number}",
       "score": "{score}% adatto",
       "accept": "Usa questa clip",
       "accepted": "Selezionata",
@@ -811,7 +812,7 @@
       "rejected": "Scartata",
       "requestFailed": "Impossibile completare la richiesta. La selezione precedente non è cambiata; riprova.",
       "replaceConfirm": "Rigenerare e sostituire la selezione attuale? Il feedback resterà registrato.",
-      "previewPending": "Le prime tre anteprime vengono preparate automaticamente. Gli altri candidati generano solo i segmenti che apri.",
+      "previewPending": "Le anteprime vengono preparate in ordine, così più clip non competono per la capacità di rendering.",
       "previewNotReady": "Anteprima non generata",
       "previewPrepare": "Prepara anteprima",
       "previewProcessing": "Preparazione anteprima leggera…",
@@ -856,6 +857,7 @@
           "conflict": "Conflitto bozza"
         },
         "style": {
+          "advanced": "Opzioni avanzate",
           "uploadFailed": "Impossibile caricare la risorsa. Usa un file supportato sotto i 5 MB.",
           "framing": { "title": "Inquadratura", "cut": "Taglio {number}", "automatic": "Inseguimento automatico", "manual": "Ritaglio fisso", "automaticNote": "Il rendering finale segue il volto principale. Se il rilevamento non è affidabile, mantiene l’intero fotogramma su uno sfondo sfocato.", "manualNote": "Questi controlli usano un ritaglio fisso per tutto il clip.", "useAutomatic": "Usa inquadratura automatica", "horizontal": "Fuoco orizzontale", "vertical": "Fuoco verticale", "zoom": "Zoom" },
           "captions": { "title": "Sottotitoli", "enabled": "Mostra sottotitoli", "template": "Stile dinamico", "karaoke": "Impatto karaoke", "boxed": "Riquadro editoriale", "minimal": "Minimale", "font": "Carattere", "defaultFont": "Predefinito Scribix", "customFont": "Carattere personalizzato {number}", "textColor": "Testo", "highlightColor": "Evidenziazione", "position": "Posizione verticale", "lineWidth": "Caratteri per riga", "lines": "Righe massime", "uploadFont": "Carica TTF o OTF", "correction": "Correggi il testo", "cue": "Sottotitolo {number}" },
@@ -864,6 +866,7 @@
           "cover": { "title": "Copertina", "time": "Fotogramma timeline", "note": "Il renderer finale estrae la copertina da questo punto esatto della timeline completata." }
         },
         "finalRender": {
+          "history": "Cronologia esportazioni",
           "eyebrow": "Esportazione cloud", "title": "Renderizza il video finale", "description": "Crea una versione immutabile dalla sorgente originale, non dai proxy di anteprima.", "generate": "Genera video", "rendering": "Rendering…", "saveFirst": "Attendi il salvataggio della modifica corrente.", "failed": "Impossibile completare la richiesta di rendering.", "limit": "Hai raggiunto il limite di rendering. Attendi il termine di uno attivo o riprova domani.", "video": "Video", "cover": "Copertina", "cancel": "Annulla", "retry": "Riprova", "externalEdit": "Richiede ancora modifiche esterne", "externalEditRecorded": "Feedback registrato",
           "status": { "draft": "Bozza", "queued": "In coda", "preparing": "Preparazione", "running": "Rendering", "uploading": "Caricamento", "completed": "Pronto", "failed": "Non riuscito", "canceled": "Annullato" }
         }

@@ -25,8 +25,15 @@ export function FinalRenderPanel({
   const [renders, setRenders] = useState<FinalRenderSummary[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<"generic" | "limit" | null>(null);
-  const [externalEditReports, setExternalEditReports] = useState<Set<string>>(() => new Set());
-  const active = useMemo(() => renders.some((render) => ACTIVE.has(render.status)), [renders]);
+  const candidateRenders = useMemo(() => renders.filter((render) => (
+    render.candidateId === candidateId
+  )), [candidateId, renders]);
+  const active = useMemo(() => candidateRenders.some((render) => (
+    ACTIVE.has(render.status)
+  )), [candidateRenders]);
+  const latestReady = candidateRenders.find((render) => (
+    render.status === "completed" && render.videoUrl
+  ));
 
   const refresh = useCallback(async () => {
     const response = await fetch(`/api/video-projects/${projectId}/renders`);
@@ -112,19 +119,9 @@ export function FinalRenderPanel({
     });
   };
 
-  const reportExternalEdit = (render: FinalRenderSummary) => {
-    trackVideoWorkspaceEvent(projectId, {
-      eventName: "external_edit_required",
-      eventKey: `external-edit:${render.id}`,
-      renderJobId: render.id,
-      properties: { reason: "other" },
-    });
-    setExternalEditReports((current) => new Set(current).add(render.id));
-  };
-
   return (
-    <section id="exports" className="scroll-mt-6 rounded-xl border border-ink bg-ink p-4 text-paper">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <section id="exports" className="scroll-mt-6 rounded-xl border border-ink bg-ink p-5 text-paper shadow-[0_18px_44px_-30px_rgba(0,0,0,0.8)]">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-paper/45">{t("eyebrow")}</p>
           <h5 className="mt-1 font-display text-lg font-semibold">{t("title")}</h5>
@@ -134,7 +131,7 @@ export function FinalRenderPanel({
           type="button"
           disabled={busy || disabled || active}
           onClick={() => void start()}
-          className="inline-flex items-center gap-2 rounded-full bg-paper px-4 py-2 text-[11px] font-semibold text-ink transition hover:bg-accent hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+          className="inline-flex min-w-36 items-center justify-center gap-2 rounded-full bg-paper px-5 py-2.5 text-[12px] font-semibold text-ink transition hover:bg-accent hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
         >
           {busy || active ? <Loader2 size={13} className="animate-spin" /> : <Film size={13} />}
           {active ? t("rendering") : t("generate")}
@@ -142,26 +139,31 @@ export function FinalRenderPanel({
       </div>
       {disabled ? <p className="mt-3 text-[10px] text-amber-300">{t("saveFirst")}</p> : null}
       {error ? <p className="mt-3 text-[10px] text-red-300">{t(error === "limit" ? "limit" : "failed")}</p> : null}
-      {renders.length > 0 ? (
-        <div className="mt-4 space-y-2 border-t border-paper/15 pt-4">
-          {renders.slice(0, 4).map((render) => (
+      {latestReady ? (
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-paper/15 pt-4">
+          <span className="mr-auto text-[11px] text-paper/65">{t("status.completed")}</span>
+          <a href={latestReady.videoUrl ?? undefined} download onClick={() => trackDownload(latestReady, "video")} className="inline-flex items-center gap-1.5 rounded-full bg-paper px-3 py-1.5 text-[10px] font-semibold text-ink"><Download size={12} />{t("video")}</a>
+          {latestReady.coverUrl ? (
+            <a href={latestReady.coverUrl} download onClick={() => trackDownload(latestReady, "cover")} className="inline-flex items-center gap-1.5 rounded-full border border-paper/25 px-3 py-1.5 text-[10px] font-semibold text-paper"><ImageIcon size={12} />{t("cover")}</a>
+          ) : null}
+        </div>
+      ) : null}
+      {candidateRenders.length > 0 ? (
+        <details className="group mt-4 border-t border-paper/15 pt-3">
+          <summary className="cursor-pointer text-[10px] font-medium text-paper/45 transition hover:text-paper/70">
+            {t("history")}
+          </summary>
+          <div className="mt-3 space-y-2">
+          {candidateRenders.slice(0, 4).map((render) => (
             <article key={render.id} className="rounded-lg bg-white/[0.06] px-3 py-2 text-[10px]">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-paper/45">v{render.version}</span>
                 <span className="capitalize text-paper/70">{t(`status.${render.status}`)}</span>
                 <span className="ml-auto font-mono text-paper/35">#{render.attempt}</span>
-                {render.status === "completed" && render.videoUrl && render.coverUrl ? (
+                {render.status === "completed" && render.videoUrl ? (
                   <>
                     <a href={render.videoUrl} download onClick={() => trackDownload(render, "video")} className="inline-flex items-center gap-1 rounded-full bg-paper px-2.5 py-1 font-semibold text-ink"><Download size={11} />{t("video")}</a>
-                    <a href={render.coverUrl} download onClick={() => trackDownload(render, "cover")} className="inline-flex items-center gap-1 rounded-full border border-paper/25 px-2.5 py-1 font-semibold text-paper"><ImageIcon size={11} />{t("cover")}</a>
-                    <button
-                      type="button"
-                      disabled={externalEditReports.has(render.id)}
-                      onClick={() => reportExternalEdit(render)}
-                      className="text-paper/45 underline decoration-paper/20 underline-offset-2 hover:text-paper disabled:no-underline"
-                    >
-                      {externalEditReports.has(render.id) ? t("externalEditRecorded") : t("externalEdit")}
-                    </button>
+                    {render.coverUrl ? <a href={render.coverUrl} download onClick={() => trackDownload(render, "cover")} className="inline-flex items-center gap-1 rounded-full border border-paper/25 px-2.5 py-1 font-semibold text-paper"><ImageIcon size={11} />{t("cover")}</a> : null}
                   </>
                 ) : null}
                 {ACTIVE.has(render.status) ? (
@@ -171,18 +173,10 @@ export function FinalRenderPanel({
                   <button type="button" disabled={busy} onClick={() => void mutate(render, "POST")} className="inline-flex items-center gap-1 text-paper/55 hover:text-paper"><RefreshCw size={11} />{t("retry")}</button>
                 ) : null}
               </div>
-              {render.status === "completed" && render.videoUrl ? (
-                <video
-                  controls
-                  playsInline
-                  preload="metadata"
-                  src={render.videoUrl}
-                  className="mx-auto mt-3 aspect-[9/16] max-h-[460px] w-auto rounded-lg bg-black"
-                />
-              ) : null}
             </article>
           ))}
-        </div>
+          </div>
+        </details>
       ) : null}
     </section>
   );

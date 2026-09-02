@@ -160,7 +160,7 @@ Cloud 从原始视频一次渲染最终 MP4
 - 示例：最终选择 `02:00–02:25`，proxy 可生成 `01:55–02:30`。
 - 用户在 handles 范围内调整时间点不需要重新生成 proxy；超出范围时异步扩展或重建该 segment proxy。
 - 不提前把 segments 合并成一个 MP4，避免用户调整顺序或删除片段时反复重渲染。
-- AI 完成后预生成排名前三的候选；其他候选在用户打开时懒生成。
+- AI 完成后把全部候选 preview 加入同一个队列；Queue 以单消费者顺序生成，避免多个候选同时争抢 Container 容量。
 - Proxy 只短期保存，并可安全重建。
 
 ### 6.3 Final Render
@@ -685,7 +685,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [ ] 构建并发布受控 FFmpeg container。
 - [x] 实现 preview job API、dispatcher、provider adapter、callback 和 reconciliation。
 - [x] 生成带 handles 的单 segment 720p proxies。
-- [x] 自动生成前三候选，其余懒生成。
+- [x] 最多五个候选全部排队，按顺序生成 preview；工作台一次只加载一个编辑器。
 - [x] 超出 handles 时支持单 segment 重建。
 - [x] 扩展 cleanup worker 清理到期 proxies。
 
@@ -706,7 +706,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [x] 实现多 segment 连续播放和下一段预加载。
 - [x] 实现调整起止时间、删除、排序和总时长提示。
 - [x] 实现 transcript/word boundary 对齐操作。
-- [x] 实现 project draft autosave 和 version snapshot。
+- [x] 实现每个候选独立的 draft autosave 和 candidate-scoped version snapshot。
 
 本地实现详见 `docs/video-workspace/m4-timeline-editor.md`。远程 migration 与 deployment
 在全部里程碑完成后统一执行。
@@ -715,7 +715,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 
 - 用户看到的是连续短视频时间线，不需要操作原始几小时时间线。
 - 在 proxy handles 内修改边界立即生效。
-- 刷新页面后编辑状态可恢复。
+- 切换候选或刷新页面后，各候选自己的编辑状态都可恢复。
 
 ### M5. 画面、字幕、品牌和音频 UI
 

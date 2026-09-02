@@ -19,6 +19,7 @@ type FinalProjectRow = {
   draft_edl_json: string | null;
   draft_render_spec_json: string | null;
   active_project_version_id: string | null;
+  active_candidate_id: string | null;
   active_edl_json: string | null;
   active_render_spec_json: string | null;
   source_status: string | null;
@@ -27,6 +28,7 @@ type FinalProjectRow = {
 
 export type FinalRenderSummary = {
   id: string;
+  candidateId: string | null;
   projectVersionId: string;
   version: number;
   status: string;
@@ -69,7 +71,7 @@ export async function createFinalRender(
   }
   const idempotent = await finalJobByIdempotency(db, userId, idempotencyKey);
   if (idempotent) {
-    if (idempotent.project_id !== projectId) {
+    if (idempotent.project_id !== projectId || idempotent.candidate_id !== candidateId) {
       return { ok: false, error: "idempotency_conflict" };
     }
     return { ok: true, render: await finalRenderSummary(db, userId, idempotent.id), existing: true };
@@ -109,6 +111,7 @@ export async function createFinalRender(
   let projectVersionId = project.active_project_version_id;
   if (
     !projectVersionId ||
+    project.active_candidate_id !== candidateId ||
     project.active_edl_json !== project.draft_edl_json ||
     project.active_render_spec_json !== project.draft_render_spec_json
   ) {
@@ -134,13 +137,14 @@ export async function createFinalRender(
       WHERE user_id = ?1
         AND project_id = ?2
         AND project_version_id = ?3
+        AND candidate_id = ?4
         AND kind = 'final'
-        AND preset_id = ?4
+        AND preset_id = ?5
         AND status NOT IN ('failed', 'canceled')
       ORDER BY created_at DESC
       LIMIT 1`
   )
-    .bind(userId, projectId, projectVersionId, FINAL_VIDEO_PRESET.id)
+    .bind(userId, projectId, projectVersionId, candidateId, FINAL_VIDEO_PRESET.id)
     .first<{ id: string }>();
   if (reusable) {
     return { ok: true, render: await finalRenderSummary(db, userId, reusable.id), existing: true };
@@ -173,16 +177,17 @@ export async function createFinalRender(
       ),
       db.prepare(
         `INSERT INTO render_jobs
-           (id, user_id, project_id, project_version_id, kind, preset_id,
+           (id, user_id, project_id, project_version_id, candidate_id, kind, preset_id,
             scope_key, status, idempotency_key, output_asset_id, cover_asset_id,
             queued_at)
-         VALUES (?1, ?2, ?3, ?4, 'final', ?5, 'default', 'queued', ?6, ?7, ?8,
+         VALUES (?1, ?2, ?3, ?4, ?5, 'final', ?6, 'default', 'queued', ?7, ?8, ?9,
                  CURRENT_TIMESTAMP)`
       ).bind(
         jobId,
         userId,
         projectId,
         projectVersionId,
+        candidateId,
         FINAL_VIDEO_PRESET.id,
         idempotencyKey,
         videoAssetId,
@@ -202,7 +207,9 @@ export async function createFinalRender(
       if (limit) return { ok: false, error: limit };
       throw error;
     }
-    if (raced.project_id !== projectId) return { ok: false, error: "idempotency_conflict" };
+    if (raced.project_id !== projectId || raced.candidate_id !== candidateId) {
+      return { ok: false, error: "idempotency_conflict" };
+    }
     return { ok: true, render: await finalRenderSummary(db, userId, raced.id), existing: true };
   }
   await recordServerRenderEvent(db, jobId, "render_requested").catch(() => undefined);
@@ -338,7 +345,7 @@ async function finalRenderSummary(
   jobId: string
 ): Promise<FinalRenderSummary> {
   const row = await db.prepare(
-    `SELECT j.id, j.project_version_id, v.version, j.status, j.attempt,
+    `SELECT j.id, j.candidate_id, j.project_version_id, v.version, j.status, j.attempt,
             j.error_code, j.created_at, j.completed_at,
             video.r2_key AS video_r2_key, video.status AS video_status,
             cover.r2_key AS cover_r2_key, cover.status AS cover_status
@@ -354,6 +361,7 @@ async function finalRenderSummary(
     .bind(jobId, userId)
     .first<{
       id: string;
+      candidate_id: string | null;
       project_version_id: string;
       version: number;
       status: string;
@@ -377,6 +385,7 @@ async function finalRenderSummary(
     : [null, null];
   return {
     id: row.id,
+    candidateId: row.candidate_id,
     projectVersionId: row.project_version_id,
     version: row.version,
     status: row.status,
@@ -394,7 +403,8 @@ function finalProject(db: D1Database, userId: string, projectId: string): Promis
   return db.prepare(
     `SELECT p.id, p.draft_candidate_id, p.draft_revision, p.draft_edl_json,
             p.draft_render_spec_json, p.active_project_version_id,
-            v.edl_json AS active_edl_json, v.render_spec_json AS active_render_spec_json,
+            v.candidate_id AS active_candidate_id, v.edl_json AS active_edl_json,
+            v.render_spec_json AS active_render_spec_json,
             source.status AS source_status, source.expires_at AS source_expires_at
        FROM video_projects p
        LEFT JOIN project_versions v
@@ -411,13 +421,13 @@ function finalJobByIdempotency(
   db: D1Database,
   userId: string,
   idempotencyKey: string
-): Promise<{ id: string; project_id: string } | null> {
+): Promise<{ id: string; project_id: string; candidate_id: string | null } | null> {
   return db.prepare(
-    `SELECT id, project_id FROM render_jobs
+    `SELECT id, project_id, candidate_id FROM render_jobs
       WHERE user_id = ?1 AND idempotency_key = ?2 AND kind = 'final'`
   )
     .bind(userId, idempotencyKey)
-    .first<{ id: string; project_id: string }>();
+    .first<{ id: string; project_id: string; candidate_id: string | null }>();
 }
 
 function ownedFinalJob(

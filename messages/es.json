@@ -804,6 +804,7 @@
       "manualEyebrow": "Fuente original",
       "manualTitle": "Edita tu propio corte",
       "manualBody": "Esta línea de tiempo parte del original subido. Ajusta las marcas de tiempo y mantén el vídeo corto final en 60 segundos o menos.",
+      "clipLabel": "Clip {number}",
       "score": "{score}% de ajuste",
       "accept": "Usar este clip",
       "accepted": "Seleccionado",
@@ -811,7 +812,7 @@
       "rejected": "Descartado",
       "requestFailed": "No se pudo completar la solicitud. La selección anterior no ha cambiado; inténtalo de nuevo.",
       "replaceConfirm": "¿Volver a generar y reemplazar la selección actual? Tus comentarios seguirán registrados.",
-      "previewPending": "Las tres primeras vistas previas se preparan automáticamente. Los demás candidatos solo generan los segmentos que abras.",
+      "previewPending": "Las vistas previas se preparan en orden para que varios clips no compitan por la capacidad de renderizado.",
       "previewNotReady": "Vista previa sin generar",
       "previewPrepare": "Preparar vista previa",
       "previewProcessing": "Preparando vista previa ligera…",
@@ -856,6 +857,7 @@
           "conflict": "Conflicto de borrador"
         },
         "style": {
+          "advanced": "Opciones avanzadas",
           "uploadFailed": "No se pudo subir el recurso. Usa un archivo compatible de menos de 5 MB.",
           "framing": { "title": "Encuadre", "cut": "Corte {number}", "automatic": "Seguimiento automático", "manual": "Recorte fijo", "automaticNote": "El render final sigue el rostro principal. Si el seguimiento no es fiable, conserva el encuadre completo sobre un fondo desenfocado.", "manualNote": "Estos controles usan un recorte fijo durante todo el clip.", "useAutomatic": "Usar encuadre automático", "horizontal": "Enfoque horizontal", "vertical": "Enfoque vertical", "zoom": "Zoom" },
           "captions": { "title": "Subtítulos", "enabled": "Mostrar subtítulos", "template": "Estilo de movimiento", "karaoke": "Impacto karaoke", "boxed": "Caja editorial", "minimal": "Minimalista", "font": "Tipografía", "defaultFont": "Predeterminada de Scribix", "customFont": "Fuente personalizada {number}", "textColor": "Texto", "highlightColor": "Resaltado", "position": "Posición vertical", "lineWidth": "Caracteres por línea", "lines": "Líneas máximas", "uploadFont": "Subir TTF u OTF", "correction": "Corregir texto de la transcripción", "cue": "Subtítulo {number}" },
@@ -864,6 +866,7 @@
           "cover": { "title": "Portada", "time": "Fotograma de la línea de tiempo", "note": "El renderizador final extrae la portada de este punto exacto de la línea de tiempo terminada." }
         },
         "finalRender": {
+          "history": "Historial de exportaciones",
           "eyebrow": "Exportación cloud", "title": "Renderizar el vídeo final", "description": "Crea una versión inmutable desde la fuente original, no desde las vistas previas.", "generate": "Generar vídeo", "rendering": "Renderizando…", "saveFirst": "Espera a que termine de guardarse la edición.", "failed": "No se pudo completar la solicitud de renderizado.", "limit": "Has alcanzado el límite de renderizado. Espera a que termine uno activo o inténtalo mañana.", "video": "Vídeo", "cover": "Portada", "cancel": "Cancelar", "retry": "Reintentar", "externalEdit": "Aún necesita edición externa", "externalEditRecorded": "Comentario registrado",
           "status": { "draft": "Borrador", "queued": "En cola", "preparing": "Preparando", "running": "Renderizando", "uploading": "Subiendo", "completed": "Listo", "failed": "Falló", "canceled": "Cancelado" }
         }

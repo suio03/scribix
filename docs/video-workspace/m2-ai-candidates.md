@@ -1,7 +1,7 @@
 # AI 短视频工作台 M2 候选生成
 
 > 状态：本地实现与验证完成
-> Migrations：`0026_clip_candidate_feedback.sql`、`0032_clip_candidate_origin.sql`
+> Migrations：`0026_clip_candidate_feedback.sql`、`0032_clip_candidate_origin.sql`、`0033_candidate_drafts.sql`
 
 ## 范围
 
@@ -94,4 +94,4 @@ hook、reason、得分、总时长和每段 source timestamp，支持重新生�
 - 合同测试覆盖真实 word-boundary 对齐、连续候选、越界过滤、高重复去重、完整性二审的接受/调整/拒绝，以及未知字段、缺失或重复 decision 拒绝。
 - Locale key/type/ICU 参数一致性必须通过。
 - 全量 TypeScript 检查与 production build 必须通过。
-- 全部 migrations 必须能从空 D1 数据库应用到 `0032`，且 foreign key check 为空。
+- 全部 migrations 必须能从空 D1 数据库应用到 `0033`，且 foreign key check 为空。

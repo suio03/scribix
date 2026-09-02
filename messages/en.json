@@ -875,8 +875,8 @@
       "workspaceLabel": "Short-video workspace",
       "workflow": { "label": "Video project stages", "transcript": "Transcript", "clips": "Clips", "editor": "Editor", "exports": "Exports" },
       "eyebrow": "AI clip finder",
-      "shortlistTitle": "Editorial shortlist",
-      "description": "Generate self-contained moments from the transcript. Every timestamp is checked against the original word boundaries before it appears here.",
+      "shortlistTitle": "Your clips",
+      "description": "Choose any clip to preview, make a few adjustments, and export it. Each clip keeps its own edits.",
       "generate": "Find clips",
       "regenerate": "Regenerate",
       "generating": "Finding moments…",
@@ -891,6 +891,7 @@
       "manualEyebrow": "Original source",
       "manualTitle": "Edit your own cut",
       "manualBody": "This timeline starts from the uploaded original. Adjust the source timestamps and keep the finished short at 60 seconds or less.",
+      "clipLabel": "Clip {number}",
       "score": "{score}% fit",
       "accept": "Use this clip",
       "accepted": "Selected",
@@ -898,7 +899,7 @@
       "rejected": "Dismissed",
       "requestFailed": "The request could not be completed. Your previous shortlist is unchanged; please try again.",
       "replaceConfirm": "Regenerate and replace the current shortlist? Your feedback will remain recorded.",
-      "previewPending": "The first three previews are prepared automatically. Open any other candidate to generate only the segments you need.",
+      "previewPending": "Previews are prepared in order so multiple clips do not compete for rendering capacity.",
       "previewNotReady": "Preview not generated",
       "previewPrepare": "Prepare preview",
       "previewProcessing": "Preparing lightweight preview…",
@@ -911,8 +912,8 @@
         "loadFailed": "The editor could not be loaded.",
         "reload": "Reload",
         "loading": "Restoring your edit…",
-        "eyebrow": "Continuous clip editor",
-        "title": "Shape the story",
+        "eyebrow": "Selected clip",
+        "title": "Edit clip",
         "clipTitle": "Clip name",
         "clipTitleSaveFailed": "The clip name could not be saved.",
         "saveVersion": "Save version",
@@ -920,7 +921,7 @@
         "play": "Play continuous preview",
         "pause": "Pause preview",
         "previewMissing": "Every remaining segment needs a ready preview before continuous playback is available.",
-        "continuousTimeline": "Virtual timeline",
+        "continuousTimeline": "Preview",
         "proxyRefreshing": "This cut moved beyond the current preview handles. A replacement segment is being prepared; the edit is already saved.",
         "segment": "Cut {number}",
         "sourceRange": "Source",
@@ -943,6 +944,7 @@
           "conflict": "Draft conflict"
         },
         "style": {
+          "advanced": "Advanced options",
           "uploadFailed": "The asset could not be uploaded. Use a supported file under 5 MB.",
           "framing": { "title": "Framing", "cut": "Cut {number}", "automatic": "Auto follow", "manual": "Fixed crop", "automaticNote": "The final render follows the prominent face. If tracking is unreliable, the full frame is preserved over a blurred background.", "manualNote": "These controls use one fixed crop for the whole clip.", "useAutomatic": "Use automatic framing", "horizontal": "Horizontal focus", "vertical": "Vertical focus", "zoom": "Zoom" },
           "captions": {
@@ -955,7 +957,7 @@
           "cover": { "title": "Cover", "time": "Timeline frame", "note": "The final renderer extracts the cover from this exact point in the finished timeline." }
         },
         "finalRender": {
-          "eyebrow": "Cloud export", "title": "Render the final video", "description": "Creates a new immutable version from the original source—not the preview proxies.", "generate": "Generate video", "rendering": "Rendering…", "saveFirst": "Wait for the current edit to finish saving.", "failed": "The render request could not be completed.", "limit": "Your render limit is currently reached. Wait for an active render to finish or try again tomorrow.", "video": "Video", "cover": "Cover", "cancel": "Cancel", "retry": "Retry", "externalEdit": "Still needs external editing", "externalEditRecorded": "Feedback recorded",
+          "eyebrow": "Ready when you are", "title": "Export this clip", "description": "Scribix renders this clip from the original source with your current crop, captions, and styling.", "generate": "Export video", "rendering": "Exporting…", "saveFirst": "Wait for the current edit to finish saving.", "failed": "The export request could not be completed.", "limit": "Your export limit is currently reached. Wait for an active export to finish or try again tomorrow.", "video": "Video", "cover": "Cover", "cancel": "Cancel", "retry": "Retry", "history": "Export history", "externalEdit": "Still needs external editing", "externalEditRecorded": "Feedback recorded",
           "status": { "draft": "Draft", "queued": "Queued", "preparing": "Preparing", "running": "Rendering", "uploading": "Uploading", "completed": "Ready", "failed": "Failed", "canceled": "Canceled" }
         }
       }

@@ -804,6 +804,7 @@
       "manualEyebrow": "元動画",
       "manualTitle": "自分でカットを編集",
       "manualBody": "このタイムラインはアップロードした元動画から始まります。元動画の時刻を調整し、完成するショート動画を60秒以内にしてください。",
+      "clipLabel": "クリップ {number}",
       "score": "適合度 {score}%",
       "accept": "このクリップを使う",
       "accepted": "選択済み",
@@ -811,7 +812,7 @@
       "rejected": "除外済み",
       "requestFailed": "リクエストを完了できませんでした。以前の候補は変更されていません。もう一度お試しください。",
       "replaceConfirm": "再生成して現在の候補を置き換えますか？フィードバックの記録は残ります。",
-      "previewPending": "上位3件のプレビューは自動で準備されます。それ以外は開いた候補のセグメントだけを生成します。",
+      "previewPending": "複数のクリップがレンダリング容量を奪い合わないよう、プレビューは順番に準備されます。",
       "previewNotReady": "プレビューは未生成です",
       "previewPrepare": "プレビューを準備",
       "previewProcessing": "軽量プレビューを準備中…",
@@ -856,6 +857,7 @@
           "conflict": "下書きの競合"
         },
         "style": {
+          "advanced": "詳細オプション",
           "uploadFailed": "アセットをアップロードできませんでした。5 MB 未満の対応ファイルを使用してください。",
           "framing": { "title": "フレーミング", "cut": "カット {number}", "automatic": "自動追従", "manual": "固定クロップ", "automaticNote": "最終レンダーでは主な顔を追従します。追跡が不安定な場合は、ぼかした背景の上に画面全体を残します。", "manualNote": "この設定はクリップ全体で固定のクロップを使います。", "useAutomatic": "自動フレーミングを使う", "horizontal": "水平方向", "vertical": "垂直方向", "zoom": "ズーム" },
           "captions": { "title": "字幕", "enabled": "字幕を表示", "template": "モーションスタイル", "karaoke": "カラオケ強調", "boxed": "エディトリアルボックス", "minimal": "静かなミニマル", "font": "書体", "defaultFont": "Scribix 標準", "customFont": "カスタムフォント {number}", "textColor": "文字", "highlightColor": "ハイライト", "position": "垂直位置", "lineWidth": "1 行の文字数", "lines": "最大行数", "uploadFont": "TTF または OTF をアップロード", "correction": "文字起こしを修正", "cue": "字幕 {number}" },
@@ -864,6 +866,7 @@
           "cover": { "title": "カバー", "time": "タイムラインのフレーム", "note": "完成タイムラインのこの時点から最終レンダラーがカバーを抽出します。" }
         },
         "finalRender": {
+          "history": "書き出し履歴",
           "eyebrow": "クラウド書き出し", "title": "最終動画をレンダー", "description": "プレビューではなく元動画から変更不能な新しいバージョンを作成します。", "generate": "動画を生成", "rendering": "レンダー中…", "saveFirst": "現在の編集内容が保存されるまでお待ちください。", "failed": "レンダー要求を完了できませんでした。", "limit": "レンダリング上限に達しました。実行中の処理完了を待つか、明日もう一度お試しください。", "video": "動画", "cover": "カバー", "cancel": "キャンセル", "retry": "再試行", "externalEdit": "外部編集がまだ必要", "externalEditRecorded": "フィードバックを記録しました",
           "status": { "draft": "下書き", "queued": "待機中", "preparing": "準備中", "running": "レンダー中", "uploading": "アップロード中", "completed": "準備完了", "failed": "失敗", "canceled": "キャンセル済み" }
         }

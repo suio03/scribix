@@ -7,7 +7,6 @@ import {
   Loader2,
   Pause,
   Play,
-  Save,
   Scissors,
   SkipBack,
   SkipForward,
@@ -50,23 +49,25 @@ import {
   type TranscriptWordBoundary,
 } from "@/lib/video-workspace/timeline";
 
-type SaveState = "saved" | "dirty" | "saving" | "error" | "conflict";
+export type VideoEditorSaveState = "saved" | "dirty" | "saving" | "error" | "conflict";
 
 export function VideoClipEditor({
   projectId,
   candidateId,
+  onSaveStateChange,
+  onTitleChange,
 }: {
   projectId: string;
   candidateId: string;
+  onSaveStateChange?: (state: VideoEditorSaveState) => void;
+  onTitleChange?: (title: string) => void;
 }) {
   const t = useTranslations("Dashboard.videoCandidates.editor");
   const [workspace, setWorkspace] = useState<EditorWorkspace | null>(null);
   const [edl, setEdl] = useState<Edl | null>(null);
   const [renderSpec, setRenderSpec] = useState<RenderSpec | null>(null);
   const [revision, setRevision] = useState(0);
-  const [saveState, setSaveState] = useState<SaveState>("saved");
-  const [snapshotVersion, setSnapshotVersion] = useState<number | null>(null);
-  const [snapshotBusy, setSnapshotBusy] = useState(false);
+  const [saveState, setSaveState] = useState<VideoEditorSaveState>("saved");
   const [loadError, setLoadError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [proxyRefreshIds, setProxyRefreshIds] = useState<string[]>([]);
@@ -76,6 +77,10 @@ export function VideoClipEditor({
   const proxyRequestRef = useRef(new Map<string, string>());
   const eventSessionRef = useRef<string | null>(null);
   const editorStartedAtRef = useRef(0);
+
+  useEffect(() => {
+    onSaveStateChange?.(saveState);
+  }, [onSaveStateChange, saveState]);
 
   useEffect(() => {
     const sessionId = crypto.randomUUID();
@@ -248,13 +253,11 @@ export function VideoClipEditor({
   const updateEdl = useCallback((updater: (current: Edl) => Edl) => {
     setEdl((current) => current ? updater(current) : current);
     setSaveState((current) => current === "conflict" ? current : "dirty");
-    setSnapshotVersion(null);
   }, []);
 
   const updateRenderSpec = useCallback((next: RenderSpec) => {
     setRenderSpec(next);
     setSaveState((current) => current === "conflict" ? current : "dirty");
-    setSnapshotVersion(null);
   }, []);
 
   useEffect(() => {
@@ -366,7 +369,6 @@ export function VideoClipEditor({
       coverTimelineMs: Math.min(renderSpec.coverTimelineMs, Math.max(0, durationMs - 1)),
     });
     setSaveState((current) => current === "conflict" ? current : "dirty");
-    setSnapshotVersion(null);
   }, [edl, renderSpec]);
 
   const moveSegment = useCallback((segmentId: string, direction: -1 | 1) => {
@@ -394,30 +396,6 @@ export function VideoClipEditor({
     if (next !== null) updateBoundary(segment.id, boundary, next);
   }, [updateBoundary, workspace]);
 
-  const createSnapshot = useCallback(async () => {
-    if (saveState !== "saved") return;
-    setSnapshotBusy(true);
-    try {
-      const response = await fetch(`/api/video-projects/${projectId}/editor`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ candidateId, expectedRevision: revision }),
-      });
-      const payload = await response.json() as { version?: number; error?: string };
-      if (response.status === 409) {
-        setSaveState("conflict");
-      } else if (response.ok && Number.isInteger(payload.version)) {
-        setSnapshotVersion(payload.version as number);
-      } else {
-        setSaveState("error");
-      }
-    } catch {
-      setSaveState("error");
-    } finally {
-      setSnapshotBusy(false);
-    }
-  }, [candidateId, projectId, revision, saveState]);
-
   const saveClipTitle = useCallback(async () => {
     const title = clipTitle.trim().replace(/\s+/g, " ").slice(0, 160);
     if (!workspace || !title || title === workspace.clipTitle || titleSaveState === "saving") {
@@ -438,10 +416,11 @@ export function VideoClipEditor({
       setClipTitle(title);
       setWorkspace((current) => current ? { ...current, clipTitle: title } : current);
       setTitleSaveState("idle");
+      onTitleChange?.(title);
     } catch {
       setTitleSaveState("error");
     }
-  }, [candidateId, clipTitle, projectId, titleSaveState, workspace]);
+  }, [candidateId, clipTitle, onTitleChange, projectId, titleSaveState, workspace]);
 
   if (loadError) {
     return (
@@ -469,15 +448,15 @@ export function VideoClipEditor({
   );
 
   return (
-    <section id="editor" className="scroll-mt-6 border-t border-line bg-[linear-gradient(135deg,rgba(14,13,11,0.025),transparent_55%)] px-5 py-6 sm:px-7">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <section id="editor" className="scroll-mt-6 bg-[linear-gradient(135deg,rgba(14,13,11,0.025),transparent_55%)] px-5 py-6 sm:px-7 sm:py-7">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-line pb-5">
         <div>
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
             <Scissors size={12} />
             {t("eyebrow")}
           </div>
           <h4 className="mt-1 font-display text-xl font-semibold text-ink">{t("title")}</h4>
-          <label className="mt-3 block max-w-md">
+          <label className="mt-3 block w-full max-w-lg">
             <span className="sr-only">{t("clipTitle")}</span>
             <input
               type="text"
@@ -491,29 +470,18 @@ export function VideoClipEditor({
               onKeyDown={(event) => {
                 if (event.key === "Enter") event.currentTarget.blur();
               }}
-              className="w-full border-b border-line bg-transparent py-1 text-[13px] font-medium text-ink outline-none transition placeholder:text-ink/35 focus:border-accent"
+              className="w-full border-b border-line bg-transparent py-1.5 font-display text-lg font-semibold text-ink outline-none transition placeholder:text-ink/35 focus:border-accent"
             />
             {titleSaveState === "error" ? (
               <span className="mt-1 block text-[10px] text-red-600">{t("clipTitleSaveFailed")}</span>
             ) : null}
           </label>
         </div>
-        <div className="flex items-center gap-2">
-          <SaveIndicator state={saveState} t={t} onReload={() => setReloadKey((value) => value + 1)} />
-          <button
-            type="button"
-            onClick={() => void createSnapshot()}
-            disabled={snapshotBusy || saveState !== "saved"}
-            className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[11px] font-semibold text-paper transition hover:bg-accent disabled:cursor-not-allowed disabled:opacity-35"
-          >
-            {snapshotBusy ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-            {snapshotVersion ? t("versionSaved", { version: snapshotVersion }) : t("saveVersion")}
-          </button>
-        </div>
+        <SaveIndicator state={saveState} t={t} onReload={() => setReloadKey((value) => value + 1)} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(270px,0.8fr)_minmax(0,1.2fr)]">
-        <div>
+      <div className="grid gap-7 lg:grid-cols-[minmax(280px,0.78fr)_minmax(0,1.22fr)]">
+        <div className="lg:sticky lg:top-6 lg:self-start">
           <ContinuousProxyPlayer
             timeline={timeline}
             renderSpec={renderSpec}
@@ -536,7 +504,7 @@ export function VideoClipEditor({
           ) : null}
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {[...edl.segments]
             .sort((left, right) => left.order - right.order)
             .map((segment, index) => (
@@ -657,9 +625,11 @@ function SegmentEditor({
           onNext={() => onStep(segment, "end", 1)}
         />
       </div>
-      <p className={`mt-3 text-[10px] font-medium ${insideHandles ? "text-emerald-700" : "text-amber-700"}`}>
-        {insideHandles ? labels.insideHandles : labels.outsideHandles}
-      </p>
+      {!insideHandles ? (
+        <p className="mt-3 text-[10px] font-medium text-amber-700">
+          {labels.outsideHandles}
+        </p>
+      ) : null}
     </article>
   );
 }
@@ -877,7 +847,7 @@ function ContinuousProxyPlayer({
         onTimeUpdate={() => onTimeUpdate(0)}
         onEnded={advance}
         style={mediaStyle(0)}
-        className={`absolute object-fill ${activeSlot === 0 ? "opacity-100" : "opacity-0"}`}
+        className={`absolute max-w-none object-fill ${activeSlot === 0 ? "opacity-100" : "opacity-0"}`}
       />
       <video
         ref={videos[1]}
@@ -888,7 +858,7 @@ function ContinuousProxyPlayer({
         onTimeUpdate={() => onTimeUpdate(1)}
         onEnded={advance}
         style={mediaStyle(1)}
-        className={`absolute object-fill ${activeSlot === 1 ? "opacity-100" : "opacity-0"}`}
+        className={`absolute max-w-none object-fill ${activeSlot === 1 ? "opacity-100" : "opacity-0"}`}
       />
       {activeSegment ? (
         <PreviewOverlays
@@ -1041,7 +1011,7 @@ function SaveIndicator({
   t,
   onReload,
 }: {
-  state: SaveState;
+  state: VideoEditorSaveState;
   t: ReturnType<typeof useTranslations>;
   onReload: () => void;
 }) {

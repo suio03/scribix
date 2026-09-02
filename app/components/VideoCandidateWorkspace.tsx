@@ -7,13 +7,16 @@ import {
   Clock3,
   Film,
   Loader2,
+  Play,
   RefreshCw,
   Scissors,
   Sparkles,
-  ThumbsDown,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { VideoClipEditor } from "@/app/components/VideoClipEditor";
+import {
+  VideoClipEditor,
+  type VideoEditorSaveState,
+} from "@/app/components/VideoClipEditor";
 import type { StoredClipCandidate } from "@/lib/video-workspace/candidates";
 import { VIDEO_WORKSPACE_LIMITS } from "@/lib/video-workspace/contracts";
 import type { CandidatePreview } from "@/lib/video-workspace/preview-jobs";
@@ -26,29 +29,39 @@ export function VideoCandidateWorkspace({
   sourceDurationMs,
   initialCandidates,
   initialPreviews,
+  initialSelectedCandidateId,
 }: {
   projectId: string;
   initialStatus: ProjectStatus;
   sourceDurationMs: number | null;
   initialCandidates: StoredClipCandidate[];
   initialPreviews: CandidatePreview[];
+  initialSelectedCandidateId: string | null;
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
   const [status, setStatus] = useState<ProjectStatus>(initialStatus);
   const [candidates, setCandidates] = useState(initialCandidates);
   const [previews, setPreviews] = useState(initialPreviews);
+  const [selectedCandidateId, setSelectedCandidateId] = useState(() => (
+    initialCandidates.some((candidate) => candidate.id === initialSelectedCandidateId)
+      ? initialSelectedCandidateId
+      : initialCandidates[0]?.id ?? null
+  ));
+  const [pendingCandidateId, setPendingCandidateId] = useState<string | null>(null);
+  const [editorSaveState, setEditorSaveState] = useState<VideoEditorSaveState>("saved");
   const [error, setError] = useState(false);
-  const [feedbackBusy, setFeedbackBusy] = useState<string | null>(null);
   const [previewBusy, setPreviewBusy] = useState<string | null>(null);
   const [manualBusy, setManualBusy] = useState(false);
   const autoStartedRef = useRef(false);
+  const editorRef = useRef<HTMLDivElement>(null);
   const generating = status === "analyzing";
   const shortSource = Boolean(
     sourceDurationMs &&
     sourceDurationMs <= VIDEO_WORKSPACE_LIMITS.directEditMaxSourceDurationMs
   );
-  const manualCandidate = candidates.find((candidate) => candidate.origin === "manual") ?? null;
-  const aiCandidates = candidates.filter((candidate) => candidate.origin === "ai");
+  const selectedCandidate = candidates.find((candidate) => (
+    candidate.id === selectedCandidateId
+  )) ?? null;
   const previewsActive = previews.some((preview) => (
     preview.status === "queued" || preview.status === "processing"
   ));
@@ -91,6 +104,35 @@ export function VideoCandidateWorkspace({
     return () => window.clearInterval(poll);
   }, [previewsActive, projectId]);
 
+  useEffect(() => {
+    if (candidates.length === 0) {
+      setSelectedCandidateId(null);
+      return;
+    }
+    if (!candidates.some((candidate) => candidate.id === selectedCandidateId)) {
+      setSelectedCandidateId(candidates[0].id);
+    }
+  }, [candidates, selectedCandidateId]);
+
+  useEffect(() => {
+    if (!pendingCandidateId || editorSaveState !== "saved") return;
+    setSelectedCandidateId(pendingCandidateId);
+    setPendingCandidateId(null);
+  }, [editorSaveState, pendingCandidateId]);
+
+  const replaceWorkspace = (
+    nextCandidates: StoredClipCandidate[],
+    nextPreviews: CandidatePreview[],
+    nextStatus: string
+  ) => {
+    setCandidates(nextCandidates);
+    setPreviews(nextPreviews);
+    setStatus(nextStatus);
+    setSelectedCandidateId(nextCandidates[0]?.id ?? null);
+    setPendingCandidateId(null);
+    setEditorSaveState("saved");
+  };
+
   const generate = async () => {
     if (generating) return;
     if (candidates.length > 0 && !window.confirm(t("replaceConfirm"))) return;
@@ -106,9 +148,11 @@ export function VideoCandidateWorkspace({
         previews?: CandidatePreview[];
       };
       if (!response.ok || !payload.candidates) throw new Error("candidate_generation_failed");
-      setCandidates(payload.candidates);
-      setPreviews(payload.previews ?? []);
-      setStatus(payload.status ?? "candidates_ready");
+      replaceWorkspace(
+        payload.candidates,
+        payload.previews ?? [],
+        payload.status ?? "candidates_ready"
+      );
     } catch {
       setStatus(candidates.length > 0 ? "candidates_ready" : "failed");
       setError(true);
@@ -136,9 +180,11 @@ export function VideoCandidateWorkspace({
       ))) {
         throw new Error("manual_editor_failed");
       }
-      setCandidates(payload.candidates);
-      setPreviews(payload.previews ?? []);
-      setStatus(payload.status ?? "editing");
+      replaceWorkspace(
+        payload.candidates,
+        payload.previews ?? [],
+        payload.status ?? "editing"
+      );
     } catch {
       setError(true);
     } finally {
@@ -168,35 +214,20 @@ export function VideoCandidateWorkspace({
     }
   };
 
-  const sendFeedback = async (
-    candidateId: string,
-    feedback: "accepted" | "rejected"
-  ) => {
-    if (feedbackBusy) return;
-    setFeedbackBusy(candidateId);
-    setError(false);
-    try {
-      const response = await fetch(
-        `/api/video-projects/${projectId}/candidates/${candidateId}/feedback`,
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ feedback }),
-        }
-      );
-      if (!response.ok) throw new Error("feedback_failed");
-      setCandidates((current) => current.map((candidate) => {
-        if (candidate.id === candidateId) return { ...candidate, status: feedback };
-        if (feedback === "accepted" && candidate.status === "accepted") {
-          return { ...candidate, status: "suggested" };
-        }
-        return candidate;
-      }));
-    } catch {
-      setError(true);
-    } finally {
-      setFeedbackBusy(null);
+  const selectCandidate = (candidateId: string) => {
+    if (candidateId === selectedCandidateId) {
+      editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
     }
+    if (editorSaveState === "dirty" || editorSaveState === "saving") {
+      setPendingCandidateId(candidateId);
+      return;
+    }
+    setSelectedCandidateId(candidateId);
+    setPendingCandidateId(null);
+    window.requestAnimationFrame(() => {
+      editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   useEffect(() => {
@@ -209,7 +240,7 @@ export function VideoCandidateWorkspace({
   }, [candidates.length, generating, manualBusy, shortSource, status]);
 
   return (
-    <section id="clips" className="mt-10 scroll-mt-6">
+    <section id="clips" className="mt-9 scroll-mt-6">
       <div className="flex flex-col justify-between gap-5 border-b border-line pb-6 sm:flex-row sm:items-end">
         <div className="max-w-2xl">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
@@ -222,33 +253,31 @@ export function VideoCandidateWorkspace({
             {t("description")}
           </p>
         </div>
-        {!manualCandidate || !shortSource ? (
-          <button
-            type="button"
-            onClick={() => void (shortSource ? startManualEdit() : generate())}
-            disabled={generating || manualBusy}
-            className="inline-flex w-fit items-center gap-2 rounded-full border border-ink bg-ink px-4 py-2 text-[13px] font-medium text-paper transition hover:bg-accent disabled:cursor-wait disabled:border-ink/30 disabled:bg-ink/30"
-          >
-            {generating || manualBusy ? (
-              <Loader2 size={15} className="animate-spin" />
-            ) : candidates.length > 0 ? (
-              <RefreshCw size={15} />
-            ) : shortSource ? (
-              <Scissors size={15} />
-            ) : (
-              <Sparkles size={15} />
-            )}
-            {generating
-              ? t("generating")
-              : manualBusy
-                ? t("directEditing")
+        <button
+          type="button"
+          onClick={() => void (shortSource ? startManualEdit() : generate())}
+          disabled={generating || manualBusy}
+          className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-[12px] font-medium text-ink transition hover:border-ink/35 hover:bg-ink hover:text-paper disabled:cursor-wait disabled:opacity-40"
+        >
+          {generating || manualBusy ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : candidates.length > 0 ? (
+            <RefreshCw size={14} />
+          ) : shortSource ? (
+            <Scissors size={14} />
+          ) : (
+            <Sparkles size={14} />
+          )}
+          {generating
+            ? t("generating")
+            : manualBusy
+              ? t("directEditing")
+              : candidates.length > 0
+                ? t("regenerate")
                 : shortSource
                   ? t("directEdit")
-                  : candidates.length > 0
-                    ? t("regenerate")
-                    : t("generate")}
-          </button>
-        ) : null}
+                  : t("generate")}
+        </button>
       </div>
 
       {error ? (
@@ -259,7 +288,7 @@ export function VideoCandidateWorkspace({
 
       {generating ? <CandidateSkeleton label={t("analyzingBody")} /> : null}
 
-      {!generating && !manualCandidate && aiCandidates.length === 0 ? (
+      {!generating && candidates.length === 0 ? (
         <div className="mt-8 grid min-h-64 place-items-center rounded-2xl border border-dashed border-line bg-card/35 px-6 text-center">
           <div className="max-w-md py-12">
             <span className="mx-auto inline-grid size-11 place-items-center rounded-full border border-line bg-paper text-accent">
@@ -290,60 +319,73 @@ export function VideoCandidateWorkspace({
         </div>
       ) : null}
 
-      {!generating && manualCandidate ? (
-        <div className="mt-8 overflow-hidden rounded-2xl border border-line bg-card">
-          <div className="px-5 py-5 sm:px-7">
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
-              {t("manualEyebrow")}
-            </p>
-            <h3 className="mt-2 font-display text-xl font-semibold">{t("manualTitle")}</h3>
-            <p className="mt-2 text-[13px] leading-6 text-ink/55">{t("manualBody")}</p>
+      {!generating && candidates.length > 0 ? (
+        <>
+          <div
+            role="listbox"
+            aria-label={t("shortlistTitle")}
+            className="mt-7 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5"
+          >
+            {candidates.map((candidate, index) => {
+              const preview = previews.find((item) => item.candidateId === candidate.id) ?? null;
+              return (
+                <CandidateTile
+                  key={candidate.id}
+                  projectId={projectId}
+                  candidate={candidate}
+                  number={index + 1}
+                  selected={candidate.id === selectedCandidateId}
+                  pending={candidate.id === pendingCandidateId}
+                  preview={preview}
+                  previewBusy={candidate.id === previewBusy}
+                  onSelect={selectCandidate}
+                  onRequestPreview={requestPreview}
+                />
+              );
+            })}
           </div>
-          <VideoClipEditor projectId={projectId} candidateId={manualCandidate.id} />
-        </div>
-      ) : null}
-
-      {!generating && aiCandidates.length > 0 ? (
-        <div className="mt-8 space-y-4">
-          {aiCandidates.map((candidate, index) => (
-            <CandidateCard
-              key={candidate.id}
-              projectId={projectId}
-              candidate={candidate}
-              displayRank={index + 1}
-              busy={feedbackBusy === candidate.id}
-              previewBusy={previewBusy === candidate.id}
-              preview={previews.find((preview) => preview.candidateId === candidate.id) ?? null}
-              onFeedback={sendFeedback}
-              onRequestPreview={requestPreview}
-            />
-          ))}
-          <p className="px-1 pt-2 text-[12px] leading-5 text-ink/45">
+          <p className="mt-3 text-[11px] leading-5 text-ink/45">
             {t("previewPending")}
           </p>
+        </>
+      ) : null}
+
+      {selectedCandidate ? (
+        <div ref={editorRef} className="mt-8 scroll-mt-6 overflow-hidden rounded-2xl border border-line bg-card shadow-[0_28px_80px_-56px_rgba(14,13,11,0.7)]">
+          <VideoClipEditor
+            key={selectedCandidate.id}
+            projectId={projectId}
+            candidateId={selectedCandidate.id}
+            onSaveStateChange={setEditorSaveState}
+            onTitleChange={(title) => setCandidates((current) => current.map((candidate) => (
+              candidate.id === selectedCandidate.id ? { ...candidate, theme: title } : candidate
+            )))}
+          />
         </div>
       ) : null}
     </section>
   );
 }
 
-function CandidateCard({
+function CandidateTile({
   projectId,
   candidate,
-  displayRank,
-  busy,
-  previewBusy,
+  number,
+  selected,
+  pending,
   preview,
-  onFeedback,
+  previewBusy,
+  onSelect,
   onRequestPreview,
 }: {
   projectId: string;
   candidate: StoredClipCandidate;
-  displayRank: number;
-  busy: boolean;
-  previewBusy: boolean;
+  number: number;
+  selected: boolean;
+  pending: boolean;
   preview: CandidatePreview | null;
-  onFeedback: (candidateId: string, feedback: "accepted" | "rejected") => Promise<void>;
+  previewBusy: boolean;
+  onSelect: (candidateId: string) => void;
   onRequestPreview: (candidateId: string) => Promise<void>;
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
@@ -351,131 +393,73 @@ function CandidateCard({
     (total, segment) => total + segment.endMs - segment.startMs,
     0
   );
-  const accepted = candidate.status === "accepted";
-  const rejected = candidate.status === "rejected";
-
-  return (
-    <article className="group relative overflow-hidden rounded-2xl border border-line bg-card transition hover:border-ink/25 hover:shadow-[0_18px_60px_-42px_rgba(14,13,11,0.65)]">
-      <div className="grid md:grid-cols-[104px_minmax(0,1fr)_190px]">
-        <div className="flex items-center justify-between border-b border-line bg-ink/[0.025] px-5 py-4 md:block md:border-b-0 md:border-r md:px-6 md:py-6">
-          <span className="font-display text-4xl font-semibold tabular-nums text-ink/15 transition group-hover:text-accent/40">
-            {String(displayRank).padStart(2, "0")}
-          </span>
-          <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink/45 md:mt-8">
-            <Clock3 size={12} />
-            {formatDuration(durationMs)}
-          </div>
-        </div>
-
-        <div className="min-w-0 px-5 py-5 sm:px-7 sm:py-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-display text-xl font-semibold tracking-tight text-ink">
-              {candidate.theme}
-            </h3>
-            <span className="rounded-full border border-line px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.1em] text-ink/45">
-              {t("score", { score: Math.round(candidate.score * 100) })}
-            </span>
-          </div>
-          <p className="mt-3 border-l-2 border-accent/45 pl-3 text-[14px] font-medium leading-6 text-ink/80">
-            “{candidate.hook}”
-          </p>
-          <p className="mt-4 text-[13px] leading-6 text-ink/55">{candidate.reason}</p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {candidate.segments.map((segment, index) => (
-              <span
-                key={`${segment.startMs}-${segment.endMs}-${index}`}
-                className="rounded-md bg-ink/[0.045] px-2 py-1 font-mono text-[10px] tabular-nums text-ink/55"
-              >
-                {formatTimestamp(segment.startMs)}–{formatTimestamp(segment.endMs)}
-              </span>
-            ))}
-          </div>
-          <PreviewPanel
-            projectId={projectId}
-            candidateId={candidate.id}
-            preview={preview}
-            busy={previewBusy}
-            onRequest={onRequestPreview}
-          />
-        </div>
-
-        <div className="flex items-center gap-2 border-t border-line px-5 py-4 md:flex-col md:items-stretch md:justify-center md:border-l md:border-t-0 md:px-5">
-          <button
-            type="button"
-            onClick={() => void onFeedback(candidate.id, "accepted")}
-            disabled={busy}
-            aria-pressed={accepted}
-            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-[12px] font-medium transition disabled:opacity-50 ${
-              accepted
-                ? "bg-emerald-700 text-white"
-                : "bg-ink text-paper hover:bg-accent"
-            }`}
-          >
-            {busy ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
-            {accepted ? t("accepted") : t("accept")}
-          </button>
-          <button
-            type="button"
-            onClick={() => void onFeedback(candidate.id, "rejected")}
-            disabled={busy}
-            aria-pressed={rejected}
-            className={`inline-flex flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-[12px] font-medium transition disabled:opacity-50 ${
-              rejected
-                ? "border-red-200 bg-red-50 text-red-700"
-                : "border-line text-ink/55 hover:border-red-200 hover:bg-red-50 hover:text-red-700"
-            }`}
-          >
-            <ThumbsDown size={13} />
-            {rejected ? t("rejected") : t("reject")}
-          </button>
-        </div>
-      </div>
-      {accepted ? (
-        <VideoClipEditor projectId={projectId} candidateId={candidate.id} />
-      ) : null}
-    </article>
-  );
-}
-
-function PreviewPanel({
-  projectId,
-  candidateId,
-  preview,
-  busy,
-  onRequest,
-}: {
-  projectId: string;
-  candidateId: string;
-  preview: CandidatePreview | null;
-  busy: boolean;
-  onRequest: (candidateId: string) => Promise<void>;
-}) {
-  const t = useTranslations("Dashboard.videoCandidates");
-  if (preview?.status === "ready") {
-    return <ReadyPreview projectId={projectId} candidateId={candidateId} />;
-  }
   const processing = preview?.status === "queued" || preview?.status === "processing";
   const failed = preview?.status === "failed";
+
   return (
-    <div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-line bg-paper/70 px-4 py-3">
-      <div className="flex min-w-0 items-center gap-2.5 text-[12px] text-ink/55">
-        {processing ? (
-          <Loader2 size={14} className="shrink-0 animate-spin text-accent" />
-        ) : failed ? (
-          <AlertCircle size={14} className="shrink-0 text-red-600" />
-        ) : (
-          <Film size={14} className="shrink-0 text-accent" />
-        )}
-        <span>{processing ? t("previewProcessing") : failed ? t("previewFailed") : t("previewNotReady")}</span>
-      </div>
-      {!processing ? (
+    <div className="group relative min-w-0">
+      <button
+        type="button"
+        role="option"
+        aria-selected={selected}
+        onClick={() => onSelect(candidate.id)}
+        className={`w-full overflow-hidden rounded-xl border bg-card text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
+          selected
+            ? "border-accent shadow-[0_12px_36px_-24px_rgba(189,87,56,0.9)]"
+            : "border-line hover:-translate-y-0.5 hover:border-ink/30"
+        }`}
+      >
+        <div className="relative aspect-video overflow-hidden bg-ink">
+          {preview?.status === "ready" ? (
+            <CandidatePreviewFrame projectId={projectId} candidateId={candidate.id} />
+          ) : (
+            <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_35%,rgba(189,87,56,0.3),transparent_38%),linear-gradient(145deg,#28231f,#0e0d0b)] text-paper/45">
+              {processing || previewBusy ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : failed ? (
+                <AlertCircle size={20} />
+              ) : (
+                <Film size={20} />
+              )}
+            </div>
+          )}
+          <span className="absolute left-2 top-2 rounded-full bg-black/65 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.08em] text-white/80 backdrop-blur">
+            {candidate.origin === "manual" ? t("manualEyebrow") : t("clipLabel", { number })}
+          </span>
+          {selected ? (
+            <span className="absolute right-2 top-2 inline-flex size-6 items-center justify-center rounded-full bg-accent text-white shadow">
+              <Check size={13} strokeWidth={2.5} />
+            </span>
+          ) : (
+            <span className="absolute inset-0 m-auto grid size-9 place-items-center rounded-full border border-white/25 bg-black/45 text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
+              <Play size={14} fill="currentColor" className="translate-x-px" />
+            </span>
+          )}
+        </div>
+        <div className="min-w-0 p-3">
+          <p className="line-clamp-2 min-h-10 text-[12px] font-semibold leading-5 text-ink">
+            {candidate.origin === "manual" ? t("manualTitle") : candidate.theme}
+          </p>
+          <span className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-ink/45">
+            {pending ? (
+              <><Loader2 size={10} className="animate-spin" />{t("editor.saveState.saving")}</>
+            ) : processing || previewBusy ? (
+              <><Loader2 size={10} className="animate-spin" />{t("previewProcessing")}</>
+            ) : failed ? (
+              <><AlertCircle size={10} />{t("previewFailed")}</>
+            ) : (
+              <><Clock3 size={10} />{formatDuration(durationMs)}</>
+            )}
+          </span>
+        </div>
+      </button>
+      {(failed || !preview) && !processing ? (
         <button
           type="button"
-          disabled={busy}
-          onClick={() => void onRequest(candidateId)}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-ink/15 bg-card px-3 py-1.5 text-[11px] font-medium text-ink transition hover:border-ink/35 disabled:opacity-50"
+          disabled={previewBusy}
+          onClick={() => void onRequestPreview(candidate.id)}
+          className="absolute bottom-2 right-2 rounded-full border border-line bg-paper px-2 py-1 text-[9px] font-semibold text-ink shadow-sm transition hover:border-ink/30 disabled:opacity-50"
         >
-          {busy ? <Loader2 size={12} className="animate-spin" /> : <Film size={12} />}
           {failed ? t("previewRetry") : t("previewPrepare")}
         </button>
       ) : null}
@@ -483,26 +467,21 @@ function PreviewPanel({
   );
 }
 
-function ReadyPreview({
+function CandidatePreviewFrame({
   projectId,
   candidateId,
 }: {
   projectId: string;
   candidateId: string;
 }) {
-  const t = useTranslations("Dashboard.videoCandidates");
-  const [segments, setSegments] = useState<Array<{
-    segmentIndex: number;
-    url: string | null;
-  }> | null>(null);
+  const [url, setUrl] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
-  const [reload, setReload] = useState(0);
 
   useEffect(() => {
     let active = true;
     fetchCandidatePreview(projectId, candidateId)
-      .then((next) => {
-        if (active) setSegments(next);
+      .then((nextUrl) => {
+        if (active) setUrl(nextUrl);
       })
       .catch(() => {
         if (active) setFailed(true);
@@ -510,58 +489,30 @@ function ReadyPreview({
     return () => {
       active = false;
     };
-  }, [candidateId, projectId, reload]);
+  }, [candidateId, projectId]);
 
-  if (failed) {
+  if (!url || failed) {
     return (
-      <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[12px] text-red-700">
-        <span>{t("previewUnavailable")}</span>
-        <button
-          type="button"
-          onClick={() => {
-            setFailed(false);
-            setSegments(null);
-            setReload((value) => value + 1);
-          }}
-          className="shrink-0 font-medium underline decoration-red-300 underline-offset-4"
-        >
-          {t("previewRetry")}
-        </button>
-      </div>
-    );
-  }
-  if (!segments) {
-    return (
-      <div className="mt-5 flex items-center gap-2 text-[12px] text-ink/45">
-        <Loader2 size={13} className="animate-spin" />
-        {t("previewLoading")}
+      <div className="absolute inset-0 grid place-items-center bg-[linear-gradient(145deg,#28231f,#0e0d0b)] text-paper/45">
+        {failed ? <AlertCircle size={18} /> : <Loader2 size={18} className="animate-spin" />}
       </div>
     );
   }
   return (
-    <div className="mt-5 grid gap-3 sm:grid-cols-2">
-      {segments.map((segment) => segment.url ? (
-        <figure key={segment.segmentIndex} className="overflow-hidden rounded-xl border border-line bg-ink">
-          <video
-            controls
-            preload="metadata"
-            playsInline
-            src={segment.url}
-            className="aspect-video w-full bg-black object-contain"
-          />
-          <figcaption className="bg-ink px-3 py-2 font-mono text-[9px] uppercase tracking-[0.12em] text-paper/55">
-            {t("previewSegment", { number: segment.segmentIndex + 1 })}
-          </figcaption>
-        </figure>
-      ) : null)}
-    </div>
+    <video
+      muted
+      playsInline
+      preload="metadata"
+      src={url}
+      onLoadedMetadata={(event) => {
+        event.currentTarget.currentTime = Math.min(0.1, event.currentTarget.duration || 0);
+      }}
+      className="absolute inset-0 size-full object-cover opacity-80 transition duration-300 group-hover:scale-[1.02] group-hover:opacity-100"
+    />
   );
 }
 
-async function fetchCandidatePreview(projectId: string, candidateId: string): Promise<Array<{
-  segmentIndex: number;
-  url: string | null;
-}>> {
+async function fetchCandidatePreview(projectId: string, candidateId: string): Promise<string> {
   const response = await fetch(
     `/api/video-projects/${projectId}/candidates/${candidateId}/previews`
   );
@@ -569,11 +520,9 @@ async function fetchCandidatePreview(projectId: string, candidateId: string): Pr
   const payload = await response.json() as {
     segments?: Array<{ segmentIndex: number; url: string | null }>;
   };
-  const segments = payload.segments ?? [];
-  if (segments.length === 0 || segments.some((segment) => !segment.url)) {
-    throw new Error("preview_url_missing");
-  }
-  return segments;
+  const url = payload.segments?.find((segment) => segment.url)?.url;
+  if (!url) throw new Error("preview_url_missing");
+  return url;
 }
 
 function CandidateSkeleton({ label }: { label: string }) {
@@ -590,15 +539,7 @@ function CandidateSkeleton({ label }: { label: string }) {
 }
 
 function formatDuration(durationMs: number): string {
-  return `${Math.round(durationMs / 1000)}s`;
-}
-
-function formatTimestamp(valueMs: number): string {
-  const seconds = Math.floor(valueMs / 1000);
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainder = seconds % 60;
-  return hours > 0
-    ? `${hours}:${minutes.toString().padStart(2, "0")}:${remainder.toString().padStart(2, "0")}`
-    : `${minutes}:${remainder.toString().padStart(2, "0")}`;
+  if (durationMs < 60_000) return `${Math.round(durationMs / 1000)}s`;
+  const seconds = Math.round(durationMs / 1000);
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }

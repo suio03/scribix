@@ -804,6 +804,7 @@
       "manualEyebrow": "Originalquelle",
       "manualTitle": "Eigenen Schnitt bearbeiten",
       "manualBody": "Diese Timeline beginnt mit dem hochgeladenen Original. Passen Sie die Quellzeitstempel an und halten Sie das fertige Kurzvideo bei höchstens 60 Sekunden.",
+      "clipLabel": "Clip {number}",
       "score": "{score}% passend",
       "accept": "Diesen Clip verwenden",
       "accepted": "Ausgewählt",
@@ -811,7 +812,7 @@
       "rejected": "Verworfen",
       "requestFailed": "Die Anfrage konnte nicht abgeschlossen werden. Die bisherige Auswahl bleibt unverändert; versuchen Sie es erneut.",
       "replaceConfirm": "Neu generieren und die aktuelle Auswahl ersetzen? Ihr Feedback bleibt gespeichert.",
-      "previewPending": "Die ersten drei Vorschauen werden automatisch erstellt. Weitere Kandidaten erzeugen nur bei Bedarf ihre Segmente.",
+      "previewPending": "Die Vorschauen werden nacheinander erstellt, damit mehrere Clips nicht um Render-Kapazität konkurrieren.",
       "previewNotReady": "Vorschau noch nicht erstellt",
       "previewPrepare": "Vorschau erstellen",
       "previewProcessing": "Leichte Vorschau wird erstellt…",
@@ -856,6 +857,7 @@
           "conflict": "Entwurfskonflikt"
         },
         "style": {
+          "advanced": "Erweiterte Optionen",
           "uploadFailed": "Die Datei konnte nicht hochgeladen werden. Verwende eine unterstützte Datei unter 5 MB.",
           "framing": { "title": "Bildausschnitt", "cut": "Schnitt {number}", "automatic": "Automatisch", "manual": "Fester Ausschnitt", "automaticNote": "Das finale Rendering folgt dem wichtigsten Gesicht. Bei unsicherem Tracking bleibt das ganze Bild vor einem unscharfen Hintergrund sichtbar.", "manualNote": "Diese Regler verwenden einen festen Ausschnitt für den gesamten Clip.", "useAutomatic": "Automatischen Ausschnitt verwenden", "horizontal": "Horizontaler Fokus", "vertical": "Vertikaler Fokus", "zoom": "Zoom" },
           "captions": { "title": "Untertitel", "enabled": "Untertitel anzeigen", "template": "Bewegungsstil", "karaoke": "Karaoke-Impuls", "boxed": "Redaktionelle Box", "minimal": "Ruhig und minimal", "font": "Schrift", "defaultFont": "Scribix-Standard", "customFont": "Eigene Schrift {number}", "textColor": "Text", "highlightColor": "Hervorhebung", "position": "Vertikale Position", "lineWidth": "Zeichen pro Zeile", "lines": "Maximale Zeilen", "uploadFont": "TTF oder OTF hochladen", "correction": "Transkripttext korrigieren", "cue": "Untertitel {number}" },
@@ -864,6 +866,7 @@
           "cover": { "title": "Cover", "time": "Timeline-Bild", "note": "Der finale Renderer erzeugt das Cover genau an diesem Punkt der fertigen Timeline." }
         },
         "finalRender": {
+          "history": "Exportverlauf",
           "eyebrow": "Cloud-Export", "title": "Finales Video rendern", "description": "Erstellt eine unveränderliche Version aus der Originalquelle – nicht aus den Vorschau-Proxys.", "generate": "Video erzeugen", "rendering": "Wird gerendert…", "saveFirst": "Warte, bis die aktuelle Bearbeitung gespeichert ist.", "failed": "Der Render-Auftrag konnte nicht abgeschlossen werden.", "limit": "Dein Render-Limit ist erreicht. Warte auf einen aktiven Render oder versuche es morgen erneut.", "video": "Video", "cover": "Cover", "cancel": "Abbrechen", "retry": "Erneut versuchen", "externalEdit": "Benötigt noch externe Bearbeitung", "externalEditRecorded": "Feedback gespeichert",
           "status": { "draft": "Entwurf", "queued": "In Warteschlange", "preparing": "Vorbereitung", "running": "Rendering", "uploading": "Upload", "completed": "Bereit", "failed": "Fehlgeschlagen", "canceled": "Abgebrochen" }
         }

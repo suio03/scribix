@@ -1,6 +1,6 @@
 # M6 Final Cloud Renderer
 
-M6 将已保存的 project version 变成不可变 final render job。浏览器只提交项目 revision；服务端复用内容一致的 snapshot，或先创建新 snapshot，再为同一 version 幂等地创建最终视频与封面资产。
+M6 将当前候选已保存的 project version 变成不可变 final render job。浏览器提交 candidate ID 与该候选的 revision；服务端只复用属于同一候选且内容一致的 snapshot，或先创建新 snapshot，再为同一 version 幂等地创建最终视频与封面资产。
 
 ## 产品 API
 
@@ -9,7 +9,7 @@ M6 将已保存的 project version 变成不可变 final render job。浏览器�
 - `DELETE /api/video-projects/:id/renders/:jobId`：取消排队中或执行中的任务。
 - `POST /api/video-projects/:id/renders/:jobId`：重试可重试失败或已取消的任务。
 
-创建接口接受 `revision` 与 `idempotencyKey`。revision 负责阻止用过期草稿发起渲染；idempotency key 和 version 唯一性共同避免重复输出。最终视频和封面的下载 URL 只有 15 分钟有效。
+创建接口接受 `candidateId`、`expectedRevision` 与 `idempotencyKey`。revision 负责阻止用过期草稿发起渲染；candidate ownership、idempotency key 和 version 唯一性共同避免不同候选串用草稿或重复输出。最终视频和封面的下载 URL 有效期为 60 分钟。
 
 ## 执行协议
 
