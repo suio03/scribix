@@ -1,6 +1,3 @@
-import { AwsClient } from "aws4fetch";
-import { RENDER_COMPUTE_PROFILES } from "../lib/video-workspace/operations";
-
 export type PreviewProviderJob = {
   jobId: string;
   jobToken: string;
@@ -20,102 +17,68 @@ export interface VideoRenderProvider {
   cancel(providerJobId: string): Promise<void>;
 }
 
-type AwsBatchConfig = {
-  accessKeyId: string;
-  secretAccessKey: string;
-  sessionToken?: string;
-  region: string;
-  jobQueue: string;
-  jobDefinition: string;
+type RenderContainer = {
+  start(options: {
+    envVars: Record<string, string>;
+    enableInternet: boolean;
+    labels: Record<string, string>;
+  }): Promise<void>;
+  destroy(): Promise<void>;
+  getState(): Promise<{
+    status: "running" | "stopping" | "stopped" | "healthy" | "stopped_with_code";
+    exitCode?: number;
+  }>;
 };
 
-export class AwsBatchRenderProvider implements VideoRenderProvider {
-  private readonly client: AwsClient;
+type RenderContainerNamespace = {
+  getByName(name: string): RenderContainer;
+};
 
-  constructor(private readonly config: AwsBatchConfig) {
-    this.client = new AwsClient({
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
-      sessionToken: config.sessionToken,
-      service: "batch",
-      region: config.region,
-    });
-  }
+export class CloudflareContainerRenderProvider implements VideoRenderProvider {
+  constructor(private readonly containers: RenderContainerNamespace) {}
 
   async submit(job: PreviewProviderJob, kind: "preview" | "final"): Promise<string> {
-    const profile = RENDER_COMPUTE_PROFILES[kind];
-    const response = await this.client.fetch(this.request("/v1/submitjob", {
-      jobDefinition: this.config.jobDefinition,
-      jobName: `scribix-${kind}-${safeJobName(job.jobId)}`,
-      jobQueue: this.config.jobQueue,
-      containerOverrides: {
-        resourceRequirements: [
-          { type: "VCPU", value: String(profile.vCpu) },
-          { type: "MEMORY", value: String(profile.memoryGb * 1024) },
-        ],
-        environment: [
-          { name: "SCRIBIX_JOB_ID", value: job.jobId },
-          { name: "SCRIBIX_JOB_TOKEN", value: job.jobToken },
-          { name: "SCRIBIX_INTERNAL_URL", value: job.internalBaseUrl },
-        ],
+    const providerJobId = job.jobId;
+    await this.containers.getByName(providerJobId).start({
+      envVars: {
+        SCRIBIX_JOB_ID: job.jobId,
+        SCRIBIX_JOB_TOKEN: job.jobToken,
+        SCRIBIX_INTERNAL_URL: job.internalBaseUrl,
       },
-      propagateTags: true,
-      retryStrategy: { attempts: 1 },
-      tags: { workload: `video-${kind}`, application: "scribix" },
-      timeout: { attemptDurationSeconds: kind === "final" ? 60 * 60 : 30 * 60 },
-    }));
-    const body = await response.json() as { jobId?: string };
-    if (!response.ok || !body.jobId) {
-      throw new Error(`aws_batch_submit_${response.status}`);
-    }
-    return body.jobId;
+      enableInternet: true,
+      labels: {
+        application: "scribix",
+        workload: `video-${kind}`,
+        job: safeLabel(job.jobId),
+      },
+    });
+    return providerJobId;
   }
 
   async cancel(providerJobId: string): Promise<void> {
-    const response = await this.client.fetch(this.request("/v1/terminatejob", {
-      jobId: providerJobId,
-      reason: "Canceled by Scribix user",
-    }));
-    if (!response.ok && response.status !== 404) {
-      throw new Error(`aws_batch_cancel_${response.status}`);
-    }
+    await this.containers.getByName(providerJobId).destroy();
   }
 
   async describe(providerJobIds: string[]): Promise<Map<string, ProviderJobState>> {
     if (providerJobIds.length === 0) return new Map();
-    const response = await this.client.fetch(this.request("/v1/describejobs", {
-      jobs: providerJobIds.slice(0, 100),
+    const states = await Promise.all(providerJobIds.slice(0, 100).map(async (jobId) => {
+      const state = await this.containers.getByName(jobId).getState();
+      return [jobId, containerState(state)] as const;
     }));
-    const body = await response.json() as {
-      jobs?: Array<{ jobId?: string; status?: string }>;
-    };
-    if (!response.ok) throw new Error(`aws_batch_describe_${response.status}`);
-    return new Map((body.jobs ?? []).flatMap((job) => {
-      if (!job.jobId || !job.status) return [];
-      return [[job.jobId, awsState(job.status)] as const];
-    }));
-  }
-
-  private request(path: string, body: object): Request {
-    return new Request(
-      `https://batch.${this.config.region}.amazonaws.com${path}`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
-      }
-    );
+    return new Map(states);
   }
 }
 
-function awsState(status: string): ProviderJobState {
-  if (status === "RUNNING") return "running";
-  if (status === "SUCCEEDED") return "succeeded";
-  if (status === "FAILED") return "failed";
-  if (status === "STARTING") return "preparing";
+function containerState(state: Awaited<ReturnType<RenderContainer["getState"]>>): ProviderJobState {
+  if (state.status === "healthy") return "running";
+  if (state.status === "running") return "preparing";
+  if (state.status === "stopping") return "running";
+  if (state.status === "stopped_with_code") {
+    return state.exitCode === 0 ? "succeeded" : "failed";
+  }
   return "queued";
 }
 
-function safeJobName(jobId: string): string {
+function safeLabel(jobId: string): string {
   return jobId.replace(/[^A-Za-z0-9_-]/g, "-").slice(0, 100);
 }

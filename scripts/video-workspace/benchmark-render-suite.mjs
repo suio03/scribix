@@ -113,6 +113,7 @@ function fixtureLease(item) {
         crop: { x: item.x, y: item.y, zoom: item.zoom },
       }])),
       captions: {
+        enabled: true,
         templateId: item.template,
         fontAssetId: null,
         textColor: "#ffffff",

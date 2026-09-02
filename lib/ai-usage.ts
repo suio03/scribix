@@ -35,6 +35,17 @@ const MODEL_PRICING: Record<string, AiModelPricing> = {
     cachedInputMicrousdPerMillion: 20_000,
     outputMicrousdPerMillion: 1_250_000,
   },
+  // Verified 2026-09-02 against https://developers.openai.com/api/docs/models/compare.
+  "gpt-5.6-luna": {
+    uncachedInputMicrousdPerMillion: 200_000,
+    cachedInputMicrousdPerMillion: 20_000,
+    outputMicrousdPerMillion: 1_200_000,
+  },
+  "gpt-5.6-terra": {
+    uncachedInputMicrousdPerMillion: 2_000_000,
+    cachedInputMicrousdPerMillion: 200_000,
+    outputMicrousdPerMillion: 12_000_000,
+  },
 };
 
 export function prepareAiUsageEvent(

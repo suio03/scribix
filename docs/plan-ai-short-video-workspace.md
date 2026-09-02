@@ -11,13 +11,20 @@
 
 - Scribix 不再只停留在“音视频转文字”，而是把长视频中的对话内容变成可以直接发布的短视频成片。
 - AI 主要分析 transcript，不对整段长视频逐帧做内容理解。
-- AI 根据对话与逐字时间戳生成多个候选 clips；一个候选 clip 可以由多个不连续的 source segments 组成。
+- AI 根据对话与逐字时间戳生成多个完整候选 clips；V1 的每个 AI 候选只使用一个连续 source segment。
 - 用户必须可以调整内容、时间点、片段顺序、9:16 裁切、动态字幕、品牌样式、音量和音频效果。
 - 浏览器负责编辑 UI 和实时预览，不负责 V1 的最终视频编码。
 - 几小时的原视频不作为编辑器的主要预览素材；Cloud 只为候选时间段生成小体积 preview proxies。
 - 用户确认后，Cloud 必须从原始视频和最终 Render Spec 一次性生成最终成片；最终渲染不得从 preview proxy 转码。
 - 最终结果应当是无需再进入 CapCut/Premiere 即可上传的 MP4，而不是未经包装的原始裁剪片段。
 - 发布包和分发不属于 Scribix V1；已有独立平台负责连接客户社交账号和分发。
+
+### 1.1 公开页面定位
+
+- `/` 是产品首页，主搜索意图为 `AI video clipper`，用于介绍从长视频发现、编辑并渲染可发布短视频的完整工作流。
+- `/video-to-text` 承接原首页的 `video to text` 搜索意图，保留视频/音频上传器、转录功能说明、使用场景和 FAQ；六种语言使用对应 locale 前缀。
+- 侧边栏的 “Video to Text” 及各语言对应名称必须链接 `/video-to-text`；首页继续通过 “Home” 入口访问，不能让两个意图共用同一 canonical URL。
+- 两个页面都必须具有自引用 canonical、完整 reciprocal hreflang、对应 sitemap 记录和与页面意图一致的结构化数据。
 
 ## 2. 一句话目标
 
@@ -61,7 +68,10 @@
 - 已确认：原视频 Free 保存 7 天/5 GiB、Basic 30 天/25 GiB、Pro 90 天/100 GiB；到期后保留 transcript、EDL、Render Spec 和成片，重新渲染要求重新上传匹配的原视频。
 - 第一版是否只接受桌面浏览器编辑。建议优先桌面 Chrome/Edge，移动端先支持查看结果和下载。
 - 是否保留 AI 标题、描述和 Hashtags。当前建议交给已有分发平台，Scribix 只保留 clip 的内部名称/主题。
-- 已确认：Cloud 执行供应商采用 AWS Batch + Fargate On-Demand；Render Job 协议保持供应商无关。
+- 已确认：Cloud 执行供应商方向改为 Cloudflare Containers；Render Job 协议保持供应商无关。隔离 POC 已验证 FFmpeg 功能与成本，生产接入仍需完成 Queue、容量重试、DLQ 和调度迁移，详见 `docs/video-workspace/cloudflare-containers-poc.md`。
+- 已确认：AI 候选允许为 0 个，质量优先，绝不为了达到候选数量而补弱片段。
+- 已确认：原视频不超过 45 秒时直接编辑完整原视频；45 秒以上至 3 分钟最多 3 个 AI 候选，超过 3 分钟最多 5 个。
+- 已确认：AI 候选总时长为 15–45 秒；用户只能从 original source 手动延长或调整，最终时间线最多 60 秒、最多 3 个 segments。
 
 ## 4. 用户流程
 
@@ -330,7 +340,12 @@ AI 必须返回结构化数据，而不是自然语言时间戳：
 - 把模型时间对齐到真实 word boundaries。
 - 校验 segment 是否越界、重叠、过短、过长或总时长超限。
 - 检查候选是否依赖前文、是否在句子中间开始/结束。
+- 完整性是硬门槛：口播本身必须包含必要背景、核心观点和收尾；标题与字幕不能补救缺失语境。
+- `gpt-5.6-terra` 第一次生成候选后，由独立的 Terra 调用逐条执行 `accept`、`adjust` 或 `reject`；二审只能调整 source ranges，不能改写候选文案。
 - 去除高度重复的候选。
+- 允许返回 0 个候选；空结果是正常编辑判断，不是 provider 错误。
+- AI 候选始终选择一个连续 source segment，不自动拼接分散片段；用户进入编辑器后可从 original source 手动调整，EDL 最多 3 段、总时长最多 60 秒。
+- 45 秒内仍无法独立成立时直接放弃，不延长到 60 秒，也不使用 AI 旁白补背景。
 - 候选只作为建议；用户确认前不得自动触发最终渲染或计费。
 - Prompt 与 transcript 都视为不可信输入；日志不得记录完整 transcript 或生成内容。
 
@@ -441,19 +456,19 @@ job_timed_out
 
 ### 14.1 V1 推荐基线
 
-- AWS Batch 负责队列、调度、重试和优先级。
-- AWS Fargate On-Demand 运行隔离的 FFmpeg container。
-- 单 job 单 task；不在同一 task 并行处理不同用户的不可信视频。
-- 初始规格从 2–4 vCPU、4–8 GiB memory 开始，按真实 benchmark 调整。
-- Fargate 默认 20 GiB ephemeral storage 可作为远程 Range 读取失败时的整文件 fallback。
-- 正式成片只用 On-Demand；有可靠幂等和中断恢复后，preview jobs 才考虑 Spot。
+- Cloudflare Queue 负责排队、背压、重试和 DLQ，Cloudflare Containers 运行隔离的 FFmpeg job。
+- 单 job 单实例；不在同一实例并行处理不同用户的不可信视频。job 终态后立即销毁实例。
+- POC 的 1 vCPU / 3 GiB / 6 GB 规格已经验证功能和单任务成本，但不是最终生产规格；用真实 1080p 样本比较 1 vCPU 与 2 vCPU 后再锁定。
+- `max_instances` 是整个 application 的硬上限，不是单实例并发数或可用容量 SLA；consumer 并发必须受控，临时容量不足必须退避重试。
+- Container 不持有 R2 永久凭证，由 Worker 进行受控 source/output 流传输并维护 D1 lease/idempotency。
 
-### 14.2 为什么当前不以 Google Cloud Batch 为第一选择
+### 14.2 为什么当前优先 Cloudflare Containers
 
-- 当前任务主要处理最终几十秒内容，启动延迟会占总耗时较大比例。
-- Google Cloud Batch 每个任务创建临时 VM，更适合更长、更重或大规模吞吐型任务。
-- AWS 官方给出的 Fargate 资源供应基线约 30 秒，更符合交互式产品的异步导出体验。
-- Render Job contract 保持供应商无关，后续仍可用同一镜像在 Google Batch 做成本 benchmark。
+- Scribix 已使用 Cloudflare Workers、D1、R2 和 Queue；Containers 可以减少跨云传输、外部 IAM 和另一套凭证/观测系统。
+- 指定测试视频的 15/30/45 秒成片均已成功，单任务 container compute estimate 均低于 `$0.01`。
+- 15 秒和 30 秒总耗时低于 90 秒；45 秒三段拼接约 123 秒，仍需用 2 vCPU 与真实 1080p 输入继续 benchmark。
+- POC 观察到三冷启动可能短暂触发容量错误，因此选择 Cloudflare 不等于省略 Queue；恰恰必须保留背压和重试。
+- Render Job contract 保持供应商无关；如未来 p95、区域容量或成本不达标，仍可迁移到 AWS/GCP，而不改业务数据模型。
 
 ### 14.3 容器要求
 
@@ -655,11 +670,14 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [x] 实现 timestamp 对齐、越界校验、去重和总时长限制。
 - [x] 保存候选、rank、reason 和 segments。
 - [x] 实现候选列表 UI、重新生成和用户反馈事件。
+- [x] 实现 0–5 个质量优先候选、短源视频直编和 45/60 秒分层边界。
 
 完成标准：
 
 - 每个候选都能映射到真实 word boundaries。
-- 一个候选可以包含多个不连续 segments。
+- 每个 AI 候选只包含一个连续 segment；用户编辑后的 EDL 可以包含最多 3 个 segments。
+- 候选不足时可以为 0 个，不得为了凑数量降低质量。
+- AI 候选不超过 45 秒，手动编辑后的最终时间线不超过 60 秒。
 - 无效模型输出不会进入 preview/render pipeline。
 
 ### M3. Preview Proxy Pipeline
@@ -672,8 +690,9 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [x] 扩展 cleanup worker 清理到期 proxies。
 
 本地状态：container 已成功构建并通过 FFmpeg fixture；“发布”保持未完成，需先创建
-Cloudflare Queue、ECR、AWS Batch compute environment/job queue/job definition 和最小权限
-secrets，详见 `docs/video-workspace/m3-preview-proxy.md`。未执行 remote migration 或 deployment。
+生产 Cloudflare Queue/DLQ、Containers binding、Queue consumer 和最小权限 secrets，详见
+`docs/video-workspace/m3-preview-proxy.md` 与 `cloudflare-containers-poc.md`。目前只部署了隔离 POC，
+未执行生产 remote migration 或 deployment；现有 AWS-shaped dispatcher 仍需替换。
 
 完成标准：
 
@@ -727,8 +746,8 @@ secrets，详见 `docs/video-workspace/m3-preview-proxy.md`。未执行 remote m
 - [x] 实现取消、重试、超时和幂等行为。
 
 本地实现、任务协议、API 与部署边界详见
-`docs/video-workspace/m6-final-render.md`。远程 migration、镜像发布和 AWS Batch
-job definition 更新在全部里程碑完成后统一执行。
+`docs/video-workspace/m6-final-render.md`。远程 migration、生产 Container 发布和 Queue consumer
+接入在全部里程碑完成后统一执行。
 
 完成标准：
 
@@ -814,7 +833,7 @@ job definition 更新在全部里程碑完成后统一执行。
 
 至少覆盖：
 
-1. 一小时横屏 talking-head，AI 生成五个候选，其中一个由两段组成；用户调整时间后输出 9:16 成片。
+1. 一小时横屏 talking-head，AI 最多生成五个完整、连续的高质量候选；用户调整时间后输出不超过 60 秒的 9:16 成片。
 2. 两位 speaker 的 podcast，用户分别调整两个 segment 的 crop，字幕 speaker/timing 正确。
 3. 用户修改 transcript 中的错误词，最终烧录字幕使用修改后的文本。
 4. 用户应用自定义 Logo、字体和颜色，preview 与最终帧一致。
@@ -825,7 +844,8 @@ job definition 更新在全部里程碑完成后统一执行。
 9. 同一 render 被重复提交，只产生一个有效输出。
 10. 原视频过期后，现有成片仍可下载；重新渲染明确要求重新上传源文件。
 11. 删除 project 和删除账号后，关联 source/proxy/final/cover/brand assets 按定义清理。
-12. 不支持或损坏的视频返回明确错误，不进入无限重试。
+12. 45 秒以内原视频不调用候选 AI，直接编辑完整原视频；无高质量候选时显示正常空状态并允许从原视频手动开始。
+13. 不支持或损坏的视频返回明确错误，不进入无限重试。
 
 ## 22. 推荐实施顺序摘要
 

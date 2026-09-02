@@ -30,6 +30,7 @@ export async function renderFinal({
   sourceInput = lease.sourceUrl,
   logoPath = null,
   fontPath = null,
+  reframePlan = null,
 }) {
   const outputPath = join(workingDirectory, "final-9x16.mp4");
   const coverPath = join(workingDirectory, "cover.jpg");
@@ -54,16 +55,42 @@ export async function renderFinal({
   if (logoPath) args.push("-loop", "1", "-i", logoPath);
 
   const filters = [];
+  const reframeBySegment = new Map(
+    (reframePlan?.segments ?? []).map((segment) => [segment.segmentId, segment])
+  );
   for (const [index, segment] of segments.entries()) {
     const crop = lease.renderSpec.segments[segment.id]?.crop;
     if (!crop) throw renderError("invalid_render_spec");
-    const geometry = coverCropGeometry(source.width, source.height, crop);
-    filters.push(
-      `[${index}:v:0]setpts=PTS-STARTPTS,` +
-      `scale=${geometry.width}:${geometry.height},` +
-      `crop=1080:1920:${geometry.cropX}:${geometry.cropY},` +
-      `setsar=1,fps=30,format=yuv420p[v${index}]`
-    );
+    const automatic = crop.x === 0.5 && crop.y === 0.5 && crop.zoom === 1;
+    const reframe = automatic ? reframeBySegment.get(segment.id) : null;
+    if (reframe?.mode === "smart_crop" && reframe.keyframes?.length > 0) {
+      filters.push(
+        `[${index}:v:0]setpts=PTS-STARTPTS,scale=-2:1920,` +
+        `crop=1080:1920:x='(iw-ow)*(${cropExpression(reframe.keyframes)})':y=0,` +
+        `setsar=1,fps=30,format=yuv420p[v${index}]`
+      );
+    } else if (reframe?.mode === "fit_blur") {
+      filters.push(`[${index}:v:0]setpts=PTS-STARTPTS,split=2[bgsrc${index}][fgsrc${index}]`);
+      filters.push(
+        `[bgsrc${index}]scale=360:640:force_original_aspect_ratio=increase,` +
+        `crop=360:640,gblur=sigma=22,scale=1080:1920[bg${index}]`
+      );
+      filters.push(
+        `[fgsrc${index}]scale=1080:1920:force_original_aspect_ratio=decrease[fg${index}]`
+      );
+      filters.push(
+        `[bg${index}][fg${index}]overlay=(W-w)/2:(H-h)/2,` +
+        `setsar=1,fps=30,format=yuv420p[v${index}]`
+      );
+    } else {
+      const geometry = coverCropGeometry(source.width, source.height, crop);
+      filters.push(
+        `[${index}:v:0]setpts=PTS-STARTPTS,` +
+        `scale=${geometry.width}:${geometry.height},` +
+        `crop=1080:1920:${geometry.cropX}:${geometry.cropY},` +
+        `setsar=1,fps=30,format=yuv420p[v${index}]`
+      );
+    }
     const duration = seconds(segment.sourceEndMs - segment.sourceStartMs);
     filters.push(source.hasAudio
       ? `[${index}:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0[a${index}]`
@@ -80,7 +107,7 @@ export async function renderFinal({
     );
     videoLabel = "branded";
   }
-  if (lease.renderSpec.captions.cues.length > 0) {
+  if (lease.renderSpec.captions.enabled && lease.renderSpec.captions.cues.length > 0) {
     const fontsDir = fontPath ? `:fontsdir='${escapeFilterPath(workingDirectory)}'` : "";
     filters.push(
       `[${videoLabel}]subtitles=filename='${escapeFilterPath(subtitlePath)}'${fontsDir}[captioned]`
@@ -351,6 +378,26 @@ function decimal(value) {
 
 function seconds(valueMs) {
   return (valueMs / 1000).toFixed(3);
+}
+
+function cropExpression(keyframes) {
+  if (keyframes.length === 1) return preciseDecimal(keyframes[0].cropX);
+  let expression = preciseDecimal(keyframes.at(-1).cropX);
+  for (let index = keyframes.length - 2; index >= 0; index -= 1) {
+    const start = keyframes[index];
+    const end = keyframes[index + 1];
+    const startSeconds = start.timeMs / 1000;
+    const endSeconds = end.timeMs / 1000;
+    const duration = Math.max(0.001, endSeconds - startSeconds);
+    const progress = `max(0\\,min(1\\,(t-${preciseDecimal(startSeconds)})/${preciseDecimal(duration)}))`;
+    const interpolated = `${preciseDecimal(start.cropX)}+(${preciseDecimal(end.cropX)}-${preciseDecimal(start.cropX)})*${progress}`;
+    expression = `if(lt(t\\,${preciseDecimal(endSeconds)})\\,${interpolated}\\,${expression})`;
+  }
+  return expression;
+}
+
+function preciseDecimal(value) {
+  return Number(value).toFixed(6).replace(/0+$/, "").replace(/\.$/, "");
 }
 
 function httpUrl(value) {

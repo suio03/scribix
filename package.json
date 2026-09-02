@@ -13,6 +13,9 @@
     "test:video-visual-parity": "node scripts/video-workspace/test-visual-parity.mjs",
     "test:video-security": "node scripts/video-workspace/test-security-controls.mjs",
     "benchmark:video-render": "node scripts/video-workspace/run-render-benchmark.mjs",
+    "poc:cloudflare-video": "node scripts/video-workspace/cloudflare-container-poc.mjs",
+    "poc:cloudflare-video:remote": "node scripts/video-workspace/run-cloudflare-container-remote-poc.mjs",
+    "poc:smart-reframe": "node scripts/video-workspace/smart-reframe-poc.mjs",
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
@@ -30,9 +33,11 @@
     "db:migrate:local": "wrangler d1 migrations apply scribix-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply scribix-db --remote",
     "deploy:cleanup": "wrangler deploy -c wrangler.cleanup.jsonc",
-    "deploy:video-render": "wrangler deploy -c wrangler.video-render.jsonc"
+    "deploy:video-render": "wrangler deploy -c wrangler.video-render.jsonc",
+    "deploy:cloudflare-video-poc": "wrangler deploy -c wrangler.video-container-poc.jsonc --x-autoconfig=false"
   },
   "dependencies": {
+    "@cloudflare/containers": "^0.3.7",
     "@paddle/paddle-js": "^1.6.4",
     "aws4fetch": "^1.0.20",
     "docx": "^9.6.1",

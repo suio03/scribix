@@ -346,7 +346,8 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
 
   const captions = requireObject(value.captions, "$.captions", issues);
   if (captions) {
-    hasOnlyKeys(captions, ["templateId", "fontAssetId", "textColor", "highlightColor", "positionY", "maxCharsPerLine", "maxLines", "cues"], "$.captions", issues);
+    hasOnlyKeys(captions, ["enabled", "templateId", "fontAssetId", "textColor", "highlightColor", "positionY", "maxCharsPerLine", "maxLines", "cues"], "$.captions", issues);
+    requireBoolean(captions.enabled, "$.captions.enabled", issues);
     requireEnum(captions.templateId, CAPTION_TEMPLATE_IDS, "$.captions.templateId", issues);
     requireNullableStableId(captions.fontAssetId, "$.captions.fontAssetId", issues);
     for (const colorKey of ["textColor", "highlightColor"] as const) {
@@ -489,14 +490,13 @@ export function validateCandidateSet(
     issues.push(issue("$.candidates", "invalid_type", "Expected an array."));
   } else {
     if (
-      value.candidates.length === 0 ||
       value.candidates.length > VIDEO_WORKSPACE_LIMITS.maxCandidates
     ) {
       issues.push(
         issue(
           "$.candidates",
           "candidate_count",
-          `Expected 1 to ${VIDEO_WORKSPACE_LIMITS.maxCandidates} candidates.`
+          `Expected 0 to ${VIDEO_WORKSPACE_LIMITS.maxCandidates} candidates.`
         )
       );
     }

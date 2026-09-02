@@ -49,6 +49,7 @@ try {
         s1: { crop: { x: 0.75, y: 0.5, zoom: 1.1 } },
       },
       captions: {
+        enabled: true,
         templateId: "karaoke-v1",
         fontAssetId: null,
         textColor: "#FFFFFF",

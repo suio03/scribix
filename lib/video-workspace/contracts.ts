@@ -2,10 +2,12 @@ export const VIDEO_WORKSPACE_SCHEMA_VERSION = 1 as const;
 
 export const VIDEO_WORKSPACE_LIMITS = {
   maxCandidates: 5,
-  maxSegments: 20,
+  maxSegments: 3,
+  maxAiCandidateDurationMs: 45_000,
+  directEditMaxSourceDurationMs: 45_000,
   minSegmentDurationMs: 250,
-  maxSegmentDurationMs: 180_000,
-  maxTimelineDurationMs: 180_000,
+  maxSegmentDurationMs: 60_000,
+  maxTimelineDurationMs: 60_000,
   maxSourceDurationMs: 12 * 60 * 60 * 1000,
   maxActiveFinalJobsPerUser: 2,
   maxFinalJobsPerUserPerDay: 20,
@@ -137,6 +139,7 @@ export type RenderSpec = {
   };
   segments: Record<string, { crop: CropSpec }>;
   captions: {
+    enabled: boolean;
     templateId: CaptionTemplateId;
     fontAssetId: string | null;
     textColor: string;

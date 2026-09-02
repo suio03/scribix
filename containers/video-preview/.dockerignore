@@ -3,3 +3,9 @@
 !final-render.mjs
 !worker.mjs
 !Dockerfile
+!poc-contract.mjs
+!poc-server.mjs
+!poc-reframe.mjs
+!poc-reframe.py
+!full-flow-poc.mjs
+!Dockerfile.poc

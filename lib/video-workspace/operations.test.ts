@@ -15,7 +15,7 @@ test("render costs use the configured model and fixed resource profile", () => {
     VIDEO_RENDER_COST_MODEL: "fixture-v1",
   });
   assert.ok(rates);
-  assert.equal(estimateRenderCost("final", 60_000, rates), 1_767);
+  assert.equal(estimateRenderCost("final", 60_000, rates), 1_017);
   assert.equal(parseRenderCostRates({}), null);
 });
 

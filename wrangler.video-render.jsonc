@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "scribix-video-render-dispatcher",
   "main": "workers/video-render-dispatcher.ts",
-  "compatibility_date": "2025-03-01",
+  "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat"],
 
   "observability": {
@@ -10,12 +10,8 @@
   },
 
   "vars": {
-    // Configure the four VIDEO_RENDER_* cost variables in the deployed Worker
-    // using current ap-southeast-2 rates; see docs/video-workspace/m8-operations.md.
-    "AWS_REGION": "ap-southeast-2",
-    "AWS_BATCH_JOB_QUEUE": "scribix-video-render",
-    "AWS_BATCH_JOB_DEFINITION": "scribix-video-render:1",
-    "SCRIBIX_INTERNAL_URL": "https://scribix.io"
+    "SCRIBIX_INTERNAL_URL": "https://scribix.io",
+    "VIDEO_RENDER_MAX_CONTAINERS": "3"
   },
 
   "triggers": {
@@ -30,6 +26,39 @@
     }
   ],
 
+  "containers": [
+    {
+      "class_name": "VideoRenderContainer",
+      "image": "./containers/video-preview/Dockerfile",
+      "image_build_context": "./containers/video-preview",
+      "max_instances": 3,
+      "instance_type": {
+        "vcpu": 1,
+        "memory_mib": 3072,
+        "disk_mb": 6000
+      },
+      "ssh": {
+        "enabled": false
+      }
+    }
+  ],
+
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "VIDEO_RENDER_CONTAINERS",
+        "class_name": "VideoRenderContainer"
+      }
+    ]
+  },
+
+  "migrations": [
+    {
+      "tag": "video-render-containers-v1",
+      "new_sqlite_classes": ["VideoRenderContainer"]
+    }
+  ],
+
   "queues": {
     "producers": [
       {
@@ -40,7 +69,8 @@
     "consumers": [
       {
         "queue": "scribix-video-render",
-        "max_batch_size": 10,
+        "max_batch_size": 3,
+        "max_concurrency": 1,
         "max_batch_timeout": 5,
         "max_retries": 5,
         "dead_letter_queue": "scribix-video-render-dlq"

@@ -7,15 +7,19 @@ import {
   OPENAI_CANDIDATE_MODEL,
   OpenAICandidateError,
   generateCandidatesWithOpenAI,
+  reviewCandidatesWithOpenAI,
 } from "@/lib/openai-candidates";
 import {
   CandidateGenerationError,
+  DIRECT_EDIT_MAX_SOURCE_DURATION_MS,
   alignAndValidateCandidateSet,
   buildCandidateAnalysisInput,
+  candidateLimitForSourceDuration,
 } from "@/lib/video-workspace/candidate-generation";
 import {
   listClipCandidates,
   replaceClipCandidates,
+  replaceWithManualClipCandidate,
 } from "@/lib/video-workspace/candidates";
 import {
   listCandidatePreviews,
@@ -50,7 +54,7 @@ export async function GET(_: Request, { params }: Params) {
   });
 }
 
-export async function POST(_: Request, { params }: Params) {
+export async function POST(request: Request, { params }: Params) {
   const context = await candidateContext(params);
   if (context instanceof Response) return context;
   const { env, project, user } = context;
@@ -69,6 +73,41 @@ export async function POST(_: Request, { params }: Params) {
   }
   if (project.status === "analyzing" && !candidateGenerationStale(project.updated_at)) {
     return Response.json({ error: "candidate_generation_active" }, { status: 409 });
+  }
+
+  const mode = await candidateRequestMode(request);
+  if (mode instanceof Response) return mode;
+  const sourceDurationMs = project.source_duration_ms;
+  if (!sourceDurationMs || sourceDurationMs < 250) {
+    return Response.json({ error: "source_video_missing" }, { status: 410 });
+  }
+  if (mode === "manual" || sourceDurationMs <= DIRECT_EDIT_MAX_SOURCE_DURATION_MS) {
+    await replaceWithManualClipCandidate(
+      env.DB,
+      user.id,
+      project.id,
+      sourceDurationMs,
+      DIRECT_EDIT_MAX_SOURCE_DURATION_MS
+    );
+    try {
+      await queueAutomaticCandidatePreviews(
+        env.DB,
+        env.VIDEO_RENDER_QUEUE,
+        user.id,
+        project.id
+      );
+    } catch (error) {
+      console.error(JSON.stringify({
+        event: "video_preview_auto_queue_failed",
+        projectId: project.id,
+        error: error instanceof Error ? error.name : "unknown",
+      }));
+    }
+    const [candidates, previews] = await Promise.all([
+      listClipCandidates(env.DB, user.id, project.id),
+      listCandidatePreviews(env.DB, user.id, project.id),
+    ]);
+    return Response.json({ status: "editing", candidates, previews });
   }
 
   const existingCandidates = await listClipCandidates(env.DB, user.id, project.id);
@@ -90,7 +129,10 @@ export async function POST(_: Request, { params }: Params) {
   }
 
   const requestId = `clips_${crypto.randomUUID()}`;
+  const reviewRequestId = `${requestId}_review`;
   let providerResult: Awaited<ReturnType<typeof generateCandidatesWithOpenAI>> | null = null;
+  let reviewResult: Awaited<ReturnType<typeof reviewCandidatesWithOpenAI>> | null = null;
+  let stage: "generation" | "review" | "persistence" = "generation";
   try {
     const transcriptObject = await env.SCRIBIX_MEDIA.get(project.transcript_r2_key);
     if (!transcriptObject) {
@@ -104,12 +146,55 @@ export async function POST(_: Request, { params }: Params) {
       transcript,
       project.source_duration_ms
     );
+    const cacheKey = await promptCacheKey(project.transcript_id);
     providerResult = await generateCandidatesWithOpenAI(analysisInput.text, {
       requestId,
-      promptCacheKey: await promptCacheKey(project.transcript_id),
+      promptCacheKey: cacheKey,
+      maxCandidates: candidateLimitForSourceDuration(analysisInput.sourceDurationMs),
     });
-    const candidateSet = alignAndValidateCandidateSet(
+    await recordUsageBestEffort({
+      db: env.DB,
+      feature: "video_candidate_generation",
+      requestId,
+      requestStatus: "success",
+      user,
+      transcriptId: project.transcript_id,
+      providerResponseId: providerResult.responseId,
+      serviceTier: providerResult.serviceTier,
+      usage: providerResult.usage,
+    });
+    stage = "review";
+    reviewResult = await reviewCandidatesWithOpenAI(
+      analysisInput.text,
       providerResult.candidates,
+      {
+        requestId: reviewRequestId,
+        promptCacheKey: cacheKey,
+      }
+    );
+    await recordUsageBestEffort({
+      db: env.DB,
+      feature: "video_candidate_completeness_review",
+      requestId: reviewRequestId,
+      requestStatus: "success",
+      user,
+      transcriptId: project.transcript_id,
+      providerResponseId: reviewResult.responseId,
+      serviceTier: reviewResult.serviceTier,
+      usage: reviewResult.usage,
+    });
+    console.info(JSON.stringify({
+      event: "video_candidate_completeness_review_completed",
+      requestId: reviewRequestId,
+      projectId: project.id,
+      proposedCount: providerResult.candidates.candidates.length,
+      acceptedCount: reviewResult.reviews.filter((review) => review.verdict === "accept").length,
+      adjustedCount: reviewResult.reviews.filter((review) => review.verdict === "adjust").length,
+      rejectedCount: reviewResult.reviews.filter((review) => review.verdict === "reject").length,
+    }));
+    stage = "persistence";
+    const candidateSet = alignAndValidateCandidateSet(
+      reviewResult.candidates,
       analysisInput.words,
       analysisInput.sourceDurationMs
     );
@@ -131,16 +216,6 @@ export async function POST(_: Request, { params }: Params) {
       }));
     }
     const previews = await listCandidatePreviews(env.DB, user.id, project.id);
-    await recordUsageBestEffort({
-      db: env.DB,
-      requestId,
-      requestStatus: "success",
-      user,
-      transcriptId: project.transcript_id,
-      providerResponseId: providerResult.responseId,
-      serviceTier: providerResult.serviceTier,
-      usage: providerResult.usage,
-    });
     return Response.json({
       status: "candidates_ready",
       candidates,
@@ -155,23 +230,25 @@ export async function POST(_: Request, { params }: Params) {
       project.id,
       existingCandidates.length > 0
     );
-    await recordUsageBestEffort({
-      db: env.DB,
-      requestId,
-      requestStatus: "failed",
-      user,
-      transcriptId: project.transcript_id,
-      providerResponseId: providerError?.responseId ?? providerResult?.responseId,
-      providerErrorCode:
-        providerError?.providerCode ??
-        (error instanceof CandidateGenerationError
-          ? error.code
-          : providerResult
-            ? "persistence_failed"
-            : "unknown"),
-      serviceTier: providerError?.serviceTier ?? providerResult?.serviceTier,
-      usage: providerError?.usage ?? providerResult?.usage,
-    });
+    if (stage !== "persistence") {
+      const failedResult = stage === "review" ? reviewResult : providerResult;
+      await recordUsageBestEffort({
+        db: env.DB,
+        feature: stage === "review"
+          ? "video_candidate_completeness_review"
+          : "video_candidate_generation",
+        requestId: stage === "review" ? reviewRequestId : requestId,
+        requestStatus: "failed",
+        user,
+        transcriptId: project.transcript_id,
+        providerResponseId: providerError?.responseId ?? failedResult?.responseId,
+        providerErrorCode:
+          providerError?.providerCode ??
+          (error instanceof CandidateGenerationError ? error.code : "unknown"),
+        serviceTier: providerError?.serviceTier ?? failedResult?.serviceTier,
+        usage: providerError?.usage ?? failedResult?.usage,
+      });
+    }
     console.error(JSON.stringify({
       event: "video_candidates_failed",
       requestId,
@@ -181,12 +258,37 @@ export async function POST(_: Request, { params }: Params) {
         providerError?.providerCode ??
         (error instanceof CandidateGenerationError
           ? error.code
-          : providerResult
+          : stage === "persistence"
             ? "persistence_failed"
-            : "unknown"),
+            : stage === "review"
+              ? "completeness_review_failed"
+              : "unknown"),
     }));
     return candidateErrorResponse(error, requestId);
   }
+}
+
+async function candidateRequestMode(
+  request: Request
+): Promise<"ai" | "manual" | Response> {
+  if (!request.headers.get("content-type")?.includes("application/json")) {
+    return "ai";
+  }
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return Response.json({ error: "invalid_json" }, { status: 400 });
+  }
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return Response.json({ error: "invalid_candidate_request" }, { status: 400 });
+  }
+  const mode = (body as { mode?: unknown }).mode;
+  return mode === undefined || mode === "ai"
+    ? "ai"
+    : mode === "manual"
+      ? "manual"
+      : Response.json({ error: "invalid_candidate_request" }, { status: 400 });
 }
 
 async function candidateContext(params: Params["params"]): Promise<
@@ -294,6 +396,7 @@ function candidateGenerationStale(updatedAt: string): boolean {
 
 async function recordUsageBestEffort({
   db,
+  feature,
   requestId,
   requestStatus,
   user,
@@ -304,6 +407,7 @@ async function recordUsageBestEffort({
   usage,
 }: {
   db: D1Database;
+  feature: "video_candidate_generation" | "video_candidate_completeness_review";
   requestId: string;
   requestStatus: "success" | "failed";
   user: CurrentUserRow;
@@ -316,7 +420,7 @@ async function recordUsageBestEffort({
   if (!usage) return;
   try {
     await prepareAiUsageEvent(db, {
-      feature: "video_candidate_generation",
+      feature,
       requestStatus,
       requestId,
       providerResponseId,
@@ -332,7 +436,7 @@ async function recordUsageBestEffort({
   } catch (error) {
     console.error(JSON.stringify({
       event: "ai_usage_write_failed",
-      feature: "video_candidate_generation",
+      feature,
       requestId,
       error: error instanceof Error ? error.name : "unknown",
     }));

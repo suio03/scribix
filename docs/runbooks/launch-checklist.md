@@ -32,7 +32,9 @@ the one-time items that are already verified and unchanged.
 - [ ] CORS allows `PUT` from `https://scribix.io` (manual-setup §0.4).
 - [ ] The default lifecycle aborts incomplete multipart uploads after **7 days**.
 - [ ] No completed-media expiration rule targets `users/`; the hourly cleanup
-  worker is the sole authority for the **14-day** media expiry (manual-setup §0.5).
+  worker is the sole authority for completed non-video audio expiry after
+  **14 days** and original-video expiry after **7/30/90 days** by plan
+  (manual-setup §0.5).
 
 ## Smoke tests on prod
 
@@ -87,6 +89,10 @@ the one-time items that are already verified and unchanged.
   confirms the exact-size final object instead of failing or deleting it.
 - [ ] Hit `/ai-note-taker` and at least one localized variant; confirm the
   localized navigation entry, canonical/hreflang, upload, record, and YouTube tabs.
+- [ ] Hit `/` and `/video-to-text` plus at least one localized variant of each;
+  confirm the homepage presents AI video clipping, the keyword page presents
+  video-to-text transcription, and both have distinct self-canonical URLs and
+  complete reciprocal hreflang sets.
 - [ ] Open the localized sidebar YouTube Extension picker in expanded,
   collapsed, and mobile layouts; confirm Chrome, Edge, and Firefox open their
   public stores in new tabs and display their official brand-colored icons.
@@ -117,11 +123,15 @@ the one-time items that are already verified and unchanged.
 - [ ] **Cleanup log alert** — Cloudflare observability alerts on repeated
   `cleanup_r2_delete_failed` events; structured logs exist in code, but the
   persistent production alert must be configured separately.
+- [ ] **Retention policy copy** — update `/privacy` and `/terms` so audio's
+  14-day expiry and plan-specific 7/30/90-day original-video retention agree
+  with `lib/plans.ts` and the cleanup worker before production release.
 
 ## Marketing
 
 - [ ] Submit `https://scribix.io/sitemap.xml` to Google Search Console.
-- [ ] Confirm the sitemap contains `/ai-note-taker` with all six locale alternates.
+- [ ] Confirm the sitemap contains `/video-to-text` and `/ai-note-taker` with
+  all six locale alternates.
 - [ ] Verify domain in Google Search Console + Bing Webmaster.
 - [ ] OG card preview looks right (`https://scribix.io` → opengraph-image
   served from `app/[locale]/opengraph-image.tsx`).

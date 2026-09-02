@@ -78,9 +78,11 @@ Do not add a completed-media expiration rule. Media objects share the
 `users/{userId}/{transcriptId}/` prefix with transcript JSON and translations,
 so an R2 prefix lifecycle would also delete permanent transcript data.
 
-The hourly cleanup worker deletes uploaded audio/video after 14 days and only
-clears the database key after R2 confirms deletion. Keep the bucket's default
-7-day abort rule for incomplete multipart uploads. Verify the current rules with
+The hourly cleanup worker deletes completed non-video audio after 14 days and
+retained original videos at their plan-specific expiry: Free 7 days, legacy
+Basic 30 days, and Pro 90 days. It only clears the database key after R2
+confirms deletion. Keep the bucket's default 7-day abort rule for incomplete
+multipart uploads. Verify the current rules with
 `npx wrangler r2 bucket lifecycle list scribix-media`.
 
 ### 0.6 R2 API tokens for presign (blocking — Phase 2 onwards)

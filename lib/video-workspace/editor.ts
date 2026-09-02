@@ -6,6 +6,7 @@ import { listBrandAssets, type EditorBrandAsset } from "./brand-assets";
 import {
   FINAL_VIDEO_PRESET,
   PREVIEW_PROXY_URL_TTL_SECONDS,
+  VIDEO_WORKSPACE_LIMITS,
   VIDEO_WORKSPACE_SCHEMA_VERSION,
   edlTimelineDurationMs,
   type CandidateSegment,
@@ -30,12 +31,14 @@ type EditorProjectRow = {
 
 type EditorCandidateRow = {
   id: string;
+  theme: string;
   segments_json: string;
   status: string;
 };
 
 export type EditorWorkspace = {
   candidateId: string;
+  clipTitle: string;
   revision: number;
   restoredDraft: boolean;
   sourceDurationMs: number;
@@ -159,6 +162,7 @@ export async function loadEditorWorkspace(
     ok: true,
     workspace: {
       candidateId,
+      clipTitle: candidate.theme,
       revision: project.draft_revision,
       restoredDraft: Boolean(restored),
       sourceDurationMs: project.source_duration_ms,
@@ -357,6 +361,7 @@ export function defaultRenderSpec(
       { crop: { x: 0.5, y: 0.5, zoom: 1 } },
     ])),
     captions: {
+      enabled: true,
       templateId: "karaoke-v1",
       fontAssetId: null,
       textColor: "#FFFFFF",
@@ -434,7 +439,7 @@ function editorCandidate(
   candidateId: string
 ): Promise<EditorCandidateRow | null> {
   return db.prepare(
-    `SELECT id, segments_json, status
+    `SELECT id, theme, segments_json, status
        FROM clip_candidates
       WHERE id = ?1
         AND user_id = ?2

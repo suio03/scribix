@@ -79,6 +79,7 @@ try {
   };
   const renderSpec = {
     captions: {
+      enabled: true,
       templateId: "karaoke-v1",
       textColor: "#ffffff",
       highlightColor: "#ff5a1f",

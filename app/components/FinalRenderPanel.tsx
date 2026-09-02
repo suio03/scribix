@@ -123,7 +123,7 @@ export function FinalRenderPanel({
   };
 
   return (
-    <section className="rounded-xl border border-ink bg-ink p-4 text-paper">
+    <section id="exports" className="scroll-mt-6 rounded-xl border border-ink bg-ink p-4 text-paper">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-paper/45">{t("eyebrow")}</p>
@@ -145,31 +145,42 @@ export function FinalRenderPanel({
       {renders.length > 0 ? (
         <div className="mt-4 space-y-2 border-t border-paper/15 pt-4">
           {renders.slice(0, 4).map((render) => (
-            <div key={render.id} className="flex flex-wrap items-center gap-2 rounded-lg bg-white/[0.06] px-3 py-2 text-[10px]">
-              <span className="font-mono text-paper/45">v{render.version}</span>
-              <span className="capitalize text-paper/70">{t(`status.${render.status}`)}</span>
-              <span className="ml-auto font-mono text-paper/35">#{render.attempt}</span>
-              {render.status === "completed" && render.videoUrl && render.coverUrl ? (
-                <>
-                  <a href={render.videoUrl} download onClick={() => trackDownload(render, "video")} className="inline-flex items-center gap-1 rounded-full bg-paper px-2.5 py-1 font-semibold text-ink"><Download size={11} />{t("video")}</a>
-                  <a href={render.coverUrl} download onClick={() => trackDownload(render, "cover")} className="inline-flex items-center gap-1 rounded-full border border-paper/25 px-2.5 py-1 font-semibold text-paper"><ImageIcon size={11} />{t("cover")}</a>
-                  <button
-                    type="button"
-                    disabled={externalEditReports.has(render.id)}
-                    onClick={() => reportExternalEdit(render)}
-                    className="text-paper/45 underline decoration-paper/20 underline-offset-2 hover:text-paper disabled:no-underline"
-                  >
-                    {externalEditReports.has(render.id) ? t("externalEditRecorded") : t("externalEdit")}
-                  </button>
-                </>
+            <article key={render.id} className="rounded-lg bg-white/[0.06] px-3 py-2 text-[10px]">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-paper/45">v{render.version}</span>
+                <span className="capitalize text-paper/70">{t(`status.${render.status}`)}</span>
+                <span className="ml-auto font-mono text-paper/35">#{render.attempt}</span>
+                {render.status === "completed" && render.videoUrl && render.coverUrl ? (
+                  <>
+                    <a href={render.videoUrl} download onClick={() => trackDownload(render, "video")} className="inline-flex items-center gap-1 rounded-full bg-paper px-2.5 py-1 font-semibold text-ink"><Download size={11} />{t("video")}</a>
+                    <a href={render.coverUrl} download onClick={() => trackDownload(render, "cover")} className="inline-flex items-center gap-1 rounded-full border border-paper/25 px-2.5 py-1 font-semibold text-paper"><ImageIcon size={11} />{t("cover")}</a>
+                    <button
+                      type="button"
+                      disabled={externalEditReports.has(render.id)}
+                      onClick={() => reportExternalEdit(render)}
+                      className="text-paper/45 underline decoration-paper/20 underline-offset-2 hover:text-paper disabled:no-underline"
+                    >
+                      {externalEditReports.has(render.id) ? t("externalEditRecorded") : t("externalEdit")}
+                    </button>
+                  </>
+                ) : null}
+                {ACTIVE.has(render.status) ? (
+                  <button type="button" disabled={busy} onClick={() => void mutate(render, "DELETE")} className="inline-flex items-center gap-1 text-paper/55 hover:text-red-300"><X size={11} />{t("cancel")}</button>
+                ) : null}
+                {render.status === "failed" || render.status === "canceled" ? (
+                  <button type="button" disabled={busy} onClick={() => void mutate(render, "POST")} className="inline-flex items-center gap-1 text-paper/55 hover:text-paper"><RefreshCw size={11} />{t("retry")}</button>
+                ) : null}
+              </div>
+              {render.status === "completed" && render.videoUrl ? (
+                <video
+                  controls
+                  playsInline
+                  preload="metadata"
+                  src={render.videoUrl}
+                  className="mx-auto mt-3 aspect-[9/16] max-h-[460px] w-auto rounded-lg bg-black"
+                />
               ) : null}
-              {ACTIVE.has(render.status) ? (
-                <button type="button" disabled={busy} onClick={() => void mutate(render, "DELETE")} className="inline-flex items-center gap-1 text-paper/55 hover:text-red-300"><X size={11} />{t("cancel")}</button>
-              ) : null}
-              {render.status === "failed" || render.status === "canceled" ? (
-                <button type="button" disabled={busy} onClick={() => void mutate(render, "POST")} className="inline-flex items-center gap-1 text-paper/55 hover:text-paper"><RefreshCw size={11} />{t("retry")}</button>
-              ) : null}
-            </div>
+            </article>
           ))}
         </div>
       ) : null}

@@ -117,7 +117,7 @@ function finalLease(value) {
       outputPresetId: "vertical-1080p-v1",
       canvas: { width: 1080, height: 1920, fps: 30, backgroundColor: "#000000" },
       segments: { "segment-1": { crop: value.crop } },
-      captions: { ...value.caption, templateId: "karaoke-v1", fontAssetId: null, cues: [] },
+      captions: { ...value.caption, enabled: true, templateId: "karaoke-v1", fontAssetId: null, cues: [] },
       brand: { ...value.brand, logoAssetId: "fixture-logo" },
       audio: { gainDb: 0, normalize: false, fadeInMs: 0, fadeOutMs: 0 },
       coverTimelineMs: value.timelineMs,

@@ -1,8 +1,8 @@
 import type { RenderErrorCode, RenderJobKind } from "./contracts";
 
 export const RENDER_COMPUTE_PROFILES = {
-  preview: { vCpu: 1, memoryGb: 2 },
-  final: { vCpu: 2, memoryGb: 4 },
+  preview: { vCpu: 1, memoryGb: 3 },
+  final: { vCpu: 1, memoryGb: 3 },
 } as const satisfies Record<RenderJobKind, { vCpu: number; memoryGb: number }>;
 
 export type RenderCostRates = {

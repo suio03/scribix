@@ -1,8 +1,8 @@
 # AI 短视频工作台 M3 Preview Proxy Pipeline
 
-> 状态：本地实现与验证完成；云端资源尚未创建或发布
+> 状态：本地实现与验证完成；生产调度已迁移到 Cloudflare Containers，尚未部署
 > Migration：`0027_preview_proxy_jobs.sql`
-> Provider：AWS Batch + Fargate On-Demand
+> Provider：Cloudflare Queue + Containers
 
 ## 范围与边界
 
@@ -35,9 +35,9 @@ segment 创建下一 version。仍在 handles 内的调整直接复用原 proxy�
 Candidate API
   -> D1 创建 preview render_job + pending media_asset
   -> Cloudflare Queue: { schemaVersion, jobId }
-  -> Dispatcher 原子 claim job
-  -> AWS Batch SubmitJob
-  -> Fargate container 使用 job-scoped token 获取 lease
+  -> Queue consumer 原子 claim job
+  -> getByName(jobId) 启动唯一 Cloudflare Container
+  -> Container 使用 job-scoped token 获取 lease
   -> 15 分钟 signed R2 GET / PUT
   -> ffprobe source -> FFmpeg proxy -> ffprobe output -> R2 PUT
   -> authenticated result callback
@@ -63,19 +63,17 @@ AAC 和 R2 object existence 检查。Worker 日志不输出 token、signed URL �
 
 ## Dispatcher 与 reconciliation
 
-`workers/video-render-dispatcher.ts` 同时处理 Queue 和每 5 分钟一次的 cron：
+`workers/video-render-dispatcher.ts` 已使用 Cloudflare Queue consumer 和 Container Durable Object，并保留以下合同能力：
 
 - D1 原子 claim 阻止普通重复 delivery 产生两次 SubmitJob。
-- provider adapter 隔离 AWS Batch API；应用侧 job contract 不依赖 AWS 字段。
-- SubmitJob 失败使用指数退避，5 次失败后把单 segment 标记为 `provider_unavailable`。
+- provider adapter 隔离 Containers API；应用侧 job contract 不依赖 provider 字段。
+- 容量/启动失败使用指数退避，5 次失败后把单 segment 标记为 `provider_unavailable` 并进入 DLQ。
 - queued job 未 dispatch 或 preparing claim 中断时重新入队。
-- `DescribeJobs` 把 AWS STARTING/RUNNING/FAILED 状态同步回 D1。
-- AWS 成功但 result callback 缺失时标记 `upload_failed`，避免永久卡住。
+- reconciliation 读取 D1 lease 与 Container/job 状态，修复 STARTING/RUNNING/FAILED 漂移。
+- Container 成功但 result callback 缺失时标记 `upload_failed`，避免永久卡住。
 
-AWS Batch SubmitJob 本身没有调用方幂等键；dispatcher 在“AWS 已接受、D1 尚未保存 provider job
-ID”之间仍存在极小 crash window。恢复时可能产生重复 provider job，但 deterministic output key、
-scoped callback 和 D1 终态保证用户只看到一个结果。后续可用 provider event ledger 进一步消除
-这部分计算重复。
+Container 必须以 `jobId` 作为 Durable Object name，并在启动前取得 D1 lease；deterministic output key、
+scoped callback 和 D1 终态共同阻止重复 delivery 覆盖成功结果。job 终态后立即销毁实例。
 
 ## Container
 
@@ -92,27 +90,19 @@ docker run --rm --entrypoint ffmpeg scribix-video-preview:m3 -version
 ```
 
 当前本地构建记录：Node `22.15.0-bookworm-slim`、FFmpeg `5.1.9-0+deb12u1`，H.264 encoder
-检查通过。正式 ECR build 必须记录 image digest，并让 AWS Batch job definition 的 CPU
-architecture 与 image platform 一致。
+检查通过。正式 Cloudflare Container build 必须记录 image digest，并让 image platform 保持
+`linux/amd64`。
 
 ## 云端发布清单（尚未执行）
 
 1. 创建 `scribix-video-render` 与 `scribix-video-render-dlq` Cloudflare Queues。
-2. 创建 ECR repository，构建、扫描并 push container，记录 immutable digest。
-3. 创建 AWS Batch Fargate On-Demand compute environment、job queue 和 job definition。
-   Preview 基线建议 1 vCPU、2 GiB memory、30 分钟 timeout、单次 attempt。
-4. Job execution role 只允许拉 ECR image 和写 CloudWatch Logs；container 不需要 R2 或 D1 IAM。
-5. Dispatcher IAM 只允许对指定 job queue/definition `batch:SubmitJob`，以及 reconciliation 所需
-   `batch:DescribeJobs`。
-6. 为 app 和 dispatcher 设置同一 `VIDEO_WORKER_SIGNING_SECRET`；只为 dispatcher 设置
-   `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`，如使用短期凭证再设置 `AWS_SESSION_TOKEN`。
-7. 确认 `AWS_REGION`、`AWS_BATCH_JOB_QUEUE`、`AWS_BATCH_JOB_DEFINITION` 和
-   `SCRIBIX_INTERNAL_URL` 后部署 `wrangler.video-render.jsonc`。
-8. 应用 remote migration `0027`，再部署包含 Queue producer binding 的 Next app 与更新后的
-   cleanup worker。
+2. 部署 Queue consumer + Container Durable Object，确认容量退避、DLQ、取消和销毁路径。
+3. 构建、扫描并发布固定版本的 Cloudflare Container image，按真实 1080p benchmark 确认资源 profile 与 `max_instances`。
+4. 为 app、consumer 和 internal callback 设置同一 `VIDEO_WORKER_SIGNING_SECRET`；Container 不注入 R2/D1 永久凭证。
+5. 应用 remote migration `0027`，再部署 Queue producer、consumer、Container binding 和更新后的 cleanup worker。
 
-上述顺序避免应用先向不存在的 queue 投递。任何 remote migration、queue 创建、AWS 资源创建、
-镜像 push 或 deployment 都需要单独批准。
+上述顺序避免应用先向不存在的 queue 投递。任何 production remote migration、queue 创建、
+Container 发布或 deployment 都需要单独批准。
 
 ## 验证记录
 

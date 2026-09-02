@@ -1,10 +1,10 @@
 # AI 短视频工作台外部设置清单
 
-本清单只描述生产环境动作。M0–M9 开发期间没有执行 remote migration、Cloudflare deploy、ECR push、AWS 资源创建或真实用户开放。
+本清单只描述生产环境动作。M0–M9 开发期间没有执行 remote migration 或真实用户开放。2026-09-02 已部署一个与生产隔离的 Cloudflare Containers POC；它不代表生产接入已经完成。此前的 AWS Batch 方案已被 Cloudflare Containers 方向取代，不要再按旧 AWS 步骤创建资源。
 
 ## 1. Cloudflare D1 与 R2
 
-1. 先备份生产 D1，再确认待执行 migrations 为 `0025`–`0031`，运行 `npm run db:migrate:remote`。
+1. 先备份生产 D1，再确认待执行 migrations 为 `0025`–`0032`，运行 `npm run db:migrate:remote`。
 2. migration 后执行 `PRAGMA foreign_key_check`，确认无结果；检查两个 `render_jobs_final_*` triggers 存在。
 3. `scribix-media` 保持 private。为浏览器直传配置 CORS，只允许实际产品 origin：
 
@@ -26,43 +26,36 @@
 
 创建 `scribix-video-render` 和 `scribix-video-render-dlq`，确认 `wrangler.jsonc` 是 producer、`wrangler.video-render.jsonc` 是 consumer，最大 retry 为 5 且 DLQ 绑定正确。
 
-生成至少 32-byte 随机 `VIDEO_WORKER_SIGNING_SECRET`，在主 Scribix Worker 和 video-render dispatcher 上配置相同值。dispatcher 另需：
+生成至少 32-byte 随机 `VIDEO_WORKER_SIGNING_SECRET`，在主 Scribix Worker、Queue consumer 和 Container job callback 上配置相同值。Container 不得接收 R2 永久凭证；由 Worker 以 job-scoped stream 或短期签名 URL 提供输入和接收输出。
 
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- 如使用短期凭证：`AWS_SESSION_TOKEN`
-- `VIDEO_RENDER_VCPU_MICROUSD_PER_HOUR`
-- `VIDEO_RENDER_MEMORY_GB_MICROUSD_PER_HOUR`
-- `VIDEO_RENDER_PER_JOB_MICROUSD`
-- `VIDEO_RENDER_COST_MODEL`
-
-价格变量使用 AWS `ap-southeast-2` 当日官方费率，不把价格或凭证提交到仓库。主 Worker 继续需要用于 R2 签名的既有 `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY`，其 token 只授予 `scribix-media` object read/write，不授予账户级管理权限。
+为生产 Worker/consumer 配置 Containers Durable Object binding、R2 binding、Queue binding 和独立的成本费率变量。费率以部署当日 Cloudflare Containers 官方价格为准，不把 secret 或账户级凭证提交到仓库。主 Worker 如继续使用 R2 S3 signed URL，只授予 `scribix-media` object read/write，不授予账户级管理权限。
 
 默认保持 `VIDEO_WORKSPACE_ROLLOUT_PERCENT=100`。仓库未准备完成前不要部署到生产；百分比和 `VIDEO_WORKSPACE_PILOT_USER_IDS` 只作为以后需要灰度或紧急止损时的控制手段。
 
-## 3. AWS ECR 与镜像
+## 3. Cloudflare Container 镜像
 
-1. 创建 immutable `scribix-video-render` ECR repository，启用 scan-on-push / enhanced scanning。
-2. 构建 `linux/amd64` 镜像，运行 `npm run test:video-security`、24-case benchmark 和 Trivy HIGH/CRITICAL gate。
-3. 推送后只使用 image digest 创建 job definition revision，不使用可漂移的 `latest`。
-4. HIGH/CRITICAL 未修复漏洞、未知 base-image digest 或 benchmark 失败时停止部署。
+1. 使用固定 digest 的 Debian/Node base image 和固定 FFmpeg 版本构建 `linux/amd64` 镜像，保留 `libx264`、AAC、`subtitles`/libass 和 `ffprobe` 启动检查。
+2. 运行 `npm run test:video-security`、render benchmark、真实 1080p 15/30/45 秒矩阵和 HIGH/CRITICAL 镜像漏洞 gate。
+3. Container 使用非 root user、只写 job 临时目录，不注入 Cloudflare API token 或 R2 key。当前实现只为 job-scoped internal callback 与短期 signed R2 URL 开启出站网络；不得把 URL、transcript 或字幕写入日志。
+4. 镜像 digest、FFmpeg 版本、Render Spec schema、资源 profile 或 benchmark 不可确认时停止生产部署。
 
-## 4. AWS IAM、Batch 与网络
+## 4. Cloudflare Containers 与调度
 
-1. 用 `docs/video-workspace/aws/dispatcher-iam-policy.json` 创建 dispatcher principal policy，替换 `REGION` / `ACCOUNT_ID`，并把资源名保持为 `scribix-video-render`。如 AWS 对 Describe/Terminate 不支持 resource-level restriction，保留模板中的 `*`，同时用独立 principal、CloudTrail 和无其他 AWS 权限限制 blast radius。
-2. 用 `execution-role-policy.json` 创建 ECS task execution role：只能拉指定 ECR repo、写指定 CloudWatch log group。
-3. container task role 不附加 policy，也不注入 AWS 或 R2 credentials。
-4. 创建 Fargate On-Demand compute environment 和 `scribix-video-render` job queue。security group 无 inbound，只允许所需 HTTPS egress；private subnet 使用受控 NAT/VPC endpoints，或明确评估 public-IP 成本与风险。
-5. job definition 使用镜像 digest、50 GiB ephemeral storage、只写临时目录、CloudWatch logs 和 60 分钟上限。preview 由 dispatcher override 为 1 vCPU / 2 GiB，final 为 2 vCPU / 4 GiB。
-6. 注册 revision 后把 `wrangler.video-render.jsonc` 的 `AWS_BATCH_JOB_DEFINITION` 更新为实际 revision。
+1. Queue consumer 只接收 `jobId`，先取得 D1 lease 和 idempotency lock，再通过 `getByName(jobId)` 启动唯一 Container；一个实例只处理一个 FFmpeg job。
+2. `max_instances` 是 application 总上限，不是每个实例的并发数，也不是立即可用容量承诺。根据 pilot 数据设置生产上限，同时在 Queue consumer 设置更小或相等的并发阈值。
+3. 对临时容量不足、冷启动和可重试 5xx 使用有上限的指数退避；穷尽重试进入 DLQ。不得因某个实例暂不可用而丢弃整个批次。
+4. job 成功、失败、取消或超时后强制销毁其 Container。唯一 job ID 不保留 warm instance；定期清理 stuck/orphan instances 和 R2 partial outputs。
+5. source 和 output 通过 Worker/R2 受控传输。R2 输出必须使用已知长度的 stream；禁止在 Worker 内缓冲超大成片，禁止把永久凭证传入容器。
+6. 初始生产 profile 为 1 vCPU / 3 GiB / 6 GB、最多 3 个单任务实例。上线后以真实 1080p 的 p50/p95、失败率和单位成本决定是否增配或扩容。
+7. POC 的公开 bearer endpoint 只用于隔离验证；生产入口必须经过 Scribix auth、ownership、job-scoped token 和内部 Queue 流程。
 
 ## 5. 部署与观测
 
-按以下顺序：D1 migrations → ECR/Batch → Queue/DLQ → 主 Next/OpenNext app → video-render dispatcher → cleanup worker。默认 rollout 为 100%，因此 schema、Batch 和其他依赖未就绪时不要部署主应用。
+按以下顺序：D1 migrations → private R2/CORS → Container image/application → Queue/DLQ consumer → 主 Next/OpenNext app → cleanup worker。默认 rollout 为 100%，因此 schema、Container 调度和其他依赖未就绪时不要部署主应用。
 
 配置并验证：
 
-- Queue/DLQ、Batch failed/timeout、ECR scan 和 CloudWatch error alarms。
+- Queue/DLQ、Container capacity/cold-start/failed/timeout、镜像扫描和 Worker error alarms。
 - `video_render_metrics` 的 queue depth、p50/p95 start/render/total、success/retry rate。
 - `video_render_cost_rates_missing` 必须为零，所有成功任务都有 cost model。
 - cleanup retry、orphan assets 和 source/proxy retention。
@@ -70,6 +63,8 @@
 
 ## 6. Production smoke 与试点
 
-使用 allowlist 内部账号依次验证：横屏有声、竖屏静音、多 segment、三个字幕模板、Logo/字体、取消、重试、重复 idempotency key、源过期、视频/封面下载、账户删除。确认 Final Render 只读取 original source。
+使用 allowlist 内部账号依次验证：横屏有声、竖屏静音、连续片段修剪、自动与固定构图、三个字幕模板、Logo/字体、取消、重试、重复 idempotency key、源过期、视频/封面下载、账户删除。确认 Final Render 只读取 original source。
 
-随后按 `m9-pilot-rollout.md` 验证真实 talking-head/podcast 用户流程。生产部署前由负责人确认隐私说明、AWS/转录处理披露、7/30/90 天源保留、5/25/100 GiB 存储额度、render 使用量/成本转嫁规则与套餐文案；确认完成后以默认 100% 上线。
+同时验证公开入口：`/` 继续承接 AI video clipper 首页，`/video-to-text` 及五个 locale 版本承接原视频转文字页面；检查侧边栏链接、上传后登录回跳、自引用 canonical、reciprocal hreflang、Open Graph、JSON-LD 和 sitemap 记录。
+
+随后按 `m9-pilot-rollout.md` 验证真实 talking-head/podcast 用户流程。生产部署前由负责人确认隐私说明、Cloudflare Containers/转录处理披露、7/30/90 天源保留、5/25/100 GiB 存储额度、render 使用量/成本转嫁规则与套餐文案；确认完成后以默认 100% 上线。

@@ -111,6 +111,7 @@ export type UseUploadOpts = {
 
 type PendingProcessing = {
   transcriptId: string;
+  projectId?: string;
   filename: string;
   toolSlug: string;
   source: "upload" | "record";
@@ -255,6 +256,7 @@ export function useUpload({
       let fallbackReason: UploadFallbackReason | undefined;
       let directUploadStarted = false;
       let pendingProcessing: PendingProcessing | null = null;
+      let videoProjectId: string | undefined;
       const uploadStartedAt = Date.now();
 
       try {
@@ -377,12 +379,14 @@ export function useUpload({
         if (!initRes.ok) throw await readError(initRes, t);
         const init = (await initRes.json()) as {
           transcriptId: string;
+          projectId?: string;
           uploadUrl?: string;
           uploadId?: string;
           partSize?: number;
           uploadMode: "single" | "multipart";
         };
         transcriptId = init.transcriptId;
+        videoProjectId = init.projectId;
 
         step = directVideo ? "uploading video" : "uploading audio";
         setPhase("uploading");
@@ -424,6 +428,7 @@ export function useUpload({
         setPhase("submitting");
         pendingProcessing = {
           transcriptId,
+          projectId: videoProjectId,
           filename: file.name,
           toolSlug,
           source,
@@ -525,7 +530,9 @@ export function useUpload({
               startedAt: uploadStartedAt,
             }));
           }
-          router.push(`/dashboard/transcripts/${transcriptId}`);
+          router.push(videoProjectId
+            ? `/dashboard/video-projects/${videoProjectId}`
+            : `/dashboard/transcripts/${transcriptId}`);
         } else {
           throw new Error(t("transcriptionGeneric", { status: finalStatus }));
         }
@@ -632,7 +639,9 @@ export function useUpload({
             upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
           });
         }
-        router.push(`/dashboard/transcripts/${pending.transcriptId}`);
+        router.push(pending.projectId
+          ? `/dashboard/video-projects/${pending.projectId}`
+          : `/dashboard/transcripts/${pending.transcriptId}`);
       })
       .catch((error) => {
         clearPendingProcessing(pending.transcriptId);
@@ -721,7 +730,9 @@ export function useUpload({
             upload_elapsed_sec: elapsedSec(submit.startedAt),
             upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
           });
-          router.push(`/dashboard/transcripts/${submit.transcriptId}`);
+          router.push(submit.projectId
+            ? `/dashboard/video-projects/${submit.projectId}`
+            : `/dashboard/transcripts/${submit.transcriptId}`);
         })
         .catch((error) => {
           const detail = uploadErrorDetail(error, "submitting transcript", t);

@@ -28,9 +28,13 @@ type CandidateTranscript = {
 
 export const AI_CLIP_CANDIDATE_COUNT = VIDEO_WORKSPACE_LIMITS.maxCandidates;
 export const AI_CLIP_MIN_DURATION_MS = 15_000;
-export const AI_CLIP_MAX_DURATION_MS = 90_000;
-export const AI_CLIP_MAX_SEGMENTS = 3;
+export const AI_CLIP_MAX_DURATION_MS = VIDEO_WORKSPACE_LIMITS.maxAiCandidateDurationMs;
+export const AI_CLIP_MAX_SEGMENTS = 1;
 export const AI_CLIP_INPUT_CHAR_LIMIT = 480_000;
+
+export const DIRECT_EDIT_MAX_SOURCE_DURATION_MS =
+  VIDEO_WORKSPACE_LIMITS.directEditMaxSourceDurationMs;
+export const MEDIUM_SOURCE_MAX_DURATION_MS = 3 * 60_000;
 
 const AI_CLIP_MIN_SEGMENT_DURATION_MS = 2_000;
 const MAX_BOUNDARY_ALIGNMENT_DRIFT_MS = 3_000;
@@ -55,6 +59,19 @@ export type ProviderCandidateSet = {
   candidates: ProviderCandidate[];
 };
 
+export type ProviderCandidateReviewDecision = {
+  candidateIndex: number;
+  verdict: "accept" | "adjust" | "reject";
+  completenessScore: number;
+  completenessReason: string;
+  segments: CandidateSegment[];
+};
+
+export type ProviderCandidateReviewResult = {
+  candidates: ProviderCandidateSet;
+  reviews: ProviderCandidateReviewDecision[];
+};
+
 export type CandidateAnalysisInput = {
   text: string;
   truncated: boolean;
@@ -68,11 +85,16 @@ export class CandidateGenerationError extends Error {
     readonly code:
       | "word_timestamps_missing"
       | "invalid_provider_output"
-      | "no_valid_candidates"
   ) {
     super(message);
     this.name = "CandidateGenerationError";
   }
+}
+
+export function candidateLimitForSourceDuration(sourceDurationMs: number): number {
+  if (sourceDurationMs <= DIRECT_EDIT_MAX_SOURCE_DURATION_MS) return 1;
+  if (sourceDurationMs <= MEDIUM_SOURCE_MAX_DURATION_MS) return 3;
+  return AI_CLIP_CANDIDATE_COUNT;
 }
 
 export function buildCandidateAnalysisInput(
@@ -111,20 +133,89 @@ export function buildCandidateAnalysisInput(
   };
 }
 
-export function parseProviderCandidateSet(input: unknown): ProviderCandidateSet {
+export function parseProviderCandidateSet(
+  input: unknown,
+  maxCandidates: number = AI_CLIP_CANDIDATE_COUNT
+): ProviderCandidateSet {
+  if (
+    !Number.isInteger(maxCandidates) ||
+    maxCandidates < 0 ||
+    maxCandidates > AI_CLIP_CANDIDATE_COUNT
+  ) {
+    throw invalidProviderOutput();
+  }
   if (!isPlainObject(input) || !hasExactKeys(input, ["candidates"])) {
     throw invalidProviderOutput();
   }
   if (
     !Array.isArray(input.candidates) ||
-    input.candidates.length === 0 ||
-    input.candidates.length > AI_CLIP_CANDIDATE_COUNT
+    input.candidates.length > maxCandidates
   ) {
     throw invalidProviderOutput();
   }
 
   const candidates = input.candidates.map((raw) => parseProviderCandidate(raw));
   return { candidates };
+}
+
+export function parseProviderCandidateReviewResult(
+  input: unknown,
+  proposedSet: ProviderCandidateSet
+): ProviderCandidateReviewResult {
+  if (!isPlainObject(input) || !hasExactKeys(input, ["reviews"])) {
+    throw invalidProviderOutput();
+  }
+  if (
+    !Array.isArray(input.reviews) ||
+    input.reviews.length !== proposedSet.candidates.length
+  ) {
+    throw invalidProviderOutput();
+  }
+
+  const seen = new Set<number>();
+  const reviews = input.reviews.map((raw) => {
+    if (
+      !isPlainObject(raw) ||
+      !hasExactKeys(raw, [
+        "candidateIndex",
+        "verdict",
+        "completenessScore",
+        "completenessReason",
+        "segments",
+      ]) ||
+      !Number.isInteger(raw.candidateIndex) ||
+      (raw.candidateIndex as number) < 0 ||
+      (raw.candidateIndex as number) >= proposedSet.candidates.length ||
+      seen.has(raw.candidateIndex as number) ||
+      !["accept", "adjust", "reject"].includes(String(raw.verdict)) ||
+      typeof raw.completenessScore !== "number" ||
+      !Number.isFinite(raw.completenessScore) ||
+      raw.completenessScore < 0 ||
+      raw.completenessScore > 1
+    ) {
+      throw invalidProviderOutput();
+    }
+    const completenessReason = boundedText(raw.completenessReason, 500);
+    if (!completenessReason) throw invalidProviderOutput();
+    seen.add(raw.candidateIndex as number);
+    return {
+      candidateIndex: raw.candidateIndex as number,
+      verdict: raw.verdict as ProviderCandidateReviewDecision["verdict"],
+      completenessScore: raw.completenessScore,
+      completenessReason,
+      segments: parseProviderSegments(raw.segments),
+    };
+  }).sort((left, right) => left.candidateIndex - right.candidateIndex);
+
+  const candidates = reviews.flatMap((review) => {
+    if (review.verdict === "reject") return [];
+    const proposed = proposedSet.candidates[review.candidateIndex];
+    return [{
+      ...proposed,
+      segments: review.verdict === "adjust" ? review.segments : proposed.segments,
+    }];
+  });
+  return { candidates: { candidates }, reviews };
 }
 
 export function alignAndValidateCandidateSet(
@@ -176,12 +267,6 @@ export function alignAndValidateCandidateSet(
     valid.push(candidate);
   }
 
-  if (valid.length === 0) {
-    throw new CandidateGenerationError(
-      "The model returned no candidates that passed timestamp validation",
-      "no_valid_candidates"
-    );
-  }
   return {
     schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION,
     candidates: valid,
@@ -338,7 +423,19 @@ function parseProviderCandidate(raw: unknown): ProviderCandidate {
   ) {
     throw invalidProviderOutput();
   }
-  const segments = raw.segments.map((segment) => {
+  const segments = parseProviderSegments(raw.segments);
+  return { theme, hook, reason, score: raw.score, segments };
+}
+
+function parseProviderSegments(rawSegments: unknown): CandidateSegment[] {
+  if (
+    !Array.isArray(rawSegments) ||
+    rawSegments.length === 0 ||
+    rawSegments.length > AI_CLIP_MAX_SEGMENTS
+  ) {
+    throw invalidProviderOutput();
+  }
+  return rawSegments.map((segment) => {
     if (
       !isPlainObject(segment) ||
       !hasExactKeys(segment, ["startMs", "endMs"]) ||
@@ -349,7 +446,6 @@ function parseProviderCandidate(raw: unknown): ProviderCandidate {
     }
     return { startMs: segment.startMs as number, endMs: segment.endMs as number };
   });
-  return { theme, hook, reason, score: raw.score, segments };
 }
 
 function alignCandidateSegments(

@@ -35,6 +35,7 @@
       }
     },
     "captions": {
+      "enabled": true,
       "templateId": "karaoke-v1",
       "fontAssetId": null,
       "textColor": "#FFFFFF",

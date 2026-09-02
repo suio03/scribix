@@ -93,7 +93,8 @@ Do not judge the `/audio-to-text` metadata experiment until at least four weeks 
 
 Before deployment, and again against production after deployment, verify:
 
-- Signed out: homepage, audio-to-text, MP3, and AI Note Taker entry points return to the same localized tool page after OAuth.
+- Signed out: homepage, video-to-text, audio-to-text, MP3, and AI Note Taker
+  entry points return to the same localized tool page after OAuth.
 - Signed in: small audio, small video, and a direct-upload video complete without duplicate transcripts.
 - Free known-duration file over remaining quota: modal shows total and real remaining minutes before upload; cancel uploads nothing; confirm processes no more than the displayed N; upgrade opens Paddle before upload and requires reselecting the file afterward.
 - Free unknown-duration audio and video: modal shows full length unavailable, both actions work, and an actually short file is not mislabeled partial after completion.
@@ -111,6 +112,9 @@ Before deployment, and again against production after deployment, verify:
   and `ai_usage_events` records input/cached/output tokens plus estimated cost
   without prompt content.
 - Checkout: new purchase UI offers Pro only, defaults to $120 yearly, allows $20 monthly, and sends the matching live price ID. Verify completed, closed, and failed paths; the completed transaction appears once in the ownership records and no amount is sent to Plausible.
-- SEO: `/sitemap.xml`, `/robots.txt`, canonical/hreflang, `/ai-note-taker`, English plus at least one localized page; legal sitemap entries have no localized alternates.
+- SEO: `/sitemap.xml`, `/robots.txt`, canonical/hreflang, `/`,
+  `/video-to-text`, `/ai-note-taker`, English plus at least one localized page;
+  the homepage and video-to-text page keep distinct intent and canonical URLs,
+  and legal sitemap entries have no localized alternates.
 
 For large-file and paid-plan tests, use dedicated test accounts and non-sensitive media. Avoid real customer files.

@@ -1,3 +1,4 @@
+import { Container } from "@cloudflare/containers";
 import { VIDEO_WORKSPACE_SCHEMA_VERSION, type RenderDispatchMessage } from "../lib/video-workspace/contracts";
 import { createScopedJobToken } from "../lib/video-workspace/job-auth";
 import { recordServerRenderEvent } from "../lib/video-workspace/events";
@@ -7,19 +8,15 @@ import {
   percentile,
   renderErrorCategory,
 } from "../lib/video-workspace/operations";
-import { AwsBatchRenderProvider, type VideoRenderProvider } from "./video-render-provider";
+import { CloudflareContainerRenderProvider, type VideoRenderProvider } from "./video-render-provider";
 
 interface Env {
   DB: D1Database;
   VIDEO_RENDER_QUEUE: Queue<RenderDispatchMessage>;
-  AWS_ACCESS_KEY_ID: string;
-  AWS_SECRET_ACCESS_KEY: string;
-  AWS_SESSION_TOKEN?: string;
-  AWS_REGION: string;
-  AWS_BATCH_JOB_QUEUE: string;
-  AWS_BATCH_JOB_DEFINITION: string;
+  VIDEO_RENDER_CONTAINERS: DurableObjectNamespace<VideoRenderContainer>;
   SCRIBIX_INTERNAL_URL: string;
   VIDEO_WORKER_SIGNING_SECRET: string;
+  VIDEO_RENDER_MAX_CONTAINERS?: string;
   VIDEO_RENDER_VCPU_MICROUSD_PER_HOUR?: string;
   VIDEO_RENDER_MEMORY_GB_MICROUSD_PER_HOUR?: string;
   VIDEO_RENDER_PER_JOB_MICROUSD?: string;
@@ -40,6 +37,35 @@ type ReconcileJobRow = DispatchJobRow & {
 };
 
 const MAX_DISPATCH_ATTEMPTS = 5;
+const PROVIDER = "cloudflare-containers";
+
+export class VideoRenderContainer extends Container<Env> {
+  sleepAfter = "10s";
+  enableInternet = true;
+
+  override onStart(): void {
+    console.log(JSON.stringify({ event: "video_render_container_started" }));
+  }
+
+  override onStop({ exitCode, reason }: { exitCode: number; reason: string }): void {
+    console.log(JSON.stringify({
+      event: "video_render_container_stopped",
+      exitCode,
+      reason,
+    }));
+  }
+
+  override onError(error: unknown): void {
+    console.error(JSON.stringify({
+      event: "video_render_container_error",
+      error: error instanceof Error ? error.message.slice(0, 160) : "unknown",
+    }));
+  }
+
+  override async onActivityExpired(): Promise<void> {
+    await this.destroy();
+  }
+}
 
 export default {
   async queue(
@@ -90,15 +116,27 @@ async function dispatchJob(
   provider: VideoRenderProvider,
   jobId: string
 ): Promise<"submitted" | "ignored" | "retry"> {
+  const pending = await env.DB.prepare(
+    `SELECT id, kind, status, provider_job_id FROM render_jobs WHERE id = ?1`
+  )
+    .bind(jobId)
+    .first<DispatchJobRow>();
+  if (!pending) return "ignored";
+  if (pending.status === "canceled" && pending.provider_job_id) {
+    await provider.cancel(pending.provider_job_id);
+    return "ignored";
+  }
+  if (pending.status !== "queued") return "ignored";
+  if (await atContainerCapacity(env)) return "retry";
   const claimed = await env.DB.prepare(
     `UPDATE render_jobs
-        SET status = 'preparing', provider = 'aws-batch', attempt = attempt + 1,
+        SET status = 'preparing', provider = ?2, attempt = attempt + 1,
             error_code = NULL, updated_at = CURRENT_TIMESTAMP
       WHERE id = ?1
         AND status = 'queued'
         AND provider_job_id IS NULL`
   )
-    .bind(jobId)
+    .bind(jobId, PROVIDER)
     .run();
   if (!claimed.meta?.changes) {
     const current = await env.DB.prepare(
@@ -133,7 +171,7 @@ async function dispatchJob(
           SET provider_job_id = ?1, provider_submitted_at = CURRENT_TIMESTAMP,
               updated_at = CURRENT_TIMESTAMP
         WHERE id = ?2
-          AND status = 'preparing'
+          AND status IN ('preparing', 'running', 'uploading', 'completed')
           AND provider_job_id IS NULL`
     )
       .bind(providerJobId, jobId)
@@ -192,12 +230,12 @@ async function reconcileJobs(env: Env): Promise<void> {
   const active = await env.DB.prepare(
     `SELECT id, kind, status, provider_job_id, output_asset_id, cover_asset_id, updated_at
        FROM render_jobs
-      WHERE provider = 'aws-batch'
+      WHERE provider = ?1
         AND provider_job_id IS NOT NULL
         AND status IN ('preparing', 'running', 'uploading')
       ORDER BY updated_at ASC
       LIMIT 100`
-  ).all<ReconcileJobRow>();
+  ).bind(PROVIDER).all<ReconcileJobRow>();
   if (active.results.length === 0) return;
   const states = await providerFor(env).describe(
     active.results.flatMap((job) => job.provider_job_id ? [job.provider_job_id] : [])
@@ -389,14 +427,21 @@ async function failReconciledJob(
 }
 
 function providerFor(env: Env): VideoRenderProvider {
-  return new AwsBatchRenderProvider({
-    accessKeyId: env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-    sessionToken: env.AWS_SESSION_TOKEN,
-    region: env.AWS_REGION,
-    jobQueue: env.AWS_BATCH_JOB_QUEUE,
-    jobDefinition: env.AWS_BATCH_JOB_DEFINITION,
-  });
+  return new CloudflareContainerRenderProvider(env.VIDEO_RENDER_CONTAINERS);
+}
+
+async function atContainerCapacity(env: Env): Promise<boolean> {
+  const configured = Number(env.VIDEO_RENDER_MAX_CONTAINERS ?? 3);
+  const limit = Number.isInteger(configured) && configured > 0
+    ? Math.min(configured, 100)
+    : 3;
+  const row = await env.DB.prepare(
+    `SELECT COUNT(*) AS count
+       FROM render_jobs
+      WHERE provider = ?1
+        AND status IN ('preparing', 'running', 'uploading')`
+  ).bind(PROVIDER).first<{ count: number }>();
+  return (row?.count ?? 0) >= limit;
 }
 
 function validMessage(value: unknown): value is RenderDispatchMessage {

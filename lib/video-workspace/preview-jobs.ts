@@ -122,7 +122,20 @@ export async function rebuildCandidatePreviewSegment(
   const candidates = await candidateRows(db, userId, projectId, [candidateId]);
   if (candidates.length === 0) return { ok: false, error: "candidate_not_found" };
   const candidateSegments = parseSegments(candidates[0].segments_json);
-  if (!candidateSegments[segmentIndex]) return { ok: false, error: "segment_not_found" };
+  if (
+    !candidateSegments[segmentIndex] &&
+    !await draftContainsSegment(
+      db,
+      userId,
+      projectId,
+      candidateId,
+      segmentIndex,
+      sourceStartMs,
+      sourceEndMs
+    )
+  ) {
+    return { ok: false, error: "segment_not_found" };
+  }
 
   const latest = await db.prepare(
     `SELECT j.id, j.status, j.provider_job_id, j.proxy_source_start_ms,
@@ -241,6 +254,45 @@ export async function rebuildCandidatePreviewSegment(
   }
   await queue.send({ schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION, jobId });
   return { ok: true, created: true, jobId };
+}
+
+async function draftContainsSegment(
+  db: D1Database,
+  userId: string,
+  projectId: string,
+  candidateId: string,
+  segmentIndex: number,
+  sourceStartMs: number,
+  sourceEndMs: number
+): Promise<boolean> {
+  if (segmentIndex >= VIDEO_WORKSPACE_LIMITS.maxSegments) return false;
+  const row = await db.prepare(
+    `SELECT draft_edl_json
+       FROM video_projects
+      WHERE id = ?1
+        AND user_id = ?2
+        AND draft_candidate_id = ?3
+        AND deleted_at IS NULL`
+  )
+    .bind(projectId, userId, candidateId)
+    .first<{ draft_edl_json: string | null }>();
+  if (!row?.draft_edl_json) return false;
+  try {
+    const parsed = JSON.parse(row.draft_edl_json) as {
+      segments?: Array<{
+        id?: unknown;
+        sourceStartMs?: unknown;
+        sourceEndMs?: unknown;
+      }>;
+    };
+    return parsed.segments?.some((segment) => (
+      segment.id === `s${segmentIndex}` &&
+      segment.sourceStartMs === sourceStartMs &&
+      segment.sourceEndMs === sourceEndMs
+    )) ?? false;
+  } catch {
+    return false;
+  }
 }
 
 async function queueCandidateRows(

@@ -8,28 +8,27 @@ const dockerfile = await readFile(join(root, "containers/video-preview/Dockerfil
 assert.match(dockerfile, /^FROM .+@sha256:[a-f0-9]{64}$/m);
 assert.match(dockerfile, /^USER node$/m);
 assert.match(dockerfile, /ffmpeg="\$\{FFMPEG_VERSION\}"/);
+assert.match(dockerfile, /mediapipe==\$\{MEDIAPIPE_VERSION\}/);
+assert.match(dockerfile, /sha256sum --check/);
 
-const dispatcherPolicy = JSON.parse(await readFile(
-  join(root, "docs/video-workspace/aws/dispatcher-iam-policy.json"),
-  "utf8"
-));
-const dispatcherActions = dispatcherPolicy.Statement.flatMap((statement) => (
-  Array.isArray(statement.Action) ? statement.Action : [statement.Action]
-));
-assert.deepEqual(new Set(dispatcherActions), new Set([
-  "batch:SubmitJob",
-  "batch:DescribeJobs",
-  "batch:TerminateJob",
-]));
+const [dispatcher, provider, wrangler] = await Promise.all([
+  readFile(join(root, "workers/video-render-dispatcher.ts"), "utf8"),
+  readFile(join(root, "workers/video-render-provider.ts"), "utf8"),
+  readFile(join(root, "wrangler.video-render.jsonc"), "utf8"),
+]);
+assert.match(dispatcher, /from "@cloudflare\/containers"/);
+assert.match(provider, /getByName\(providerJobId\)\.destroy\(\)/);
+assert.doesNotMatch(`${dispatcher}\n${provider}\n${wrangler}`, /AWS_|aws-batch/i);
 
-const executionPolicy = JSON.parse(await readFile(
-  join(root, "docs/video-workspace/aws/execution-role-policy.json"),
-  "utf8"
-));
-const executionActions = executionPolicy.Statement.flatMap((statement) => (
-  Array.isArray(statement.Action) ? statement.Action : [statement.Action]
-));
-assert.equal(executionActions.some((action) => action.startsWith("s3:") || action.startsWith("r2:")), false);
+const wranglerConfig = JSON.parse(wrangler);
+assert.equal(wranglerConfig.containers[0].max_instances, 3);
+assert.deepEqual(wranglerConfig.containers[0].instance_type, {
+  vcpu: 1,
+  memory_mib: 3072,
+  disk_mb: 6000,
+});
+assert.equal(wranglerConfig.containers[0].ssh.enabled, false);
+assert.equal(wranglerConfig.queues.consumers[0].max_concurrency, 1);
 
 let imageScan = "external-required";
 if (process.env.TRIVY_IMAGE) {
@@ -45,7 +44,9 @@ console.log(JSON.stringify({
   event: "video_security_controls_passed",
   baseImagePinned: true,
   nonRootContainer: true,
-  dispatcherActions,
+  provider: "cloudflare-containers",
+  maxInstances: wranglerConfig.containers[0].max_instances,
+  mediaPipePinned: true,
   containerHasObjectStoreCredentials: false,
   imageScan,
 }));

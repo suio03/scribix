@@ -873,15 +873,24 @@
       "createClipsFailed": "Could not open the clip workspace.",
       "back": "← Back to transcript",
       "workspaceLabel": "Short-video workspace",
+      "workflow": { "label": "Video project stages", "transcript": "Transcript", "clips": "Clips", "editor": "Editor", "exports": "Exports" },
       "eyebrow": "AI clip finder",
       "shortlistTitle": "Editorial shortlist",
       "description": "Generate self-contained moments from the transcript. Every timestamp is checked against the original word boundaries before it appears here.",
       "generate": "Find clips",
       "regenerate": "Regenerate",
       "generating": "Finding moments…",
+      "directEdit": "Edit original video",
+      "directEditing": "Opening editor…",
       "analyzingBody": "Reading the transcript and checking each proposed cut…",
       "emptyTitle": "No shortlist yet",
       "emptyBody": "Generate candidates to find strong hooks and complete ideas across the source video.",
+      "shortSourceBody": "This source is already short. Open the original directly to trim it, add captions, and style the final clip.",
+      "noQualityTitle": "No strong moments found",
+      "noQualityBody": "The AI did not find a complete, compelling clip and will not fill the list with weak suggestions. You can still start a manual cut from the original video.",
+      "manualEyebrow": "Original source",
+      "manualTitle": "Edit your own cut",
+      "manualBody": "This timeline starts from the uploaded original. Adjust the source timestamps and keep the finished short at 60 seconds or less.",
       "score": "{score}% fit",
       "accept": "Use this clip",
       "accepted": "Selected",
@@ -904,6 +913,8 @@
         "loading": "Restoring your edit…",
         "eyebrow": "Continuous clip editor",
         "title": "Shape the story",
+        "clipTitle": "Clip name",
+        "clipTitleSaveFailed": "The clip name could not be saved.",
         "saveVersion": "Save version",
         "versionSaved": "Version {version} saved",
         "play": "Play continuous preview",
@@ -920,6 +931,7 @@
         "moveEarlier": "Move cut earlier",
         "moveLater": "Move cut later",
         "remove": "Remove cut",
+        "addSegment": "Add another source segment",
         "insideHandles": "Instant preview · inside proxy handles",
         "outsideHandles": "New preview required · edit remains saved",
         "conflictReload": "Newer draft found · reload",
@@ -932,9 +944,9 @@
         },
         "style": {
           "uploadFailed": "The asset could not be uploaded. Use a supported file under 5 MB.",
-          "framing": { "title": "Framing", "cut": "Cut {number}", "horizontal": "Horizontal focus", "vertical": "Vertical focus", "zoom": "Zoom" },
+          "framing": { "title": "Framing", "cut": "Cut {number}", "automatic": "Auto follow", "manual": "Fixed crop", "automaticNote": "The final render follows the prominent face. If tracking is unreliable, the full frame is preserved over a blurred background.", "manualNote": "These controls use one fixed crop for the whole clip.", "useAutomatic": "Use automatic framing", "horizontal": "Horizontal focus", "vertical": "Vertical focus", "zoom": "Zoom" },
           "captions": {
-            "title": "Captions", "template": "Motion style", "karaoke": "Karaoke punch", "boxed": "Editorial box", "minimal": "Quiet minimal", "font": "Typeface", "defaultFont": "Scribix default", "customFont": "Custom font {number}", "textColor": "Text", "highlightColor": "Highlight", "position": "Vertical position", "lineWidth": "Characters per line", "lines": "Maximum lines", "uploadFont": "Upload TTF or OTF", "correction": "Correct transcript text", "cue": "Caption cue {number}"
+            "title": "Captions", "enabled": "Show captions", "template": "Motion style", "karaoke": "Karaoke punch", "boxed": "Editorial box", "minimal": "Quiet minimal", "font": "Typeface", "defaultFont": "Scribix default", "customFont": "Custom font {number}", "textColor": "Text", "highlightColor": "Highlight", "position": "Vertical position", "lineWidth": "Characters per line", "lines": "Maximum lines", "uploadFont": "Upload TTF or OTF", "correction": "Correct transcript text", "cue": "Caption cue {number}"
           },
           "brand": {
             "title": "Brand", "template": "Brand layout", "none": "No brand overlay", "corner": "Corner mark", "signature": "Signature line", "logo": "Logo", "noLogo": "No logo", "customLogo": "Custom logo {number}", "accent": "Accent", "position": "Logo position", "topLeft": "Top left", "topRight": "Top right", "bottomLeft": "Bottom left", "bottomRight": "Bottom right", "scale": "Logo size", "uploadLogo": "Upload PNG, JPEG or WebP"

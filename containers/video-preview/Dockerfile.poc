@@ -32,9 +32,10 @@ RUN mkdir -p /opt/scribix-models \
   && chmod 0444 /opt/scribix-models/blaze_face_full_range_v1.tflite
 
 WORKDIR /app
-COPY --chown=node:node preview-render.mjs final-render.mjs poc-reframe.mjs poc-reframe.py worker.mjs ./
+COPY --chown=node:node preview-render.mjs final-render.mjs poc-contract.mjs poc-server.mjs poc-reframe.mjs poc-reframe.py full-flow-poc.mjs ./
 
 ENV PATH="/opt/scribix-venv/bin:${PATH}"
 
 USER node
-ENTRYPOINT ["node", "/app/worker.mjs"]
+EXPOSE 8080
+ENTRYPOINT ["node", "/app/poc-server.mjs"]

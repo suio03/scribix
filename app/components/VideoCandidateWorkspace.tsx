@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AlertCircle,
   Check,
@@ -8,12 +8,14 @@ import {
   Film,
   Loader2,
   RefreshCw,
+  Scissors,
   Sparkles,
   ThumbsDown,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { VideoClipEditor } from "@/app/components/VideoClipEditor";
 import type { StoredClipCandidate } from "@/lib/video-workspace/candidates";
+import { VIDEO_WORKSPACE_LIMITS } from "@/lib/video-workspace/contracts";
 import type { CandidatePreview } from "@/lib/video-workspace/preview-jobs";
 
 type ProjectStatus = "draft" | "analyzing" | "candidates_ready" | "failed" | string;
@@ -21,11 +23,13 @@ type ProjectStatus = "draft" | "analyzing" | "candidates_ready" | "failed" | str
 export function VideoCandidateWorkspace({
   projectId,
   initialStatus,
+  sourceDurationMs,
   initialCandidates,
   initialPreviews,
 }: {
   projectId: string;
   initialStatus: ProjectStatus;
+  sourceDurationMs: number | null;
   initialCandidates: StoredClipCandidate[];
   initialPreviews: CandidatePreview[];
 }) {
@@ -36,7 +40,15 @@ export function VideoCandidateWorkspace({
   const [error, setError] = useState(false);
   const [feedbackBusy, setFeedbackBusy] = useState<string | null>(null);
   const [previewBusy, setPreviewBusy] = useState<string | null>(null);
+  const [manualBusy, setManualBusy] = useState(false);
+  const autoStartedRef = useRef(false);
   const generating = status === "analyzing";
+  const shortSource = Boolean(
+    sourceDurationMs &&
+    sourceDurationMs <= VIDEO_WORKSPACE_LIMITS.directEditMaxSourceDurationMs
+  );
+  const manualCandidate = candidates.find((candidate) => candidate.origin === "manual") ?? null;
+  const aiCandidates = candidates.filter((candidate) => candidate.origin === "ai");
   const previewsActive = previews.some((preview) => (
     preview.status === "queued" || preview.status === "processing"
   ));
@@ -103,6 +115,37 @@ export function VideoCandidateWorkspace({
     }
   };
 
+  const startManualEdit = async () => {
+    if (manualBusy || generating) return;
+    if (candidates.length > 0 && !window.confirm(t("replaceConfirm"))) return;
+    setManualBusy(true);
+    setError(false);
+    try {
+      const response = await fetch(`/api/video-projects/${projectId}/candidates`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ mode: "manual" }),
+      });
+      const payload = (await response.json()) as {
+        status?: string;
+        candidates?: StoredClipCandidate[];
+        previews?: CandidatePreview[];
+      };
+      if (!response.ok || !payload.candidates?.some((candidate) => (
+        candidate.origin === "manual"
+      ))) {
+        throw new Error("manual_editor_failed");
+      }
+      setCandidates(payload.candidates);
+      setPreviews(payload.previews ?? []);
+      setStatus(payload.status ?? "editing");
+    } catch {
+      setError(true);
+    } finally {
+      setManualBusy(false);
+    }
+  };
+
   const requestPreview = async (candidateId: string) => {
     if (previewBusy) return;
     setPreviewBusy(candidateId);
@@ -156,8 +199,17 @@ export function VideoCandidateWorkspace({
     }
   };
 
+  useEffect(() => {
+    if (
+      autoStartedRef.current || status !== "draft" || candidates.length > 0 ||
+      generating || manualBusy
+    ) return;
+    autoStartedRef.current = true;
+    void (shortSource ? startManualEdit() : generate());
+  }, [candidates.length, generating, manualBusy, shortSource, status]);
+
   return (
-    <section className="mt-10">
+    <section id="clips" className="mt-10 scroll-mt-6">
       <div className="flex flex-col justify-between gap-5 border-b border-line pb-6 sm:flex-row sm:items-end">
         <div className="max-w-2xl">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
@@ -170,25 +222,33 @@ export function VideoCandidateWorkspace({
             {t("description")}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => void generate()}
-          disabled={generating}
-          className="inline-flex w-fit items-center gap-2 rounded-full border border-ink bg-ink px-4 py-2 text-[13px] font-medium text-paper transition hover:bg-accent disabled:cursor-wait disabled:border-ink/30 disabled:bg-ink/30"
-        >
-          {generating ? (
-            <Loader2 size={15} className="animate-spin" />
-          ) : candidates.length > 0 ? (
-            <RefreshCw size={15} />
-          ) : (
-            <Sparkles size={15} />
-          )}
-          {generating
-            ? t("generating")
-            : candidates.length > 0
-              ? t("regenerate")
-              : t("generate")}
-        </button>
+        {!manualCandidate || !shortSource ? (
+          <button
+            type="button"
+            onClick={() => void (shortSource ? startManualEdit() : generate())}
+            disabled={generating || manualBusy}
+            className="inline-flex w-fit items-center gap-2 rounded-full border border-ink bg-ink px-4 py-2 text-[13px] font-medium text-paper transition hover:bg-accent disabled:cursor-wait disabled:border-ink/30 disabled:bg-ink/30"
+          >
+            {generating || manualBusy ? (
+              <Loader2 size={15} className="animate-spin" />
+            ) : candidates.length > 0 ? (
+              <RefreshCw size={15} />
+            ) : shortSource ? (
+              <Scissors size={15} />
+            ) : (
+              <Sparkles size={15} />
+            )}
+            {generating
+              ? t("generating")
+              : manualBusy
+                ? t("directEditing")
+                : shortSource
+                  ? t("directEdit")
+                  : candidates.length > 0
+                    ? t("regenerate")
+                    : t("generate")}
+          </button>
+        ) : null}
       </div>
 
       {error ? (
@@ -199,21 +259,53 @@ export function VideoCandidateWorkspace({
 
       {generating ? <CandidateSkeleton label={t("analyzingBody")} /> : null}
 
-      {!generating && candidates.length === 0 ? (
+      {!generating && !manualCandidate && aiCandidates.length === 0 ? (
         <div className="mt-8 grid min-h-64 place-items-center rounded-2xl border border-dashed border-line bg-card/35 px-6 text-center">
           <div className="max-w-md py-12">
             <span className="mx-auto inline-grid size-11 place-items-center rounded-full border border-line bg-paper text-accent">
               <Sparkles size={18} />
             </span>
-            <h3 className="mt-4 font-display text-xl font-semibold">{t("emptyTitle")}</h3>
-            <p className="mt-2 text-[13px] leading-6 text-ink/55">{t("emptyBody")}</p>
+            <h3 className="mt-4 font-display text-xl font-semibold">
+              {status === "candidates_ready" ? t("noQualityTitle") : t("emptyTitle")}
+            </h3>
+            <p className="mt-2 text-[13px] leading-6 text-ink/55">
+              {status === "candidates_ready"
+                ? t("noQualityBody")
+                : shortSource
+                  ? t("shortSourceBody")
+                  : t("emptyBody")}
+            </p>
+            {status === "candidates_ready" && !shortSource ? (
+              <button
+                type="button"
+                onClick={() => void startManualEdit()}
+                disabled={manualBusy}
+                className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[12px] font-semibold text-paper transition hover:bg-accent disabled:opacity-40"
+              >
+                {manualBusy ? <Loader2 size={14} className="animate-spin" /> : <Scissors size={14} />}
+                {manualBusy ? t("directEditing") : t("directEdit")}
+              </button>
+            ) : null}
           </div>
         </div>
       ) : null}
 
-      {!generating && candidates.length > 0 ? (
+      {!generating && manualCandidate ? (
+        <div className="mt-8 overflow-hidden rounded-2xl border border-line bg-card">
+          <div className="px-5 py-5 sm:px-7">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+              {t("manualEyebrow")}
+            </p>
+            <h3 className="mt-2 font-display text-xl font-semibold">{t("manualTitle")}</h3>
+            <p className="mt-2 text-[13px] leading-6 text-ink/55">{t("manualBody")}</p>
+          </div>
+          <VideoClipEditor projectId={projectId} candidateId={manualCandidate.id} />
+        </div>
+      ) : null}
+
+      {!generating && aiCandidates.length > 0 ? (
         <div className="mt-8 space-y-4">
-          {candidates.map((candidate, index) => (
+          {aiCandidates.map((candidate, index) => (
             <CandidateCard
               key={candidate.id}
               projectId={projectId}

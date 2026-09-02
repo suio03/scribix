@@ -2,6 +2,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { downloadAsset, renderFinal, validateFinalLease } from "./final-render.mjs";
+import { analyzeReframe } from "./poc-reframe.mjs";
 import {
   probeMedia,
   renderError,
@@ -68,7 +69,35 @@ async function runFinal(lease) {
     downloadAsset(lease.logoUrl, join(workingDirectory, "logo-asset")),
     downloadAsset(lease.fontUrl, join(workingDirectory, "font-asset")),
   ]);
-  const rendered = await renderFinal({ lease, workingDirectory, logoPath, fontPath });
+  let reframePlan = null;
+  if (usesAutomaticFraming(lease)) {
+    try {
+      reframePlan = await analyzeReframe({
+        sourceInput: lease.sourceUrl,
+        segments: lease.edl.segments,
+        workingDirectory,
+      });
+    } catch {
+      console.warn(JSON.stringify({ event: "video_reframe_fallback", jobId }));
+      reframePlan = {
+        schemaVersion: 1,
+        segments: lease.edl.segments.map((segment) => ({
+          segmentId: segment.id,
+          mode: "fit_blur",
+          confidence: 0,
+          reasons: ["analysis_unavailable"],
+          keyframes: [],
+        })),
+      };
+    }
+  }
+  const rendered = await renderFinal({
+    lease,
+    workingDirectory,
+    logoPath,
+    fontPath,
+    reframePlan,
+  });
   await markUploading();
   const [video, cover] = await Promise.all([
     readFile(rendered.outputPath),
@@ -98,6 +127,13 @@ async function runFinal(lease) {
     },
   });
   console.log(JSON.stringify({ event: "video_final_completed", jobId, bytes: video.byteLength, durationMs: rendered.output.durationMs }));
+}
+
+function usesAutomaticFraming(lease) {
+  return lease.edl.segments.some((segment) => {
+    const crop = lease.renderSpec.segments[segment.id]?.crop;
+    return crop && crop.x === 0.5 && crop.y === 0.5 && crop.zoom === 1;
+  });
 }
 
 async function markUploading() {

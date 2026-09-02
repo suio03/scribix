@@ -70,7 +70,7 @@ libass 的 FFmpeg build；在该镜像通过 ASS 路径前，字幕 parity 仍�
 - [x] Browser/renderer 合同排除任意 shell/filter/path 输入。
 - [ ] 固定并验证包含 libass 的生产 FFmpeg 镜像。
 - [ ] 准备并跑完 20–30 条真实输入基准，包括损坏文件和 VFR。
-- [ ] 确认剩余产品项：首发设备范围、AI 元数据边界和首选 provider。
+- [ ] 确认剩余产品项：首发设备范围和 AI 元数据边界；首选 provider 已确认为 Cloudflare Containers，但生产调度迁移仍未完成。
 
 ## 尚待产品确认
 
@@ -78,7 +78,7 @@ libass 的 FFmpeg build；在该镜像通过 ASS 路径前，字幕 parity 仍�
 
 - 编辑器首发桌面 Chrome/Edge；移动端只查看和下载。
 - AI 只保存 clip 内部名称/主题，不生成面向社交平台的描述和 hashtags。
-- Job contract 保持 provider-neutral；AWS Batch + Fargate On-Demand 作为首个实现目标。
+- Job contract 保持 provider-neutral；首个生产实现目标已改为 Cloudflare Queue + Containers，隔离 POC 结果见 `cloudflare-containers-poc.md`。
 
 已确认：
 

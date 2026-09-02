@@ -19,7 +19,12 @@ import { VideoStyleControls } from "@/app/components/VideoStyleControls";
 import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
 import { trackVideoWorkspaceEvent } from "@/app/components/video-event-client";
 import type { EditorWorkspace } from "@/lib/video-workspace/editor";
-import type { Edl, EdlSegment, RenderSpec } from "@/lib/video-workspace/contracts";
+import {
+  VIDEO_WORKSPACE_LIMITS,
+  type Edl,
+  type EdlSegment,
+  type RenderSpec,
+} from "@/lib/video-workspace/contracts";
 import {
   VIDEO_LOGO_BOTTOM_PX,
   VIDEO_LOGO_SIDE_PX,
@@ -65,6 +70,8 @@ export function VideoClipEditor({
   const [loadError, setLoadError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [proxyRefreshIds, setProxyRefreshIds] = useState<string[]>([]);
+  const [clipTitle, setClipTitle] = useState("");
+  const [titleSaveState, setTitleSaveState] = useState<"idle" | "saving" | "error">("idle");
   const lastSavedRef = useRef("");
   const proxyRequestRef = useRef(new Map<string, string>());
   const eventSessionRef = useRef<string | null>(null);
@@ -96,6 +103,7 @@ export function VideoClipEditor({
         const signature = draftSignature(next.edl, next.renderSpec);
         lastSavedRef.current = next.restoredDraft ? signature : "";
         setWorkspace(next);
+        setClipTitle(next.clipTitle);
         setEdl(next.edl);
         setRenderSpec(next.renderSpec);
         setRevision(next.revision);
@@ -164,16 +172,21 @@ export function VideoClipEditor({
   }, [candidateId, edl, projectId, renderSpec, revision, saveState, signature]);
 
   useEffect(() => {
-    if (!workspace || !edl) return;
+    if (!workspace || !edl || saveState !== "saved") return;
     const uncovered = edl.segments.filter((segment) => {
       const proxy = workspace.proxies.find((item) => item.segmentId === segment.id);
-      return proxy && !sourceRangeInsideProxy(proxy, segment.sourceStartMs, segment.sourceEndMs);
+      return !proxy || !sourceRangeInsideProxy(
+        proxy,
+        segment.sourceStartMs,
+        segment.sourceEndMs
+      );
     });
     if (uncovered.length === 0) return;
     const timer = window.setTimeout(() => {
       for (const segment of uncovered) {
         const proxy = workspace.proxies.find((item) => item.segmentId === segment.id);
-        if (!proxy) continue;
+        const segmentIndex = proxy?.segmentIndex ?? segmentIndexFromId(segment.id);
+        if (segmentIndex === null) continue;
         const requestKey = `${segment.sourceStartMs}:${segment.sourceEndMs}`;
         if (proxyRequestRef.current.get(segment.id) === requestKey) continue;
         proxyRequestRef.current.set(segment.id, requestKey);
@@ -184,7 +197,7 @@ export function VideoClipEditor({
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
-              segmentIndex: proxy.segmentIndex,
+              segmentIndex,
               sourceStartMs: segment.sourceStartMs,
               sourceEndMs: segment.sourceEndMs,
             }),
@@ -193,7 +206,7 @@ export function VideoClipEditor({
       }
     }, 1_200);
     return () => window.clearTimeout(timer);
-  }, [candidateId, edl, projectId, workspace]);
+  }, [candidateId, edl, projectId, saveState, workspace]);
 
   useEffect(() => {
     if (proxyRefreshIds.length === 0 || !edl) return;
@@ -245,7 +258,7 @@ export function VideoClipEditor({
   }, []);
 
   useEffect(() => {
-    if (!edl) return;
+    if (!edl || !workspace) return;
     setRenderSpec((current) => {
       if (!current) return current;
       const segments = new Map(edl.segments.map((segment) => [segment.id, segment]));
@@ -265,6 +278,12 @@ export function VideoClipEditor({
           words,
         }];
       });
+      const cueSegmentIds = new Set(cues.map((cue) => cue.segmentId));
+      const usedCueIds = new Set(cues.map((cue) => cue.id));
+      for (const segment of edl.segments) {
+        if (cueSegmentIds.has(segment.id)) continue;
+        cues.push(...captionCuesForSegment(segment, workspace.words, usedCueIds));
+      }
       return cues.length === current.captions.cues.length && cues.every((cue, index) => (
         cue.sourceStartMs === current.captions.cues[index].sourceStartMs &&
         cue.sourceEndMs === current.captions.cues[index].sourceEndMs &&
@@ -273,7 +292,7 @@ export function VideoClipEditor({
         ? current
         : { ...current, captions: { ...current.captions, cues } };
     });
-  }, [edl]);
+  }, [edl, workspace]);
 
   const updateBoundary = useCallback((
     segmentId: string,
@@ -281,25 +300,47 @@ export function VideoClipEditor({
     valueMs: number
   ) => {
     if (!workspace) return;
-    updateEdl((current) => ({
-      ...current,
-      segments: current.segments.map((segment) => {
-        if (segment.id !== segmentId) return segment;
-        if (boundary === "start") {
+    updateEdl((current) => {
+      const otherDurationMs = current.segments.reduce((total, segment) => (
+        segment.id === segmentId
+          ? total
+          : total + segment.sourceEndMs - segment.sourceStartMs
+      ), 0);
+      const availableDurationMs = Math.max(
+        VIDEO_WORKSPACE_LIMITS.minSegmentDurationMs,
+        VIDEO_WORKSPACE_LIMITS.maxTimelineDurationMs - otherDurationMs
+      );
+      return {
+        ...current,
+        segments: current.segments.map((segment) => {
+          if (segment.id !== segmentId) return segment;
+          if (boundary === "start") {
+            return {
+              ...segment,
+              sourceStartMs: Math.max(
+                0,
+                segment.sourceEndMs - availableDurationMs,
+                Math.min(
+                  Math.round(valueMs),
+                  segment.sourceEndMs - VIDEO_WORKSPACE_LIMITS.minSegmentDurationMs
+                )
+              ),
+            };
+          }
           return {
             ...segment,
-            sourceStartMs: Math.max(0, Math.min(Math.round(valueMs), segment.sourceEndMs - 250)),
+            sourceEndMs: Math.min(
+              workspace.sourceDurationMs,
+              segment.sourceStartMs + availableDurationMs,
+              Math.max(
+                Math.round(valueMs),
+                segment.sourceStartMs + VIDEO_WORKSPACE_LIMITS.minSegmentDurationMs
+              )
+            ),
           };
-        }
-        return {
-          ...segment,
-          sourceEndMs: Math.min(
-            workspace.sourceDurationMs,
-            Math.max(Math.round(valueMs), segment.sourceStartMs + 250)
-          ),
-        };
-      }),
-    }));
+        }),
+      };
+    });
   }, [updateEdl, workspace]);
 
   const removeSegment = useCallback((segmentId: string) => {
@@ -377,6 +418,31 @@ export function VideoClipEditor({
     }
   }, [candidateId, projectId, revision, saveState]);
 
+  const saveClipTitle = useCallback(async () => {
+    const title = clipTitle.trim().replace(/\s+/g, " ").slice(0, 160);
+    if (!workspace || !title || title === workspace.clipTitle || titleSaveState === "saving") {
+      if (workspace && !title) setClipTitle(workspace.clipTitle);
+      return;
+    }
+    setTitleSaveState("saving");
+    try {
+      const response = await fetch(
+        `/api/video-projects/${projectId}/candidates/${candidateId}`,
+        {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ title }),
+        }
+      );
+      if (!response.ok) throw new Error("clip_title_save_failed");
+      setClipTitle(title);
+      setWorkspace((current) => current ? { ...current, clipTitle: title } : current);
+      setTitleSaveState("idle");
+    } catch {
+      setTitleSaveState("error");
+    }
+  }, [candidateId, clipTitle, projectId, titleSaveState, workspace]);
+
   if (loadError) {
     return (
       <EditorNotice tone="error">
@@ -403,7 +469,7 @@ export function VideoClipEditor({
   );
 
   return (
-    <section className="border-t border-line bg-[linear-gradient(135deg,rgba(14,13,11,0.025),transparent_55%)] px-5 py-6 sm:px-7">
+    <section id="editor" className="scroll-mt-6 border-t border-line bg-[linear-gradient(135deg,rgba(14,13,11,0.025),transparent_55%)] px-5 py-6 sm:px-7">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
@@ -411,6 +477,26 @@ export function VideoClipEditor({
             {t("eyebrow")}
           </div>
           <h4 className="mt-1 font-display text-xl font-semibold text-ink">{t("title")}</h4>
+          <label className="mt-3 block max-w-md">
+            <span className="sr-only">{t("clipTitle")}</span>
+            <input
+              type="text"
+              value={clipTitle}
+              maxLength={160}
+              onChange={(event) => {
+                setClipTitle(event.target.value);
+                setTitleSaveState("idle");
+              }}
+              onBlur={() => void saveClipTitle()}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") event.currentTarget.blur();
+              }}
+              className="w-full border-b border-line bg-transparent py-1 text-[13px] font-medium text-ink outline-none transition placeholder:text-ink/35 focus:border-accent"
+            />
+            {titleSaveState === "error" ? (
+              <span className="mt-1 block text-[10px] text-red-600">{t("clipTitleSaveFailed")}</span>
+            ) : null}
+          </label>
         </div>
         <div className="flex items-center gap-2">
           <SaveIndicator state={saveState} t={t} onReload={() => setReloadKey((value) => value + 1)} />
@@ -433,9 +519,9 @@ export function VideoClipEditor({
             renderSpec={renderSpec}
             assets={workspace.assets}
             labels={{
-            play: t("play"),
-            pause: t("pause"),
-            previewMissing: t("previewMissing"),
+              play: t("play"),
+              pause: t("pause"),
+              previewMissing: t("previewMissing"),
             }}
           />
           <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.1em] text-ink/45">
@@ -850,11 +936,11 @@ function PreviewOverlays({
   renderSpec: RenderSpec;
   assets: EditorWorkspace["assets"];
 }) {
-  const cue = renderSpec.captions.cues.find((item) => (
+  const cue = renderSpec.captions.enabled ? renderSpec.captions.cues.find((item) => (
     item.segmentId === segmentId &&
     sourceMs >= item.sourceStartMs &&
     sourceMs < item.sourceEndMs
-  ));
+  )) : undefined;
   const logo = assets.find((asset) => (
     asset.kind === "logo" && asset.id === renderSpec.brand.logoAssetId
   ));
@@ -994,6 +1080,44 @@ function IconButton({
 
 function draftSignature(edl: Edl, renderSpec: RenderSpec): string {
   return JSON.stringify({ edl, renderSpec });
+}
+
+function segmentIndexFromId(segmentId: string): number | null {
+  const match = /^s(\d+)$/.exec(segmentId);
+  if (!match) return null;
+  const value = Number(match[1]);
+  return value < VIDEO_WORKSPACE_LIMITS.maxSegments ? value : null;
+}
+
+function captionCuesForSegment(
+  segment: EdlSegment,
+  words: TranscriptWordBoundary[],
+  usedCueIds: Set<string>
+): RenderSpec["captions"]["cues"] {
+  const segmentWords = words.filter((word) => (
+    word.endMs > segment.sourceStartMs && word.startMs < segment.sourceEndMs
+  ));
+  const cues: RenderSpec["captions"]["cues"] = [];
+  for (let index = 0; index < segmentWords.length; index += 6) {
+    const group = segmentWords.slice(index, index + 6);
+    if (group.length === 0) continue;
+    let cueIndex = usedCueIds.size;
+    while (usedCueIds.has(`cue_${cueIndex}`)) cueIndex += 1;
+    const id = `cue_${cueIndex}`;
+    usedCueIds.add(id);
+    cues.push({
+      id,
+      segmentId: segment.id,
+      sourceStartMs: Math.max(segment.sourceStartMs, group[0].startMs),
+      sourceEndMs: Math.min(segment.sourceEndMs, group.at(-1)?.endMs ?? group[0].endMs),
+      words: group.map((word) => ({
+        text: word.text,
+        sourceStartMs: Math.max(segment.sourceStartMs, word.startMs),
+        sourceEndMs: Math.min(segment.sourceEndMs, word.endMs),
+      })),
+    });
+  }
+  return cues;
 }
 
 function formatDuration(valueMs: number): string {

@@ -82,14 +82,38 @@ export function VideoStyleControls({
         <div className="space-y-4">
           {[...edl.segments].sort((a, b) => a.order - b.order).map((segment, index) => {
             const crop = renderSpec.segments[segment.id].crop;
+            const automatic = crop.x === 0.5 && crop.y === 0.5 && crop.zoom === 1;
             return (
               <div key={segment.id} className="rounded-lg border border-line bg-paper/65 p-3">
-                <p className="mb-3 font-mono text-[9px] uppercase tracking-[0.12em] text-ink/45">
-                  {t("framing.cut", { number: index + 1 })}
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-ink/45">
+                    {t("framing.cut", { number: index + 1 })}
+                  </p>
+                  <span className={`rounded-full px-2 py-0.5 text-[9px] font-semibold ${automatic ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
+                    {t(automatic ? "framing.automatic" : "framing.manual")}
+                  </span>
+                </div>
+                <p className="mb-3 text-[10px] leading-4 text-ink/50">
+                  {t(automatic ? "framing.automaticNote" : "framing.manualNote")}
                 </p>
                 <ControlRange label={t("framing.horizontal")} min={0} max={1} step={0.01} value={crop.x} display={`${Math.round(crop.x * 100)}%`} onChange={(x) => onChange({ ...renderSpec, segments: { ...renderSpec.segments, [segment.id]: { crop: { ...crop, x } } } })} />
                 <ControlRange label={t("framing.vertical")} min={0} max={1} step={0.01} value={crop.y} display={`${Math.round(crop.y * 100)}%`} onChange={(y) => onChange({ ...renderSpec, segments: { ...renderSpec.segments, [segment.id]: { crop: { ...crop, y } } } })} />
                 <ControlRange label={t("framing.zoom")} min={1} max={4} step={0.05} value={crop.zoom} display={`${crop.zoom.toFixed(2)}×`} onChange={(zoom) => onChange({ ...renderSpec, segments: { ...renderSpec.segments, [segment.id]: { crop: { ...crop, zoom } } } })} />
+                {!automatic ? (
+                  <button
+                    type="button"
+                    onClick={() => onChange({
+                      ...renderSpec,
+                      segments: {
+                        ...renderSpec.segments,
+                        [segment.id]: { crop: { x: 0.5, y: 0.5, zoom: 1 } },
+                      },
+                    })}
+                    className="mt-3 text-[10px] font-semibold text-accent underline decoration-accent/30 underline-offset-4"
+                  >
+                    {t("framing.useAutomatic")}
+                  </button>
+                ) : null}
               </div>
             );
           })}
@@ -97,6 +121,18 @@ export function VideoStyleControls({
       </ControlSection>
 
       <ControlSection icon={<Type size={13} />} title={t("captions.title")} open>
+        <label className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-line bg-paper/65 px-3 py-2.5 text-[11px] font-medium text-ink/70">
+          <span>{t("captions.enabled")}</span>
+          <input
+            type="checkbox"
+            checked={renderSpec.captions.enabled}
+            onChange={(event) => onChange({
+              ...renderSpec,
+              captions: { ...renderSpec.captions, enabled: event.target.checked },
+            })}
+            className="size-4 accent-[#bd5738]"
+          />
+        </label>
         <div className="grid gap-3 sm:grid-cols-2">
           <ControlSelect label={t("captions.template")} value={renderSpec.captions.templateId} options={[
             ["karaoke-v1", t("captions.karaoke")],
