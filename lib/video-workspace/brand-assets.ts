@@ -160,3 +160,39 @@ export async function completeBrandAssetUpload(
     .run();
   return { ok: true };
 }
+
+export async function deleteBrandAsset(
+  db: D1Database,
+  bucket: R2Bucket,
+  userId: string,
+  projectId: string,
+  assetId: string
+): Promise<
+  | { ok: true }
+  | { ok: false; error: "asset_not_found" }
+> {
+  const asset = await db.prepare(
+    `SELECT r2_key
+       FROM media_assets
+      WHERE id = ?1
+        AND user_id = ?2
+        AND project_id = ?3
+        AND kind IN ('logo', 'font')
+        AND deleted_at IS NULL`
+  )
+    .bind(assetId, userId, projectId)
+    .first<{ r2_key: string | null }>();
+  if (!asset) return { ok: false, error: "asset_not_found" };
+  if (asset.r2_key) await bucket.delete(asset.r2_key);
+  await db.prepare(
+    `UPDATE media_assets
+        SET status = 'deleted', r2_key = NULL, deleted_at = CURRENT_TIMESTAMP
+      WHERE id = ?1
+        AND user_id = ?2
+        AND project_id = ?3
+        AND deleted_at IS NULL`
+  )
+    .bind(assetId, userId, projectId)
+    .run();
+  return { ok: true };
+}

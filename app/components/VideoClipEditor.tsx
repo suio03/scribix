@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  ChevronDown,
-  ChevronUp,
   CircleAlert,
   Loader2,
   Pause,
@@ -10,7 +8,6 @@ import {
   Scissors,
   SkipBack,
   SkipForward,
-  Trash2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -48,6 +45,13 @@ import {
   type TimelineSegment,
   type TranscriptWordBoundary,
 } from "@/lib/video-workspace/timeline";
+
+const ORIGINAL_AUDIO_SETTINGS: RenderSpec["audio"] = {
+  gainDb: 0,
+  normalize: false,
+  fadeInMs: 0,
+  fadeOutMs: 0,
+};
 
 export type VideoEditorSaveState = "saved" | "dirty" | "saving" | "error" | "conflict";
 
@@ -105,14 +109,19 @@ export function VideoClipEditor({
       })
       .then((next) => {
         if (!active) return;
-        const signature = draftSignature(next.edl, next.renderSpec);
-        lastSavedRef.current = next.restoredDraft ? signature : "";
+        const savedSignature = draftSignature(next.edl, next.renderSpec);
+        const nextRenderSpec = {
+          ...next.renderSpec,
+          audio: ORIGINAL_AUDIO_SETTINGS,
+        };
+        const nextSignature = draftSignature(next.edl, nextRenderSpec);
+        lastSavedRef.current = next.restoredDraft ? savedSignature : "";
         setWorkspace(next);
         setClipTitle(next.clipTitle);
         setEdl(next.edl);
-        setRenderSpec(next.renderSpec);
+        setRenderSpec(nextRenderSpec);
         setRevision(next.revision);
-        setSaveState(next.restoredDraft ? "saved" : "dirty");
+        setSaveState(next.restoredDraft && savedSignature === nextSignature ? "saved" : "dirty");
       })
       .catch(() => {
         if (active) setLoadError(true);
@@ -346,42 +355,6 @@ export function VideoClipEditor({
     });
   }, [updateEdl, workspace]);
 
-  const removeSegment = useCallback((segmentId: string) => {
-    if (!edl || !renderSpec || edl.segments.length <= 1) return;
-    const nextSegments = edl.segments
-      .filter((segment) => segment.id !== segmentId)
-      .sort((left, right) => left.order - right.order)
-      .map((segment, order) => ({ ...segment, order }));
-    const nextSegmentSpecs = { ...renderSpec.segments };
-    delete nextSegmentSpecs[segmentId];
-    const durationMs = nextSegments.reduce(
-      (total, segment) => total + segment.sourceEndMs - segment.sourceStartMs,
-      0
-    );
-    setEdl({ ...edl, segments: nextSegments });
-    setRenderSpec({
-      ...renderSpec,
-      segments: nextSegmentSpecs,
-      captions: {
-        ...renderSpec.captions,
-        cues: renderSpec.captions.cues.filter((cue) => cue.segmentId !== segmentId),
-      },
-      coverTimelineMs: Math.min(renderSpec.coverTimelineMs, Math.max(0, durationMs - 1)),
-    });
-    setSaveState((current) => current === "conflict" ? current : "dirty");
-  }, [edl, renderSpec]);
-
-  const moveSegment = useCallback((segmentId: string, direction: -1 | 1) => {
-    updateEdl((current) => {
-      const ordered = [...current.segments].sort((left, right) => left.order - right.order);
-      const index = ordered.findIndex((segment) => segment.id === segmentId);
-      const target = index + direction;
-      if (index < 0 || target < 0 || target >= ordered.length) return current;
-      [ordered[index], ordered[target]] = [ordered[target], ordered[index]];
-      return { ...current, segments: ordered.map((segment, order) => ({ ...segment, order })) };
-    });
-  }, [updateEdl]);
-
   const stepBoundary = useCallback((
     segment: EdlSegment,
     boundary: "start" | "end",
@@ -511,8 +484,6 @@ export function VideoClipEditor({
               <SegmentEditor
                 key={segment.id}
                 segment={segment}
-                index={index}
-                count={edl.segments.length}
                 words={workspace.words}
                 proxy={workspace.proxies.find((item) => item.segmentId === segment.id)}
                 labels={{
@@ -522,16 +493,11 @@ export function VideoClipEditor({
                   end: t("end"),
                   previousWord: t("previousWord"),
                   nextWord: t("nextWord"),
-                  moveEarlier: t("moveEarlier"),
-                  moveLater: t("moveLater"),
-                  remove: t("remove"),
                   insideHandles: t("insideHandles"),
                   outsideHandles: t("outsideHandles"),
                 }}
                 onBoundary={updateBoundary}
                 onStep={stepBoundary}
-                onMove={moveSegment}
-                onRemove={removeSegment}
               />
             ))}
           <VideoStyleControls
@@ -557,26 +523,18 @@ export function VideoClipEditor({
 
 function SegmentEditor({
   segment,
-  index,
-  count,
   words,
   proxy,
   labels,
   onBoundary,
   onStep,
-  onMove,
-  onRemove,
 }: {
   segment: EdlSegment;
-  index: number;
-  count: number;
   words: TranscriptWordBoundary[];
   proxy: EditorWorkspace["proxies"][number] | undefined;
   labels: Record<string, string>;
   onBoundary: (id: string, boundary: "start" | "end", valueMs: number) => void;
   onStep: (segment: EdlSegment, boundary: "start" | "end", direction: -1 | 1) => void;
-  onMove: (id: string, direction: -1 | 1) => void;
-  onRemove: (id: string) => void;
 }) {
   const insideHandles = proxy
     ? sourceRangeInsideProxy(proxy, segment.sourceStartMs, segment.sourceEndMs)
@@ -587,18 +545,11 @@ function SegmentEditor({
     .join(" ");
   return (
     <article className="rounded-xl border border-line bg-card p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">{labels.segment}</p>
-          <p className="mt-1 text-[12px] text-ink/60">
-            {labels.source} · {formatTimestamp(segment.sourceStartMs)}–{formatTimestamp(segment.sourceEndMs)}
-          </p>
-        </div>
-        <div className="flex items-center gap-1">
-          <IconButton label={labels.moveEarlier} disabled={index === 0} onClick={() => onMove(segment.id, -1)}><ChevronUp size={14} /></IconButton>
-          <IconButton label={labels.moveLater} disabled={index === count - 1} onClick={() => onMove(segment.id, 1)}><ChevronDown size={14} /></IconButton>
-          <IconButton label={labels.remove} disabled={count === 1} onClick={() => onRemove(segment.id)}><Trash2 size={14} /></IconButton>
-        </div>
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/45">{labels.segment}</p>
+        <p className="mt-1 text-[12px] text-ink/60">
+          {labels.source} · {formatTimestamp(segment.sourceStartMs)}–{formatTimestamp(segment.sourceEndMs)}
+        </p>
       </div>
 
       <p className="mt-3 line-clamp-2 min-h-10 text-[12px] leading-5 text-ink/55">
@@ -651,17 +602,39 @@ function BoundaryInput({
   onPrevious: () => void;
   onNext: () => void;
 }) {
+  const [draftValue, setDraftValue] = useState(() => formatPreciseTimestamp(valueMs));
+
+  useEffect(() => {
+    setDraftValue(formatPreciseTimestamp(valueMs));
+  }, [valueMs]);
+
+  const commit = () => {
+    const parsed = parseTimestamp(draftValue);
+    if (parsed === null) {
+      setDraftValue(formatPreciseTimestamp(valueMs));
+      return;
+    }
+    onChange(parsed);
+  };
+
   return (
     <label className="block">
       <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink/45">{label}</span>
       <div className="mt-1 flex items-stretch overflow-hidden rounded-lg border border-line bg-paper">
         <button type="button" onClick={onPrevious} aria-label={previousLabel} title={previousLabel} className="px-2 text-ink/45 transition hover:bg-ink/5 hover:text-ink"><SkipBack size={13} /></button>
         <input
-          type="number"
-          min={0}
-          step={0.001}
-          value={(valueMs / 1000).toFixed(3)}
-          onChange={(event) => onChange(Math.round(Number(event.target.value) * 1000))}
+          type="text"
+          inputMode="decimal"
+          value={draftValue}
+          onChange={(event) => setDraftValue(event.target.value)}
+          onBlur={commit}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") event.currentTarget.blur();
+            if (event.key === "Escape") {
+              setDraftValue(formatPreciseTimestamp(valueMs));
+              event.currentTarget.blur();
+            }
+          }}
           className="min-w-0 flex-1 border-x border-line bg-transparent px-2 py-2 font-mono text-[11px] tabular-nums text-ink outline-none focus:bg-card"
         />
         <button type="button" onClick={onNext} aria-label={nextLabel} title={nextLabel} className="px-2 text-ink/45 transition hover:bg-ink/5 hover:text-ink"><SkipForward size={13} /></button>
@@ -1030,24 +1003,6 @@ function EditorNotice({ children, tone }: { children: React.ReactNode; tone: "er
   return <div className={`flex min-h-32 items-center justify-center gap-3 border-t border-line px-6 text-[12px] ${tone === "error" ? "bg-red-50 text-red-700" : ""}`}>{children}</div>;
 }
 
-function IconButton({
-  children,
-  label,
-  disabled,
-  onClick,
-}: {
-  children: React.ReactNode;
-  label: string;
-  disabled: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button type="button" disabled={disabled} onClick={onClick} aria-label={label} title={label} className="grid size-8 place-items-center rounded-lg border border-line text-ink/45 transition hover:border-ink/25 hover:text-ink disabled:opacity-20">
-      {children}
-    </button>
-  );
-}
-
 function draftSignature(edl: Edl, renderSpec: RenderSpec): string {
   return JSON.stringify({ edl, renderSpec });
 }
@@ -1103,4 +1058,38 @@ function formatTimestamp(valueMs: number): string {
   return hours > 0
     ? `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
     : `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function formatPreciseTimestamp(valueMs: number): string {
+  const safeValueMs = Math.max(0, Math.round(valueMs));
+  const totalSeconds = Math.floor(safeValueMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const milliseconds = safeValueMs % 1000;
+  const prefix = hours > 0
+    ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
+    : String(minutes).padStart(2, "0");
+  return `${prefix}:${String(seconds).padStart(2, "0")}.${String(milliseconds).padStart(3, "0")}`;
+}
+
+function parseTimestamp(value: string): number | null {
+  const parts = value.trim().split(":");
+  if (parts.length < 2 || parts.length > 3) return null;
+  const seconds = Number(parts.at(-1));
+  const minutes = Number(parts.at(-2));
+  const hours = parts.length === 3 ? Number(parts[0]) : 0;
+  if (
+    !Number.isFinite(hours) ||
+    !Number.isFinite(minutes) ||
+    !Number.isFinite(seconds) ||
+    hours < 0 ||
+    minutes < 0 ||
+    seconds < 0 ||
+    (parts.length === 3 && minutes >= 60) ||
+    seconds >= 60
+  ) {
+    return null;
+  }
+  return Math.round(((hours * 60 + minutes) * 60 + seconds) * 1000);
 }

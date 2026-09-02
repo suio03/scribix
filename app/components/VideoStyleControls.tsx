@@ -1,6 +1,6 @@
 "use client";
 
-import { ImagePlus, Loader2, SlidersHorizontal, Type, Volume2 } from "lucide-react";
+import { ImagePlus, Loader2, SlidersHorizontal, Trash2, Type } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { EditorBrandAsset } from "@/lib/video-workspace/brand-assets";
@@ -23,12 +23,13 @@ export function VideoStyleControls({
 }) {
   const t = useTranslations("Dashboard.videoCandidates.editor.style");
   const [uploading, setUploading] = useState<"logo" | "font" | null>(null);
-  const [uploadError, setUploadError] = useState(false);
+  const [deletingAssetId, setDeletingAssetId] = useState<string | null>(null);
+  const [assetError, setAssetError] = useState<"upload" | "remove" | null>(null);
 
   const uploadAsset = async (kind: "logo" | "font", file: File | undefined) => {
     if (!file || uploading) return;
     setUploading(kind);
-    setUploadError(false);
+    setAssetError(null);
     try {
       const mimeType = file.type || (kind === "font"
         ? file.name.toLowerCase().endsWith(".otf") ? "font/otf" : "font/ttf"
@@ -70,11 +71,41 @@ export function VideoStyleControls({
             }),
       });
     } catch {
-      setUploadError(true);
+      setAssetError("upload");
     } finally {
       setUploading(null);
     }
   };
+
+  const removeLogo = async (assetId: string) => {
+    if (deletingAssetId) return;
+    setDeletingAssetId(assetId);
+    setAssetError(null);
+    try {
+      const response = await fetch(
+        `/api/video-projects/${projectId}/brand-assets/${assetId}`,
+        { method: "DELETE" }
+      );
+      if (!response.ok) throw new Error("asset_remove_failed");
+      onAssetsChange(assets.filter((asset) => asset.id !== assetId));
+      if (renderSpec.brand.logoAssetId === assetId) {
+        onChange({
+          ...renderSpec,
+          brand: {
+            ...renderSpec.brand,
+            templateId: null,
+            logoAssetId: null,
+          },
+        });
+      }
+    } catch {
+      setAssetError("remove");
+    } finally {
+      setDeletingAssetId(null);
+    }
+  };
+
+  const logos = assets.filter((asset) => asset.kind === "logo");
 
   return (
     <div className="space-y-3">
@@ -153,16 +184,19 @@ export function VideoStyleControls({
           {t("captions.uploadFont")}
           <input type="file" accept=".ttf,.otf,font/ttf,font/otf" className="sr-only" onChange={(event) => void uploadAsset("font", event.target.files?.[0])} />
         </label>
-        <div className="mt-4 space-y-2">
+        <div className="mt-4 space-y-1.5">
           <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink/45">{t("captions.correction")}</p>
           {renderSpec.captions.cues.map((cue, index) => (
-            <label key={cue.id} className="block">
+            <label key={cue.id} className="grid gap-1.5 rounded-lg border border-line bg-paper/60 px-2.5 py-2 sm:grid-cols-[7.75rem_minmax(0,1fr)] sm:items-center sm:gap-3">
               <span className="sr-only">{t("captions.cue", { number: index + 1 })}</span>
+              <span className="font-mono text-[9px] tabular-nums text-ink/45">
+                {formatCueTimestamp(cue.sourceStartMs)}–{formatCueTimestamp(cue.sourceEndMs)}
+              </span>
               <input
                 value={cue.words.map((word) => word.text).join(" ")}
                 maxLength={400}
                 onChange={(event) => onChange({ ...renderSpec, captions: { ...renderSpec.captions, cues: renderSpec.captions.cues.map((item) => item.id === cue.id ? { ...item, words: redistributeCueWords(item, event.target.value) } : item) } })}
-                className="w-full rounded-lg border border-line bg-paper px-3 py-2 text-[11px] leading-5 text-ink outline-none transition focus:border-ink/30 focus:bg-card"
+                className="min-w-0 border-0 bg-transparent px-0 py-1 text-[11px] leading-5 text-ink outline-none placeholder:text-ink/30 focus-visible:ring-0"
               />
             </label>
           ))}
@@ -179,27 +213,61 @@ export function VideoStyleControls({
           <ControlSection icon={<ImagePlus size={13} />} title={t("brand.title")}>
             <div className="grid gap-3 sm:grid-cols-2">
               <ControlSelect label={t("brand.template")} value={renderSpec.brand.templateId ?? ""} options={[["", t("brand.none")], ["corner-v1", t("brand.corner")], ["signature-v1", t("brand.signature")]]} onChange={(templateId) => onChange({ ...renderSpec, brand: { ...renderSpec.brand, templateId: (templateId || null) as RenderSpec["brand"]["templateId"] } })} />
-              <ControlSelect label={t("brand.logo")} value={renderSpec.brand.logoAssetId ?? ""} options={[["", t("brand.noLogo")], ...assets.filter((asset) => asset.kind === "logo").map((asset, index) => [asset.id, t("brand.customLogo", { number: index + 1 })] as [string, string])]} onChange={(logoAssetId) => onChange({ ...renderSpec, brand: { ...renderSpec.brand, logoAssetId: logoAssetId || null } })} />
+              <ControlSelect label={t("brand.logo")} value={renderSpec.brand.logoAssetId ?? ""} options={[["", t("brand.noLogo")], ...logos.map((asset, index) => [asset.id, t("brand.customLogo", { number: index + 1 })] as [string, string])]} onChange={(logoAssetId) => onChange({ ...renderSpec, brand: { ...renderSpec.brand, logoAssetId: logoAssetId || null } })} />
               <ColorControl label={t("brand.accent")} value={renderSpec.brand.accentColor} onChange={(accentColor) => onChange({ ...renderSpec, brand: { ...renderSpec.brand, accentColor } })} />
               <ControlSelect label={t("brand.position")} value={renderSpec.brand.logoPosition} options={[["top-left", t("brand.topLeft")], ["top-right", t("brand.topRight")], ["bottom-left", t("brand.bottomLeft")], ["bottom-right", t("brand.bottomRight")]]} onChange={(logoPosition) => onChange({ ...renderSpec, brand: { ...renderSpec.brand, logoPosition: logoPosition as RenderSpec["brand"]["logoPosition"] } })} />
             </div>
             <div className="mt-3"><ControlRange label={t("brand.scale")} min={0.05} max={0.4} step={0.01} value={renderSpec.brand.logoScale} display={`${Math.round(renderSpec.brand.logoScale * 100)}%`} onChange={(logoScale) => onChange({ ...renderSpec, brand: { ...renderSpec.brand, logoScale } })} /></div>
+            {logos.length > 0 ? (
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {logos.map((asset, index) => {
+                  const selected = renderSpec.brand.logoAssetId === asset.id;
+                  const deleting = deletingAssetId === asset.id;
+                  const label = t("brand.customLogo", { number: index + 1 });
+                  return (
+                    <div
+                      key={asset.id}
+                      className={`flex items-center gap-2 rounded-lg border p-2 transition ${selected ? "border-accent/45 bg-accent/[0.06]" : "border-line bg-paper/65"}`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => onChange({
+                          ...renderSpec,
+                          brand: {
+                            ...renderSpec.brand,
+                            templateId: renderSpec.brand.templateId ?? "corner-v1",
+                            logoAssetId: asset.id,
+                          },
+                        })}
+                        className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                      >
+                        {/* User-provided signed URLs are intentionally rendered without image optimization. */}
+                        <img src={asset.url} alt="" className="size-9 shrink-0 rounded-md border border-line bg-white object-contain p-1" />
+                        <span className="min-w-0">
+                          <span className="block truncate text-[10px] font-medium text-ink/70">{label}</span>
+                          {selected ? <span className="block text-[9px] text-accent">{t("brand.selected")}</span> : null}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        disabled={deletingAssetId !== null}
+                        onClick={() => void removeLogo(asset.id)}
+                        aria-label={t("brand.removeLogo", { name: label })}
+                        title={t("brand.removeLogo", { name: label })}
+                        className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1.5 text-[9px] font-medium text-ink/45 transition hover:bg-red-50 hover:text-red-700 disabled:opacity-40"
+                      >
+                        {deleting ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
+                        {t("brand.remove")}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
             <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-line px-3 py-2 text-[11px] text-ink/60 transition hover:border-ink/25">
               {uploading === "logo" ? <Loader2 size={13} className="animate-spin" /> : <ImagePlus size={13} />}
-              {t("brand.uploadLogo")}
+              {renderSpec.brand.logoAssetId ? t("brand.replaceLogo") : t("brand.uploadLogo")}
               <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(event) => void uploadAsset("logo", event.target.files?.[0])} />
-            </label>
-          </ControlSection>
-
-          <ControlSection icon={<Volume2 size={13} />} title={t("audio.title")}>
-            <ControlRange label={t("audio.gain")} min={-24} max={24} step={1} value={renderSpec.audio.gainDb} display={`${renderSpec.audio.gainDb > 0 ? "+" : ""}${renderSpec.audio.gainDb} dB`} onChange={(gainDb) => onChange({ ...renderSpec, audio: { ...renderSpec.audio, gainDb } })} />
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <NumberControl label={t("audio.fadeIn")} value={renderSpec.audio.fadeInMs} min={0} max={10000} step={50} onChange={(fadeInMs) => onChange({ ...renderSpec, audio: { ...renderSpec.audio, fadeInMs } })} />
-              <NumberControl label={t("audio.fadeOut")} value={renderSpec.audio.fadeOutMs} min={0} max={10000} step={50} onChange={(fadeOutMs) => onChange({ ...renderSpec, audio: { ...renderSpec.audio, fadeOutMs } })} />
-            </div>
-            <label className="mt-3 flex items-start gap-2 text-[11px] leading-5 text-ink/60">
-              <input type="checkbox" checked={renderSpec.audio.normalize} onChange={(event) => onChange({ ...renderSpec, audio: { ...renderSpec.audio, normalize: event.target.checked } })} className="mt-1 accent-[#bd5738]" />
-              <span>{t("audio.normalize")}<small className="block text-[10px] text-ink/40">{t("audio.normalizeNote")}</small></span>
             </label>
           </ControlSection>
 
@@ -210,7 +278,7 @@ export function VideoStyleControls({
         </div>
       </details>
 
-      {uploadError ? <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[11px] text-red-700">{t("uploadFailed")}</p> : null}
+      {assetError ? <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[11px] text-red-700">{t(assetError === "remove" ? "removeFailed" : "uploadFailed")}</p> : null}
     </div>
   );
 }
@@ -231,10 +299,6 @@ function ColorControl({ label, value, onChange }: { label: string; value: string
   return <label className="block"><span className="text-[10px] text-ink/50">{label}</span><span className="mt-1 flex items-center gap-2 rounded-lg border border-line bg-paper px-2 py-1.5"><input type="color" value={value} onChange={(event) => onChange(event.target.value.toUpperCase())} className="size-6 border-0 bg-transparent" /><span className="font-mono text-[10px]">{value}</span></span></label>;
 }
 
-function NumberControl({ label, value, min, max, step, onChange }: { label: string; value: number; min: number; max: number; step: number; onChange: (value: number) => void }) {
-  return <label className="block"><span className="text-[10px] text-ink/50">{label}</span><input type="number" value={value} min={min} max={max} step={step} onChange={(event) => onChange(Math.min(max, Math.max(min, Number(event.target.value))))} className="mt-1 w-full rounded-lg border border-line bg-paper px-3 py-2 font-mono text-[11px] text-ink outline-none focus:border-ink/30" /></label>;
-}
-
 function redistributeCueWords(cue: RenderSpec["captions"]["cues"][number], text: string): RenderSpec["captions"]["cues"][number]["words"] {
   const tokens = text.trim().split(/\s+/u).filter(Boolean).slice(0, 20);
   if (tokens.length === 0) return cue.words;
@@ -244,4 +308,17 @@ function redistributeCueWords(cue: RenderSpec["captions"]["cues"][number], text:
     sourceStartMs: cue.sourceStartMs + Math.floor((durationMs * index) / tokens.length),
     sourceEndMs: cue.sourceStartMs + Math.floor((durationMs * (index + 1)) / tokens.length),
   }));
+}
+
+function formatCueTimestamp(valueMs: number): string {
+  const safeValueMs = Math.max(0, Math.round(valueMs));
+  const totalSeconds = Math.floor(safeValueMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const tenths = Math.floor((safeValueMs % 1000) / 100);
+  const prefix = hours > 0
+    ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
+    : String(minutes).padStart(2, "0");
+  return `${prefix}:${String(seconds).padStart(2, "0")}.${tenths}`;
 }

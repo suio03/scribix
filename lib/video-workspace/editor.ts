@@ -407,7 +407,7 @@ export function defaultRenderSpec(
       logoPosition: "top-right",
       logoScale: 0.16,
     },
-    audio: { gainDb: 0, normalize: true, fadeInMs: 0, fadeOutMs: 250 },
+    audio: { gainDb: 0, normalize: false, fadeInMs: 0, fadeOutMs: 0 },
     coverTimelineMs: Math.min(4_800, Math.max(0, edlTimelineDurationMs(edl) - 1)),
   };
 }
