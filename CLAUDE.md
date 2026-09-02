@@ -62,9 +62,11 @@ Free and grandfathered Starter (`basic`) accounts receive 3 successful questions
 
 ## AI video workspace
 
-Video uploads retain the original source and create a dormant video project. Sources up to 45 seconds enter the editor directly. Longer sources use `gpt-5.6-terra` with medium reasoning for candidate generation and an independent completeness review: return 0–3 candidates for sources up to 3 minutes or 0–5 for longer sources, never fill a quota with weak clips. Every AI candidate is one continuous 15–45 second source segment; user-edited EDLs may contain up to 3 segments and 60 seconds total.
+Video uploads retain the original source and create a dormant video project. Sources up to 45 seconds enter the editor directly. Longer sources use `gpt-5.6-terra` with medium reasoning for candidate generation and an independent completeness review: return 0–3 candidates for sources up to 3 minutes or 0–5 for longer sources, never fill a quota with weak clips. Every AI candidate is one continuous 15–45 second source segment. The EDL contract still validates up to 3 segments and 60 seconds for stored compatibility, but the current editor intentionally exposes only original-source start/end adjustment—not add, delete, or reorder controls.
 
 Preview and final jobs use Cloudflare Queue plus one Cloudflare Container per job. The current profile is 1 vCPU / 3 GiB / 6 GB with `max_instances=3`; capacity errors must retry through Queue/DLQ. The image contains pinned FFmpeg, MediaPipe Tasks, and the face model. Final rendering uses conservative single-speaker smart crop and falls back to full-frame blur when framing confidence is insufficient. The workspace shows every candidate in one top selector, loads one editor at a time, and stores autosaved drafts and exports per candidate. The isolated POC is deployed, but production Queue/Container rollout and remote D1 migration `0033` still require explicit approval. Current architecture and operational steps live under `docs/video-workspace/`.
+
+Editor time fields use original-video timecodes, and caption correction rows show each cue's original-source interval. Audio has no user controls: drafts are normalized to 0 dB gain, no loudness normalization, and no fades so final exports retain the original source sound. Uploaded logos can be selected, replaced, or removed; removal deletes both the project asset record and its R2 object.
 
 ## YouTube captions and extension
 

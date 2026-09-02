@@ -6,10 +6,10 @@ M5 extends the immutable Render Spec contract and implements the same controlled
 
 - Per-segment crop uses normalized `x`, `y` and `zoom` values.
 - Caption templates are stable IDs: `karaoke-v1`, `boxed-v1` and `minimal-v1`.
-- Caption cues retain source-time word boundaries and a stable segment ID. Reordering cuts does not invalidate timing.
+- Caption cues retain source-time word boundaries and a stable segment ID. Correction rows display each cue's original-video time interval so the segmentation is understandable.
 - Caption line width, line count, position and colors have bounded numeric or hex-color fields.
 - Brand templates, logo position, logo scale and accent color are enum/bounded values.
-- Audio exposes gain, loudness normalization and fade-in/out only. Browser preview approximates gain and fades; normalization remains a final-render operation.
+- Audio is fixed to the original source sound: 0 dB gain, no loudness normalization, and no fades. The Render Spec retains these fields for contract compatibility, but the editor exposes no audio controls.
 - Cover selection stores one exact virtual timeline millisecond and seeks the browser preview to it.
 
 The browser draws a 5% safe-area guide and constrains captions and logos inside it. `VideoClipEditor` and `VideoStyleControls` mutate only the shared `RenderSpec` type; the autosave endpoint performs the same server validation before persistence.
@@ -25,7 +25,7 @@ Transcript words are grouped into six-word cues when a draft is first created. A
 - Logo: PNG, JPEG or WebP, maximum 5 MiB.
 - Font: TTF or OTF, maximum 5 MiB.
 
-After direct upload, `POST /api/video-projects/:id/brand-assets/:assetId` verifies the R2 object exists and its size matches before marking it ready. Draft save separately verifies that selected logo/font IDs are ready, correctly typed, project-owned assets. M8 adds magic-byte/content scanning before production release.
+After direct upload, `POST /api/video-projects/:id/brand-assets/:assetId` verifies the R2 object exists and its size matches before marking it ready. `DELETE /api/video-projects/:id/brand-assets/:assetId` removes the owned R2 object and soft-deletes the project asset; removing the selected logo also clears the draft's brand selection. Draft save separately verifies that selected logo/font IDs are ready, correctly typed, project-owned assets. Content headers are magic-byte validated before an upload becomes ready.
 
 ## External R2 CORS setting
 

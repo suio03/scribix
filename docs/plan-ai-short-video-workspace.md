@@ -12,7 +12,7 @@
 - Scribix 不再只停留在“音视频转文字”，而是把长视频中的对话内容变成可以直接发布的短视频成片。
 - AI 主要分析 transcript，不对整段长视频逐帧做内容理解。
 - AI 根据对话与逐字时间戳生成多个完整候选 clips；V1 的每个 AI 候选只使用一个连续 source segment。
-- 用户必须可以调整内容、时间点、片段顺序、9:16 裁切、动态字幕、品牌样式、音量和音频效果。
+- 用户必须可以调整内容边界、9:16 裁切、动态字幕和品牌样式；时间字段明确使用原视频时间码，声音固定保留原始音轨。
 - 浏览器负责编辑 UI 和实时预览，不负责 V1 的最终视频编码。
 - 几小时的原视频不作为编辑器的主要预览素材；Cloud 只为候选时间段生成小体积 preview proxies。
 - 用户确认后，Cloud 必须从原始视频和最终 Render Spec 一次性生成最终成片；最终渲染不得从 preview proxy 转码。
@@ -28,7 +28,7 @@
 
 ## 2. 一句话目标
 
-用户上传一段几小时的长视频后，Scribix 自动提出多个值得发布的短视频候选；用户在浏览器中完成少量调整，然后由 Cloud 生成一条带动态字幕、品牌样式、正确画幅和处理后音频的最终 9:16 MP4。
+用户上传一段几小时的长视频后，Scribix 自动提出多个值得发布的短视频候选；用户在浏览器中完成少量调整，然后由 Cloud 生成一条带动态字幕、品牌样式、正确画幅和原始音轨的最终 9:16 MP4。
 
 ## 3. V1 产品边界
 
@@ -38,11 +38,11 @@
 - transcript 必须提供可用于精确裁切的 word-level timestamps；有 speaker 数据时保留 speaker。
 - AI 生成多个候选 clips，并给出候选理由、标题或主题和 segments。
 - 用户可以播放候选 clip，而不是从头播放几小时原视频。
-- 用户可以修改 segment 起止时间、删除 segment、调整顺序。
+- 用户可以用原视频时间码修改候选 segment 的起止时间；当前 UI 不提供新增、删除或排序 Cut。
 - 用户可以校正字幕文本并选择动态字幕模板。
 - 用户可以设置每个 segment 的 9:16 裁切位置和缩放。
 - 用户可以应用 Logo、字体和颜色等品牌模板。
-- 用户可以调整音量，并应用 V1 最终确认的音频处理项。
+- 最终视频保留原始音轨，不向用户提供音量、响度标准化或淡入淡出设置。
 - 用户可以选择封面时间点。
 - Cloud 从原始视频生成最终 1080 × 1920 MP4 和封面图片。
 - 用户可以下载最终视频和封面。
@@ -64,14 +64,14 @@
 
 以下不改变总体架构，但必须在对应里程碑开始前确认：
 
-- 已确认：“音效”在 V1 仅指音量、响度标准化、降噪、淡入淡出等音频处理，不包括背景音乐和可放置在时间线上的音效素材。
+- 已确认：V1 不提供声音设置，也不添加背景音乐或音效素材；Render Spec 中的音频字段仅保留兼容性固定值。
 - 已确认：原视频 Free 保存 7 天/5 GiB、Basic 30 天/25 GiB、Pro 90 天/100 GiB；到期后保留 transcript、EDL、Render Spec 和成片，重新渲染要求重新上传匹配的原视频。
 - 第一版是否只接受桌面浏览器编辑。建议优先桌面 Chrome/Edge，移动端先支持查看结果和下载。
 - 是否保留 AI 标题、描述和 Hashtags。当前建议交给已有分发平台，Scribix 只保留 clip 的内部名称/主题。
 - 已确认：Cloud 执行供应商方向改为 Cloudflare Containers；Render Job 协议保持供应商无关。隔离 POC 已验证 FFmpeg 功能与成本，生产接入仍需完成 Queue、容量重试、DLQ 和调度迁移，详见 `docs/video-workspace/cloudflare-containers-poc.md`。
 - 已确认：AI 候选允许为 0 个，质量优先，绝不为了达到候选数量而补弱片段。
 - 已确认：原视频不超过 45 秒时直接编辑完整原视频；45 秒以上至 3 分钟最多 3 个 AI 候选，超过 3 分钟最多 5 个。
-- 已确认：AI 候选总时长为 15–45 秒；用户只能从 original source 手动延长或调整，最终时间线最多 60 秒、最多 3 个 segments。
+- 已确认：AI 候选总时长为 15–45 秒；用户只能从 original source 手动调整当前候选边界，最终时间线仍受 60 秒 contract 上限约束。最多 3 个 segments 的校验仅用于已有数据兼容。
 
 ## 4. 用户流程
 
@@ -86,11 +86,10 @@ AI 生成多个候选 clips
   ↓
 用户进入短视频编辑器
   ├── 调整内容和时间点
-  ├── 调整 segment 顺序
   ├── 选择 9:16 裁切
   ├── 校正并设计动态字幕
   ├── 应用品牌模板
-  ├── 调整音量/音频处理
+  ├── 保留原始音轨
   └── 选择封面
   ↓
 保存 EDL + Render Spec
@@ -159,7 +158,7 @@ Cloud 从原始视频一次渲染最终 MP4
 - 每个候选的每个 source segment 单独生成 proxy，并在最终 segment 前后保留默认 5 秒 handles。
 - 示例：最终选择 `02:00–02:25`，proxy 可生成 `01:55–02:30`。
 - 用户在 handles 范围内调整时间点不需要重新生成 proxy；超出范围时异步扩展或重建该 segment proxy。
-- 不提前把 segments 合并成一个 MP4，避免用户调整顺序或删除片段时反复重渲染。
+- 不提前把 segments 合并成一个 MP4，使已有多 segment 草稿仍可逐段扩展 proxy，而不必反复重渲染整条时间线。
 - AI 完成后把全部候选 preview 加入同一个队列；Queue 以单消费者顺序生成，避免多个候选同时争抢 Container 容量。
 - Proxy 只短期保存，并可安全重建。
 
@@ -260,9 +259,9 @@ Render Spec 描述“如何把 EDL 渲染成成片”：
   },
   "audio": {
     "gainDb": 0,
-    "normalize": true,
+    "normalize": false,
     "fadeInMs": 0,
-    "fadeOutMs": 250
+    "fadeOutMs": 0
   },
   "coverTimelineMs": 4800
 }
@@ -283,7 +282,7 @@ V1 使用 transcript-first、template-first 的编辑器：
 
 - 左侧/上方：视频预览。
 - 中间：连续的虚拟 timeline 和 segments。
-- 右侧/下方：字幕、画面、品牌、音频和封面设置。
+- 右侧/下方：字幕、画面、品牌和封面设置；声音固定使用原始音轨。
 - Transcript 面板允许按句子或词调整边界，不要求用户拖动传统多轨时间线完成所有操作。
 
 ### 9.2 Preview 播放
@@ -301,7 +300,7 @@ V1 使用 transcript-first、template-first 的编辑器：
 - 字幕模板必须同时实现 Browser Preview adapter 与 FFmpeg/ASS Render adapter。
 - 字体文件、字号计算、行宽、行数、safe area 和 word highlight timing 必须共享规范。
 - Crop 使用相同的归一化坐标和 zoom 算法。
-- 音量预览可使用 Web Audio，但最终以 Cloud FFmpeg 的实现为准；UI 必须标记无法完全实时模拟的处理。
+- 浏览器与 Cloud renderer 都使用固定原音参数，不提供音量或音效预览分支。
 - 每个模板需要 golden fixtures，用固定视频、字幕和 Render Spec 对比 preview screenshot 与最终输出关键帧。
 
 ## 10. AI 候选 clips
@@ -389,7 +388,7 @@ Proxy job 不烧录字幕、不加品牌、不生成最终比例；这些由浏�
 3. 按 EDL 顺序 concat。
 4. 应用每段 crop/scale/pad。
 5. 应用字幕、Logo 和品牌 overlay。
-6. 应用 gain、normalization、fade 等已确认音频处理。
+6. 按固定兼容参数保留原始音轨，不应用 gain、normalization 或 fade。
 7. 编码 H.264/AAC MP4，写入 web-compatible metadata 和 `faststart`。
 8. 从最终 timeline 的 `coverTimelineMs` 生成 JPEG/PNG 封面。
 9. 用 `ffprobe` 校验输出后再上传，并回传 completed 状态。
@@ -704,7 +703,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 
 - [x] 实现 source/proxy/timeline 三套时间映射。
 - [x] 实现多 segment 连续播放和下一段预加载。
-- [x] 实现调整起止时间、删除、排序和总时长提示。
+- [x] 实现带原视频时间码的起止时间调整和总时长提示；移除难以理解的删除与排序入口。
 - [x] 实现 transcript/word boundary 对齐操作。
 - [x] 实现每个候选独立的 draft autosave 和 candidate-scoped version snapshot。
 
@@ -717,12 +716,13 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - 在 proxy handles 内修改边界立即生效。
 - 切换候选或刷新页面后，各候选自己的编辑状态都可恢复。
 
-### M5. 画面、字幕、品牌和音频 UI
+### M5. 画面、字幕、品牌和封面 UI
 
 - [x] 实现每个 segment 的 9:16 crop/zoom 设置。
 - [x] 实现字幕文本校正、断行、位置和动态模板选择。
-- [x] 实现 Logo、字体、颜色和品牌模板。
-- [x] 实现音量和已确认的 V1 音频处理控制。
+- [x] 实现带原视频时间范围的字幕校正行。
+- [x] 实现 Logo、字体、颜色和品牌模板，并支持明确的 Logo 替换与移除。
+- [x] 移除声音设置，固定使用原始音轨。
 - [x] 实现封面 timeline scrubber 与时间点选择。
 - [x] 为每个模板实现 Browser Preview adapter。
 
@@ -834,10 +834,10 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 至少覆盖：
 
 1. 一小时横屏 talking-head，AI 最多生成五个完整、连续的高质量候选；用户调整时间后输出不超过 60 秒的 9:16 成片。
-2. 两位 speaker 的 podcast，用户分别调整两个 segment 的 crop，字幕 speaker/timing 正确。
+2. 两位 speaker 的 podcast，smart crop 能稳定跟随当前说话者，字幕 speaker/timing 正确。
 3. 用户修改 transcript 中的错误词，最终烧录字幕使用修改后的文本。
 4. 用户应用自定义 Logo、字体和颜色，preview 与最终帧一致。
-5. 用户调低音量并启用 normalization，最终无削波、音画同步。
+5. 成片保留原始音轨的响度与起止，不应用 normalization 或淡入淡出，并保持音画同步。
 6. 用户把边界拖出 proxy handles，系统只重建受影响 segment proxy。
 7. 用户刷新或跨设备返回，能用 R2 proxy 恢复编辑。
 8. Provider callback 丢失，reconciliation 最终把 job 修复为 completed/failed。

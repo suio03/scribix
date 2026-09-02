@@ -7,7 +7,7 @@ M4 turns any selected AI candidate into its own persistent, transcript-aligned d
 - `sourceStartMs` / `sourceEndMs` remain the durable edit and final-render truth.
 - `proxySourceStartMs` / `proxySourceEndMs` describe which source interval a proxy contains.
 - `proxyStartMs = sourceStartMs - proxySourceStartMs` seeks into a proxy.
-- `timelineStartMs` / `timelineEndMs` are recomputed from ordered EDL duration, so deleted or reordered cuts never leave gaps.
+- `timelineStartMs` / `timelineEndMs` are recomputed from ordered EDL duration, preserving continuous playback for any stored multi-segment draft.
 
 `lib/video-workspace/timeline.ts` owns these mappings and word-boundary stepping. The player keeps two video elements: the active proxy plays while the next proxy is preloaded, then the slots swap at a segment boundary.
 
@@ -38,10 +38,9 @@ Migration `0028_video_editor_drafts.sql` adds the active project draft mirror. M
 ## Editing behavior
 
 - Only one candidate is selected for the singular project draft at a time.
-- Start and end controls step across real transcript word boundaries or accept millisecond-precise numeric edits.
-- Boundary changes always reference the uploaded original source. AI cuts start at no more than 45 seconds; manual edits may extend the combined timeline to 60 seconds, with at most three source segments.
-- Users can add another source segment when duration and segment slots remain; the editor autosaves it before requesting a segment-scoped proxy and restores transcript-aligned captions when that source range becomes available.
-- Delete and reorder operations preserve stable segment IDs and normalize `order` from zero.
+- Start and end controls step across real transcript word boundaries or accept millisecond-precise original-video timecodes such as `02:03.637`.
+- Boundary changes always reference the uploaded original source. AI cuts start at no more than 45 seconds; manual boundary edits may extend the timeline to the 60-second contract limit.
+- The current product does not expose add, delete, or reorder controls for cuts. Existing multi-segment drafts remain valid and play in their stored order, but ordinary editing stays focused on one understandable source range.
 - Changes inside proxy handles update immediately without media processing.
 - Changes beyond handles are saved immediately, then queue a replacement for that segment only. The editor polls until the new signed proxy covers the edited range.
 - Autosave waits 900 ms after an edit. A revision conflict requires an explicit reload.
