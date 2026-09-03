@@ -68,6 +68,13 @@ The canonical values live in `tokens.json`. The web adapters live in `app/[local
 - Icons support a named action or state; they do not decorate empty space.
 - AI sparkle iconography appears only at the analysis handoff, not throughout every card.
 
+## Brand mark
+
+- The approved Scribix mark is A2 Leading Rail: an open, unequal-weight double-rail S.
+- Product surfaces render the mark through `app/components/Logo.tsx` in the current ink color; violet remains reserved for actions and selection.
+- Favicons and app icons use the fixed dark tile artwork and do not follow the application theme.
+- Production SVG/PNG masters, minimum size, clear space, and misuse rules live in `logo-exploration-round-6/production/USAGE.md`.
+
 ## Motion
 
 - Standard duration: 180–240ms for hover/focus, 520–700ms for entrance, 2.8s for the explanatory analysis loop.
