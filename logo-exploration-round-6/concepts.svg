@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1040" role="img" aria-label="Four Scribix double-loop logo directions">
+  <rect width="1600" height="1040" fill="#f5f5f2"/>
+  <style>
+    svg{color:#111}
+    text{font-family:Arial,sans-serif}
+    .title{font-size:42px;font-weight:700;letter-spacing:-1.5px;fill:#111}
+    .sub{font-size:18px;font-weight:400;fill:#666}
+    .name{font-size:23px;font-weight:700;fill:#111}
+    .body{font-size:16px;font-weight:400;fill:#666}
+    .word{font-size:36px;font-weight:700;letter-spacing:-1.5px}
+    .tiny{font-size:12px;font-weight:600;fill:#777}
+  </style>
+  <text x="70" y="76" class="title">Scribix · Double-loop S</text>
+  <text x="70" y="112" class="sub">Four equal directions · monochrome · same scale · unchanged wordmark content</text>
+
+  <g transform="translate(70 160)">
+    <rect width="710" height="390" rx="18" fill="#fff" stroke="#d9d9d9"/>
+    <text x="28" y="42" class="name">A · Twin Trace</text>
+    <text x="28" y="70" class="body">Two complete nested S traces; the closest to the looping reference.</text>
+    <g transform="translate(42 104) scale(1.75)" color="#111">
+      <g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g>
+    </g>
+    <g transform="translate(225 135)" fill="#111">
+      <g transform="translate(0 -28) scale(.72)" color="#111"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g></g>
+      <text x="72" y="24" class="word">Scribix</text>
+    </g>
+    <g transform="translate(238 220)"><rect width="412" height="72" rx="10" fill="#fafafa" stroke="#ddd"/><g transform="translate(18 15) scale(.44)" color="#111"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g></g><text x="67" y="45" class="name">Scribix</text></g>
+    <g transform="translate(34 320)"><text y="18" class="tiny">16px</text><g transform="translate(50 0) scale(.1667)" color="#111"><g fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g></g><text x="100" y="18" class="tiny">24px</text><g transform="translate(150 -4) scale(.25)" color="#111"><g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g></g><text x="213" y="18" class="tiny">32px</text><g transform="translate(263 -8) scale(.3333)" color="#111"><g fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g></g></g>
+  </g>
+
+  <g transform="translate(820 160)">
+    <rect width="710" height="390" rx="18" fill="#fff" stroke="#d9d9d9"/>
+    <text x="28" y="42" class="name">B · Cut Handoff</text>
+    <text x="28" y="70" class="body">Two arcs hand off at the center; the break comes from the editing action.</text>
+    <g transform="translate(42 104) scale(1.75)" color="#111"><g fill="none" stroke="currentColor" stroke-linecap="round"><g stroke-width="9"><path d="M69 25C62 17 30 18 25 36C21 49 36 53 49 51"/><path d="M47 45C60 42 75 47 71 62C66 81 33 81 26 71"/></g><g stroke-width="3.5"><path d="M61 30C55 26 39 27 35 37C33 43 39 46 45 46"/><path d="M52 50C60 50 64 54 62 61C60 68 45 72 37 67"/></g></g></g>
+    <g transform="translate(225 135)" fill="#111"><g transform="translate(0 -28) scale(.72)" color="#111"><g fill="none" stroke="currentColor" stroke-linecap="round"><g stroke-width="9"><path d="M69 25C62 17 30 18 25 36C21 49 36 53 49 51"/><path d="M47 45C60 42 75 47 71 62C66 81 33 81 26 71"/></g><g stroke-width="3.5"><path d="M61 30C55 26 39 27 35 37C33 43 39 46 45 46"/><path d="M52 50C60 50 64 54 62 61C60 68 45 72 37 67"/></g></g></g><text x="72" y="24" class="word">Scribix</text></g>
+    <g transform="translate(238 220)"><rect width="412" height="72" rx="10" fill="#fafafa" stroke="#ddd"/><g transform="translate(18 15) scale(.44)" color="#111"><g fill="none" stroke="currentColor" stroke-linecap="round"><g stroke-width="9"><path d="M69 25C62 17 30 18 25 36C21 49 36 53 49 51"/><path d="M47 45C60 42 75 47 71 62C66 81 33 81 26 71"/></g><g stroke-width="3.5"><path d="M61 30C55 26 39 27 35 37C33 43 39 46 45 46"/><path d="M52 50C60 50 64 54 62 61C60 68 45 72 37 67"/></g></g></g><text x="67" y="45" class="name">Scribix</text></g>
+    <g transform="translate(34 320)"><text y="18" class="tiny">16px</text><g transform="translate(50 0) scale(.1667)" color="#111"><g fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round"><path d="M69 25C62 17 30 18 25 36C21 49 36 53 49 51"/><path d="M47 45C60 42 75 47 71 62C66 81 33 81 26 71"/></g></g><text x="100" y="18" class="tiny">24px</text><g transform="translate(150 -4) scale(.25)" color="#111"><g fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"><path d="M69 25C62 17 30 18 25 36C21 49 36 53 49 51"/><path d="M47 45C60 42 75 47 71 62C66 81 33 81 26 71"/></g></g><text x="213" y="18" class="tiny">32px</text><g transform="translate(263 -8) scale(.3333)" color="#111"><g fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"><path d="M69 25C62 17 30 18 25 36C21 49 36 53 49 51"/><path d="M47 45C60 42 75 47 71 62C66 81 33 81 26 71"/></g></g></g>
+  </g>
+
+  <g transform="translate(70 590)">
+    <rect width="710" height="390" rx="18" fill="#fff" stroke="#d9d9d9"/>
+    <text x="28" y="42" class="name">C · Frame Rails</text>
+    <text x="28" y="70" class="body">Wide and narrow editing rails bend into an S with a structured silhouette.</text>
+    <g transform="translate(42 104) scale(1.75)" color="#111"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="8" d="M69 23H39C28 23 22 29 22 38C22 47 29 51 40 51H56C67 51 74 56 74 65C74 75 67 80 56 80H25"/><path stroke-width="4" d="M67 34H41C35 34 32 36 32 39C32 42 35 43 41 43H57C73 43 83 51 83 65C83 80 73 89 56 89H29"/></g></g>
+    <g transform="translate(225 135)" fill="#111"><g transform="translate(0 -28) scale(.72)" color="#111"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="8" d="M69 23H39C28 23 22 29 22 38C22 47 29 51 40 51H56C67 51 74 56 74 65C74 75 67 80 56 80H25"/><path stroke-width="4" d="M67 34H41C35 34 32 36 32 39C32 42 35 43 41 43H57C73 43 83 51 83 65C83 80 73 89 56 89H29"/></g></g><text x="72" y="24" class="word">Scribix</text></g>
+    <g transform="translate(238 220)"><rect width="412" height="72" rx="10" fill="#fafafa" stroke="#ddd"/><g transform="translate(18 15) scale(.44)" color="#111"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="8" d="M69 23H39C28 23 22 29 22 38C22 47 29 51 40 51H56C67 51 74 56 74 65C74 75 67 80 56 80H25"/><path stroke-width="4" d="M67 34H41C35 34 32 36 32 39C32 42 35 43 41 43H57C73 43 83 51 83 65C83 80 73 89 56 89H29"/></g></g><text x="67" y="45" class="name">Scribix</text></g>
+    <g transform="translate(34 320)"><text y="18" class="tiny">16px</text><g transform="translate(50 0) scale(.1667)" color="#111"><path fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round" d="M69 23H39C28 23 22 29 22 38C22 47 29 51 40 51H56C67 51 74 56 74 65C74 75 67 80 56 80H25"/></g><text x="100" y="18" class="tiny">24px</text><g transform="translate(150 -4) scale(.25)" color="#111"><g fill="none" stroke="currentColor" stroke-linecap="round"><path stroke-width="9" d="M69 23H39C28 23 22 29 22 38C22 47 29 51 40 51H56C67 51 74 56 74 65C74 75 67 80 56 80H25"/><path stroke-width="4" d="M67 34H41C35 34 32 36 32 39C32 42 35 43 41 43H57C73 43 83 51 83 65C83 80 73 89 56 89H29"/></g></g><text x="213" y="18" class="tiny">32px</text><g transform="translate(263 -8) scale(.3333)" color="#111"><g fill="none" stroke="currentColor" stroke-linecap="round"><path stroke-width="8" d="M69 23H39C28 23 22 29 22 38C22 47 29 51 40 51H56C67 51 74 56 74 65C74 75 67 80 56 80H25"/><path stroke-width="4" d="M67 34H41C35 34 32 36 32 39C32 42 35 43 41 43H57C73 43 83 51 83 65C83 80 73 89 56 89H29"/></g></g></g>
+  </g>
+
+  <g transform="translate(820 590)">
+    <rect width="710" height="390" rx="18" fill="#fff" stroke="#d9d9d9"/>
+    <text x="28" y="42" class="name">D · Ribbon Counter</text>
+    <text x="28" y="70" class="body">A heavy S is carved by a second trace for the strongest standalone symbol.</text>
+    <g transform="translate(42 104) scale(1.75)"><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#111" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g transform="translate(225 135)" fill="#111"><g transform="translate(0 -28) scale(.72)"><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#111" stroke-width="20" stroke-linecap="round"/><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/></g><text x="72" y="24" class="word">Scribix</text></g>
+    <g transform="translate(238 220)"><rect width="412" height="72" rx="10" fill="#fafafa" stroke="#ddd"/><g transform="translate(18 15) scale(.44)"><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#111" stroke-width="20" stroke-linecap="round"/><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#fafafa" stroke-width="6" stroke-linecap="round"/></g><text x="67" y="45" class="name">Scribix</text></g>
+    <g transform="translate(34 320)"><text y="18" class="tiny">16px</text><g transform="translate(50 0) scale(.1667)"><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#111" stroke-width="22" stroke-linecap="round"/></g><text x="100" y="18" class="tiny">24px</text><g transform="translate(150 -4) scale(.25)"><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#111" stroke-width="20" stroke-linecap="round"/><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/></g><text x="213" y="18" class="tiny">32px</text><g transform="translate(263 -8) scale(.3333)"><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#111" stroke-width="20" stroke-linecap="round"/><path d="M69 24C61 16 31 17 25 36C20 51 40 55 52 52C65 49 76 54 72 66C67 83 35 84 25 71" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/></g></g>
+  </g>
+</svg>

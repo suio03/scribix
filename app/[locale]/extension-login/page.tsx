@@ -60,7 +60,7 @@ export default async function ExtensionLoginPage({
     <main className="extension-auth-page grid min-h-screen place-items-center bg-paper px-6 py-12 text-ink">
       <section className="extension-auth-card w-full max-w-sm rounded-xl border border-line bg-card p-6 shadow-sm">
         <div className="mb-8 flex items-center gap-2">
-          <Logo size={34} variant="app" />
+          <Logo size={34} />
           <div>
             <p className="text-lg font-[560] leading-tight tracking-[-0.035em]">Scribix</p>
             <p className="text-sm text-muted">YouTube Extension</p>

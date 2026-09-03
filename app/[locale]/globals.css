@@ -2287,14 +2287,7 @@ details[open] .faq-icon {
 }
 
 /* The brand mark carries the ink colour; --accent stays reserved for actions,
-   so a page never shows the logo and its call to action in the same colour.
-   The app tile is fixed artwork and deliberately ignores the theme. */
-.scribix-logo-app {
-  color: #f7f5ff;
-  background: #17122c;
-  box-shadow: 0 8px 18px -12px rgba(23, 18, 44, 0.7);
-}
-
+   so a page never shows the logo and its call to action in the same colour. */
 .scribix-logo-mark {
   color: var(--ink);
 }

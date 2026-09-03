@@ -72,7 +72,7 @@ export function WorkspaceSidebar({
       >
         <div className="flex h-16 items-center justify-between border-b border-line px-5">
           <Link href="/dashboard" onClick={closeMobile} className="flex items-center gap-2" aria-label="Scribix">
-            <Logo size={30} variant="app" />
+            <Logo size={30} />
             <span className="text-[20px] font-semibold tracking-[-0.045em] text-ink">Scribix</span>
           </Link>
           <button

@@ -1,41 +1,37 @@
-const MARK_PATH =
-  "M62,30 C62,24 34,24 34,41.28 C34,50.4 62,45.6 62,54.72 C62,72 34,72 34,66";
+const OUTER_PATH =
+  "M71 23C64 14 27 15 23 35C20 49 70 43 70 59C70 80 31 83 23 69";
+const INNER_PATH =
+  "M60 32C56 27 40 28 37 37C35 44 59 44 59 55C59 65 44 68 39 63";
 
 export function Logo({
   size = 28,
-  variant = "mark",
 }: {
   size?: number;
-  variant?: "mark" | "app";
 }) {
-  const isAppIcon = variant === "app";
-
   return (
     <span
-      className={`scribix-logo inline-grid shrink-0 place-items-center ${
-        isAppIcon ? "scribix-logo-app" : "scribix-logo-mark"
-      }`}
+      className="scribix-logo scribix-logo-mark inline-grid shrink-0 place-items-center"
       style={{
         width: size,
         height: size,
-        borderRadius: isAppIcon ? Math.round(size * 0.23) : undefined,
       }}
       aria-hidden
     >
       <svg
-        viewBox="0 0 96 96"
+        viewBox="8 6 80 84"
         width={size}
         height={size}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d={MARK_PATH}
+        <g
           fill="none"
           stroke="currentColor"
-          strokeWidth={15}
           strokeLinecap="round"
-          transform={isAppIcon ? "translate(10.08 10.08) scale(.79)" : undefined}
-        />
+          strokeLinejoin="round"
+        >
+          <path d={OUTER_PATH} strokeWidth={8} />
+          <path d={INNER_PATH} strokeWidth={5.5} />
+        </g>
       </svg>
     </span>
   );

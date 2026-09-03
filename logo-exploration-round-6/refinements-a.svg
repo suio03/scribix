@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 900" role="img" aria-label="Three Scribix Twin Trace refinements">
+  <rect width="1500" height="900" fill="#f5f5f2"/>
+  <style>
+    svg{color:#111} text{font-family:Arial,sans-serif}
+    .title{font-size:42px;font-weight:700;letter-spacing:-1.6px;fill:#111}
+    .sub{font-size:18px;fill:#666}.name{font-size:23px;font-weight:700;fill:#111}.body{font-size:15px;fill:#666}.word{font-size:28px;font-weight:700;letter-spacing:-1.2px;fill:#111}.tiny{font-size:12px;font-weight:600;fill:#777}
+  </style>
+  <text x="60" y="68" class="title">Twin Trace · focused refinements</text>
+  <text x="60" y="101" class="sub">Same thesis, same wordmark, three optical decisions</text>
+
+  <g transform="translate(60 140)">
+    <rect width="440" height="690" rx="18" fill="#fff" stroke="#d9d9d9"/>
+    <text x="26" y="42" class="name">A1 · Balanced</text><text x="26" y="69" class="body">Equal weight. Closest to the selected concept.</text>
+    <g transform="translate(132 98) scale(1.85)" fill="none" stroke="#111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g>
+    <g transform="translate(26 315)"><rect width="388" height="74" rx="12" fill="#fafafa" stroke="#ddd"/><g transform="translate(14 15) scale(.46)" fill="none" stroke="#111" stroke-width="7" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g><text x="63" y="47" class="word">Scribix</text></g>
+    <g transform="translate(26 416)"><rect width="184" height="184" rx="42" fill="#17122c"/><g transform="translate(4 4) scale(1.83)" fill="none" stroke="#f7f5ff" stroke-width="7" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g></g>
+    <g transform="translate(236 425)"><text y="18" class="tiny">16px</text><g transform="translate(45 0) scale(.1667)" fill="none" stroke="#111" stroke-width="9" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g><text y="73" class="tiny">24px</text><g transform="translate(45 51) scale(.25)" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g><text y="134" class="tiny">32px</text><g transform="translate(45 106) scale(.3333)" fill="none" stroke="#111" stroke-width="7" stroke-linecap="round"><path d="M70 23C64 14 28 15 24 35C21 49 69 43 69 59C69 79 31 83 24 69"/><path d="M59 31C55 27 38 27 36 37C34 45 59 43 59 56C59 67 42 70 36 64"/></g></g>
+    <text x="26" y="635" class="body">Best fidelity to the reference.</text><text x="26" y="660" class="body">Risk: the two tracks compete at 16px.</text>
+  </g>
+
+  <g transform="translate(530 140)">
+    <rect width="440" height="690" rx="18" fill="#fff" stroke="#d9d9d9"/>
+    <text x="26" y="42" class="name">A2 · Leading Rail</text><text x="26" y="69" class="body">A strong outer path carries a lighter inner echo.</text>
+    <g transform="translate(132 98) scale(1.85)" fill="none" stroke="#111" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="8" d="M71 23C64 14 27 15 23 35C20 49 70 43 70 59C70 80 31 83 23 69"/><path stroke-width="5.5" d="M60 32C56 27 40 28 37 37C35 44 59 44 59 55C59 65 44 68 39 63"/></g>
+    <g transform="translate(26 315)"><rect width="388" height="74" rx="12" fill="#fafafa" stroke="#ddd"/><g transform="translate(14 15) scale(.46)" fill="none" stroke="#111" stroke-linecap="round"><path stroke-width="8" d="M71 23C64 14 27 15 23 35C20 49 70 43 70 59C70 80 31 83 23 69"/><path stroke-width="5.5" d="M60 32C56 27 40 28 37 37C35 44 59 44 59 55C59 65 44 68 39 63"/></g><text x="63" y="47" class="word">Scribix</text></g>
+    <g transform="translate(26 416)"><rect width="184" height="184" rx="42" fill="#17122c"/><g transform="translate(4 4) scale(1.83)" fill="none" stroke="#f7f5ff" stroke-linecap="round"><path stroke-width="8" d="M71 23C64 14 27 15 23 35C20 49 70 43 70 59C70 80 31 83 23 69"/><path stroke-width="5.5" d="M60 32C56 27 40 28 37 37C35 44 59 44 59 55C59 65 44 68 39 63"/></g></g>
+    <g transform="translate(236 425)"><text y="18" class="tiny">16px</text><g transform="translate(45 0) scale(.1667)" fill="none" stroke="#111" stroke-linecap="round"><path stroke-width="10" d="M71 23C64 14 27 15 23 35C20 49 70 43 70 59C70 80 31 83 23 69"/><path stroke-width="6" d="M60 32C56 27 40 28 37 37C35 44 59 44 59 55C59 65 44 68 39 63"/></g><text y="73" class="tiny">24px</text><g transform="translate(45 51) scale(.25)" fill="none" stroke="#111" stroke-linecap="round"><path stroke-width="9" d="M71 23C64 14 27 15 23 35C20 49 70 43 70 59C70 80 31 83 23 69"/><path stroke-width="5.5" d="M60 32C56 27 40 28 37 37C35 44 59 44 59 55C59 65 44 68 39 63"/></g><text y="134" class="tiny">32px</text><g transform="translate(45 106) scale(.3333)" fill="none" stroke="#111" stroke-linecap="round"><path stroke-width="8" d="M71 23C64 14 27 15 23 35C20 49 70 43 70 59C70 80 31 83 23 69"/><path stroke-width="5.5" d="M60 32C56 27 40 28 37 37C35 44 59 44 59 55C59 65 44 68 39 63"/></g></g>
+    <text x="26" y="635" class="body">Best hierarchy and small-size clarity.</text><text x="26" y="660" class="body">Risk: slightly less pure as a “twin” system.</text>
+  </g>
+
+  <g transform="translate(1000 140)">
+    <rect width="440" height="690" rx="18" fill="#fff" stroke="#d9d9d9"/>
+    <text x="26" y="42" class="name">A3 · Open Counter</text><text x="26" y="69" class="body">More air separates the tracks and opens the center.</text>
+    <g transform="translate(132 98) scale(1.85)" fill="none" stroke="#111" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"><path d="M72 24C64 14 29 14 24 34C20 49 70 43 70 60C70 80 31 84 23 70"/><path d="M58 33C54 29 41 29 38 37C36 44 57 44 57 55C57 64 45 67 40 63"/></g>
+    <g transform="translate(26 315)"><rect width="388" height="74" rx="12" fill="#fafafa" stroke="#ddd"/><g transform="translate(14 15) scale(.46)" fill="none" stroke="#111" stroke-width="6.5" stroke-linecap="round"><path d="M72 24C64 14 29 14 24 34C20 49 70 43 70 60C70 80 31 84 23 70"/><path d="M58 33C54 29 41 29 38 37C36 44 57 44 57 55C57 64 45 67 40 63"/></g><text x="63" y="47" class="word">Scribix</text></g>
+    <g transform="translate(26 416)"><rect width="184" height="184" rx="42" fill="#17122c"/><g transform="translate(4 4) scale(1.83)" fill="none" stroke="#f7f5ff" stroke-width="6.5" stroke-linecap="round"><path d="M72 24C64 14 29 14 24 34C20 49 70 43 70 60C70 80 31 84 23 70"/><path d="M58 33C54 29 41 29 38 37C36 44 57 44 57 55C57 64 45 67 40 63"/></g></g>
+    <g transform="translate(236 425)"><text y="18" class="tiny">16px</text><g transform="translate(45 0) scale(.1667)" fill="none" stroke="#111" stroke-width="8.5" stroke-linecap="round"><path d="M72 24C64 14 29 14 24 34C20 49 70 43 70 60C70 80 31 84 23 70"/><path d="M58 33C54 29 41 29 38 37C36 44 57 44 57 55C57 64 45 67 40 63"/></g><text y="73" class="tiny">24px</text><g transform="translate(45 51) scale(.25)" fill="none" stroke="#111" stroke-width="7.5" stroke-linecap="round"><path d="M72 24C64 14 29 14 24 34C20 49 70 43 70 60C70 80 31 84 23 70"/><path d="M58 33C54 29 41 29 38 37C36 44 57 44 57 55C57 64 45 67 40 63"/></g><text y="134" class="tiny">32px</text><g transform="translate(45 106) scale(.3333)" fill="none" stroke="#111" stroke-width="6.5" stroke-linecap="round"><path d="M72 24C64 14 29 14 24 34C20 49 70 43 70 60C70 80 31 84 23 70"/><path d="M58 33C54 29 41 29 38 37C36 44 57 44 57 55C57 64 45 67 40 63"/></g></g>
+    <text x="26" y="635" class="body">Best negative space and light-theme elegance.</text><text x="26" y="660" class="body">Risk: weakest presence at 16px.</text>
+  </g>
+</svg>

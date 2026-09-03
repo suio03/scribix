@@ -110,7 +110,7 @@ export function ProductTopbar({
           <div className="flex min-w-0 items-center gap-2 lg:hidden">
             <SidebarToggle />
             <Link href="/dashboard" className="flex items-center gap-2" aria-label="Scribix">
-              <Logo size={28} variant="app" />
+              <Logo size={28} />
               <span className="text-[18px] font-semibold tracking-[-0.045em]">Scribix</span>
             </Link>
           </div>
@@ -120,7 +120,7 @@ export function ProductTopbar({
             className="flex shrink-0 items-center gap-2"
             aria-label="Scribix"
           >
-            <Logo size={30} variant="app" />
+            <Logo size={30} />
             <span className="text-[20px] font-semibold tracking-[-0.045em]">Scribix</span>
           </Link>
         )}

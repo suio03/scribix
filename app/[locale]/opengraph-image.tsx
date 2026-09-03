@@ -27,13 +27,21 @@ export default async function Image() {
           viewBox="0 0 96 96"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path
-            d="M62,30 C62,24 34,24 34,41.28 C34,50.4 62,45.6 62,54.72 C62,72 34,72 34,66"
+          <g
             fill="none"
             stroke="#17122c"
-            strokeWidth={15}
             strokeLinecap="round"
-          />
+            strokeLinejoin="round"
+          >
+            <path
+              d="M71 23C64 14 27 15 23 35C20 49 70 43 70 59C70 80 31 83 23 69"
+              strokeWidth={8}
+            />
+            <path
+              d="M60 32C56 27 40 28 37 37C35 44 59 44 59 55C59 65 44 68 39 63"
+              strokeWidth={5.5}
+            />
+          </g>
         </svg>
 
         <div

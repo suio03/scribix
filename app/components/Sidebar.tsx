@@ -547,7 +547,7 @@ export function Sidebar({
               isCollapsed ? "lg:hidden" : ""
             }`}
           >
-            <Logo size={30} variant="app" />
+            <Logo size={30} />
             <span
               className={`font-sans text-[18px] font-[560] tracking-[-0.035em] text-ink ${
                 isCollapsed ? "lg:hidden" : ""

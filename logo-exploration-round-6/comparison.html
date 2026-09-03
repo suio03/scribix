@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scribix — Double-loop S Logo Direction Comparison</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #111111;
+      --muted: #666666;
+      --line: #d9d9d9;
+      --paper: #f5f5f2;
+      --panel: #ffffff;
+      --max: 1440px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { background: var(--paper); color: var(--ink); }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    img, svg { display: block; max-width: 100%; }
+
+    .logo-img { width: 100%; height: auto; }
+    .direction__reverse .logo-img { filter: invert(1); }
+    .lockup { display: flex; align-items: center; gap: 9px; color: var(--ink); font-size: 20px; font-weight: 700; letter-spacing: -0.04em; }
+    .lockup img { width: 30px; height: 30px; }
+    .mini-set { display: flex; align-items: center; justify-content: center; gap: 11px; min-height: 34px; }
+    .mini-set img:nth-child(1) { width: 16px; height: 16px; }
+    .mini-set img:nth-child(2) { width: 24px; height: 24px; }
+    .mini-set img:nth-child(3) { width: 32px; height: 32px; }
+    .nav-demo { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; color: var(--ink); }
+    .nav-demo small { white-space: nowrap; color: var(--muted); font-size: 10px; }
+    .evidence td:first-child { white-space: nowrap; font-weight: 700; }
+    .risk { color: #8f251b; }
+
+    a { color: inherit; text-underline-offset: 0.18em; }
+
+    .page {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+      padding: 48px 0 80px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 900px;
+      margin-bottom: 32px;
+      font-size: clamp(38px, 6vw, 84px);
+      font-weight: 520;
+      letter-spacing: -0.045em;
+      line-height: 0.95;
+    }
+
+    h2 {
+      margin-bottom: 18px;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .section {
+      padding: 32px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .measure { max-width: 780px; }
+
+    .evidence {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      font-size: 13px;
+    }
+
+    .evidence th, .evidence td {
+      padding: 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .directions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .direction {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      min-width: 0;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .direction__header, .direction__notes { padding: 20px; }
+
+    .direction__header {
+      min-height: 142px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .direction__canvas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 360px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .direction__primary,
+    .direction__reverse {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      padding: 32px;
+    }
+
+    .direction__primary { background: #ffffff; color: #111111; }
+    .direction__reverse { background: #111111; color: #ffffff; }
+
+    .direction__primary > *, .direction__reverse > * {
+      width: min(72%, 220px);
+      height: auto;
+    }
+
+    .tests {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      margin: 0;
+      padding: 0;
+      background: var(--line);
+      border-top: 1px solid var(--line);
+      list-style: none;
+    }
+
+    .tests li {
+      display: grid;
+      min-height: 88px;
+      place-items: center;
+      padding: 12px;
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .direction__notes dl {
+      display: grid;
+      grid-template-columns: 104px 1fr;
+      gap: 8px 12px;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .direction__notes dt { color: var(--muted); }
+    .direction__notes dd { margin: 0; }
+
+    .decision {
+      padding: 24px;
+      border: 1px solid var(--ink);
+      background: var(--panel);
+    }
+
+    footer {
+      padding-top: 32px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .directions { grid-template-columns: 1fr; }
+      .direction__canvas { min-height: 300px; }
+    }
+
+    @media (max-width: 520px) {
+      .page { width: min(calc(100% - 20px), var(--max)); padding-top: 28px; }
+      .direction__canvas { grid-template-columns: 1fr; }
+      .direction__primary, .direction__reverse { min-height: 220px; }
+      .tests { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .direction__notes dl { grid-template-columns: 1fr; }
+      .direction__notes dd { margin-bottom: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Logo direction comparison</p>
+      <h1>Scribix: an S with two lives</h1>
+    </header>
+
+    <section class="section measure" aria-labelledby="brief-title">
+      <p class="eyebrow">Confirmed brief</p>
+      <h2 id="brief-title">What the logo must do</h2>
+      <p><strong>Must express:</strong> Scribix, video editing and content flow, clarity, and a memorable S.</p>
+      <p><strong>Must avoid:</strong> copying OpusClip’s P silhouette, generic AI sparkles, play triangles, radial bursts, and details that fail at 16px.</p>
+      <p><strong>Use contexts:</strong> website navigation, workspace sidebar, favicon, and app icon across light and dark themes.</p>
+      <p><strong>Constraints:</strong> keep the name “Scribix,” retain an S-based symbol, translate the approved double-loop idea into original geometry, and leave the current violet product palette unchanged until a direction is selected.</p>
+    </section>
+
+    <section class="section" aria-labelledby="research-title">
+      <p class="eyebrow">Research evidence</p>
+      <h2 id="research-title">Principles to borrow, boundaries not to cross</h2>
+      <table class="evidence">
+        <thead><tr><th>Brand / layer</th><th>Direct source</th><th>Observable decision</th><th>Borrow as principle</th><th>Do not copy / risk</th></tr></thead>
+        <tbody>
+          <tr><td>OpusClip<br>direct peer</td><td><a href="https://media.opus.pro/">Official media kit</a></td><td>A rounded nested-line symbol has horizontal, stacked, and icon-only lockups.</td><td>One construction rule should survive every responsive format.</td><td>Do not reuse the P silhouette, its concentric proportions, or its exact symbol–wordmark spacing.</td></tr>
+          <tr><td>Descript<br>direct peer</td><td><a href="https://www.descript.com/">Official site</a></td><td>An interrupted modular D sits beside a compact lowercase wordmark.</td><td>Let symbol and wordmark carry different visual jobs.</td><td>Avoid its stacked bars, D counter, and warm-red identity.</td></tr>
+          <tr><td>Riverside<br>direct peer</td><td><a href="https://riverside.fm/">Official site</a></td><td>A tiny waveform-like sign lives inside a rounded square beside an uppercase wordmark.</td><td>Plan a deliberate tiny variant rather than shrinking blindly.</td><td>Avoid the square tile, dot-wave motif, and spaced uppercase rhythm.</td></tr>
+          <tr><td>VEED<br>direct peer</td><td><a href="https://www.veed.io/">Official site</a></td><td>A heavy custom uppercase wordmark uses sharp internal cuts without a separate symbol.</td><td>Distinctive internal negative space can carry recognition.</td><td>Avoid the stencil cuts and VEED’s wide uppercase silhouette.</td></tr>
+          <tr><td>Linear<br>structural analogue</td><td><a href="https://linear.app/">Official site</a></td><td>A compact circle is built from disciplined repeated diagonal lines.</td><td>Repeated strokes need one strict rhythm and clear outer bounds.</td><td>Avoid the circle, diagonal striping, and gradient-tech associations.</td></tr>
+          <tr><td>Loom<br>application exemplar</td><td><a href="https://www.loom.com/">Official site</a></td><td>A radial mark holds up inside a colored app tile and beside a stacked lockup.</td><td>Separate icon behavior from full-lockup behavior.</td><td>Avoid radial spokes, a sunburst, or a blue rounded tile.</td></tr>
+          <tr><td>Vimeo<br>typographic analogue</td><td><a href="https://vimeo.com/about/brand_guidelines">Official media kit</a></td><td>A compact custom script wordmark works without an attached symbol.</td><td>Prioritize a silhouette recognizable before its details.</td><td>Avoid script lettering and the distinctive lowercase v gesture.</td></tr>
+          <tr><td>Headspace<br>mood/application</td><td><a href="https://www.headspace.com/press-and-media">Official press kit</a></td><td>An extremely reduced imperfect circle pairs with a quiet lowercase wordmark.</td><td>Restraint and clear space can outperform added meaning.</td><td>Avoid the orange dot, soft wellness tone, and circle-plus-word formula.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" aria-labelledby="directions-title">
+      <p class="eyebrow">Four equal candidates</p>
+      <h2 id="directions-title">Compare the idea before the polish</h2>
+      <div class="directions">
+        <!-- Each inserted .direction must use the same internal structure, canvas sizes,
+             monochrome colors, test contexts, and amount of explanatory copy. -->
+        <article class="direction">
+          <div class="direction__header"><h3>A · Twin Trace</h3><p>Two complete nested S traces make “continuous content flow” the primary idea.</p></div>
+          <div class="direction__canvas"><div class="direction__primary"><img class="logo-img" src="direction-a-twin-trace.svg" alt="Twin Trace in black"></div><div class="direction__reverse"><img class="logo-img" src="direction-a-twin-trace.svg" alt="Twin Trace reversed in white"></div></div>
+          <ul class="tests"><li><div class="mini-set"><img src="direction-a-twin-trace.svg" alt=""><img src="direction-a-twin-trace.svg" alt=""><img src="direction-a-twin-trace.svg" alt=""></div><span>16 / 24 / 32 px</span></li><li><div class="lockup"><img src="direction-a-twin-trace.svg" alt=""><span>Scribix</span></div><span>horizontal lockup</span></li><li><div class="nav-demo"><div class="lockup"><img src="direction-a-twin-trace.svg" alt=""><span>Scribix</span></div><small>Projects · Pricing</small></div><span>navigation</span></li><li><img src="direction-a-twin-trace.svg" alt="Twin Trace symbol" style="width:42px"><span>symbol only</span></li></ul>
+          <div class="direction__notes"><dl><dt>Logo format</dt><dd>Responsive combination mark</dd><dt>Semantic source</dt><dd>Name + continuous content flow</dd><dt>Construction</dt><dd>Two independent nested Bézier traces with shared round terminals</dd><dt>Feels like</dt><dd>Fluid, calm, familiar</dd><dt>Reference mix</dt><dd>OpusClip’s consistent stroke system + Headspace’s restraint</dd><dt>Signature move</dt><dd>Large and small S paths end at opposing optical corners</dd><dt>Restraint</dt><dd>No cut, container, fill, or playback cue</dd><dt>Small size</dt><dd>Both lines remain; stroke weight increases slightly at 16px</dd><dt>Advantage</dt><dd>Closest to the exact quality you pointed out</dd><dt>Main risk</dt><dd class="risk">Highest similarity risk to the OpusClip design language</dd><dt>Avoid when</dt><dd>Distinctiveness matters more than closeness to the reference</dd></dl></div>
+        </article>
+
+        <article class="direction">
+          <div class="direction__header"><h3>B · Cut Handoff</h3><p>Two unequal arcs hand the motion across a visible edit point in the center.</p></div>
+          <div class="direction__canvas"><div class="direction__primary"><img class="logo-img" src="direction-b-cut-handoff.svg" alt="Cut Handoff in black"></div><div class="direction__reverse"><img class="logo-img" src="direction-b-cut-handoff.svg" alt="Cut Handoff reversed in white"></div></div>
+          <ul class="tests"><li><div class="mini-set"><img src="direction-b-cut-handoff.svg" alt=""><img src="direction-b-cut-handoff.svg" alt=""><img src="direction-b-cut-handoff.svg" alt=""></div><span>16 / 24 / 32 px</span></li><li><div class="lockup"><img src="direction-b-cut-handoff.svg" alt=""><span>Scribix</span></div><span>horizontal lockup</span></li><li><div class="nav-demo"><div class="lockup"><img src="direction-b-cut-handoff.svg" alt=""><span>Scribix</span></div><small>Projects · Pricing</small></div><span>navigation</span></li><li><img src="direction-b-cut-handoff.svg" alt="Cut Handoff symbol" style="width:42px"><span>symbol only</span></li></ul>
+          <div class="direction__notes"><dl><dt>Logo format</dt><dd>Independent monogram + wordmark</dd><dt>Semantic source</dt><dd>The editing cut and handoff between moments</dd><dt>Construction</dt><dd>Two broken heavy arcs, each carrying a lighter inner echo</dd><dt>Feels like</dt><dd>Energetic, editorial, compact</dd><dt>Reference mix</dt><dd>Descript’s interruption + OpusClip’s rounded line rhythm</dd><dt>Signature move</dt><dd>A controlled central seam where one clip becomes another</dd><dt>Restraint</dt><dd>No complete enclosure and no symmetric loop</dd><dt>Small size</dt><dd>The inner echo drops out at 16px; the two-part silhouette remains</dd><dt>Advantage</dt><dd>Strongest product-specific story</dd><dt>Main risk</dt><dd class="risk">Can read as a chain link or an abstract 8 before it reads as S</dd><dt>Avoid when</dt><dd>Immediate letter recognition is the only priority</dd></dl></div>
+        </article>
+
+        <article class="direction">
+          <div class="direction__header"><h3>C · Frame Rails</h3><p>A wide and a narrow editing rail bend through two rectangular video frames.</p></div>
+          <div class="direction__canvas"><div class="direction__primary"><img class="logo-img" src="direction-c-frame-rails.svg" alt="Frame Rails in black"></div><div class="direction__reverse"><img class="logo-img" src="direction-c-frame-rails.svg" alt="Frame Rails reversed in white"></div></div>
+          <ul class="tests"><li><div class="mini-set"><img src="direction-c-frame-rails.svg" alt=""><img src="direction-c-frame-rails.svg" alt=""><img src="direction-c-frame-rails.svg" alt=""></div><span>16 / 24 / 32 px</span></li><li><div class="lockup"><img src="direction-c-frame-rails.svg" alt=""><span>Scribix</span></div><span>horizontal lockup</span></li><li><div class="nav-demo"><div class="lockup"><img src="direction-c-frame-rails.svg" alt=""><span>Scribix</span></div><small>Projects · Pricing</small></div><span>navigation</span></li><li><img src="direction-c-frame-rails.svg" alt="Frame Rails symbol" style="width:42px"><span>symbol only</span></li></ul>
+          <div class="direction__notes"><dl><dt>Logo format</dt><dd>System-derived monogram + wordmark</dd><dt>Semantic source</dt><dd>Video frames, timeline rails, and source-to-output structure</dd><dt>Construction</dt><dd>A rounded rectangular S rail followed by a thinner offset rail</dd><dt>Feels like</dt><dd>Precise, capable, technical</dd><dt>Reference mix</dt><dd>Linear’s repeated-line discipline + Riverside’s workspace clarity</dd><dt>Signature move</dt><dd>The second rail exits lower and farther than the first</dd><dt>Restraint</dt><dd>No circles, organic spiral, or decorative node</dd><dt>Small size</dt><dd>16px uses the primary rail only; two rails return at 24px</dd><dt>Advantage</dt><dd>Most clearly belongs to a video editing workspace</dd><dt>Main risk</dt><dd class="risk">The rigid upper rail can read as “5” in isolation</dd><dt>Avoid when</dt><dd>The brand should feel soft and creator-led rather than tool-like</dd></dl></div>
+        </article>
+
+        <article class="direction">
+          <div class="direction__header"><h3>D · Ribbon Counter</h3><p>A single heavy S ribbon is hollowed into two rails by its own negative space.</p></div>
+          <div class="direction__canvas"><div class="direction__primary"><img class="logo-img" src="direction-d-ribbon-counter.svg" alt="Ribbon Counter in black"></div><div class="direction__reverse"><img class="logo-img" src="direction-d-ribbon-counter.svg" alt="Ribbon Counter reversed in white"></div></div>
+          <ul class="tests"><li><div class="mini-set"><img src="direction-d-ribbon-counter.svg" alt=""><img src="direction-d-ribbon-counter.svg" alt=""><img src="direction-d-ribbon-counter.svg" alt=""></div><span>16 / 24 / 32 px</span></li><li><div class="lockup"><img src="direction-d-ribbon-counter.svg" alt=""><span>Scribix</span></div><span>horizontal lockup</span></li><li><div class="nav-demo"><div class="lockup"><img src="direction-d-ribbon-counter.svg" alt=""><span>Scribix</span></div><small>Projects · Pricing</small></div><span>navigation</span></li><li><img src="direction-d-ribbon-counter.svg" alt="Ribbon Counter symbol" style="width:42px"><span>symbol only</span></li></ul>
+          <div class="direction__notes"><dl><dt>Logo format</dt><dd>Bold monogram + tiny solid fallback</dd><dt>Semantic source</dt><dd>Name recognition and clarity through subtraction</dd><dt>Construction</dt><dd>One heavy S band carved along its centerline</dd><dt>Feels like</dt><dd>Confident, graphic, brand-first</dd><dt>Reference mix</dt><dd>VEED’s heavy letter mass + Vimeo’s memorable standalone silhouette</dd><dt>Signature move</dt><dd>The negative-space counter becomes the second track</dd><dt>Restraint</dt><dd>No separate echo line, geometry container, or product iconography</dd><dt>Small size</dt><dd>Counter closes into a solid S at 16px, intentionally</dd><dt>Advantage</dt><dd>Strongest standalone app-icon presence</dd><dt>Main risk</dt><dd class="risk">The hollow counter can fill in during low-quality printing</dd><dt>Avoid when</dt><dd>A light, airy header mark is more important than app-icon impact</dd></dl></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="decision-title">
+      <div class="decision measure">
+        <p class="eyebrow">Decision</p>
+        <h2 id="decision-title">Select one direction or at most two finalists</h2>
+        <p>Choose <strong>one direction</strong>, or at most two finalists for targeted refinement. Judge the 16/24/32px tests first, then the symbol’s distinctiveness. Color has intentionally been withheld so it cannot make one idea look more finished.</p>
+        <p><strong>My design read:</strong> A is the closest match to your reference; B carries the clearest editing story; C is the most product-specific; D has the strongest app-icon weight.</p>
+      </div>
+    </section>
+
+    <footer>2026 · Neutral evaluation sheet · No direction has been validated yet. This is a practical similarity screen, not trademark clearance.</footer>
+  </main>
+</body>
+</html>
