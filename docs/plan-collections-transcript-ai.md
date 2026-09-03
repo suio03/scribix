@@ -1,9 +1,11 @@
 # Scribix Collections 与 Transcript AI Workspace 实施计划
 
-> 状态：已规划，尚未实施  
+> 状态：Collections 尚未实施；Transcript Ask AI v1 已完成，后续仅保留 v2 规划
 > 创建日期：2026-07-27  
 > 当前范围：第一阶段、第二阶段  
 > 延后范围：第三阶段 Collection AI 及场景化能力
+
+Ask AI v1 的已实现边界与验证项以 `docs/plan-transcript-ask-ai.md` 为准。本文件中的 Ask AI 多会话、引用和结构化 AI Notes 仅表示未来 v2 方向。
 
 ## 1. 已确认的产品方向
 
@@ -12,7 +14,7 @@
 - 用户不会只有一个视频或一份 transcript；学生、播客创作者和工作人员都会长期积累相关内容。
 - 近期先让用户通过 Collection（资料集）组织和管理多份 transcript。
 - “先不要做 AI‘分析当前学科的所有 transcript’”，Collection 级 AI “可以作为第三阶段使用”。
-- 在 Collection AI 之前，增加针对“当前的转录文件进行交流”的 Ask AI。
+- 在 Collection AI 之前，已先增加针对“当前的转录文件进行交流”的 Ask AI v1。
 - 当前 transcript 的 AI Notes 与 Ask AI 应形成一个统一的 Transcript AI Workspace。
 - 第三阶段需要进入长期计划，但现在不实施。
 - 后续按本文件的里程碑一步一步完成，每个里程碑完成并验证后再进入下一步。
@@ -40,12 +42,12 @@
 ### 3.3 删除 Collection 不删除 transcript
 
 - 删除 Collection 时，其中的 transcripts 全部移回 Unfiled。
-- 删除 transcript 时继续沿用现有 transcript、音视频、翻译、AI Notes 的清理语义。
-- 未来加入 Ask AI 后，删除 transcript 和删除账户也必须清理对应会话与消息。
+- 删除 transcript 时继续沿用现有 transcript、音视频、翻译、AI Notes 和 Ask AI 消息的清理语义。
+- 删除账户也必须清理对应 Ask AI 会话内容；匿名成本记录只解除用户与 transcript 关联。
 
 ### 3.4 两种 AI 范围必须分开
 
-- Transcript AI：上下文固定为当前一份 transcript，近期实施。
+- Transcript AI：上下文固定为当前一份 transcript；Ask AI v1 已实施。
 - Collection AI：从同一个 Collection 的多份 transcripts 中检索和回答，第三阶段实施。
 - 当前阶段不得为了未来 Collection AI 提前加入向量库、知识图谱或 Collection chat 表。
 
@@ -60,7 +62,7 @@
 
 ### 4.1 Transcript Library
 
-- Dashboard 当前按 `created_at DESC` 平铺最近 100 条 transcripts。
+- `/dashboard` 当前按活动时间列出最多 100 个视频项目；`/dashboard/transcripts` 按 `created_at DESC` 列出最多 100 条不属于视频项目的 transcripts。
 - `transcripts` 表没有 Collection 关系。
 - 上传/录音和应用内 YouTube import 分别创建 transcript。
 - 浏览器扩展的即时 YouTube transcript 当前不写入主 transcript library，因此不在第一阶段的 Collection 赋值范围内。
@@ -76,8 +78,9 @@
 
 ### 4.3 Ask AI
 
-- 当前没有 Ask AI API、会话数据模型、对话历史、引用协议或聊天 UI。
-- 当前隐私政策只覆盖 OpenAI 处理付费 AI summary；加入 Ask AI 前必须更新相关说明。
+- 当前 `GET/POST/DELETE /api/transcripts/[id]/chat` 为每份已完成 transcript 提供一个持久化对话，Transcript Workspace 默认显示 Ask AI，并可切换 AI Notes；Export 位于独立 modal。
+- Ask AI v1 没有 citations、多会话或 Collection 范围检索。Free 与 grandfathered Starter 账户终身 3 次成功提问，Pro 每 allowance period 300 次。
+- Privacy、删除语义和匿名 analytics 已覆盖 Ask AI；当前实现与剩余生产验证以 `docs/plan-transcript-ask-ai.md` 为准。
 
 ## 5. 当前明确不做的内容
 
@@ -360,17 +363,17 @@ transcript_chat_messages
 - 列表状态可分享/刷新恢复，移动后统计正确。
 - `npm run check-locales` 与 `npm run build` 通过，主要管理流程完成手动验证。
 
-## 第二阶段 B：当前 Transcript AI Workspace
+## 第二阶段 B：未来 Transcript AI Workspace v2
+
+当前 v1 已实现单会话 Ask AI、双栏工作区和独立 Export modal。以下里程碑只描述尚未实现的结构化 AI Notes、可靠引用、多会话和更完整的质量控制，不得当作当前产品行为。
 
 ### 决策门 DG-AI-1：实施前必须确认
 
-Ask AI 会产生持续、不可缓存为单份固定结果的成本。开始 M2B 前必须确认：
+Ask AI v1 的套餐、额度、隐私与删除边界已经确定。开始 v2 前只确认新增能力带来的变化：
 
-- [ ] Ask AI 是否只开放给 Pro；当前建议：Pro-only。
-- [ ] 每用户每日消息上限、并发上限与最大输入/输出预算。
-- [ ] 超限后的产品文案和是否提供升级入口。
-- [ ] AI 对话保存期限，以及用户是否可以删除单个会话。
-- [ ] 用真实 transcript eval 比较模型质量、延迟和成本后再确定 Ask AI model；不因为文档推荐新模型就顺便替换当前 summary model。
+- [ ] citations 的服务端 schema、segment 校验和 legacy answer 兼容策略。
+- [ ] 多会话的保存期限、单会话删除语义和数量上限。
+- [ ] 用真实 transcript eval 比较 v2 的模型质量、延迟和成本；不因为文档推荐新模型就顺便替换当前 summary/chat model。
 
 ### M2B.1 AI Notes v2
 
@@ -385,42 +388,28 @@ Ask AI 会产生持续、不可缓存为单份固定结果的成本。开始 M2B
 
 ### M2B.2 Transcript 双栏工作区
 
-- [ ] 桌面端左侧固定 transcript，右侧切换 AI Notes / Ask AI。
-- [ ] 移动端使用可访问的 tabs 或纵向切换。
-- [ ] 将现有 ExportPanel 重新安置到顶部操作或独立面板，保留所有下载、copy 和 audio 行为。
 - [ ] AI 引用跳转时自动滚动、高亮 segment，并同步播放位置。
-- [ ] 完成键盘导航、焦点管理、loading 和 screen-reader labels。
+- [ ] 为新增引用和会话控件完成键盘导航、焦点管理、loading 和 screen-reader labels。
 
 ### M2B.3 Ask AI 后端
 
-- [ ] 新增 chat session/message migration。
-- [ ] 新增会话 CRUD 和 message routes。
-- [ ] 应用层管理对话历史，明确 OpenAI `store` 与删除策略。
-- [ ] 增加 server-side rate limit、并发保护和消息长度限制。
-- [ ] 抵抗 transcript 中的 prompt injection：将 transcript 明确视为不可信来源内容，而不是系统指令。
-- [ ] 回答只基于当前 transcript；外部知识如果未来允许，必须在 UI 中明确区分。
-- [ ] 对超长 transcript 做 token budget guard；先验证完整上下文方案，再决定是否需要 retrieval。
-- [ ] 保存合法 citations、usage、model 和状态。
+- [ ] 在现有单会话 message 模型上增加 session 归属和会话 CRUD，不破坏 v1 历史。
+- [ ] 保存经服务端验证的 citations，并继续保留 usage、model 与状态成本记录。
+- [ ] 保持 `store: false`、prompt-injection 防护、当前 transcript 事实边界和现有 token budget guard。
 
 ### M2B.4 Ask AI 前端
 
-- [ ] 当前 transcript 页面增加 Ask AI tab。
-- [ ] 支持首次提问、连续追问、新建对话、打开历史和删除会话。
-- [ ] 提供少量基于当前 transcript 的 starter questions，不做学生/播客/工作三套模式。
+- [ ] 在现有连续对话 UI 上增加新建、打开历史和删除单个会话。
 - [ ] 回答显示可点击引用。
-- [ ] 明确显示“只基于当前 transcript”；找不到时不伪造答案。
-- [ ] 处理发送中、重试、限流、额度用尽、内容缺失和服务不可用状态。
 
 ### M2B.5 隐私、analytics 与质量验证
 
-- [ ] 更新 Privacy 页面，说明 Ask AI 会发送哪些 transcript 片段、问题和对话上下文给 OpenAI。
-- [ ] transcript/account deletion 清理所有 chat session/message 数据。
-- [ ] analytics 只记录事件和技术元数据，不记录问题、回答、Collection name 或 transcript 内容。
-- [ ] 建立最小 eval 集：事实问题、找不到答案、跨段归纳、时间点引用、speaker 引用、prompt injection、长 transcript。
+- [ ] 更新 Privacy 与删除测试以覆盖新增 session/citation 数据；analytics 继续禁止记录问题、回答、Collection name 或 transcript 内容。
+- [ ] 在 v1 eval 基线上增加时间点引用、speaker 引用和跨会话隔离用例。
 - [ ] 验证每个引用对应真实 segment，且点击定位正确。
-- [ ] 记录并检查 token usage、延迟、失败率和缓存命中（如启用）。
+- [ ] 对比 v1 与 v2 的 token usage、延迟、失败率和缓存命中。
 - [ ] 运行 `npm run check-locales` 与 `npm run build`。
-- [ ] 手动验证桌面、移动端、Free/Pro、partial transcript、YouTube 和音视频 playback。
+- [ ] 手动验证桌面、移动端、Free/Pro、partial transcript、YouTube、音视频 playback 与 legacy v1 conversation。
 
 第二阶段 B 完成标准：
 
@@ -535,4 +524,3 @@ Ask AI 会产生持续、不可缓存为单份固定结果的成本。开始 M2B
 4. 更新本计划中的 checkbox 和必要状态说明。
 5. 汇报改动、验证结果、残余风险和下一里程碑。
 6. 等用户确认后再进入下一步。
-

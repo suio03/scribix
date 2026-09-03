@@ -23,8 +23,10 @@
 
 - `/` 是产品首页，主搜索意图为 `AI video clipper`，用于介绍从长视频发现、编辑并渲染可发布短视频的完整工作流。
 - `/video-to-text` 承接原首页的 `video to text` 搜索意图，保留视频/音频上传器、转录功能说明、使用场景和 FAQ；六种语言使用对应 locale 前缀。
-- 侧边栏的 “Video to Text” 及各语言对应名称必须链接 `/video-to-text`；首页继续通过 “Home” 入口访问，不能让两个意图共用同一 canonical URL。
+- 公开页的 `ProductTopbar` 在 Tools 菜单中链接 `/video-to-text`；首页继续通过品牌入口访问，不能让两个意图共用同一 canonical URL。
 - 两个页面都必须具有自引用 canonical、完整 reciprocal hreflang、对应 sitemap 记录和与页面意图一致的结构化数据。
+- 登录后的工作区按结果类型分流：`/dashboard` 只列视频项目，`/dashboard/new` 只启动长视频剪辑流程，`/dashboard/transcripts` 负责 transcript-only 的新建与历史记录；统一使用 `WorkspaceChrome` / `WorkspaceSidebar`。
+- 当前生产视觉方向为 Prism Pulse，设计原则、语义颜色和主题边界以 `design-exploration/design-system.md` 为准；真实 source/output proof 与导出预览固定使用 inverse media palette，不随应用主题反色。
 
 ## 2. 一句话目标
 

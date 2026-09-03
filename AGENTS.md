@@ -21,7 +21,7 @@ Scribix is a Next.js App Router project deployed through OpenNext on Cloudflare.
 
 ## Coding Style & Naming Conventions
 
-Use TypeScript with `strict` enabled and the `@/*` path alias for root imports. Follow existing two-space indentation, double-quoted strings, named exports, and PascalCase component filenames such as `TranscriptViewer.tsx`. Route handlers export HTTP methods from `route.ts`. Add `"use client"` only where browser APIs or hooks require it. Reuse Tailwind tokens such as `bg-paper`, `border-line`, and `font-display`.
+Use TypeScript with `strict` enabled and the `@/*` path alias for root imports. Follow existing two-space indentation, double-quoted strings, named exports, and PascalCase component filenames such as `TranscriptViewer.tsx`. Route handlers export HTTP methods from `route.ts`. Add `"use client"` only where browser APIs or hooks require it. Follow the approved Prism Pulse system in `design-exploration/design-system.md` and reuse semantic Tailwind tokens such as `bg-paper`, `border-line`, and `font-display`; fixed inverse colors are reserved for media and proof surfaces whose appearance must not change with the app theme.
 
 ## Internationalization Boundaries
 
