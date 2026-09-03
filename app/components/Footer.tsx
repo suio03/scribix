@@ -41,9 +41,9 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
     <footer className="footer-refresh border-t border-line bg-card px-4 pb-10 pt-14 sm:px-8">
       <div className="mx-auto max-w-[1100px]">
         <div className="flex flex-col gap-4">
-          <Link href="/" className="inline-flex items-center gap-2.5">
-            <Logo size={30} />
-            <span className="font-display text-[20px] font-semibold tracking-tight">
+          <Link href="/" className="inline-flex items-center gap-2">
+            <Logo size={27} />
+            <span className="font-sans text-[20px] font-[560] tracking-[-0.035em]">
               Scribix
             </span>
           </Link>

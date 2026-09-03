@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Shell } from "./Shell";
-import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { ProductTopbar } from "./ProductTopbar";
 
 export function LegalShell({
   title,
@@ -14,8 +14,8 @@ export function LegalShell({
 }) {
   return (
     <Shell>
-      <div className="neutral-page-background">
-        <Header showLanguageSwitcher={false} />
+      <div className="legal-surface neutral-page-background">
+        <ProductTopbar />
         <main className="mx-auto max-w-[760px] px-4 py-16 sm:px-8 sm:py-24">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted">
             Last updated · {updated}

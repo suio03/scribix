@@ -473,29 +473,26 @@ export function Sidebar({
       href: "/dashboard",
       icon: LayoutDashboard,
     },
-    {
-      key: "billing",
-      label: t("billing"),
-      href: "/dashboard/billing",
-      icon: BadgeDollarSign,
-    },
-    {
-      key: "account",
-      label: t("account"),
-      href: "/dashboard/account",
-      icon: UserRound,
-    },
   ];
+  const usesProductNavigation = variant === "dashboard" || signedIn;
   const productNav =
-    variant === "dashboard"
+    usesProductNavigation
       ? dashboardNav
       : nav;
   const isDashboardPathActive = (href: string) => {
     if (href === "/dashboard") {
-      return pathname === "/dashboard" || pathname.startsWith("/dashboard/transcripts");
+      return pathname === "/dashboard" ||
+        pathname.startsWith("/dashboard/transcripts") ||
+        pathname.startsWith("/dashboard/video-projects");
     }
     return pathname === href;
   };
+
+  useEffect(() => {
+    if (pathname.startsWith("/dashboard/video-projects/")) {
+      setCollapsed(true);
+    }
+  }, [pathname, setCollapsed]);
 
   useEffect(() => {
     if (!accountOpen) return;
@@ -544,15 +541,15 @@ export function Sidebar({
           }`}
         >
           <Link
-            href="/"
+            href={signedIn ? "/dashboard" : "/"}
             onClick={closeAfterNavigate}
-            className={`flex items-center gap-2.5 ${
+            className={`flex items-center gap-1.5 ${
               isCollapsed ? "lg:hidden" : ""
             }`}
           >
-            <Logo size={26} />
+            <Logo size={30} variant="app" />
             <span
-              className={`font-display text-[18px] font-semibold tracking-tight text-ink ${
+              className={`font-sans text-[18px] font-[560] tracking-[-0.035em] text-ink ${
                 isCollapsed ? "lg:hidden" : ""
               }`}
             >
@@ -634,7 +631,7 @@ export function Sidebar({
                 />
               );
             })}
-            {variant === "dashboard" ? (
+            {usesProductNavigation ? (
               <ExtensionMenu
                 isCollapsed={isCollapsed}
                 onNavigate={closeAfterNavigate}
@@ -642,7 +639,7 @@ export function Sidebar({
             ) : null}
           </ul>
 
-          {variant === "site" ? (
+          {variant === "site" && !signedIn ? (
             <>
               <div className="my-3 h-px bg-line" />
 

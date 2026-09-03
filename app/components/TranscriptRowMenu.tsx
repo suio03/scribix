@@ -12,9 +12,16 @@ type Props = {
   title: string;
   status: string;
   audioAvailable: boolean;
+  context?: "transcript" | "project";
 };
 
-export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) {
+export function TranscriptRowMenu({
+  id,
+  title,
+  status,
+  audioAvailable,
+  context = "transcript",
+}: Props) {
   const t = useTranslations("Dashboard.rowMenu");
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -27,7 +34,13 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
   const ref = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const completed = status === "completed";
+  const completed = context === "transcript" && status === "completed";
+  const renameTitleKey = context === "project" ? "renameProjectTitle" : "renameTitle";
+  const renameBodyKey = context === "project" ? "renameProjectBody" : "renameBody";
+  const renameInputKey = context === "project" ? "renameProjectInputLabel" : "renameInputLabel";
+  const confirmTitleKey = context === "project" ? "confirmProjectTitle" : "confirmTitle";
+  const confirmBodyKey = context === "project" ? "confirmProjectBody" : "confirmBody";
+  const confirmDeleteKey = context === "project" ? "confirmDeleteProject" : "confirmDelete";
 
   const updateMenuPosition = () => {
     const button = buttonRef.current;
@@ -198,10 +211,10 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
               </span>
               <div className="min-w-0 flex-1">
                 <h2 id="rename-transcript-title" className="text-[15px] font-semibold text-ink">
-                  {t("renameTitle")}
+                  {t(renameTitleKey)}
                 </h2>
                 <p className="mt-1 text-[13px] leading-5 text-muted">
-                  {t("renameBody")}
+                  {t(renameBodyKey)}
                 </p>
               </div>
               <button
@@ -217,7 +230,7 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
 
             <div className="px-5 py-4">
               <label htmlFor={`rename-${id}`} className="sr-only">
-                {t("renameInputLabel")}
+                {t(renameInputKey)}
               </label>
               <input
                 id={`rename-${id}`}
@@ -279,10 +292,10 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
               </span>
               <div className="min-w-0 flex-1">
                 <h2 id="delete-transcript-title" className="text-[15px] font-semibold text-ink">
-                  {t("confirmTitle")}
+                  {t(confirmTitleKey)}
                 </h2>
                 <p id="delete-transcript-description" className="mt-1 text-[13px] leading-5 text-muted">
-                  {t("confirmBody")}
+                  {t(confirmBodyKey)}
                 </p>
               </div>
               <button
@@ -317,7 +330,7 @@ export function TranscriptRowMenu({ id, title, status, audioAvailable }: Props) 
                   disabled={busy}
                   className="rounded-full bg-red-600 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
                 >
-                  {busy ? t("confirmDeleting") : t("confirmDelete")}
+                  {busy ? t("confirmDeleting") : t(confirmDeleteKey)}
                 </button>
               </div>
             </div>

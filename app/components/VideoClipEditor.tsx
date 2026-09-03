@@ -793,7 +793,7 @@ function ContinuousProxyPlayer({
   };
 
   if (timeline.length === 0) {
-    return <div className="grid aspect-[9/16] max-h-[620px] place-items-center rounded-xl bg-ink px-6 text-center text-[12px] text-paper/55">{labels.previewMissing}</div>;
+    return <div className="fixed-media-surface grid aspect-[9/16] max-h-[620px] place-items-center rounded-xl bg-ink px-6 text-center text-[12px] text-paper/55">{labels.previewMissing}</div>;
   }
   const mediaStyle = (slot: 0 | 1) => {
     const dimensions = videoDimensions[slot];

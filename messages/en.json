@@ -63,6 +63,21 @@
       "dropMeta": "MP4, MOV, WebM, AVI or MKV",
       "videoOnly": "Choose a video file to start AI video clipping."
     },
+    "proof": {
+      "eyebrow": "A real Scribix render",
+      "title": "See the source become a finished short.",
+      "intro": "The same 12-second moment appears on both sides: first the original frame, then the vertical clip Scribix rendered with reframing and dynamic captions.",
+      "sourceLabel": "Original source",
+      "sourceMeta": "26:10 long-form video",
+      "outputLabel": "Scribix output",
+      "outputMeta": "Vertical crop · captions included",
+      "transform": "AI-selected and reframed",
+      "previewNote": "12-second real output · muted by default",
+      "play": "Play preview",
+      "pause": "Pause preview",
+      "soundOn": "Play with sound",
+      "soundOff": "Mute sound"
+    },
     "workflow": {
       "label": "Long video to short clips",
       "title": "From long video to finished short—in one focused workflow.",
@@ -78,7 +93,7 @@
         },
         {
           "title": "Shape the final story",
-          "body": "Trim and reorder segments, refine the 9:16 crop, correct captions, apply brand styling, adjust audio, and choose the cover frame."
+          "body": "Refine the original-video start and end times, adjust the 9:16 crop, correct captions, apply brand styling, and choose the cover frame."
         },
         {
           "title": "Render and download",
@@ -97,7 +112,7 @@
         },
         {
           "title": "Transcript-precise timeline",
-          "body": "Adjust start and end points, remove sections, and reorder non-contiguous moments using word-level timing."
+          "body": "Adjust the clip’s original-video start and end points with word-level precision and clear source timecodes."
         },
         {
           "title": "Dynamic captions",
@@ -113,7 +128,7 @@
         },
         {
           "title": "Full-quality cloud render",
-          "body": "Create the final MP4 from the original video rather than a compressed browser preview, with normalized audio and a cover image."
+          "body": "Create the final MP4 from the original video rather than a compressed browser preview, preserving the source audio and adding a cover image."
         }
       ]
     },
@@ -156,7 +171,7 @@
         },
         {
           "q": "Can I change the clips AI suggests?",
-          "a": "Yes. You can change segment boundaries and order, remove segments, correct caption text, adjust the vertical crop, apply brand styling, tune audio, and select a cover frame."
+          "a": "Yes. You can change the clip’s original-video boundaries, correct caption text, adjust the vertical crop, apply brand styling, and select a cover frame."
         },
         {
           "q": "What does Scribix export?",
@@ -183,12 +198,22 @@
       "cta": "Upload a video free"
     }
   },
+  "TopNav": {
+    "primaryNav": "Primary navigation",
+    "mobileNav": "Mobile navigation",
+    "product": "AI clips",
+    "howItWorks": "How it works",
+    "tools": "Tools",
+    "supportingTools": "More from Scribix",
+    "createClips": "Create clips",
+    "getClips": "Get clips"
+  },
   "Sidebar": {
     "openNav": "Open navigation",
     "closeNav": "Close navigation",
     "expandSidebar": "Expand sidebar",
     "collapseSidebar": "Collapse sidebar",
-    "newTranscript": "New Transcript",
+    "newTranscript": "New project",
     "aiTools": "AI Tools",
     "browserExtension": "YouTube Extension",
     "extensionMenuHint": "Install it from your browser's store.",
@@ -196,7 +221,7 @@
     "firefoxExtensionStore": "Firefox Add-ons",
     "edgeExtensionStore": "Microsoft Edge Add-ons",
     "openExtensionStore": "Open {store}",
-    "myLibrary": "Dashboard",
+    "myLibrary": "Projects",
     "pricing": "Pricing",
     "billing": "Billing",
     "pricingBadge": "50% off",
@@ -237,9 +262,9 @@
     "close": "Close sign-in",
     "eyebrow": "Free to get started",
     "title": "Welcome to Scribix",
-    "description": "Sign in to turn recordings into accurate, speaker-labeled transcripts you can review and export.",
-    "benefitTitle": "45 free transcription minutes",
-    "benefitBody": "No credit card required. Use them whenever you need.",
+    "description": "Sign in to turn long videos into ready-to-edit short clips, with transcription included automatically.",
+    "benefitTitle": "Create your first AI clips free",
+    "benefitBody": "Start with 45 processing minutes. No credit card required.",
     "continueWithGoogle": "Continue with Google",
     "signingIn": "Connecting to Google…",
     "error": "We couldn't start Google sign-in. Please try again.",
@@ -681,14 +706,38 @@
       "signOut": "Sign out"
     },
     "list": {
-      "title": "Your transcripts",
-      "empty": "Nothing yet.",
+      "eyebrow": "Your workspace",
+      "title": "Projects",
+      "description": "Your long-form videos and the short clips created from them.",
+      "empty": "No projects yet.",
       "itemCount": "{count, plural, =1 {# item} other {# items}}",
-      "newTranscript": "New transcript",
+      "newTranscript": "Create clips",
       "checkoutOkTitle": "Subscription active — welcome aboard.",
       "checkoutOkBody": "Your new plan is live. Visit <link>billing</link> to see your usage.",
-      "emptyBody": "No transcripts yet.",
-      "emptyCta": "Upload your first file →",
+      "filterLabel": "Filter projects",
+      "filterAll": "All",
+      "filterVideo": "Video projects",
+      "filterTranscripts": "Transcripts",
+      "emptyTitle": "Create your first clips",
+      "emptyFilterTitle": "Nothing in this view",
+      "emptyBody": "Upload a long video and Scribix will find the strongest moments to turn into short clips.",
+      "emptyFilterBody": "Choose another project type or create something new.",
+      "emptyCta": "Create clips",
+      "videoProject": "Video project",
+      "transcriptProject": "Transcript",
+      "durationPending": "Duration pending",
+      "clipCount": "{count, plural, =1 {# clip} other {# clips}}",
+      "openProject": "Open {title}",
+      "projectStatus": {
+        "uploading": "Uploading",
+        "transcribing": "Transcribing",
+        "findingClips": "Finding clips",
+        "readyToEdit": "Ready to edit",
+        "exporting": "Exporting",
+        "exported": "Exported",
+        "transcriptReady": "Transcript ready",
+        "failed": "Needs attention"
+      },
       "tableName": "Name",
       "tableUploaded": "Uploaded",
       "tableDuration": "Duration",
@@ -701,8 +750,20 @@
       "statusPending": "Pending"
     },
     "new": {
-      "title": "New transcript",
-      "back": "Back"
+      "eyebrow": "Start something new",
+      "title": "Create a new project",
+      "description": "Choose the outcome you want. Scribix will keep the next steps focused on that workflow.",
+      "back": "Back to projects",
+      "workflowLabel": "Project workflow",
+      "recommended": "Primary",
+      "clipsTitle": "Turn a video into short clips",
+      "clipsDescription": "Find complete moments, refine captions and framing, then export a vertical video.",
+      "transcriptTitle": "Transcribe audio or video",
+      "transcriptDescription": "Create searchable text with timestamps, speaker labels and document exports.",
+      "clipsUploadTitle": "Upload a long video",
+      "clipsUploadDescription": "Your video will be transcribed first, then Scribix will find the strongest self-contained moments.",
+      "transcriptUploadTitle": "Choose a transcription source",
+      "transcriptUploadDescription": "Upload a file, import existing YouTube captions, or record from your microphone."
     },
     "account": {
       "title": "Account",
@@ -871,7 +932,7 @@
       "createClips": "Find video clips",
       "creatingClips": "Opening workspace…",
       "createClipsFailed": "Could not open the clip workspace.",
-      "back": "← Back to transcript",
+      "back": "← Back to projects",
       "workspaceLabel": "Short-video workspace",
       "workflow": { "label": "Video project stages", "transcript": "Transcript", "clips": "Clips", "editor": "Editor", "exports": "Exports" },
       "eyebrow": "AI clip finder",
@@ -970,8 +1031,11 @@
       "renameFailed": "Rename failed",
       "renameTitle": "Rename transcript",
       "renameBody": "Give this transcript a clear title for your library.",
+      "renameProjectTitle": "Rename project",
+      "renameProjectBody": "Give this project a clear title for your workspace.",
       "renameClose": "Close rename dialog",
       "renameInputLabel": "Transcript title",
+      "renameProjectInputLabel": "Project title",
       "renameTitleRequired": "Title cannot be empty.",
       "renameCancel": "Cancel",
       "renameSave": "Save title",
@@ -980,9 +1044,12 @@
       "deleteFailed": "Delete failed",
       "confirmTitle": "Delete transcript?",
       "confirmBody": "This transcript and its audio file will be removed from your library. This cannot be undone.",
+      "confirmProjectTitle": "Delete project?",
+      "confirmProjectBody": "This video project, its transcript, source file, clips and exports will be removed. This cannot be undone.",
       "confirmClose": "Close delete confirmation",
       "confirmCancel": "Cancel",
       "confirmDelete": "Delete transcript",
+      "confirmDeleteProject": "Delete project",
       "confirmDeleting": "Deleting..."
     },
     "billingPortal": {
@@ -1039,11 +1106,16 @@
     },
     "uploader": {
       "dropPrompt": "Drop a video or audio file",
+      "dropVideoPrompt": "Drop a long video here",
       "limits": "Uploads up to 1 GB · Free trial: 45 min lifetime",
       "limitsFree": "Videos up to {size} · Audio up to 1 GB · Free trial: 45 min lifetime",
       "limitsBasic": "Videos up to {size} · Audio up to 1 GB · Up to 10 hours per file",
       "limitsPro": "Videos up to {size} · Audio up to 1 GB · Up to 10 hours per file",
+      "videoLimitsFree": "Up to {size} · MP4, MOV, WebM, AVI or MKV",
+      "videoLimitsBasic": "Up to {size} and 10 hours · MP4, MOV, WebM, AVI or MKV",
+      "videoLimitsPro": "Up to {size} and 10 hours · MP4, MOV, WebM, AVI or MKV",
       "choose": "Choose file",
+      "chooseVideo": "Choose video",
       "upgradePlan": "Upgrade plan",
       "phasePreparing": "Preparing…",
       "phaseExtracting": "Extracting audio {percent}%",
@@ -1053,6 +1125,7 @@
       "videoTooBig": "This video is larger than {size}. Extract the audio locally, then upload the audio file.",
       "audioTooBig": "This audio file is larger than {size}. Compress it to MP3/M4A or split it into smaller files.",
       "audioOnly": "Please choose an audio file.",
+      "videoOnly": "Please choose a video file for the clip workflow.",
       "fileTooLargeWithCap": "That file is larger than your tier allows (max {mb} MB). Upgrade for higher limits.",
       "fileTooLarge": "That file is larger than your tier allows. Upgrade for higher limits.",
       "videoSourceStorageLimit": "This video would exceed your video storage allowance. Delete stored source videos or upgrade your plan.",

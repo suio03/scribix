@@ -2,7 +2,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/auth";
 import { getPathname } from "@/i18n/navigation";
 import { Shell } from "../components/Shell";
-import { Sidebar } from "../components/Sidebar";
 import { getSidebarUsage } from "../components/sidebarUsage";
 import { LandingChrome } from "../components/LandingChrome";
 import { GoogleOneTap } from "../components/GoogleOneTap";
@@ -67,25 +66,12 @@ export default async function HomePage({
   ]);
   const postSignInPath = getPathname({ href: "/dashboard/new", locale });
   const homePath = getPathname({ href: "/", locale });
-  const dashboardPath = getPathname({ href: "/dashboard", locale });
   const sidebarUsage = await getSidebarUsage(session);
   const pageUrl = new URL(homePath, SITE_URL).toString();
   const jsonLd = buildJsonLd(locale, pageUrl, metadata("description"));
 
   return (
-    <Shell
-      sidebar={
-        <Sidebar
-          usage={sidebarUsage}
-          signedIn={!!session}
-          signInRedirect={dashboardPath}
-          newTranscriptRedirect={postSignInPath}
-          signOutRedirect={homePath}
-          userImage={session?.user?.image ?? null}
-          userLabel={session?.user?.name ?? session?.user?.email ?? null}
-        />
-      }
-    >
+    <Shell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
@@ -96,6 +82,14 @@ export default async function HomePage({
       <TrackToolVisit slug="home" />
       <LandingChrome
         signedIn={!!session}
+        className={`landing-refresh tool-landing-refresh video-marketing-home ${
+          session ? "" : "prism-home"
+        }`}
+        postSignInPath={postSignInPath}
+        signOutRedirect={homePath}
+        usage={sidebarUsage}
+        userImage={session?.user?.image ?? null}
+        userLabel={session?.user?.name ?? session?.user?.email ?? null}
         primary={
           <VideoHomeHero
             signedIn={!!session}
@@ -105,7 +99,6 @@ export default async function HomePage({
         }
         marketing={<VideoHomeMarketing />}
         publicFooterExtra={<Partners />}
-        showMarketingWhenSignedIn
       />
     </Shell>
   );

@@ -19,9 +19,9 @@ export function Header({
           {showSidebarToggle ? (
             <SidebarToggle />
           ) : (
-            <Link href="/" className="flex items-center gap-2.5">
-              <Logo size={28} />
-              <span className="font-display text-[19px] font-semibold tracking-tight">
+            <Link href="/" className="flex items-center gap-1.5">
+              <Logo size={25} />
+              <span className="font-sans text-[19px] font-[560] tracking-[-0.035em]">
                 Scribix
               </span>
             </Link>

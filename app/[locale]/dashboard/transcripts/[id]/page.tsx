@@ -81,7 +81,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
     partialRequested: row.partial_requested === 1,
   });
   const checkoutSuccessPath = getPathname({
-    href: { pathname: "/dashboard", query: { checkout: "ok" } },
+    href: "/dashboard/transcripts",
     locale,
   });
 
@@ -90,7 +90,7 @@ export default async function TranscriptViewerPage({ params }: Params) {
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <Link
-            href="/dashboard"
+            href="/dashboard/transcripts"
             className="text-[13px] text-ink/60 hover:text-ink"
           >
             {t("back")}

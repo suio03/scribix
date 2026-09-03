@@ -161,7 +161,7 @@ export function VideoStyleControls({
               ...renderSpec,
               captions: { ...renderSpec.captions, enabled: event.target.checked },
             })}
-            className="size-4 accent-[#bd5738]"
+            className="size-4 accent-[var(--accent)]"
           />
         </label>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -288,7 +288,7 @@ function ControlSection({ children, icon, title, open = false }: { children: Rea
 }
 
 function ControlRange({ label, min, max, step, value, display, onChange }: { label: string; min: number; max: number; step: number; value: number; display: string; onChange: (value: number) => void }) {
-  return <label className="mt-2 block first:mt-0"><span className="flex justify-between text-[10px] text-ink/50"><span>{label}</span><span className="font-mono tabular-nums">{display}</span></span><input type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} className="mt-1 w-full accent-[#bd5738]" /></label>;
+  return <label className="mt-2 block first:mt-0"><span className="flex justify-between text-[10px] text-ink/50"><span>{label}</span><span className="font-mono tabular-nums">{display}</span></span><input type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} className="mt-1 w-full accent-[var(--accent)]" /></label>;
 }
 
 function ControlSelect({ label, value, options, onChange }: { label: string; value: string; options: Array<[string, string]>; onChange: (value: string) => void }) {

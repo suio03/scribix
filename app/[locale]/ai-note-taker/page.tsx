@@ -9,7 +9,6 @@ import { GoogleOneTap } from "@/app/components/GoogleOneTap";
 import { HowItWorks } from "@/app/components/HowItWorks";
 import { LandingChrome } from "@/app/components/LandingChrome";
 import { Shell } from "@/app/components/Shell";
-import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { TrackToolVisit } from "@/app/components/Track";
 import { UseCases } from "@/app/components/UseCases";
@@ -80,26 +79,13 @@ export default async function AiNoteTakerPage({
   const newTranscriptPath = getPathname({ href: "/dashboard/new", locale });
   const postSignInPath = getPathname({ href: PATH, locale });
   const homePath = getPathname({ href: "/", locale });
-  const dashboardPath = getPathname({ href: "/dashboard", locale });
   const structuredCopy = {
     faq: t.raw("faq"),
     jsonLd: t.raw("jsonLd"),
   } as AiNoteTakerStructuredCopy;
 
   return (
-    <Shell
-      sidebar={
-        <Sidebar
-          usage={sidebarUsage}
-          signedIn={!!session}
-          signInRedirect={dashboardPath}
-          newTranscriptRedirect={newTranscriptPath}
-          signOutRedirect={homePath}
-          userImage={session?.user?.image ?? null}
-          userLabel={session?.user?.name ?? session?.user?.email ?? null}
-        />
-      }
-    >
+    <Shell>
       <JsonLd copy={structuredCopy} locale={locale} />
       {!session && process.env.GOOGLE_ID ? (
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
@@ -108,6 +94,11 @@ export default async function AiNoteTakerPage({
       <LandingChrome
         signedIn={!!session}
         className="landing-refresh tool-landing-refresh"
+        usage={sidebarUsage}
+        postSignInPath={newTranscriptPath}
+        signOutRedirect={homePath}
+        userImage={session?.user?.image ?? null}
+        userLabel={session?.user?.name ?? session?.user?.email ?? null}
         primary={
           <Generator
             signedIn={!!session}

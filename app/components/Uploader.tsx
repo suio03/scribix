@@ -17,6 +17,7 @@ const DEFAULT_TOOL_SLUG = "transcribe";
 type UploaderT = ReturnType<typeof useTranslations<"Dashboard.uploader">>;
 
 const ACCEPT = "audio/*,video/*";
+const VIDEO_ACCEPT = "video/*";
 
 export type UploadPhase =
   | "idle"
@@ -105,6 +106,8 @@ export type UseUploadOpts = {
   checkoutSuccessPath?: string;
   /** Restrict uploads to audio files and skip the video extraction path. */
   audioOnly?: boolean;
+  /** Restrict uploads to video files so the result enters the clip workspace. */
+  videoOnly?: boolean;
   /** Analytics tool identifier for attribution across shared upload surfaces. */
   toolSlug?: string;
 };
@@ -146,6 +149,7 @@ export function useUpload({
   tier = "free",
   postSignInPath = "/dashboard/new",
   audioOnly = false,
+  videoOnly = false,
   toolSlug = DEFAULT_TOOL_SLUG,
 }: UseUploadOpts) {
   const t = useTranslations("Dashboard.uploader");
@@ -225,6 +229,22 @@ export function useUpload({
         setFilename(file.name);
         setPhase("error");
         const error = makeUploadError("audio_only_file_type", t("audioOnly"), "product_limit");
+        setUploadError(error);
+        trackEvent("transcribe_fail", {
+          tool_slug: toolSlug,
+          source,
+          input_type: inputType,
+          error_type: error.type,
+          error_code: error.code,
+          error_message: error.message,
+        });
+        return;
+      }
+
+      if (videoOnly && inputType !== "video") {
+        setFilename(file.name);
+        setPhase("error");
+        const error = makeUploadError("video_only_file_type", t("videoOnly"), "product_limit");
         setUploadError(error);
         trackEvent("transcribe_fail", {
           tool_slug: toolSlug,
@@ -602,7 +622,7 @@ export function useUpload({
         setUploadError(uploadFailure);
       }
     },
-    [router, signedIn, postSignInPath, audioOnly, tier, toolSlug, t, openLogin]
+    [router, signedIn, postSignInPath, audioOnly, videoOnly, tier, toolSlug, t, openLogin]
   );
 
   useEffect(() => {
@@ -814,8 +834,17 @@ export function Uploader(props: UseUploadOpts) {
   } = useUpload(props);
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
-  const limitCopyKey =
-    props.tier === "pro" ? "limitsPro" : props.tier === "basic" ? "limitsBasic" : "limitsFree";
+  const limitCopyKey = props.videoOnly
+    ? props.tier === "pro"
+      ? "videoLimitsPro"
+      : props.tier === "basic"
+        ? "videoLimitsBasic"
+        : "videoLimitsFree"
+    : props.tier === "pro"
+      ? "limitsPro"
+      : props.tier === "basic"
+        ? "limitsBasic"
+        : "limitsFree";
   const videoLimitLabel = (props.tier === "basic" || props.tier === "pro") ? "5 GB" : "2 GB";
 
   return (
@@ -839,7 +868,7 @@ export function Uploader(props: UseUploadOpts) {
       <input
         ref={inputRef}
         type="file"
-        accept={ACCEPT}
+        accept={props.videoOnly ? VIDEO_ACCEPT : ACCEPT}
         className="hidden"
         onChange={(e) => {
           const f = e.target.files?.[0];
@@ -850,14 +879,16 @@ export function Uploader(props: UseUploadOpts) {
 
       {phase === "idle" || phase === "error" ? (
         <>
-          <p className="text-base font-medium">{t("dropPrompt")}</p>
+          <p className="text-base font-medium">
+            {props.videoOnly ? t("dropVideoPrompt") : t("dropPrompt")}
+          </p>
           <p className="mt-1 text-sm text-ink/60">{t(limitCopyKey, { size: videoLimitLabel })}</p>
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
             className="mt-6 rounded-full bg-ink px-5 py-2 text-[13px] font-medium text-paper hover:bg-accent"
           >
-            {t("choose")}
+            {props.videoOnly ? t("chooseVideo") : t("choose")}
           </button>
           <UploadErrorHelp
             error={uploadError}

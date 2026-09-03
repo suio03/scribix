@@ -12,7 +12,6 @@ import { HowItWorks } from "@/app/components/HowItWorks";
 import { LandingChrome } from "@/app/components/LandingChrome";
 import { Partners } from "@/app/components/Partners";
 import { Shell } from "@/app/components/Shell";
-import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { TrackToolVisit } from "@/app/components/Track";
 import { UseCases } from "@/app/components/UseCases";
@@ -68,26 +67,13 @@ export default async function VideoToTextPage({
   ]);
   const pagePath = getPathname({ href: PATH, locale });
   const homePath = getPathname({ href: "/", locale });
-  const dashboardPath = getPathname({ href: "/dashboard", locale });
   const newTranscriptPath = getPathname({ href: "/dashboard/new", locale });
   const sidebarUsage = await getSidebarUsage(session);
   const pageUrl = urlFor(locale, PATH).href;
   const jsonLd = buildJsonLd(locale, pageUrl, metadataT("description"));
 
   return (
-    <Shell
-      sidebar={
-        <Sidebar
-          usage={sidebarUsage}
-          signedIn={!!session}
-          signInRedirect={dashboardPath}
-          newTranscriptRedirect={newTranscriptPath}
-          signOutRedirect={homePath}
-          userImage={session?.user?.image ?? null}
-          userLabel={session?.user?.name ?? session?.user?.email ?? null}
-        />
-      }
-    >
+    <Shell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -100,6 +86,11 @@ export default async function VideoToTextPage({
       <TrackToolVisit slug="video-to-text" />
       <LandingChrome
         signedIn={!!session}
+        usage={sidebarUsage}
+        postSignInPath={newTranscriptPath}
+        signOutRedirect={homePath}
+        userImage={session?.user?.image ?? null}
+        userLabel={session?.user?.name ?? session?.user?.email ?? null}
         primary={
           <Generator
             signedIn={!!session}

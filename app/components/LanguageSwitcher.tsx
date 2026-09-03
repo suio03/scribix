@@ -27,9 +27,11 @@ function withoutLocalePrefix(pathname: string): string {
 export function LanguageSwitcher({
   menuPlacement = "bottom",
   menuAlign = "right",
+  buttonClassName = "",
 }: {
   menuPlacement?: "bottom" | "top";
   menuAlign?: "left" | "right";
+  buttonClassName?: string;
 } = {}) {
   const locale = useLocale();
   const router = useRouter();
@@ -62,7 +64,7 @@ export function LanguageSwitcher({
         aria-label={t("language")}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="inline-grid size-9 place-items-center rounded-lg text-muted transition hover:bg-card hover:text-ink"
+        className={`inline-grid size-9 place-items-center rounded-lg text-muted transition hover:bg-card hover:text-ink ${buttonClassName}`}
       >
         <Languages size={16} strokeWidth={1.6} />
       </button>

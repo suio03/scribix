@@ -61,7 +61,7 @@ export default async function VideoProjectPage({ params }: Params) {
   return (
     <main className="product-surface-refresh mx-auto max-w-[1180px] px-4 py-10 sm:px-8 sm:py-14">
       <Link
-        href={`/dashboard/transcripts/${project.transcript_id}`}
+        href="/dashboard"
         className="text-[13px] text-ink/55 transition hover:text-ink"
       >
         {t("back")}

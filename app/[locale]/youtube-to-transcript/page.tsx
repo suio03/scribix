@@ -29,7 +29,6 @@ import {
   type ToolLandingIcon,
 } from "@/app/components/marketing/ToolLandingSections";
 import { Shell } from "@/app/components/Shell";
-import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { TrackToolVisit } from "@/app/components/Track";
 import { YouTubeImporter } from "@/app/components/YouTubeImporter";
@@ -228,7 +227,6 @@ export default async function YouTubeToTranscriptPage({
   const session = await auth();
   const toolPath = getPathname({ href: PATH, locale });
   const homePath = getPathname({ href: "/", locale });
-  const dashboardPath = getPathname({ href: "/dashboard", locale });
   const newTranscriptPath = getPathname({ href: "/dashboard/new", locale });
   const sidebarUsage = await getSidebarUsage(session);
   const t = await getTranslations("YouTubeToTranscript");
@@ -249,19 +247,7 @@ export default async function YouTubeToTranscriptPage({
   } as YouTubeToTranscriptCopy;
 
   return (
-    <Shell
-      sidebar={
-        <Sidebar
-          usage={sidebarUsage}
-          signedIn={!!session}
-          signInRedirect={dashboardPath}
-          newTranscriptRedirect={newTranscriptPath}
-          signOutRedirect={homePath}
-          userImage={session?.user?.image ?? null}
-          userLabel={session?.user?.name ?? session?.user?.email ?? null}
-        />
-      }
-    >
+    <Shell>
       <JsonLd copy={copy} locale={locale} />
       {!session && process.env.GOOGLE_ID ? (
         <GoogleOneTap clientId={process.env.GOOGLE_ID} />
@@ -270,6 +256,11 @@ export default async function YouTubeToTranscriptPage({
       <LandingChrome
         signedIn={!!session}
         className="landing-refresh tool-landing-refresh"
+        usage={sidebarUsage}
+        postSignInPath={newTranscriptPath}
+        signOutRedirect={homePath}
+        userImage={session?.user?.image ?? null}
+        userLabel={session?.user?.name ?? session?.user?.email ?? null}
         primary={
           <ToolHero
             {...copy.hero}

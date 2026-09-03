@@ -26,7 +26,7 @@ export default async function AdminLayout({
   if (!isAdmin(session!.user.email)) redirect({ href: "/dashboard", locale });
 
   return (
-    <div className="min-h-screen">
+    <div className="admin-surface min-h-screen">
       <header className="border-b border-line">
         <div className="mx-auto flex max-w-[1180px] items-center justify-between px-4 py-3 sm:px-8">
           <div className="flex items-center gap-6">

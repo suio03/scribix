@@ -1,7 +1,16 @@
 import { auth } from "@/auth";
 import { redirect } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { AlertCircle, AudioLines, CheckCircle2, Clock, Loader2 } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowUpRight,
+  CheckCircle2,
+  Clapperboard,
+  Clock3,
+  Loader2,
+  Plus,
+  Sparkles,
+} from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
@@ -12,9 +21,22 @@ type Row = {
   title: string;
   status: "pending" | "uploading" | "queued" | "processing" | "completed" | "error";
   created_at: string;
+  activity_at: string;
   duration_sec: number | null;
   audio_r2_key: string | null;
+  video_project_id: string;
+  video_project_status: string;
+  clip_count: number;
 };
+
+type ProjectStage =
+  | "uploading"
+  | "transcribing"
+  | "findingClips"
+  | "readyToEdit"
+  | "exporting"
+  | "exported"
+  | "failed";
 
 const AUDIO_TTL_MS = 14 * 24 * 60 * 60 * 1000;
 
@@ -52,34 +74,30 @@ export default async function DashboardPage({
   const t = await getTranslations("Dashboard.list");
 
   const { results } = await env.DB.prepare(
-    `SELECT id, title, status, created_at, duration_sec, audio_r2_key
-       FROM transcripts
-      WHERE user_id = ?1 AND deleted_at IS NULL
-      ORDER BY created_at DESC
+    `SELECT t.id, t.title, t.status, t.created_at, t.duration_sec, t.audio_r2_key,
+            p.id AS video_project_id, p.status AS video_project_status,
+            COALESCE(p.updated_at, t.created_at) AS activity_at,
+            (
+              SELECT COUNT(*)
+                FROM clip_candidates c
+               WHERE c.project_id = p.id AND c.status <> 'deleted'
+            ) AS clip_count
+       FROM video_projects p
+       INNER JOIN transcripts t
+         ON t.id = p.transcript_id
+        AND t.user_id = p.user_id
+        AND t.deleted_at IS NULL
+      WHERE p.user_id = ?1 AND p.deleted_at IS NULL
+      ORDER BY activity_at DESC
       LIMIT 100`
   )
     .bind(userId)
     .all<Row>();
 
   return (
-    <main className="mx-auto max-w-[1180px] px-4 py-12 sm:px-8">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight">{t("title")}</h1>
-          <p className="mt-1 text-sm text-ink/60">
-            {results.length === 0 ? t("empty") : t("itemCount", { count: results.length })}
-          </p>
-        </div>
-        <Link
-          href="/dashboard/new"
-          className="rounded-full bg-ink px-3.5 py-1.5 text-[13px] font-medium text-paper hover:bg-accent"
-        >
-          {t("newTranscript")}
-        </Link>
-      </div>
-
+    <main className="product-surface-refresh mx-auto max-w-[1120px] px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       {showCheckoutOk ? (
-        <div className="mt-8 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
+        <div className="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
           <p className="font-medium">{t("checkoutOkTitle")}</p>
           <p className="mt-0.5 text-emerald-800/80">
             {t.rich("checkoutOkBody", {
@@ -93,118 +111,185 @@ export default async function DashboardPage({
         </div>
       ) : null}
 
+      <div className="flex items-end justify-between gap-5">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
+            {t("eyebrow")}
+          </p>
+          <h1 className="font-display text-[30px] font-semibold tracking-[-0.035em] text-ink sm:text-[36px]">
+            {t("title")}
+          </h1>
+          <p className="mt-1.5 text-[13px] leading-6 text-muted">{t("description")}</p>
+        </div>
+        <Link
+          href="/dashboard/new"
+          className="hidden shrink-0 items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-[12px] font-semibold text-ink transition hover:border-ink/25 sm:inline-flex"
+        >
+          <Plus size={14} />
+          {t("newTranscript")}
+        </Link>
+      </div>
+
       {results.length === 0 ? (
-        <div className="mt-10 rounded-2xl border border-dashed border-line p-12 text-center">
-          <p className="text-sm text-ink/60">{t("emptyBody")}</p>
+        <div className="mt-8 rounded-[24px] border border-dashed border-line bg-card px-6 py-16 text-center">
+          <span className="mx-auto inline-grid size-12 place-items-center rounded-2xl bg-accent-soft text-accent">
+            <Sparkles size={20} strokeWidth={1.8} />
+          </span>
+          <h2 className="mt-5 font-display text-2xl font-semibold tracking-tight text-ink">
+            {t("emptyTitle")}
+          </h2>
+          <p className="mx-auto mt-2 max-w-[46ch] text-[14px] leading-6 text-muted">
+            {t("emptyBody")}
+          </p>
           <Link
             href="/dashboard/new"
-            className="mt-4 inline-block text-sm font-medium text-accent underline-offset-4 hover:underline"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[13px] font-semibold text-paper transition hover:bg-accent"
           >
+            <Plus size={15} />
             {t("emptyCta")}
           </Link>
         </div>
       ) : (
-        <div className="mt-8 overflow-hidden rounded-2xl border border-line">
-          <table className="w-full text-sm">
-            <thead className="bg-ink/[0.03] text-left text-[12px] uppercase tracking-wide text-ink/60">
-              <tr>
-                <th className="px-4 py-3 font-medium sm:px-6">{t("tableName")}</th>
-                <th className="hidden px-4 py-3 font-medium sm:table-cell">{t("tableUploaded")}</th>
-                <th className="hidden px-4 py-3 font-medium sm:table-cell">{t("tableDuration")}</th>
-                <th className="px-4 py-3 font-medium">{t("tableStatus")}</th>
-                <th className="px-4 py-3 text-right font-medium sm:px-6">{t("tableOperation")}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line">
-              {results.map((r) => (
-                <tr key={r.id} className="hover:bg-ink/[0.02]">
-                  <td className="min-w-0 max-w-[420px] px-4 py-3 sm:px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
-                        <AudioLines size={18} />
+        <div className="mt-8 grid gap-2.5">
+          {results.map((row) => {
+            const href = `/dashboard/video-projects/${row.video_project_id}`;
+            const stage = projectStage(row);
+            return (
+              <article
+                key={row.id}
+                className="group overflow-hidden rounded-2xl border border-line bg-card transition duration-200 hover:border-ink/18 hover:shadow-[0_16px_42px_-38px_rgba(17,16,13,0.5)]"
+              >
+                <div className="flex min-h-[112px]">
+                  <Link
+                    href={href}
+                    aria-label={row.title}
+                    className="relative hidden w-[124px] shrink-0 overflow-hidden border-r border-line bg-[#17102f] sm:block"
+                  >
+                    <VideoProjectVisual />
+                  </Link>
+                  <div className="flex min-w-0 flex-1 flex-col justify-center p-4 sm:px-5">
+                    <div className="flex min-w-0 items-start gap-4">
+                      <div className="min-w-0 flex-1">
+                        <p className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-muted">
+                          <Clapperboard size={12} />
+                          {t("videoProject")}
+                        </p>
+                        <Link
+                          href={href}
+                          className="mt-1.5 block truncate text-[15px] font-semibold tracking-[-0.01em] text-ink transition group-hover:text-accent sm:text-[16px]"
+                        >
+                          {row.title}
+                        </Link>
+                      </div>
+                      <ProjectStatus stage={stage} label={t(`projectStatus.${stage}`)} />
+                      <TranscriptRowMenu
+                        id={row.id}
+                        title={row.title}
+                        status={row.status}
+                        audioAvailable={audioStillAvailable(row.created_at, row.audio_r2_key)}
+                        context="project"
+                      />
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between gap-4">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-muted">
+                        <span>{formatDateTime(row.activity_at)}</span>
+                        <span aria-hidden>·</span>
+                        <span className="tabular-nums">
+                          {row.duration_sec ? formatDuration(row.duration_sec) : t("durationPending")}
+                        </span>
+                        {row.clip_count > 0 ? (
+                          <>
+                            <span aria-hidden>·</span>
+                            <span>{t("clipCount", { count: row.clip_count })}</span>
+                          </>
+                        ) : null}
                       </div>
                       <Link
-                        href={`/dashboard/transcripts/${r.id}`}
-                        className="block truncate text-[14px] font-medium text-ink hover:text-accent"
+                        href={href}
+                        aria-label={t("openProject", { title: row.title })}
+                        className="inline-grid size-8 shrink-0 place-items-center rounded-full border border-line text-muted transition group-hover:border-accent/30 group-hover:bg-accent-soft group-hover:text-accent"
                       >
-                        {r.title}
+                        <ArrowUpRight size={15} />
                       </Link>
                     </div>
-                  </td>
-                  <td className="hidden whitespace-nowrap px-4 py-3 text-[13px] text-ink/70 sm:table-cell">
-                    {formatDateTime(r.created_at)}
-                  </td>
-                  <td className="hidden whitespace-nowrap px-4 py-3 text-[13px] tabular-nums text-ink/70 sm:table-cell">
-                    {r.duration_sec ? formatDuration(r.duration_sec) : "—"}
-                  </td>
-                  <td className="px-4 py-3">
-                    <StatusIcon
-                      status={r.status}
-                      labels={{
-                        ready: t("statusReady"),
-                        error: t("statusError"),
-                        transcribing: t("statusTranscribing"),
-                        uploading: t("statusUploading"),
-                        pending: t("statusPending"),
-                      }}
-                    />
-                  </td>
-                  <td className="px-4 py-3 sm:px-6">
-                    <TranscriptRowMenu
-                      id={r.id}
-                      title={r.title}
-                      status={r.status}
-                      audioAvailable={audioStillAvailable(r.created_at, r.audio_r2_key)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
     </main>
   );
 }
 
-type StatusLabels = {
-  ready: string;
-  error: string;
-  transcribing: string;
-  uploading: string;
-  pending: string;
-};
+function projectStage(row: Row): ProjectStage {
+  if (row.status === "error" || row.video_project_status === "failed") return "failed";
+  if (row.status === "pending" || row.status === "uploading") return "uploading";
+  if (row.status === "queued" || row.status === "processing") return "transcribing";
 
-function StatusIcon({ status, labels }: { status: Row["status"]; labels: StatusLabels }) {
-  switch (status) {
+  switch (row.video_project_status) {
+    case "analyzing":
+      return "findingClips";
+    case "rendering":
+      return "exporting";
     case "completed":
-      return (
-        <span title={labels.ready} className="inline-flex text-emerald-600">
-          <CheckCircle2 size={20} />
-        </span>
-      );
-    case "error":
-      return (
-        <span title={labels.error} className="inline-flex text-red-600">
-          <AlertCircle size={20} />
-        </span>
-      );
-    case "queued":
-    case "processing":
-      return (
-        <span title={labels.transcribing} className="inline-flex text-amber-600">
-          <Loader2 size={20} className="animate-spin" />
-        </span>
-      );
-    case "pending":
-    case "uploading":
+      return "exported";
+    case "candidates_ready":
+    case "editing":
+    case "draft":
     default:
-      return (
-        <span title={status === "uploading" ? labels.uploading : labels.pending} className="inline-flex text-ink/40">
-          <Clock size={20} />
-        </span>
-      );
+      return "readyToEdit";
   }
+}
+
+function ProjectStatus({ stage, label }: { stage: ProjectStage; label: string }) {
+  const active = stage === "transcribing" || stage === "findingClips" || stage === "exporting";
+  const failed = stage === "failed";
+  const complete = stage === "exported";
+  const Icon = failed
+    ? AlertCircle
+    : active
+      ? Loader2
+      : complete
+        ? CheckCircle2
+        : Clock3;
+
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium ${
+        failed
+          ? "border-red-200 bg-red-50 text-red-700"
+          : complete
+            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+            : active
+              ? "border-accent/20 bg-accent-soft text-accent"
+              : "border-line bg-paper text-muted"
+      }`}
+    >
+      <Icon size={12} className={active ? "animate-spin" : undefined} />
+      {label}
+    </span>
+  );
+}
+
+function VideoProjectVisual() {
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute -left-10 top-2 size-32 rounded-full bg-accent/25 blur-3xl" />
+      <div className="absolute -right-12 bottom-0 size-28 rounded-full bg-generated/25 blur-3xl" />
+      <div className="absolute left-1/2 top-1/2 h-[88px] w-[50px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[9px] border border-white/15 bg-[#201641] shadow-2xl">
+        <div className="absolute inset-x-1.5 top-2 h-10 rounded-md bg-gradient-to-br from-[#5943a3] to-[#201641]" />
+        <div className="absolute inset-x-1.5 bottom-5 space-y-0.5">
+          <span className="block h-1 rounded-full bg-white/85" />
+          <span className="mx-auto block h-1 w-4/5 rounded-full bg-white/85" />
+          <span className="mx-auto block h-1 w-3/5 rounded-full bg-accent" />
+        </div>
+        <div className="absolute inset-x-1.5 bottom-2 h-px bg-white/15" />
+      </div>
+    </div>
+  );
 }
 
 function formatDuration(sec: number): string {

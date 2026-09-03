@@ -1,29 +1,40 @@
-export function Logo({ size = 28 }: { size?: number }) {
+const MARK_PATH =
+  "M62,30 C62,24 34,24 34,41.28 C34,50.4 62,45.6 62,54.72 C62,72 34,72 34,66";
+
+export function Logo({
+  size = 28,
+  variant = "mark",
+}: {
+  size?: number;
+  variant?: "mark" | "app";
+}) {
+  const isAppIcon = variant === "app";
+
   return (
     <span
-      className="inline-grid place-items-center"
-      style={{ width: size, height: size }}
+      className={`scribix-logo inline-grid shrink-0 place-items-center ${
+        isAppIcon ? "scribix-logo-app" : "scribix-logo-mark"
+      }`}
+      style={{
+        width: size,
+        height: size,
+        borderRadius: isAppIcon ? Math.round(size * 0.23) : undefined,
+      }}
       aria-hidden
     >
       <svg
-        viewBox="0 0 100 100"
+        viewBox="0 0 96 96"
         width={size}
         height={size}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <defs>
-          <linearGradient id="scribixLogoGradient" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#dc4a1f" />
-            <stop offset="1" stopColor="#f59e3c" />
-          </linearGradient>
-        </defs>
-        <rect x="0" y="0" width="100" height="100" rx="26" fill="url(#scribixLogoGradient)" />
         <path
-          d="M 68 37 C 68 28 58 27 50 27 C 40 27 33 33 33 41 C 33 47 41 50 50 50 C 59 50 67 53 67 59 C 67 67 60 73 50 73 C 42 73 32 72 32 63"
+          d={MARK_PATH}
           fill="none"
-          stroke="#ffffff"
-          strokeWidth="8"
+          stroke="currentColor"
+          strokeWidth={15}
           strokeLinecap="round"
+          transform={isAppIcon ? "translate(10.08 10.08) scale(.79)" : undefined}
         />
       </svg>
     </span>

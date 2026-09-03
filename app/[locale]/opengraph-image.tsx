@@ -10,7 +10,7 @@ export default async function Image() {
     (
       <div
         style={{
-          background: "#f4f0e6",
+          background: "linear-gradient(135deg, #eee8ff 0%, #f7f5ff 56%, #fff4cd 100%)",
           width: "100%",
           height: "100%",
           display: "flex",
@@ -24,31 +24,26 @@ export default async function Image() {
         <svg
           width="180"
           height="180"
-          viewBox="0 0 100 100"
+          viewBox="0 0 96 96"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M 22 28 Q 22 20, 30 20 L 70 20 Q 78 20, 78 28 L 78 54 Q 78 62, 70 62 L 42 62 L 34 72 L 34 62 Q 22 62, 22 54 Z"
+            d="M62,30 C62,24 34,24 34,41.28 C34,50.4 62,45.6 62,54.72 C62,72 34,72 34,66"
             fill="none"
-            stroke="#5c7050"
-            strokeWidth="3"
-            strokeLinejoin="round"
+            stroke="#17122c"
+            strokeWidth={15}
+            strokeLinecap="round"
           />
-          <circle cx="34" cy="41" r="2" fill="#5c7050" />
-          <circle cx="42" cy="41" r="3.5" fill="#5c7050" />
-          <circle cx="50" cy="41" r="5" fill="#5c7050" />
-          <circle cx="58" cy="41" r="3.5" fill="#5c7050" />
-          <circle cx="66" cy="41" r="2" fill="#5c7050" />
         </svg>
 
         <div
           style={{
             fontSize: 120,
-            color: "#0e0d0b",
+            color: "#17122c",
             marginTop: 36,
             letterSpacing: "-0.02em",
-            fontFamily: "serif",
-            fontWeight: 400,
+            fontFamily: "sans-serif",
+            fontWeight: 600,
           }}
         >
           Scribix
@@ -57,7 +52,7 @@ export default async function Image() {
         <div
           style={{
             fontSize: 26,
-            color: "#6e6b62",
+            color: "#665f7c",
             marginTop: 28,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
@@ -71,7 +66,7 @@ export default async function Image() {
             position: "absolute",
             bottom: 48,
             fontSize: 18,
-            color: "#6e6b62",
+            color: "#665f7c",
             letterSpacing: "0.18em",
             textTransform: "uppercase",
             opacity: 0.7,

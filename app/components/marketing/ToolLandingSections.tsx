@@ -454,7 +454,7 @@ export function DemoTranscriptSection({
             </h2>
             <p className="mt-5 text-[15px] leading-[1.7] text-muted">{body}</p>
           </div>
-          <div className="overflow-hidden rounded-2xl border border-line bg-ink text-paper shadow-[0_30px_80px_-45px_rgba(14,13,11,0.42)]">
+          <div className="fixed-media-surface overflow-hidden rounded-2xl border border-line bg-ink text-paper shadow-[0_30px_80px_-45px_rgba(14,13,11,0.42)]">
             <div className="flex items-center justify-between border-b border-paper/10 px-5 py-4">
               <div className="flex items-center gap-2">
                 <span className="size-2 rounded-full bg-rec" />

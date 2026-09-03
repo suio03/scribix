@@ -405,15 +405,15 @@ function CandidateTile({
         onClick={() => onSelect(candidate.id)}
         className={`w-full overflow-hidden rounded-xl border bg-card text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
           selected
-            ? "border-accent shadow-[0_12px_36px_-24px_rgba(189,87,56,0.9)]"
+            ? "border-accent shadow-[0_12px_36px_-24px_rgba(108,53,255,0.9)]"
             : "border-line hover:-translate-y-0.5 hover:border-ink/30"
         }`}
       >
-        <div className="relative aspect-video overflow-hidden bg-ink">
+        <div className="fixed-media-surface relative aspect-video overflow-hidden bg-ink">
           {preview?.status === "ready" ? (
             <CandidatePreviewFrame projectId={projectId} candidateId={candidate.id} />
           ) : (
-            <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_35%,rgba(189,87,56,0.3),transparent_38%),linear-gradient(145deg,#28231f,#0e0d0b)] text-paper/45">
+            <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_35%,rgba(108,53,255,0.32),transparent_38%),linear-gradient(145deg,#201641,#09031b)] text-paper/45">
               {processing || previewBusy ? (
                 <Loader2 size={20} className="animate-spin" />
               ) : failed ? (
@@ -493,7 +493,7 @@ function CandidatePreviewFrame({
 
   if (!url || failed) {
     return (
-      <div className="absolute inset-0 grid place-items-center bg-[linear-gradient(145deg,#28231f,#0e0d0b)] text-paper/45">
+      <div className="absolute inset-0 grid place-items-center bg-[linear-gradient(145deg,#201641,#09031b)] text-paper/45">
         {failed ? <AlertCircle size={18} /> : <Loader2 size={18} className="animate-spin" />}
       </div>
     );

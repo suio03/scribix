@@ -577,7 +577,7 @@ function YouTubeEmbed({ ref, videoId, onTimeUpdate }: YouTubeEmbedProps) {
   );
 
   return (
-    <div className="transcript-media overflow-hidden rounded-2xl border border-line bg-ink">
+    <div className="fixed-media-surface transcript-media overflow-hidden rounded-2xl border border-line bg-ink">
       <iframe
         ref={ref}
         src={src}

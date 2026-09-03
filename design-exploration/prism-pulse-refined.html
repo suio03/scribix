@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scribix — Prism Pulse refined homepage</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --canvas: #f7f5ff;
+      --canvas-deep: #eee8ff;
+      --surface: rgba(255, 255, 255, .80);
+      --surface-solid: #ffffff;
+      --surface-muted: rgba(249, 247, 255, .74);
+      --text: #17122c;
+      --text-secondary: #665f7c;
+      --border: rgba(45, 27, 91, .14);
+      --border-strong: rgba(45, 27, 91, .25);
+      --action: #6c35ff;
+      --action-hover: #5922e8;
+      --action-text: #ffffff;
+      --selection: #8158ff;
+      --generated: #ffc73d;
+      --generated-text: #2a1d00;
+      --success: #2bbd8b;
+      --danger: #d83c65;
+      --shadow: 0 28px 80px rgba(55, 26, 127, .16);
+      --motion-multiplier: 1;
+      --page-width: 1240px;
+      --radius-large: 32px;
+      --radius-medium: 20px;
+      --radius-small: 12px;
+    }
+
+    body[data-theme="dark"] {
+      color-scheme: dark;
+      --canvas: #10072b;
+      --canvas-deep: #180c41;
+      --surface: rgba(27, 15, 66, .80);
+      --surface-solid: #1c1047;
+      --surface-muted: rgba(22, 11, 57, .78);
+      --text: #fcfaff;
+      --text-secondary: #bbb1d5;
+      --border: rgba(255, 255, 255, .14);
+      --border-strong: rgba(255, 255, 255, .25);
+      --action: #946cff;
+      --action-hover: #a98aff;
+      --action-text: #ffffff;
+      --selection: #a184ff;
+      --generated: #ffd157;
+      --generated-text: #281c00;
+      --success: #58d8a9;
+      --danger: #ff7294;
+      --shadow: 0 32px 100px rgba(0, 0, 0, .36);
+    }
+
+    body[data-speed="slow"] { --motion-multiplier: 2.4; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-width: 320px;
+      margin: 0;
+      color: var(--text);
+      background: var(--canvas);
+      font-family: "Avenir Next", Avenir, "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: color 220ms ease, background 220ms ease;
+    }
+    button, a { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; text-decoration: none; }
+    button:not(:disabled), a { cursor: pointer; }
+    button:disabled { cursor: not-allowed; }
+    :focus-visible { outline: 3px solid var(--generated); outline-offset: 4px; }
+
+    .page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 14% 17%, color-mix(in srgb, var(--action) 26%, transparent), transparent 31rem),
+        radial-gradient(circle at 84% 30%, color-mix(in srgb, var(--generated) 28%, transparent), transparent 28rem),
+        linear-gradient(145deg, var(--canvas-deep), var(--canvas) 48%, color-mix(in srgb, var(--generated) 10%, var(--canvas)));
+    }
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .17;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: linear-gradient(to bottom, transparent 1%, #000 32%, transparent 86%);
+    }
+    .orb {
+      position: absolute;
+      width: 540px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      pointer-events: none;
+      border: 1px solid color-mix(in srgb, var(--action) 12%, transparent);
+      box-shadow:
+        0 0 0 74px color-mix(in srgb, var(--action) 3%, transparent),
+        0 0 0 148px color-mix(in srgb, var(--generated) 2%, transparent);
+    }
+    .orb-one { top: 8rem; right: -18rem; animation: orbit calc(14s * var(--motion-multiplier)) ease-in-out infinite alternate; }
+    .orb-two { width: 360px; left: -15rem; top: 40rem; animation: orbit calc(18s * var(--motion-multiplier)) ease-in-out infinite alternate-reverse; }
+    @keyframes orbit { to { transform: translate3d(22px, -18px, 0) scale(1.03); } }
+
+    .container { position: relative; z-index: 1; width: min(var(--page-width), calc(100% - 48px)); margin-inline: auto; }
+    .site-nav { display: flex; align-items: center; justify-content: space-between; min-height: 76px; gap: 24px; border-bottom: 1px solid var(--border); }
+    .brand { display: inline-flex; align-items: center; gap: 9px; font-size: 21px; font-weight: 780; letter-spacing: -.055em; }
+    .brand svg { width: 28px; height: 28px; color: var(--action); }
+    .nav-links { display: flex; align-items: center; gap: 31px; font-size: 13px; font-weight: 560; }
+    .nav-links > a:not(.nav-cta) { color: var(--text-secondary); }
+    .nav-links > a:not(.nav-cta):hover { color: var(--text); }
+    .nav-cta { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 17px; border-radius: 999px; color: var(--action-text); background: var(--action); box-shadow: 0 9px 24px color-mix(in srgb, var(--action) 22%, transparent); }
+    .nav-cta:hover { background: var(--action-hover); transform: translateY(-1px); }
+
+    .hero { padding: 86px 0 28px; text-align: center; }
+    .kicker { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 22px; color: var(--action); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .kicker::before { content: ""; width: 24px; height: 1px; background: currentColor; }
+    .hero h1 { max-width: 1000px; margin: 0 auto; font-size: clamp(64px, 7.4vw, 108px); font-weight: 760; letter-spacing: -.074em; line-height: .90; text-wrap: balance; }
+    .hero h1 strong { position: relative; color: var(--action); font-weight: inherit; white-space: nowrap; }
+    .hero h1 strong::after { content: ""; position: absolute; left: .03em; right: -.01em; bottom: -.06em; height: .09em; border-radius: 999px; background: var(--generated); transform: rotate(-1.2deg); }
+    .hero-lede { max-width: 660px; margin: 28px auto 0; color: var(--text-secondary); font-size: 17px; line-height: 1.66; text-wrap: balance; }
+
+    .upload-module { position: relative; width: min(760px, 100%); margin: 34px auto 0; }
+    .upload-card {
+      position: relative;
+      min-height: 84px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: var(--surface);
+      box-shadow: var(--shadow), inset 0 1px 0 color-mix(in srgb, white 52%, transparent);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+    .upload-state { display: none; min-height: 82px; align-items: center; gap: 14px; padding: 10px; text-align: left; }
+    body[data-state="idle"] .upload-idle,
+    body[data-state="uploading"] .upload-uploading,
+    body[data-state="analyzing"] .upload-analyzing,
+    body[data-state="ready"] .upload-ready,
+    body[data-state="error"] .upload-error { display: flex; }
+    .state-icon { display: grid; place-items: center; flex: 0 0 auto; width: 60px; height: 60px; border-radius: 15px; color: var(--action); background: color-mix(in srgb, var(--action) 10%, var(--surface-solid)); }
+    .state-icon svg { width: 24px; height: 24px; }
+    .state-copy { min-width: 0; flex: 1; }
+    .state-copy strong { display: block; font-size: 14px; font-weight: 700; }
+    .state-copy small { display: block; margin-top: 4px; color: var(--text-secondary); font-size: 11px; }
+    .primary-button, .secondary-button { min-height: 48px; padding: 0 20px; border-radius: 14px; font-size: 12px; font-weight: 760; transition: transform 160ms ease, background 160ms ease; }
+    .primary-button { border: 0; color: var(--action-text); background: var(--action); }
+    .primary-button:hover { background: var(--action-hover); transform: translateY(-1px); }
+    .primary-button:active { transform: translateY(0) scale(.985); }
+    .secondary-button { border: 1px solid var(--border); color: var(--text); background: transparent; }
+    .secondary-button:hover { border-color: var(--border-strong); background: var(--surface-muted); }
+    .progress-wrap { min-width: 132px; }
+    .progress-meta { display: flex; justify-content: space-between; margin-bottom: 7px; color: var(--text-secondary); font: 700 9px/1 monospace; }
+    .progress-track { height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--action) 9%, var(--surface-solid)); overflow: hidden; }
+    .progress-fill { width: 0; height: 100%; border-radius: inherit; background: var(--action); }
+    body[data-state="uploading"] .progress-fill { animation: upload-progress calc(1.2s * var(--motion-multiplier)) cubic-bezier(.22,1,.36,1) forwards; }
+    @keyframes upload-progress { from { width: 4%; } to { width: 86%; } }
+    .analyze-pulse { position: relative; }
+    .analyze-pulse::after { content: ""; position: absolute; inset: 0; border: 1px solid var(--action); border-radius: inherit; animation: pulse calc(1.1s * var(--motion-multiplier)) ease-out infinite; }
+    @keyframes pulse { to { transform: scale(1.38); opacity: 0; } }
+    .word-stream { display: flex; gap: 5px; min-width: 148px; overflow: hidden; }
+    .word-stream span { flex: 0 0 auto; padding: 5px 7px; border-radius: 7px; color: var(--text-secondary); background: var(--surface-solid); font-size: 9px; animation: word-scan calc(1.4s * var(--motion-multiplier)) ease-in-out infinite; }
+    .word-stream span:nth-child(2) { animation-delay: calc(.16s * var(--motion-multiplier)); }
+    .word-stream span:nth-child(3) { animation-delay: calc(.32s * var(--motion-multiplier)); }
+    @keyframes word-scan { 50% { color: var(--action-text); background: var(--action); transform: translateY(-2px); } }
+    .ready-icon { color: var(--generated-text); background: var(--generated); }
+    .error-icon { color: #fff; background: var(--danger); }
+    .status-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+    .trust-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 24px; margin: 19px 0 0; padding: 0; list-style: none; color: var(--text-secondary); font-size: 11px; font-weight: 650; }
+    .trust-row li { display: flex; align-items: center; gap: 7px; }
+    .trust-row i { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 11%, transparent); }
+
+    .transformation { position: relative; margin: 56px auto 0; }
+    .stage {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) 116px minmax(330px, .85fr);
+      align-items: center;
+      gap: 18px;
+      min-height: 470px;
+      padding: 32px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-large);
+      background: color-mix(in srgb, var(--surface) 83%, transparent);
+      box-shadow: 0 32px 90px color-mix(in srgb, var(--action) 12%, transparent), inset 0 1px 0 color-mix(in srgb, white 54%, transparent);
+      backdrop-filter: blur(22px);
+    }
+    .stage-label { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 11px; color: var(--text-secondary); font: 700 9px/1.2 "SFMono-Regular", Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; }
+    .stage-label b { color: var(--text); font-weight: 750; }
+    .source-video { position: relative; aspect-ratio: 16/9; overflow: hidden; border-radius: 18px; background: #172038; box-shadow: 0 18px 46px rgba(10,8,24,.3); }
+    .studio-scene { position: absolute; inset: 0; background: linear-gradient(180deg,#465779 0 63%,#1d2230 63%); }
+    .studio-scene::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 31% 39%,#db9777 0 4.4%,transparent 4.7%), radial-gradient(circle at 69% 39%,#b37561 0 4.4%,transparent 4.7%), linear-gradient(90deg,transparent 0 23%,#303c58 23% 40%,transparent 40% 60%,#2d3852 60% 77%,transparent 77%); }
+    .studio-scene::after { content: ""; position: absolute; left: 16%; right: 16%; bottom: 15%; height: 11%; border-radius: 50%; background: #0d1018; box-shadow: 0 -22px 0 -11px #737e99; }
+    .video-badge { position: absolute; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 999px; color: #fff; background: rgba(8,9,14,.58); backdrop-filter: blur(10px); font-size: 8px; font-weight: 750; }
+    .video-badge i { width: 5px; height: 5px; border-radius: 50%; background: #ff5d78; }
+    .video-time { position: absolute; right: 12px; bottom: 11px; padding: 5px 7px; border-radius: 6px; color: #fff; background: rgba(0,0,0,.68); font: 700 8px/1 monospace; }
+    .transcript-line { position: absolute; left: 16%; right: 16%; bottom: 25%; display: flex; justify-content: center; gap: 5px; }
+    .transcript-line span { padding: 4px 5px; border-radius: 4px; color: #fff; background: rgba(8,9,14,.55); font-size: 7px; font-weight: 800; text-transform: uppercase; }
+    body[data-state="analyzing"] .transcript-line span { animation: transcript-highlight calc(1.2s * var(--motion-multiplier)) ease-in-out infinite; }
+    body[data-state="analyzing"] .transcript-line span:nth-child(2) { animation-delay: calc(.2s * var(--motion-multiplier)); }
+    body[data-state="analyzing"] .transcript-line span:nth-child(3) { animation-delay: calc(.4s * var(--motion-multiplier)); }
+    @keyframes transcript-highlight { 50% { color: #211700; background: var(--generated); } }
+
+    .beam { position: relative; align-self: stretch; display: grid; place-items: center; min-height: 260px; }
+    .beam::before { content: ""; position: absolute; left: 4px; right: 4px; top: 50%; height: 2px; background: linear-gradient(90deg,var(--action),var(--generated)); transform-origin: left; opacity: .25; }
+    .beam-core { position: relative; z-index: 2; display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; color: var(--action-text); background: var(--action); box-shadow: 0 0 0 10px color-mix(in srgb, var(--action) 10%, transparent), 0 14px 35px color-mix(in srgb, var(--action) 30%, transparent); }
+    .beam-core svg { width: 19px; height: 19px; }
+    body[data-state="analyzing"] .beam::before { opacity: 1; animation: beam-grow calc(1.5s * var(--motion-multiplier)) cubic-bezier(.22,1,.36,1) both; }
+    body[data-state="analyzing"] .beam-core { animation: core-scan calc(1.15s * var(--motion-multiplier)) ease-in-out infinite; }
+    @keyframes beam-grow { from { transform: scaleX(.05); } to { transform: scaleX(1); } }
+    @keyframes core-scan { 50% { transform: scale(1.08); background: var(--generated); color: var(--generated-text); } }
+    .beam-word { position: absolute; z-index: 3; top: calc(50% - 28px); padding: 4px 6px; border-radius: 6px; color: var(--generated-text); background: var(--generated); font: 800 7px/1 monospace; opacity: 0; }
+    body[data-state="analyzing"] .beam-word { animation: beam-word calc(1.7s * var(--motion-multiplier)) ease-in-out infinite; }
+    @keyframes beam-word { 0% { left: 0; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { left: calc(100% - 34px); opacity: 0; } }
+
+    .candidate-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .candidate {
+      position: relative;
+      aspect-ratio: 9/14;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 16px;
+      color: #fff;
+      background: #171a26;
+      box-shadow: 0 16px 34px rgba(10,8,24,.22);
+      opacity: .18;
+      transform: translateX(-24px) scale(.94);
+      transition:
+        opacity calc(420ms * var(--motion-multiplier)) ease,
+        transform calc(520ms * var(--motion-multiplier)) cubic-bezier(.22,1,.36,1);
+    }
+    .candidate::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 25%,#db9777 0 8%,transparent 8.5%), linear-gradient(90deg,transparent 20%,#33405e 20% 80%,transparent 80%), linear-gradient(180deg,#4a5c80 0 69%,#191d29 69%); }
+    .candidate::after { content: ""; position: absolute; inset: auto 0 0; height: 42%; background: linear-gradient(transparent,rgba(4,5,8,.88)); }
+    body[data-state="ready"] .candidate { opacity: 1; transform: translateX(0) scale(1); }
+    body[data-state="ready"] .candidate:nth-child(2) { transition-delay: calc(90ms * var(--motion-multiplier)); }
+    body[data-state="ready"] .candidate:nth-child(3) { transition-delay: calc(180ms * var(--motion-multiplier)); }
+    .candidate.selected { border-color: var(--generated); box-shadow: 0 0 0 2px var(--generated), 0 18px 42px rgba(10,8,24,.28); }
+    .candidate-score { position: absolute; z-index: 2; top: 9px; right: 9px; padding: 5px 7px; border-radius: 999px; color: var(--generated-text); background: var(--generated); font: 800 7px/1 monospace; }
+    .candidate-copy { position: absolute; z-index: 2; left: 9px; right: 9px; bottom: 10px; text-align: center; }
+    .candidate-copy strong { display: block; font-size: 8px; line-height: 1.15; text-transform: uppercase; text-shadow: 0 1px 5px #000; }
+    .candidate-copy mark { color: var(--generated); background: transparent; }
+    .candidate-copy span { display: flex; justify-content: space-between; margin-top: 8px; color: rgba(255,255,255,.67); font: 700 7px/1 monospace; }
+    .source-panel, .candidate-panel { min-width: 0; }
+    .source-status { color: var(--success); }
+    body[data-state="uploading"] .source-status { color: var(--action); }
+    body[data-state="analyzing"] .source-status { color: var(--generated-text); }
+    .source-status span { display: none; }
+    body[data-state="idle"] .source-status .status-idle,
+    body[data-state="uploading"] .source-status .status-uploading,
+    body[data-state="analyzing"] .source-status .status-analyzing,
+    body[data-state="ready"] .source-status .status-ready,
+    body[data-state="error"] .source-status .status-error { display: inline; }
+
+    .workflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 20px 6px 0; border-top: 1px solid var(--border); }
+    .workflow article { position: relative; padding: 20px 22px 8px 0; }
+    .workflow article::before { content: ""; position: absolute; top: -4px; left: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
+    .workflow article.active::before { background: var(--action); box-shadow: 0 0 0 5px color-mix(in srgb, var(--action) 11%, transparent); }
+    .workflow span { display: block; color: var(--action); font: 800 9px/1 monospace; }
+    .workflow strong { display: block; margin-top: 7px; font-size: 13px; }
+    .workflow p { max-width: 22ch; margin: 5px 0 0; color: var(--text-secondary); font-size: 10px; line-height: 1.45; }
+
+    .proof-note { display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: center; margin: 72px 0 120px; padding: 32px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .proof-note h2 { max-width: 740px; margin: 0; font-size: clamp(30px,4vw,52px); line-height: 1.02; letter-spacing: -.052em; }
+    .proof-note p { max-width: 380px; margin: 0; color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+
+    .prototype-dock {
+      position: fixed;
+      z-index: 20;
+      left: 50%;
+      bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px;
+      border: 1px solid rgba(255,255,255,.17);
+      border-radius: 999px;
+      color: #fff;
+      background: rgba(15,12,23,.86);
+      box-shadow: 0 16px 48px rgba(0,0,0,.28);
+      backdrop-filter: blur(18px);
+      transform: translateX(-50%);
+    }
+    .prototype-dock button { min-height: 38px; padding: 0 13px; border: 0; border-radius: 999px; color: rgba(255,255,255,.68); background: transparent; font-size: 11px; font-weight: 680; }
+    .prototype-dock button:hover { color: #fff; background: rgba(255,255,255,.10); }
+    .prototype-dock button[aria-pressed="true"] { color: #17121e; background: #fff; }
+    .prototype-dock .replay { color: #211700; background: var(--generated); }
+    .prototype-dock .replay:hover { color: #211700; background: #ffdb6d; }
+    .dock-divider { width: 1px; height: 22px; margin: 0 2px; background: rgba(255,255,255,.16); }
+
+    @media (max-width: 860px) {
+      .container { width: min(100% - 28px, var(--page-width)); }
+      .nav-links > a:not(.nav-cta) { display: none; }
+      .hero { padding-top: 68px; }
+      .hero h1 { font-size: clamp(53px, 11vw, 82px); }
+      .stage { grid-template-columns: 1fr; gap: 24px; padding: 22px; }
+      .beam { min-height: 62px; transform: rotate(90deg); }
+      .candidate-grid { width: min(100%, 520px); margin-inline: auto; }
+      .workflow { grid-template-columns: repeat(2, 1fr); }
+      .proof-note { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .site-nav { min-height: 66px; }
+      .brand { font-size: 19px; }
+      .brand svg { width: 25px; height: 25px; }
+      .nav-cta { min-height: 44px; padding: 0 14px; font-size: 12px; }
+      .hero { padding-top: 48px; }
+      .hero h1 { font-size: clamp(45px, 13.6vw, 66px); line-height: .93; }
+      .hero h1 strong { white-space: normal; }
+      .hero-lede { font-size: 15px; }
+      .upload-card { border-radius: 18px; }
+      .upload-state { flex-wrap: wrap; padding: 10px; }
+      .state-copy { flex-basis: calc(100% - 76px); }
+      .upload-state > .primary-button,
+      .upload-state > .secondary-button,
+      .progress-wrap,
+      .word-stream { width: 100%; }
+      .progress-wrap,.word-stream { margin: 0 4px 4px; }
+      .upload-state > .primary-button,.upload-state > .secondary-button { min-height: 44px; }
+      .trust-row { justify-content: flex-start; padding-left: 4px; }
+      .transformation { margin-top: 38px; }
+      .stage { border-radius: 24px; padding: 15px; }
+      .source-video { border-radius: 14px; }
+      .candidate-grid { gap: 7px; }
+      .candidate { border-radius: 12px; }
+      .candidate-copy strong { font-size: 6px; }
+      .workflow { grid-template-columns: 1fr 1fr; margin-top: 14px; }
+      .workflow article { padding-right: 10px; }
+      .proof-note { margin-bottom: 100px; }
+      .prototype-dock { bottom: 10px; max-width: calc(100% - 16px); overflow-x: auto; justify-content: flex-start; }
+      .prototype-dock button { flex: 0 0 auto; padding-inline: 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .orb, .analyze-pulse::after, .word-stream span, .transcript-line span, .beam::before, .beam-core, .beam-word, .progress-fill { animation: none !important; }
+      .candidate { transition-duration: 1ms !important; }
+      *, *::before, *::after { scroll-behavior: auto !important; }
+    }
+    @media (prefers-contrast: more) {
+      :root { --border: rgba(23,18,44,.38); --border-strong: rgba(23,18,44,.62); --text-secondary:#474057; --surface:rgba(255,255,255,.96); }
+      body[data-theme="dark"] { --border:rgba(255,255,255,.38); --border-strong:rgba(255,255,255,.62); --text-secondary:#ddd7ec; --surface:rgba(27,15,66,.98); }
+    }
+    @media (prefers-reduced-transparency: reduce) {
+      .upload-card, .stage, .prototype-dock { backdrop-filter: none; }
+      .upload-card, .stage { background: var(--surface-solid); }
+    }
+  </style>
+</head>
+<body data-theme="light" data-speed="normal" data-state="ready">
+  <div class="page">
+    <div class="orb orb-one" aria-hidden="true"></div>
+    <div class="orb orb-two" aria-hidden="true"></div>
+
+    <nav class="site-nav container" aria-label="Primary navigation">
+      <a class="brand" href="#" aria-label="Scribix home">
+        <svg viewBox="0 0 96 96" aria-hidden="true"><path d="M72 12H36C20 12 12 20 12 33C12 46 20 52 37 53H52C61 53 65 56 65 63C65 70 61 73 52 73H12V85H54C70 85 78 77 78 63C78 49 70 42 53 41H38C30 41 26 38 26 33C26 27 30 24 38 24H72Z" fill="currentColor"/></svg>
+        Scribix
+      </a>
+      <div class="nav-links">
+        <a href="#proof">How it works</a>
+        <a href="#workflow">Features</a>
+        <a href="#">Pricing</a>
+        <a href="#">Sign in</a>
+        <a class="nav-cta" href="#upload">Create shorts <span aria-hidden="true">↗</span></a>
+      </div>
+    </nav>
+
+    <main class="container">
+      <section class="hero" aria-labelledby="hero-title">
+        <p class="kicker">AI video clipper</p>
+        <h1 id="hero-title">Turn long videos into <strong>publish-ready shorts.</strong></h1>
+        <p class="hero-lede">Scribix finds complete moments in podcasts, interviews, and webinars, then gives you precise control before export.</p>
+
+        <div class="upload-module" id="upload">
+          <div class="upload-card" aria-busy="false">
+            <div class="upload-state upload-idle">
+              <span class="state-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg></span>
+              <span class="state-copy"><strong>Drop a long video here</strong><small>MP4, MOV, WebM, AVI or MKV · up to your plan limit</small></span>
+              <button class="primary-button start-flow" type="button">Upload a video free</button>
+            </div>
+            <div class="upload-state upload-uploading">
+              <span class="state-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg></span>
+              <span class="state-copy"><strong>Uploading founder-interview.mp4</strong><small>Securely preparing the original source</small></span>
+              <span class="progress-wrap"><span class="progress-meta"><b>UPLOAD</b><b>86%</b></span><span class="progress-track"><span class="progress-fill"></span></span></span>
+              <button class="secondary-button cancel-flow" type="button">Cancel</button>
+            </div>
+            <div class="upload-state upload-analyzing">
+              <span class="state-icon analyze-pulse" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3Z"/><path d="M18.5 15l.7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7.7-2.3Z"/></svg></span>
+              <span class="state-copy"><strong>Finding complete moments</strong><small>Reading transcript, speaker turns, and word timing</small></span>
+              <span class="word-stream" aria-hidden="true"><span>hook</span><span>context</span><span>payoff</span></span>
+              <button class="secondary-button cancel-flow" type="button">Cancel</button>
+            </div>
+            <div class="upload-state upload-ready">
+              <span class="state-icon ready-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4L19 6"/></svg></span>
+              <span class="state-copy"><strong>5 clip candidates are ready</strong><small>Ranked by complete story, hook, and clarity</small></span>
+              <button class="secondary-button start-flow" type="button">Replay</button>
+              <button class="primary-button" type="button">Review clips</button>
+            </div>
+            <div class="upload-state upload-error">
+              <span class="state-icon error-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 8v5m0 3h.01M4.9 19h14.2a2 2 0 0 0 1.73-3L13.73 4a2 2 0 0 0-3.46 0L3.17 16a2 2 0 0 0 1.73 3Z"/></svg></span>
+              <span class="state-copy"><strong>This file format isn’t supported</strong><small>Choose MP4, MOV, WebM, AVI or MKV to continue.</small></span>
+              <button class="primary-button reset-flow" type="button">Choose another video</button>
+            </div>
+          </div>
+          <span class="status-live" role="status" aria-live="polite">5 clip candidates are ready.</span>
+        </div>
+
+        <ul class="trust-row" aria-label="Product output">
+          <li><i aria-hidden="true"></i>Transcript-precise cuts</li>
+          <li><i aria-hidden="true"></i>Dynamic captions and 9:16 framing</li>
+          <li><i aria-hidden="true"></i>Final 1080 × 1920 MP4</li>
+        </ul>
+      </section>
+
+      <section class="transformation" id="proof" aria-label="Long video transformed into short clip candidates">
+        <div class="stage">
+          <div class="source-panel">
+            <div class="stage-label"><span>Original source</span><b>Founder interview · 01:24:18</b></div>
+            <div class="source-video">
+              <div class="studio-scene"></div>
+              <span class="video-badge"><i></i>Original · 16:9</span>
+              <span class="video-time">01:24:18</span>
+              <span class="transcript-line" aria-hidden="true"><span>we listened</span><span>earlier</span><span>and changed</span></span>
+            </div>
+          </div>
+
+          <div class="beam" aria-hidden="true">
+            <span class="beam-word">IDEA</span>
+            <span class="beam-core"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m8 5 8 7-8 7V5Z"/></svg></span>
+          </div>
+
+          <div class="candidate-panel">
+            <div class="stage-label"><span>AI clip candidates</span><b class="source-status"><span class="status-idle">Awaiting upload</span><span class="status-uploading">Preparing source</span><span class="status-analyzing">Scanning transcript</span><span class="status-ready">Ready · 5 found</span><span class="status-error">Source unavailable</span></b></div>
+            <div class="candidate-grid">
+              <article class="candidate selected"><span class="candidate-score">94%</span><div class="candidate-copy"><strong>The mistake that <mark>changed our product</mark></strong><span><b>Selected</b><b>00:42</b></span></div></article>
+              <article class="candidate"><span class="candidate-score">89%</span><div class="candidate-copy"><strong>Why small teams <mark>move faster</mark></strong><span><b>Clip 02</b><b>00:36</b></span></div></article>
+              <article class="candidate"><span class="candidate-score">86%</span><div class="candidate-copy"><strong>A better way to <mark>hear customers</mark></strong><span><b>Clip 03</b><b>00:51</b></span></div></article>
+            </div>
+          </div>
+        </div>
+
+        <div class="workflow" id="workflow">
+          <article class="active"><span>01</span><strong>Upload</strong><p>Add the full podcast, interview, webinar, or talking-head video.</p></article>
+          <article class="active"><span>02</span><strong>AI finds moments</strong><p>Review complete clip candidates with hooks, timing, and reasons.</p></article>
+          <article class="active"><span>03</span><strong>Refine</strong><p>Adjust cuts, 9:16 crop, captions, branding, and cover frame.</p></article>
+          <article class="active"><span>04</span><strong>Export</strong><p>Render a polished vertical MP4 from the original source.</p></article>
+        </div>
+      </section>
+
+      <section class="proof-note">
+        <h2>The clips are already in your long video. Scribix finds the ones worth finishing.</h2>
+        <p>The luminous brand field creates energy, while every task surface remains neutral and readable. Exported video colors stay fixed regardless of the site theme.</p>
+      </section>
+    </main>
+  </div>
+
+  <div class="prototype-dock" role="group" aria-label="Prototype controls">
+    <button class="replay" type="button" data-action="replay">Replay flow</button>
+    <button type="button" data-action="error">Show error</button>
+    <span class="dock-divider" aria-hidden="true"></span>
+    <button type="button" aria-pressed="true" data-theme-value="light">Light</button>
+    <button type="button" aria-pressed="false" data-theme-value="dark">Dark</button>
+    <span class="dock-divider" aria-hidden="true"></span>
+    <button type="button" aria-pressed="true" data-speed-value="normal">Normal</button>
+    <button type="button" aria-pressed="false" data-speed-value="slow">Slow</button>
+  </div>
+
+  <script>
+    const body = document.body;
+    const uploadCard = document.querySelector('.upload-card');
+    const liveRegion = document.querySelector('.status-live');
+    let timers = [];
+
+    const stateCopy = {
+      idle: 'Ready to choose a long video.',
+      uploading: 'Uploading founder interview video.',
+      analyzing: 'Finding complete moments in the transcript.',
+      ready: '5 clip candidates are ready.',
+      error: 'This file format is not supported.'
+    };
+
+    function setState(state) {
+      body.dataset.state = state;
+      uploadCard.setAttribute('aria-busy', String(state === 'uploading' || state === 'analyzing'));
+      liveRegion.textContent = stateCopy[state];
+    }
+
+    function clearFlow() {
+      timers.forEach(window.clearTimeout);
+      timers = [];
+    }
+
+    function runFlow() {
+      clearFlow();
+      const multiplier = body.dataset.speed === 'slow' ? 2.4 : 1;
+      setState('idle');
+      timers.push(window.setTimeout(() => setState('uploading'), 160 * multiplier));
+      timers.push(window.setTimeout(() => setState('analyzing'), 1450 * multiplier));
+      timers.push(window.setTimeout(() => setState('ready'), 3400 * multiplier));
+    }
+
+    document.addEventListener('click', (event) => {
+      if (event.target.closest('.start-flow') || event.target.closest('[data-action="replay"]')) runFlow();
+      if (event.target.closest('.cancel-flow') || event.target.closest('.reset-flow')) { clearFlow(); setState('idle'); }
+      if (event.target.closest('[data-action="error"]')) { clearFlow(); setState('error'); }
+
+      const themeButton = event.target.closest('[data-theme-value]');
+      if (themeButton) {
+        body.dataset.theme = themeButton.dataset.themeValue;
+        document.querySelectorAll('[data-theme-value]').forEach((button) => button.setAttribute('aria-pressed', String(button === themeButton)));
+      }
+
+      const speedButton = event.target.closest('[data-speed-value]');
+      if (speedButton) {
+        body.dataset.speed = speedButton.dataset.speedValue;
+        document.querySelectorAll('[data-speed-value]').forEach((button) => button.setAttribute('aria-pressed', String(button === speedButton)));
+      }
+    });
+  </script>
+</body>
+</html>

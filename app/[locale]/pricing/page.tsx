@@ -5,13 +5,13 @@ import { auth } from "@/auth";
 import { getPathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { Footer } from "@/app/components/Footer";
-import { Header } from "@/app/components/Header";
+import { ProductTopbar } from "@/app/components/ProductTopbar";
+import { WorkspaceChrome } from "@/app/components/WorkspaceChrome";
 import {
   PricingPlans,
   type PlanId,
 } from "@/app/components/PricingPlans";
 import { Shell } from "@/app/components/Shell";
-import { Sidebar } from "@/app/components/Sidebar";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
@@ -78,7 +78,6 @@ export default async function PricingPage({
     currentCycle = user?.billing_cycle ?? null;
   }
   const homePath = getPathname({ href: "/", locale });
-  const dashboardPath = getPathname({ href: "/dashboard", locale });
   const dashboardNewPath = getPathname({ href: "/dashboard/new", locale });
   const checkoutSuccessPath = getPathname({
     href: { pathname: "/dashboard", query: { checkout: "ok" } },
@@ -105,21 +104,8 @@ export default async function PricingPage({
     plans.map((plan) => [plan.id, t("chooseLabel", { plan: plan.name })])
   ) as Record<PlanId, string>;
 
-  return (
-    <Shell
-      sidebar={
-        <Sidebar
-          usage={sidebarUsage}
-          signedIn={!!session}
-          signInRedirect={dashboardPath}
-          newTranscriptRedirect={dashboardNewPath}
-          signOutRedirect={homePath}
-          userImage={session?.user?.image ?? null}
-          userLabel={session?.user?.name ?? session?.user?.email ?? null}
-        />
-      }
-    >
-      <Header showSidebarToggle />
+  const content = (
+    <div className="pricing-surface">
       <main>
         <section className="border-b border-line bg-paper px-4 py-14 sm:px-8 sm:py-18">
           <div className="mx-auto max-w-[1100px]">
@@ -190,6 +176,29 @@ export default async function PricingPage({
         </section>
       </main>
       <Footer />
+    </div>
+  );
+
+  return (
+    <Shell>
+      {session ? (
+        <WorkspaceChrome
+          signOutRedirect={homePath}
+          usage={sidebarUsage}
+          userImage={session.user?.image ?? null}
+          userLabel={session.user?.name ?? session.user?.email ?? null}
+        >
+          {content}
+        </WorkspaceChrome>
+      ) : (
+        <>
+          <ProductTopbar
+            postSignInPath={dashboardNewPath}
+            signOutRedirect={homePath}
+          />
+          {content}
+        </>
+      )}
     </Shell>
   );
 }

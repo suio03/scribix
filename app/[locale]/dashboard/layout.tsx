@@ -3,9 +3,7 @@ import { auth } from "@/auth";
 import { getPathname, redirect } from "@/i18n/navigation";
 import { TrackSignInSuccess } from "@/app/components/Track";
 import { FeedbackWidget } from "@/app/components/FeedbackWidget";
-import { Header } from "@/app/components/Header";
-import { Shell } from "@/app/components/Shell";
-import { Sidebar } from "@/app/components/Sidebar";
+import { WorkspaceChrome } from "@/app/components/WorkspaceChrome";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 
 export const metadata = {
@@ -29,31 +27,20 @@ export default async function DashboardLayout({
     redirect({ href: "/", locale });
   }
   const homePath = getPathname({ href: "/", locale });
-  const dashboardPath = getPathname({ href: "/dashboard", locale });
   const sidebarUsage = await getSidebarUsage(session);
 
   return (
     <>
       <TrackSignInSuccess />
-      <Shell
-        sidebar={
-          <Sidebar
-            variant="dashboard"
-            usage={sidebarUsage}
-            signedIn={true}
-            signInRedirect={dashboardPath}
-            signOutRedirect={homePath}
-            userImage={session?.user?.image ?? null}
-            userLabel={session?.user?.name ?? session?.user?.email ?? null}
-          />
-        }
+      <WorkspaceChrome
+        signOutRedirect={homePath}
+        usage={sidebarUsage}
+        userImage={session?.user?.image ?? null}
+        userLabel={session?.user?.name ?? session?.user?.email ?? null}
       >
-        <div className="neutral-page-background">
-          <Header showSidebarToggle />
-          {children}
-          <FeedbackWidget />
-        </div>
-      </Shell>
+        {children}
+      </WorkspaceChrome>
+      <FeedbackWidget />
     </>
   );
 }

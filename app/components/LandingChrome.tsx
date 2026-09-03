@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Footer } from "./Footer";
-import { Header } from "./Header";
+import { ProductTopbar } from "./ProductTopbar";
+import type { SidebarUsage } from "./sidebarUsage";
+import { WorkspaceChrome } from "./WorkspaceChrome";
 
 type LandingChromeProps = {
   signedIn: boolean;
@@ -9,6 +11,11 @@ type LandingChromeProps = {
   className?: string;
   publicFooterExtra?: ReactNode;
   showMarketingWhenSignedIn?: boolean;
+  postSignInPath?: string;
+  signOutRedirect?: string;
+  usage?: SidebarUsage;
+  userImage?: string | null;
+  userLabel?: string | null;
 };
 
 export function LandingChrome({
@@ -18,6 +25,11 @@ export function LandingChrome({
   className,
   publicFooterExtra,
   showMarketingWhenSignedIn = false,
+  postSignInPath,
+  signOutRedirect,
+  usage,
+  userImage,
+  userLabel,
 }: LandingChromeProps) {
   const showMarketing = !signedIn || showMarketingWhenSignedIn;
   const layoutClassName = [
@@ -28,9 +40,32 @@ export function LandingChrome({
     .filter(Boolean)
     .join(" ");
 
+  if (signedIn && !showMarketing) {
+    return (
+      <WorkspaceChrome
+        signOutRedirect={signOutRedirect}
+        usage={usage}
+        userImage={userImage}
+        userLabel={userLabel}
+      >
+        <div className={layoutClassName}>
+          <main className="flex-1">{primary}</main>
+          <Footer compact />
+        </div>
+      </WorkspaceChrome>
+    );
+  }
+
   return (
     <div className={layoutClassName}>
-      <Header showSidebarToggle />
+      <ProductTopbar
+        signedIn={signedIn}
+        usage={usage}
+        postSignInPath={postSignInPath}
+        signOutRedirect={signOutRedirect}
+        userImage={userImage}
+        userLabel={userLabel}
+      />
       <main className={signedIn && !showMarketing ? "flex-1" : undefined}>
         {primary}
         {showMarketing ? marketing : null}

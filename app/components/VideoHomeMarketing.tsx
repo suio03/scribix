@@ -17,6 +17,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { mergeLocalizedItems } from "@/lib/localized-items";
 import { SectionLabel } from "./SectionLabel";
+import { VideoProofSection } from "./VideoProofSection";
 
 type ItemCopy = { title: string; body: string };
 type AudienceCopy = ItemCopy & { label: string };
@@ -65,9 +66,11 @@ export async function VideoHomeMarketing() {
 
   return (
     <>
+      <VideoProofSection />
+
       <section id="video-how" className="scroll-mt-20 border-y border-line bg-card/55 px-4 py-20 sm:px-8 sm:py-28">
         <div className="mx-auto max-w-[1180px]">
-          <SectionLabel number="01" label={t("workflow.label")} />
+          <SectionLabel number="02" label={t("workflow.label")} />
           <div className="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] xl:items-end">
             <h2 className="max-w-[15ch] font-display text-[38px] font-semibold leading-[1.04] tracking-[-0.04em] sm:text-[54px]">
               {t("workflow.title")}
@@ -101,7 +104,7 @@ export async function VideoHomeMarketing() {
 
       <section id="video-features" className="scroll-mt-20 px-4 py-20 sm:px-8 sm:py-28">
         <div className="mx-auto max-w-[1180px]">
-          <SectionLabel number="02" label={t("features.label")} />
+          <SectionLabel number="03" label={t("features.label")} />
           <div className="grid gap-8 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] xl:items-end">
             <h2 className="max-w-[16ch] font-display text-[38px] font-semibold leading-[1.04] tracking-[-0.04em] sm:text-[54px]">
               {t("features.title")}
@@ -137,8 +140,8 @@ export async function VideoHomeMarketing() {
       </section>
 
       <section id="video-use-cases" className="scroll-mt-20 px-4 pb-20 sm:px-8 sm:pb-28">
-        <div className="mx-auto max-w-[1180px] rounded-[1.75rem] bg-ink px-6 py-10 text-paper sm:px-10 sm:py-14 lg:px-14">
-          <SectionLabel number="03" label={t("audiences.label")} />
+        <div className="home-audience-shell mx-auto max-w-[1180px] rounded-[1.75rem] bg-ink px-6 py-10 text-paper sm:px-10 sm:py-14 lg:px-14">
+          <SectionLabel number="04" label={t("audiences.label")} />
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
             <h2 className="max-w-[14ch] font-display text-[38px] font-semibold leading-[1.04] tracking-[-0.04em] sm:text-[52px]">
               {t("audiences.title")}
@@ -151,7 +154,7 @@ export async function VideoHomeMarketing() {
             {audiences.map((audience) => {
               const Icon = audience.icon;
               return (
-                <article key={audience.key} className="bg-ink p-7 transition hover:bg-paper/[0.035]">
+                <article key={audience.key} className="home-audience-card bg-ink p-7 transition hover:bg-paper/[0.035]">
                   <div className="flex items-center justify-between gap-3">
                     <Icon size={21} strokeWidth={1.5} className="text-rec" />
                     <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-paper/35">
@@ -194,7 +197,7 @@ export async function VideoHomeMarketing() {
       <section id="video-faq" className="scroll-mt-20 px-4 py-20 sm:px-8 sm:py-28">
         <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)]">
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <SectionLabel number="04" label={t("faq.label")} />
+            <SectionLabel number="05" label={t("faq.label")} />
             <h2 className="max-w-[12ch] font-display text-[38px] font-semibold leading-[1.04] tracking-[-0.04em] sm:text-[50px]">
               {t("faq.title")}
             </h2>
