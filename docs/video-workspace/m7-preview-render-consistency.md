@@ -32,6 +32,6 @@ renderer 的逐字高亮现在按每个 word interval 生成稳定 ASS event：�
 - 编辑器 safe-area 虚线是操作辅助，不进入最终视频。
 - 播放按钮和 timeline 控件属于编辑器 chrome，不进入最终视频。
 - 浏览器字体栅格器和 libass 会有亚像素抗锯齿差异；字号、行、位置、颜色与当前高亮单词必须一致。
-- Browser Preview 的响度标准化只显示已启用状态；最终响度结果由 FFmpeg `loudnorm` 产生，浏览器不模拟离线分析。
+- Render Spec 仍保留音频兼容字段，但当前产品固定为 0 dB gain、不做响度标准化或淡入淡出；Browser Preview 与 Final Renderer 都保留原始音轨的响度和起止。
 
 这些差异在 UI 或本文档中明确，不视为 silent mismatch。

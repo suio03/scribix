@@ -80,8 +80,8 @@ so an R2 prefix lifecycle would also delete permanent transcript data.
 
 The hourly cleanup worker deletes completed non-video audio after 14 days and
 retained original videos at their plan-specific expiry: Free 7 days, legacy
-Basic 30 days, and Pro 90 days. It only clears the database key after R2
-confirms deletion. Keep the bucket's default 7-day abort rule for incomplete
+Basic 30 days, and Creator (backend tier `pro`) 30 days. It only clears the
+database key after R2 confirms deletion. Keep the bucket's default 7-day abort rule for incomplete
 multipart uploads. Verify the current rules with
 `npx wrangler r2 bucket lifecycle list scribix-media`.
 
@@ -246,18 +246,18 @@ Edge sign-in. Build and publishing instructions live in
 
 ## Phase 4 — Paddle payments
 
-Scribix uses Paddle Billing. New purchases offer Pro only: $20 monthly or
-$120 yearly. Existing Starter subscriptions remain supported as a grandfathered
-legacy tier. The app opens Paddle overlay checkout through Paddle.js and falls
+Scribix uses Paddle Billing. New purchases offer the public Creator plan
+(backend tier `pro`) only: $20 monthly or $120 yearly. Existing Starter
+subscriptions remain supported as a grandfathered legacy tier. The app opens Paddle overlay checkout through Paddle.js and falls
 back to Paddle's hosted checkout URL if Paddle.js is not initialized.
 
 ### 4.1 Products and prices
 
-Create recurring Paddle prices for new Pro purchases, and retain the existing
+Create recurring Paddle prices for new Creator purchases, and retain the existing
 Starter prices for grandfathered subscriptions:
 
-- Pro monthly → `PADDLE_PRO_MONTHLY_PRICE_ID`
-- Pro yearly → `PADDLE_PRO_YEARLY_PRICE_ID`
+- Creator monthly → `PADDLE_PRO_MONTHLY_PRICE_ID`
+- Creator yearly → `PADDLE_PRO_YEARLY_PRICE_ID`
 - Legacy Starter monthly → `PADDLE_BASIC_MONTHLY_PRICE_ID`
 - Legacy Starter yearly → `PADDLE_BASIC_YEARLY_PRICE_ID`
 

@@ -39,9 +39,9 @@ the one-time items that are already verified and unchanged.
 ## Smoke tests on prod
 
 - [ ] Sign in with Google → user row appears in D1.
-- [ ] `/pricing` and the upgrade modal offer Pro only: yearly is selected by
+- [ ] `/pricing` and the upgrade modal offer Creator only (backend tier `pro`): yearly is selected by
   default at **$120/year**, and monthly is available at **$20/month**.
-- [ ] Both Pro billing options open the Paddle overlay with the matching live
+- [ ] Both Creator billing options open the Paddle overlay with the matching live
   price ID.
 - [ ] Completed Paddle checkout returns to `/dashboard?checkout=ok`, webhook
   activates the tier, and duplicate webhook delivery is ignored.
@@ -83,6 +83,15 @@ the one-time items that are already verified and unchanged.
 - [ ] Test Free rejection over 2 GiB and paid acceptance near the 4.9 billion-byte cap.
 - [ ] Force a metadata/extraction failure → the same file automatically falls
   back to direct video without asking the user to select it again.
+- [ ] As Free, upload videos on both sides of the 45-second boundary; confirm AI
+  candidate selection appears, clip/brand editing controls stay unavailable,
+  and the generated export matches the selected AI candidate exactly.
+- [ ] As Free, confirm direct editor, manual-candidate, brand-asset, edited-render,
+  and old edited-render retry requests are rejected server-side; render listings
+  do not expose cover URLs.
+- [ ] As Creator, confirm direct editing for a source up to 45 seconds, candidate
+  editing for a longer source, brand assets, saved revisions, final video, and
+  cover download all continue to work.
 - [ ] Record, pause, wait, and stop without resuming; confirm paused wall-clock
   time is excluded. Repeat with pause → resume → stop.
 - [ ] Retry multipart complete after it has already succeeded → the endpoint

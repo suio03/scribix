@@ -67,12 +67,12 @@
 以下不改变总体架构，但必须在对应里程碑开始前确认：
 
 - 已确认：V1 不提供声音设置，也不添加背景音乐或音效素材；Render Spec 中的音频字段仅保留兼容性固定值。
-- 已确认：原视频 Free 保存 7 天/5 GiB、Basic 30 天/25 GiB、Pro 90 天/100 GiB；到期后保留 transcript、EDL、Render Spec 和成片，重新渲染要求重新上传匹配的原视频。
+- 已确认：原视频 Free 保存 7 天/5 GiB、Basic 30 天/25 GiB、Creator（后端 tier `pro`）30 天/100 GiB；到期后保留 transcript、EDL、Render Spec 和成片，重新渲染要求重新上传匹配的原视频。
 - 第一版是否只接受桌面浏览器编辑。建议优先桌面 Chrome/Edge，移动端先支持查看结果和下载。
 - 是否保留 AI 标题、描述和 Hashtags。当前建议交给已有分发平台，Scribix 只保留 clip 的内部名称/主题。
 - 已确认：Cloud 执行供应商方向改为 Cloudflare Containers；Render Job 协议保持供应商无关。隔离 POC 已验证 FFmpeg 功能与成本，生产接入仍需完成 Queue、容量重试、DLQ 和调度迁移，详见 `docs/video-workspace/cloudflare-containers-poc.md`。
 - 已确认：AI 候选允许为 0 个，质量优先，绝不为了达到候选数量而补弱片段。
-- 已确认：原视频不超过 45 秒时直接编辑完整原视频；45 秒以上至 3 分钟最多 3 个 AI 候选，超过 3 分钟最多 5 个。
+- 已确认：Free 无论原视频长度都先走 AI 候选，只能选择、预览并原样导出 AI 生成结果，不能编辑 clip 或添加品牌；Creator 与 legacy Basic 在原视频不超过 45 秒时可直接编辑完整原视频。45 秒以上至 3 分钟最多 3 个 AI 候选，超过 3 分钟最多 5 个。
 - 已确认：AI 候选总时长为 15–45 秒；用户只能从 original source 手动调整当前候选边界，最终时间线仍受 60 秒 contract 上限约束。最多 3 个 segments 的校验仅用于已有数据兼容。
 
 ## 4. 用户流程
@@ -86,13 +86,15 @@ AI 生成多个候选 clips
   ↓
 自动准备排名靠前候选的 preview proxies
   ↓
-用户进入短视频编辑器
-  ├── 调整内容和时间点
-  ├── 选择 9:16 裁切
-  ├── 校正并设计动态字幕
-  ├── 应用品牌模板
-  ├── 保留原始音轨
-  └── 选择封面
+用户选择 AI 候选
+  ├── Free：预览并原样导出 AI 结果
+  └── Creator / legacy Basic：进入短视频编辑器
+      ├── 调整内容和时间点
+      ├── 选择 9:16 裁切
+      ├── 校正并设计动态字幕
+      ├── 应用品牌模板
+      ├── 保留原始音轨
+      └── 选择封面
   ↓
 保存 EDL + Render Spec
   ↓
@@ -626,9 +628,11 @@ V1 至少记录：
 - 每个 project 的候选数、proxy 数和 render 数。
 - 每次失败的稳定 error code。
 
-计费产品不应直接向用户展示 GB 和 vCPU；建议以后用两类可理解额度：
+公开定价以 processed source minutes 表达上传视频额度，不混用小时与分钟。当前 Creator 无论月付或年付，每月都有 2,400 分钟，按月重置且不结转；年付只改变付款周期和价格，不改变月度额度窗口。
 
-- Processed source minutes：AI 分析/生成候选的原视频分钟。
+计费产品不应向用户展示 vCPU；长期存储容量和保留期可作为详细套餐能力列出：
+
+- Processed source minutes：上传后用于转录、AI 分析和候选生成的原视频分钟。
 - Export minutes：最终输出视频分钟，多个版本分别计入。
 
 Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户计费。

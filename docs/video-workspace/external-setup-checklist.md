@@ -67,4 +67,4 @@
 
 同时验证公开入口：`/` 继续承接 AI video clipper 首页，`/video-to-text` 及五个 locale 版本承接原视频转文字页面；检查侧边栏链接、上传后登录回跳、自引用 canonical、reciprocal hreflang、Open Graph、JSON-LD 和 sitemap 记录。
 
-随后按 `m9-pilot-rollout.md` 验证真实 talking-head/podcast 用户流程。生产部署前由负责人确认隐私说明、Cloudflare Containers/转录处理披露、7/30/90 天源保留、5/25/100 GiB 存储额度、render 使用量/成本转嫁规则与套餐文案；确认完成后以默认 100% 上线。
+随后按 `m9-pilot-rollout.md` 验证真实 talking-head/podcast 用户流程。生产部署前由负责人确认隐私说明、Cloudflare Containers/转录处理披露、7/30/30 天源保留、5/25/100 GiB 存储额度、render 使用量/成本转嫁规则与套餐文案；确认完成后以默认 100% 上线。

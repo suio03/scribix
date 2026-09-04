@@ -82,6 +82,6 @@ libass 的 FFmpeg build；在该镜像通过 ASS 路径前，字幕 parity 仍�
 
 已确认：
 
-- V1 音频只做 gain、响度标准化、降噪和淡入淡出，不做背景音乐或时间线音效素材。
-- Source retention：Free 7 天/5 GiB，Basic 30 天/25 GiB，Pro 90 天/100 GiB；
+- V1 不提供音频编辑控件；Render Spec 使用固定兼容值，成片保留原始响度且不做响度标准化或淡入淡出。
+- Source retention：Free 7 天/5 GiB，Basic 30 天/25 GiB，Creator（后端 tier `pro`）30 天/100 GiB；
   到期后保留项目和成片，重新渲染需重新上传匹配的 source。

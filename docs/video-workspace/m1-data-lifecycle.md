@@ -51,7 +51,7 @@ versions 产生多条短视频方案。
 |---|---:|---:|
 | Free | 7 天 | 5 GiB |
 | Basic | 30 天 | 25 GiB |
-| Pro | 90 天 | 100 GiB |
+| Creator（`pro`） | 30 天 | 100 GiB |
 
 这些值定义在 `lib/plans.ts`，是套餐事实的单一来源。Preflight 会在上传前返回当前
 `usedBytes`、`limitBytes`、`requiredBytes` 和 `retentionDays`；创建 source asset 时再用带

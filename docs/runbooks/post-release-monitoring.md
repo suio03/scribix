@@ -111,7 +111,7 @@ Before deployment, and again against production after deployment, verify:
   Free/grandfathered Starter (`basic`) and Pro boundaries behave as configured,
   and `ai_usage_events` records input/cached/output tokens plus estimated cost
   without prompt content.
-- Checkout: new purchase UI offers Pro only, defaults to $120 yearly, allows $20 monthly, and sends the matching live price ID. Verify completed, closed, and failed paths; the completed transaction appears once in the ownership records and no amount is sent to Plausible.
+- Checkout: new purchase UI offers Creator only (backend tier `pro`), defaults to $120 yearly, allows $20 monthly, and sends the matching live price ID. Verify completed, closed, and failed paths; the completed transaction appears once in the ownership records and no amount is sent to Plausible.
 - SEO: `/sitemap.xml`, `/robots.txt`, canonical/hreflang, `/`,
   `/video-to-text`, `/ai-note-taker`, English plus at least one localized page;
   the homepage and video-to-text page keep distinct intent and canonical URLs,

@@ -11,6 +11,8 @@ M6 将当前候选已保存的 project version 变成不可变 final render job�
 
 创建接口接受 `candidateId`、`expectedRevision` 与 `idempotencyKey`。revision 负责阻止用过期草稿发起渲染；candidate ownership、idempotency key 和 version 唯一性共同避免不同候选串用草稿或重复输出。最终视频和封面的下载 URL 有效期为 60 分钟。
 
+Free 的创建请求不信任浏览器草稿：服务端从所选 AI candidate 重建默认 EDL 与 Render Spec，并原样导出该候选。Free 不能渲染 manual-origin candidate、不能重试历史 edited render，也不会收到 cover 下载 URL。Creator 和 legacy Basic 继续按当前已保存的 editor draft/version 渲染，并可下载封面。
+
 ## 执行协议
 
 Cloudflare Queue dispatcher 同时处理 preview 与 final 两类任务。final lease 只签发本次任务需要的对象：原视频只读 URL、可选 Logo/字体只读 URL，以及最终 MP4、封面各自的只写 URL。Cloudflare Container 不持有 R2 永久凭证，也无法列举 bucket 或访问其他用户对象。

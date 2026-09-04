@@ -2,6 +2,12 @@
 
 M4 turns any selected AI candidate into its own persistent, transcript-aligned draft. The top gallery selects one clip at a time; the browser composes that clip's existing per-segment proxies into a continuous virtual timeline and saves source-time EDL changes without overwriting edits made to another candidate.
 
+## Plan access
+
+- Creator and grandfathered Basic users can open the editor, change clip boundaries, and use brand controls.
+- Free users do not receive the editor API or brand controls. They can select and preview an AI candidate, then use the generated-clip export surface to render it exactly as generated.
+- `lib/video-workspace/access.ts` is the shared policy source. The editor, candidate, brand-asset, and render routes enforce it on the server; hiding controls is not the security boundary.
+
 ## Time model
 
 - `sourceStartMs` / `sourceEndMs` remain the durable edit and final-render truth.
