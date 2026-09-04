@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
 import {
   loadEditorWorkspace,
   saveProjectDraft,
@@ -12,6 +13,7 @@ type Params = { params: Promise<{ id: string }> };
 export async function GET(request: Request, { params }: Params) {
   const context = await editorContext(params);
   if (context instanceof Response) return context;
+  if (!context.canEdit) return upgradeRequired();
   const candidateId = new URL(request.url).searchParams.get("candidateId");
   if (!candidateId) {
     return Response.json({ error: "candidate_id_required" }, { status: 400 });
@@ -37,6 +39,7 @@ export async function GET(request: Request, { params }: Params) {
 export async function PUT(request: Request, { params }: Params) {
   const context = await editorContext(params);
   if (context instanceof Response) return context;
+  if (!context.canEdit) return upgradeRequired();
   const body = await readBody(request);
   if (body instanceof Response) return body;
   const result = await saveProjectDraft(
@@ -64,6 +67,7 @@ export async function PUT(request: Request, { params }: Params) {
 export async function POST(request: Request, { params }: Params) {
   const context = await editorContext(params);
   if (context instanceof Response) return context;
+  if (!context.canEdit) return upgradeRequired();
   let body: { candidateId?: unknown; expectedRevision?: unknown };
   try {
     body = await request.json();
@@ -92,7 +96,7 @@ export async function POST(request: Request, { params }: Params) {
 }
 
 async function editorContext(params: Params["params"]): Promise<
-  | { env: CloudflareEnv; userId: string; projectId: string }
+  | { env: CloudflareEnv; userId: string; projectId: string; canEdit: boolean }
   | Response
 > {
   const session = await auth();
@@ -101,8 +105,17 @@ async function editorContext(params: Params["params"]): Promise<
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   return user
-    ? { env, userId: user.id, projectId: id }
+    ? {
+        env,
+        userId: user.id,
+        projectId: id,
+        canEdit: videoWorkspaceAccessFor(user.tier).canEditClips,
+      }
     : Response.json({ error: "user_not_found" }, { status: 404 });
+}
+
+function upgradeRequired(): Response {
+  return Response.json({ error: "upgrade_required" }, { status: 402 });
 }
 
 async function readBody(request: Request): Promise<

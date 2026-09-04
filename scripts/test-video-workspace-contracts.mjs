@@ -20,6 +20,7 @@ const sources = [
   "lib/video-workspace/events.ts",
   "lib/video-workspace/rollout.ts",
   "lib/video-workspace/upload-policy.ts",
+  "lib/video-workspace/access.ts",
   "lib/upload-preflight.ts",
   "lib/video-workspace/validation.test.ts",
   "lib/video-workspace/job-auth.test.ts",
@@ -30,6 +31,7 @@ const sources = [
   "lib/video-workspace/events.test.ts",
   "lib/video-workspace/rollout.test.ts",
   "lib/video-workspace/upload-policy.test.ts",
+  "lib/video-workspace/access.test.ts",
   "lib/upload-preflight.test.ts",
 ];
 
@@ -69,6 +71,7 @@ try {
     join(outputDirectory, "video-workspace/events.test.js"),
     join(outputDirectory, "video-workspace/rollout.test.js"),
     join(outputDirectory, "video-workspace/upload-policy.test.js"),
+    join(outputDirectory, "video-workspace/access.test.js"),
     join(outputDirectory, "upload-preflight.test.js"),
   ];
   const run = spawnSync(process.execPath, ["--test", ...testFiles], {

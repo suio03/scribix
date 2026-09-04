@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
 
 type Params = {
   params: Promise<{ id: string; candidateId: string }>;
@@ -19,6 +20,9 @@ export async function PATCH(request: Request, { params }: Params) {
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  if (!videoWorkspaceAccessFor(user.tier).canEditClips) {
+    return Response.json({ error: "upgrade_required" }, { status: 402 });
+  }
   const result = await env.DB.prepare(
     `UPDATE clip_candidates
         SET theme = ?1

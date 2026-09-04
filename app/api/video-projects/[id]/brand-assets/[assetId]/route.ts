@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
 import {
   completeBrandAssetUpload,
   deleteBrandAsset,
@@ -15,6 +16,9 @@ export async function POST(_: Request, { params }: Params) {
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  if (!videoWorkspaceAccessFor(user.tier).canUseBrandControls) {
+    return Response.json({ error: "upgrade_required" }, { status: 402 });
+  }
   const result = await completeBrandAssetUpload(
     env.DB,
     env.SCRIBIX_MEDIA,
@@ -37,6 +41,9 @@ export async function DELETE(_: Request, { params }: Params) {
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
+  if (!videoWorkspaceAccessFor(user.tier).canUseBrandControls) {
+    return Response.json({ error: "upgrade_required" }, { status: 402 });
+  }
   const result = await deleteBrandAsset(
     env.DB,
     env.SCRIBIX_MEDIA,

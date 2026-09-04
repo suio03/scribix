@@ -5,6 +5,7 @@ import { VideoCandidateWorkspace } from "@/app/components/VideoCandidateWorkspac
 import { Link, redirect } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
 import { listClipCandidates } from "@/lib/video-workspace/candidates";
 import { listCandidatePreviews } from "@/lib/video-workspace/preview-jobs";
 
@@ -52,11 +53,17 @@ export default async function VideoProjectPage({ params }: Params) {
     }>();
   if (!project) notFound();
 
-  const [candidates, previews, t] = await Promise.all([
+  const [allCandidates, allPreviews, t] = await Promise.all([
     listClipCandidates(env.DB, user.id, project.id),
     listCandidatePreviews(env.DB, user.id, project.id),
     getTranslations("Dashboard.videoCandidates"),
   ]);
+  const access = videoWorkspaceAccessFor(user.tier);
+  const candidates = access.canEditClips
+    ? allCandidates
+    : allCandidates.filter((candidate) => candidate.origin === "ai");
+  const candidateIds = new Set(candidates.map((candidate) => candidate.id));
+  const previews = allPreviews.filter((preview) => candidateIds.has(preview.candidateId));
 
   return (
     <main className="product-surface-refresh mx-auto max-w-[1180px] px-4 py-10 sm:px-8 sm:py-14">
@@ -81,6 +88,7 @@ export default async function VideoProjectPage({ params }: Params) {
         initialCandidates={candidates}
         initialPreviews={previews}
         initialSelectedCandidateId={project.draft_candidate_id}
+        canEdit={access.canEditClips}
       />
     </main>
   );

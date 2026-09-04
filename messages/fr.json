@@ -851,6 +851,7 @@
       "eyebrow": "Sélection de clips par IA",
       "shortlistTitle": "Sélection éditoriale",
       "description": "Générez des moments autonomes depuis la transcription. Chaque horodatage est vérifié sur les limites réelles des mots.",
+      "descriptionFree": "Choisissez un clip sélectionné par l’IA pour le prévisualiser et l’exporter. L’offre gratuite exporte la coupe générée sans montage ni personnalisation de marque.",
       "generate": "Trouver des clips",
       "regenerate": "Régénérer",
       "generating": "Recherche des moments…",
@@ -862,6 +863,7 @@
       "shortSourceBody": "Cette vidéo est déjà courte. Ouvrez directement l’original pour la raccourcir, ajouter des sous-titres et styliser le clip final.",
       "noQualityTitle": "Aucun moment fort trouvé",
       "noQualityBody": "L’IA n’a trouvé aucun extrait complet et convaincant et ne remplira pas la liste avec des suggestions faibles. Vous pouvez tout de même créer une coupe manuelle depuis la vidéo originale.",
+      "noQualityBodyFree": "L’IA n’a trouvé aucun extrait complet et convaincant et ne remplira pas la liste avec des suggestions faibles. Relancez la génération ou importez une autre vidéo.",
       "manualEyebrow": "Source originale",
       "manualTitle": "Montez votre propre extrait",
       "manualBody": "Cette timeline part du fichier original importé. Ajustez les repères source et limitez la vidéo courte finale à 60 secondes.",
@@ -882,6 +884,15 @@
       "previewLoading": "Chargement de l’aperçu sécurisé…",
       "previewUnavailable": "Impossible de charger l’aperçu. Réessayez.",
       "previewSegment": "Segment {number}",
+      "freeExport": {
+        "eyebrow": "Export gratuit",
+        "title": "Exporter la coupe générée par l’IA",
+        "body": "Ce clip conserve le minutage, les sous-titres et le cadrage générés par Scribix. L’offre gratuite l’exporte tel quel.",
+        "included": "Inclus : minutage sélectionné par l’IA · sous-titres automatiques · MP4 1080 × 1920",
+        "lockedTitle": "Le montage et la marque sont inclus dans Creator",
+        "lockedBody": "Passez à Creator pour raccourcir le clip, corriger les sous-titres, recadrer la vidéo et appliquer votre marque.",
+        "upgrade": "Débloquer le montage"
+      },
       "editor": {
         "loadFailed": "Impossible de charger l’éditeur.",
         "reload": "Recharger",
@@ -928,6 +939,7 @@
           "cover": { "title": "Couverture", "time": "Image de la timeline", "note": "Le moteur final extrait la couverture à ce point exact de la timeline terminée." }
         },
         "finalRender": {
+          "descriptionGenerated": "Scribix exporte la coupe sélectionnée par l’IA avec des sous-titres et un cadrage automatiques.",
           "history": "Historique des exports",
           "eyebrow": "Export cloud", "title": "Générer la vidéo finale", "description": "Crée une version immuable depuis la source originale, jamais depuis les proxies d’aperçu.", "generate": "Générer la vidéo", "rendering": "Rendu en cours…", "saveFirst": "Attendez la fin de l’enregistrement du montage.", "failed": "La demande de rendu n’a pas pu aboutir.", "limit": "Votre limite de rendu est atteinte. Attendez la fin d’un rendu actif ou réessayez demain.", "video": "Vidéo", "cover": "Couverture", "cancel": "Annuler", "retry": "Réessayer", "externalEdit": "Nécessite encore un montage externe", "externalEditRecorded": "Avis enregistré",
           "status": { "draft": "Brouillon", "queued": "En attente", "preparing": "Préparation", "running": "Rendu", "uploading": "Envoi", "completed": "Prêt", "failed": "Échec", "canceled": "Annulé" }

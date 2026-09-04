@@ -32,6 +32,7 @@ type EditorProjectRow = {
 type EditorCandidateRow = {
   id: string;
   theme: string;
+  origin: "ai" | "manual";
   segments_json: string;
   status: string;
   draft_revision: number;
@@ -77,6 +78,23 @@ export type SaveDraftResult =
         | "invalid_render_spec"
         | "draft_conflict";
       issues?: ContractIssue[];
+      revision?: number;
+    };
+
+export type GeneratedDraftResult =
+  | { ok: true; revision: number }
+  | {
+      ok: false;
+      error:
+        | "project_not_found"
+        | "candidate_not_found"
+        | "source_video_missing"
+        | "transcript_not_ready"
+        | "manual_candidate_forbidden"
+        | "invalid_candidate"
+        | "invalid_edl"
+        | "invalid_render_spec"
+        | "draft_conflict";
       revision?: number;
     };
 
@@ -288,6 +306,53 @@ export async function saveProjectDraft(
   return { ok: true, revision: nextRevision };
 }
 
+export async function prepareGeneratedCandidateDraft(
+  db: D1Database,
+  bucket: R2Bucket,
+  userId: string,
+  projectId: string,
+  candidateId: string
+): Promise<GeneratedDraftResult> {
+  const project = await editorProject(db, userId, projectId);
+  if (!project) return { ok: false, error: "project_not_found" };
+  if (
+    project.source_status !== "ready" ||
+    !project.source_duration_ms ||
+    sourceExpired(project.source_expires_at)
+  ) {
+    return { ok: false, error: "source_video_missing" };
+  }
+  if (!project.transcript_r2_key) {
+    return { ok: false, error: "transcript_not_ready" };
+  }
+
+  const candidate = await editorCandidate(db, userId, projectId, candidateId);
+  if (!candidate) return { ok: false, error: "candidate_not_found" };
+  if (candidate.origin !== "ai") {
+    return { ok: false, error: "manual_candidate_forbidden" };
+  }
+  const segments = parseCandidateSegments(candidate.segments_json);
+  if (!segments) return { ok: false, error: "invalid_candidate" };
+
+  const transcriptObject = await bucket.get(project.transcript_r2_key);
+  if (!transcriptObject) return { ok: false, error: "transcript_not_ready" };
+  const transcript = (await transcriptObject.json()) as AaiTranscript;
+  const edl = edlFromCandidate(segments);
+  const renderSpec = defaultRenderSpec(edl, relevantWords(transcript, edl));
+  const saved = await saveProjectDraft(
+    db,
+    userId,
+    projectId,
+    candidateId,
+    candidate.draft_revision,
+    edl,
+    renderSpec
+  );
+  return saved.ok
+    ? { ok: true, revision: saved.revision }
+    : { ok: false, error: saved.error, revision: saved.revision };
+}
+
 export async function snapshotProjectDraft(
   db: D1Database,
   userId: string,
@@ -468,7 +533,7 @@ function editorCandidate(
   candidateId: string
 ): Promise<EditorCandidateRow | null> {
   return db.prepare(
-    `SELECT id, theme, segments_json, status, draft_revision,
+    `SELECT id, theme, origin, segments_json, status, draft_revision,
             draft_edl_json, draft_render_spec_json
        FROM clip_candidates
       WHERE id = ?1

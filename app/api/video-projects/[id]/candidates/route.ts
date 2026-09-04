@@ -21,6 +21,7 @@ import {
   replaceClipCandidates,
   replaceWithManualClipCandidate,
 } from "@/lib/video-workspace/candidates";
+import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
 import {
   listCandidatePreviews,
   queueAutomaticCandidatePreviews,
@@ -43,10 +44,16 @@ type CandidateProjectRow = {
 export async function GET(_: Request, { params }: Params) {
   const context = await candidateContext(params);
   if (context instanceof Response) return context;
-  const [candidates, previews] = await Promise.all([
+  const [allCandidates, allPreviews] = await Promise.all([
     listClipCandidates(context.env.DB, context.user.id, context.project.id),
     listCandidatePreviews(context.env.DB, context.user.id, context.project.id),
   ]);
+  const access = videoWorkspaceAccessFor(context.user.tier);
+  const candidates = access.canEditClips
+    ? allCandidates
+    : allCandidates.filter((candidate) => candidate.origin === "ai");
+  const candidateIds = new Set(candidates.map((candidate) => candidate.id));
+  const previews = allPreviews.filter((preview) => candidateIds.has(preview.candidateId));
   return Response.json({
     status: effectiveProjectStatus(context.project),
     candidates,
@@ -77,11 +84,18 @@ export async function POST(request: Request, { params }: Params) {
 
   const mode = await candidateRequestMode(request);
   if (mode instanceof Response) return mode;
+  const access = videoWorkspaceAccessFor(user.tier);
+  if (mode === "manual" && !access.canEditClips) {
+    return Response.json({ error: "upgrade_required" }, { status: 402 });
+  }
   const sourceDurationMs = project.source_duration_ms;
   if (!sourceDurationMs || sourceDurationMs < 250) {
     return Response.json({ error: "source_video_missing" }, { status: 410 });
   }
-  if (mode === "manual" || sourceDurationMs <= DIRECT_EDIT_MAX_SOURCE_DURATION_MS) {
+  if (
+    access.canEditClips &&
+    (mode === "manual" || sourceDurationMs <= DIRECT_EDIT_MAX_SOURCE_DURATION_MS)
+  ) {
     await replaceWithManualClipCandidate(
       env.DB,
       user.id,

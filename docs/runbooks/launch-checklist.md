@@ -33,7 +33,7 @@ the one-time items that are already verified and unchanged.
 - [ ] The default lifecycle aborts incomplete multipart uploads after **7 days**.
 - [ ] No completed-media expiration rule targets `users/`; the hourly cleanup
   worker is the sole authority for completed non-video audio expiry after
-  **14 days** and original-video expiry after **7/30/90 days** by plan
+  **14 days** and original-video expiry after **7/30/30 days** by plan
   (manual-setup §0.5).
 
 ## Smoke tests on prod
@@ -124,7 +124,7 @@ the one-time items that are already verified and unchanged.
   `cleanup_r2_delete_failed` events; structured logs exist in code, but the
   persistent production alert must be configured separately.
 - [ ] **Retention policy copy** — update `/privacy` and `/terms` so audio's
-  14-day expiry and plan-specific 7/30/90-day original-video retention agree
+  14-day expiry and plan-specific 7/30/30-day original-video retention agree
   with `lib/plans.ts` and the cleanup worker before production release.
 
 ## Marketing
@@ -135,8 +135,9 @@ the one-time items that are already verified and unchanged.
 - [ ] Verify domain in Google Search Console + Bing Webmaster.
 - [ ] OG card preview looks right (`https://scribix.io` → opengraph-image
   served from `app/[locale]/opengraph-image.tsx`).
-- [ ] Pricing, account usage, and Terms agree that yearly Pro receives 2,400
-  minutes each month, resets monthly, and does not roll over.
+- [ ] Pricing, account usage, and Terms agree that yearly Creator receives 2,400
+  minutes of uploaded video processing each month, resets monthly, and does not
+  roll over.
 - [ ] Paddle Customer Portal plan switching is restricted so unsupported
   self-service downgrades are not exposed.
 

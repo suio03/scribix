@@ -6,6 +6,7 @@ import {
   Check,
   Clock3,
   Film,
+  LockKeyhole,
   Loader2,
   Play,
   RefreshCw,
@@ -13,10 +14,12 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
 import {
   VideoClipEditor,
   type VideoEditorSaveState,
 } from "@/app/components/VideoClipEditor";
+import { Link } from "@/i18n/navigation";
 import type { StoredClipCandidate } from "@/lib/video-workspace/candidates";
 import { VIDEO_WORKSPACE_LIMITS } from "@/lib/video-workspace/contracts";
 import type { CandidatePreview } from "@/lib/video-workspace/preview-jobs";
@@ -30,6 +33,7 @@ export function VideoCandidateWorkspace({
   initialCandidates,
   initialPreviews,
   initialSelectedCandidateId,
+  canEdit,
 }: {
   projectId: string;
   initialStatus: ProjectStatus;
@@ -37,6 +41,7 @@ export function VideoCandidateWorkspace({
   initialCandidates: StoredClipCandidate[];
   initialPreviews: CandidatePreview[];
   initialSelectedCandidateId: string | null;
+  canEdit: boolean;
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
   const [status, setStatus] = useState<ProjectStatus>(initialStatus);
@@ -56,7 +61,7 @@ export function VideoCandidateWorkspace({
   const editorRef = useRef<HTMLDivElement>(null);
   const generating = status === "analyzing";
   const shortSource = Boolean(
-    sourceDurationMs &&
+    canEdit && sourceDurationMs &&
     sourceDurationMs <= VIDEO_WORKSPACE_LIMITS.directEditMaxSourceDurationMs
   );
   const selectedCandidate = candidates.find((candidate) => (
@@ -250,7 +255,7 @@ export function VideoCandidateWorkspace({
             {t("shortlistTitle")}
           </h2>
           <p className="mt-2 text-[14px] leading-6 text-ink/60">
-            {t("description")}
+            {t(canEdit ? "description" : "descriptionFree")}
           </p>
         </div>
         <button
@@ -299,12 +304,12 @@ export function VideoCandidateWorkspace({
             </h3>
             <p className="mt-2 text-[13px] leading-6 text-ink/55">
               {status === "candidates_ready"
-                ? t("noQualityBody")
+                ? t(canEdit ? "noQualityBody" : "noQualityBodyFree")
                 : shortSource
                   ? t("shortSourceBody")
                   : t("emptyBody")}
             </p>
-            {status === "candidates_ready" && !shortSource ? (
+            {canEdit && status === "candidates_ready" && !shortSource ? (
               <button
                 type="button"
                 onClick={() => void startManualEdit()}
@@ -352,17 +357,83 @@ export function VideoCandidateWorkspace({
 
       {selectedCandidate ? (
         <div ref={editorRef} className="mt-8 scroll-mt-6 overflow-hidden rounded-2xl border border-line bg-card shadow-[0_28px_80px_-56px_rgba(14,13,11,0.7)]">
-          <VideoClipEditor
-            key={selectedCandidate.id}
-            projectId={projectId}
-            candidateId={selectedCandidate.id}
-            onSaveStateChange={setEditorSaveState}
-            onTitleChange={(title) => setCandidates((current) => current.map((candidate) => (
-              candidate.id === selectedCandidate.id ? { ...candidate, theme: title } : candidate
-            )))}
-          />
+          {canEdit ? (
+            <VideoClipEditor
+              key={selectedCandidate.id}
+              projectId={projectId}
+              candidateId={selectedCandidate.id}
+              onSaveStateChange={setEditorSaveState}
+              onTitleChange={(title) => setCandidates((current) => current.map((candidate) => (
+                candidate.id === selectedCandidate.id ? { ...candidate, theme: title } : candidate
+              )))}
+            />
+          ) : (
+            <FreeCandidateExport
+              key={selectedCandidate.id}
+              projectId={projectId}
+              candidate={selectedCandidate}
+            />
+          )}
         </div>
       ) : null}
+    </section>
+  );
+}
+
+function FreeCandidateExport({
+  projectId,
+  candidate,
+}: {
+  projectId: string;
+  candidate: StoredClipCandidate;
+}) {
+  const t = useTranslations("Dashboard.videoCandidates.freeExport");
+
+  return (
+    <section className="grid gap-6 px-5 py-6 sm:px-7 sm:py-7 lg:grid-cols-[minmax(0,0.88fr)_minmax(320px,1.12fr)]">
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+          {t("eyebrow")}
+        </p>
+        <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink">
+          {t("title")}
+        </h3>
+        <p className="mt-2 text-[13px] leading-6 text-ink/60">{t("body")}</p>
+
+        <div className="mt-5 rounded-xl border border-line bg-paper/60 p-4">
+          <p className="text-[12px] font-semibold text-ink">{candidate.theme}</p>
+          <p className="mt-2 text-[11px] leading-5 text-ink/50">{t("included")}</p>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="rounded-xl border border-accent/25 bg-accent/[0.055] p-4">
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-accent/10 text-accent">
+              <LockKeyhole size={14} />
+            </span>
+            <div>
+              <p className="text-[12px] font-semibold text-ink">{t("lockedTitle")}</p>
+              <p className="mt-1 text-[11px] leading-5 text-ink/55">{t("lockedBody")}</p>
+              <Link
+                href="/pricing"
+                className="mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-[11px] font-semibold text-white transition hover:bg-ink"
+              >
+                {t("upgrade")}
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <FinalRenderPanel
+          projectId={projectId}
+          candidateId={candidate.id}
+          revision={0}
+          disabled={false}
+          generatedOnly
+          onConflict={() => undefined}
+        />
+      </div>
     </section>
   );
 }

@@ -851,6 +851,7 @@
       "eyebrow": "Buscador de clips con IA",
       "shortlistTitle": "Selección editorial",
       "description": "Genera momentos independientes desde la transcripción. Cada marca de tiempo se verifica con los límites reales de las palabras.",
+      "descriptionFree": "Elige un clip seleccionado por la IA para previsualizarlo y exportarlo. El plan gratuito exporta el corte generado sin edición ni controles de marca.",
       "generate": "Buscar clips",
       "regenerate": "Volver a generar",
       "generating": "Buscando momentos…",
@@ -862,6 +863,7 @@
       "shortSourceBody": "Este vídeo ya es corto. Abre el original directamente para recortarlo, añadir subtítulos y dar estilo al clip final.",
       "noQualityTitle": "No se encontraron momentos sólidos",
       "noQualityBody": "La IA no encontró un clip completo y atractivo, y no rellenará la lista con sugerencias débiles. Aun así, puedes crear un corte manual desde el vídeo original.",
+      "noQualityBodyFree": "La IA no encontró un clip completo y atractivo, y no rellenará la lista con sugerencias débiles. Vuelve a generar los clips o sube otro vídeo.",
       "manualEyebrow": "Fuente original",
       "manualTitle": "Edita tu propio corte",
       "manualBody": "Esta línea de tiempo parte del original subido. Ajusta las marcas de tiempo y mantén el vídeo corto final en 60 segundos o menos.",
@@ -882,6 +884,15 @@
       "previewLoading": "Cargando vista previa segura…",
       "previewUnavailable": "No se pudo cargar la vista previa. Inténtalo de nuevo.",
       "previewSegment": "Segmento {number}",
+      "freeExport": {
+        "eyebrow": "Exportación gratuita",
+        "title": "Exporta el corte generado por la IA",
+        "body": "Este clip conserva los tiempos, subtítulos y encuadre generados por Scribix. El plan gratuito lo exporta tal cual.",
+        "included": "Incluye: tiempos seleccionados por IA · subtítulos automáticos · MP4 1080 × 1920",
+        "lockedTitle": "La edición y los controles de marca están en Creator",
+        "lockedBody": "Mejora tu plan para recortar el clip, corregir subtítulos, reencuadrar el vídeo y aplicar tu marca.",
+        "upgrade": "Desbloquear edición"
+      },
       "editor": {
         "loadFailed": "No se pudo cargar el editor.",
         "reload": "Recargar",
@@ -928,6 +939,7 @@
           "cover": { "title": "Portada", "time": "Fotograma de la línea de tiempo", "note": "El renderizador final extrae la portada de este punto exacto de la línea de tiempo terminada." }
         },
         "finalRender": {
+          "descriptionGenerated": "Scribix exporta el corte seleccionado por la IA con subtítulos y encuadre automáticos.",
           "history": "Historial de exportaciones",
           "eyebrow": "Exportación cloud", "title": "Renderizar el vídeo final", "description": "Crea una versión inmutable desde la fuente original, no desde las vistas previas.", "generate": "Generar vídeo", "rendering": "Renderizando…", "saveFirst": "Espera a que termine de guardarse la edición.", "failed": "No se pudo completar la solicitud de renderizado.", "limit": "Has alcanzado el límite de renderizado. Espera a que termine uno activo o inténtalo mañana.", "video": "Vídeo", "cover": "Portada", "cancel": "Cancelar", "retry": "Reintentar", "externalEdit": "Aún necesita edición externa", "externalEditRecorded": "Comentario registrado",
           "status": { "draft": "Borrador", "queued": "En cola", "preparing": "Preparando", "running": "Renderizando", "uploading": "Subiendo", "completed": "Listo", "failed": "Falló", "canceled": "Cancelado" }

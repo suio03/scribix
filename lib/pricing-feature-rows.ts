@@ -86,6 +86,24 @@ export function compactPricingRows(
   ]);
 }
 
+export function showcasePricingRows(
+  featureRows: PlanFeatureCopy[]
+): PlanFeatureCopy[] {
+  const rowsByKey = featureRowsByKey(featureRows);
+
+  return [
+    rowsByKey.get("monthlyMinutes"),
+    rowsByKey.get("accuracyModel"),
+    rowsByKey.get("aiSummaries"),
+    rowsByKey.get("exports"),
+    rowsByKey.get("transcriptFiles"),
+    rowsByKey.get("aiTranslation"),
+    rowsByKey.get("speakerLabels"),
+    rowsByKey.get("processingQueue"),
+    rowsByKey.get("maxFileLength"),
+  ].filter((row): row is PlanFeatureCopy => Boolean(row));
+}
+
 export function compactBillingRows(
   featureRows: PlanFeatureCopy[],
   t: PricingFeatureT

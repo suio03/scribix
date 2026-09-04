@@ -55,7 +55,7 @@ export const PLANS = {
     maxFileSec: 10 * 3600,
     maxFileBytes: ONE_GIB,
     maxVideoUploadBytes: PAID_VIDEO_UPLOAD_BYTES,
-    videoSourceRetentionDays: 90,
+    videoSourceRetentionDays: 30,
     maxVideoSourceStorageBytes: 100 * ONE_GIB,
     speechModels: ["universal-3-5-pro", "universal-2"] as const,
   },

@@ -851,6 +851,7 @@
       "eyebrow": "KI-Clip-Finder",
       "shortlistTitle": "Redaktionelle Auswahl",
       "description": "Finden Sie eigenständige Momente im Transkript. Jeder Zeitstempel wird mit den Wortgrenzen des Originals geprüft.",
+      "descriptionFree": "Wählen Sie einen KI-Clip zur Vorschau und zum Export. Im kostenlosen Tarif wird der generierte Schnitt ohne Bearbeitung oder Markenoptionen exportiert.",
       "generate": "Clips finden",
       "regenerate": "Neu generieren",
       "generating": "Momente werden gesucht…",
@@ -862,6 +863,7 @@
       "shortSourceBody": "Dieses Video ist bereits kurz. Öffnen Sie das Original direkt, um es zu kürzen, Untertitel hinzuzufügen und den fertigen Clip zu gestalten.",
       "noQualityTitle": "Keine starken Momente gefunden",
       "noQualityBody": "Die KI hat keinen vollständigen, überzeugenden Clip gefunden und füllt die Liste nicht mit schwachen Vorschlägen. Sie können trotzdem einen eigenen Schnitt aus dem Originalvideo beginnen.",
+      "noQualityBodyFree": "Die KI hat keinen vollständigen, überzeugenden Clip gefunden und füllt die Liste nicht mit schwachen Vorschlägen. Generieren Sie erneut oder laden Sie ein anderes Video hoch.",
       "manualEyebrow": "Originalquelle",
       "manualTitle": "Eigenen Schnitt bearbeiten",
       "manualBody": "Diese Timeline beginnt mit dem hochgeladenen Original. Passen Sie die Quellzeitstempel an und halten Sie das fertige Kurzvideo bei höchstens 60 Sekunden.",
@@ -882,6 +884,15 @@
       "previewLoading": "Sichere Vorschau wird geladen…",
       "previewUnavailable": "Die Vorschau konnte nicht geladen werden. Versuchen Sie es erneut.",
       "previewSegment": "Segment {number}",
+      "freeExport": {
+        "eyebrow": "Kostenloser Export",
+        "title": "KI-generierten Schnitt exportieren",
+        "body": "Dieser Clip behält das von Scribix erzeugte Timing, die Untertitel und den Bildausschnitt. Im kostenlosen Tarif wird er unverändert exportiert.",
+        "included": "Enthalten: KI-Timing · automatische Untertitel · 1080 × 1920 MP4",
+        "lockedTitle": "Bearbeitung und Markenoptionen gibt es in Creator",
+        "lockedBody": "Mit Creator können Sie den Clip kürzen, Untertitel korrigieren, das Video neu ausrichten und Ihre Marke anwenden.",
+        "upgrade": "Bearbeitung freischalten"
+      },
       "editor": {
         "loadFailed": "Der Editor konnte nicht geladen werden.",
         "reload": "Neu laden",
@@ -928,6 +939,7 @@
           "cover": { "title": "Cover", "time": "Timeline-Bild", "note": "Der finale Renderer erzeugt das Cover genau an diesem Punkt der fertigen Timeline." }
         },
         "finalRender": {
+          "descriptionGenerated": "Scribix exportiert den KI-ausgewählten Schnitt mit automatischen Untertiteln und automatischem Bildausschnitt.",
           "history": "Exportverlauf",
           "eyebrow": "Cloud-Export", "title": "Finales Video rendern", "description": "Erstellt eine unveränderliche Version aus der Originalquelle – nicht aus den Vorschau-Proxys.", "generate": "Video erzeugen", "rendering": "Wird gerendert…", "saveFirst": "Warte, bis die aktuelle Bearbeitung gespeichert ist.", "failed": "Der Render-Auftrag konnte nicht abgeschlossen werden.", "limit": "Dein Render-Limit ist erreicht. Warte auf einen aktiven Render oder versuche es morgen erneut.", "video": "Video", "cover": "Cover", "cancel": "Abbrechen", "retry": "Erneut versuchen", "externalEdit": "Benötigt noch externe Bearbeitung", "externalEditRecorded": "Feedback gespeichert",
           "status": { "draft": "Entwurf", "queued": "In Warteschlange", "preparing": "Vorbereitung", "running": "Rendering", "uploading": "Upload", "completed": "Bereit", "failed": "Fehlgeschlagen", "canceled": "Abgebrochen" }

@@ -13,12 +13,14 @@ export function FinalRenderPanel({
   candidateId,
   revision,
   disabled,
+  generatedOnly = false,
   onConflict,
 }: {
   projectId: string;
   candidateId: string;
   revision: number;
   disabled: boolean;
+  generatedOnly?: boolean;
   onConflict: () => void;
 }) {
   const t = useTranslations("Dashboard.videoCandidates.editor.finalRender");
@@ -69,7 +71,8 @@ export function FinalRenderPanel({
         }),
       });
       if (response.status === 409) {
-        onConflict();
+        if (generatedOnly) setError("generic");
+        else onConflict();
         return;
       }
       const payload = await response.json() as { render?: FinalRenderSummary; error?: string };
@@ -125,7 +128,9 @@ export function FinalRenderPanel({
         <div>
           <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-paper/45">{t("eyebrow")}</p>
           <h5 className="mt-1 font-display text-lg font-semibold">{t("title")}</h5>
-          <p className="mt-1 max-w-md text-[11px] leading-5 text-paper/55">{t("description")}</p>
+          <p className="mt-1 max-w-md text-[11px] leading-5 text-paper/55">
+            {t(generatedOnly ? "descriptionGenerated" : "description")}
+          </p>
         </div>
         <button
           type="button"
@@ -143,7 +148,7 @@ export function FinalRenderPanel({
         <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-paper/15 pt-4">
           <span className="mr-auto text-[11px] text-paper/65">{t("status.completed")}</span>
           <a href={latestReady.videoUrl ?? undefined} download onClick={() => trackDownload(latestReady, "video")} className="inline-flex items-center gap-1.5 rounded-full bg-paper px-3 py-1.5 text-[10px] font-semibold text-ink"><Download size={12} />{t("video")}</a>
-          {latestReady.coverUrl ? (
+          {!generatedOnly && latestReady.coverUrl ? (
             <a href={latestReady.coverUrl} download onClick={() => trackDownload(latestReady, "cover")} className="inline-flex items-center gap-1.5 rounded-full border border-paper/25 px-3 py-1.5 text-[10px] font-semibold text-paper"><ImageIcon size={12} />{t("cover")}</a>
           ) : null}
         </div>
@@ -163,13 +168,13 @@ export function FinalRenderPanel({
                 {render.status === "completed" && render.videoUrl ? (
                   <>
                     <a href={render.videoUrl} download onClick={() => trackDownload(render, "video")} className="inline-flex items-center gap-1 rounded-full bg-paper px-2.5 py-1 font-semibold text-ink"><Download size={11} />{t("video")}</a>
-                    {render.coverUrl ? <a href={render.coverUrl} download onClick={() => trackDownload(render, "cover")} className="inline-flex items-center gap-1 rounded-full border border-paper/25 px-2.5 py-1 font-semibold text-paper"><ImageIcon size={11} />{t("cover")}</a> : null}
+                    {!generatedOnly && render.coverUrl ? <a href={render.coverUrl} download onClick={() => trackDownload(render, "cover")} className="inline-flex items-center gap-1 rounded-full border border-paper/25 px-2.5 py-1 font-semibold text-paper"><ImageIcon size={11} />{t("cover")}</a> : null}
                   </>
                 ) : null}
                 {ACTIVE.has(render.status) ? (
                   <button type="button" disabled={busy} onClick={() => void mutate(render, "DELETE")} className="inline-flex items-center gap-1 text-paper/55 hover:text-red-300"><X size={11} />{t("cancel")}</button>
                 ) : null}
-                {render.status === "failed" || render.status === "canceled" ? (
+                {!generatedOnly && (render.status === "failed" || render.status === "canceled") ? (
                   <button type="button" disabled={busy} onClick={() => void mutate(render, "POST")} className="inline-flex items-center gap-1 text-paper/55 hover:text-paper"><RefreshCw size={11} />{t("retry")}</button>
                 ) : null}
               </div>

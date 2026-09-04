@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { presignOwnedAssetGet } from "@/lib/video-workspace/asset-access";
+import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
 import {
   candidatePreview,
   queueCandidatePreviews,
@@ -58,6 +59,9 @@ export async function POST(request: Request, { params }: Params) {
   }
   const rebuildRequested = body.segmentIndex !== undefined ||
     body.sourceStartMs !== undefined || body.sourceEndMs !== undefined;
+  if (rebuildRequested && !context.canEdit) {
+    return Response.json({ error: "upgrade_required" }, { status: 402 });
+  }
   const result = rebuildRequested
     ? await rebuildCandidatePreviewSegment(
         context.env.DB,
@@ -95,7 +99,7 @@ export async function POST(request: Request, { params }: Params) {
 }
 
 async function previewContext(params: Params["params"]): Promise<
-  | { env: CloudflareEnv; userId: string; projectId: string }
+  | { env: CloudflareEnv; userId: string; projectId: string; canEdit: boolean }
   | Response
 > {
   const session = await auth();
@@ -111,6 +115,11 @@ async function previewContext(params: Params["params"]): Promise<
     .bind(id, user.id)
     .first<{ id: string }>();
   return project
-    ? { env, userId: user.id, projectId: project.id }
+    ? {
+        env,
+        userId: user.id,
+        projectId: project.id,
+        canEdit: videoWorkspaceAccessFor(user.tier).canEditClips,
+      }
     : Response.json({ error: "not_found" }, { status: 404 });
 }

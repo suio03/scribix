@@ -171,7 +171,7 @@
         },
         {
           "q": "Can I change the clips AI suggests?",
-          "a": "Yes. You can change the clip’s original-video boundaries, correct caption text, adjust the vertical crop, apply brand styling, and select a cover frame."
+          "a": "Creator users can change the clip’s original-video boundaries, correct caption text, adjust the vertical crop, apply brand styling, and select a cover frame. Free exports AI-generated clips as-is."
         },
         {
           "q": "What does Scribix export?",
@@ -179,11 +179,11 @@
         },
         {
           "q": "How long is my original video stored?",
-          "a": "Original video retention depends on your plan: 7 days on Free, 30 days on legacy Basic, and 90 days on Pro. Transcripts, edit decisions, and completed renders can remain after the original expires."
+          "a": "Original video retention depends on your plan: 7 days on Free and 30 days on legacy Basic or Creator. Transcripts, edit decisions, and completed renders can remain after the original expires."
         },
         {
           "q": "Which source videos can I upload?",
-          "a": "Scribix accepts common formats including MP4, MOV, WebM, AVI, and MKV. Upload limits, transcription minutes, and retained video storage depend on your plan."
+          "a": "Scribix accepts common formats including MP4, MOV, WebM, AVI, and MKV. Upload limits, video-processing allowance, and retained video storage depend on your plan."
         },
         {
           "q": "Can I still use Scribix only for transcription?",
@@ -455,11 +455,11 @@
   "PricingPage": {
     "metadata": {
       "title": "Pricing",
-      "description": "Simple Scribix pricing: start with {freeMinutes, number} free lifetime minutes, then upgrade to Pro for {proMinutes, number} transcription minutes every month.",
+      "description": "Process {freeMinutes, number} minutes of uploaded video for free, then upgrade to process {proMinutes, number} minutes every month with AI clipping, editing, captions, and brand controls.",
       "ogTitle": "Scribix Pricing",
-      "ogDescription": "Free and Pro plans for video and audio transcription."
+      "ogDescription": "Free and Creator plans for turning long videos into short, publish-ready clips."
     },
-    "h1": "One plan. Everything you need.",
+    "h1": "One long video. Multiple publish-ready shorts.",
     "bestValue": "Best value",
     "annualPrefix": "Annual",
     "billingToggleLabel": "Billing interval",
@@ -477,19 +477,19 @@
     "faqTitle": "Pricing FAQ",
     "featureRows": [
       {
-        "label": "Transcript files",
+        "label": "Automatic transcript",
         "values": {
-          "free": "Limited by {minutes, number} min total",
-          "starter": "Unlimited files within {minutes, number} min",
-          "pro": "Within {minutes, number} min/month"
+          "free": "{minutes, select, other {Included with video processing}}",
+          "starter": "{minutes, select, other {Included with video processing}}",
+          "pro": "{minutes, select, other {Included with video processing}}"
         }
       },
       {
-        "label": "Transcription allowance",
+        "label": "Uploaded video processing",
         "values": {
-          "free": "{minutes, number} min lifetime",
-          "starter": "{minutes, number} min/month",
-          "pro": "{hours, number} hours/month ({minutes, number} min)"
+          "free": "{minutes, number} minutes total",
+          "starter": "{minutes, number} minutes per month",
+          "pro": "{hours, select, other {{minutes, number} minutes per month}}"
         }
       },
       {
@@ -509,67 +509,67 @@
         }
       },
       {
-        "label": "File length",
+        "label": "Original video storage",
         "values": {
-          "free": "Long files accepted · first {freeMinutes, number} min total",
-          "starter": "Up to {hours, number} hours",
-          "pro": "Up to {hours, number} hours"
+          "free": "{freeMinutes, select, other {5 GB · stored for 7 days}}",
+          "starter": "{hours, select, other {25 GB · stored for 30 days}}",
+          "pro": "{hours, select, other {100 GB · stored for 30 days}}"
         }
       },
       {
-        "label": "Max file size",
+        "label": "Upload limits",
         "values": {
-          "free": "{videoGb, number} GB video / {audioGb, number} GB audio",
-          "starter": "{videoGb, number} GB video / {audioGb, number} GB audio",
-          "pro": "{videoGb, number} GB video / {audioGb, number} GB audio"
+          "free": "Up to 10 hours · {videoGb, number} GB video / {audioGb, number} GB audio",
+          "starter": "Up to 10 hours · {videoGb, number} GB video / {audioGb, number} GB audio",
+          "pro": "Up to 10 hours · {videoGb, number} GB video / {audioGb, number} GB audio"
         }
       },
       {
-        "label": "Processing queue",
+        "label": "Transcription quality",
         "values": {
           "free": "Standard",
-          "starter": "Standard",
-          "pro": "Standard"
+          "starter": "Best available speech model",
+          "pro": "Best available speech model"
         }
       },
       {
-        "label": "Transcription model",
+        "label": "AI-selected clips",
         "values": {
-          "free": "Standard",
-          "starter": "Best accuracy",
-          "pro": "Best available"
+          "free": "Up to 5 ranked clips per uploaded video",
+          "starter": "Up to 5 ranked clips per uploaded video",
+          "pro": "Up to 5 ranked clips per uploaded video"
         }
       },
       {
-        "label": "AI translation",
-        "values": {
-          "free": "No",
-          "starter": "Yes",
-          "pro": "Yes"
-        }
-      },
-      {
-        "label": "Speaker labels",
-        "values": {
-          "free": "Yes",
-          "starter": "Yes",
-          "pro": "Yes"
-        }
-      },
-      {
-        "label": "Exports",
-        "values": {
-          "free": "TXT, DOCX, SRT, VTT, CSV",
-          "starter": "Unlimited exports",
-          "pro": "Unlimited exports"
-        }
-      },
-      {
-        "label": "AI notes",
+        "label": "AI notes + translation",
         "values": {
           "free": "No",
-          "starter": "Yes",
-          "pro": "Yes"
+          "starter": "Included",
+          "pro": "Included"
+        }
+      },
+      {
+        "label": "Ask AI",
+        "values": {
+          "free": "3 questions lifetime",
+          "starter": "3 questions lifetime",
+          "pro": "300 questions per month"
+        }
+      },
+      {
+        "label": "Final video export",
+        "values": {
+          "free": "1080 × 1920 MP4 · AI-generated cut only",
+          "starter": "1080 × 1920 MP4 + cover image",
+          "pro": "1080 × 1920 MP4 + cover image"
+        }
+      },
+      {
+        "label": "Clip editing + brand controls",
+        "values": {
+          "free": "Not available on Free",
+          "starter": "Trim clips, edit captions, reframe and apply branding",
+          "pro": "Trim clips, edit captions, reframe and apply branding"
         }
       }
     ],
@@ -577,12 +577,12 @@
       {
         "name": "Free",
         "cadence": "one-time",
-        "summary": "Try Scribix once and check transcript quality before paying."
+        "summary": "Turn 45 minutes of uploaded video into AI-selected clips and export them as generated."
       },
       {
-        "name": "Pro",
+        "name": "Creator",
         "cadence": "per month",
-        "summary": "Transcribe long recordings, turn them into clear AI notes, and translate them in one plan.",
+        "summary": "Process up to 2,400 minutes of uploaded video every month, then edit and brand every clip.",
         "purchaseNote": "Cancel anytime",
         "annualCadence": "per year"
       }
@@ -590,37 +590,37 @@
     "faqs": [
       {
         "question": "Can I start for free?",
-        "answer": "Yes. Free includes {freeMinutes, number} lifetime minutes so you can test transcript quality before choosing a paid plan."
+        "answer": "Yes. Free includes {freeMinutes, number} minutes of uploaded video processing so you can try AI highlight detection and export the generated clips before choosing a paid plan."
       },
       {
-        "question": "What counts as transcription minutes?",
-        "answer": "Minutes are based on the length of the audio or video you transcribe. A 30-minute file uses 30 transcription minutes."
+        "question": "How is video processing measured?",
+        "answer": "Usage is based on the combined length of videos uploaded for clipping. A 30-minute video uses 30 minutes of processing, including its automatic transcript, AI highlight analysis, and candidate clips. The same video is not charged separately for transcription and clipping."
       },
       {
         "question": "Do unused minutes roll over?",
-        "answer": "No. Pro includes {proMinutes, number} transcription minutes every month. The allowance resets monthly and unused minutes do not roll over, including on the yearly billing option."
+        "answer": "No. Creator includes {proMinutes, number} minutes of uploaded video processing every month. The allowance resets monthly and unused usage does not roll over, including on the yearly billing option."
       },
       {
-        "question": "What is the max file length?",
-        "answer": "Free accepts files up to {proHours, number} hours and transcribes up to your remaining {freeMinutes, number} lifetime minutes. Pro includes a larger monthly allowance."
+        "question": "Is transcription charged separately?",
+        "answer": "No. Every uploaded video is automatically transcribed so Scribix can find highlights and create captions. The transcript is included in the same video-processing allowance, not charged separately. Free processes up to your remaining {freeMinutes, number} minutes; the maximum uploaded video length is {proHours, number} hours."
       },
       {
-        "question": "Are there upload size limits?",
-        "answer": "Yes. Video uploads can be up to {proVideoGb, number} GB on Pro and {freeVideoGb, number} GB on Free. Audio uploads can be up to {audioGb, number} GB. The source-duration limit and your remaining plan allowance still apply."
+        "question": "How long are source videos stored?",
+        "answer": "Original videos are stored for 7 days on Free and 30 days on Creator, with up to 5 GB and 100 GB of source storage respectively. Individual video uploads can be up to {freeVideoGb, number} GB on Free and {proVideoGb, number} GB on Creator; audio uploads can be up to {audioGb, number} GB."
+      },
+      {
+        "question": "What happens when an original video expires?",
+        "answer": "The original media is removed automatically. Your transcript and editing decisions remain in the project, so you can re-upload the original video when you want to continue editing or render another clip."
       },
       {
         "question": "Can I change plans later?",
-        "answer": "Yes. You can start on Free, subscribe to Pro when you need it, and manage or cancel your subscription from your billing account."
-      },
-      {
-        "question": "Is there a free trial on paid plans?",
-        "answer": "Paid plans do not include a separate trial. Use the {freeMinutes, number} free lifetime minutes to check transcript quality before subscribing."
+        "answer": "Yes. You can start with {freeMinutes, number} minutes of uploaded video processing on Free, subscribe to Creator when you need more, and manage or cancel your subscription from your billing account."
       }
     ],
     "aiFeatures": "AI notes + translation",
     "included": "Included",
-    "paidIncludedTitle": "Also included",
-    "paidIncludedDescription": "Unlimited exports · Speaker labels · TXT, DOCX, SRT, VTT, CSV",
+    "paidIncludedTitle": "Compare Free and Creator",
+    "paidIncludedDescription": "The cards focus on turning long videos into shorts. This table covers transcription, AI tools, upload limits, storage, and every other plan detail.",
     "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
   },
   "FAQ": {
@@ -792,7 +792,7 @@
       "description": "Choose monthly or yearly Pro billing, or manage your existing subscription.",
       "currentPlan": "Current plan",
       "choosePlanTitle": "Choose the right plan",
-      "choosePlanDescription": "Pro includes 2,400 transcription minutes every month, AI notes, and translation.",
+      "choosePlanDescription": "Creator includes 2,400 minutes of uploaded video processing every month, plus clip editing and brand controls.",
       "checkoutOkTitle": "Subscription active — welcome aboard.",
       "checkoutOkBody": "Your new plan is live. Usage and subscription controls are shown below.",
       "aiFeatures": "AI notes + translation",
@@ -938,6 +938,7 @@
       "eyebrow": "AI clip finder",
       "shortlistTitle": "Your clips",
       "description": "Choose any clip to preview, make a few adjustments, and export it. Each clip keeps its own edits.",
+      "descriptionFree": "Choose an AI-selected clip to preview and export. Free exports the generated cut without editing or brand controls.",
       "generate": "Find clips",
       "regenerate": "Regenerate",
       "generating": "Finding moments…",
@@ -949,6 +950,7 @@
       "shortSourceBody": "This source is already short. Open the original directly to trim it, add captions, and style the final clip.",
       "noQualityTitle": "No strong moments found",
       "noQualityBody": "The AI did not find a complete, compelling clip and will not fill the list with weak suggestions. You can still start a manual cut from the original video.",
+      "noQualityBodyFree": "The AI did not find a complete, compelling clip and will not fill the list with weak suggestions. Try regenerating from this video or upload another source.",
       "manualEyebrow": "Original source",
       "manualTitle": "Edit your own cut",
       "manualBody": "This timeline starts from the uploaded original. Adjust the source timestamps and keep the finished short at 60 seconds or less.",
@@ -969,6 +971,15 @@
       "previewLoading": "Loading secure preview…",
       "previewUnavailable": "The preview URL could not be loaded. Please try again.",
       "previewSegment": "Segment {number}",
+      "freeExport": {
+        "eyebrow": "Free export",
+        "title": "Export the AI-generated cut",
+        "body": "This clip keeps the timing, captions, and framing generated by Scribix. Free exports it as-is.",
+        "included": "Included: AI-selected timing · automatic captions · 1080 × 1920 MP4",
+        "lockedTitle": "Editing and brand controls are on Creator",
+        "lockedBody": "Upgrade to trim the clip, correct captions, reframe the video, and apply your brand.",
+        "upgrade": "Unlock editing"
+      },
       "editor": {
         "loadFailed": "The editor could not be loaded.",
         "reload": "Reload",
@@ -1019,6 +1030,7 @@
           "cover": { "title": "Cover", "time": "Timeline frame", "note": "The final renderer extracts the cover from this exact point in the finished timeline." }
         },
         "finalRender": {
+          "descriptionGenerated": "Scribix exports the AI-selected cut with automatic captions and framing.",
           "eyebrow": "Ready when you are", "title": "Export this clip", "description": "Scribix renders this clip from the original source with your current crop, captions, and styling.", "generate": "Export video", "rendering": "Exporting…", "saveFirst": "Wait for the current edit to finish saving.", "failed": "The export request could not be completed.", "limit": "Your export limit is currently reached. Wait for an active export to finish or try again tomorrow.", "video": "Video", "cover": "Cover", "cancel": "Cancel", "retry": "Retry", "history": "Export history", "externalEdit": "Still needs external editing", "externalEditRecorded": "Feedback recorded",
           "status": { "draft": "Draft", "queued": "Queued", "preparing": "Preparing", "running": "Rendering", "uploading": "Uploading", "completed": "Ready", "failed": "Failed", "canceled": "Canceled" }
         }
