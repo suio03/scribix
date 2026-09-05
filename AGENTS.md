@@ -26,6 +26,8 @@ Scribix is a Next.js App Router project deployed through OpenNext on Cloudflare.
 
 Use TypeScript with `strict` enabled and the `@/*` path alias for root imports. Follow existing two-space indentation, double-quoted strings, named exports, and PascalCase component filenames such as `TranscriptViewer.tsx`. Route handlers export HTTP methods from `route.ts`. Add `"use client"` only where browser APIs or hooks require it. Follow the approved Prism Pulse system in `design-exploration/design-system.md` and reuse semantic Tailwind tokens such as `bg-paper`, `border-line`, and `font-display`; fixed inverse colors are reserved for media and proof surfaces whose appearance must not change with the app theme.
 
+Homepage media behavior, source licenses and proof-versus-demo boundaries are documented in `docs/homepage-media.md`; follow that guide when changing marketing videos.
+
 ## Internationalization Boundaries
 
 Keep `messages/*.json` limited to user-facing copy and localized format templates. Define routes, icons, IDs, stable keys, ordering, feature flags, Tailwind layout classes, prices, quotas, limits, and other application structure in typed TypeScript with one source of truth; assemble translated labels from stable message keys at render time. Do not use `t.raw()` plus a type assertion to load application configuration. Use `t.raw()` only when every field is genuinely localized content, and validate or parity-check the structure across all locales. Interpolate product facts from canonical configuration such as `lib/plans.ts` instead of duplicating literal values in translations.

@@ -59,7 +59,7 @@ The canonical values live in `tokens.json`. The web adapters live in `app/[local
 
 - The page may use two low-opacity radial fields and a masked 72px grid.
 - Translucency is allowed on navigation, the upload module, and the transformation stage only.
-- Product proof uses real Scribix source/output media. Decorative synthetic video imagery should not replace real proof.
+- Product proof uses real Scribix source/output media. Separately labeled feature illustrations may use licensed source excerpts; preserve attribution and do not present them as completed project exports. See `docs/homepage-media.md`. Decorative synthetic video imagery should not replace real proof.
 - Candidate content is a fixed export-preview material and does not invert in dark mode.
 
 ## Iconography
