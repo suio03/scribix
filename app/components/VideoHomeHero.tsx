@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useRef, useState } from "react";
-import { ArrowRight, Check, CloudUpload, Film, Sparkles } from "lucide-react";
+import { ArrowRight, Check, CloudUpload, Film } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { Tier } from "@/lib/plans";
 import {
@@ -12,6 +11,7 @@ import {
   useUpload,
 } from "./Uploader";
 import { useLoginModal } from "./LoginModal";
+import { VideoHomeDemo } from "./VideoHomeDemo";
 
 const VIDEO_ACCEPT =
   "video/mp4,video/quicktime,video/webm,video/x-msvideo,video/x-matroska,.mp4,.mov,.webm,.avi,.mkv";
@@ -51,11 +51,6 @@ export function VideoHomeHero({
     toolSlug: "home",
   });
   const trust = t.raw("trust") as string[];
-  const previewCandidates = t.raw("previewCandidates") as Array<{
-    title: string;
-    duration: string;
-    score: string;
-  }>;
   const busy = phase !== "idle" && phase !== "error";
   const publicHero = !signedIn;
 
@@ -229,78 +224,7 @@ export function VideoHomeHero({
           ))}
         </ul>
 
-        {publicHero ? (
-          <div
-            className="prism-transformation rise-in"
-            aria-label={t("previewLabel")}
-          >
-            <div className="prism-source-panel">
-              <div className="prism-stage-label">
-                <span>{t("previewSource")}</span>
-                <b>16:9</b>
-              </div>
-              <div className="prism-source-frame">
-                <Image
-                  src="/media/video-proof/original-source.jpg"
-                  alt=""
-                  fill
-                  sizes="(max-width: 767px) 100vw, 560px"
-                  className="object-cover"
-                  aria-hidden
-                />
-                <span className="prism-source-badge">
-                  <i aria-hidden />
-                  {t("previewProject")}
-                </span>
-                <p className="prism-source-caption">
-                  {t.rich("previewCaption", {
-                    mark: (chunks) => <mark>{chunks}</mark>,
-                  })}
-                </p>
-              </div>
-            </div>
-
-            <div className="prism-beam" aria-hidden>
-              <span className="prism-beam-line" />
-              <span className="prism-beam-core">
-                <Sparkles size={20} strokeWidth={1.8} />
-              </span>
-            </div>
-
-            <div className="prism-candidate-panel">
-              <div className="prism-stage-label">
-                <span>{t("previewCandidatesLabel")}</span>
-                <b>{previewCandidates.length} AI</b>
-              </div>
-              <div className="prism-candidate-grid">
-                {previewCandidates.map((candidate, index) => (
-                  <article
-                    key={candidate.title}
-                    className={`prism-candidate ${index === 0 ? "is-selected" : ""}`}
-                  >
-                    <Image
-                      src="/media/video-proof/scribix-short.jpg"
-                      alt=""
-                      fill
-                      sizes="(max-width: 767px) 30vw, 140px"
-                      className="object-cover"
-                      style={{ objectPosition: `${48 + index * 4}% center` }}
-                      aria-hidden
-                    />
-                    <span className="prism-candidate-score">{candidate.score}</span>
-                    <div className="prism-candidate-copy">
-                      <strong>{candidate.title}</strong>
-                      <span>
-                        <b>{index === 0 ? t("previewSelected") : `0${index + 1}`}</b>
-                        <b>{candidate.duration}</b>
-                      </span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </div>
-        ) : null}
+        {publicHero ? <VideoHomeDemo /> : null}
       </div>
 
       <PartialTranscriptModal
