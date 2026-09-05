@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, MoreHorizontal, Pencil, X } from "lucide-react";
+import { AlertTriangle, MoreHorizontal, Pencil, VideoOff, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { DownloadMenu } from "./DownloadMenu";
 
@@ -12,6 +12,8 @@ type Props = {
   title: string;
   status: string;
   audioAvailable: boolean;
+  projectId?: string;
+  sourceAvailable?: boolean;
   context?: "transcript" | "project";
 };
 
@@ -20,6 +22,8 @@ export function TranscriptRowMenu({
   title,
   status,
   audioAvailable,
+  projectId,
+  sourceAvailable = false,
   context = "transcript",
 }: Props) {
   const t = useTranslations("Dashboard.rowMenu");
@@ -29,6 +33,7 @@ export function TranscriptRowMenu({
   const [renameOpen, setRenameOpen] = useState(false);
   const [renameTitle, setRenameTitle] = useState(title);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [sourceConfirmOpen, setSourceConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
@@ -46,7 +51,7 @@ export function TranscriptRowMenu({
     const button = buttonRef.current;
     if (!button) return;
     const rect = button.getBoundingClientRect();
-    const menuHeight = 82;
+    const menuHeight = context === "project" && sourceAvailable ? 122 : 82;
     const gap = 6;
     const opensUp = rect.bottom + gap + menuHeight > window.innerHeight;
     setMenuPosition({
@@ -78,15 +83,16 @@ export function TranscriptRowMenu({
   }, [menuOpen]);
 
   useEffect(() => {
-    if (!confirmOpen && !renameOpen) return;
+    if (!confirmOpen && !renameOpen && !sourceConfirmOpen) return;
     function onKeyDown(e: KeyboardEvent) {
       if (e.key !== "Escape" || busy) return;
       setConfirmOpen(false);
       setRenameOpen(false);
+      setSourceConfirmOpen(false);
     }
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [busy, confirmOpen, renameOpen]);
+  }, [busy, confirmOpen, renameOpen, sourceConfirmOpen]);
 
   useEffect(() => {
     if (!renameOpen) setRenameTitle(title);
@@ -122,12 +128,32 @@ export function TranscriptRowMenu({
     setErr(null);
     setBusy(true);
     try {
-      const res = await fetch(`/api/transcripts/${id}`, { method: "DELETE" });
+      const endpoint = context === "project" && projectId
+        ? `/api/video-projects/${projectId}`
+        : `/api/transcripts/${id}`;
+      const res = await fetch(endpoint, { method: "DELETE" });
       if (!res.ok) throw new Error(`Delete failed (${res.status})`);
       setConfirmOpen(false);
-      router.refresh();
+      if (context === "project") router.push("/dashboard");
+      else router.refresh();
     } catch (err) {
       setErr(err instanceof Error ? err.message : t("deleteFailed"));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const onRemoveSource = async () => {
+    if (busy || !projectId) return;
+    setErr(null);
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/video-projects/${projectId}/source`, { method: "DELETE" });
+      if (!res.ok) throw new Error(`Delete failed (${res.status})`);
+      setSourceConfirmOpen(false);
+      router.refresh();
+    } catch (error) {
+      setErr(error instanceof Error ? error.message : t("deleteFailed"));
     } finally {
       setBusy(false);
     }
@@ -155,7 +181,7 @@ export function TranscriptRowMenu({
       {menuOpen && menuPosition && createPortal(
         <div
           ref={menuRef}
-          className="surface-popover fixed z-50 w-32 overflow-hidden rounded-lg border border-line bg-paper shadow-lg"
+          className="surface-popover fixed z-50 w-44 overflow-hidden rounded-lg border border-line bg-paper shadow-lg"
           style={{ right: menuPosition.right, top: menuPosition.top }}
         >
           <button
@@ -172,6 +198,21 @@ export function TranscriptRowMenu({
             <Pencil size={14} />
             {t("rename")}
           </button>
+          {context === "project" && sourceAvailable ? (
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                setErr(null);
+                setSourceConfirmOpen(true);
+              }}
+              disabled={busy}
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-ink hover:bg-ink/5 disabled:opacity-50"
+            >
+              <VideoOff size={14} />
+              {t("removeSource")}
+            </button>
+          ) : null}
           <button
             type="button"
             onClick={() => {
@@ -331,6 +372,72 @@ export function TranscriptRowMenu({
                   className="rounded-full bg-red-600 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
                 >
                   {busy ? t("confirmDeleting") : t(confirmDeleteKey)}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+      {sourceConfirmOpen && createPortal(
+        <div
+          className="surface-modal-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !busy) setSourceConfirmOpen(false);
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="remove-source-title"
+            aria-describedby="remove-source-description"
+            className="surface-modal w-full max-w-[420px] overflow-hidden rounded-xl border border-line bg-card shadow-2xl shadow-ink/20"
+          >
+            <div className="flex items-start gap-3 border-b border-line bg-paper/70 px-5 py-4">
+              <span className="mt-0.5 inline-grid size-9 shrink-0 place-items-center rounded-full bg-amber-500/10 text-amber-700">
+                <VideoOff size={18} strokeWidth={1.8} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 id="remove-source-title" className="text-[15px] font-semibold text-ink">
+                  {t("removeSourceTitle")}
+                </h2>
+                <p id="remove-source-description" className="mt-1 text-[13px] leading-5 text-muted">
+                  {t("removeSourceBody")}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSourceConfirmOpen(false)}
+                disabled={busy}
+                aria-label={t("confirmClose")}
+                className="inline-grid size-8 shrink-0 place-items-center rounded-lg text-muted transition hover:bg-ink/5 hover:text-ink disabled:opacity-50"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="px-5 py-4">
+              {err ? (
+                <p className="mb-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[13px] text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200">
+                  {err}
+                </p>
+              ) : null}
+              <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setSourceConfirmOpen(false)}
+                  disabled={busy}
+                  className="rounded-full border border-line px-4 py-2 text-[13px] font-medium text-ink transition hover:bg-ink/5 disabled:opacity-50"
+                >
+                  {t("confirmCancel")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void onRemoveSource()}
+                  disabled={busy}
+                  className="rounded-full bg-amber-600 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-amber-700 disabled:opacity-60"
+                >
+                  {busy ? t("removingSource") : t("removeSourceConfirm")}
                 </button>
               </div>
             </div>

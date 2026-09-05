@@ -113,36 +113,56 @@ export function VideoStyleControls({
         <div className="space-y-4">
           {[...edl.segments].sort((a, b) => a.order - b.order).map((segment, index) => {
             const crop = renderSpec.segments[segment.id].crop;
-            const automatic = crop.x === 0.5 && crop.y === 0.5 && crop.zoom === 1;
+            const framingMode = renderSpec.segments[segment.id].framingMode ?? "fill";
+            const updateFraming = (
+              nextMode: "fill" | "fit",
+              nextCrop = crop
+            ) => onChange({
+              ...renderSpec,
+              segments: {
+                ...renderSpec.segments,
+                [segment.id]: { framingMode: nextMode, crop: nextCrop },
+              },
+            });
             return (
               <div key={segment.id} className="rounded-lg border border-line bg-paper/65 p-3">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-ink/45">
                     {t("framing.cut", { number: index + 1 })}
                   </p>
-                  <span className={`rounded-full px-2 py-0.5 text-[9px] font-semibold ${automatic ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
-                    {t(automatic ? "framing.automatic" : "framing.manual")}
-                  </span>
                 </div>
-                <p className="mb-3 text-[10px] leading-4 text-ink/50">
-                  {t(automatic ? "framing.automaticNote" : "framing.manualNote")}
+                <div className="grid grid-cols-2 rounded-lg border border-line bg-card p-1">
+                  {(["fill", "fit"] as const).map((mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      aria-pressed={framingMode === mode}
+                      onClick={() => updateFraming(mode)}
+                      className={`rounded-md px-3 py-2 text-[10px] font-semibold transition ${framingMode === mode ? "bg-ink text-paper" : "text-ink/55 hover:bg-ink/5 hover:text-ink"}`}
+                    >
+                      {t(`framing.${mode}`)}
+                    </button>
+                  ))}
+                </div>
+                <p className="my-3 text-[10px] leading-4 text-ink/50">
+                  {t(framingMode === "fill" ? "framing.fillNote" : "framing.fitNote")}
                 </p>
-                <ControlRange label={t("framing.horizontal")} min={0} max={1} step={0.01} value={crop.x} display={`${Math.round(crop.x * 100)}%`} onChange={(x) => onChange({ ...renderSpec, segments: { ...renderSpec.segments, [segment.id]: { crop: { ...crop, x } } } })} />
-                <ControlRange label={t("framing.vertical")} min={0} max={1} step={0.01} value={crop.y} display={`${Math.round(crop.y * 100)}%`} onChange={(y) => onChange({ ...renderSpec, segments: { ...renderSpec.segments, [segment.id]: { crop: { ...crop, y } } } })} />
-                <ControlRange label={t("framing.zoom")} min={1} max={4} step={0.05} value={crop.zoom} display={`${crop.zoom.toFixed(2)}×`} onChange={(zoom) => onChange({ ...renderSpec, segments: { ...renderSpec.segments, [segment.id]: { crop: { ...crop, zoom } } } })} />
-                {!automatic ? (
+                {framingMode === "fill" ? (
+                  <>
+                    <ControlRange label={t("framing.horizontal")} min={0} max={1} step={0.01} value={crop.x} display={`${Math.round(crop.x * 100)}%`} onChange={(x) => updateFraming("fill", { ...crop, x })} />
+                    <ControlRange label={t("framing.vertical")} min={0} max={1} step={0.01} value={crop.y} display={`${Math.round(crop.y * 100)}%`} onChange={(y) => updateFraming("fill", { ...crop, y })} />
+                    <ControlRange label={t("framing.zoom")} min={1} max={4} step={0.05} value={crop.zoom} display={`${crop.zoom.toFixed(2)}×`} onChange={(zoom) => updateFraming("fill", { ...crop, zoom })} />
+                  </>
+                ) : null}
+                {framingMode === "fill" && (
+                  crop.x !== 0.5 || crop.y !== 0.5 || crop.zoom !== 1
+                ) ? (
                   <button
                     type="button"
-                    onClick={() => onChange({
-                      ...renderSpec,
-                      segments: {
-                        ...renderSpec.segments,
-                        [segment.id]: { crop: { x: 0.5, y: 0.5, zoom: 1 } },
-                      },
-                    })}
+                    onClick={() => updateFraming("fill", { x: 0.5, y: 0.5, zoom: 1 })}
                     className="mt-3 text-[10px] font-semibold text-accent underline decoration-accent/30 underline-offset-4"
                   >
-                    {t("framing.useAutomatic")}
+                    {t("framing.reset")}
                   </button>
                 ) : null}
               </div>

@@ -78,7 +78,9 @@ export function validateClientEventProperties(
     };
   }
   if (eventName === "render_downloaded") {
-    return hasOnly(value, ["assetKind"]) && (value.assetKind === "video" || value.assetKind === "cover")
+    return hasOnly(value, ["assetKind"]) && (
+      value.assetKind === "video" || value.assetKind === "cover" || value.assetKind === "package"
+    )
       ? { assetKind: value.assetKind }
       : null;
   }

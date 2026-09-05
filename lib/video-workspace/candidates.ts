@@ -99,7 +99,7 @@ export async function replaceClipCandidates(
   await db.batch(statements);
 }
 
-export async function replaceWithManualClipCandidate(
+export async function createManualClipCandidate(
   db: D1Database,
   userId: string,
   projectId: string,
@@ -108,30 +108,50 @@ export async function replaceWithManualClipCandidate(
 ): Promise<string> {
   const candidateId = newId();
   const endMs = Math.min(sourceDurationMs, initialDurationMs);
-  const statements = [
-    db.prepare(
-      `DELETE FROM clip_candidates WHERE project_id = ?1 AND user_id = ?2`
-    ).bind(projectId, userId),
-    db.prepare(
-      `INSERT INTO clip_candidates
-         (id, user_id, project_id, rank, theme, hook, reason, score,
-          segments_json, status, origin)
-       VALUES (?1, ?2, ?3, 0, 'manual_source', 'manual_source',
-               'manual_source', 0, ?4, 'accepted', 'manual')`
-    ).bind(
+  await db.prepare(
+    `INSERT INTO clip_candidates
+       (id, user_id, project_id, rank, theme, hook, reason, score,
+        segments_json, status, origin)
+     SELECT ?1, ?2, ?3, COALESCE(MAX(rank), -1) + 1,
+            'manual_source', 'manual_source', 'manual_source', 0,
+            ?4, 'accepted', 'manual'
+       FROM clip_candidates
+      WHERE project_id = ?3 AND user_id = ?2
+     HAVING NOT EXISTS (
+       SELECT 1 FROM clip_candidates
+        WHERE project_id = ?3
+          AND user_id = ?2
+          AND origin = 'manual'
+          AND status <> 'deleted'
+     )`
+  )
+    .bind(
       candidateId,
       userId,
       projectId,
       JSON.stringify([{ startMs: 0, endMs }])
-    ),
-    db.prepare(
-      `UPDATE video_projects
-          SET status = 'editing', updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL`
-    ).bind(projectId, userId),
-  ];
-  await db.batch(statements);
-  return candidateId;
+    )
+    .run();
+  await db.prepare(
+    `UPDATE video_projects
+        SET status = 'editing', updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL`
+  )
+    .bind(projectId, userId)
+    .run();
+  const candidate = await db.prepare(
+    `SELECT id
+       FROM clip_candidates
+      WHERE project_id = ?1
+        AND user_id = ?2
+        AND origin = 'manual'
+        AND status <> 'deleted'
+      LIMIT 1`
+  )
+    .bind(projectId, userId)
+    .first<{ id: string }>();
+  if (!candidate) throw new Error("manual_candidate_create_failed");
+  return candidate.id;
 }
 
 function parseSegments(value: string): ClipCandidate["segments"] | null {

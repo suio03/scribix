@@ -45,8 +45,8 @@ try {
       outputPresetId: "vertical-1080p-v1",
       canvas: { width: 1080, height: 1920, fps: 30, backgroundColor: "#000000" },
       segments: {
-        s0: { crop: { x: 0.25, y: 0.5, zoom: 1 } },
-        s1: { crop: { x: 0.75, y: 0.5, zoom: 1.1 } },
+        s0: { framingMode: "fill", crop: { x: 0.25, y: 0.5, zoom: 1 } },
+        s1: { framingMode: "fit", crop: { x: 0.75, y: 0.5, zoom: 1.1 } },
       },
       captions: {
         enabled: true,

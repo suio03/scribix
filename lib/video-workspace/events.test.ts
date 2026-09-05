@@ -18,5 +18,8 @@ test("pilot event properties reject free text and unknown fields", () => {
   assert.deepEqual(validateClientEventProperties("render_downloaded", { assetKind: "video" }), {
     assetKind: "video",
   });
+  assert.deepEqual(validateClientEventProperties("render_downloaded", { assetKind: "package" }), {
+    assetKind: "package",
+  });
   assert.equal(validateClientEventProperties("external_edit_required", { reason: "free text" }), null);
 });

@@ -3,15 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import {
   AlertCircle,
+  AlertTriangle,
+  Archive,
   Check,
   Clock3,
   Film,
   LockKeyhole,
   Loader2,
   Play,
-  RefreshCw,
   Scissors,
   Sparkles,
+  Trash2,
+  X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
@@ -23,6 +26,7 @@ import { Link } from "@/i18n/navigation";
 import type { StoredClipCandidate } from "@/lib/video-workspace/candidates";
 import { VIDEO_WORKSPACE_LIMITS } from "@/lib/video-workspace/contracts";
 import type { CandidatePreview } from "@/lib/video-workspace/preview-jobs";
+import type { FinalRenderSummary } from "@/lib/video-workspace/final-jobs";
 
 type ProjectStatus = "draft" | "analyzing" | "candidates_ready" | "failed" | string;
 
@@ -33,6 +37,9 @@ export function VideoCandidateWorkspace({
   initialCandidates,
   initialPreviews,
   initialSelectedCandidateId,
+  initialRenders,
+  sourceAvailable,
+  sourceExpiresAt,
   canEdit,
 }: {
   projectId: string;
@@ -41,6 +48,9 @@ export function VideoCandidateWorkspace({
   initialCandidates: StoredClipCandidate[];
   initialPreviews: CandidatePreview[];
   initialSelectedCandidateId: string | null;
+  initialRenders: FinalRenderSummary[];
+  sourceAvailable: boolean;
+  sourceExpiresAt: string | null;
   canEdit: boolean;
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
@@ -57,9 +67,11 @@ export function VideoCandidateWorkspace({
   const [error, setError] = useState(false);
   const [previewBusy, setPreviewBusy] = useState<string | null>(null);
   const [manualBusy, setManualBusy] = useState(false);
+  const [candidateToDelete, setCandidateToDelete] = useState<string | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
   const autoStartedRef = useRef(false);
   const editorRef = useRef<HTMLDivElement>(null);
-  const generating = status === "analyzing";
+  const generating = sourceAvailable && status === "analyzing";
   const shortSource = Boolean(
     canEdit && sourceDurationMs &&
     sourceDurationMs <= VIDEO_WORKSPACE_LIMITS.directEditMaxSourceDurationMs
@@ -67,9 +79,37 @@ export function VideoCandidateWorkspace({
   const selectedCandidate = candidates.find((candidate) => (
     candidate.id === selectedCandidateId
   )) ?? null;
+  const hasManualCandidate = candidates.some((candidate) => candidate.origin === "manual");
   const previewsActive = previews.some((preview) => (
     preview.status === "queued" || preview.status === "processing"
   ));
+
+  const deleteCustomClip = async () => {
+    if (!candidateToDelete || deleteBusy) return;
+    setDeleteBusy(true);
+    setError(false);
+    try {
+      const response = await fetch(
+        `/api/video-projects/${projectId}/candidates/${candidateToDelete}`,
+        { method: "DELETE" }
+      );
+      const payload = await response.json() as { candidates?: StoredClipCandidate[] };
+      if (!response.ok || !payload.candidates) throw new Error("candidate_delete_failed");
+      const nextCandidates = payload.candidates;
+      setCandidates(nextCandidates);
+      setPreviews((current) => current.filter((preview) => (
+        preview.candidateId !== candidateToDelete
+      )));
+      setSelectedCandidateId(nextCandidates[0]?.id ?? null);
+      setPendingCandidateId(null);
+      setEditorSaveState("saved");
+      setCandidateToDelete(null);
+    } catch {
+      setError(true);
+    } finally {
+      setDeleteBusy(false);
+    }
+  };
 
   useEffect(() => {
     if (!generating) return;
@@ -120,6 +160,19 @@ export function VideoCandidateWorkspace({
   }, [candidates, selectedCandidateId]);
 
   useEffect(() => {
+    if (sourceAvailable) return;
+    const exportedCandidateIds = new Set(initialRenders.flatMap((render) => (
+      render.status === "completed" && render.videoUrl && render.candidateId
+        ? [render.candidateId]
+        : []
+    )));
+    setCandidates((current) => current.filter((candidate) => (
+      exportedCandidateIds.has(candidate.id)
+    )));
+    setPreviews([]);
+  }, [initialRenders, sourceAvailable]);
+
+  useEffect(() => {
     if (!pendingCandidateId || editorSaveState !== "saved") return;
     setSelectedCandidateId(pendingCandidateId);
     setPendingCandidateId(null);
@@ -140,7 +193,6 @@ export function VideoCandidateWorkspace({
 
   const generate = async () => {
     if (generating) return;
-    if (candidates.length > 0 && !window.confirm(t("replaceConfirm"))) return;
     setStatus("analyzing");
     setError(false);
     try {
@@ -166,7 +218,6 @@ export function VideoCandidateWorkspace({
 
   const startManualEdit = async () => {
     if (manualBusy || generating) return;
-    if (candidates.length > 0 && !window.confirm(t("replaceConfirm"))) return;
     setManualBusy(true);
     setError(false);
     try {
@@ -179,6 +230,7 @@ export function VideoCandidateWorkspace({
         status?: string;
         candidates?: StoredClipCandidate[];
         previews?: CandidatePreview[];
+        candidateId?: string;
       };
       if (!response.ok || !payload.candidates?.some((candidate) => (
         candidate.origin === "manual"
@@ -190,6 +242,7 @@ export function VideoCandidateWorkspace({
         payload.previews ?? [],
         payload.status ?? "editing"
       );
+      if (payload.candidateId) setSelectedCandidateId(payload.candidateId);
     } catch {
       setError(true);
     } finally {
@@ -237,12 +290,12 @@ export function VideoCandidateWorkspace({
 
   useEffect(() => {
     if (
-      autoStartedRef.current || status !== "draft" || candidates.length > 0 ||
+      !sourceAvailable || autoStartedRef.current || status !== "draft" || candidates.length > 0 ||
       generating || manualBusy
     ) return;
     autoStartedRef.current = true;
     void (shortSource ? startManualEdit() : generate());
-  }, [candidates.length, generating, manualBusy, shortSource, status]);
+  }, [candidates.length, generating, manualBusy, shortSource, sourceAvailable, status]);
 
   return (
     <section id="clips" className="mt-9 scroll-mt-6">
@@ -255,34 +308,51 @@ export function VideoCandidateWorkspace({
             {t("shortlistTitle")}
           </h2>
           <p className="mt-2 text-[14px] leading-6 text-ink/60">
-            {t(canEdit ? "description" : "descriptionFree")}
+            {t(!sourceAvailable
+              ? "archivedDescription"
+              : canEdit
+                ? "description"
+                : "descriptionFree")}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => void (shortSource ? startManualEdit() : generate())}
-          disabled={generating || manualBusy}
-          className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-[12px] font-medium text-ink transition hover:border-ink/35 hover:bg-ink hover:text-paper disabled:cursor-wait disabled:opacity-40"
-        >
-          {generating || manualBusy ? (
-            <Loader2 size={14} className="animate-spin" />
-          ) : candidates.length > 0 ? (
-            <RefreshCw size={14} />
-          ) : shortSource ? (
-            <Scissors size={14} />
-          ) : (
-            <Sparkles size={14} />
-          )}
-          {generating
-            ? t("generating")
-            : manualBusy
-              ? t("directEditing")
-              : candidates.length > 0
-                ? t("regenerate")
-                : shortSource
-                  ? t("directEdit")
-                  : t("generate")}
-        </button>
+        {sourceAvailable && candidates.length > 0 ? (
+          canEdit && !hasManualCandidate ? (
+            <button
+              type="button"
+              onClick={() => void startManualEdit()}
+              disabled={manualBusy}
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-[12px] font-medium text-ink transition hover:border-ink/35 hover:bg-ink hover:text-paper disabled:cursor-wait disabled:opacity-40"
+            >
+              {manualBusy ? <Loader2 size={14} className="animate-spin" /> : <Scissors size={14} />}
+              {manualBusy ? t("directEditing") : t("createCustomClip")}
+            </button>
+          ) : null
+        ) : status === "failed" ? (
+          <button
+            type="button"
+            onClick={() => void generate()}
+            disabled={generating}
+            className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-[12px] font-medium text-ink transition hover:border-ink/35 hover:bg-ink hover:text-paper disabled:cursor-wait disabled:opacity-40"
+          >
+            {generating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+            {generating ? t("generating") : t("tryAgain")}
+          </button>
+        ) : null}
+      </div>
+
+      <div className={`mt-5 flex flex-wrap items-center gap-2 rounded-xl border px-4 py-3 text-[12px] ${
+        sourceAvailable
+          ? "border-line bg-card/60 text-ink/55"
+          : "border-amber-300/35 bg-amber-100/35 text-amber-900 dark:bg-amber-400/10 dark:text-amber-100"
+      }`}>
+        {sourceAvailable ? <Clock3 size={14} className="text-accent" /> : <Archive size={14} />}
+        <span>
+          {sourceAvailable && sourceExpiresAt
+            ? t("sourceAvailableUntil", { date: formatAssetDate(sourceExpiresAt) })
+            : sourceAvailable
+              ? t("sourceAvailable")
+              : t("sourceUnavailableBody")}
+        </span>
       </div>
 
       {error ? (
@@ -293,7 +363,19 @@ export function VideoCandidateWorkspace({
 
       {generating ? <CandidateSkeleton label={t("analyzingBody")} /> : null}
 
-      {!generating && candidates.length === 0 ? (
+      {!sourceAvailable && candidates.length === 0 ? (
+        <div className="mt-8 grid min-h-64 place-items-center rounded-2xl border border-dashed border-line bg-card/35 px-6 text-center">
+          <div className="max-w-md py-12">
+            <span className="mx-auto inline-grid size-11 place-items-center rounded-full border border-line bg-paper text-muted">
+              <Archive size={18} />
+            </span>
+            <h3 className="mt-4 font-display text-xl font-semibold">{t("sourceUnavailableTitle")}</h3>
+            <p className="mt-2 text-[13px] leading-6 text-ink/55">{t("sourceUnavailableEmpty")}</p>
+          </div>
+        </div>
+      ) : null}
+
+      {sourceAvailable && !generating && candidates.length === 0 ? (
         <div className="mt-8 grid min-h-64 place-items-center rounded-2xl border border-dashed border-line bg-card/35 px-6 text-center">
           <div className="max-w-md py-12">
             <span className="mx-auto inline-grid size-11 place-items-center rounded-full border border-line bg-paper text-accent">
@@ -309,7 +391,7 @@ export function VideoCandidateWorkspace({
                   ? t("shortSourceBody")
                   : t("emptyBody")}
             </p>
-            {canEdit && status === "candidates_ready" && !shortSource ? (
+            {canEdit && status === "candidates_ready" ? (
               <button
                 type="button"
                 onClick={() => void startManualEdit()}
@@ -343,21 +425,39 @@ export function VideoCandidateWorkspace({
                   pending={candidate.id === pendingCandidateId}
                   preview={preview}
                   previewBusy={candidate.id === previewBusy}
+                  sourceAvailable={sourceAvailable}
+                  coverUrl={initialRenders.find((render) => (
+                    render.candidateId === candidate.id && render.videoUrl
+                  ))?.coverUrl ?? null}
                   onSelect={selectCandidate}
                   onRequestPreview={requestPreview}
+                  onDelete={candidate.origin === "manual"
+                    ? () => setCandidateToDelete(candidate.id)
+                    : undefined}
                 />
               );
             })}
           </div>
-          <p className="mt-3 text-[11px] leading-5 text-ink/45">
-            {t("previewPending")}
-          </p>
+          {sourceAvailable ? (
+            <p className="mt-3 text-[11px] leading-5 text-ink/45">
+              {t("previewPending")}
+            </p>
+          ) : null}
         </>
       ) : null}
 
       {selectedCandidate ? (
         <div ref={editorRef} className="mt-8 scroll-mt-6 overflow-hidden rounded-2xl border border-line bg-card shadow-[0_28px_80px_-56px_rgba(14,13,11,0.7)]">
-          {canEdit ? (
+          {!sourceAvailable ? (
+            <ArchivedClipExport
+              projectId={projectId}
+              candidate={selectedCandidate}
+              renders={initialRenders.filter((render) => render.candidateId === selectedCandidate.id)}
+              onExportDeleted={() => setCandidates((current) => (
+                current.filter((candidate) => candidate.id !== selectedCandidate.id)
+              ))}
+            />
+          ) : canEdit ? (
             <VideoClipEditor
               key={selectedCandidate.id}
               projectId={projectId}
@@ -376,6 +476,100 @@ export function VideoCandidateWorkspace({
           )}
         </div>
       ) : null}
+      {candidateToDelete ? (
+        <div
+          className="surface-modal-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !deleteBusy) setCandidateToDelete(null);
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-custom-clip-title"
+            className="surface-modal w-full max-w-[420px] overflow-hidden rounded-xl border border-line bg-card shadow-2xl shadow-ink/20"
+          >
+            <div className="flex items-start gap-3 border-b border-line bg-paper/70 px-5 py-4">
+              <span className="mt-0.5 inline-grid size-9 shrink-0 place-items-center rounded-full bg-red-500/10 text-red-600">
+                <AlertTriangle size={18} strokeWidth={1.8} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 id="delete-custom-clip-title" className="text-[15px] font-semibold text-ink">
+                  {t("deleteCustomTitle")}
+                </h2>
+                <p className="mt-1 text-[13px] leading-5 text-muted">{t("deleteCustomBody")}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCandidateToDelete(null)}
+                disabled={deleteBusy}
+                aria-label={t("deleteCustomCancel")}
+                className="inline-grid size-8 shrink-0 place-items-center rounded-lg text-muted transition hover:bg-ink/5 hover:text-ink disabled:opacity-50"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="flex flex-col-reverse gap-2 px-5 py-4 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setCandidateToDelete(null)}
+                disabled={deleteBusy}
+                className="rounded-full border border-line px-4 py-2 text-[13px] font-medium text-ink transition hover:bg-ink/5 disabled:opacity-50"
+              >
+                {t("deleteCustomCancel")}
+              </button>
+              <button
+                type="button"
+                onClick={() => void deleteCustomClip()}
+                disabled={deleteBusy}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+              >
+                {deleteBusy ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+                {deleteBusy ? t("deletingCustom") : t("deleteCustomConfirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function ArchivedClipExport({
+  projectId,
+  candidate,
+  renders,
+  onExportDeleted,
+}: {
+  projectId: string;
+  candidate: StoredClipCandidate;
+  renders: FinalRenderSummary[];
+  onExportDeleted: () => void;
+}) {
+  const t = useTranslations("Dashboard.videoCandidates");
+  return (
+    <section className="grid gap-6 px-5 py-6 sm:px-7 sm:py-7 lg:grid-cols-[minmax(0,0.88fr)_minmax(320px,1.12fr)]">
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+          {t("sourceUnavailableEyebrow")}
+        </p>
+        <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink">
+          {candidate.origin === "manual" ? t("manualTitle") : candidate.theme}
+        </h3>
+        <p className="mt-2 text-[13px] leading-6 text-ink/60">{t("archivedClipBody")}</p>
+      </div>
+      <FinalRenderPanel
+        projectId={projectId}
+        candidateId={candidate.id}
+        revision={0}
+        disabled
+        generatedOnly
+        sourceAvailable={false}
+        initialRenders={renders}
+        onConflict={() => undefined}
+        onExportDeleted={onExportDeleted}
+      />
     </section>
   );
 }
@@ -446,8 +640,11 @@ function CandidateTile({
   pending,
   preview,
   previewBusy,
+  sourceAvailable,
+  coverUrl,
   onSelect,
   onRequestPreview,
+  onDelete,
 }: {
   projectId: string;
   candidate: StoredClipCandidate;
@@ -456,8 +653,11 @@ function CandidateTile({
   pending: boolean;
   preview: CandidatePreview | null;
   previewBusy: boolean;
+  sourceAvailable: boolean;
+  coverUrl: string | null;
   onSelect: (candidateId: string) => void;
   onRequestPreview: (candidateId: string) => Promise<void>;
+  onDelete?: () => void;
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
   const durationMs = candidate.segments.reduce(
@@ -481,7 +681,13 @@ function CandidateTile({
         }`}
       >
         <div className="fixed-media-surface relative aspect-video overflow-hidden bg-ink">
-          {preview?.status === "ready" ? (
+          {coverUrl ? (
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-cover bg-center opacity-85 transition duration-300 group-hover:scale-[1.02] group-hover:opacity-100"
+              style={{ backgroundImage: `url(${JSON.stringify(coverUrl).slice(1, -1)})` }}
+            />
+          ) : preview?.status === "ready" ? (
             <CandidatePreviewFrame projectId={projectId} candidateId={candidate.id} />
           ) : (
             <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_35%,rgba(108,53,255,0.32),transparent_38%),linear-gradient(145deg,#201641,#09031b)] text-paper/45">
@@ -498,7 +704,7 @@ function CandidateTile({
             {candidate.origin === "manual" ? t("manualEyebrow") : t("clipLabel", { number })}
           </span>
           {selected ? (
-            <span className="absolute right-2 top-2 inline-flex size-6 items-center justify-center rounded-full bg-accent text-white shadow">
+            <span className={`absolute top-2 inline-flex size-6 items-center justify-center rounded-full bg-accent text-white shadow ${onDelete ? "right-10" : "right-2"}`}>
               <Check size={13} strokeWidth={2.5} />
             </span>
           ) : (
@@ -524,7 +730,18 @@ function CandidateTile({
           </span>
         </div>
       </button>
-      {(failed || !preview) && !processing ? (
+      {onDelete ? (
+        <button
+          type="button"
+          onClick={onDelete}
+          aria-label={t("deleteCustom")}
+          title={t("deleteCustom")}
+          className="absolute right-2 top-2 inline-grid size-6 place-items-center rounded-full bg-black/65 text-white/70 backdrop-blur transition hover:bg-red-600 hover:text-white"
+        >
+          <Trash2 size={11} />
+        </button>
+      ) : null}
+      {sourceAvailable && (failed || !preview) && !processing ? (
         <button
           type="button"
           disabled={previewBusy}
@@ -613,4 +830,10 @@ function formatDuration(durationMs: number): string {
   if (durationMs < 60_000) return `${Math.round(durationMs / 1000)}s`;
   const seconds = Math.round(durationMs / 1000);
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+function formatAssetDate(value: string): string {
+  const normalized = value.includes("T") ? value : `${value.replace(" ", "T")}Z`;
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString();
 }

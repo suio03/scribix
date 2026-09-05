@@ -23,6 +23,7 @@ import { checkSourcePolicy } from "./source-policy";
 import { VideoWorkspaceR2 } from "./r2-keys";
 import {
   CandidateGenerationError,
+  aiCandidateGenerationBlocked,
   alignAndValidateCandidateSet,
   buildCandidateAnalysisInput,
   candidateLimitForSourceDuration,
@@ -48,8 +49,8 @@ const renderSpec: RenderSpec = {
     backgroundColor: "#000000",
   },
   segments: {
-    seg_01: { crop: { x: 0.5, y: 0.5, zoom: 1.15 } },
-    seg_02: { crop: { x: 0.42, y: 0.5, zoom: 1.1 } },
+    seg_01: { framingMode: "fill", crop: { x: 0.5, y: 0.5, zoom: 1.15 } },
+    seg_02: { framingMode: "fit", crop: { x: 0.42, y: 0.5, zoom: 1.1 } },
   },
   captions: {
     enabled: true,
@@ -129,6 +130,29 @@ test("rejects renderer fields outside the versioned contract", () => {
   }
 });
 
+test("accepts legacy crop specs and rejects unknown framing modes", () => {
+  const legacy = {
+    ...renderSpec,
+    segments: {
+      seg_01: { crop: renderSpec.segments.seg_01.crop },
+      seg_02: { crop: renderSpec.segments.seg_02.crop },
+    },
+  };
+  assert.equal(validateRenderSpec(legacy, edl).success, true);
+  const invalid = {
+    ...renderSpec,
+    segments: {
+      ...renderSpec.segments,
+      seg_01: { ...renderSpec.segments.seg_01, framingMode: "stretch" },
+    },
+  };
+  const result = validateRenderSpec(invalid, edl);
+  assert.equal(result.success, false);
+  if (!result.success) {
+    assert.ok(result.issues.some((item) => item.path.endsWith(".framingMode")));
+  }
+});
+
 test("requires every EDL segment and a cover point inside the timeline", () => {
   const result = validateRenderSpec(
     {
@@ -199,6 +223,14 @@ test("validates structured candidate output against source time", () => {
     { sourceDurationMs: 60_000 }
   );
   assert.equal(result.success, true);
+});
+
+test("AI candidate generation is available only before a successful analysis", () => {
+  assert.equal(aiCandidateGenerationBlocked("draft", []), false);
+  assert.equal(aiCandidateGenerationBlocked("failed", []), false);
+  assert.equal(aiCandidateGenerationBlocked("candidates_ready", []), true);
+  assert.equal(aiCandidateGenerationBlocked("editing", ["manual"]), true);
+  assert.equal(aiCandidateGenerationBlocked("failed", ["ai"]), true);
 });
 
 test("short-video duration policy adapts candidate count without padding", () => {

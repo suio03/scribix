@@ -61,9 +61,17 @@ export async function renderFinal({
   for (const [index, segment] of segments.entries()) {
     const crop = lease.renderSpec.segments[segment.id]?.crop;
     if (!crop) throw renderError("invalid_render_spec");
-    const automatic = crop.x === 0.5 && crop.y === 0.5 && crop.zoom === 1;
-    const reframe = automatic ? reframeBySegment.get(segment.id) : null;
-    if (reframe?.mode === "smart_crop" && reframe.keyframes?.length > 0) {
+    const framingMode = lease.renderSpec.segments[segment.id]?.framingMode ?? "fill";
+    const reframe = reframeBySegment.get(segment.id);
+    if (framingMode === "fit") {
+      const background = lease.renderSpec.canvas.backgroundColor.replace("#", "0x");
+      filters.push(
+        `[${index}:v:0]setpts=PTS-STARTPTS,` +
+        `scale=1080:1920:force_original_aspect_ratio=decrease,` +
+        `pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=${background},` +
+        `setsar=1,fps=30,format=yuv420p[v${index}]`
+      );
+    } else if (reframe?.mode === "smart_crop" && reframe.keyframes?.length > 0) {
       filters.push(
         `[${index}:v:0]setpts=PTS-STARTPTS,scale=-2:1920,` +
         `crop=1080:1920:x='(iw-ow)*(${cropExpression(reframe.keyframes)})':y=0,` +

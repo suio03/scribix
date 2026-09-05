@@ -4,14 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { Clapperboard, FileText, FolderKanban, X } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { getPathname, Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Logo } from "./Logo";
 import { AccountMenu } from "./ProductTopbar";
 import { useSidebar } from "./SidebarContext";
 import type { SidebarUsage } from "./sidebarUsage";
 import { ThemeToggle } from "./ThemeToggle";
+import { UpgradePlanButton } from "./UpgradePlanButton";
 
 export function WorkspaceSidebar({
   signOutRedirect,
@@ -27,11 +28,15 @@ export function WorkspaceSidebar({
   const topNavT = useTranslations("TopNav");
   const sidebarT = useTranslations("Sidebar");
   const dashboardT = useTranslations("Dashboard.list");
+  const locale = useLocale();
   const pathname = usePathname();
   const { isOpen, setOpen } = useSidebar();
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
-  const remainingMin = Math.max(0, Math.round((usage?.quotaMin ?? 45) - (usage?.usedMin ?? 0)));
+  const checkoutSuccessPath = getPathname({
+    href: { pathname: "/dashboard/billing", query: { checkout: "ok" } },
+    locale,
+  });
 
   const closeMobile = () => setOpen(false);
   const createActive = pathname === "/dashboard/new";
@@ -122,23 +127,19 @@ export function WorkspaceSidebar({
         </nav>
 
         <div className="border-t border-line p-3">
-          <Link
-            href="/dashboard/billing"
-            onClick={closeMobile}
-            className="flex items-center justify-between rounded-xl border border-line bg-paper px-3 py-2.5 text-[11px] font-medium text-muted transition hover:border-ink/20 hover:text-ink"
-          >
-            <span>{sidebarT("usageTitle")}</span>
-            <span className="flex items-center gap-2 tabular-nums">
-              <span className="size-1.5 rounded-full bg-accent" />
-              {sidebarT("usageRemaining", { remaining: remainingMin })}
-            </span>
-          </Link>
-
-          {usage?.tier !== "pro" ? (
+          {usage?.tier === "free" || !usage ? (
+            <UpgradePlanButton
+              checkoutSuccessPath={checkoutSuccessPath}
+              onOpen={closeMobile}
+              className="flex w-full items-center justify-center rounded-xl bg-accent px-3 py-2.5 text-[12px] font-semibold text-[var(--action-text)] transition hover:bg-accent/90"
+            >
+              {sidebarT("upgradePlan")}
+            </UpgradePlanButton>
+          ) : usage.tier === "basic" ? (
             <Link
               href="/dashboard/billing"
               onClick={closeMobile}
-              className="mt-2 flex items-center justify-center rounded-xl bg-accent px-3 py-2.5 text-[12px] font-semibold text-[var(--action-text)] transition hover:bg-accent/90"
+              className="flex items-center justify-center rounded-xl bg-accent px-3 py-2.5 text-[12px] font-semibold text-[var(--action-text)] transition hover:bg-accent/90"
             >
               {sidebarT("upgradePlan")}
             </Link>

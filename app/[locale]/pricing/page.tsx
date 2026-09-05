@@ -32,7 +32,6 @@ import { PRICING_FACTS } from "@/lib/pricing-facts";
 import {
   buildPricingFeatureRows,
   compactPricingRows,
-  includedPaidRows,
   showcasePricingRows,
   type PlanFeatureCopy,
 } from "@/lib/pricing-feature-rows";
@@ -128,10 +127,6 @@ export default async function PricingPage({
       ? showcasePricingRows(featureRows)
       : compactPricingRows(featureRows, t)
   ).filter((feature) => feature.key !== "youtubeCaptionImports");
-  const includedPaidFeatures = includedPaidRows(featureRows, t).filter(
-    (feature) =>
-      (feature.key !== "maxFileSize" && feature.key !== "maxYoutubeCaptionVideo")
-  );
   const faqCopy = t.raw("faqs") as Array<Omit<FaqCopy, "key">>;
   const faqs: FaqCopy[] = faqCopy.map((faq, index) => ({
     key: `faq-${index + 1}`,
@@ -202,30 +197,21 @@ export default async function PricingPage({
               supportUpgradeLabel={t("supportUpgradeLabel")}
               unavailableLabel={t("unavailableLabel")}
             />
+            <PlanComparison
+              description={t("paidIncludedDescription")}
+              extraRows={transcriptComparisonRows}
+              plans={plans}
+              rows={featureRows}
+              title={t("paidIncludedTitle")}
+            />
             {englishShowcase ? (
-              <>
-                <PlanComparison
-                  description={t("paidIncludedDescription")}
-                  extraRows={transcriptComparisonRows}
-                  plans={plans}
-                  rows={featureRows}
-                  title={t("paidIncludedTitle")}
-                />
-                <PricingFeatureShowcase
-                  features={productFeatures}
-                  intro={videoT("features.intro")}
-                  label={videoT("features.label")}
-                  title={videoT("features.title")}
-                />
-              </>
-            ) : (
-              <IncludedPaidPlans
-                compact
-                description={t("paidIncludedDescription")}
-                features={includedPaidFeatures}
-                title={t("paidIncludedTitle")}
+              <PricingFeatureShowcase
+                features={productFeatures}
+                intro={videoT("features.intro")}
+                label={videoT("features.label")}
+                title={videoT("features.title")}
               />
-            )}
+            ) : null}
           </div>
         </section>
 
@@ -328,7 +314,10 @@ function PlanComparison({
   ];
 
   return (
-    <section className="mt-16 border-t border-line pt-12 sm:mt-20 sm:pt-16">
+    <section
+      id="compare-plans"
+      className="mt-16 scroll-mt-24 border-t border-line pt-12 sm:mt-20 sm:pt-16"
+    >
       <div className="grid gap-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-end">
         <h2 className="max-w-[14ch] font-display text-[36px] font-semibold leading-[1.05] tracking-[-0.04em] sm:text-[48px]">
           {title}
@@ -476,69 +465,4 @@ function pathLanguages(path: string): Record<string, string> {
 function metadataUrlFor(locale: string, path: string): URL {
   const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   return new URL(`${prefix}${path}`, SITE);
-}
-
-function IncludedPaidPlans({
-  compact,
-  description,
-  features,
-  title,
-}: {
-  compact: boolean;
-  description: string;
-  features: PlanFeatureCopy[];
-  title: string;
-}) {
-  if (compact) {
-    return (
-      <section className="mt-8 border border-line bg-card px-5 py-4 sm:px-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4">
-          <p className="shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
-            {title}
-          </p>
-          <p className="text-[14px] leading-6 text-muted">{description}</p>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className="mt-8 border border-line bg-card p-5 sm:p-6">
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] lg:items-start">
-        <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
-            {title}
-          </p>
-          <p className="mt-2 max-w-[42ch] text-[14px] leading-6 text-muted">
-            {description}
-          </p>
-        </div>
-        <dl className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2">
-          {features.map((feature) => (
-            <div
-              key={feature.key}
-              className={`px-4 py-4 ${
-                feature.key === "aiSummaries" || feature.key === "aiTranslation"
-                  ? "bg-ink text-paper"
-                  : "bg-paper text-ink"
-              }`}
-            >
-              <dt
-                className={`font-mono text-[10px] uppercase tracking-[0.14em] ${
-                  feature.key === "aiSummaries" || feature.key === "aiTranslation"
-                    ? "text-paper/50"
-                    : "text-muted"
-                }`}
-              >
-                {feature.label}
-              </dt>
-              <dd className="mt-1 text-[14px] font-medium leading-6">
-                {feature.values.pro}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-    </section>
-  );
 }

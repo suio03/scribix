@@ -114,6 +114,9 @@ export type CropSpec = {
   zoom: number;
 };
 
+export const FRAMING_MODES = ["fill", "fit"] as const;
+export type FramingMode = (typeof FRAMING_MODES)[number];
+
 export type CaptionWord = {
   text: string;
   sourceStartMs: number;
@@ -137,7 +140,7 @@ export type RenderSpec = {
     fps: typeof FINAL_VIDEO_PRESET.fps;
     backgroundColor: string;
   };
-  segments: Record<string, { crop: CropSpec }>;
+  segments: Record<string, { framingMode?: FramingMode; crop: CropSpec }>;
   captions: {
     enabled: boolean;
     templateId: CaptionTemplateId;

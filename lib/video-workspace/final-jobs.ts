@@ -31,11 +31,13 @@ export type FinalRenderSummary = {
   candidateId: string | null;
   projectVersionId: string;
   version: number;
+  isCurrent: boolean;
   status: string;
   attempt: number;
   errorCode: string | null;
   createdAt: string;
   completedAt: string | null;
+  expiresAt: string | null;
   videoUrl: string | null;
   coverUrl: string | null;
   expiresInSec: number | null;
@@ -133,15 +135,29 @@ export async function createFinalRender(
   }
 
   const reusable = await db.prepare(
-    `SELECT id FROM render_jobs
-      WHERE user_id = ?1
-        AND project_id = ?2
-        AND project_version_id = ?3
-        AND candidate_id = ?4
-        AND kind = 'final'
-        AND preset_id = ?5
-        AND status NOT IN ('failed', 'canceled')
-      ORDER BY created_at DESC
+    `SELECT j.id
+       FROM render_jobs j
+       JOIN project_versions v
+         ON v.id = j.project_version_id AND v.user_id = j.user_id
+       JOIN media_assets video
+         ON video.id = j.output_asset_id AND video.user_id = j.user_id
+       JOIN media_assets cover
+         ON cover.id = j.cover_asset_id AND cover.user_id = j.user_id
+      WHERE j.user_id = ?1
+        AND j.project_id = ?2
+        AND j.project_version_id = ?3
+        AND v.candidate_id = ?4
+        AND j.kind = 'final'
+        AND j.preset_id = ?5
+        AND j.status NOT IN ('failed', 'canceled')
+        AND j.superseded_at IS NULL
+        AND video.status <> 'deleted'
+        AND video.deleted_at IS NULL
+        AND (video.expires_at IS NULL OR video.expires_at > CURRENT_TIMESTAMP)
+        AND cover.status <> 'deleted'
+        AND cover.deleted_at IS NULL
+        AND (cover.expires_at IS NULL OR cover.expires_at > CURRENT_TIMESTAMP)
+      ORDER BY j.created_at DESC
       LIMIT 1`
   )
     .bind(userId, projectId, projectVersionId, candidateId, FINAL_VIDEO_PRESET.id)
@@ -177,17 +193,16 @@ export async function createFinalRender(
       ),
       db.prepare(
         `INSERT INTO render_jobs
-           (id, user_id, project_id, project_version_id, candidate_id, kind, preset_id,
+           (id, user_id, project_id, project_version_id, kind, preset_id,
             scope_key, status, idempotency_key, output_asset_id, cover_asset_id,
             queued_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, 'final', ?6, 'default', 'queued', ?7, ?8, ?9,
+         VALUES (?1, ?2, ?3, ?4, 'final', ?5, 'default', 'queued', ?6, ?7, ?8,
                  CURRENT_TIMESTAMP)`
       ).bind(
         jobId,
         userId,
         projectId,
         projectVersionId,
-        candidateId,
         FINAL_VIDEO_PRESET.id,
         idempotencyKey,
         videoAssetId,
@@ -230,6 +245,7 @@ export async function listFinalRenders(
       WHERE j.user_id = ?1
         AND j.project_id = ?2
         AND j.kind = 'final'
+        AND j.superseded_at IS NULL
         AND p.deleted_at IS NULL
       ORDER BY j.created_at DESC
       LIMIT 20`
@@ -270,6 +286,7 @@ export async function cancelFinalRender(
               SELECT 1 FROM render_jobs
                WHERE project_id = ?1 AND user_id = ?2
                  AND kind = 'final' AND status = 'completed'
+                 AND superseded_at IS NULL
             ) THEN 'completed'
             ELSE 'editing'
           END,
@@ -283,6 +300,68 @@ export async function cancelFinalRender(
   ]);
   await queue.send({ schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION, jobId });
   return { ok: true };
+}
+
+export async function removeFinalRender(
+  db: D1Database,
+  bucket: R2Bucket,
+  queue: Queue<RenderDispatchMessage>,
+  userId: string,
+  projectId: string,
+  jobId: string
+): Promise<
+  | { ok: true; action: "canceled" | "deleted" }
+  | { ok: false; error: "job_not_found" | "job_not_cancelable" }
+> {
+  const job = await ownedFinalJob(db, userId, projectId, jobId);
+  if (!job) return { ok: false, error: "job_not_found" };
+  if (["queued", "preparing", "running", "uploading"].includes(job.status)) {
+    const canceled = await cancelFinalRender(db, queue, userId, projectId, jobId);
+    return canceled.ok ? { ok: true, action: "canceled" } : canceled;
+  }
+  if (job.status !== "completed") {
+    return { ok: false, error: "job_not_cancelable" };
+  }
+
+  const assets = await db.prepare(
+    `SELECT id, r2_key
+       FROM media_assets
+      WHERE user_id = ?1
+        AND id IN (?2, ?3)
+        AND status = 'ready'
+        AND deleted_at IS NULL`
+  )
+    .bind(userId, job.output_asset_id, job.cover_asset_id)
+    .all<{ id: string; r2_key: string | null }>();
+  const keys = assets.results.flatMap((asset) => asset.r2_key ? [asset.r2_key] : []);
+  if (keys.length > 0) await bucket.delete(keys);
+  await db.batch([
+    db.prepare(
+      `UPDATE media_assets
+          SET status = 'deleted', r2_key = NULL, deleted_at = CURRENT_TIMESTAMP
+        WHERE user_id = ?1 AND id IN (?2, ?3) AND deleted_at IS NULL`
+    ).bind(userId, job.output_asset_id, job.cover_asset_id),
+    db.prepare(
+      `UPDATE render_jobs
+          SET superseded_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?1 AND user_id = ?2 AND project_id = ?3 AND kind = 'final'`
+    ).bind(jobId, userId, projectId),
+    db.prepare(
+      `UPDATE video_projects
+          SET status = CASE
+                WHEN EXISTS (
+                  SELECT 1 FROM render_jobs
+                   WHERE project_id = ?1 AND user_id = ?2
+                     AND kind = 'final' AND status = 'completed'
+                     AND superseded_at IS NULL
+                ) THEN 'completed'
+                ELSE 'editing'
+              END,
+              updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL`
+    ).bind(projectId, userId),
+  ]);
+  return { ok: true, action: "deleted" };
 }
 
 export async function retryFinalRender(
@@ -345,13 +424,24 @@ async function finalRenderSummary(
   jobId: string
 ): Promise<FinalRenderSummary> {
   const row = await db.prepare(
-    `SELECT j.id, j.candidate_id, j.project_version_id, v.version, j.status, j.attempt,
+    `SELECT j.id, v.candidate_id, j.project_version_id, v.version, j.status, j.attempt,
             j.error_code, j.created_at, j.completed_at,
+            CASE
+              WHEN candidate.draft_edl_json = v.edl_json
+               AND candidate.draft_render_spec_json = v.render_spec_json
+              THEN 1 ELSE 0
+            END AS is_current,
             video.r2_key AS video_r2_key, video.status AS video_status,
-            cover.r2_key AS cover_r2_key, cover.status AS cover_status
+            video.expires_at AS video_expires_at,
+            cover.r2_key AS cover_r2_key, cover.status AS cover_status,
+            cover.expires_at AS cover_expires_at
        FROM render_jobs j
        JOIN project_versions v
          ON v.id = j.project_version_id AND v.user_id = j.user_id
+       LEFT JOIN clip_candidates candidate
+         ON candidate.id = v.candidate_id
+        AND candidate.user_id = j.user_id
+        AND candidate.project_id = j.project_id
        JOIN media_assets video
          ON video.id = j.output_asset_id AND video.user_id = j.user_id
        JOIN media_assets cover
@@ -364,6 +454,7 @@ async function finalRenderSummary(
       candidate_id: string | null;
       project_version_id: string;
       version: number;
+      is_current: number;
       status: string;
       attempt: number;
       error_code: string | null;
@@ -371,11 +462,15 @@ async function finalRenderSummary(
       completed_at: string | null;
       video_r2_key: string;
       video_status: string;
+      video_expires_at: string | null;
       cover_r2_key: string;
       cover_status: string;
+      cover_expires_at: string | null;
     }>();
   if (!row) throw new Error("final_render_not_found");
-  const ready = row.status === "completed" && row.video_status === "ready" && row.cover_status === "ready";
+  const expiresAt = earliestTimestamp(row.video_expires_at, row.cover_expires_at);
+  const ready = row.status === "completed" && row.video_status === "ready" &&
+    row.cover_status === "ready" && !timestampExpired(expiresAt);
   const expiresInSec = ready ? 15 * 60 : null;
   const [videoUrl, coverUrl] = ready
     ? await Promise.all([
@@ -388,11 +483,13 @@ async function finalRenderSummary(
     candidateId: row.candidate_id,
     projectVersionId: row.project_version_id,
     version: row.version,
+    isCurrent: row.is_current === 1,
     status: row.status,
     attempt: row.attempt,
     errorCode: row.error_code,
     createdAt: row.created_at,
     completedAt: row.completed_at,
+    expiresAt,
     videoUrl,
     coverUrl,
     expiresInSec,
@@ -423,8 +520,11 @@ function finalJobByIdempotency(
   idempotencyKey: string
 ): Promise<{ id: string; project_id: string; candidate_id: string | null } | null> {
   return db.prepare(
-    `SELECT id, project_id, candidate_id FROM render_jobs
-      WHERE user_id = ?1 AND idempotency_key = ?2 AND kind = 'final'`
+    `SELECT j.id, j.project_id, v.candidate_id
+       FROM render_jobs j
+       JOIN project_versions v
+         ON v.id = j.project_version_id AND v.user_id = j.user_id
+      WHERE j.user_id = ?1 AND j.idempotency_key = ?2 AND j.kind = 'final'`
   )
     .bind(userId, idempotencyKey)
     .first<{ id: string; project_id: string; candidate_id: string | null }>();
@@ -463,6 +563,19 @@ function sourceExpired(expiresAt: string | null): boolean {
   const value = expiresAt.includes("T") ? expiresAt : `${expiresAt.replace(" ", "T")}Z`;
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) && timestamp <= Date.now();
+}
+
+function timestampExpired(expiresAt: string | null): boolean {
+  if (!expiresAt) return false;
+  const value = expiresAt.includes("T") ? expiresAt : `${expiresAt.replace(" ", "T")}Z`;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) && timestamp <= Date.now();
+}
+
+function earliestTimestamp(left: string | null, right: string | null): string | null {
+  if (!left) return right;
+  if (!right) return left;
+  return left < right ? left : right;
 }
 
 function databaseLimitError(

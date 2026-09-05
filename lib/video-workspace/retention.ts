@@ -2,6 +2,8 @@ import { PLANS, type Tier } from "@/lib/plans";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+export const FINAL_EXPORT_RETENTION_DAYS = 30;
+
 export type VideoSourceStorage = {
   usedBytes: number;
   limitBytes: number;
@@ -11,6 +13,13 @@ export type VideoSourceStorage = {
 
 export function videoSourceExpiresAt(tier: Tier, now = new Date()): string {
   return new Date(now.getTime() + PLANS[tier].videoSourceRetentionDays * DAY_MS)
+    .toISOString()
+    .replace("T", " ")
+    .slice(0, 19);
+}
+
+export function finalExportExpiresAt(now = new Date()): string {
+  return new Date(now.getTime() + FINAL_EXPORT_RETENTION_DAYS * DAY_MS)
     .toISOString()
     .replace("T", " ")
     .slice(0, 19);

@@ -452,7 +452,7 @@ export function defaultRenderSpec(
     },
     segments: Object.fromEntries(edl.segments.map((segment) => [
       segment.id,
-      { crop: { x: 0.5, y: 0.5, zoom: 1 } },
+      { framingMode: "fill", crop: { x: 0.5, y: 0.5, zoom: 1 } },
     ])),
     captions: {
       enabled: true,

@@ -2,6 +2,7 @@ import {
   BRAND_TEMPLATE_IDS,
   CAPTION_TEMPLATE_IDS,
   FINAL_VIDEO_PRESET,
+  FRAMING_MODES,
   LOGO_POSITIONS,
   MEDIA_ASSET_KINDS,
   MEDIA_ASSET_STATUSES,
@@ -329,7 +330,15 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
       }
       const spec = requireObject(rawSpec, `$.segments.${segmentId}`, issues);
       if (!spec) continue;
-      hasOnlyKeys(spec, ["crop"], `$.segments.${segmentId}`, issues);
+      hasOnlyKeys(spec, ["framingMode", "crop"], `$.segments.${segmentId}`, issues);
+      if (spec.framingMode !== undefined) {
+        requireEnum(
+          spec.framingMode,
+          FRAMING_MODES,
+          `$.segments.${segmentId}.framingMode`,
+          issues
+        );
+      }
       const crop = requireObject(spec.crop, `$.segments.${segmentId}.crop`, issues);
       if (!crop) continue;
       hasOnlyKeys(crop, ["x", "y", "zoom"], `$.segments.${segmentId}.crop`, issues);

@@ -91,6 +91,17 @@ export class CandidateGenerationError extends Error {
   }
 }
 
+export function aiCandidateGenerationBlocked(
+  projectStatus: string,
+  candidateOrigins: readonly ("ai" | "manual")[]
+): boolean {
+  return (
+    projectStatus === "candidates_ready" ||
+    projectStatus === "editing" ||
+    candidateOrigins.includes("ai")
+  );
+}
+
 export function candidateLimitForSourceDuration(sourceDurationMs: number): number {
   if (sourceDurationMs <= DIRECT_EDIT_MAX_SOURCE_DURATION_MS) return 1;
   if (sourceDurationMs <= MEDIUM_SOURCE_MAX_DURATION_MS) return 3;

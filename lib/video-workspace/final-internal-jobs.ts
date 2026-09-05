@@ -12,11 +12,14 @@ import {
 } from "./contracts";
 import { validateEdl, validateRenderSpec } from "./validation";
 import { recordServerRenderEvent } from "./events";
+import { finalExportExpiresAt } from "./retention";
 
 type FinalJobRow = {
   id: string;
   user_id: string;
   project_id: string;
+  candidate_id: string;
+  version: number;
   status: string;
   preset_id: string;
   edl_json: string;
@@ -206,23 +209,61 @@ export async function recordFinalJobResult(
     await failFinalJob(db, jobId, "upload_failed");
     return { ok: false, error: "upload_failed" };
   }
+  const expiresAt = finalExportExpiresAt();
   await db.batch([
     db.prepare(
       `UPDATE media_assets
-          SET status = 'ready', bytes = ?1, duration_ms = ?2, width = ?3, height = ?4
-        WHERE id = ?5 AND status IN ('pending', 'uploading')`
-    ).bind(videoObject.size, output.video.durationMs, output.video.width, output.video.height, job.output_asset_id),
+          SET status = 'ready', bytes = ?1, duration_ms = ?2, width = ?3, height = ?4,
+              expires_at = ?5
+        WHERE id = ?6 AND status IN ('pending', 'uploading')`
+    ).bind(videoObject.size, output.video.durationMs, output.video.width, output.video.height, expiresAt, job.output_asset_id),
     db.prepare(
       `UPDATE media_assets
-          SET status = 'ready', bytes = ?1, width = ?2, height = ?3
-        WHERE id = ?4 AND status IN ('pending', 'uploading')`
-    ).bind(coverObject.size, output.cover.width, output.cover.height, job.cover_asset_id),
+          SET status = 'ready', bytes = ?1, width = ?2, height = ?3, expires_at = ?4
+        WHERE id = ?5 AND status IN ('pending', 'uploading')`
+    ).bind(coverObject.size, output.cover.width, output.cover.height, expiresAt, job.cover_asset_id),
     db.prepare(
       `UPDATE render_jobs
           SET status = 'completed', error_code = NULL,
-              completed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+              completed_at = CURRENT_TIMESTAMP,
+              superseded_at = CASE
+                WHEN EXISTS (
+                  SELECT 1
+                    FROM render_jobs newer_job
+                    JOIN project_versions newer_version
+                      ON newer_version.id = newer_job.project_version_id
+                     AND newer_version.user_id = newer_job.user_id
+                   WHERE newer_job.user_id = ?2
+                     AND newer_job.project_id = ?3
+                     AND newer_job.kind = 'final'
+                     AND newer_job.status = 'completed'
+                     AND newer_job.superseded_at IS NULL
+                     AND newer_version.candidate_id = ?4
+                     AND newer_version.version > ?5
+                ) THEN CURRENT_TIMESTAMP
+                ELSE NULL
+              END,
+              updated_at = CURRENT_TIMESTAMP
         WHERE id = ?1 AND kind = 'final' AND status IN ('running', 'uploading')`
-    ).bind(jobId),
+    ).bind(jobId, job.user_id, job.project_id, job.candidate_id, job.version),
+    db.prepare(
+      `UPDATE render_jobs
+          SET superseded_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ?1
+          AND project_id = ?2
+          AND kind = 'final'
+          AND status = 'completed'
+          AND superseded_at IS NULL
+          AND id <> ?3
+          AND project_version_id IN (
+            SELECT id
+              FROM project_versions
+             WHERE user_id = ?1
+               AND project_id = ?2
+               AND candidate_id = ?4
+               AND version <= ?5
+          )`
+    ).bind(job.user_id, job.project_id, jobId, job.candidate_id, job.version),
     db.prepare(
       `UPDATE video_projects SET status = 'completed', updated_at = CURRENT_TIMESTAMP
         WHERE id = ?1 AND user_id = ?2
@@ -233,13 +274,27 @@ export async function recordFinalJobResult(
     ).bind(job.project_id, job.user_id, jobId),
   ]);
   await recordServerRenderEvent(db, jobId, "render_completed").catch(() => undefined);
+  await deleteSupersededFinalAssets(
+    db,
+    bucket,
+    job.user_id,
+    job.project_id,
+    job.candidate_id
+  ).catch((error) => {
+    console.error(JSON.stringify({
+      event: "superseded_final_asset_cleanup_failed",
+      projectId: job.project_id,
+      candidateId: job.candidate_id,
+      error: error instanceof Error ? error.message.slice(0, 200) : "unknown",
+    }));
+  });
   return { ok: true };
 }
 
 async function finalJob(db: D1Database, jobId: string): Promise<FinalJobRow | null> {
   return db.prepare(
     `SELECT j.id, j.user_id, j.project_id, j.status, j.preset_id,
-            v.edl_json, v.render_spec_json,
+            v.candidate_id, v.version, v.edl_json, v.render_spec_json,
             source.r2_key AS source_r2_key, source.status AS source_status,
             source.expires_at AS source_expires_at,
             source.duration_ms AS source_duration_ms,
@@ -259,11 +314,48 @@ async function finalJob(db: D1Database, jobId: string): Promise<FinalJobRow | nu
        JOIN media_assets cover
          ON cover.id = j.cover_asset_id AND cover.user_id = j.user_id
       WHERE j.id = ?1 AND j.kind = 'final' AND p.deleted_at IS NULL
-        AND source.deleted_at IS NULL AND output.deleted_at IS NULL
-        AND cover.deleted_at IS NULL`
+        AND source.deleted_at IS NULL`
   )
     .bind(jobId)
     .first<FinalJobRow>();
+}
+
+async function deleteSupersededFinalAssets(
+  db: D1Database,
+  bucket: R2Bucket,
+  userId: string,
+  projectId: string,
+  candidateId: string
+): Promise<void> {
+  const { results } = await db.prepare(
+    `SELECT asset.id, asset.r2_key
+       FROM render_jobs job
+       JOIN project_versions version
+         ON version.id = job.project_version_id AND version.user_id = job.user_id
+       JOIN media_assets asset
+         ON asset.id IN (job.output_asset_id, job.cover_asset_id)
+        AND asset.user_id = job.user_id
+      WHERE job.user_id = ?1
+        AND job.project_id = ?2
+        AND job.kind = 'final'
+        AND job.superseded_at IS NOT NULL
+        AND version.candidate_id = ?3
+        AND asset.status = 'ready'
+        AND asset.deleted_at IS NULL
+        AND asset.r2_key IS NOT NULL`
+  )
+    .bind(userId, projectId, candidateId)
+    .all<{ id: string; r2_key: string }>();
+  if (results.length === 0) return;
+  for (let index = 0; index < results.length; index += 1000) {
+    const assets = results.slice(index, index + 1000);
+    await bucket.delete(assets.map((asset) => asset.r2_key));
+    await db.batch(assets.map((asset) => db.prepare(
+      `UPDATE media_assets
+          SET status = 'deleted', r2_key = NULL, deleted_at = CURRENT_TIMESTAMP
+        WHERE id = ?1 AND user_id = ?2 AND status = 'ready' AND deleted_at IS NULL`
+    ).bind(asset.id, userId)));
+  }
 }
 
 async function ownedAssetKey(

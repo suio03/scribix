@@ -1,8 +1,8 @@
 import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { downloadAsset, renderFinal, validateFinalLease } from "./final-render.mjs";
-import { analyzeReframe } from "./poc-reframe.mjs";
 import {
   probeMedia,
   renderError,
@@ -15,6 +15,7 @@ const jobToken = requiredEnv("SCRIBIX_JOB_TOKEN");
 const internalBaseUrl = requiredEnv("SCRIBIX_INTERNAL_URL").replace(/\/$/, "");
 const jobUrl = `${internalBaseUrl}/api/internal/video-jobs/${encodeURIComponent(jobId)}`;
 const authorization = `Bearer ${jobToken}`;
+const healthServer = await startHealthServer();
 let workingDirectory;
 
 try {
@@ -40,6 +41,7 @@ try {
   process.exitCode = 1;
 } finally {
   if (workingDirectory) await rm(workingDirectory, { recursive: true, force: true });
+  await closeHealthServer(healthServer);
 }
 
 async function runPreview(lease) {
@@ -69,34 +71,11 @@ async function runFinal(lease) {
     downloadAsset(lease.logoUrl, join(workingDirectory, "logo-asset")),
     downloadAsset(lease.fontUrl, join(workingDirectory, "font-asset")),
   ]);
-  let reframePlan = null;
-  if (usesAutomaticFraming(lease)) {
-    try {
-      reframePlan = await analyzeReframe({
-        sourceInput: lease.sourceUrl,
-        segments: lease.edl.segments,
-        workingDirectory,
-      });
-    } catch {
-      console.warn(JSON.stringify({ event: "video_reframe_fallback", jobId }));
-      reframePlan = {
-        schemaVersion: 1,
-        segments: lease.edl.segments.map((segment) => ({
-          segmentId: segment.id,
-          mode: "fit_blur",
-          confidence: 0,
-          reasons: ["analysis_unavailable"],
-          keyframes: [],
-        })),
-      };
-    }
-  }
   const rendered = await renderFinal({
     lease,
     workingDirectory,
     logoPath,
     fontPath,
-    reframePlan,
   });
   await markUploading();
   const [video, cover] = await Promise.all([
@@ -127,13 +106,6 @@ async function runFinal(lease) {
     },
   });
   console.log(JSON.stringify({ event: "video_final_completed", jobId, bytes: video.byteLength, durationMs: rendered.output.durationMs }));
-}
-
-function usesAutomaticFraming(lease) {
-  return lease.edl.segments.some((segment) => {
-    const crop = lease.renderSpec.segments[segment.id]?.crop;
-    return crop && crop.x === 0.5 && crop.y === 0.5 && crop.zoom === 1;
-  });
 }
 
 async function markUploading() {
@@ -188,4 +160,30 @@ function stableErrorCode(error) {
     "provider_unavailable",
     "job_timed_out",
   ].includes(code) ? code : "render_failed";
+}
+
+function startHealthServer() {
+  return new Promise((resolve, reject) => {
+    const server = createServer((_request, response) => {
+      response.writeHead(200, {
+        "content-type": "text/plain; charset=utf-8",
+        connection: "close",
+      });
+      response.end("ok");
+    });
+    server.once("error", reject);
+    server.listen(8080, "0.0.0.0", () => {
+      server.off("error", reject);
+      resolve(server);
+    });
+  });
+}
+
+function closeHealthServer(server) {
+  return new Promise((resolve, reject) => {
+    server.close((error) => {
+      if (error) reject(error);
+      else resolve();
+    });
+  });
 }

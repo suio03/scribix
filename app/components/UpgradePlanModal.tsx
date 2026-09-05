@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { ArrowRight, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   PLANS,
   PRICING_DISPLAY,
@@ -11,6 +13,7 @@ import {
 import { PaddleCheckoutButton } from "./PaddleCheckoutButton";
 
 export type UpgradeReason =
+  | "plan"
   | "translation"
   | "summary"
   | "chat"
@@ -34,7 +37,18 @@ export function UpgradePlanModal({
 }) {
   const t = useTranslations("Dashboard.viewer");
   const [cycle, setCycle] = useState<BillingCycle>("yearly");
+
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [onClose, open]);
+
   if (!open || !reason) return null;
+  if (typeof document === "undefined") return null;
 
   const selectedPlan = upgradePlanCopy(t);
   const copy = upgradeReasonCopy(reason, t);
@@ -44,7 +58,7 @@ export function UpgradePlanModal({
     PRICING_DISPLAY.pro.yearly.amount / 12
   );
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -82,34 +96,46 @@ export function UpgradePlanModal({
 
           <div
             aria-label={safeT(t, "upgradeBillingLabel", "Choose billing")}
-            className="mt-4 grid gap-2.5 sm:grid-cols-2"
+            className="mt-4 grid grid-cols-2 rounded-xl border border-line bg-paper p-1"
             role="radiogroup"
           >
-            <BillingOption
-              active={cycle === "yearly"}
-              badge={safeT(t, "upgradeYearlyBadge", "Save 50%")}
-              cadence={safeT(t, "upgradeYearlyCadence", "/year")}
-              detail={safeTValues(
-                t,
-                "upgradeYearlyEquivalent",
-                `${yearlyMonthlyEquivalent}/month equivalent`,
-                { price: yearlyMonthlyEquivalent }
-              )}
-              label={safeT(t, "upgradeYearly", "Yearly")}
-              onClick={() => setCycle("yearly")}
-              price={yearlyPrice}
-            />
-            <BillingOption
+            <BillingCycleButton
               active={cycle === "monthly"}
-              cadence={safeT(t, "upgradeMonthlyCadence", "/month")}
-              detail={safeT(t, "upgradeMonthlyDetail", "Billed monthly")}
               label={safeT(t, "upgradeMonthly", "Monthly")}
               onClick={() => setCycle("monthly")}
-              price={monthlyPrice}
+            />
+            <BillingCycleButton
+              active={cycle === "yearly"}
+              badge={safeT(t, "upgradeYearlyBadge", "Save 50%")}
+              label={safeT(t, "upgradeYearly", "Yearly")}
+              onClick={() => setCycle("yearly")}
             />
           </div>
 
-          <div className="mt-4 grid gap-2">
+          <div className="mt-5 border-t border-line pt-5">
+            <div className="flex flex-wrap items-end gap-x-2 gap-y-1">
+              {cycle === "yearly" ? (
+                <span className="pb-0.5 font-display text-[27px] font-medium leading-none tracking-tight text-muted/55 line-through decoration-2">
+                  {monthlyPrice}
+                </span>
+              ) : null}
+              <span className="font-display text-[46px] font-semibold leading-none tracking-[-0.05em] text-ink">
+                {cycle === "yearly" ? yearlyMonthlyEquivalent : monthlyPrice}
+              </span>
+              <span className="pb-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                {safeT(t, "upgradeMonthlyCadence", "/month")}
+              </span>
+            </div>
+            <p className="mt-2 text-[12px] font-medium text-muted">
+              {cycle === "yearly"
+                ? safeTValues(t, "upgradeYearlyBilled", `Billed ${yearlyPrice} yearly`, {
+                    price: yearlyPrice,
+                  })
+                : safeT(t, "upgradeMonthlyDetail", "Billed monthly")}
+            </p>
+          </div>
+
+          <div className="mt-5 grid gap-2">
             {selectedPlan.bullets.map((bullet) => (
               <div key={bullet} className="flex items-start gap-2 text-[13px] leading-5 text-ink/70">
                 <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-accent" />
@@ -133,65 +159,54 @@ export function UpgradePlanModal({
               : safeT(t, "upgradeContinueMonthly", "Continue with monthly")}
           </PaddleCheckoutButton>
         </div>
+
+        <Link
+          href="/pricing#compare-plans"
+          onClick={onClose}
+          className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-lg px-1 text-[13px] font-semibold text-accent underline decoration-accent/35 underline-offset-4 transition hover:decoration-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35"
+        >
+          {safeT(t, "upgradeComparePlans", "Compare all plan features")}
+          <ArrowRight size={15} strokeWidth={1.8} />
+        </Link>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
-function BillingOption({
+function BillingCycleButton({
   active,
   badge,
-  cadence,
-  detail,
   label,
   onClick,
-  price,
 }: {
   active: boolean;
   badge?: string;
-  cadence: string;
-  detail: string;
   label: string;
   onClick: () => void;
-  price: string;
 }) {
   return (
     <button
       aria-checked={active}
-      className={`relative min-w-0 rounded-xl border p-3.5 text-left transition ${
+      className={`flex min-h-12 min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-2 text-center transition sm:flex-row sm:gap-2 sm:px-4 ${
         active
-          ? "border-ink bg-ink text-paper shadow-[4px_4px_0_0_var(--accent)]"
-          : "border-line bg-paper text-ink hover:border-ink/40"
+          ? "bg-accent text-[var(--action-text)] shadow-[0_8px_24px_-18px_rgba(108,53,255,0.8)]"
+          : "text-muted hover:bg-card hover:text-ink"
       }`}
       onClick={onClick}
       role="radio"
       type="button"
     >
-      <div className="flex min-h-5 items-center justify-between gap-2">
-        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em]">
-          {label}
-        </span>
-        {badge ? (
-          <span className="shrink-0 bg-accent px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-[0.1em] text-paper">
-            {badge}
-          </span>
-        ) : null}
-      </div>
-      <div className="mt-3 flex flex-wrap items-end gap-x-1.5 gap-y-1">
-        <span className="font-display text-[32px] font-medium leading-none tracking-tight">
-          {price}
-        </span>
+      <span className="text-[13px] font-semibold">{label}</span>
+      {badge ? (
         <span
-          className={`pb-0.5 font-mono text-[10px] uppercase tracking-[0.12em] ${
-            active ? "text-paper/55" : "text-ink/45"
+          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[8px] font-semibold uppercase tracking-[0.1em] ${
+            active ? "bg-paper/16 text-[var(--action-text)]" : "bg-accent-soft text-accent"
           }`}
         >
-          {cadence}
+          {badge}
         </span>
-      </div>
-      <p className={`mt-2 text-[11px] ${active ? "text-paper/62" : "text-ink/48"}`}>
-        {detail}
-      </p>
+      ) : null}
     </button>
   );
 }
@@ -200,6 +215,17 @@ function upgradeReasonCopy(
   reason: UpgradeReason,
   t: ((key: string) => string) & { has?: (key: string) => boolean }
 ) {
+  if (reason === "plan") {
+    return {
+      title: safeT(t, "upgradePlanModalTitle", "Upgrade your plan"),
+      body: safeT(
+        t,
+        "upgradePlanModalBody",
+        "Get more processing time and unlock every Creator feature."
+      ),
+    };
+  }
+
   if (reason === "summary") {
     return {
       title: safeT(t, "upgradeSummaryModalTitle", "Create AI notes"),
@@ -283,7 +309,7 @@ function upgradePlanCopy(
   const monthlyMinutes = PLANS.pro.monthly.minutesPerCycle;
   const maxFileHours = PLANS.pro.maxFileSec / 3600;
   return {
-    title: safeT(t, "upgradePro", "Pro"),
+    title: "Creator",
     description: safeT(
       t,
       "upgradeProMonthlyDescription",

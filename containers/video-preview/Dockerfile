@@ -37,4 +37,5 @@ COPY --chown=node:node preview-render.mjs final-render.mjs poc-reframe.mjs poc-r
 ENV PATH="/opt/scribix-venv/bin:${PATH}"
 
 USER node
+EXPOSE 8080
 ENTRYPOINT ["node", "/app/worker.mjs"]

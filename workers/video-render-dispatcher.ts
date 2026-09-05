@@ -40,7 +40,8 @@ const MAX_DISPATCH_ATTEMPTS = 5;
 const PROVIDER = "cloudflare-containers";
 
 export class VideoRenderContainer extends Container<Env> {
-  sleepAfter = "10s";
+  defaultPort = 8080;
+  sleepAfter = "1h";
   enableInternet = true;
 
   override onStart(): void {

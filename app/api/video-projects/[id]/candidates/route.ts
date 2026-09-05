@@ -12,19 +12,21 @@ import {
 import {
   CandidateGenerationError,
   DIRECT_EDIT_MAX_SOURCE_DURATION_MS,
+  aiCandidateGenerationBlocked,
   alignAndValidateCandidateSet,
   buildCandidateAnalysisInput,
   candidateLimitForSourceDuration,
 } from "@/lib/video-workspace/candidate-generation";
 import {
+  createManualClipCandidate,
   listClipCandidates,
   replaceClipCandidates,
-  replaceWithManualClipCandidate,
 } from "@/lib/video-workspace/candidates";
 import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
 import {
   listCandidatePreviews,
   queueAutomaticCandidatePreviews,
+  queueCandidatePreviews,
 } from "@/lib/video-workspace/preview-jobs";
 
 type Params = { params: Promise<{ id: string }> };
@@ -92,11 +94,18 @@ export async function POST(request: Request, { params }: Params) {
   if (!sourceDurationMs || sourceDurationMs < 250) {
     return Response.json({ error: "source_video_missing" }, { status: 410 });
   }
+  const existingCandidates = await listClipCandidates(env.DB, user.id, project.id);
+  if (mode === "ai" && aiCandidateGenerationBlocked(
+    project.status,
+    existingCandidates.map((candidate) => candidate.origin)
+  )) {
+    return Response.json({ error: "candidates_already_generated" }, { status: 409 });
+  }
   if (
     access.canEditClips &&
     (mode === "manual" || sourceDurationMs <= DIRECT_EDIT_MAX_SOURCE_DURATION_MS)
   ) {
-    await replaceWithManualClipCandidate(
+    const candidateId = await createManualClipCandidate(
       env.DB,
       user.id,
       project.id,
@@ -104,11 +113,12 @@ export async function POST(request: Request, { params }: Params) {
       DIRECT_EDIT_MAX_SOURCE_DURATION_MS
     );
     try {
-      await queueAutomaticCandidatePreviews(
+      await queueCandidatePreviews(
         env.DB,
         env.VIDEO_RENDER_QUEUE,
         user.id,
-        project.id
+        project.id,
+        candidateId
       );
     } catch (error) {
       console.error(JSON.stringify({
@@ -121,10 +131,9 @@ export async function POST(request: Request, { params }: Params) {
       listClipCandidates(env.DB, user.id, project.id),
       listCandidatePreviews(env.DB, user.id, project.id),
     ]);
-    return Response.json({ status: "editing", candidates, previews });
+    return Response.json({ status: "editing", candidates, previews, candidateId });
   }
 
-  const existingCandidates = await listClipCandidates(env.DB, user.id, project.id);
   const claimed = await env.DB.prepare(
     `UPDATE video_projects
         SET status = 'analyzing', updated_at = CURRENT_TIMESTAMP

@@ -138,12 +138,7 @@ export function ProductTopbar({
                 {sidebarT("myLibrary")}
               </TopLink>
             </>
-          ) : (
-            <>
-              <TopLink href="/#upload">{t("product")}</TopLink>
-              <TopLink href="/#video-how">{t("howItWorks")}</TopLink>
-            </>
-          )}
+          ) : null}
 
           {!signedIn ? (
             <div ref={toolsRef} className="relative">
@@ -389,11 +384,7 @@ function MobileMenu({
             <Link href="/dashboard" onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[14px] font-medium ${linkClass}`}>{sidebarT("myLibrary")}</Link>
           </>
         ) : (
-          <>
-            <Link href="/#upload" onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[14px] font-medium ${linkClass}`}>{t("product")}</Link>
-            <Link href="/#video-how" onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[14px] font-medium ${linkClass}`}>{t("howItWorks")}</Link>
-            <Link href="/pricing" onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[14px] font-medium ${linkClass}`}>{sidebarT("pricing")}</Link>
-          </>
+          <Link href="/pricing" onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[14px] font-medium ${linkClass}`}>{sidebarT("pricing")}</Link>
         )}
         {!signedIn ? (
           <>

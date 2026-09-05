@@ -80,8 +80,10 @@ so an R2 prefix lifecycle would also delete permanent transcript data.
 
 The hourly cleanup worker deletes completed non-video audio after 14 days and
 retained original videos at their plan-specific expiry: Free 7 days, legacy
-Basic 30 days, and Creator (backend tier `pro`) 30 days. It only clears the
-database key after R2 confirms deletion. Keep the bucket's default 7-day abort rule for incomplete
+Basic 30 days, and Creator (backend tier `pro`) 30 days. Each completed final
+video and cover is retained for 30 days from export; a newer export of the same
+clip still supersedes and removes the older files immediately. The worker only
+clears a database key after R2 confirms deletion. Keep the bucket's default 7-day abort rule for incomplete
 multipart uploads. Verify the current rules with
 `npx wrangler r2 bucket lifecycle list scribix-media`.
 

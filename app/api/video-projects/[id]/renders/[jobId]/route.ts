@@ -2,15 +2,16 @@ import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
-import { cancelFinalRender, retryFinalRender } from "@/lib/video-workspace/final-jobs";
+import { removeFinalRender, retryFinalRender } from "@/lib/video-workspace/final-jobs";
 
 type Params = { params: Promise<{ id: string; jobId: string }> };
 
 export async function DELETE(_: Request, { params }: Params) {
   const context = await contextFor(params);
   if (context instanceof Response) return context;
-  const result = await cancelFinalRender(
+  const result = await removeFinalRender(
     context.env.DB,
+    context.env.SCRIBIX_MEDIA,
     context.env.VIDEO_RENDER_QUEUE,
     context.userId,
     context.projectId,

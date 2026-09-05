@@ -26,7 +26,10 @@ type Row = {
   audio_r2_key: string | null;
   video_project_id: string;
   video_project_status: string;
+  source_available: number;
+  source_expires_at: string | null;
   clip_count: number;
+  exported_clip_count: number;
 };
 
 type ProjectStage =
@@ -36,6 +39,7 @@ type ProjectStage =
   | "readyToEdit"
   | "exporting"
   | "exported"
+  | "sourceExpired"
   | "failed";
 
 const AUDIO_TTL_MS = 14 * 24 * 60 * 60 * 1000;
@@ -76,17 +80,48 @@ export default async function DashboardPage({
   const { results } = await env.DB.prepare(
     `SELECT t.id, t.title, t.status, t.created_at, t.duration_sec, t.audio_r2_key,
             p.id AS video_project_id, p.status AS video_project_status,
+            source.expires_at AS source_expires_at,
+            CASE
+              WHEN source.id IS NOT NULL
+               AND source.status = 'ready'
+               AND source.deleted_at IS NULL
+               AND (source.expires_at IS NULL OR source.expires_at > CURRENT_TIMESTAMP)
+              THEN 1 ELSE 0
+            END AS source_available,
             COALESCE(p.updated_at, t.created_at) AS activity_at,
             (
               SELECT COUNT(*)
                 FROM clip_candidates c
                WHERE c.project_id = p.id AND c.status <> 'deleted'
-            ) AS clip_count
+            ) AS clip_count,
+            (
+              SELECT COUNT(DISTINCT version.candidate_id)
+                FROM project_versions version
+                JOIN render_jobs job
+                  ON job.project_version_id = version.id
+                 AND job.user_id = version.user_id
+                JOIN media_assets video
+                  ON video.id = job.output_asset_id AND video.user_id = job.user_id
+                JOIN media_assets cover
+                  ON cover.id = job.cover_asset_id AND cover.user_id = job.user_id
+               WHERE version.project_id = p.id
+                 AND version.user_id = p.user_id
+                 AND version.candidate_id IS NOT NULL
+                 AND job.kind = 'final'
+                 AND job.status = 'completed'
+                 AND job.superseded_at IS NULL
+                 AND video.status = 'ready' AND video.deleted_at IS NULL
+                 AND (video.expires_at IS NULL OR video.expires_at > CURRENT_TIMESTAMP)
+                 AND cover.status = 'ready' AND cover.deleted_at IS NULL
+                 AND (cover.expires_at IS NULL OR cover.expires_at > CURRENT_TIMESTAMP)
+            ) AS exported_clip_count
        FROM video_projects p
        INNER JOIN transcripts t
          ON t.id = p.transcript_id
         AND t.user_id = p.user_id
         AND t.deleted_at IS NULL
+       LEFT JOIN media_assets source
+         ON source.id = p.source_asset_id AND source.user_id = p.user_id
       WHERE p.user_id = ?1 AND p.deleted_at IS NULL
       ORDER BY activity_at DESC
       LIMIT 100`
@@ -154,6 +189,9 @@ export default async function DashboardPage({
           {results.map((row) => {
             const href = `/dashboard/video-projects/${row.video_project_id}`;
             const stage = projectStage(row);
+            const visibleClipCount = row.source_available === 1
+              ? row.clip_count
+              : row.exported_clip_count;
             return (
               <article
                 key={row.id}
@@ -184,9 +222,11 @@ export default async function DashboardPage({
                       <ProjectStatus stage={stage} label={t(`projectStatus.${stage}`)} />
                       <TranscriptRowMenu
                         id={row.id}
+                        projectId={row.video_project_id}
                         title={row.title}
                         status={row.status}
                         audioAvailable={audioStillAvailable(row.created_at, row.audio_r2_key)}
+                        sourceAvailable={row.source_available === 1}
                         context="project"
                       />
                     </div>
@@ -198,10 +238,16 @@ export default async function DashboardPage({
                         <span className="tabular-nums">
                           {row.duration_sec ? formatDuration(row.duration_sec) : t("durationPending")}
                         </span>
-                        {row.clip_count > 0 ? (
+                        {visibleClipCount > 0 ? (
                           <>
                             <span aria-hidden>·</span>
-                            <span>{t("clipCount", { count: row.clip_count })}</span>
+                            <span>{t("clipCount", { count: visibleClipCount })}</span>
+                          </>
+                        ) : null}
+                        {row.source_available === 1 && row.source_expires_at ? (
+                          <>
+                            <span aria-hidden>·</span>
+                            <span>{t("sourceExpires", { date: formatDateTime(row.source_expires_at) })}</span>
                           </>
                         ) : null}
                       </div>
@@ -228,6 +274,7 @@ function projectStage(row: Row): ProjectStage {
   if (row.status === "error" || row.video_project_status === "failed") return "failed";
   if (row.status === "pending" || row.status === "uploading") return "uploading";
   if (row.status === "queued" || row.status === "processing") return "transcribing";
+  if (row.source_available !== 1) return "sourceExpired";
 
   switch (row.video_project_status) {
     case "analyzing":

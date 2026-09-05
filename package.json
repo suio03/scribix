@@ -16,6 +16,8 @@
     "poc:cloudflare-video": "node scripts/video-workspace/cloudflare-container-poc.mjs",
     "poc:cloudflare-video:remote": "node scripts/video-workspace/run-cloudflare-container-remote-poc.mjs",
     "poc:smart-reframe": "node scripts/video-workspace/smart-reframe-poc.mjs",
+    "build:cloudflare": "opennextjs-cloudflare build",
+    "dev:video-workspace": "MINIFLARE_CONTAINER_EGRESS_IMAGE=cloudflare/proxy-everything:3cb1195 wrangler dev -c wrangler.jsonc -c wrangler.video-render.local.jsonc --persist-to .wrangler/state --port 3000",
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
@@ -41,6 +43,7 @@
     "@paddle/paddle-js": "^1.6.4",
     "aws4fetch": "^1.0.20",
     "docx": "^9.6.1",
+    "fflate": "^0.8.2",
     "lucide-react": "^1.11.0",
     "next": "^16.2.4",
     "next-auth": "^5.0.0-beta.31",
@@ -49,7 +52,7 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260426.1",
+    "@cloudflare/workers-types": "4.20260701.1",
     "@opennextjs/cloudflare": "^1.19.4",
     "@tailwindcss/postcss": "^4.2.4",
     "@types/node": "22.15.3",
@@ -58,6 +61,6 @@
     "postcss": "^8.5.12",
     "tailwindcss": "^4.2.4",
     "typescript": "5.8.3",
-    "wrangler": "^4.86.0"
+    "wrangler": "4.107.0"
   }
 }

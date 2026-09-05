@@ -12,6 +12,31 @@ For local M0 verification only, the script can use `pango-view` to create fixed
 caption PNGs when the installed FFmpeg build omits libass; the JSON result makes
 that fallback explicit so it cannot be mistaken for production parity.
 
+## Full local export flow
+
+The full local flow runs the application, D1, queue consumer, dispatcher, and
+render container locally. It deliberately uses the existing remote
+`scribix-media` R2 bucket so the container can download retained source media
+and upload final video and cover outputs exactly as it does in production.
+
+Requirements:
+
+- Node.js 22 and a Docker-compatible runtime
+- `.dev.vars` populated from `.env.local.example`
+- local D1 migrations applied with `npm run db:migrate:local`
+
+Build the OpenNext Worker once, then start the complete environment:
+
+```bash
+npm run build:cloudflare
+npm run dev:video-workspace
+```
+
+Open `http://localhost:3000`. Changes to application code require rebuilding
+the OpenNext Worker; the dispatcher and render-container sources are watched by
+Wrangler. Keep test exports inside test projects because their source and latest
+final outputs are real objects in the shared remote R2 bucket.
+
 Run the disposable verification:
 
 ```bash

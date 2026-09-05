@@ -15,6 +15,8 @@
 //      while preserving project versions and completed output assets.
 //   7. Deletes seven-day preview proxies when their segment job is no longer active.
 //   8. Removes abandoned workspace uploads that have no owning render job.
+//   9. Removes final videos and covers 30 days after each export completes.
+//  10. Removes final videos and covers superseded by a newer export of the same clip.
 //
 // Deployed separately from the Next app via `wrangler.cleanup.jsonc`. Shares
 // the same D1 + R2 bindings.
@@ -22,6 +24,7 @@
 import {
   deleteVideoWorkspaceObjects,
   hardDeleteVideoProjects,
+  removeVideoProjectSource,
   videoWorkspaceDeletionForTranscript,
 } from "../lib/video-workspace/lifecycle";
 
@@ -75,6 +78,14 @@ type OrphanVideoAssetRow = {
   asset_id: string;
   user_id: string;
   project_id: string | null;
+  kind: string;
+  r2_key: string;
+};
+
+type SupersededFinalAssetRow = {
+  asset_id: string;
+  user_id: string;
+  project_id: string;
   kind: string;
   r2_key: string;
 };
@@ -269,25 +280,14 @@ async function sweepExpiredVideoSources(env: Env, nowIso: string): Promise<Sweep
   const stats: SweepStats = { scanned: rows.results.length, deleted: 0, failed: 0, retry: 0 };
   for (const source of rows.results) {
     try {
-      await env.SCRIBIX_MEDIA.delete(source.r2_key);
-      await env.DB.batch([
-        env.DB.prepare(
-          `UPDATE video_projects
-              SET source_asset_id = NULL, updated_at = CURRENT_TIMESTAMP
-            WHERE id = ?1 AND user_id = ?2 AND source_asset_id = ?3`
-        ).bind(source.project_id, source.user_id, source.asset_id),
-        env.DB.prepare(
-          `UPDATE transcripts
-              SET audio_r2_key = NULL
-            WHERE id = ?1 AND user_id = ?2 AND audio_r2_key = ?3`
-        ).bind(source.transcript_id, source.user_id, source.r2_key),
-        env.DB.prepare(
-          `UPDATE media_assets
-              SET status = 'deleted', r2_key = NULL, deleted_at = CURRENT_TIMESTAMP
-            WHERE id = ?1 AND user_id = ?2 AND status = 'ready'`
-        ).bind(source.asset_id, source.user_id),
-      ]);
-      stats.deleted += 1;
+      const result = await removeVideoProjectSource(
+        env.DB,
+        env.SCRIBIX_MEDIA,
+        source.user_id,
+        source.project_id
+      );
+      if (result.ok) stats.deleted += 1;
+      else stats.retry += 1;
     } catch (error) {
       stats.failed += 1;
       stats.retry += 1;
@@ -297,6 +297,69 @@ async function sweepExpiredVideoSources(env: Env, nowIso: string): Promise<Sweep
         assetId: source.asset_id,
         errorCategory: cleanupErrorCategory(error),
         error: error instanceof Error ? error.message.slice(0, 200) : "unknown",
+      }));
+    }
+  }
+  return stats;
+}
+
+async function sweepExpiredFinalAssets(env: Env, nowIso: string): Promise<SweepStats> {
+  const rows = await env.DB.prepare(
+    `SELECT a.id AS asset_id, a.user_id, a.project_id, a.kind, a.r2_key
+       FROM media_assets a
+      WHERE a.kind IN ('final_video', 'cover')
+        AND a.status = 'ready'
+        AND a.deleted_at IS NULL
+        AND a.r2_key IS NOT NULL
+        AND a.expires_at IS NOT NULL
+        AND a.expires_at <= ?1
+      ORDER BY a.expires_at ASC
+      LIMIT 200`
+  ).bind(nowIso).all<SupersededFinalAssetRow>();
+  const stats: SweepStats = { scanned: rows.results.length, deleted: 0, failed: 0, retry: 0 };
+  for (const asset of rows.results) {
+    try {
+      await env.SCRIBIX_MEDIA.delete(asset.r2_key);
+      const updated = await env.DB.batch([
+        env.DB.prepare(
+          `UPDATE media_assets
+              SET status = 'deleted', r2_key = NULL, deleted_at = CURRENT_TIMESTAMP
+            WHERE id = ?1 AND user_id = ?2 AND status = 'ready' AND deleted_at IS NULL`
+        ).bind(asset.asset_id, asset.user_id),
+        env.DB.prepare(
+          `UPDATE video_projects
+              SET status = CASE
+                    WHEN EXISTS (
+                      SELECT 1
+                        FROM render_jobs job
+                        JOIN media_assets video
+                          ON video.id = job.output_asset_id AND video.user_id = job.user_id
+                        JOIN media_assets cover
+                          ON cover.id = job.cover_asset_id AND cover.user_id = job.user_id
+                       WHERE job.project_id = ?1 AND job.user_id = ?2
+                         AND job.kind = 'final' AND job.status = 'completed'
+                         AND job.superseded_at IS NULL
+                         AND video.status = 'ready' AND video.deleted_at IS NULL
+                         AND (video.expires_at IS NULL OR video.expires_at > CURRENT_TIMESTAMP)
+                         AND cover.status = 'ready' AND cover.deleted_at IS NULL
+                         AND (cover.expires_at IS NULL OR cover.expires_at > CURRENT_TIMESTAMP)
+                    ) THEN 'completed'
+                    ELSE 'editing'
+                  END,
+                  updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL`
+        ).bind(asset.project_id, asset.user_id),
+      ]);
+      if (updated[0].meta?.changes) stats.deleted += 1;
+    } catch (error) {
+      stats.failed += 1;
+      stats.retry += 1;
+      console.error(JSON.stringify({
+        event: "cleanup_expired_final_asset_failed",
+        projectId: asset.project_id,
+        assetId: asset.asset_id,
+        assetKind: asset.kind,
+        errorCategory: cleanupErrorCategory(error),
       }));
     }
   }
@@ -399,6 +462,49 @@ async function sweepOrphanVideoAssets(env: Env): Promise<SweepStats> {
   return stats;
 }
 
+async function sweepSupersededFinalAssets(env: Env): Promise<SweepStats> {
+  const rows = await env.DB.prepare(
+    `SELECT a.id AS asset_id, a.user_id, a.project_id, a.kind, a.r2_key
+       FROM render_jobs j
+       JOIN media_assets a
+         ON a.id IN (j.output_asset_id, j.cover_asset_id)
+        AND a.user_id = j.user_id
+      WHERE j.kind = 'final'
+        AND j.superseded_at IS NOT NULL
+        AND a.kind IN ('final_video', 'cover')
+        AND a.status = 'ready'
+        AND a.deleted_at IS NULL
+        AND a.r2_key IS NOT NULL
+      ORDER BY j.superseded_at ASC
+      LIMIT 200`
+  ).all<SupersededFinalAssetRow>();
+  const stats: SweepStats = { scanned: rows.results.length, deleted: 0, failed: 0, retry: 0 };
+  for (const asset of rows.results) {
+    try {
+      await env.SCRIBIX_MEDIA.delete(asset.r2_key);
+      const updated = await env.DB.prepare(
+        `UPDATE media_assets
+            SET status = 'deleted', r2_key = NULL, deleted_at = CURRENT_TIMESTAMP
+          WHERE id = ?1 AND user_id = ?2 AND status = 'ready' AND deleted_at IS NULL`
+      )
+        .bind(asset.asset_id, asset.user_id)
+        .run();
+      if (updated.meta?.changes) stats.deleted += 1;
+    } catch (error) {
+      stats.failed += 1;
+      stats.retry += 1;
+      console.error(JSON.stringify({
+        event: "cleanup_superseded_final_asset_failed",
+        projectId: asset.project_id,
+        assetId: asset.asset_id,
+        assetKind: asset.kind,
+        errorCategory: cleanupErrorCategory(error),
+      }));
+    }
+  }
+  return stats;
+}
+
 function cleanupErrorCategory(error: unknown): string {
   if (error instanceof Error && /auth|forbidden|unauthorized/i.test(error.message)) return "auth";
   if (error instanceof Error && /timeout|network|fetch/i.test(error.message)) return "network";
@@ -420,6 +526,8 @@ async function runCleanup(env: Env): Promise<void> {
     nowIso
   );
   const expiredPreviewProxies = await sweepExpiredPreviewProxies(env, nowIso);
+  const expiredFinalAssets = await sweepExpiredFinalAssets(env, nowIso);
+  const supersededFinalAssets = await sweepSupersededFinalAssets(env);
   const orphanVideoAssets = await sweepOrphanVideoAssets(env);
   const expired = await sweepExpiredAudio(env, isoCutoff(AUDIO_TTL_MS));
   const sweeps = {
@@ -429,6 +537,8 @@ async function runCleanup(env: Env): Promise<void> {
     legacyDeleted,
     expiredVideoSources,
     expiredPreviewProxies,
+    expiredFinalAssets,
+    supersededFinalAssets,
     orphanVideoAssets,
     expiredMedia: expired,
   };

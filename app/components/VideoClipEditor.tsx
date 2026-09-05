@@ -3,6 +3,7 @@
 import {
   CircleAlert,
   Loader2,
+  Move,
   Pause,
   Play,
   Scissors,
@@ -16,7 +17,9 @@ import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
 import { trackVideoWorkspaceEvent } from "@/app/components/video-event-client";
 import type { EditorWorkspace } from "@/lib/video-workspace/editor";
 import {
+  FINAL_VIDEO_PRESET,
   VIDEO_WORKSPACE_LIMITS,
+  type CropSpec,
   type Edl,
   type EdlSegment,
   type RenderSpec,
@@ -109,6 +112,9 @@ export function VideoClipEditor({
       })
       .then((next) => {
         if (!active) return;
+        const displayClipTitle = next.clipTitle === "manual_source"
+          ? t("customClipTitle")
+          : next.clipTitle;
         const savedSignature = draftSignature(next.edl, next.renderSpec);
         const nextRenderSpec = {
           ...next.renderSpec,
@@ -116,8 +122,8 @@ export function VideoClipEditor({
         };
         const nextSignature = draftSignature(next.edl, nextRenderSpec);
         lastSavedRef.current = next.restoredDraft ? savedSignature : "";
-        setWorkspace(next);
-        setClipTitle(next.clipTitle);
+        setWorkspace({ ...next, clipTitle: displayClipTitle });
+        setClipTitle(displayClipTitle);
         setEdl(next.edl);
         setRenderSpec(nextRenderSpec);
         setRevision(next.revision);
@@ -129,7 +135,7 @@ export function VideoClipEditor({
     return () => {
       active = false;
     };
-  }, [candidateId, projectId, reloadKey]);
+  }, [candidateId, projectId, reloadKey, t]);
 
   const signature = useMemo(
     () => edl && renderSpec ? draftSignature(edl, renderSpec) : "",
@@ -459,10 +465,18 @@ export function VideoClipEditor({
             timeline={timeline}
             renderSpec={renderSpec}
             assets={workspace.assets}
+            onCropChange={(segmentId, crop) => updateRenderSpec({
+              ...renderSpec,
+              segments: {
+                ...renderSpec.segments,
+                [segmentId]: { framingMode: "fill", crop },
+              },
+            })}
             labels={{
               play: t("play"),
               pause: t("pause"),
               previewMissing: t("previewMissing"),
+              dragToReframe: t("style.framing.dragToReframe"),
             }}
           />
           <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.1em] text-ink/45">
@@ -647,19 +661,23 @@ function ContinuousProxyPlayer({
   timeline,
   renderSpec,
   assets,
+  onCropChange,
   labels,
 }: {
   timeline: TimelineSegment[];
   renderSpec: RenderSpec;
   assets: EditorWorkspace["assets"];
-  labels: { play: string; pause: string; previewMissing: string };
+  onCropChange: (segmentId: string, crop: CropSpec) => void;
+  labels: { play: string; pause: string; previewMissing: string; dragToReframe: string };
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const videos = [useRef<HTMLVideoElement>(null), useRef<HTMLVideoElement>(null)];
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeSlot, setActiveSlot] = useState<0 | 1>(0);
   const [timelineMs, setTimelineMs] = useState(0);
   const [sourceMs, setSourceMs] = useState(timeline[0]?.sourceStartMs ?? 0);
   const [playing, setPlaying] = useState(false);
+  const [showDragHint, setShowDragHint] = useState(true);
   const [videoDimensions, setVideoDimensions] = useState<Array<{
     width: number;
     height: number;
@@ -670,6 +688,17 @@ function ContinuousProxyPlayer({
   const activeCrop = activeSegment
     ? renderSpec.segments[activeSegment.id]?.crop
     : undefined;
+  const activeFramingMode = activeSegment
+    ? renderSpec.segments[activeSegment.id]?.framingMode ?? "fill"
+    : "fill";
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    crop: CropSpec;
+    overflowX: number;
+    overflowY: number;
+  } | null>(null);
   const slot0Index = activeSlot === 0 ? activeIndex : activeIndex + 1;
   const slot1Index = activeSlot === 1 ? activeIndex : activeIndex + 1;
 
@@ -797,6 +826,15 @@ function ContinuousProxyPlayer({
   }
   const mediaStyle = (slot: 0 | 1) => {
     const dimensions = videoDimensions[slot];
+    if (activeFramingMode === "fit") {
+      return {
+        width: "100%",
+        height: "100%",
+        left: "0%",
+        top: "0%",
+        objectFit: "contain" as const,
+      };
+    }
     if (!dimensions || !activeCrop) {
       return {
         width: "100%",
@@ -809,8 +847,57 @@ function ContinuousProxyPlayer({
     }
     return browserCropStyle(coverCropBox(dimensions.width, dimensions.height, activeCrop));
   };
+
+  const startCropDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (
+      activeFramingMode !== "fill" || !activeSegment || !activeCrop ||
+      (event.target as HTMLElement).closest("button, input")
+    ) return;
+    const container = containerRef.current;
+    const dimensions = videoDimensions[activeSlot];
+    if (!container || !dimensions) return;
+    const rect = container.getBoundingClientRect();
+    const box = coverCropBox(dimensions.width, dimensions.height, activeCrop);
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      crop: activeCrop,
+      overflowX: Math.max(0, (box.width / FINAL_VIDEO_PRESET.width - 1) * rect.width),
+      overflowY: Math.max(0, (box.height / FINAL_VIDEO_PRESET.height - 1) * rect.height),
+    };
+    setShowDragHint(false);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const moveCrop = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId || !activeSegment) return;
+    const x = drag.overflowX > 0
+      ? clamp01(drag.crop.x - (event.clientX - drag.startX) / drag.overflowX)
+      : drag.crop.x;
+    const y = drag.overflowY > 0
+      ? clamp01(drag.crop.y - (event.clientY - drag.startY) / drag.overflowY)
+      : drag.crop.y;
+    onCropChange(activeSegment.id, { ...drag.crop, x, y });
+  };
+
+  const endCropDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (dragRef.current?.pointerId !== event.pointerId) return;
+    dragRef.current = null;
+    event.currentTarget.releasePointerCapture(event.pointerId);
+  };
   return (
-    <div className="relative mx-auto aspect-[9/16] max-h-[620px] overflow-hidden rounded-xl bg-black [container-type:inline-size] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
+    <div
+      ref={containerRef}
+      title={activeFramingMode === "fill" ? labels.dragToReframe : undefined}
+      onPointerDown={startCropDrag}
+      onPointerMove={moveCrop}
+      onPointerUp={endCropDrag}
+      onPointerCancel={endCropDrag}
+      style={{ backgroundColor: renderSpec.canvas.backgroundColor }}
+      className={`relative mx-auto aspect-[9/16] max-h-[620px] touch-none overflow-hidden rounded-xl [container-type:inline-size] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)] ${activeFramingMode === "fill" ? "cursor-grab active:cursor-grabbing" : ""}`}
+    >
       <video
         ref={videos[0]}
         src={timeline[slot0Index]?.proxyUrl}
@@ -840,6 +927,14 @@ function ContinuousProxyPlayer({
           renderSpec={renderSpec}
           assets={assets}
         />
+      ) : null}
+      {activeFramingMode === "fill" && showDragHint ? (
+        <div className="pointer-events-none absolute inset-x-0 top-4 flex justify-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1.5 text-[10px] font-semibold text-white/85 shadow-lg backdrop-blur">
+            <Move size={12} />
+            {labels.dragToReframe}
+          </span>
+        </div>
       ) : null}
       <button
         type="button"
@@ -1005,6 +1100,10 @@ function EditorNotice({ children, tone }: { children: React.ReactNode; tone: "er
 
 function draftSignature(edl: Edl, renderSpec: RenderSpec): string {
   return JSON.stringify({ edl, renderSpec });
+}
+
+function clamp01(value: number): number {
+  return Math.max(0, Math.min(1, value));
 }
 
 function segmentIndexFromId(segmentId: string): number | null {
