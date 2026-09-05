@@ -6,12 +6,19 @@ M6 将当前候选已保存的 project version 变成不可变 final render job�
 
 - `GET /api/video-projects/:id/renders`：列出最终渲染及短期下载 URL。
 - `POST /api/video-projects/:id/renders`：创建或复用同一 version 的 final job。
-- `DELETE /api/video-projects/:id/renders/:jobId`：取消排队中或执行中的任务。
+- `DELETE /api/video-projects/:id/renders/:jobId`：取消排队中/执行中的任务，或删除已完成导出的 R2 视频与封面。
 - `POST /api/video-projects/:id/renders/:jobId`：重试可重试失败或已取消的任务。
+- `GET /api/video-projects/:id/renders/:jobId/download`：下载 ZIP；付费用户包含 MP4 与 JPEG cover，Free 只包含 MP4。
 
-创建接口接受 `candidateId`、`expectedRevision` 与 `idempotencyKey`。revision 负责阻止用过期草稿发起渲染；candidate ownership、idempotency key 和 version 唯一性共同避免不同候选串用草稿或重复输出。最终视频和封面的下载 URL 有效期为 60 分钟。
+创建接口接受 `candidateId`、`expectedRevision` 与 `idempotencyKey`。revision 负责阻止用过期草稿发起渲染；candidate ownership、idempotency key 和 version 唯一性共同避免不同候选串用草稿或重复输出。Container 使用的对象 URL 有效期为 60 分钟；用户下载通过受认证的打包接口读取当前可用资产。
 
 Free 的创建请求不信任浏览器草稿：服务端从所选 AI candidate 重建默认 EDL 与 Render Spec，并原样导出该候选。Free 不能渲染 manual-origin candidate、不能重试历史 edited render，也不会收到 cover 下载 URL。Creator 和 legacy Basic 继续按当前已保存的 editor draft/version 渲染，并可下载封面。
+
+Migration `0034_latest_final_render.sql` 为 final job 增加 `superseded_at`。同一个 candidate 的新导出
+完成后成为唯一可下载版本，服务端立即尝试从 R2 删除旧视频与封面，失败时由 cleanup worker
+重试；历史 job row 只保留用于运行诊断。
+Migration `0035_final_export_retention.sql` 为已有 final assets 回填完成时间起 30 天的过期时间；
+新导出在 callback 验证成功时直接写入相同期限。用户可在期限前主动删除当前导出。
 
 ## 执行协议
 
@@ -20,7 +27,7 @@ Cloudflare Queue dispatcher 同时处理 preview 与 final 两类任务。final 
 容器直接从原视频执行以下流水线：
 
 1. 按不可变 EDL 对连续 source segment seek、trim。
-2. 默认由 MediaPipe 检测主要人脸并生成平滑 9:16 跟随；置信不足时用完整画面加模糊背景，用户也可选择固定 crop。
+2. Fill 模式使用用户 crop，并可由 MediaPipe 对默认 framing 生成平滑 9:16 跟随；检测置信不足时退回完整画面加模糊背景。Fit 模式始终保留完整画面并使用模糊背景填充 9:16 canvas。
 3. 标准化视频编码；音频保持原始响度和起止，不应用标准化或淡入淡出，无音轨输入自动补静音。
 4. 生成带逐字 timing 的 ASS 动态字幕，并应用模板、断行、安全区和自定义字体。
 5. 应用品牌署名和 Logo；音频使用固定的原音兼容参数。

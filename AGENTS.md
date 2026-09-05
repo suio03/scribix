@@ -8,7 +8,10 @@ Scribix is a Next.js App Router project deployed through OpenNext on Cloudflare.
 
 - `npm run dev`: start the Next.js dev server using webpack.
 - `npm run check-locales`: verify locale key/type/array-length parity, message placeholders, and structural-field boundaries.
+- `npm run test:video-workspace`: run the video workspace contract, validation, access, and rendering-boundary tests.
 - `npm run build`: run the production Next.js build; use this as baseline validation.
+- `npm run build:cloudflare`: build the OpenNext Worker used by the full local video export environment.
+- `npm run dev:video-workspace`: run the app, local D1/Queue/Container bindings, and the shared remote media bucket after the Cloudflare build.
 - `npm run start`: serve a previously built Next.js app.
 - `npm run preview`: build with OpenNext and preview on Cloudflare using remote bindings.
 - `npm run deploy`: build and deploy the Cloudflare app.

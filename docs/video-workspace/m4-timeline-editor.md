@@ -46,7 +46,9 @@ Migration `0028_video_editor_drafts.sql` adds the active project draft mirror. M
 - Only one candidate is selected for the singular project draft at a time.
 - Start and end controls step across real transcript word boundaries or accept millisecond-precise original-video timecodes such as `02:03.637`.
 - Boundary changes always reference the uploaded original source. AI cuts start at no more than 45 seconds; manual boundary edits may extend the timeline to the 60-second contract limit.
+- Fill framing crops to 9:16. The preview shows a drag affordance and lets the user drag the picture directly; the horizontal, vertical, and zoom controls edit the same persisted crop. Fit framing keeps the complete source frame over a blurred background and disables crop dragging.
 - The current product does not expose add, delete, or reorder controls for cuts. Existing multi-segment drafts remain valid and play in their stored order, but ordinary editing stays focused on one understandable source range.
+- A paid user can keep one manual candidate at a time, delete it as a unit, and then create another. Deleting it removes its draft versions, render jobs, and stored outputs; AI candidates are preserved as the original recommendations.
 - Changes inside proxy handles update immediately without media processing.
 - Changes beyond handles are saved immediately, then queue a replacement for that segment only. The editor polls until the new signed proxy covers the edited range.
 - Autosave waits 900 ms after an edit. A revision conflict requires an explicit reload.

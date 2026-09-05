@@ -21,7 +21,9 @@ M8 的本地实现覆盖输入边界、任务资源边界、恢复路径和可�
 - provider 成功后留两分钟等待签名 callback；callback 丢失则稳定失败为 `upload_failed`。provider 状态连续缺失 15 分钟则失败为 `provider_unavailable`。
 - stale job 失败时只修改 job 与其 output/cover assets，不泄露用户对象路径。
 - cleanup worker 删除超过 24 小时且没有 render job 的 pending/uploading 品牌或输出资产，以及超过 7 天的同类 failed orphan assets。
-- source/proxy retention、账户删除和项目删除继续由原有 lifecycle sweep 执行；R2 删除确认后才清除 D1 引用。
+- source 到期或用户主动移除时同时删除 source 与 preview proxies，保留 transcript 文本和未到期最新成片，并将项目降为不可编辑的归档视图。
+- cleanup worker 删除完成超过 30 天的 final video/cover，以及被同一 candidate 较新导出 supersede 的旧资产。
+- 账户删除、项目删除和用户主动删除成片继续由 lifecycle 路径执行；R2 删除确认后才清除 D1 引用。
 
 ## 监控事件
 

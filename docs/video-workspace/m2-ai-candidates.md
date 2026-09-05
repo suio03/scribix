@@ -71,27 +71,27 @@ provider payload 在写入 D1 前失败。两次调用分别记录 token、reaso
 ## API 与状态
 
 - `GET /api/video-projects/{projectId}/candidates`：读取当前候选和 project 状态。
-- `POST /api/video-projects/{projectId}/candidates`：生成或重新生成候选；JSON body `{ "mode": "manual" }` 从 original source 建立手动剪辑入口。
+- `POST /api/video-projects/{projectId}/candidates`：首次生成 AI 候选；JSON body `{ "mode": "manual" }` 从 original source 建立额外的手动剪辑入口。
+- `DELETE /api/video-projects/{projectId}/candidates/{candidateId}`：只删除付费用户创建的 manual candidate 及其相关草稿、任务和输出；AI 推荐不可通过该接口删除。
 - `POST /api/video-projects/{projectId}/candidates/{candidateId}/feedback`：记录
   `accepted` 或 `rejected`。
 
 AI 生成时 project 原子切换为 `analyzing`，阻止同一项目重复请求。短源视频和显式 manual 模式不调用 AI。超过 10 分钟的 analyzing
-状态可被安全重试。重新生成成功后才以 D1 batch 替换旧候选；失败时旧候选和此前的用户反馈
-事件都保留。
+状态可安全重试；一旦已有 AI candidates 或项目进入候选/编辑状态，服务端返回
+`candidates_already_generated`，避免无上限重复消耗 AI。首次生成失败不会写入部分候选。
 
 反馈当前同时更新候选状态，并写入 `clip_candidate_feedback_events` 事件表。事件不依赖候选
-外键，因此候选被重新生成替换后，历史接受率数据仍可保留；删除 project 或账号时事件一起
-删除。
+外键，因此删除 candidate 后历史接受率数据仍可保留；删除 project 或账号时事件一起删除。
 
 ## UI
 
-完成转录且仍有原视频的 transcript 会显示“查找视频片段”入口。候选工作台展示 rank、主题、
-hook、reason、得分、总时长和每段 source timestamp，支持重新生成、选择和排除。页面重新加载
-到活跃任务时会轮询状态；陈旧任务会恢复为可重试状态。
+完成转录且仍有原视频的 transcript 会显示“查找视频片段”入口。候选工作台展示 AI 推荐与
+manual candidates，支持选择候选；付费用户可创建和删除 manual candidate。AI 推荐生成完成后
+不显示 Regenerate。页面重新加载到活跃任务时会轮询状态；陈旧任务会恢复为可重试状态。
 
 ## 验证
 
 - 合同测试覆盖真实 word-boundary 对齐、连续候选、越界过滤、高重复去重、完整性二审的接受/调整/拒绝，以及未知字段、缺失或重复 decision 拒绝。
 - Locale key/type/ICU 参数一致性必须通过。
 - 全量 TypeScript 检查与 production build 必须通过。
-- 全部 migrations 必须能从空 D1 数据库应用到 `0033`，且 foreign key check 为空。
+- 全部 migrations 必须能从空 D1 数据库应用到当前最新版本，且 foreign key check 为空。

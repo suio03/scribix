@@ -16,6 +16,8 @@ the one-time items that are already verified and unchanged.
 - [ ] `db:migrate:remote` applied; for release `0.25.0+`, confirm migrations
   `0020_partial_transcripts.sql` through `0024_ai_usage_events.sql` are listed
   as applied.
+- [ ] Before releasing the video workspace lifecycle, confirm migrations
+  `0025_video_workspace.sql` through `0035_final_export_retention.sql` are applied.
 - [ ] `npm run deploy:cleanup` deployed the hourly cleanup Worker and its cron is visible in Cloudflare.
 
 ## Webhook URLs
@@ -33,7 +35,8 @@ the one-time items that are already verified and unchanged.
 - [ ] The default lifecycle aborts incomplete multipart uploads after **7 days**.
 - [ ] No completed-media expiration rule targets `users/`; the hourly cleanup
   worker is the sole authority for completed non-video audio expiry after
-  **14 days** and original-video expiry after **7/30/30 days** by plan
+  **14 days**, original-video expiry after **7/30/30 days** by plan, and final
+  video/cover expiry **30 days after export**
   (manual-setup §0.5).
 
 ## Smoke tests on prod
@@ -90,8 +93,16 @@ the one-time items that are already verified and unchanged.
   and old edited-render retry requests are rejected server-side; render listings
   do not expose cover URLs.
 - [ ] As Creator, confirm direct editing for a source up to 45 seconds, candidate
-  editing for a longer source, brand assets, saved revisions, final video, and
-  cover download all continue to work.
+  editing for a longer source, Fill drag-to-reframe, Fit framing, manual candidate
+  create/delete, brand assets, saved revisions, and ZIP download containing the
+  final video and cover all work.
+- [ ] Export the same candidate twice; confirm only the latest package remains
+  downloadable and the superseded R2 video/cover are removed. Delete the latest
+  export and confirm its assets are removed without deleting the candidate.
+- [ ] Remove an original video; confirm preview proxies disappear, transcript text
+  and the unexpired latest export remain, and editing/re-export are unavailable.
+  Separately delete a video project and confirm all project media disappears while
+  the transcript text record remains.
 - [ ] Record, pause, wait, and stop without resuming; confirm paused wall-clock
   time is excluded. Repeat with pause → resume → stop.
 - [ ] Retry multipart complete after it has already succeeded → the endpoint

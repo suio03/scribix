@@ -4,7 +4,7 @@
 
 ## 1. Cloudflare D1 与 R2
 
-1. 先备份生产 D1，再确认待执行 migrations 为 `0025`–`0033`，运行 `npm run db:migrate:remote`。
+1. 先备份生产 D1，再确认待执行 migrations 为 `0025`–`0035`，运行 `npm run db:migrate:remote`。
 2. migration 后执行 `PRAGMA foreign_key_check`，确认无结果；检查两个 `render_jobs_final_*` triggers 存在。
 3. `scribix-media` 保持 private。为浏览器直传配置 CORS，只允许实际产品 origin：
 
@@ -58,12 +58,12 @@
 - Queue/DLQ、Container capacity/cold-start/failed/timeout、镜像扫描和 Worker error alarms。
 - `video_render_metrics` 的 queue depth、p50/p95 start/render/total、success/retry rate。
 - `video_render_cost_rates_missing` 必须为零，所有成功任务都有 cost model。
-- cleanup retry、orphan assets 和 source/proxy retention。
+- cleanup retry、orphan assets、source/proxy retention、30 天 final export expiry 与 superseded export 清理。
 - 日志不得出现 signed URL、Authorization、R2 key、transcript 或字幕内容。
 
 ## 6. Production smoke 与试点
 
-使用 allowlist 内部账号依次验证：横屏有声、竖屏静音、连续片段修剪、自动与固定构图、三个字幕模板、Logo/字体、取消、重试、重复 idempotency key、源过期、视频/封面下载、账户删除。确认 Final Render 只读取 original source。
+使用 allowlist 内部账号依次验证：横屏有声、竖屏静音、连续片段修剪、Fill 拖动裁切与 Fit 模式、三个字幕模板、Logo/字体、取消、重试、重复 idempotency key、源过期、ZIP 下载、成片删除、账户删除。确认 Final Render 只读取 original source，同一 candidate 的新导出会替换旧导出。
 
 同时验证公开入口：`/` 继续承接 AI video clipper 首页，`/video-to-text` 及五个 locale 版本承接原视频转文字页面；检查侧边栏链接、上传后登录回跳、自引用 canonical、reciprocal hreflang、Open Graph、JSON-LD 和 sitemap 记录。
 
