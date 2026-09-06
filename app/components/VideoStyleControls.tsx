@@ -7,6 +7,7 @@ import type { EditorBrandAsset } from "@/lib/video-workspace/brand-assets";
 import type { Edl, RenderSpec } from "@/lib/video-workspace/contracts";
 
 export function VideoStyleControls({
+  expanded = false,
   projectId,
   edl,
   renderSpec,
@@ -14,6 +15,7 @@ export function VideoStyleControls({
   onChange,
   onAssetsChange,
 }: {
+  expanded?: boolean;
   projectId: string;
   edl: Edl;
   renderSpec: RenderSpec;
@@ -109,69 +111,7 @@ export function VideoStyleControls({
 
   return (
     <div className="space-y-3">
-      <ControlSection icon={<SlidersHorizontal size={13} />} title={t("framing.title")}>
-        <div className="space-y-4">
-          {[...edl.segments].sort((a, b) => a.order - b.order).map((segment, index) => {
-            const crop = renderSpec.segments[segment.id].crop;
-            const framingMode = renderSpec.segments[segment.id].framingMode ?? "fill";
-            const updateFraming = (
-              nextMode: "fill" | "fit",
-              nextCrop = crop
-            ) => onChange({
-              ...renderSpec,
-              segments: {
-                ...renderSpec.segments,
-                [segment.id]: { framingMode: nextMode, crop: nextCrop },
-              },
-            });
-            return (
-              <div key={segment.id} className="rounded-lg border border-line bg-paper/65 p-3">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-ink/45">
-                    {t("framing.cut", { number: index + 1 })}
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 rounded-lg border border-line bg-card p-1">
-                  {(["fill", "fit"] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      type="button"
-                      aria-pressed={framingMode === mode}
-                      onClick={() => updateFraming(mode)}
-                      className={`rounded-md px-3 py-2 text-[10px] font-semibold transition ${framingMode === mode ? "bg-ink text-paper" : "text-ink/55 hover:bg-ink/5 hover:text-ink"}`}
-                    >
-                      {t(`framing.${mode}`)}
-                    </button>
-                  ))}
-                </div>
-                <p className="my-3 text-[10px] leading-4 text-ink/50">
-                  {t(framingMode === "fill" ? "framing.fillNote" : "framing.fitNote")}
-                </p>
-                {framingMode === "fill" ? (
-                  <>
-                    <ControlRange label={t("framing.horizontal")} min={0} max={1} step={0.01} value={crop.x} display={`${Math.round(crop.x * 100)}%`} onChange={(x) => updateFraming("fill", { ...crop, x })} />
-                    <ControlRange label={t("framing.vertical")} min={0} max={1} step={0.01} value={crop.y} display={`${Math.round(crop.y * 100)}%`} onChange={(y) => updateFraming("fill", { ...crop, y })} />
-                    <ControlRange label={t("framing.zoom")} min={1} max={4} step={0.05} value={crop.zoom} display={`${crop.zoom.toFixed(2)}×`} onChange={(zoom) => updateFraming("fill", { ...crop, zoom })} />
-                  </>
-                ) : null}
-                {framingMode === "fill" && (
-                  crop.x !== 0.5 || crop.y !== 0.5 || crop.zoom !== 1
-                ) ? (
-                  <button
-                    type="button"
-                    onClick={() => updateFraming("fill", { x: 0.5, y: 0.5, zoom: 1 })}
-                    className="mt-3 text-[10px] font-semibold text-accent underline decoration-accent/30 underline-offset-4"
-                  >
-                    {t("framing.reset")}
-                  </button>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-      </ControlSection>
-
-      <ControlSection icon={<Type size={13} />} title={t("captions.title")}>
+      <ControlSection open={expanded} icon={<Type size={13} />} title={t("captions.title")}>
         <label className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-line bg-paper/65 px-3 py-2.5 text-[11px] font-medium text-ink/70">
           <span>{t("captions.enabled")}</span>
           <input
@@ -195,6 +135,7 @@ export function VideoStyleControls({
           <ColorControl label={t("captions.highlightColor")} value={renderSpec.captions.highlightColor} onChange={(highlightColor) => onChange({ ...renderSpec, captions: { ...renderSpec.captions, highlightColor } })} />
         </div>
         <div className="mt-3">
+          <ControlRange label={t("captions.size")} min={0.5} max={1.5} step={0.05} value={renderSpec.captions.fontScale ?? 1} display={`${Math.round((renderSpec.captions.fontScale ?? 1) * 100)}%`} onChange={(fontScale) => onChange({ ...renderSpec, captions: { ...renderSpec.captions, fontScale } })} />
           <ControlRange label={t("captions.position")} min={0.2} max={0.86} step={0.01} value={renderSpec.captions.positionY} display={`${Math.round(renderSpec.captions.positionY * 100)}%`} onChange={(positionY) => onChange({ ...renderSpec, captions: { ...renderSpec.captions, positionY } })} />
           <ControlRange label={t("captions.lineWidth")} min={8} max={42} step={1} value={renderSpec.captions.maxCharsPerLine} display={String(renderSpec.captions.maxCharsPerLine)} onChange={(maxCharsPerLine) => onChange({ ...renderSpec, captions: { ...renderSpec.captions, maxCharsPerLine } })} />
           <ControlRange label={t("captions.lines")} min={1} max={3} step={1} value={renderSpec.captions.maxLines} display={String(renderSpec.captions.maxLines)} onChange={(maxLines) => onChange({ ...renderSpec, captions: { ...renderSpec.captions, maxLines } })} />
@@ -204,23 +145,7 @@ export function VideoStyleControls({
           {t("captions.uploadFont")}
           <input type="file" accept=".ttf,.otf,font/ttf,font/otf" className="sr-only" onChange={(event) => void uploadAsset("font", event.target.files?.[0])} />
         </label>
-        <div className="mt-4 space-y-1.5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-ink/45">{t("captions.correction")}</p>
-          {renderSpec.captions.cues.map((cue, index) => (
-            <label key={cue.id} className="grid gap-1.5 rounded-lg border border-line bg-paper/60 px-2.5 py-2 sm:grid-cols-[7.75rem_minmax(0,1fr)] sm:items-center sm:gap-3">
-              <span className="sr-only">{t("captions.cue", { number: index + 1 })}</span>
-              <span className="font-mono text-[9px] tabular-nums text-ink/45">
-                {formatCueTimestamp(cue.sourceStartMs)}–{formatCueTimestamp(cue.sourceEndMs)}
-              </span>
-              <input
-                value={cue.words.map((word) => word.text).join(" ")}
-                maxLength={400}
-                onChange={(event) => onChange({ ...renderSpec, captions: { ...renderSpec.captions, cues: renderSpec.captions.cues.map((item) => item.id === cue.id ? { ...item, words: redistributeCueWords(item, event.target.value) } : item) } })}
-                className="min-w-0 border-0 bg-transparent px-0 py-1 text-[11px] leading-5 text-ink outline-none placeholder:text-ink/30 focus-visible:ring-0"
-              />
-            </label>
-          ))}
-        </div>
+
       </ControlSection>
 
       <details className="group rounded-xl border border-line bg-ink/[0.025]">
@@ -291,12 +216,31 @@ export function VideoStyleControls({
             </label>
           </ControlSection>
 
-          <ControlSection icon={<ImagePlus size={13} />} title={t("cover.title")}>
+          {!expanded ? <ControlSection icon={<ImagePlus size={13} />} title={t("cover.title")}>
             <ControlRange label={t("cover.time")} min={0} max={Math.max(0, edl.segments.reduce((total, segment) => total + segment.sourceEndMs - segment.sourceStartMs, 0) - 1)} step={10} value={renderSpec.coverTimelineMs} display={`${(renderSpec.coverTimelineMs / 1000).toFixed(2)}s`} onChange={(coverTimelineMs) => onChange({ ...renderSpec, coverTimelineMs })} />
             <p className="mt-2 text-[10px] leading-4 text-ink/45">{t("cover.note")}</p>
-          </ControlSection>
+          </ControlSection> : null}
         </div>
       </details>
+
+      <ControlSection icon={<Type size={13} />} title={t("captions.correction")}>
+        <div className="max-h-64 space-y-1.5 overflow-y-auto overscroll-contain pr-1">
+          {renderSpec.captions.cues.map((cue, index) => (
+            <label key={cue.id} className="grid gap-1.5 rounded-lg border border-line bg-paper/60 px-2.5 py-2 sm:grid-cols-[7.75rem_minmax(0,1fr)] sm:items-center sm:gap-3">
+              <span className="sr-only">{t("captions.cue", { number: index + 1 })}</span>
+              <span className="font-mono text-[9px] tabular-nums text-ink/45">
+                {formatCueTimestamp(cue.sourceStartMs)}–{formatCueTimestamp(cue.sourceEndMs)}
+              </span>
+              <input
+                value={cue.words.map((word) => word.text).join(" ")}
+                maxLength={400}
+                onChange={(event) => onChange({ ...renderSpec, captions: { ...renderSpec.captions, cues: renderSpec.captions.cues.map((item) => item.id === cue.id ? { ...item, words: redistributeCueWords(item, event.target.value) } : item) } })}
+                className="min-w-0 border-0 bg-transparent px-0 py-1 text-[11px] leading-5 text-ink outline-none placeholder:text-ink/30 focus-visible:ring-0"
+              />
+            </label>
+          ))}
+        </div>
+      </ControlSection>
 
       {assetError ? <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-[11px] text-red-700">{t(assetError === "remove" ? "removeFailed" : "uploadFailed")}</p> : null}
     </div>

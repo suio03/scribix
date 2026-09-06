@@ -1,3 +1,4 @@
+import { claimNextRenderJob, renderConcurrency, wakeRenderScheduler } from "../lib/video-workspace/render-scheduling";
 import { Container } from "@cloudflare/containers";
 import { VIDEO_WORKSPACE_SCHEMA_VERSION, type RenderDispatchMessage } from "../lib/video-workspace/contracts";
 import { createScopedJobToken } from "../lib/video-workspace/job-auth";
@@ -80,27 +81,14 @@ export default {
         message.ack();
         continue;
       }
-      try {
-        const dispatched = await dispatchJob(env, provider, message.body.jobId);
-        if (dispatched !== "retry") {
-          message.ack();
-          continue;
-        }
-        message.retry({ delaySeconds: retryDelaySeconds(message.attempts) });
-      } catch (error) {
-        const permanent = message.attempts >= MAX_DISPATCH_ATTEMPTS;
-        await markDispatchError(env.DB, message.body.jobId, permanent);
-        console.error(JSON.stringify({
-          event: "video_dispatch_failed",
-          jobId: message.body.jobId,
-          attempt: message.attempts,
-          permanent,
-          error: error instanceof Error ? error.message.slice(0, 160) : "unknown",
-        }));
-        if (permanent) message.ack();
-        else message.retry({ delaySeconds: retryDelaySeconds(message.attempts) });
-      }
+      // Cancellation messages still need to stop their specific container.
+      const job = await env.DB.prepare("SELECT status, provider_job_id FROM render_jobs WHERE id = ?1")
+        .bind(message.body.jobId).first<{ status: string; provider_job_id: string | null }>();
+      if (job?.status === "canceled" && job.provider_job_id) await provider.cancel(job.provider_job_id);
     }
+    await dispatchAvailableJobs(env);
+    // Capacity waits are stored in D1, not provider failures or queue retries.
+    batch.ackAll();
   },
 
   async scheduled(
@@ -112,53 +100,38 @@ export default {
   },
 };
 
-async function dispatchJob(
+async function dispatchAvailableJobs(env: Env): Promise<void> {
+  const provider = providerFor(env);
+  const limit = renderConcurrency(env.VIDEO_RENDER_MAX_CONTAINERS);
+  await Promise.all(Array.from({ length: limit }, async () => {
+    const claimed = await claimNextRenderJob(env.DB, limit);
+    if (!claimed) return;
+    try {
+      const result = await dispatchClaimedJob(env, provider, claimed.id);
+      if (result === "retry") await wakeRenderScheduler(env.DB, env.VIDEO_RENDER_QUEUE, 5);
+    } catch (error) {
+      await markDispatchError(env.DB, claimed.id, claimed.attempt >= MAX_DISPATCH_ATTEMPTS);
+      console.error(JSON.stringify({
+        event: "video_dispatch_failed", jobId: claimed.id, attempt: claimed.attempt,
+        permanent: claimed.attempt >= MAX_DISPATCH_ATTEMPTS,
+        error: error instanceof Error ? error.message.slice(0, 160) : "unknown",
+      }));
+      await wakeRenderScheduler(env.DB, env.VIDEO_RENDER_QUEUE, 15);
+    }
+  }));
+}
+
+async function dispatchClaimedJob(
   env: Env,
   provider: VideoRenderProvider,
   jobId: string
 ): Promise<"submitted" | "ignored" | "retry"> {
-  const pending = await env.DB.prepare(
-    `SELECT id, kind, status, provider_job_id FROM render_jobs WHERE id = ?1`
-  )
-    .bind(jobId)
-    .first<DispatchJobRow>();
-  if (!pending) return "ignored";
-  if (pending.status === "canceled" && pending.provider_job_id) {
-    await provider.cancel(pending.provider_job_id);
-    return "ignored";
-  }
-  if (pending.status !== "queued") return "ignored";
-  if (await atContainerCapacity(env)) return "retry";
-  const claimed = await env.DB.prepare(
-    `UPDATE render_jobs
-        SET status = 'preparing', provider = ?2, attempt = attempt + 1,
-            error_code = NULL, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?1
-        AND status = 'queued'
-        AND provider_job_id IS NULL`
-  )
-    .bind(jobId, PROVIDER)
-    .run();
-  if (!claimed.meta?.changes) {
-    const current = await env.DB.prepare(
-      `SELECT id, kind, status, provider_job_id FROM render_jobs WHERE id = ?1`
-    )
-      .bind(jobId)
-      .first<DispatchJobRow>();
-    if (!current) return "ignored";
-    if (current.status === "canceled" && current.provider_job_id) {
-      await provider.cancel(current.provider_job_id);
-      return "ignored";
-    }
-    return current.status === "queued" ? "retry" : "ignored";
-  }
-
   const claimedJob = await env.DB.prepare(
     `SELECT id, kind, status, provider_job_id FROM render_jobs WHERE id = ?1`
   )
     .bind(jobId)
     .first<DispatchJobRow>();
-  if (!claimedJob) return "ignored";
+  if (!claimedJob || claimedJob.status !== "preparing") return "ignored";
   const jobToken = await createScopedJobToken(env.VIDEO_WORKER_SIGNING_SECRET, jobId);
   const providerJobId = await provider.submit({
     jobId,
@@ -169,7 +142,7 @@ async function dispatchJob(
   try {
     updated = await env.DB.prepare(
       `UPDATE render_jobs
-          SET provider_job_id = ?1, provider_submitted_at = CURRENT_TIMESTAMP,
+          SET provider_job_id = ?1, provider_submitted_at = COALESCE(provider_submitted_at, CURRENT_TIMESTAMP),
               updated_at = CURRENT_TIMESTAMP
         WHERE id = ?2
           AND status IN ('preparing', 'running', 'uploading', 'completed')
@@ -218,7 +191,9 @@ async function reconcileJobs(env: Env): Promise<void> {
       `UPDATE render_jobs
           SET status = 'queued', provider = NULL, queued_at = CURRENT_TIMESTAMP,
               updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?1 AND provider_job_id IS NULL AND status IN ('queued', 'preparing')`
+        WHERE id = ?1 AND provider_job_id IS NULL
+          AND ((status = 'queued' AND queued_at < datetime('now', '-2 minutes'))
+            OR (status = 'preparing' AND updated_at < datetime('now', '-5 minutes')))`
     )
       .bind(job.id)
       .run();
@@ -276,6 +251,7 @@ async function reconcileJobs(env: Env): Promise<void> {
 
 async function runScheduledOperations(env: Env): Promise<void> {
   await reconcileJobs(env);
+  await dispatchAvailableJobs(env);
   await recordRenderCosts(env);
   await emitRenderMetrics(env.DB);
 }
@@ -431,20 +407,6 @@ function providerFor(env: Env): VideoRenderProvider {
   return new CloudflareContainerRenderProvider(env.VIDEO_RENDER_CONTAINERS);
 }
 
-async function atContainerCapacity(env: Env): Promise<boolean> {
-  const configured = Number(env.VIDEO_RENDER_MAX_CONTAINERS ?? 3);
-  const limit = Number.isInteger(configured) && configured > 0
-    ? Math.min(configured, 100)
-    : 3;
-  const row = await env.DB.prepare(
-    `SELECT COUNT(*) AS count
-       FROM render_jobs
-      WHERE provider = ?1
-        AND status IN ('preparing', 'running', 'uploading')`
-  ).bind(PROVIDER).first<{ count: number }>();
-  return (row?.count ?? 0) >= limit;
-}
-
 function validMessage(value: unknown): value is RenderDispatchMessage {
   return Boolean(
     value &&
@@ -453,10 +415,6 @@ function validMessage(value: unknown): value is RenderDispatchMessage {
     typeof (value as { jobId?: unknown }).jobId === "string" &&
     (value as { jobId: string }).jobId.length > 0
   );
-}
-
-function retryDelaySeconds(attempt: number): number {
-  return Math.min(300, 15 * 2 ** Math.max(0, attempt - 1));
 }
 
 function staleTimestamp(value: string, ageMs: number): boolean {

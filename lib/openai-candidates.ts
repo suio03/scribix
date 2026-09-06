@@ -4,8 +4,12 @@ import {
   AI_CLIP_MAX_DURATION_MS,
   AI_CLIP_MAX_SEGMENTS,
   AI_CLIP_MIN_DURATION_MS,
-  parseProviderCandidateReviewResult,
-  parseProviderCandidateSet,
+  buildCandidateReviewInput,
+  parseSentenceCandidateReviewResult,
+  parseSentenceCandidateSet,
+  shortlistSentenceCandidates,
+  type CandidateAnalysisInput,
+  type ProviderCandidate,
   type ProviderCandidateReviewDecision,
   type ProviderCandidateSet,
 } from "@/lib/video-workspace/candidate-generation";
@@ -51,7 +55,7 @@ type OpenAIResponse = {
     total_tokens?: number;
     output_tokens_details?: { reasoning_tokens?: number };
   };
-  error?: { code?: string; message?: string };
+  error?: { code?: string; message?: string; param?: string };
 };
 
 export type GenerateCandidatesResult = {
@@ -100,7 +104,7 @@ export class OpenAICandidateError extends Error {
 }
 
 export async function generateCandidatesWithOpenAI(
-  input: string,
+  analysis: CandidateAnalysisInput,
   options: {
     requestId?: string;
     promptCacheKey?: string;
@@ -112,38 +116,69 @@ export async function generateCandidatesWithOpenAI(
   const maxCandidates = options.maxCandidates ?? AI_CLIP_CANDIDATE_COUNT;
   const model = options.model ?? OPENAI_CANDIDATE_MODEL;
   const reasoningEffort = options.reasoningEffort ?? OPENAI_CANDIDATE_REASONING_EFFORT;
-  const result = await requestStructuredJson({
-    requestId: options.requestId,
-    promptCacheKey: options.promptCacheKey,
-    model,
-    reasoningEffort,
-    instructions: candidateInstructions(maxCandidates),
-    input,
-    schemaName: "video_clip_candidates",
-    schema: candidateJsonSchema(maxCandidates),
-    maxOutputTokens: CANDIDATE_MAX_OUTPUT_TOKENS,
-    eventPrefix: "video_candidates",
-  });
-
-  try {
-    return {
-      candidates: parseProviderCandidateSet(result.parsed, maxCandidates),
-      responseId: result.responseId,
-      serviceTier: result.serviceTier,
-      usage: result.usage,
-    };
-  } catch {
-    throw new OpenAICandidateError("OpenAI candidate response failed local validation", {
-      providerCode: "invalid_candidate_payload",
-      responseId: result.responseId ?? undefined,
-      serviceTier: result.serviceTier ?? undefined,
-      usage: result.usage ?? undefined,
-    });
+  const candidates: ProviderCandidate[] = [];
+  let usage: AiTokenUsage | null = null;
+  let lastResult: StructuredJsonResult | null = null;
+  for (const [index, batch] of analysis.batches.entries()) {
+    let result: StructuredJsonResult;
+    try {
+      result = await requestStructuredJson({
+        requestId: analysis.batches.length === 1 ? options.requestId : `${options.requestId ?? "clips"}_batch${index}`,
+        promptCacheKey: options.promptCacheKey,
+        model,
+        reasoningEffort,
+        instructions: candidateInstructions(maxCandidates),
+        input: batch.text,
+        schemaName: "video_clip_sentence_candidates",
+        schema: candidateJsonSchema(maxCandidates),
+        maxOutputTokens: CANDIDATE_MAX_OUTPUT_TOKENS,
+        eventPrefix: "video_candidates",
+      });
+    } catch (error) {
+      if (!(error instanceof OpenAICandidateError)) throw error;
+      throw new OpenAICandidateError(error.message, {
+        status: error.status,
+        providerCode: error.providerCode,
+        responseId: error.responseId,
+        serviceTier: error.serviceTier,
+        usage: sumUsage(usage, error.usage ?? null) ?? undefined,
+      });
+    }
+    usage = sumUsage(usage, result.usage);
+    lastResult = result;
+    try {
+      candidates.push(...parseSentenceCandidateSet(result.parsed, batch.sentences, maxCandidates).candidates);
+    } catch {
+      throw new OpenAICandidateError("OpenAI candidate response failed local validation", {
+        providerCode: "invalid_candidate_payload",
+        responseId: result.responseId ?? undefined,
+        serviceTier: result.serviceTier ?? undefined,
+        usage: usage ?? undefined,
+      });
+    }
   }
+  return {
+    candidates: shortlistSentenceCandidates(candidates, maxCandidates),
+    responseId: analysis.batches.length === 1 ? lastResult?.responseId ?? null : null,
+    serviceTier: lastResult?.serviceTier ?? null,
+    usage,
+  };
+}
+
+function sumUsage(left: AiTokenUsage | null, right: AiTokenUsage | null): AiTokenUsage | null {
+  if (!left) return right;
+  if (!right) return left;
+  return {
+    inputTokens: left.inputTokens + right.inputTokens,
+    cachedInputTokens: left.cachedInputTokens + right.cachedInputTokens,
+    outputTokens: left.outputTokens + right.outputTokens,
+    reasoningTokens: left.reasoningTokens + right.reasoningTokens,
+    totalTokens: left.totalTokens + right.totalTokens,
+  };
 }
 
 export async function reviewCandidatesWithOpenAI(
-  transcriptInput: string,
+  analysis: CandidateAnalysisInput,
   proposedSet: ProviderCandidateSet,
   options: {
     requestId?: string;
@@ -163,30 +198,22 @@ export async function reviewCandidatesWithOpenAI(
   }
   const model = options.model ?? OPENAI_CANDIDATE_MODEL;
   const reasoningEffort = options.reasoningEffort ?? OPENAI_CANDIDATE_REASONING_EFFORT;
-  const input = [
-    transcriptInput,
-    "",
-    "PROPOSED CANDIDATES — review each by candidateIndex:",
-    JSON.stringify(proposedSet.candidates.map((candidate, candidateIndex) => ({
-      candidateIndex,
-      ...candidate,
-    }))),
-  ].join("\n");
+  const reviewInput = buildCandidateReviewInput(analysis, proposedSet);
   const result = await requestStructuredJson({
     requestId: options.requestId,
     promptCacheKey: options.promptCacheKey,
     model,
     reasoningEffort,
     instructions: candidateReviewInstructions(proposedSet.candidates.length),
-    input,
-    schemaName: "video_clip_candidate_completeness_review",
+    input: reviewInput.text,
+    schemaName: "video_clip_sentence_completeness_review",
     schema: candidateReviewJsonSchema(proposedSet.candidates.length),
     maxOutputTokens: CANDIDATE_REVIEW_MAX_OUTPUT_TOKENS,
     eventPrefix: "video_candidate_review",
   });
 
   try {
-    const reviewed = parseProviderCandidateReviewResult(result.parsed, proposedSet);
+    const reviewed = parseSentenceCandidateReviewResult(result.parsed, proposedSet, reviewInput);
     return {
       ...reviewed,
       responseId: result.responseId,
@@ -210,7 +237,8 @@ function candidateInstructions(maxCandidates: number): string {
     `Return 0 to ${maxCandidates} distinct, self-contained clip candidates ranked by editorial strength.`,
     "Quality is mandatory: return fewer candidates, including zero, when the transcript does not contain enough complete and compelling moments. Never add filler just to reach the maximum.",
     `Each candidate must total ${AI_CLIP_MIN_DURATION_MS / 1000}–${AI_CLIP_MAX_DURATION_MS / 1000} seconds and use no more than ${AI_CLIP_MAX_SEGMENTS} non-overlapping source segments.`,
-    "Use integer millisecond timestamps from the supplied transcript rows.",
+    "Return startSentenceId and endSentenceId from the supplied rows, including all sentences between them. Never invent IDs or return timestamps.",
+    "Each candidate must start and end on complete sentence boundaries. The displayed times are approximate; allow a small margin inside the 15–45 second limits.",
     "Completeness is a hard gate, not a scoring preference. Judge only the spoken excerpt; theme, hook, captions, and titles cannot supply missing context.",
     "A viewer who has never seen the source must understand the subject, any essential people or events, the central point, and the conclusion without preceding or following video.",
     "Reject excerpts that begin mid-argument, use unresolved pronouns or references, or end before the thought resolves.",
@@ -229,11 +257,14 @@ function candidateReviewInstructions(candidateCount: number): string {
     `Return exactly one review for each of the ${candidateCount} proposed candidates, using every candidateIndex exactly once.`,
     "Completeness is a hard gate. Ignore the proposed theme, hook, reason, subtitles, and any possible title when judging whether the spoken excerpt stands alone.",
     "A first-time viewer must understand what is being discussed, all essential references, the central point, and a resolved ending without seeing surrounding source video.",
-    "Use verdict=accept only when the original spoken ranges already pass. Repeat the original segments in the response.",
+    "Use verdict=accept only when the original spoken range already passes.",
     `Use verdict=adjust only when timestamp boundaries can produce a complete ${AI_CLIP_MIN_DURATION_MS / 1000}–${AI_CLIP_MAX_DURATION_MS / 1000} second clip with at most ${AI_CLIP_MAX_SEGMENTS} chronological segments from the same speaker, topic, and context.`,
     "An adjustment may extend the single continuous range to include necessary setup or conclusion. It must never combine separate contexts, manufacture a claim, or change the speaker's meaning.",
     "Use verdict=reject when the clip depends on missing context and cannot be repaired within the limits. Never approve a clip merely because its isolated sentences sound motivational or quotable.",
-    "Use integer millisecond timestamps from the supplied transcript rows. The local application will align and validate every boundary again.",
+    "Only the provided local context is available. Return sentence IDs within this candidate's own context range; never borrow another candidate's context or invent unseen content.",
+    "Context outside the chosen range is NOT part of the clip. Essential context must be included in the final range, or the candidate must be rejected.",
+    "For accept, repeat the original startSentenceId and endSentenceId. For adjust, return a continuous sentence range overlapping the original. For reject, set both sentence IDs to null.",
+    "Never return timestamps. The application maps the selected sentences directly to the retained word boundaries and validates the exact duration.",
     "Keep completenessReason under 500 characters and do not reproduce the full transcript.",
   ].join("\n");
 }
@@ -252,9 +283,10 @@ function candidateJsonSchema(maxCandidates: number): Record<string, unknown> {
             hook: { type: "string", minLength: 1, maxLength: 240 },
             reason: { type: "string", minLength: 1, maxLength: 500 },
             score: { type: "number", minimum: 0, maximum: 1 },
-            segments: candidateSegmentsJsonSchema(),
+            startSentenceId: { type: "string", pattern: "^s[0-9]+$" },
+            endSentenceId: { type: "string", pattern: "^s[0-9]+$" },
           },
-          required: ["theme", "hook", "reason", "score", "segments"],
+          required: ["theme", "hook", "reason", "score", "startSentenceId", "endSentenceId"],
           additionalProperties: false,
         },
       },
@@ -283,14 +315,16 @@ function candidateReviewJsonSchema(candidateCount: number): Record<string, unkno
             verdict: { type: "string", enum: ["accept", "adjust", "reject"] },
             completenessScore: { type: "number", minimum: 0, maximum: 1 },
             completenessReason: { type: "string", minLength: 1, maxLength: 500 },
-            segments: candidateSegmentsJsonSchema(),
+            startSentenceId: { type: ["string", "null"], pattern: "^s[0-9]+$" },
+            endSentenceId: { type: ["string", "null"], pattern: "^s[0-9]+$" },
           },
           required: [
             "candidateIndex",
             "verdict",
             "completenessScore",
             "completenessReason",
-            "segments",
+            "startSentenceId",
+            "endSentenceId",
           ],
           additionalProperties: false,
         },
@@ -298,23 +332,6 @@ function candidateReviewJsonSchema(candidateCount: number): Record<string, unkno
     },
     required: ["reviews"],
     additionalProperties: false,
-  };
-}
-
-function candidateSegmentsJsonSchema(): Record<string, unknown> {
-  return {
-    type: "array",
-    minItems: 1,
-    maxItems: AI_CLIP_MAX_SEGMENTS,
-    items: {
-      type: "object",
-      properties: {
-        startMs: { type: "integer" },
-        endMs: { type: "integer" },
-      },
-      required: ["startMs", "endMs"],
-      additionalProperties: false,
-    },
   };
 }
 
@@ -360,8 +377,8 @@ async function requestStructuredJson({
       body: JSON.stringify({
         model,
         instructions,
-        input,
-        prompt_cache_key: promptCacheKey,
+        input: [{ role: "user", content: [{ type: "input_text", text: input }] }],
+        prompt_cache_key: await boundedPromptCacheKey(promptCacheKey),
         reasoning: { effort: reasoningEffort },
         text: {
           verbosity: "low",
@@ -386,6 +403,7 @@ async function requestStructuredJson({
       model,
       status: response.status,
       providerCode: details.code,
+      providerParam: details.param,
       latencyMs: Date.now() - startedAt,
     });
     throw new OpenAICandidateError("OpenAI candidate request failed", {
@@ -456,6 +474,16 @@ async function requestStructuredJson({
   }
 }
 
+// Enforce the provider's 64-character cache-key limit for every caller, including POCs.
+// Hash the full oversized key instead of truncating potentially distinguishing suffixes.
+async function boundedPromptCacheKey(key: string | undefined): Promise<string | undefined> {
+  if (key === undefined || key.length <= 64) return key;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(key));
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 function extractResponseText(response: OpenAIResponse): string {
   if (typeof response.output_text === "string") return response.output_text;
   return response.output
@@ -475,6 +503,7 @@ function extractRefusal(response: OpenAIResponse): string | null {
 
 async function readErrorResponse(response: Response): Promise<{
   code?: string;
+  param?: string;
   responseId?: string;
   serviceTier?: string;
   usage: AiTokenUsage | null;
@@ -483,6 +512,7 @@ async function readErrorResponse(response: Response): Promise<{
     const payload = (await response.json()) as OpenAIResponse;
     return {
       code: payload.error?.code,
+      param: payload.error?.param,
       responseId: payload.id,
       serviceTier: payload.service_tier,
       usage: normalizeUsage(payload.usage),

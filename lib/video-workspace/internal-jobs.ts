@@ -1,3 +1,4 @@
+import { validAutoFramingPlan } from "./auto-framing";
 import { presignGet, presignPut } from "@/lib/r2";
 import {
   PREVIEW_PROXY_PRESET,
@@ -141,6 +142,11 @@ export async function recordPreviewJobResult(
     await failPreviewJob(db, jobId, validationError);
     return { ok: false, error: validationError };
   }
+  if (result.autoFraming !== undefined && (!validAutoFramingPlan(result.autoFraming) ||
+    result.autoFraming.sourceStartMs !== job.proxy_source_start_ms ||
+    Math.abs(result.autoFraming.sourceEndMs - job.proxy_source_end_ms) > 250)) {
+    return { ok: false, error: "invalid_auto_framing" };
+  }
   const object = await bucket.head(job.output_r2_key);
   if (!object || object.size <= 0) {
     await failPreviewJob(db, jobId, "upload_failed");
@@ -149,14 +155,15 @@ export async function recordPreviewJobResult(
   await db.batch([
     db.prepare(
       `UPDATE media_assets
-          SET status = 'ready', bytes = ?1, duration_ms = ?2, width = ?3, height = ?4
+          SET status = 'ready', bytes = ?1, duration_ms = ?2, width = ?3, height = ?4, auto_framing_json = ?6
         WHERE id = ?5 AND status IN ('pending', 'uploading')`
     ).bind(
       object.size,
       result.output.durationMs,
       result.output.width,
       result.output.height,
-      job.output_asset_id
+      job.output_asset_id,
+      result.autoFraming ? JSON.stringify(result.autoFraming) : null
     ),
     db.prepare(
       `UPDATE render_jobs

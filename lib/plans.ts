@@ -17,8 +17,8 @@ export const PAID_VIDEO_UPLOAD_BYTES = 4_900_000_000;
 
 export const PLANS = {
   free: {
-    // Free transcript minutes are lifetime; YouTube caption imports reset daily.
-    minutesPerCycle: 45,
+    // Free source-processing minutes are lifetime; YouTube caption imports reset daily.
+    minutesPerCycle: 60,
     aiQuestionsLifetime: 3,
     youtubeImportsPerCycle: FREE_YOUTUBE_IMPORTS_PER_DAY,
     youtubeMaxVideoSec: 2 * 3600,

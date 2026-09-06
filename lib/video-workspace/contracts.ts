@@ -1,8 +1,11 @@
+import type { AutoFramingPlan } from "./auto-framing";
+
 export const VIDEO_WORKSPACE_SCHEMA_VERSION = 1 as const;
 
 export const VIDEO_WORKSPACE_LIMITS = {
   maxCandidates: 5,
   maxSegments: 3,
+  maxFramingRangesPerSegment: 100,
   maxAiCandidateDurationMs: 45_000,
   directEditMaxSourceDurationMs: 45_000,
   minSegmentDurationMs: 250,
@@ -108,13 +111,15 @@ export type Edl = {
   segments: EdlSegment[];
 };
 
+export const CROP_ZOOM_LIMITS = { min: 0.1, max: 4 } as const;
+
 export type CropSpec = {
   x: number;
   y: number;
   zoom: number;
 };
 
-export const FRAMING_MODES = ["fill", "fit"] as const;
+export const FRAMING_MODES = ["fill", "fit", "auto"] as const;
 export type FramingMode = (typeof FRAMING_MODES)[number];
 
 export type CaptionWord = {
@@ -140,11 +145,12 @@ export type RenderSpec = {
     fps: typeof FINAL_VIDEO_PRESET.fps;
     backgroundColor: string;
   };
-  segments: Record<string, { framingMode?: FramingMode; crop: CropSpec }>;
+  segments: Record<string, { autoFraming?: AutoFramingPlan; framingMode?: FramingMode; crop: CropSpec; framingRanges?: Array<{ sourceStartMs: number; framingMode: FramingMode; crop: CropSpec }> }>;
   captions: {
     enabled: boolean;
     templateId: CaptionTemplateId;
     fontAssetId: string | null;
+    fontScale?: number;
     textColor: string;
     highlightColor: string;
     positionY: number;
@@ -269,6 +275,7 @@ export type FinalJobLease = {
 
 export type PreviewJobResult = {
   status: "completed";
+  autoFraming?: AutoFramingPlan;
   output: {
     bytes: number;
     durationMs: number;

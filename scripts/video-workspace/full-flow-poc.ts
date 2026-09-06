@@ -193,8 +193,8 @@ try {
   }));
 
   const modelRuns = await Promise.all([
-    runCandidateModel("gpt-5.6-luna", "luna", analysisInput.text, analysisInput.words),
-    runCandidateModel("gpt-5.6-terra", "terra", analysisInput.text, analysisInput.words),
+    runCandidateModel("gpt-5.6-luna", "luna", analysisInput, analysisInput.words),
+    runCandidateModel("gpt-5.6-terra", "terra", analysisInput, analysisInput.words),
   ]);
   for (const runResult of modelRuns) {
     await writeJson(
@@ -283,7 +283,7 @@ try {
 async function runCandidateModel(
   model: OpenAICandidateModel,
   label: "luna" | "terra",
-  input: string,
+  input: ReturnType<typeof buildCandidateAnalysisInput>,
   words: TranscriptWordBoundary[]
 ) {
   const startedAt = Date.now();

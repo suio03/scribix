@@ -145,24 +145,48 @@ Paste into `.env.local` and `.dev.vars` as `AUTH_SECRET=...`.
 
 ## Phase 2 — transcription pipeline
 
-### 2.1 ngrok for AssemblyAI webhooks in dev (blocking — only when you want to test the webhook locally)
+### 2.1 Local transcription without ngrok
 
 AssemblyAI can't reach `localhost`. Two options:
 
-**Option A — ngrok (recommended for dev testing):**
+**Option A — polling (recommended for local testing):**
+Set these in both `.env.local` and `.dev.vars`, keeping the existing API key:
+
+```env
+ASSEMBLYAI_COMPLETION_MODE=polling
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3000
+```
+
+Restart the local server. In this mode no webhook URL or webhook auth fields are
+sent to AssemblyAI. While the upload waiting page polls `/api/transcripts/[id]/status`,
+the local server queries AssemblyAI and saves completed/error results through
+the same handler as webhooks, including transcript storage and quota settlement.
+The normal 15-minute webhook recovery delay does not apply. Existing jobs with a
+saved AssemblyAI ID can recover without resubmission. The Dashboard list alone
+does not trigger this polling; keep or resume the upload waiting page.
+
+For Clips including final export, follow the full local queue/container setup in
+`scripts/video-workspace/README.md`. After application code changes, rebuild with
+`npm run build:cloudflare` before `npm run dev:video-workspace`.
+
+`wrangler.jsonc` explicitly sets `ASSEMBLYAI_COMPLETION_MODE=webhook` for
+production, retaining webhooks and the existing 15-minute lost-webhook fallback.
+Keep this runtime override: OpenNext bundles `.env.local` values as defaults.
+For local Wrangler, `.dev.vars` overrides it with `polling`.
+
+**Option B — ngrok (only to exercise webhook delivery itself):**
 1. Install: https://ngrok.com/download
 2. Authenticate: `ngrok config add-authtoken <your-token>`
 3. In a separate terminal: `ngrok http 3000`
-4. Copy the `https://abc123.ngrok.io` URL. Set in `.env.local`:
+4. Copy the `https://abc123.ngrok.io` URL. Set in `.env.local` and `.dev.vars`:
    ```
+   ASSEMBLYAI_COMPLETION_MODE=webhook
    ASSEMBLYAI_WEBHOOK_URL=https://abc123.ngrok.io/api/webhook/assemblyai
    NEXT_PUBLIC_APP_URL=https://abc123.ngrok.io
    ```
 5. Restart `next dev` (env changes need a restart).
 6. Add the ngrok URL to your Google OAuth allowed callbacks (1.2 step 3).
-
-**Option B — skip the webhook in dev:**
-The inline reconcile path on `/api/transcripts/[id]/status` (every poll, after 15min, hits AAI directly) will pick up completion without a webhook. Slower but no infra needed. Use this if you only care about wiring, not webhook timing.
 
 ### 2.2 AssemblyAI API key (blocking)
 
@@ -480,7 +504,8 @@ GOOGLE_SECRET=
 
 # AssemblyAI (Phase 2)
 ASSEMBLYAI_API_KEY=
-ASSEMBLYAI_WEBHOOK_URL=http://localhost:3000/api/webhook/assemblyai
+ASSEMBLYAI_COMPLETION_MODE=polling
+ASSEMBLYAI_WEBHOOK_URL=
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 # OpenAI (AI Notes + transcript Ask AI)
 OPENAI_API_KEY=
@@ -511,3 +536,9 @@ DISCORD_ERROR_WEBHOOK_URL=
 DISCORD_CHECKOUT_WEBHOOK_URL=
 DISCORD_FEEDBACK_WEBHOOK_URL=
 ```
+
+## Free allowance and pricing copy
+
+Free includes 60 lifetime source-processing minutes. Creator retains 2,400 minutes per month for monthly and yearly billing. `lib/plans.ts` is the canonical limit; quota preflight, atomic reservations and usage displays read it. Existing Free users keep their usage and gain 15 minutes of remaining allowance when moving from the old 45-minute cap. No database reset or migration is needed.
+
+Pricing describes original video duration, with transcription, highlight selection and clip generation included. `i18n/plan-messages.ts` resolves shared `{freeTrialMinutes}` and `{creatorMonthlyMinutes}` facts from the plan before ICU formatting, including nested/raw copy. Do not hard-code these allowances in translations or UI fallbacks. `npm run test:free-quota` covers the 60/61-minute boundary, partial reservations, existing users and all six locales.

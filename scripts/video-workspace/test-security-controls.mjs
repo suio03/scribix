@@ -21,7 +21,7 @@ assert.match(provider, /getByName\(providerJobId\)\.destroy\(\)/);
 assert.doesNotMatch(`${dispatcher}\n${provider}\n${wrangler}`, /AWS_|aws-batch/i);
 
 const wranglerConfig = JSON.parse(wrangler);
-assert.equal(wranglerConfig.containers[0].max_instances, 3);
+assert.equal(wranglerConfig.containers[0].max_instances, 10);
 assert.deepEqual(wranglerConfig.containers[0].instance_type, {
   vcpu: 1,
   memory_mib: 3072,

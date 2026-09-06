@@ -3,7 +3,6 @@
 import {
   CircleAlert,
   Loader2,
-  Move,
   Pause,
   Play,
   Scissors,
@@ -11,7 +10,10 @@ import {
   SkipForward,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
+import { ManualFramingEditor } from "@/app/components/ManualFramingEditor";
+import { framingAt } from "@/lib/video-workspace/auto-framing";
 import { VideoStyleControls } from "@/app/components/VideoStyleControls";
 import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
 import { trackVideoWorkspaceEvent } from "@/app/components/video-event-client";
@@ -70,12 +72,16 @@ export function VideoClipEditor({
   onTitleChange?: (title: string) => void;
 }) {
   const t = useTranslations("Dashboard.videoCandidates.editor");
+  const [panel, setPanel] = useState<"framing" | "captions" | "cover" | "content">("framing");
+  const [controlsHost, setControlsHost] = useState<HTMLDivElement | null>(null);
   const [workspace, setWorkspace] = useState<EditorWorkspace | null>(null);
   const [edl, setEdl] = useState<Edl | null>(null);
   const [renderSpec, setRenderSpec] = useState<RenderSpec | null>(null);
   const [revision, setRevision] = useState(0);
   const [saveState, setSaveState] = useState<VideoEditorSaveState>("saved");
   const [loadError, setLoadError] = useState(false);
+  const [framingDraftActive, setFramingDraftActive] = useState(false);
+  const [proxyRefreshError, setProxyRefreshError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [proxyRefreshIds, setProxyRefreshIds] = useState<string[]>([]);
   const [clipTitle, setClipTitle] = useState("");
@@ -105,6 +111,7 @@ export function VideoClipEditor({
     let active = true;
     setLoadError(false);
     setWorkspace(null);
+    setProxyRefreshIds([]);
     fetch(`/api/video-projects/${projectId}/editor?candidateId=${encodeURIComponent(candidateId)}`)
       .then(async (response) => {
         if (!response.ok) throw new Error("editor_load_failed");
@@ -143,7 +150,11 @@ export function VideoClipEditor({
   );
 
   useEffect(() => {
-    if (!edl || !renderSpec || !signature || signature === lastSavedRef.current) return;
+    if (!edl || !renderSpec || !signature) return;
+    if (signature === lastSavedRef.current) {
+      if (saveState === "dirty") setSaveState("saved");
+      return;
+    }
     if (saveState === "saving" || saveState === "error" || saveState === "conflict") return;
     setSaveState("dirty");
     const timer = window.setTimeout(async () => {
@@ -238,6 +249,13 @@ export function VideoClipEditor({
         );
         if (!response.ok) return;
         const next = await response.json() as EditorWorkspace;
+        if (!active) return;
+        if (next.previewStatus === "failed") {
+          setProxyRefreshError(true);
+          setProxyRefreshIds([]);
+          return;
+        }
+        if (next.previewStatus !== "ready") return;
         const refreshed = proxyRefreshIds.every((segmentId) => {
           const segment = edl.segments.find((item) => item.id === segmentId);
           const proxy = next.proxies.find((item) => item.segmentId === segmentId);
@@ -401,6 +419,8 @@ export function VideoClipEditor({
     }
   }, [candidateId, clipTitle, onTitleChange, projectId, titleSaveState, workspace]);
 
+  const timeline = useMemo(() => edl && workspace ? buildTimelineSegments(edl, workspace.proxies) : [], [edl, workspace?.proxies]);
+
   if (loadError) {
     return (
       <EditorNotice tone="error">
@@ -420,7 +440,6 @@ export function VideoClipEditor({
     );
   }
 
-  const timeline = buildTimelineSegments(edl, workspace.proxies);
   const totalDuration = edl.segments.reduce(
     (total, segment) => total + segment.sourceEndMs - segment.sourceStartMs,
     0
@@ -429,7 +448,7 @@ export function VideoClipEditor({
   return (
     <section id="editor" className="scroll-mt-6 bg-[linear-gradient(135deg,rgba(14,13,11,0.025),transparent_55%)] px-5 py-6 sm:px-7 sm:py-7">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-line pb-5">
-        <div>
+        <div className="min-w-0 flex-1 basis-64">
           <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
             <Scissors size={12} />
             {t("eyebrow")}
@@ -456,22 +475,30 @@ export function VideoClipEditor({
             ) : null}
           </label>
         </div>
-        <SaveIndicator state={saveState} t={t} onReload={() => setReloadKey((value) => value + 1)} />
+        <div className="flex flex-wrap items-center gap-4">
+        {framingDraftActive ? <p className="max-w-52 text-xs text-ink/60">{t("style.visual.draftStatus")}</p> : <SaveIndicator state={saveState} t={t} onReload={() => setReloadKey((value) => value + 1)} />}
+          <FinalRenderPanel compact
+            projectId={projectId}
+            candidateId={candidateId}
+            revision={revision}
+            disabled={saveState !== "saved" || framingDraftActive}
+            disabledReason={framingDraftActive ? t("style.visual.draftStatus") : undefined}
+            onConflict={() => setSaveState("conflict")}
+          />
+        </div>
       </div>
 
-      <div className="grid gap-7 lg:grid-cols-[minmax(280px,0.78fr)_minmax(0,1.22fr)]">
+      <div className="grid gap-7 lg:grid-cols-[minmax(280px,1fr)_minmax(340px,1fr)]">
         <div className="lg:sticky lg:top-6 lg:self-start">
           <ContinuousProxyPlayer
+            panel={panel}
+            setPanel={setPanel}
+            controlsHost={controlsHost}
             timeline={timeline}
             renderSpec={renderSpec}
+            onDraftActive={setFramingDraftActive}
             assets={workspace.assets}
-            onCropChange={(segmentId, crop) => updateRenderSpec({
-              ...renderSpec,
-              segments: {
-                ...renderSpec.segments,
-                [segmentId]: { framingMode: "fill", crop },
-              },
-            })}
+            onChange={updateRenderSpec}
             labels={{
               play: t("play"),
               pause: t("pause"),
@@ -479,6 +506,7 @@ export function VideoClipEditor({
               dragToReframe: t("style.framing.dragToReframe"),
             }}
           />
+          {proxyRefreshError ? <p role="alert" className="mt-3 text-xs text-red-600">{t("style.framing.autoUnavailable")}</p> : null}
           <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.1em] text-ink/45">
             <span>{t("continuousTimeline")}</span>
             <span>{formatDuration(totalDuration)}</span>
@@ -491,7 +519,12 @@ export function VideoClipEditor({
           ) : null}
         </div>
 
-        <div className="space-y-4">
+        <div className="min-w-0 self-start rounded-2xl border border-line bg-card lg:max-h-[72vh] lg:overflow-y-auto">
+          <div className="sticky top-0 z-10 grid grid-cols-4 border-b border-line bg-card p-2" role="group" aria-label={t("workspace.tools")}>
+            {(["framing", "captions", "cover", "content"] as const).map(item => <button type="button" key={item} aria-pressed={panel === item} onClick={() => setPanel(item)} className="rounded-lg px-2 py-3 text-sm font-medium text-ink/60 transition hover:bg-ink/5 aria-pressed:bg-accent/10 aria-pressed:text-accent">{t(`workspace.${item}`)}</button>)}
+          </div>
+          <div ref={setControlsHost} hidden={panel !== "framing" && panel !== "cover"} />
+          <div hidden={panel !== "content"} className="space-y-4 p-5">
           {[...edl.segments]
             .sort((left, right) => left.order - right.order)
             .map((segment, index) => (
@@ -514,7 +547,10 @@ export function VideoClipEditor({
                 onStep={stepBoundary}
               />
             ))}
+          </div>
+          <div hidden={panel !== "captions"} className="p-4">
           <VideoStyleControls
+            expanded
             projectId={projectId}
             edl={edl}
             renderSpec={renderSpec}
@@ -522,13 +558,8 @@ export function VideoClipEditor({
             onChange={updateRenderSpec}
             onAssetsChange={(assets) => setWorkspace((current) => current ? { ...current, assets } : current)}
           />
-          <FinalRenderPanel
-            projectId={projectId}
-            candidateId={candidateId}
-            revision={revision}
-            disabled={saveState !== "saved"}
-            onConflict={() => setSaveState("conflict")}
-          />
+          </div>
+
         </div>
       </div>
     </section>
@@ -658,26 +689,64 @@ function BoundaryInput({
 }
 
 function ContinuousProxyPlayer({
+  panel, setPanel, controlsHost,
+  onDraftActive,
   timeline,
-  renderSpec,
+  renderSpec: savedRenderSpec,
   assets,
-  onCropChange,
+  onChange,
   labels,
 }: {
+  panel: "framing" | "captions" | "cover" | "content";
+  setPanel: (panel: "framing" | "captions" | "cover" | "content") => void;
+  controlsHost: HTMLDivElement | null;
+  onDraftActive: (active: boolean) => void;
   timeline: TimelineSegment[];
   renderSpec: RenderSpec;
   assets: EditorWorkspace["assets"];
-  onCropChange: (segmentId: string, crop: CropSpec) => void;
+  onChange: (spec: RenderSpec) => void;
   labels: { play: string; pause: string; previewMissing: string; dragToReframe: string };
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("Dashboard.videoCandidates.editor.style");
+  const [adjusting, setAdjusting] = useState(false);
+  const [manualDraft, setManualDraft] = useState<RenderSpec | null>(null);
+  const [beforeCrop, setBeforeCrop] = useState<RenderSpec["segments"] | null>(null);
+  const [previewSection, setPreviewSection] = useState<{ start: number; end: number; number: number } | null>(null);
+  const [previewWholeClip, setPreviewWholeClip] = useState(false);
+  const playbackScope = adjusting && !previewWholeClip ? previewSection : null;
+  const playbackScopeRef = useRef(playbackScope);
+  playbackScopeRef.current = playbackScope;
+  const renderSpec = manualDraft ?? savedRenderSpec;
+  useEffect(() => {
+    onDraftActive(adjusting);
+    return () => onDraftActive(false);
+  }, [adjusting, onDraftActive]);
+  const [coverSet, setCoverSet] = useState(false);
+  useEffect(() => {
+    if (panel !== "framing") { setManualDraft(null); setAdjusting(false); }
+  }, [panel]);
   const videos = [useRef<HTMLVideoElement>(null), useRef<HTMLVideoElement>(null)];
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeSlot, setActiveSlot] = useState<0 | 1>(0);
   const [timelineMs, setTimelineMs] = useState(0);
   const [sourceMs, setSourceMs] = useState(timeline[0]?.sourceStartMs ?? 0);
   const [playing, setPlaying] = useState(false);
-  const [showDragHint, setShowDragHint] = useState(true);
+  const [playbackControlVisible, setPlaybackControlVisible] = useState(true);
+  const playbackControlTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchControlReveal = useRef(false);
+  const hidePlaybackControl = () => {
+    if (playbackControlTimer.current) clearTimeout(playbackControlTimer.current);
+    setPlaybackControlVisible(false);
+  };
+  const revealPlaybackControl = () => {
+    if (playbackControlTimer.current) clearTimeout(playbackControlTimer.current);
+    setPlaybackControlVisible(true);
+    playbackControlTimer.current = setTimeout(() => setPlaybackControlVisible(false), 1500);
+  };
+  useEffect(() => () => {
+    if (playbackControlTimer.current) clearTimeout(playbackControlTimer.current);
+  }, []);
+
   const [videoDimensions, setVideoDimensions] = useState<Array<{
     width: number;
     height: number;
@@ -685,20 +754,18 @@ function ContinuousProxyPlayer({
   const switchingRef = useRef(false);
   const durationMs = timelineDurationMs(timeline);
   const activeSegment = timeline[activeIndex];
-  const activeCrop = activeSegment
-    ? renderSpec.segments[activeSegment.id]?.crop
-    : undefined;
-  const activeFramingMode = activeSegment
-    ? renderSpec.segments[activeSegment.id]?.framingMode ?? "fill"
-    : "fill";
-  const dragRef = useRef<{
-    pointerId: number;
-    startX: number;
-    startY: number;
-    crop: CropSpec;
-    overflowX: number;
-    overflowY: number;
-  } | null>(null);
+  const baseFraming = activeSegment ? renderSpec.segments[activeSegment.id] : undefined;
+  const ranges = baseFraming?.framingRanges ?? [];
+  const activeRangeIndex = ranges.findLastIndex(range => range.sourceStartMs <= sourceMs);
+  const framing = ranges[activeRangeIndex] ?? baseFraming;
+  const resolvedFraming = baseFraming ? framingAt(baseFraming, sourceMs) : undefined;
+  const activeCrop = resolvedFraming?.crop;
+  const activeFramingMode = resolvedFraming?.framingMode ?? "fit";
+  const setSimpleMode = (mode: "auto" | "fit") => {
+    setManualDraft(null);
+    setBeforeCrop(savedRenderSpec.segments);
+    onChange({ ...savedRenderSpec, segments: Object.fromEntries(Object.entries(savedRenderSpec.segments).map(([id, spec]) => [id, { ...spec, framingMode: mode, framingRanges: [] }])) });
+  };
   const slot0Index = activeSlot === 0 ? activeIndex : activeIndex + 1;
   const slot1Index = activeSlot === 1 ? activeIndex : activeIndex + 1;
 
@@ -720,6 +787,7 @@ function ContinuousProxyPlayer({
     setSourceMs(segment.sourceStartMs + localMs);
     if (Number.isFinite(video.duration)) video.currentTime = seek;
     if (playing) void video.play().catch(() => setPlaying(false));
+    else video.pause();
     switchingRef.current = false;
   }, [activeIndex, activeSlot, playing, timeline]);
 
@@ -759,7 +827,14 @@ function ContinuousProxyPlayer({
   }, [renderSpec.coverTimelineMs]);
 
   const advance = () => {
-    if (switchingRef.current) return;
+    if (!playing || switchingRef.current) return;
+    const scope = playbackScopeRef.current;
+    if (scope && timeline[activeIndex].timelineEndMs >= scope.end) {
+      videos[activeSlot].current?.pause();
+      setPlaying(false);
+      seekTimeline(scope.end - 1);
+      return;
+    }
     switchingRef.current = true;
     videos[activeSlot].current?.pause();
     if (activeIndex >= timeline.length - 1) {
@@ -775,13 +850,24 @@ function ContinuousProxyPlayer({
   };
 
   const onTimeUpdate = (slot: 0 | 1) => {
-    if (slot !== activeSlot) return;
+    if (slot !== activeSlot || !playing) return;
     const video = videos[slot].current;
     const segment = timeline[activeIndex];
     if (!video || !segment) return;
     const sourceMs = segment.proxySourceStartMs + video.currentTime * 1000;
     setSourceMs(sourceMs);
     const nextTimelineMs = segment.timelineStartMs + sourceMs - segment.sourceStartMs;
+    const scope = playbackScopeRef.current;
+    if (playing && scope && nextTimelineMs >= scope.end - 30) {
+      const stoppedAt = scope.end - 1;
+      video.pause();
+      setPlaying(false);
+      setTimelineMs(stoppedAt);
+      setSourceMs(segment.sourceStartMs + stoppedAt - segment.timelineStartMs);
+      const localTime = (segment.proxyStartMs + stoppedAt - segment.timelineStartMs) / 1000;
+      if (Math.abs(video.currentTime - localTime) > 0.01) video.currentTime = localTime;
+      return;
+    }
     if (nextTimelineMs >= segment.timelineEndMs - 30) {
       advance();
       return;
@@ -813,16 +899,29 @@ function ContinuousProxyPlayer({
       setPlaying(false);
       return;
     }
-    if (timelineMs >= durationMs) {
-      seekTimeline(0);
+    if (timelineMs >= (playbackScope?.end ?? durationMs) - 30 || (playbackScope && timelineMs < playbackScope.start)) {
+      seekTimeline(playbackScope?.start ?? 0);
       setPlaying(true);
       return;
     }
     void video.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
   };
 
+  useEffect(() => {
+    if (!playing) return;
+    let frame = 0;
+    const update = () => {
+      onTimeUpdate(activeSlot);
+      frame = requestAnimationFrame(update);
+    };
+    frame = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(frame);
+    // Keep framing and captions in sync with playback between native timeupdate events.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, activeSlot, activeIndex, timeline]);
+
   if (timeline.length === 0) {
-    return <div className="fixed-media-surface grid aspect-[9/16] max-h-[620px] place-items-center rounded-xl bg-ink px-6 text-center text-[12px] text-paper/55">{labels.previewMissing}</div>;
+    return <div className="fixed-media-surface grid aspect-[9/16] w-full max-w-[min(100%,calc(56vh*9/16))] place-items-center rounded-xl bg-ink px-6 text-center text-[12px] text-paper/55">{labels.previewMissing}</div>;
   }
   const mediaStyle = (slot: 0 | 1) => {
     const dimensions = videoDimensions[slot];
@@ -848,55 +947,11 @@ function ContinuousProxyPlayer({
     return browserCropStyle(coverCropBox(dimensions.width, dimensions.height, activeCrop));
   };
 
-  const startCropDrag = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (
-      activeFramingMode !== "fill" || !activeSegment || !activeCrop ||
-      (event.target as HTMLElement).closest("button, input")
-    ) return;
-    const container = containerRef.current;
-    const dimensions = videoDimensions[activeSlot];
-    if (!container || !dimensions) return;
-    const rect = container.getBoundingClientRect();
-    const box = coverCropBox(dimensions.width, dimensions.height, activeCrop);
-    dragRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      crop: activeCrop,
-      overflowX: Math.max(0, (box.width / FINAL_VIDEO_PRESET.width - 1) * rect.width),
-      overflowY: Math.max(0, (box.height / FINAL_VIDEO_PRESET.height - 1) * rect.height),
-    };
-    setShowDragHint(false);
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
-
-  const moveCrop = (event: React.PointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId || !activeSegment) return;
-    const x = drag.overflowX > 0
-      ? clamp01(drag.crop.x - (event.clientX - drag.startX) / drag.overflowX)
-      : drag.crop.x;
-    const y = drag.overflowY > 0
-      ? clamp01(drag.crop.y - (event.clientY - drag.startY) / drag.overflowY)
-      : drag.crop.y;
-    onCropChange(activeSegment.id, { ...drag.crop, x, y });
-  };
-
-  const endCropDrag = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (dragRef.current?.pointerId !== event.pointerId) return;
-    dragRef.current = null;
-    event.currentTarget.releasePointerCapture(event.pointerId);
-  };
   return (
+    <div className="space-y-3">
     <div
-      ref={containerRef}
-      title={activeFramingMode === "fill" ? labels.dragToReframe : undefined}
-      onPointerDown={startCropDrag}
-      onPointerMove={moveCrop}
-      onPointerUp={endCropDrag}
-      onPointerCancel={endCropDrag}
       style={{ backgroundColor: renderSpec.canvas.backgroundColor }}
-      className={`relative mx-auto aspect-[9/16] max-h-[620px] touch-none overflow-hidden rounded-xl [container-type:inline-size] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)] ${activeFramingMode === "fill" ? "cursor-grab active:cursor-grabbing" : ""}`}
+      className="relative mx-auto aspect-[9/16] w-full max-w-[min(100%,calc(56vh*9/16))] overflow-hidden rounded-xl [container-type:inline-size] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]"
     >
       <video
         ref={videos[0]}
@@ -928,39 +983,114 @@ function ContinuousProxyPlayer({
           assets={assets}
         />
       ) : null}
-      {activeFramingMode === "fill" && showDragHint ? (
-        <div className="pointer-events-none absolute inset-x-0 top-4 flex justify-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1.5 text-[10px] font-semibold text-white/85 shadow-lg backdrop-blur">
-            <Move size={12} />
-            {labels.dragToReframe}
-          </span>
-        </div>
-      ) : null}
       <button
         type="button"
-        onClick={toggle}
         aria-label={playing ? labels.pause : labels.play}
-        className="absolute inset-0 m-auto grid size-14 place-items-center rounded-full border border-white/30 bg-black/55 text-white backdrop-blur transition hover:scale-105 hover:bg-black/75"
+        onPointerMove={(event) => { if (event.pointerType === "mouse") revealPlaybackControl(); }}
+        onPointerLeave={hidePlaybackControl}
+        onPointerDown={(event) => { touchControlReveal.current = event.pointerType === "touch" && !playbackControlVisible; }}
+        onFocus={(event) => { if (event.currentTarget.matches(":focus-visible")) revealPlaybackControl(); }}
+        onBlur={hidePlaybackControl}
+        onClick={(event) => {
+          if (event.detail !== 0 && touchControlReveal.current) {
+            touchControlReveal.current = false;
+            revealPlaybackControl();
+            return;
+          }
+          hidePlaybackControl();
+          toggle();
+        }}
+        className="absolute inset-0 grid place-items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
       >
-        {playing ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="translate-x-0.5" />}
+        <span className={`grid size-14 place-items-center rounded-full border border-white/30 bg-black/55 text-white backdrop-blur transition-opacity duration-150 motion-reduce:transition-none ${playbackControlVisible ? "opacity-100" : "opacity-0"}`}>
+          {playing ? <Pause size={20} fill="currentColor" aria-hidden="true" /> : <Play size={20} fill="currentColor" aria-hidden="true" className="translate-x-0.5" />}
+        </span>
       </button>
-      <div className="absolute inset-x-3 bottom-3 rounded-lg bg-black/70 px-3 py-2 backdrop-blur">
+    </div>
+      <div className="rounded-xl border border-line bg-card px-4 py-3">
+        {adjusting && previewSection ? <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span className="font-medium text-ink">{playbackScope ? t("visual.previewSection", { number: playbackScope.number, start: formatSectionTimestamp(playbackScope.start), end: formatSectionTimestamp(playbackScope.end) }) : t("visual.previewWhole")}</span>
+          <button type="button" className="text-accent underline" onClick={() => { setPlaying(false); setPreviewWholeClip(!previewWholeClip); playbackScopeRef.current = null; seekTimeline(previewWholeClip ? previewSection.start : 0); }}>{t(previewWholeClip ? "visual.backToSection" : "visual.playWhole")}</button>
+        </div> : null}
+        <label className="sr-only" htmlFor="clip-playhead">{t("workspace.playhead")}</label>
         <input
+          id="clip-playhead"
           type="range"
-          min={0}
-          max={Math.max(1, durationMs)}
+          min={playbackScope?.start ?? 0}
+          max={Math.max(1, (playbackScope?.end ?? durationMs) - 1)}
           step={10}
-          value={Math.min(timelineMs, durationMs)}
-          onChange={(event) => seekTimeline(Number(event.target.value))}
-          className="w-full accent-[#ff5a1f]"
+          value={Math.max(playbackScope?.start ?? 0, Math.min(timelineMs, (playbackScope?.end ?? durationMs) - 1))}
+          onChange={(event) => { setPlaying(false); seekTimeline(Number(event.target.value)); }}
+          className="w-full accent-[var(--accent)]"
         />
-        <div className="mt-1 flex justify-between font-mono text-[9px] tabular-nums text-white/65">
-          <span>{formatTimestamp(timelineMs)}</span>
-          <span>{formatTimestamp(durationMs)}</span>
+        <div className="mt-1 flex justify-between font-mono text-xs tabular-nums text-ink/60">
+          <span>{(playbackScope ? formatSectionTimestamp : formatTimestamp)(playbackScope && timelineMs >= playbackScope.end - 30 ? playbackScope.end : timelineMs)}</span>
+          <span>{(playbackScope ? formatSectionTimestamp : formatTimestamp)(playbackScope?.end ?? durationMs)}</span>
         </div>
+
       </div>
+    <div className="flex flex-wrap justify-center gap-2">
+      <button type="button" onClick={() => { setPlaying(false); setPanel("cover"); setCoverSet(true); onChange({ ...renderSpec, coverTimelineMs: Math.min(Math.round(timelineMs), durationMs - 1) }); }} className="rounded-lg border border-line bg-card px-3 py-2 text-xs font-medium text-ink">{t("workspace.coverAt", { time: formatTimestamp(timelineMs) })}</button>
+
+    </div>
+    {activeSegment && activeCrop && controlsHost ? createPortal(
+      <div className="space-y-4 p-5 text-sm text-ink">
+      {panel === "framing" ? <>
+        <h5 className="font-display text-lg font-semibold">{t("framing.title")}</h5>
+        {adjusting ? <ManualFramingEditor
+          timeline={timeline} spec={savedRenderSpec} timeMs={timelineMs} playing={playing}
+          onSeek={time => { playbackScopeRef.current = null; setPreviewWholeClip(false); setPlaying(false); seekTimeline(time); }}
+          onSectionChange={setPreviewSection}
+          onPreview={setManualDraft}
+          onApply={next => { setBeforeCrop(savedRenderSpec.segments); onChange(next); setManualDraft(null); setAdjusting(false); setPlaying(false); playbackScopeRef.current = null; }}
+          onCancel={() => { setManualDraft(null); setAdjusting(false); setPlaying(false); }}
+        /> : <>
+          {beforeCrop ? <button type="button" onClick={() => { onChange({ ...savedRenderSpec, segments: Object.fromEntries(Object.entries(savedRenderSpec.segments).map(([id, spec]) => [id, beforeCrop[id] ? { ...spec, crop: beforeCrop[id].crop, framingMode: beforeCrop[id].framingMode, framingRanges: beforeCrop[id].framingRanges, autoFraming: beforeCrop[id].autoFraming } : spec])) }); setBeforeCrop(null); }} className="text-accent underline">{t("visual.undo")}</button> : null}
+          <p className="text-ink/60">{t("visual.simpleHelp")}</p>
+          <div className="grid grid-cols-2 gap-3">
+            {(["auto", "fit"] as const).map(mode => <button key={mode} type="button" aria-pressed={Object.values(savedRenderSpec.segments).every(spec => spec.framingMode === mode && !spec.framingRanges?.length)} onClick={() => setSimpleMode(mode)} className="rounded-xl border border-line p-4 text-left font-medium aria-pressed:border-accent aria-pressed:bg-accent/10 aria-pressed:text-accent">{t(`workspace.${mode}`)}</button>)}
+          </div>
+          <p className="text-xs leading-5 text-ink/60">{t("visual.wholeWarning")}</p>
+          <div className="border-t border-line pt-4">
+            <button type="button" onClick={() => { setPlaying(false); setPreviewWholeClip(false); setAdjusting(true); }} className="rounded-lg bg-accent px-4 py-3 font-medium text-white">{t("visual.manual")}</button>
+            <p className="mt-2 text-xs leading-5 text-ink/60">{t("visual.manualHelp")}</p>
+          </div>
+        </>}
+      </> : panel === "cover" ? <>
+        <h5 className="font-display text-lg font-semibold">{t("workspace.chooseCover")}</h5>
+        <p className="leading-6 text-ink/60">{t("workspace.coverHelp")}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          {coverSet ? <p role="status" className="text-accent">{t("simple.coverSet", { time: formatTimestamp(renderSpec.coverTimelineMs) })}</p> : null}
+          <button type="button" className="p-2 underline" onClick={() => { setPlaying(false); seekTimeline(renderSpec.coverTimelineMs); }}>{t("cover.view")} · {formatTimestamp(renderSpec.coverTimelineMs)}</button>
+        </div>
+        <CoverFrame timeline={timeline} renderSpec={renderSpec} assets={assets} />
+        </> : null}
+      </div>, controlsHost
+    ) : null}
     </div>
   );
+}
+
+function CoverFrame({ timeline, renderSpec, assets }: { timeline: TimelineSegment[]; renderSpec: RenderSpec; assets: EditorWorkspace["assets"] }) {
+  const video = useRef<HTMLVideoElement>(null);
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
+  const position = timeline.find(segment => renderSpec.coverTimelineMs >= segment.timelineStartMs && renderSpec.coverTimelineMs < segment.timelineEndMs);
+  const sourceMs = position ? position.sourceStartMs + renderSpec.coverTimelineMs - position.timelineStartMs : 0;
+  const base = position ? renderSpec.segments[position.id] : undefined;
+  const framing = base ? framingAt(base, sourceMs) : undefined;
+  const seek = () => {
+    if (video.current && position && Number.isFinite(video.current.duration)) {
+      video.current.currentTime = (position.proxyStartMs + renderSpec.coverTimelineMs - position.timelineStartMs) / 1000;
+      setDimensions({ width: video.current.videoWidth, height: video.current.videoHeight });
+    }
+  };
+  useEffect(seek, [position?.proxyUrl, renderSpec.coverTimelineMs, position?.proxyStartMs, position?.timelineStartMs]);
+  if (!position || !framing) return null;
+  const style = framing.framingMode === "fit" || !dimensions ? { width: "100%", height: "100%", objectFit: "contain" as const } : browserCropStyle(coverCropBox(dimensions.width, dimensions.height, framing.crop));
+  return <div className="relative mx-auto aspect-[9/16] w-32 overflow-hidden rounded-lg [container-type:inline-size]" style={{ backgroundColor: renderSpec.canvas.backgroundColor }}>
+    <video ref={video} src={position.proxyUrl} muted playsInline preload="metadata" onLoadedMetadata={seek} style={style} className="absolute max-w-none" />
+    <PreviewOverlays segmentId={position.id} sourceMs={sourceMs} renderSpec={renderSpec} assets={assets} />
+  </div>;
 }
 
 function PreviewOverlays({
@@ -1036,7 +1166,7 @@ function PreviewOverlays({
             color: renderSpec.captions.textColor,
             fontFamily,
             width: "90%",
-            fontSize: `${captionStyle.fontSize / 10.8}cqw`,
+            fontSize: `${captionStyle.fontSize * (renderSpec.captions.fontScale ?? 1) / 10.8}cqw`,
             fontWeight: captionStyle.fontWeight,
             textTransform: captionStyle.uppercase ? "uppercase" : "none",
             WebkitTextStroke: captionStyle.outline > 0
@@ -1147,6 +1277,11 @@ function captionCuesForSegment(
 function formatDuration(valueMs: number): string {
   const seconds = Math.round(valueMs / 1000);
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+function formatSectionTimestamp(valueMs: number): string {
+  const rounded = Math.max(0, Math.round(valueMs / 100) * 100);
+  return `${formatTimestamp(rounded)}${rounded % 1000 ? `.${rounded % 1000 / 100}` : ""}`;
 }
 
 function formatTimestamp(valueMs: number): string {

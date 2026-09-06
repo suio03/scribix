@@ -33,7 +33,7 @@ import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import { Link, usePathname } from "@/i18n/navigation";
-import { FREE_YOUTUBE_IMPORTS_PER_DAY } from "@/lib/plans";
+import { PLANS, FREE_YOUTUBE_IMPORTS_PER_DAY } from "@/lib/plans";
 import { BillingPortalButton } from "./BillingPortalButton";
 import { useSidebar } from "./SidebarContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -436,7 +436,7 @@ export function Sidebar({
     label: t(`navLabels.${item.key}`),
   }));
   const usedMin = Math.max(0, Math.round(usage?.usedMin ?? 0));
-  const quotaMin = Math.max(1, Math.round(usage?.quotaMin ?? 45));
+  const quotaMin = Math.max(1, Math.round(usage?.quotaMin ?? PLANS.free.minutesPerCycle));
   const remainingMin = Math.max(0, quotaMin - usedMin);
   const usedYouTubeImports = Math.max(0, Math.round(usage?.usedYouTubeImports ?? 0));
   const quotaYouTubeImports = Math.max(

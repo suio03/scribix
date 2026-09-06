@@ -9,3 +9,8 @@
 !poc-reframe.py
 !full-flow-poc.mjs
 !Dockerfile.poc
+!analyze-framing.mjs
+!speaker-framing.py
+!talknet/
+!talknet/**
+!framing_policy.py

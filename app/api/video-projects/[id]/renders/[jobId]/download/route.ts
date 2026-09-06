@@ -1,4 +1,4 @@
-import { zipSync } from "fflate";
+import { attachmentHeader, exportArchive, exportFileName } from "@/lib/video-workspace/export-archive";
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
@@ -7,7 +7,9 @@ import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
 type Params = { params: Promise<{ id: string; jobId: string }> };
 
 type DownloadRow = {
-  version: number;
+  rank: number;
+  theme: string;
+  title: string;
   video_r2_key: string;
   cover_r2_key: string;
 };
@@ -21,12 +23,20 @@ export async function GET(_: Request, { params }: Params) {
   if (!user) return Response.json({ error: "user_not_found" }, { status: 404 });
 
   const render = await env.DB.prepare(
-    `SELECT version.version,
+    `SELECT (SELECT COUNT(*) FROM clip_candidates preceding
+                     WHERE preceding.project_id = candidate.project_id
+                       AND preceding.user_id = candidate.user_id
+                       AND preceding.status <> 'deleted'
+                       AND preceding.rank < candidate.rank) AS rank,
+            candidate.theme, transcript.title,
             video.r2_key AS video_r2_key,
             cover.r2_key AS cover_r2_key
        FROM render_jobs job
        JOIN project_versions version
          ON version.id = job.project_version_id AND version.user_id = job.user_id
+       JOIN clip_candidates candidate ON candidate.id = version.candidate_id AND candidate.user_id = job.user_id
+       JOIN video_projects project ON project.id = job.project_id AND project.user_id = job.user_id
+       JOIN transcripts transcript ON transcript.id = project.transcript_id
        JOIN media_assets video
          ON video.id = job.output_asset_id AND video.user_id = job.user_id
        JOIN media_assets cover
@@ -59,23 +69,14 @@ export async function GET(_: Request, { params }: Params) {
     return Response.json({ error: "render_assets_missing" }, { status: 410 });
   }
 
-  const files: Record<string, Uint8Array> = {
-    "scribix-video.mp4": new Uint8Array(await video.arrayBuffer()),
-  };
-  if (cover) {
-    files["scribix-cover.jpg"] = new Uint8Array(await cover.arrayBuffer());
-  }
-  const archive = zipSync(files, { level: 0 });
-  const body = archive.buffer.slice(
-    archive.byteOffset,
-    archive.byteOffset + archive.byteLength
-  ) as ArrayBuffer;
+  const name = exportFileName(render.title, render.rank + 1, render.theme);
+  const entries = [{ name: `${name}.mp4`, body: video.body }];
+  if (cover) entries.push({ name: `${name}-cover.jpg`, body: cover.body });
 
-  return new Response(body, {
+  return new Response(exportArchive(entries), {
     headers: {
       "cache-control": "private, no-store",
-      "content-disposition": `attachment; filename="scribix-clip-v${render.version}.zip"`,
-      "content-length": String(archive.byteLength),
+      "content-disposition": attachmentHeader(`${name}.zip`),
       "content-type": "application/zip",
       "x-content-type-options": "nosniff",
     },

@@ -36,7 +36,7 @@ export async function renderFinal({
   const coverPath = join(workingDirectory, "cover.jpg");
   const subtitlePath = join(workingDirectory, "captions.ass");
   const source = await probeMedia(sourceInput);
-  const segments = [...lease.edl.segments].sort((left, right) => left.order - right.order);
+  const segments = expandFramingSegments(lease.edl, lease.renderSpec);
   if (segments.some((segment) => segment.sourceEndMs > source.durationMs + 250)) {
     throw renderError("invalid_source");
   }
@@ -59,26 +59,35 @@ export async function renderFinal({
     (reframePlan?.segments ?? []).map((segment) => [segment.segmentId, segment])
   );
   for (const [index, segment] of segments.entries()) {
-    const crop = lease.renderSpec.segments[segment.id]?.crop;
+    // Input -t limits packets, not all decoded B-frames. Trim before reframing
+    // so a decoded frame from the next shot can never use the previous crop.
+    const duration = seconds(segment.sourceEndMs - segment.sourceStartMs);
+    const videoInput = `[${index}:v:0]trim=start=0:end=${duration},setpts=PTS-STARTPTS,`;
+    const crop = segment.framing.crop;
     if (!crop) throw renderError("invalid_render_spec");
-    const framingMode = lease.renderSpec.segments[segment.id]?.framingMode ?? "fill";
+    const framingMode = segment.framing.framingMode ?? "fill";
     const reframe = reframeBySegment.get(segment.id);
     if (framingMode === "fit") {
       const background = lease.renderSpec.canvas.backgroundColor.replace("#", "0x");
       filters.push(
-        `[${index}:v:0]setpts=PTS-STARTPTS,` +
+        videoInput +
         `scale=1080:1920:force_original_aspect_ratio=decrease,` +
         `pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=${background},` +
         `setsar=1,fps=30,format=yuv420p[v${index}]`
       );
+    } else if (segment.autoPoints?.length) {
+      filters.push(videoInput +
+        framedVideoFilter(source, crop, lease.renderSpec.canvas.backgroundColor,
+          autoCropExpression(segment.autoPoints, segment.sourceStartMs)) +
+        `,setsar=1,fps=30,format=yuv420p[v${index}]`);
     } else if (reframe?.mode === "smart_crop" && reframe.keyframes?.length > 0) {
       filters.push(
-        `[${index}:v:0]setpts=PTS-STARTPTS,scale=-2:1920,` +
+        videoInput + `scale=-2:1920,` +
         `crop=1080:1920:x='(iw-ow)*(${cropExpression(reframe.keyframes)})':y=0,` +
         `setsar=1,fps=30,format=yuv420p[v${index}]`
       );
     } else if (reframe?.mode === "fit_blur") {
-      filters.push(`[${index}:v:0]setpts=PTS-STARTPTS,split=2[bgsrc${index}][fgsrc${index}]`);
+      filters.push(videoInput + `split=2[bgsrc${index}][fgsrc${index}]`);
       filters.push(
         `[bgsrc${index}]scale=360:640:force_original_aspect_ratio=increase,` +
         `crop=360:640,gblur=sigma=22,scale=1080:1920[bg${index}]`
@@ -91,17 +100,12 @@ export async function renderFinal({
         `setsar=1,fps=30,format=yuv420p[v${index}]`
       );
     } else {
-      const geometry = coverCropGeometry(source.width, source.height, crop);
-      filters.push(
-        `[${index}:v:0]setpts=PTS-STARTPTS,` +
-        `scale=${geometry.width}:${geometry.height},` +
-        `crop=1080:1920:${geometry.cropX}:${geometry.cropY},` +
-        `setsar=1,fps=30,format=yuv420p[v${index}]`
-      );
+      filters.push(videoInput +
+        framedVideoFilter(source, crop, lease.renderSpec.canvas.backgroundColor) +
+        `,setsar=1,fps=30,format=yuv420p[v${index}]`);
     }
-    const duration = seconds(segment.sourceEndMs - segment.sourceStartMs);
     filters.push(source.hasAudio
-      ? `[${index}:a:0]asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0[a${index}]`
+      ? `[${index}:a:0]atrim=start=0:end=${duration},asetpts=PTS-STARTPTS,aresample=48000:async=1:first_pts=0[a${index}]`
       : `anullsrc=r=48000:cl=stereo,atrim=duration=${duration},asetpts=PTS-STARTPTS[a${index}]`
     );
   }
@@ -201,6 +205,7 @@ export function buildAss(edl, renderSpec, customFontName = null) {
   const captions = renderSpec.captions;
   const fontName = customFontName ?? "DejaVu Sans";
   const style = captionStyle(captions.templateId);
+  style.fontSize *= captions.fontScale ?? 1;
   const header = `[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\nWrapStyle: 0\nScaledBorderAndShadow: yes\n\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,${fontName},${style.fontSize},${assColor(captions.textColor)},${assColor(captions.highlightColor)},&HCC000000,&H99000000,${style.bold},0,0,0,100,100,0,0,${style.borderStyle},${style.outline},${style.shadow},5,54,54,54,1\n\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text`;
   const timelineStarts = new Map();
   let cursorMs = 0;
@@ -340,6 +345,17 @@ export function logoOverlay(position) {
   return { x: "W-w-65", y: "115" };
 }
 
+// Pad undersized axes before cropping oversized axes. x/y retain their existing
+// alignment semantics on both sides of 1x; this matches browserCropStyle.
+export function framedVideoFilter(source, crop, background, xExpression = String(crop.x)) {
+  const g = coverCropGeometry(source.width, source.height, crop);
+  const padWidth = Math.max(1080, g.width);
+  const padHeight = Math.max(1920, g.height);
+  return `scale=${g.width}:${g.height},` +
+    `pad=${padWidth}:${padHeight}:x=${Math.max(0, -g.cropX)}:y=${Math.max(0, -g.cropY)}:color=${background.replace("#", "0x")}:eval=frame,` +
+    `crop=1080:1920:x='${Math.max(0, g.width-1080)}*(${xExpression})':y=${Math.max(0, g.cropY)}`;
+}
+
 export function coverCropGeometry(sourceWidth, sourceHeight, crop) {
   const targetWidth = even(Math.ceil(1080 * crop.zoom));
   const targetHeight = even(Math.ceil(1920 * crop.zoom));
@@ -434,4 +450,43 @@ function run(command, args, errorCode, timeoutMs) {
       else reject(renderError(errorCode, new Error(stderr.slice(-4_000))));
     });
   });
+}
+
+// Split only render inputs: captions and the content timeline keep their original IDs.
+export function expandFramingSegments(edl, renderSpec) {
+  return [...edl.segments].sort((a, b) => a.order - b.order).flatMap((segment) => {
+    const base = renderSpec.segments[segment.id];
+    const ranges = base.framingRanges ?? [];
+    const plan = base.autoFraming;
+    const candidates = [segment.sourceStartMs, ...ranges.map(range => range.sourceStartMs)];
+    const automaticAt = time => (ranges.filter(range => range.sourceStartMs <= time).at(-1) ?? base).framingMode === "auto";
+    if (plan) {
+      if (automaticAt(plan.sourceStartMs)) candidates.push(plan.sourceStartMs);
+      if (automaticAt(plan.sourceEndMs)) candidates.push(plan.sourceEndMs);
+      for (let i = 0; i < plan.points.length; i++) {
+        if (automaticAt(plan.points[i].sourceMs) && (i === 0 || plan.points[i].framingMode !== plan.points[i - 1].framingMode || plan.points[i].crop.zoom !== plan.points[i - 1].crop.zoom || plan.points[i].crop.y !== plan.points[i - 1].crop.y)) candidates.push(plan.points[i].sourceMs);
+      }
+    }
+    const starts = [...new Set(candidates)].filter(time => time >= segment.sourceStartMs && time < segment.sourceEndMs).sort((a, b) => a - b);
+    return starts.map((start, index) => {
+      const end = starts[index + 1] ?? segment.sourceEndMs;
+      let framing = ranges.filter(range => range.sourceStartMs <= start).at(-1) ?? base;
+      let autoPoints;
+      if (framing.framingMode === "auto") {
+        const covered = plan && start >= plan.sourceStartMs && start < plan.sourceEndMs;
+        const point = covered ? plan.points.filter(item => item.sourceMs <= start).at(-1) : null;
+        framing = point ?? { framingMode: "fit", crop: { x: .5, y: .5, zoom: 1 } };
+        if (point?.framingMode === "fill") autoPoints = [point, ...plan.points.filter(item => item.sourceMs > start && item.sourceMs < end)];
+      }
+      return { ...segment, sourceStartMs: start, sourceEndMs: end, framing, autoPoints };
+    });
+  });
+}
+
+function autoCropExpression(points, sourceStartMs) {
+  let expression = preciseDecimal(points.at(-1).crop.x);
+  for (let i = points.length - 2; i >= 0; i--) {
+    expression = `if(lt(t,${preciseDecimal((points[i + 1].sourceMs - sourceStartMs) / 1000)}),${preciseDecimal(points[i].crop.x)},${expression})`;
+  }
+  return expression;
 }

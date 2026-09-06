@@ -11,11 +11,11 @@
 
   "vars": {
     "SCRIBIX_INTERNAL_URL": "https://scribix.io",
-    "VIDEO_RENDER_MAX_CONTAINERS": "3"
+    "VIDEO_RENDER_MAX_CONTAINERS": "10"
   },
 
   "triggers": {
-    "crons": ["*/5 * * * *"]
+    "crons": ["* * * * *"]
   },
 
   "d1_databases": [
@@ -31,7 +31,7 @@
       "class_name": "VideoRenderContainer",
       "image": "./containers/video-preview/Dockerfile",
       "image_build_context": "./containers/video-preview",
-      "max_instances": 3,
+      "max_instances": 10,
       "instance_type": {
         "vcpu": 1,
         "memory_mib": 3072,
@@ -69,7 +69,7 @@
     "consumers": [
       {
         "queue": "scribix-video-render",
-        "max_batch_size": 3,
+        "max_batch_size": 10,
         "max_concurrency": 1,
         "max_batch_timeout": 5,
         "max_retries": 5,

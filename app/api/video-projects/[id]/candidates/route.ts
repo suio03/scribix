@@ -1,3 +1,4 @@
+import { recoverProjectRenderQueue } from "@/lib/video-workspace/render-scheduling";
 import { auth } from "@/auth";
 import type { AaiTranscript } from "@/lib/aai";
 import { prepareAiUsageEvent, type AiTokenUsage } from "@/lib/ai-usage";
@@ -46,6 +47,8 @@ type CandidateProjectRow = {
 export async function GET(_: Request, { params }: Params) {
   const context = await candidateContext(params);
   if (context instanceof Response) return context;
+  await recoverProjectRenderQueue(context.env.DB, context.env.VIDEO_RENDER_QUEUE, context.user.id, context.project.id)
+    .catch(() => console.error(JSON.stringify({ event: "video_scheduler_recovery_failed", projectId: context.project.id })));
   const [allCandidates, allPreviews] = await Promise.all([
     listClipCandidates(context.env.DB, context.user.id, context.project.id),
     listCandidatePreviews(context.env.DB, context.user.id, context.project.id),
@@ -170,7 +173,7 @@ export async function POST(request: Request, { params }: Params) {
       project.source_duration_ms
     );
     const cacheKey = await promptCacheKey(project.transcript_id);
-    providerResult = await generateCandidatesWithOpenAI(analysisInput.text, {
+    providerResult = await generateCandidatesWithOpenAI(analysisInput, {
       requestId,
       promptCacheKey: cacheKey,
       maxCandidates: candidateLimitForSourceDuration(analysisInput.sourceDurationMs),
@@ -188,7 +191,7 @@ export async function POST(request: Request, { params }: Params) {
     });
     stage = "review";
     reviewResult = await reviewCandidatesWithOpenAI(
-      analysisInput.text,
+      analysisInput,
       providerResult.candidates,
       {
         requestId: reviewRequestId,

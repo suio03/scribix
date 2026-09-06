@@ -184,6 +184,10 @@ export async function loadEditorWorkspace(
       }))
     : [];
 
+  for (const segment of edl.segments) {
+    const analysis = preview?.segments.find(item => `s${item.segmentIndex}` === segment.id)?.autoFraming;
+    if (analysis && !activeDraft && !renderSpec.segments[segment.id].autoFraming) renderSpec.segments[segment.id] = { ...renderSpec.segments[segment.id], autoFraming: analysis };
+  }
   return {
     ok: true,
     workspace: {
@@ -339,6 +343,11 @@ export async function prepareGeneratedCandidateDraft(
   const transcript = (await transcriptObject.json()) as AaiTranscript;
   const edl = edlFromCandidate(segments);
   const renderSpec = defaultRenderSpec(edl, relevantWords(transcript, edl));
+  const preview = await candidatePreview(db, userId, projectId, candidateId);
+  for (const segment of edl.segments) {
+    const analysis = preview?.segments.find(item => `s${item.segmentIndex}` === segment.id)?.autoFraming;
+    if (analysis) renderSpec.segments[segment.id].autoFraming = analysis;
+  }
   const saved = await saveProjectDraft(
     db,
     userId,
@@ -452,7 +461,7 @@ export function defaultRenderSpec(
     },
     segments: Object.fromEntries(edl.segments.map((segment) => [
       segment.id,
-      { framingMode: "fill", crop: { x: 0.5, y: 0.5, zoom: 1 } },
+      { framingMode: "auto", crop: { x: 0.5, y: 0.5, zoom: 1 } },
     ])),
     captions: {
       enabled: true,

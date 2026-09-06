@@ -1,10 +1,10 @@
 import { auth } from "@/auth";
-import { getTranscript } from "@/lib/aai";
+import { getTranscript, isAaiPollingEnabled } from "@/lib/aai";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { discordAlert } from "@/lib/discord";
 import { reconcileQuota } from "@/lib/quota";
-import { applyAaiResult } from "@/app/api/webhook/assemblyai/route";
+import { applyAaiResult } from "@/lib/aai-result";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -81,12 +81,12 @@ export async function GET(_: Request, { params }: Params) {
     return Response.json(await readStatus(env, transcriptId));
   }
 
-  // §9.3 inline reconcile. Only fire when the user is actually waiting
-  // and the row has been pending long enough that a webhook should have landed.
+  // Local polling needs no public callback. Webhook mode retains the 15-minute
+  // recovery window. Both paths run only while the user requests status.
   if (
     row.aai_transcript_id &&
     (row.status === "queued" || row.status === "processing") &&
-    isStale(row.created_at)
+    (isAaiPollingEnabled() || isStale(row.created_at))
   ) {
     try {
       const aai = await getTranscript(row.aai_transcript_id);

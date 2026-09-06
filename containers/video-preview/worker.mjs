@@ -1,3 +1,4 @@
+import { analyzeFraming } from "./analyze-framing.mjs";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
@@ -49,11 +50,16 @@ async function runPreview(lease) {
   const source = await probeMedia(lease.sourceUrl);
   await renderProxy({ input: lease.sourceUrl, output: outputPath, segment: lease.segment, source });
   const output = await probeMedia(outputPath);
+  const autoFraming = await analyzeFraming({ input: outputPath,
+    sourceStartMs: lease.segment.proxySourceStartMs,
+    durationMs: lease.segment.proxySourceEndMs - lease.segment.proxySourceStartMs,
+    workingDirectory });
   await markUploading();
   const file = await readFile(outputPath);
   await upload(lease.outputUrl, "video/mp4", file);
   await complete({
     status: "completed",
+    autoFraming,
     output: {
       bytes: file.byteLength,
       durationMs: output.durationMs,

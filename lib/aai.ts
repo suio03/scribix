@@ -89,7 +89,20 @@ function key() {
   return k;
 }
 
+// Explicit runtime setting: local OpenNext also runs a production build.
+export function isAaiPollingEnabled(): boolean {
+  return process.env.ASSEMBLYAI_COMPLETION_MODE === "polling";
+}
+
 export async function submitTranscript(body: AaiSubmit): Promise<AaiSubmitResult> {
+  const payload = isAaiPollingEnabled()
+    ? {
+        ...body,
+        webhook_url: undefined,
+        webhook_auth_header_name: undefined,
+        webhook_auth_header_value: undefined,
+      }
+    : body;
   const maxAttempts = 3;
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     let res: Response;
@@ -100,7 +113,7 @@ export async function submitTranscript(body: AaiSubmit): Promise<AaiSubmitResult
           authorization: key(),
           "content-type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(payload),
         signal: AbortSignal.timeout(20_000),
       });
     } catch (error) {

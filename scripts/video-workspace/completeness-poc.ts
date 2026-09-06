@@ -48,7 +48,7 @@ const analysisInput = buildCandidateAnalysisInput(transcript, source.durationMs)
 const maxCandidates = candidateLimitForSourceDuration(source.durationMs);
 const cacheKey = `scribix-completeness-${transcriptSource.fingerprint}`;
 const generationStartedAt = Date.now();
-const generated = await generateCandidatesWithOpenAI(analysisInput.text, {
+const generated = await generateCandidatesWithOpenAI(analysisInput, {
   requestId: `completeness-poc-generate-${randomUUID()}`,
   promptCacheKey: cacheKey,
   maxCandidates,
@@ -57,7 +57,7 @@ const generationLatencyMs = Date.now() - generationStartedAt;
 
 const reviewStartedAt = Date.now();
 const reviewed = await reviewCandidatesWithOpenAI(
-  analysisInput.text,
+  analysisInput,
   generated.candidates,
   {
     requestId: `completeness-poc-review-${randomUUID()}`,

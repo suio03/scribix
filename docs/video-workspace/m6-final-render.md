@@ -27,7 +27,7 @@ Cloudflare Queue dispatcher 同时处理 preview 与 final 两类任务。final 
 容器直接从原视频执行以下流水线：
 
 1. 按不可变 EDL 对连续 source segment seek、trim。
-2. Fill 模式使用用户 crop，并可由 MediaPipe 对默认 framing 生成平滑 9:16 跟随；检测置信不足时退回完整画面加模糊背景。Fit 模式始终保留完整画面并使用模糊背景填充 9:16 canvas。
+2. Fill 模式使用用户 crop；Fit 模式保留完整画面并按 canvas 背景色填充。Auto 模式使用预览任务缓存的 MediaPipe + TalkNet 取景计划，置信度不足时显示 Fit；手动设置优先。
 3. 标准化视频编码；音频保持原始响度和起止，不应用标准化或淡入淡出，无音轨输入自动补静音。
 4. 生成带逐字 timing 的 ASS 动态字幕，并应用模板、断行、安全区和自定义字体。
 5. 应用品牌署名和 Logo；音频使用固定的原音兼容参数。
@@ -54,3 +54,53 @@ AI 候选为 15–45 秒且只使用一个连续 source segment，不做语义�
 - `npm run build`：验证 Next.js 路由、UI 和服务端模块集成。
 
 远程 D1 migration、生产 Cloudflare Container/Queue consumer 发布均未执行；代码、Container 镜像构建和 Wrangler dry-run 已在本地通过。
+
+
+## Timed framing and cover selection
+
+The editor supports optional `renderSpec.segments[id].framingRanges`: ordered source-time boundaries, each with its own fill/fit mode and crop. The base crop applies before the first boundary; subsequent settings continue until the next boundary or the content segment end. Source timestamps keep framing attached to the same footage when clip trims change. Boundaries outside the current trim are retained and ignored unless they establish the framing at the trimmed start.
+
+The preview exposes split, boundary adjustment (clip timeline seconds), merge, position, and zoom controls. Merging uses the preceding range. Cover selection uses the current playback time and has a separate preview with the selected framing and overlays.
+
+Final rendering expands content segments into temporary render inputs at framing boundaries, then concatenates them. Original EDL IDs and caption timing remain intact. Existing specs without ranges retain their original rendering behavior. No database migration is needed. Deploy/rebuild the video container before enabling the new editor: older container images ignore the optional framing ranges.
+
+Download ZIP and contained media names use the source title, current visible clip number, and clip title. Internal project version numbers remain in export history rather than filenames.
+
+Validation: workspace contract suite; `test:video-final` exercises multiple framing ranges in one content segment with 1080×1920 output and a 150 ms duration tolerance; `test:video-consistency` checks browser/render crop geometry. Local browser verification covered independent ranges, boundary editing, merge, cover preview, and persistence after reload.
+
+## Automatic speaker framing
+
+Auto framing adds migration `0037_auto_framing.sql` and an updated CPU video image. Apply the migration before deploying the app and worker together. Only local migration/build validation has been performed. See [speaker-follow-plan.md](speaker-follow-plan.md) for policy, model provenance, verification, and remaining release evaluation.
+
+## Editor workspace layout
+
+The paid editor now keeps a bounded video preview and external playhead beside a single inspector (Framing, Captions, Cover, Content). Export actions and status live in the editor header. Manual framing controls are disclosed on demand; the action beside the playhead creates a range at that explicit time, and range selection sits beside the playhead. Cover selection states the exact displayed clip time. Starting framing analysis also enables Auto for the selected range. Existing saved edits remain intact.
+
+Validation: local browser tool switching retained the 12-second playhead, the cover action reflected its time, and range creation/merge saved successfully. Next.js/OpenNext build, locale parity and presentation consistency checks passed.
+
+Framing corrections now ask for start/end seconds before entering manual mode; the original framing resumes at the end boundary. A secondary whole-clip action covers all source cuts. Manual position/zoom controls are hidden in Auto and Fit, and axes without crop overflow are disabled. Close adjustments only collapses the controls; edits autosave. The sole cover-setting action is next to the preview and directly applies its displayed frame. The inspector shows the selected cover and feedback. Interval preservation is covered by the presentation consistency script.
+
+### Visual manual framing (local, 2026-09-05)
+
+The Framing panel separates whole-clip Automatic follow / Show full frame from manual section editing. `ManualFramingEditor` keeps a draft: the original proxy shows a movable, resizable 9:16 crop rectangle, while the main player previews the output. Timeline handles and sampled muted proxy frames select the affected interval; exact seconds are optional. Apply persists the interval while restoring the prior framing at its end; Cancel discards the draft. The editor offers selection playback and one-step framing undo. No vertical-focus slider is shown; vertical movement becomes possible when the source crop has vertical overflow.
+
+The user-triggered Reanalyze speaker framing action and its proposal UI were removed at the user's request. Automatic analysis still runs when preview media is prepared. Users who dislike automatic framing use manual section cropping. The preview rebuild endpoint no longer accepts reanalysis flags; it only rebuilds missing or insufficient preview coverage. Existing saved drafts retain their framing.
+
+Validation: Cloudflare production build and six-locale checks pass; 53 workspace contract tests and presentation consistency checks pass. Local browser checks covered crop zoom and horizontal/vertical dragging, Apply, Undo and Cancel. An explicit rerun produced a new completed preview job and the proposal UI; Keep previous framing was checked without replacing the user's saved manual ranges.
+
+A pending crop preview disables export and replaces the saved indicator with an Apply/Cancel instruction, so users cannot accidentally export the saved version while viewing an uncommitted proposal. Browser validation also confirmed real timeline thumbnails and automatic stop at the selection end.
+
+### Caption size and settings access (local, 2026-09-05)
+
+Captions now expose Subtitle size (50–150% of the selected template's default). Optional `captions.fontScale` defaults to 1 for legacy drafts and is validated server-side. Player/cover overlays and ASS export apply the same multiplier. Advanced options precede a separate, collapsed Correct transcript text section; its expanded list has a bounded scroll area. Updated the local renderer image along with the app. Verified the 75% preview and autosave in-browser, then restored the user's original 100% size. Build, 54 contract tests, and all-template size/export consistency checks pass.
+
+
+### Persistent section framing editor (local, 2026-09-05)
+
+Manual framing now opens all existing framing sections instead of inventing a three-second interval. A continuous editing session supports splitting at the displayed playhead, selecting existing sections using cropped thumbnails, moving a shared boundary, changing the selected crop/zoom or restoring automatic framing for that section, and undoing session edits. Save adjustments commits the entire draft once; Cancel discards it. Source cut boundaries remain fixed; only framing boundaries within the same source segment can move. Existing source-time settings outside trimmed footage and automatic plans are preserved. `framing-sections.ts` handles section conversion, splitting, adjacent boundary changes and composition back into the render spec.
+
+Targeted tests cover split inheritance, immutable undo snapshots, adjacent boundaries, restored automatic framing and retained saved specs. Browser checks verified splitting at 6 seconds, moving to 5.5 seconds, setting the new section to 1.5×, and confirming the prior section remains at 1×. Testing used a separate tab to preserve the user's unsaved old-editor session and did not save test edits over it.
+
+Selecting a manual framing section now scopes the main preview and its scrubber to that section. Playback stops at its end; replay starts at the section start. The player shows the section number and tenth-second bounds, with an entire-clip preview toggle. Selecting a section again returns to scoped preview. The duplicate right-panel playback button was removed; draft crops continue to appear live before saving.
+
+The numbered framing timeline now accepts position clicks directly, seeks the main preview, and offers Split here plus Merge with previous (or next for the first section) immediately below it. The duplicate editing playhead slider was removed. A playhead marker shows the selected time. Merge keeps the neighbour’s framing and all footage, cannot cross source cuts, and participates in session Undo. Browser checks covered click-to-seek, five-to-six section splitting, merging back to five, and undo; test drafts were restored without saving. Targeted merge tests, six-locale validation, and the Cloudflare build pass.

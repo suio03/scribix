@@ -290,7 +290,8 @@ test("edited timelines allow no more than three source segments", () => {
 
 test("candidate generation aligns every range to real word boundaries", () => {
   const analysis = buildCandidateAnalysisInput(candidateTranscriptFixture(), 120_000);
-  assert.match(analysis.text, /10000-10800:word10/);
+  assert.doesNotMatch(analysis.text, /10000-10800:word10/);
+  assert.ok(analysis.text.includes("word10"));
   const provider = parseProviderCandidateSet({
     candidates: [
       {
@@ -582,3 +583,46 @@ function reviewDecision(
     segments: [{ startMs, endMs }],
   };
 }
+
+
+test("framing ranges accept timed crops and reject unsafe or ambiguous ranges", () => {
+  const spec = structuredClone(renderSpec);
+  spec.segments.seg_01.framingRanges = [
+    { sourceStartMs: 125000, framingMode: "fill", crop: { x: 1, y: 0, zoom: 2 } },
+    { sourceStartMs: 130000, framingMode: "fit", crop: { x: 0.5, y: 0.5, zoom: 1 } },
+  ];
+  assert.equal(validateRenderSpec(spec, edl).success, true);
+  for (const change of [
+    (value: RenderSpec) => { value.segments.seg_01.framingRanges![1].sourceStartMs = 125000; },
+    (value: RenderSpec) => { value.segments.seg_01.framingRanges![0].crop.zoom = 9; },
+    (value: RenderSpec) => { value.segments.seg_01.framingRanges![0].sourceStartMs = -1; },
+  ]) {
+    const invalid = structuredClone(spec);
+    change(invalid);
+    assert.equal(validateRenderSpec(invalid, edl).success, false);
+  }
+});
+
+
+test("subtitle size remains compatible with old drafts and rejects invalid scales", () => {
+  const spec = structuredClone(renderSpec);
+  delete spec.captions.fontScale;
+  assert.equal(validateRenderSpec(spec, edl).success, true);
+  for (const scale of [0.5, 1, 1.5]) {
+    spec.captions.fontScale = scale;
+    assert.equal(validateRenderSpec(spec, edl).success, true);
+  }
+  for (const scale of [0, 0.49, 1.51, NaN, Infinity]) {
+    spec.captions.fontScale = scale;
+    assert.equal(validateRenderSpec(spec, edl).success, false);
+  }
+});
+
+
+test("manual zoom-out is accepted and zero scale is rejected", () => {
+  const value = structuredClone(renderSpec);
+  value.segments.seg_01.crop.zoom = 0.4;
+  assert.equal(validateRenderSpec(value, edl).success, true);
+  value.segments.seg_01.crop.zoom = 0;
+  assert.equal(validateRenderSpec(value, edl).success, false);
+});

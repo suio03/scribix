@@ -14,6 +14,7 @@ import {
 import { getTranslations } from "next-intl/server";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { VideoProjectThumbnail } from "@/app/components/VideoProjectThumbnail";
 import { TranscriptRowMenu } from "@/app/components/TranscriptRowMenu";
 
 type Row = {
@@ -203,7 +204,12 @@ export default async function DashboardPage({
                     aria-label={row.title}
                     className="relative hidden w-[124px] shrink-0 overflow-hidden border-r border-line bg-[#17102f] sm:block"
                   >
-                    <VideoProjectVisual />
+                    <VideoProjectThumbnail
+                      projectId={row.video_project_id}
+                      available={row.source_available === 1}
+                    >
+                      <VideoProjectVisual />
+                    </VideoProjectThumbnail>
                   </Link>
                   <div className="flex min-w-0 flex-1 flex-col justify-center p-4 sm:px-5">
                     <div className="flex min-w-0 items-start gap-4">

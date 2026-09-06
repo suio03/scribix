@@ -132,7 +132,7 @@ the one-time items that are already verified and unchanged.
 - [ ] **Refund policy** — written at `/refunds` with Paddle-aligned 14-day
   refund request wording and no usage-based qualifiers.
 - [ ] **Free-tier recording max length** — confirm the 30 min recorder cap is
-  still intentional alongside the separate 45 min lifetime allowance in
+  still intentional alongside the separate 60 min lifetime allowance in
   `lib/plans.ts`.
 - [ ] **AAI bulk-delete cadence** — schedule the first run on the 1st Monday
   of the next month and add a calendar reminder

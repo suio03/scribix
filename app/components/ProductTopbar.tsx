@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { PLANS } from "@/lib/plans";
 import type { SidebarUsage } from "./sidebarUsage";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Logo } from "./Logo";
@@ -68,7 +69,7 @@ export function ProductTopbar({
   const [mobileOpen, setMobileOpen] = useState(false);
   const toolsRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
-  const remainingMin = Math.max(0, Math.round((usage?.quotaMin ?? 45) - (usage?.usedMin ?? 0)));
+  const remainingMin = Math.max(0, Math.round((usage?.quotaMin ?? PLANS.free.minutesPerCycle) - (usage?.usedMin ?? 0)));
 
   useEffect(() => {
     if (!toolsOpen && !accountOpen) return;

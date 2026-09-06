@@ -18,6 +18,51 @@
     }
   },
   "VideoHome": {
+    "hero": {
+      "eyebrow": "Generatore di clip AI",
+      "headline": "Trasforma video lunghi in <accent>short pronti da pubblicare.</accent>",
+      "description": "Scribix è un generatore di clip AI per podcast, interviste, webinar e video parlati. Trova momenti completi nella conversazione e ti permette di rifinire ogni clip prima dell’esportazione.",
+      "primaryCta": "Crea clip gratis",
+      "secondaryCta": "Scopri come funziona",
+      "ctaNote": "{freeTrialMinutes} minuti di video inclusi · Nessuna carta richiesta.",
+      "trust": [
+        "Clip complete selezionate dall’AI",
+        "Tagli precisi dalla trascrizione",
+        "Sottotitoli dinamici e formato 9:16",
+        "MP4 finale 1080 × 1920"
+      ],
+      "previewLabel": "Workspace clip Scribix",
+      "previewProject": "Intervista al fondatore — Episodio 12",
+      "previewSource": "Sorgente · 01:24:18",
+      "previewCandidatesLabel": "Clip candidati IA",
+      "previewCandidates": [
+        {
+          "title": "L’errore che ha cambiato il nostro prodotto",
+          "duration": "00:42",
+          "score": "94%"
+        },
+        {
+          "title": "Perché i piccoli team sono più veloci",
+          "duration": "00:36",
+          "score": "89%"
+        },
+        {
+          "title": "Un modo migliore di ascoltare i clienti",
+          "duration": "00:51",
+          "score": "86%"
+        }
+      ],
+      "previewSelected": "Selezionato",
+      "previewCaption": "LA LEZIONE ERA <mark>ASCOLTARE PRIMA</mark>",
+      "previewFormat": "Anteprima verticale",
+      "previewLength": "00:42 / 00:42",
+      "previewEdit": "Modifica",
+      "previewCaptions": "Sottotitoli",
+      "previewExport": "Esporta",
+      "dropTitle": "Trascina qui un video lungo",
+      "dropMeta": "MP4, MOV, WebM, AVI o MKV",
+      "videoOnly": "Scegli un file video per generare clip con l’AI."
+    },
     "showcase": {
       "casesLabel": "Formati diversi. Un unico flusso.",
       "casesTitle": "I momenti migliori hanno tante forme.",
@@ -76,34 +121,6 @@
       "title": "Una conversazione. Più video brevi pronti.",
       "description": "Guarda un vero progetto Scribix trasformarsi in clip verticali con sottotitoli. Questa demo senza audio mostra il flusso di lavoro in 15 secondi."
     },
-    "hero": {
-      "eyebrow": "Generatore di clip AI",
-      "headline": "Trasforma video lunghi in <accent>short pronti da pubblicare.</accent>",
-      "description": "Scribix è un generatore di clip AI per podcast, interviste, webinar e video parlati. Trova momenti completi nella conversazione e ti permette di rifinire ogni clip prima dell’esportazione.",
-      "primaryCta": "Carica un video gratis",
-      "secondaryCta": "Scopri come funziona",
-      "ctaNote": "Inizia con 45 minuti di trascrizione. Nessuna carta di credito.",
-      "trust": ["Clip complete selezionate dall’AI", "Tagli precisi dalla trascrizione", "Sottotitoli dinamici e formato 9:16", "MP4 finale 1080 × 1920"],
-      "previewLabel": "Workspace clip Scribix",
-      "previewProject": "Intervista al fondatore — Episodio 12",
-      "previewSource": "Sorgente · 01:24:18",
-      "previewCandidatesLabel": "Clip candidati IA",
-      "previewCandidates": [
-        {"title": "L’errore che ha cambiato il nostro prodotto", "duration": "00:42", "score": "94%"},
-        {"title": "Perché i piccoli team sono più veloci", "duration": "00:36", "score": "89%"},
-        {"title": "Un modo migliore di ascoltare i clienti", "duration": "00:51", "score": "86%"}
-      ],
-      "previewSelected": "Selezionato",
-      "previewCaption": "LA LEZIONE ERA <mark>ASCOLTARE PRIMA</mark>",
-      "previewFormat": "Anteprima verticale",
-      "previewLength": "00:42 / 00:42",
-      "previewEdit": "Modifica",
-      "previewCaptions": "Sottotitoli",
-      "previewExport": "Esporta",
-      "dropTitle": "Trascina qui un video lungo",
-      "dropMeta": "MP4, MOV, WebM, AVI o MKV",
-      "videoOnly": "Scegli un file video per generare clip con l’AI."
-    },
     "proof": {
       "eyebrow": "Un rendering reale di Scribix",
       "title": "Guarda il video originale diventare uno short finito.",
@@ -124,10 +141,22 @@
       "title": "Dal video lungo allo short finito, in un unico flusso.",
       "intro": "Mantieni il contesto dell’intera conversazione e lavora solo sui momenti da pubblicare. Scribix unisce generazione di clip AI, montaggio dalla trascrizione e rendering finale.",
       "steps": [
-        {"title": "Carica il video originale", "body": "Aggiungi l’intervista, il podcast, il webinar o il video completo. Scribix conserva in sicurezza la sorgente per il rendering finale alla massima qualità."},
-        {"title": "Valuta le clip selezionate dall’AI", "body": "L’AI usa trascrizione, turni dei parlanti e timestamp delle parole per proporre clip complete con hook, tema, punteggio e motivazione."},
-        {"title": "Dai forma alla storia", "body": "Regola inizio e fine nel video originale e l’inquadratura 9:16, correggi i sottotitoli, applica il brand e scegli la copertina."},
-        {"title": "Renderizza e scarica", "body": "Genera dalla sorgente un MP4 1080 × 1920 completo e una copertina, pronti per la tua piattaforma di pubblicazione."}
+        {
+          "title": "Carica il video originale",
+          "body": "Aggiungi l’intervista, il podcast, il webinar o il video completo. Scribix conserva in sicurezza la sorgente per il rendering finale alla massima qualità."
+        },
+        {
+          "title": "Valuta le clip selezionate dall’AI",
+          "body": "L’AI usa trascrizione, turni dei parlanti e timestamp delle parole per proporre clip complete con hook, tema, punteggio e motivazione."
+        },
+        {
+          "title": "Dai forma alla storia",
+          "body": "Regola inizio e fine nel video originale e l’inquadratura 9:16, correggi i sottotitoli, applica il brand e scegli la copertina."
+        },
+        {
+          "title": "Renderizza e scarica",
+          "body": "Genera dalla sorgente un MP4 1080 × 1920 completo e una copertina, pronti per la tua piattaforma di pubblicazione."
+        }
       ]
     },
     "features": {
@@ -135,12 +164,30 @@
       "title": "Il controllo necessario per finire lo short, non solo trovarlo.",
       "intro": "Il generatore di clip AI offre un ottimo primo montaggio. L’editor lascia a te le decisioni creative senza obbligarti a usare una timeline professionale complessa.",
       "items": [
-        {"title": "Clip complete ordinate", "body": "Confronta i momenti suggeriti per hook, tema, durata e motivazione prima di scegliere quale sviluppare."},
-        {"title": "Timeline precisa sulla trascrizione", "body": "Regola inizio e fine del clip con precisione sulle singole parole e chiari timecode del video originale."},
-        {"title": "Sottotitoli dinamici", "body": "Correggi le parole e controlla stile, lunghezza delle righe, posizione, colore ed enfasi."},
-        {"title": "Reframing verticale", "body": "Imposta posizione e zoom per ogni segmento mentre visualizzi la composizione 9:16 finale nel browser."},
-        {"title": "Stile del brand riutilizzabile", "body": "Applica logo, font, colore principale e un trattamento visivo coerente a tutti i clip."},
-        {"title": "Rendering cloud in alta qualità", "body": "Crea l’MP4 finale dal video originale, non dall’anteprima compressa, mantenendo l’audio originale e aggiungendo una copertina."}
+        {
+          "title": "Clip complete ordinate",
+          "body": "Confronta i momenti suggeriti per hook, tema, durata e motivazione prima di scegliere quale sviluppare."
+        },
+        {
+          "title": "Timeline precisa sulla trascrizione",
+          "body": "Regola inizio e fine del clip con precisione sulle singole parole e chiari timecode del video originale."
+        },
+        {
+          "title": "Sottotitoli dinamici",
+          "body": "Correggi le parole e controlla stile, lunghezza delle righe, posizione, colore ed enfasi."
+        },
+        {
+          "title": "Reframing verticale",
+          "body": "Imposta posizione e zoom per ogni segmento mentre visualizzi la composizione 9:16 finale nel browser."
+        },
+        {
+          "title": "Stile del brand riutilizzabile",
+          "body": "Applica logo, font, colore principale e un trattamento visivo coerente a tutti i clip."
+        },
+        {
+          "title": "Rendering cloud in alta qualità",
+          "body": "Crea l’MP4 finale dal video originale, non dall’anteprima compressa, mantenendo l’audio originale e aggiungendo una copertina."
+        }
       ]
     },
     "audiences": {
@@ -148,26 +195,66 @@
       "title": "Per team con più buon materiale che tempo per montarlo.",
       "intro": "Scribix è pensato per video parlati di lunga durata che contengono già clip complete: basta trovarle e rifinirle.",
       "items": [
-        {"label": "Dal lungo al breve", "title": "Video creator", "body": "Trasforma interviste, spiegazioni e video creator in un flusso costante di clip verticali senza ricostruire ogni montaggio da zero."},
-        {"label": "Show video e audio", "title": "Podcaster e producer", "body": "Trova momenti completi negli episodi lunghi e aggiungi sottotitoli e inquadrature adatti ai feed short-form."},
-        {"label": "Content operations", "title": "Team marketing e media", "body": "Trasforma webinar, storie dei clienti e conversazioni con i founder in contenuti social di brand con un flusso revisionabile."}
+        {
+          "label": "Dal lungo al breve",
+          "title": "Video creator",
+          "body": "Trasforma interviste, spiegazioni e video creator in un flusso costante di clip verticali senza ricostruire ogni montaggio da zero."
+        },
+        {
+          "label": "Show video e audio",
+          "title": "Podcaster e producer",
+          "body": "Trova momenti completi negli episodi lunghi e aggiungi sottotitoli e inquadrature adatti ai feed short-form."
+        },
+        {
+          "label": "Content operations",
+          "title": "Team marketing e media",
+          "body": "Trasforma webinar, storie dei clienti e conversazioni con i founder in contenuti social di brand con un flusso revisionabile."
+        }
       ]
     },
-    "secondaryTools": {"label": "Ti serve solo la trascrizione?", "audio": "Audio in testo", "youtube": "Trascrizione YouTube", "notes": "Appunti IA"},
+    "secondaryTools": {
+      "label": "Ti serve solo la trascrizione?",
+      "audio": "Audio in testo",
+      "youtube": "Trascrizione YouTube",
+      "notes": "Appunti IA"
+    },
     "faq": {
       "label": "FAQ",
       "title": "Cosa sapere prima del primo clip.",
       "contactPrefix": "Hai ancora una domanda? Scrivi a",
       "items": [
-        {"q": "Come sceglie i momenti il generatore di clip AI?", "a": "Scribix analizza trascrizione, turni dei parlanti e timestamp delle parole per proporre momenti autonomi con hook e tema chiaro. La V1 non analizza ogni fotogramma dell’intero video."},
-        {"q": "Posso modificare i clip suggeriti dall’IA?", "a": "Sì. Puoi cambiare i limiti del clip nel video originale, correggere i sottotitoli, regolare il crop verticale, applicare il brand e scegliere la copertina."},
-        {"q": "Cosa esporta Scribix?", "a": "Il flusso genera un MP4 H.264 1080 × 1920 con audio AAC e un’immagine di copertina. Scarica i file e pubblicali sulla piattaforma che preferisci."},
-        {"q": "Per quanto tempo viene conservato il video originale?", "a": "I video originali vengono conservati 7 giorni con Free e 30 giorni con il precedente Basic o Creator. La trascrizione rimane disponibile e ogni esportazione completata resta disponibile per 30 giorni dalla creazione."},
-        {"q": "Quali video posso caricare?", "a": "Scribix accetta formati comuni tra cui MP4, MOV, WebM, AVI e MKV. Dimensione, minuti di trascrizione e spazio video dipendono dal piano."},
-        {"q": "Posso ancora usare Scribix solo per trascrivere?", "a": "Sì. Audio in testo, trascrizioni YouTube, appunti IA, modifica delle trascrizioni ed esportazioni di testo o sottotitoli restano disponibili come strumenti dedicati."}
+        {
+          "q": "Come sceglie i momenti il generatore di clip AI?",
+          "a": "Scribix analizza trascrizione, turni dei parlanti e timestamp delle parole per proporre momenti autonomi con hook e tema chiaro. La V1 non analizza ogni fotogramma dell’intero video."
+        },
+        {
+          "q": "Posso modificare i clip suggeriti dall’IA?",
+          "a": "Sì. Puoi cambiare i limiti del clip nel video originale, correggere i sottotitoli, regolare il crop verticale, applicare il brand e scegliere la copertina."
+        },
+        {
+          "q": "Cosa esporta Scribix?",
+          "a": "Il flusso genera un MP4 H.264 1080 × 1920 con audio AAC e un’immagine di copertina. Scarica i file e pubblicali sulla piattaforma che preferisci."
+        },
+        {
+          "q": "Per quanto tempo viene conservato il video originale?",
+          "a": "I video originali vengono conservati 7 giorni con Free e 30 giorni con il precedente Basic o Creator. La trascrizione rimane disponibile e ogni esportazione completata resta disponibile per 30 giorni dalla creazione."
+        },
+        {
+          "q": "Quali video posso caricare?",
+          "a": "Scribix accetta formati comuni tra cui MP4, MOV, WebM, AVI e MKV. Dimensione, minuti di trascrizione e spazio video dipendono dal piano."
+        },
+        {
+          "q": "Posso ancora usare Scribix solo per trascrivere?",
+          "a": "Sì. Audio in testo, trascrizioni YouTube, appunti IA, modifica delle trascrizioni ed esportazioni di testo o sottotitoli restano disponibili come strumenti dedicati."
+        }
       ]
     },
-    "final": {"kicker": "Le clip brevi sono già nel tuo video lungo", "title": "Carica un video lungo. Esci con uno short finito.", "body": "Usa l’AI per trovare momenti completi, prendi le decisioni creative importanti e renderizza un MP4 verticale pronto per il pubblico.", "cta": "Carica un video gratis"}
+    "final": {
+      "kicker": "Le clip brevi sono già nel tuo video lungo",
+      "title": "Carica un video lungo. Esci con uno short finito.",
+      "body": "Usa l’AI per trovare momenti completi, prendi le decisioni creative importanti e renderizza un MP4 verticale pronto per il pubblico.",
+      "cta": "Carica un video gratis"
+    }
   },
   "TopNav": {
     "primaryNav": "Navigazione principale",
@@ -235,7 +322,7 @@
     "title": "Benvenuto su Scribix",
     "description": "Accedi per trasformare video lunghi in brevi clip pronte da modificare, con trascrizione automatica inclusa.",
     "benefitTitle": "Crea gratuitamente le tue prime clip IA",
-    "benefitBody": "Inizia con 45 minuti di elaborazione. Nessuna carta di credito richiesta.",
+    "benefitBody": "{freeTrialMinutes} minuti di video inclusi · Nessuna carta richiesta.",
     "continueWithGoogle": "Continua con Google",
     "signingIn": "Connessione a Google…",
     "error": "Non è stato possibile avviare l’accesso con Google. Riprova.",
@@ -254,10 +341,10 @@
     "issue": "REC · 00:00:00",
     "issueLabel": "Issue №01 · Video to Text",
     "h1": "Converti il video in testo con l’IA",
-    "description": "Scribix trasforma file video e audio in testo con etichette dei relatori, pronto da rivedere ed esportare. Carica MP4, MOV, WebM, AVI, MP3, WAV o M4A e ottieni timestamp per parola con <stat>rilevamento automatico della lingua</stat>. <stat>45 minuti gratis</stat>, senza carta.",
+    "description": "Scribix trasforma file video e audio in testo con etichette dei relatori, pronto da rivedere ed esportare. Carica MP4, MOV, WebM, AVI, MP3, WAV o M4A e ottieni timestamp per parola con <stat>rilevamento automatico della lingua</stat>. <stat>{freeTrialMinutes} minuti gratis</stat>, senza carta.",
     "trust": [
       {
-        "label": "45 minuti gratis"
+        "label": "{freeTrialMinutes} minuti gratis"
       },
       {
         "label": "Rilevamento automatico"
@@ -289,7 +376,7 @@
     "upload": {
       "instruction": "Trascina un file video o audio, oppure clicca per cercare.",
       "button": "Carica File",
-      "specsFree": "Video fino a 2 GB · Audio fino a 1 GB · 45 min totali",
+      "specsFree": "Video fino a 2 GB · Audio fino a 1 GB · {freeTrialMinutes} min totali",
       "specsPaid": "Video fino a 5 GB · Audio fino a 1 GB · Limiti in base al piano"
     },
     "record": {
@@ -456,7 +543,7 @@
         }
       },
       {
-        "label": "Quota di trascrizione",
+        "label": "Minuti del video originale",
         "values": {
           "free": "{minutes, number} min a vita",
           "starter": "{minutes, number} min/mese",
@@ -548,12 +635,12 @@
       {
         "name": "Gratis",
         "cadence": "una tantum",
-        "summary": "Prova Scribix una volta e verifica la qualità della trascrizione prima di pagare."
+        "summary": "Trasforma gratis {freeTrialMinutes} minuti di video in clip ed esporta i tagli generati dall’AI."
       },
       {
         "name": "Pro",
         "cadence": "al mese",
-        "summary": "Trascrivi registrazioni lunghe, trasformale in chiari appunti AI e traducile, tutto in un unico piano.",
+        "summary": "Trasforma {creatorMonthlyMinutes} minuti di video in clip ogni mese. Modifica le clip e applica il tuo brand.",
         "purchaseNote": "Annulla quando vuoi",
         "annualCadence": "all'anno"
       }
@@ -592,7 +679,8 @@
     "included": "Incluso",
     "paidIncludedTitle": "Incluso anche",
     "paidIncludedDescription": "Esportazioni illimitate · Etichette speaker · TXT, DOCX, SRT, VTT, CSV",
-    "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
+    "exportFormats": "TXT, DOCX, SRT, VTT, CSV",
+    "usageExplanation": "Conta la durata del video originale. Trascrizione, selezione dei momenti con AI e creazione delle clip sono incluse."
   },
   "FAQ": {
     "label": "Domande Frequenti",
@@ -605,7 +693,7 @@
     "items": [
       {
         "q": "Scribix è davvero gratuito per video-to-text?",
-        "a": "Sì. Con Google ottieni 45 minuti di trascrizione una tantum, senza carta. I piani a pagamento aggiungono minuti mensili, note AI, traduzione e video più grandi."
+        "a": "Sì. Con Google ottieni {freeTrialMinutes} minuti di trascrizione una tantum, senza carta. I piani a pagamento aggiungono minuti mensili, note AI, traduzione e video più grandi."
       },
       {
         "q": "Quali formati video supporta Scribix?",
@@ -645,11 +733,11 @@
     "kicker": "Pronto quando lo sei tu",
     "h2Part1": "Rilascia un video.",
     "h2Part2": "<accent>Il resto lo faremo noi.</accent>",
-    "body": "Provalo gratis con un accesso Google — 45 minuti, nessuna carta di credito. Il tuo primo transcript appare prima di finire il caffè.",
+    "body": "Provalo gratis con un accesso Google — {freeTrialMinutes} minuti, nessuna carta di credito. Il tuo primo transcript appare prima di finire il caffè.",
     "primaryCta": "Carica un Video",
     "stats": [
       {
-        "value": "45 min",
+        "value": "{freeTrialMinutes} min",
         "label": "Credito gratuito"
       },
       {
@@ -931,7 +1019,13 @@
       "createClipsFailed": "Impossibile aprire l’area clip.",
       "back": "← Torna alle clip",
       "workspaceLabel": "Area video brevi",
-      "workflow": { "label": "Fasi di creazione delle clip", "transcript": "Trascrizione", "clips": "Clip", "editor": "Editor", "exports": "Esportazioni" },
+      "workflow": {
+        "label": "Fasi di creazione delle clip",
+        "transcript": "Trascrizione",
+        "clips": "Clip",
+        "editor": "Editor",
+        "exports": "Esportazioni"
+      },
       "eyebrow": "Ricerca clip con IA",
       "shortlistTitle": "Selezione editoriale",
       "description": "Genera momenti autonomi dalla trascrizione. Ogni timestamp viene verificato sui confini reali delle parole.",
@@ -992,6 +1086,13 @@
         "upgrade": "Sblocca la modifica"
       },
       "editor": {
+        "workspace": {
+          "tools": "Strumenti di modifica",
+          "framing": "Inquadratura",
+          "captions": "Sottotitoli",
+          "cover": "Copertina",
+          "content": "Contenuto"
+        },
         "loadFailed": "Impossibile caricare l’editor.",
         "reload": "Ricarica",
         "loading": "Ripristino della modifica…",
@@ -1028,22 +1129,211 @@
           "conflict": "Conflitto bozza"
         },
         "style": {
+          "visual": {
+            "previewSection": "Anteprima sezione {number} · {start}–{end}",
+            "previewWhole": "Anteprima dell’intera clip",
+            "playWhole": "Riproduci l’intera clip",
+            "backToSection": "Torna alla sezione",
+            "editingSection": "Modifica {start}–{end}",
+            "playhead": "Posizione di riproduzione: {time}",
+            "switchAt": "Cambia inquadratura a {time}",
+            "switchHelp": "Sposta il cursore nel punto in cui deve cambiare l’immagine.",
+            "boundary": "Confine dopo la sezione {number}",
+            "sectionsHelp": "Fai clic sulla timeline per scegliere dove dividere. Trascina un divisore viola per cambiare il momento.",
+            "autoSection": "Automatico",
+            "fullSection": "Immagine intera",
+            "manualSection": "Ritaglio manuale",
+            "restoreSection": "Usa inquadratura automatica per questa sezione",
+            "saveSections": "Salva modifiche",
+            "batchHelp": "Modifica più sezioni e salva una sola volta. Annulla elimina tutte le modifiche di questa sessione.",
+            "draftStatus": "Solo anteprima. Salva o annulla prima di esportare.",
+            "playRange": "Riproduci la sezione selezionata",
+            "undo": "Annulla l’ultima inquadratura",
+            "simpleHelp": "Scegli come inquadrare il video.",
+            "wholeWarning": "Queste due opzioni si applicano all’intera clip e sostituiscono i ritagli manuali.",
+            "manual": "Ritaglia una sezione manualmente",
+            "manualHelp": "Scegli alcuni secondi e posiziona tu l’immagine.",
+            "dragHelp": "Trascina il video per posizionarlo. Riduci lo zoom per mostrare più del soggetto; lo spazio vuoto usa lo sfondo della tela. Le modifiche si applicano solo a questa sezione.",
+            "cropBox": "Area di ritaglio — usa le frecce per spostare",
+            "fillSection": "Riempi il fotogramma",
+            "zoom": "Zoom",
+            "onlyRange": "Solo {start}–{end}",
+            "rangeHelp": "Trascina le maniglie viola per scegliere inizio e fine del ritaglio.",
+            "precise": "Inserisci tempi precisi",
+            "start": "Inizio (secondi)",
+            "end": "Fine (secondi)",
+            "tooMany": "Troppe regolazioni separate. Scegli una sezione più lunga.",
+            "apply": "Applica ritaglio",
+            "cancel": "Annulla",
+            "previewHelp": "L’anteprima mostra la bozza. Applica la salva; Annulla mantiene l’inquadratura precedente.",
+            "splitHere": "Dividi qui · {time}",
+            "mergePrevious": "Unisci alla precedente",
+            "mergeNext": "Unisci alla successiva",
+            "mergeHelp": "Mantiene l’inquadratura della sezione vicina. Nessun video viene eliminato."
+          },
           "advanced": "Opzioni avanzate",
           "uploadFailed": "Impossibile caricare la risorsa. Usa un file supportato sotto i 5 MB.",
           "removeFailed": "Impossibile rimuovere la risorsa. Riprova.",
-          "framing": { "title": "Inquadratura", "cut": "Taglio {number}", "fill": "Riempi", "fit": "Adatta", "fillNote": "Riempie il formato verticale. Trascina l’anteprima o usa i controlli per scegliere il ritaglio.", "fitNote": "Mostra l’intero fotogramma originale senza ritagliarlo.", "dragToReframe": "Trascina per reinquadrare", "horizontal": "Fuoco orizzontale", "vertical": "Fuoco verticale", "zoom": "Zoom", "reset": "Reimposta inquadratura" },
-          "captions": { "title": "Sottotitoli", "enabled": "Mostra sottotitoli", "template": "Stile dinamico", "karaoke": "Impatto karaoke", "boxed": "Riquadro editoriale", "minimal": "Minimale", "font": "Carattere", "defaultFont": "Predefinito Scribix", "customFont": "Carattere personalizzato {number}", "textColor": "Testo", "highlightColor": "Evidenziazione", "position": "Posizione verticale", "lineWidth": "Caratteri per riga", "lines": "Righe massime", "uploadFont": "Carica TTF o OTF", "correction": "Correggi il testo", "cue": "Sottotitolo {number}" },
-          "brand": { "title": "Brand", "template": "Layout brand", "none": "Nessuna sovrimpressione", "corner": "Marchio ad angolo", "signature": "Linea firma", "logo": "Logo", "noLogo": "Nessun logo", "customLogo": "Logo personalizzato {number}", "accent": "Accento", "position": "Posizione logo", "topLeft": "In alto a sinistra", "topRight": "In alto a destra", "bottomLeft": "In basso a sinistra", "bottomRight": "In basso a destra", "scale": "Dimensione logo", "uploadLogo": "Carica PNG, JPEG o WebP", "replaceLogo": "Sostituisci logo", "selected": "Selezionato", "remove": "Rimuovi", "removeLogo": "Rimuovi {name}" },
-          "audio": { "title": "Audio", "gain": "Volume", "fadeIn": "Dissolvenza in entrata (ms)", "fadeOut": "Dissolvenza in uscita (ms)", "normalize": "Normalizza il volume nel render finale", "normalizeNote": "Il browser mostra volume e dissolvenze; la normalizzazione viene applicata dal renderer cloud." },
-          "cover": { "title": "Copertina", "time": "Fotogramma timeline", "note": "Il renderer finale estrae la copertina da questo punto esatto della timeline completata." }
+          "simple": {
+            "rangeQuestion": "Quale parte vuoi correggere?",
+            "rangeHelp": "Scegli i secondi da regolare. Il resto mantiene l’inquadratura esistente.",
+            "start": "Inizio (secondi)",
+            "end": "Fine (secondi)",
+            "invalid": "Inserisci un intervallo valido. Se sono troppi, riutilizza un intervallo esistente.",
+            "adjustRange": "Regola questo intervallo",
+            "adjustWhole": "Regola tutta la clip",
+            "cancel": "Annulla",
+            "changeRange": "Regola un altro intervallo",
+            "zoomHelp": "Trascina l’anteprima a sinistra o destra. Ingrandisci oltre 1× per spostarla verticalmente.",
+            "autoSave": "Le modifiche sono immediate e vengono salvate automaticamente.",
+            "close": "Chiudi regolazioni",
+            "coverSet": "Copertina impostata a {time}. Salvataggio automatico."
+          },
+          "workspace": {
+            "playhead": "Posizione di riproduzione",
+            "adjustAt": "Regola immagine a {time}",
+            "chooseCover": "Scegli copertina",
+            "autoStatus": "Inquadratura automatica attiva",
+            "manualStatus": "Inquadratura manuale per questo intervallo",
+            "adjust": "Regola immagine",
+            "restoreAuto": "Ripristina inquadratura automatica",
+            "wholeClip": "Intera clip · {time}",
+            "auto": "Segui automaticamente",
+            "fill": "Ritaglio manuale",
+            "fit": "Mostra immagine intera",
+            "rangeHelp": "Scegli un momento nell’anteprima e inizia un nuovo intervallo. Le modifiche si applicano solo all’intervallo selezionato.",
+            "done": "Fine",
+            "coverHelp": "Metti in pausa o scorri l’anteprima a sinistra per scegliere la copertina.",
+            "coverAt": "Usa il fotogramma a {time} come copertina"
+          },
+          "framing": {
+            "autoUnavailable": "L’analisi automatica non è disponibile. Viene mostrato il fotogramma completo; puoi riprovare o regolarlo manualmente.",
+            "auto": "Auto",
+            "analyze": "Analizza inquadratura",
+            "analyzing": "Analisi inquadratura…",
+            "autoHelp": "Segue chi parla quando il risultato è affidabile; altrimenti mostra il fotogramma completo. Le modifiche manuali valgono solo per l’intervallo selezionato.",
+            "autoMissing": "L’inquadratura automatica non è ancora stata analizzata. Nel frattempo viene mostrato il fotogramma completo.",
+            "ranges": "Scegli intervallo",
+            "adjustHelp": "Scegli un momento e regola l’inquadratura da quel punto.",
+            "rangeLimit": "Hai raggiunto il limite di intervalli. Uniscine alcuni prima di aggiungerne altri.",
+            "atEnd": "Spostati prima della fine del clip per creare un intervallo.",
+            "atStart": "Sei già all’inizio di questo intervallo. Avanza per regolarne un altro.",
+            "editing": "Modifica {start}–{end}. Gli altri intervalli restano invariati.",
+            "split": "Regola inquadratura da qui",
+            "rangeHelp": "Ogni intervallo ha la sua inquadratura. Sposta il limite in secondi; unisci per usare quella precedente. Ingrandisci per spostare verticalmente.",
+            "boundary": "Limite (s)",
+            "view": "Vedi",
+            "merge": "Unisci",
+            "title": "Inquadratura",
+            "cut": "Taglio {number}",
+            "fill": "Riempi",
+            "fit": "Adatta",
+            "fillNote": "Riempie il formato verticale. Trascina l’anteprima o usa i controlli per scegliere il ritaglio.",
+            "fitNote": "Mostra l’intero fotogramma originale senza ritagliarlo.",
+            "dragToReframe": "Trascina per reinquadrare",
+            "horizontal": "Fuoco orizzontale",
+            "vertical": "Fuoco verticale",
+            "zoom": "Zoom",
+            "reset": "Reimposta inquadratura"
+          },
+          "captions": {
+            "size": "Dimensione sottotitoli",
+            "title": "Sottotitoli",
+            "enabled": "Mostra sottotitoli",
+            "template": "Stile dinamico",
+            "karaoke": "Impatto karaoke",
+            "boxed": "Riquadro editoriale",
+            "minimal": "Minimale",
+            "font": "Carattere",
+            "defaultFont": "Predefinito Scribix",
+            "customFont": "Carattere personalizzato {number}",
+            "textColor": "Testo",
+            "highlightColor": "Evidenziazione",
+            "position": "Posizione verticale",
+            "lineWidth": "Caratteri per riga",
+            "lines": "Righe massime",
+            "uploadFont": "Carica TTF o OTF",
+            "correction": "Correggi il testo",
+            "cue": "Sottotitolo {number}"
+          },
+          "brand": {
+            "title": "Brand",
+            "template": "Layout brand",
+            "none": "Nessuna sovrimpressione",
+            "corner": "Marchio ad angolo",
+            "signature": "Linea firma",
+            "logo": "Logo",
+            "noLogo": "Nessun logo",
+            "customLogo": "Logo personalizzato {number}",
+            "accent": "Accento",
+            "position": "Posizione logo",
+            "topLeft": "In alto a sinistra",
+            "topRight": "In alto a destra",
+            "bottomLeft": "In basso a sinistra",
+            "bottomRight": "In basso a destra",
+            "scale": "Dimensione logo",
+            "uploadLogo": "Carica PNG, JPEG o WebP",
+            "replaceLogo": "Sostituisci logo",
+            "selected": "Selezionato",
+            "remove": "Rimuovi",
+            "removeLogo": "Rimuovi {name}"
+          },
+          "audio": {
+            "title": "Audio",
+            "gain": "Volume",
+            "fadeIn": "Dissolvenza in entrata (ms)",
+            "fadeOut": "Dissolvenza in uscita (ms)",
+            "normalize": "Normalizza il volume nel render finale",
+            "normalizeNote": "Il browser mostra volume e dissolvenze; la normalizzazione viene applicata dal renderer cloud."
+          },
+          "cover": {
+            "useCurrent": "Usa fotogramma attuale come copertina",
+            "view": "Vedi copertina",
+            "title": "Copertina",
+            "time": "Fotogramma timeline",
+            "note": "Il renderer finale estrae la copertina da questo punto esatto della timeline completata."
+          }
         },
         "finalRender": {
+          "downloadVideo": "Scarica video",
+          "moreActions": "Opzioni di esportazione",
           "descriptionGenerated": "Scribix esporta il taglio selezionato dall’IA con sottotitoli automatici e inquadratura verticale.",
           "descriptionArchived": "Il video originale non è più archiviato. Scarica questa esportazione completata prima della scadenza.",
           "history": "Cronologia esportazioni",
-          "eyebrow": "Esportazione cloud", "title": "Renderizza il video finale", "description": "Crea una versione immutabile dalla sorgente originale, non dai proxy di anteprima.", "generate": "Genera video", "exportUpdated": "Esporta video aggiornato", "download": "Scarica esportazione", "rendering": "Rendering…", "saveFirst": "Attendi il salvataggio della modifica corrente.", "failed": "Impossibile completare la richiesta di rendering.", "limit": "Hai raggiunto il limite di rendering. Attendi il termine di uno attivo o riprova domani.", "cancel": "Annulla", "retry": "Riprova", "externalEdit": "Richiede ancora modifiche esterne", "externalEditRecorded": "Feedback registrato",
-          "availableUntil": "Disponibile fino al {date}", "deleteExport": "Elimina video esportato", "deleteExportTitle": "Eliminare questo video esportato?", "deleteExportBody": "Il video e la copertina verranno eliminati definitivamente. La clip modificabile resta disponibile finché lo è il video originale.", "cancelDelete": "Annulla", "confirmDelete": "Elimina esportazione", "deletingExport": "Eliminazione…", "unavailable": "Sorgente non disponibile",
-          "status": { "draft": "Bozza", "queued": "In coda", "preparing": "Preparazione", "running": "Rendering", "uploading": "Caricamento", "completed": "Pronto", "failed": "Non riuscito", "canceled": "Annullato" }
+          "eyebrow": "Esportazione cloud",
+          "title": "Renderizza il video finale",
+          "description": "Crea una versione immutabile dalla sorgente originale, non dai proxy di anteprima.",
+          "generate": "Genera video",
+          "exportUpdated": "Esporta video aggiornato",
+          "download": "Scarica esportazione",
+          "downloadAgain": "Scarica di nuovo",
+          "statusUnavailable": "Impossibile aggiornare lo stato dell’esportazione. Nuovo tentativo automatico…",
+          "rendering": "Rendering…",
+          "saveFirst": "Attendi il salvataggio della modifica corrente.",
+          "failed": "Impossibile completare la richiesta di rendering.",
+          "limit": "Hai raggiunto il limite di rendering. Attendi il termine di uno attivo o riprova domani.",
+          "cancel": "Annulla",
+          "retry": "Riprova",
+          "externalEdit": "Richiede ancora modifiche esterne",
+          "externalEditRecorded": "Feedback registrato",
+          "availableUntil": "Disponibile fino al {date}",
+          "deleteExport": "Elimina video esportato",
+          "deleteExportTitle": "Eliminare questo video esportato?",
+          "deleteExportBody": "Il video e la copertina verranno eliminati definitivamente. La clip modificabile resta disponibile finché lo è il video originale.",
+          "cancelDelete": "Annulla",
+          "confirmDelete": "Elimina esportazione",
+          "deletingExport": "Eliminazione…",
+          "unavailable": "Sorgente non disponibile",
+          "status": {
+            "draft": "Bozza",
+            "queued": "In coda",
+            "preparing": "Preparazione",
+            "running": "Rendering",
+            "uploading": "Caricamento",
+            "completed": "Pronto",
+            "failed": "Non riuscito",
+            "canceled": "Annullato"
+          }
         }
       }
     },
@@ -1135,8 +1425,8 @@
     "uploader": {
       "dropPrompt": "Trascina un file video o audio",
       "dropVideoPrompt": "Trascina qui un video lungo",
-      "limits": "Caricamenti fino a 1 GB · Prova gratuita: 45 min per tutta la vita",
-      "limitsFree": "Video fino a {size} · Audio fino a 1 GB · Prova gratuita: 45 min totali",
+      "limits": "Caricamenti fino a 1 GB · Prova gratuita: {freeTrialMinutes} min per tutta la vita",
+      "limitsFree": "Video fino a {size} · Audio fino a 1 GB · Prova gratuita: {freeTrialMinutes} min totali",
       "limitsBasic": "Video fino a {size} · Audio fino a 1 GB · Fino a 10 ore per file",
       "limitsPro": "Video fino a {size} · Audio fino a 1 GB · Fino a 10 ore per file",
       "videoLimitsFree": "Fino a {size} · MP4, MOV, WebM, AVI o MKV",
@@ -1256,12 +1546,12 @@
       "descriptionStart": "Scribix converte file audio in testo accurato, con speaker, che puoi rivedere, copiare ed esportare. Accedi con Google, carica un file audio e ottieni una trascrizione con timestamp in",
       "stat": "Rilevamento automatico della lingua",
       "descriptionEnd": ".",
-      "primaryCta": "Prova 45 minuti gratis",
+      "primaryCta": "Prova {freeTrialMinutes} minuti gratis",
       "signedInPrimaryCta": "Carica audio",
       "secondaryCta": "Ti serve video in testo?",
       "proof": [
         {
-          "label": "45 min gratis"
+          "label": "{freeTrialMinutes} min gratis"
         },
         {
           "label": "Rilevamento automatico della lingua"
@@ -1278,8 +1568,8 @@
       "uploadTab": "Carica file",
       "uploadHint": "Audio",
       "instruction": "Trascina un file audio o clicca per cercare.",
-      "specs": "Prova gratuita: 45 min · MP3 · WAV · M4A · nessuna carta",
-      "button": "Prova 45 minuti gratis",
+      "specs": "Prova gratuita: {freeTrialMinutes} min · MP3 · WAV · M4A · nessuna carta",
+      "button": "Prova {freeTrialMinutes} minuti gratis",
       "signedInButton": "Carica audio"
     },
     "quickAnswer": {
@@ -1313,7 +1603,7 @@
         },
         {
           "item": "Prova gratuita",
-          "detail": "45 minuti con accesso Google, senza carta di credito"
+          "detail": "{freeTrialMinutes} minuti con accesso Google, senza carta di credito"
         },
         {
           "item": "Privacy",
@@ -1346,7 +1636,7 @@
       "steps": [
         {
           "title": "Accedi con Google.",
-          "body": "La prova gratuita parte con 45 minuti di trascrizione e nessuna carta di credito.",
+          "body": "La prova gratuita parte con {freeTrialMinutes} minuti di trascrizione e nessuna carta di credito.",
           "meta": "Nessuna carta"
         },
         {
@@ -1489,7 +1779,7 @@
         },
         {
           "q": "Lo strumento è gratis da provare?",
-          "a": "Sì. Scribix offre una prova gratuita di 45 minuti con accesso Google e senza carta di credito."
+          "a": "Sì. Scribix offre una prova gratuita di {freeTrialMinutes} minuti con accesso Google e senza carta di credito."
         },
         {
           "q": "Quali formati supporta Scribix?",
@@ -1525,7 +1815,7 @@
       "signedInPrimaryCta": "Carica audio",
       "stats": [
         {
-          "value": "45 min",
+          "value": "{freeTrialMinutes} min",
           "label": "Prova"
         },
         {
@@ -1541,7 +1831,7 @@
     "jsonLd": {
       "appName": "Scribix Audio in testo",
       "appDescription": "Strumento online per convertire audio caricato in trascrizioni con speaker, timestamp ed export.",
-      "offerDescription": "Prova gratuita di 45 minuti con accesso Google e senza carta di credito.",
+      "offerDescription": "Prova gratuita di {freeTrialMinutes} minuti con accesso Google e senza carta di credito.",
       "featureList": [
         "Caricamento audio",
         "Rilevamento automatico lingua",
@@ -1579,14 +1869,22 @@
       "issueLabel": "Edizione n. 05 · Appunti AI",
       "h1": "Appunti AI",
       "description": "Carica un file video o audio, registra con il microfono oppure incolla l’URL di un video YouTube con sottotitoli disponibili. Scribix crea una trascrizione con parlanti e timestamp; con Pro puoi anche generare un riepilogo, i punti chiave e le attività da svolgere.",
-      "primaryCta": "Inizia con 45 minuti gratuiti",
+      "primaryCta": "Inizia con {freeTrialMinutes} minuti gratuiti",
       "signedInPrimaryCta": "Crea una trascrizione",
       "secondaryCta": "Vedi i prezzi",
       "trust": [
-        { "label": "Audio, video, YouTube e microfono" },
-        { "label": "Etichette dei parlanti" },
-        { "label": "Timestamp parola per parola" },
-        { "label": "Appunti AI nei piani a pagamento" }
+        {
+          "label": "Audio, video, YouTube e microfono"
+        },
+        {
+          "label": "Etichette dei parlanti"
+        },
+        {
+          "label": "Timestamp parola per parola"
+        },
+        {
+          "label": "Appunti AI nei piani a pagamento"
+        }
       ]
     },
     "features": {
@@ -1595,12 +1893,30 @@
       "h2": "Appunti AI che conservano <accent>la fonte e ciò che conta.</accent>",
       "intro": "Scribix trasforma una registrazione in due livelli utili: una trascrizione che puoi verificare e appunti AI più brevi su cui agire. Riepilogo, punti chiave e attività mantengono il contesto grazie ai parlanti e ai timestamp.",
       "items": [
-        {  "title": "Appunti AI strutturati", "body": "Genera un riepilogo, i punti chiave e le attività da una trascrizione completata con Pro." },
-        {  "title": "Conversazioni divise per parlante", "body": "Scribix separa i turni quando la qualità della registrazione lo consente. In seguito puoi rinominare le etichette generate." },
-        {  "title": "Timestamp verificabili", "body": "I timestamp parola per parola ti riportano al momento esatto da cui nasce un appunto, una citazione o un’attività." },
-        {  "title": "Quattro modi per aggiungere una registrazione", "body": "Carica video, carica audio, registra con il microfono oppure importa una traccia di sottotitoli disponibile da un URL YouTube." },
-        {  "title": "Esportazione della trascrizione", "body": "Rivedi e modifica la trascrizione, quindi copiala o esportala in TXT, DOCX, SRT, VTT o CSV." },
-        {  "title": "Conservazione trasparente", "body": "I file audio e video caricati vengono eliminati automaticamente dopo 14 giorni. Le trascrizioni rimangono finché non le elimini o chiudi l’account." }
+        {
+          "title": "Appunti AI strutturati",
+          "body": "Genera un riepilogo, i punti chiave e le attività da una trascrizione completata con Pro."
+        },
+        {
+          "title": "Conversazioni divise per parlante",
+          "body": "Scribix separa i turni quando la qualità della registrazione lo consente. In seguito puoi rinominare le etichette generate."
+        },
+        {
+          "title": "Timestamp verificabili",
+          "body": "I timestamp parola per parola ti riportano al momento esatto da cui nasce un appunto, una citazione o un’attività."
+        },
+        {
+          "title": "Quattro modi per aggiungere una registrazione",
+          "body": "Carica video, carica audio, registra con il microfono oppure importa una traccia di sottotitoli disponibile da un URL YouTube."
+        },
+        {
+          "title": "Esportazione della trascrizione",
+          "body": "Rivedi e modifica la trascrizione, quindi copiala o esportala in TXT, DOCX, SRT, VTT o CSV."
+        },
+        {
+          "title": "Conservazione trasparente",
+          "body": "I file audio e video caricati vengono eliminati automaticamente dopo 14 giorni. Le trascrizioni rimangono finché non le elimini o chiudi l’account."
+        }
       ]
     },
     "howItWorks": {
@@ -1609,9 +1925,21 @@
       "h2Part1": "Tre passaggi.",
       "h2Part2": "Dalla registrazione agli appunti AI.",
       "steps": [
-        {   "title": "Aggiungi la conversazione.", "body": "Carica un file audio o video, registra dal vivo con il microfono oppure incolla un URL YouTube con una traccia di sottotitoli disponibile.", "duration": "Audio · Video · YouTube · Microfono" },
-        {   "title": "Crea una trascrizione verificabile.", "body": "Scribix trascrive i contenuti caricati o registrati, separa i parlanti quando l’audio lo consente e aggiunge timestamp parola per parola. Per gli URL YouTube importa invece la traccia di sottotitoli scelta.", "duration": "Parlanti + timestamp" },
-        {   "title": "Genera e controlla gli appunti.", "body": "Con Pro, crea un riepilogo, i punti chiave e le attività. Verifica le informazioni importanti nella trascrizione prima di condividerle o utilizzarle.", "duration": "Riepilogo · Punti chiave · Attività" }
+        {
+          "title": "Aggiungi la conversazione.",
+          "body": "Carica un file audio o video, registra dal vivo con il microfono oppure incolla un URL YouTube con una traccia di sottotitoli disponibile.",
+          "duration": "Audio · Video · YouTube · Microfono"
+        },
+        {
+          "title": "Crea una trascrizione verificabile.",
+          "body": "Scribix trascrive i contenuti caricati o registrati, separa i parlanti quando l’audio lo consente e aggiunge timestamp parola per parola. Per gli URL YouTube importa invece la traccia di sottotitoli scelta.",
+          "duration": "Parlanti + timestamp"
+        },
+        {
+          "title": "Genera e controlla gli appunti.",
+          "body": "Con Pro, crea un riepilogo, i punti chiave e le attività. Verifica le informazioni importanti nella trascrizione prima di condividerle o utilizzarle.",
+          "duration": "Riepilogo · Punti chiave · Attività"
+        }
       ]
     },
     "useCases": {
@@ -1621,11 +1949,56 @@
       "h2Part2": "<accent>un resoconto davvero utile.</accent>",
       "intro": "Usa Scribix dopo riunioni, interviste, lezioni, webinar, podcast e sessioni di ricerca quando riascoltare tutta la registrazione rallenterebbe il passaggio successivo.",
       "items": [
-        {  "title": "Follow-up delle riunioni", "audience": "Founder, operations e team di progetto", "body": "Mantieni consultabile l’intera conversazione e ricava punti principali e attività senza invitare un bot nella chiamata.", "workflow": ["Registrazione della riunione", "Trascrizione per parlante", "Punti chiave + attività"] },
-        {  "title": "Chiamate commerciali e con i clienti", "audience": "Vendite, customer success e prodotto", "body": "Rivedi le parole del cliente, torna ai momenti importanti e trasforma i follow-up concordati in un elenco di attività.", "workflow": ["Chiamata registrata", "Evidenze del cliente", "Elenco follow-up"] },
-        {  "title": "Lezioni e studio", "audience": "Studenti e docenti", "body": "Converti una lezione registrata in testo ricercabile e in un insieme più breve di punti chiave per il ripasso.", "workflow": ["Audio della lezione", "Trascrizione con timestamp", "Appunti di studio"] },
-        {  "title": "Interviste e ricerca", "audience": "Giornalisti, recruiter e ricercatori", "body": "Mantieni parlanti e timestamp accanto alla fonte, poi riassumi temi e prossimi passi per l’analisi.", "workflow": ["Intervista registrata", "Citazioni verificabili", "Temi + attività"] },
-        {  "title": "Podcast e webinar", "audience": "Creator, marketing e produzione", "body": "Trasforma contenuti lunghi in una trascrizione e in appunti concisi per riepiloghi, resoconti e pianificazione editoriale.", "workflow": ["Episodio o webinar", "Trascrizione completa", "Scaletta del riepilogo"] }
+        {
+          "title": "Follow-up delle riunioni",
+          "audience": "Founder, operations e team di progetto",
+          "body": "Mantieni consultabile l’intera conversazione e ricava punti principali e attività senza invitare un bot nella chiamata.",
+          "workflow": [
+            "Registrazione della riunione",
+            "Trascrizione per parlante",
+            "Punti chiave + attività"
+          ]
+        },
+        {
+          "title": "Chiamate commerciali e con i clienti",
+          "audience": "Vendite, customer success e prodotto",
+          "body": "Rivedi le parole del cliente, torna ai momenti importanti e trasforma i follow-up concordati in un elenco di attività.",
+          "workflow": [
+            "Chiamata registrata",
+            "Evidenze del cliente",
+            "Elenco follow-up"
+          ]
+        },
+        {
+          "title": "Lezioni e studio",
+          "audience": "Studenti e docenti",
+          "body": "Converti una lezione registrata in testo ricercabile e in un insieme più breve di punti chiave per il ripasso.",
+          "workflow": [
+            "Audio della lezione",
+            "Trascrizione con timestamp",
+            "Appunti di studio"
+          ]
+        },
+        {
+          "title": "Interviste e ricerca",
+          "audience": "Giornalisti, recruiter e ricercatori",
+          "body": "Mantieni parlanti e timestamp accanto alla fonte, poi riassumi temi e prossimi passi per l’analisi.",
+          "workflow": [
+            "Intervista registrata",
+            "Citazioni verificabili",
+            "Temi + attività"
+          ]
+        },
+        {
+          "title": "Podcast e webinar",
+          "audience": "Creator, marketing e produzione",
+          "body": "Trasforma contenuti lunghi in una trascrizione e in appunti concisi per riepiloghi, resoconti e pianificazione editoriale.",
+          "workflow": [
+            "Episodio o webinar",
+            "Trascrizione completa",
+            "Scaletta del riepilogo"
+          ]
+        }
       ]
     },
     "faq": {
@@ -1637,37 +2010,88 @@
       "contactEmail": "hello@scribix.io",
       "contactSuffix": "e ti aiuteremo a scegliere il flusso giusto.",
       "items": [
-        { "q": "Che cos’è un’AI per prendere appunti?", "a": "È uno strumento che trasforma una conversazione registrata in testo e in appunti organizzati più brevi. Nei piani a pagamento, Scribix affianca a trascrizione, parlanti e timestamp un riepilogo, i punti chiave e le attività generati dall’AI." },
-        { "q": "Posso usare Scribix per riunioni in presenza?", "a": "Sì. Registra la riunione con il microfono del dispositivo oppure carica in seguito un file audio o video. Posizione del microfono, rumore della stanza e voci sovrapposte influenzano il risultato." },
-        { "q": "Scribix entra nelle chiamate Zoom, Google Meet o Microsoft Teams?", "a": "No. Scribix non invia un bot nelle riunioni. Aggiungi tu la registrazione caricando un file, registrando con il microfono o importando i sottotitoli da un URL YouTube compatibile." },
-        { "q": "Che cosa includono gli appunti AI di Scribix?", "a": "Includono un riepilogo, i punti chiave e le attività. La trascrizione completata contiene anche timestamp ed etichette dei parlanti quando la registrazione ne consente il rilevamento." },
-        { "q": "L’AI per prendere appunti è gratuita?", "a": "Scribix include un totale di 45 minuti di trascrizione gratuita, con accesso Google e senza carta. Riepiloghi e appunti AI strutturati sono disponibili con Pro." },
-        { "q": "Posso creare appunti da un video YouTube?", "a": "Sì, se il video ha una traccia di sottotitoli disponibile. Incolla l’URL, scegli la traccia, importala e genera gli appunti AI con un piano a pagamento. Se i sottotitoli non sono disponibili, carica un file multimediale di tua proprietà." },
-        { "q": "Quanto sono accurati la trascrizione e gli appunti AI?", "a": "Il risultato dipende dalla chiarezza dell’audio, dalla distanza del microfono, dal rumore, dagli accenti, dal lessico specialistico e dalle voci sovrapposte. Controlla nomi, numeri, impegni e citazioni importanti nella registrazione." },
-        { "q": "Per quanto tempo Scribix conserva le registrazioni?", "a": "I file audio e video caricati vengono eliminati automaticamente dopo 14 giorni. Le trascrizioni restano nell’account finché non le elimini o chiudi l’account." },
-        { "q": "Posso esportare gli appunti?", "a": "Gli appunti AI vengono mostrati nell’area della trascrizione. Non esiste un’esportazione dedicata per gli appunti; la trascrizione può essere scaricata in TXT, DOCX, SRT, VTT o CSV." }
+        {
+          "q": "Che cos’è un’AI per prendere appunti?",
+          "a": "È uno strumento che trasforma una conversazione registrata in testo e in appunti organizzati più brevi. Nei piani a pagamento, Scribix affianca a trascrizione, parlanti e timestamp un riepilogo, i punti chiave e le attività generati dall’AI."
+        },
+        {
+          "q": "Posso usare Scribix per riunioni in presenza?",
+          "a": "Sì. Registra la riunione con il microfono del dispositivo oppure carica in seguito un file audio o video. Posizione del microfono, rumore della stanza e voci sovrapposte influenzano il risultato."
+        },
+        {
+          "q": "Scribix entra nelle chiamate Zoom, Google Meet o Microsoft Teams?",
+          "a": "No. Scribix non invia un bot nelle riunioni. Aggiungi tu la registrazione caricando un file, registrando con il microfono o importando i sottotitoli da un URL YouTube compatibile."
+        },
+        {
+          "q": "Che cosa includono gli appunti AI di Scribix?",
+          "a": "Includono un riepilogo, i punti chiave e le attività. La trascrizione completata contiene anche timestamp ed etichette dei parlanti quando la registrazione ne consente il rilevamento."
+        },
+        {
+          "q": "L’AI per prendere appunti è gratuita?",
+          "a": "Scribix include un totale di {freeTrialMinutes} minuti di trascrizione gratuita, con accesso Google e senza carta. Riepiloghi e appunti AI strutturati sono disponibili con Pro."
+        },
+        {
+          "q": "Posso creare appunti da un video YouTube?",
+          "a": "Sì, se il video ha una traccia di sottotitoli disponibile. Incolla l’URL, scegli la traccia, importala e genera gli appunti AI con un piano a pagamento. Se i sottotitoli non sono disponibili, carica un file multimediale di tua proprietà."
+        },
+        {
+          "q": "Quanto sono accurati la trascrizione e gli appunti AI?",
+          "a": "Il risultato dipende dalla chiarezza dell’audio, dalla distanza del microfono, dal rumore, dagli accenti, dal lessico specialistico e dalle voci sovrapposte. Controlla nomi, numeri, impegni e citazioni importanti nella registrazione."
+        },
+        {
+          "q": "Per quanto tempo Scribix conserva le registrazioni?",
+          "a": "I file audio e video caricati vengono eliminati automaticamente dopo 14 giorni. Le trascrizioni restano nell’account finché non le elimini o chiudi l’account."
+        },
+        {
+          "q": "Posso esportare gli appunti?",
+          "a": "Gli appunti AI vengono mostrati nell’area della trascrizione. Non esiste un’esportazione dedicata per gli appunti; la trascrizione può essere scaricata in TXT, DOCX, SRT, VTT o CSV."
+        }
       ]
     },
     "finalCta": {
       "kicker": "Quando vuoi",
       "h2Part1": "Aggiungi la registrazione.",
       "h2Part2": "<accent>Ottieni appunti chiari.</accent>",
-      "body": "Inizia con 45 minuti gratuiti di trascrizione. Passa a Pro per generare un riepilogo, i punti chiave e le attività con l’AI.",
+      "body": "Inizia con {freeTrialMinutes} minuti gratuiti di trascrizione. Passa a Pro per generare un riepilogo, i punti chiave e le attività con l’AI.",
       "primaryCta": "Inizia a prendere appunti",
       "stats": [
-        { "value": "45 min", "label": "Trascrizione gratuita" },
-        { "value": "3", "label": "Sezioni degli appunti AI" },
-        { "value": "14 giorni", "label": "Eliminazione dei media" }
+        {
+          "value": "{freeTrialMinutes} min",
+          "label": "Trascrizione gratuita"
+        },
+        {
+          "value": "3",
+          "label": "Sezioni degli appunti AI"
+        },
+        {
+          "value": "14 giorni",
+          "label": "Eliminazione dei media"
+        }
       ]
     },
     "jsonLd": {
       "appName": "Scribix AI per prendere appunti",
       "appDescription": "Strumento AI che trasforma audio, video, registrazioni dal microfono e sottotitoli YouTube disponibili in trascrizioni verificabili e appunti strutturati.",
-      "offerDescription": "Sono inclusi 45 minuti di trascrizione con accesso Google; gli appunti AI sono disponibili con Pro.",
-      "featureList": ["Caricamento audio e video", "Registrazione dal microfono", "Importazione dei sottotitoli YouTube", "Etichette dei parlanti", "Timestamp parola per parola", "Riepilogo AI", "Punti chiave AI", "Attività generate dall’AI", "Modifica ed esportazione della trascrizione"],
+      "offerDescription": "Sono inclusi {freeTrialMinutes} minuti di trascrizione con accesso Google; gli appunti AI sono disponibili con Pro.",
+      "featureList": [
+        "Caricamento audio e video",
+        "Registrazione dal microfono",
+        "Importazione dei sottotitoli YouTube",
+        "Etichette dei parlanti",
+        "Timestamp parola per parola",
+        "Riepilogo AI",
+        "Punti chiave AI",
+        "Attività generate dall’AI",
+        "Modifica ed esportazione della trascrizione"
+      ],
       "howToName": "Come creare appunti AI con Scribix",
       "howToDescription": "Aggiungi una registrazione, crea una trascrizione verificabile, quindi genera e controlla appunti strutturati con un piano a pagamento.",
-      "howToSteps": ["Caricare, registrare o incollare un URL YouTube compatibile", "Creare o importare la trascrizione", "Generare appunti AI con Pro", "Controllare gli appunti nella trascrizione"]
+      "howToSteps": [
+        "Caricare, registrare o incollare un URL YouTube compatibile",
+        "Creare o importare la trascrizione",
+        "Generare appunti AI con Pro",
+        "Controllare gli appunti nella trascrizione"
+      ]
     }
   },
   "Feedback": {
@@ -1710,7 +2134,7 @@
       "secondaryCta": "Hai bisogno di altri formati audio?",
       "proof": [
         {
-          "label": "Prova gratuita di 45 min"
+          "label": "Prova gratuita di {freeTrialMinutes} min"
         },
         {
           "label": "Rilevamento automatico della lingua"
@@ -1727,7 +2151,7 @@
       "uploadTab": "Carica file",
       "uploadHint": "MP3",
       "instruction": "Trascina un file MP3 o clicca per sceglierlo.",
-      "specs": "Prova gratuita: 45 min · MP3 · Nessuna carta",
+      "specs": "Prova gratuita: {freeTrialMinutes} min · MP3 · Nessuna carta",
       "button": "Converti MP3 in testo",
       "signedInButton": "Carica MP3"
     },
@@ -1762,7 +2186,7 @@
         },
         {
           "item": "Prova gratuita",
-          "detail": "45 minuti con accesso Google, senza carta di credito"
+          "detail": "{freeTrialMinutes} minuti con accesso Google, senza carta di credito"
         },
         {
           "item": "Privacy",
@@ -1796,7 +2220,7 @@
       "steps": [
         {
           "title": "Accedi con Google.",
-          "body": "La prova gratuita include 45 minuti di trascrizione e nessuna carta di credito.",
+          "body": "La prova gratuita include {freeTrialMinutes} minuti di trascrizione e nessuna carta di credito.",
           "meta": "Nessuna carta"
         },
         {
@@ -1939,7 +2363,7 @@
         },
         {
           "q": "Lo strumento MP3 in testo è gratis da provare?",
-          "a": "Sì. Scribix offre una prova gratuita di 45 minuti con accesso Google e senza carta di credito."
+          "a": "Sì. Scribix offre una prova gratuita di {freeTrialMinutes} minuti con accesso Google e senza carta di credito."
         },
         {
           "q": "In quali formati posso esportare la trascrizione MP3?",
@@ -1979,7 +2403,7 @@
       "signedInPrimaryCta": "Carica MP3",
       "stats": [
         {
-          "value": "45 min",
+          "value": "{freeTrialMinutes} min",
           "label": "Prova"
         },
         {
@@ -1995,7 +2419,7 @@
     "jsonLd": {
       "appName": "Scribix MP3 in testo",
       "appDescription": "Strumento online di trascrizione MP3 in testo per convertire audio MP3 caricato in trascrizioni con parlanti, timestamp ed esportazioni.",
-      "offerDescription": "Prova gratuita di 45 minuti con accesso Google e senza carta di credito.",
+      "offerDescription": "Prova gratuita di {freeTrialMinutes} minuti con accesso Google e senza carta di credito.",
       "featureList": [
         "Upload file MP3",
         "Rilevamento automatico lingua",

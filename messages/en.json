@@ -18,6 +18,51 @@
     }
   },
   "VideoHome": {
+    "hero": {
+      "eyebrow": "AI video clipper",
+      "headline": "Turn long videos into <accent>publish-ready shorts.</accent>",
+      "description": "Scribix is an AI video clipper for podcasts, interviews, webinars, and talking-head videos. It finds complete moments in the conversation, then lets you refine every clip before export.",
+      "primaryCta": "Create clips for free",
+      "secondaryCta": "See how it works",
+      "ctaNote": "{freeTrialMinutes} minutes of video included · No credit card required.",
+      "trust": [
+        "AI-selected, self-contained clips",
+        "Precise transcript-based cuts",
+        "Dynamic captions and 9:16 framing",
+        "Final 1080 × 1920 MP4"
+      ],
+      "previewLabel": "Scribix clip workspace",
+      "previewProject": "Founder interview — Episode 12",
+      "previewSource": "Source · 01:24:18",
+      "previewCandidatesLabel": "AI clip candidates",
+      "previewCandidates": [
+        {
+          "title": "The mistake that changed our product",
+          "duration": "00:42",
+          "score": "94%"
+        },
+        {
+          "title": "Why small teams move faster",
+          "duration": "00:36",
+          "score": "89%"
+        },
+        {
+          "title": "A better way to hear customers",
+          "duration": "00:51",
+          "score": "86%"
+        }
+      ],
+      "previewSelected": "Selected",
+      "previewCaption": "THE LESSON WAS TO <mark>LISTEN EARLIER</mark>",
+      "previewFormat": "Vertical preview",
+      "previewLength": "00:42 / 00:42",
+      "previewEdit": "Edit",
+      "previewCaptions": "Captions",
+      "previewExport": "Export",
+      "dropTitle": "Drop a long video here",
+      "dropMeta": "MP4, MOV, WebM, AVI or MKV",
+      "videoOnly": "Choose a video file to start AI video clipping."
+    },
     "showcase": {
       "casesLabel": "Different formats. One workflow.",
       "casesTitle": "Good moments come in many forms.",
@@ -75,51 +120,6 @@
     "demo": {
       "title": "One conversation. Multiple finished shorts.",
       "description": "Watch a real Scribix project become captioned, vertical clips. This silent demo shows the workflow in 15 seconds."
-    },
-    "hero": {
-      "eyebrow": "AI video clipper",
-      "headline": "Turn long videos into <accent>publish-ready shorts.</accent>",
-      "description": "Scribix is an AI video clipper for podcasts, interviews, webinars, and talking-head videos. It finds complete moments in the conversation, then lets you refine every clip before export.",
-      "primaryCta": "Upload a video free",
-      "secondaryCta": "See how it works",
-      "ctaNote": "Start with 45 transcription minutes. No credit card required.",
-      "trust": [
-        "AI-selected, self-contained clips",
-        "Precise transcript-based cuts",
-        "Dynamic captions and 9:16 framing",
-        "Final 1080 × 1920 MP4"
-      ],
-      "previewLabel": "Scribix clip workspace",
-      "previewProject": "Founder interview — Episode 12",
-      "previewSource": "Source · 01:24:18",
-      "previewCandidatesLabel": "AI clip candidates",
-      "previewCandidates": [
-        {
-          "title": "The mistake that changed our product",
-          "duration": "00:42",
-          "score": "94%"
-        },
-        {
-          "title": "Why small teams move faster",
-          "duration": "00:36",
-          "score": "89%"
-        },
-        {
-          "title": "A better way to hear customers",
-          "duration": "00:51",
-          "score": "86%"
-        }
-      ],
-      "previewSelected": "Selected",
-      "previewCaption": "THE LESSON WAS TO <mark>LISTEN EARLIER</mark>",
-      "previewFormat": "Vertical preview",
-      "previewLength": "00:42 / 00:42",
-      "previewEdit": "Edit",
-      "previewCaptions": "Captions",
-      "previewExport": "Export",
-      "dropTitle": "Drop a long video here",
-      "dropMeta": "MP4, MOV, WebM, AVI or MKV",
-      "videoOnly": "Choose a video file to start AI video clipping."
     },
     "proof": {
       "eyebrow": "A real Scribix render",
@@ -322,7 +322,7 @@
     "title": "Welcome to Scribix",
     "description": "Sign in to turn long videos into ready-to-edit short clips, with transcription included automatically.",
     "benefitTitle": "Create your first AI clips free",
-    "benefitBody": "Start with 45 processing minutes. No credit card required.",
+    "benefitBody": "{freeTrialMinutes} minutes of video included · No credit card required.",
     "continueWithGoogle": "Continue with Google",
     "signingIn": "Connecting to Google…",
     "error": "We couldn't start Google sign-in. Please try again.",
@@ -341,10 +341,10 @@
     "issue": "REC · 00:00:00",
     "issueLabel": "Issue №01 · Video to Text",
     "h1": "Convert video to text with AI",
-    "description": "Scribix turns video and audio files into speaker-labeled text you can review and export. Upload MP4, MOV, WebM, AVI, MP3, WAV, or M4A and get word-level timestamps with <stat>automatic language detection</stat>. <stat>45 minutes free</stat> with Google sign-in and no credit card.",
+    "description": "Scribix turns video and audio files into speaker-labeled text you can review and export. Upload MP4, MOV, WebM, AVI, MP3, WAV, or M4A and get word-level timestamps with <stat>automatic language detection</stat>. <stat>{freeTrialMinutes} minutes free</stat> with Google sign-in and no credit card.",
     "trust": [
       {
-        "label": "45 Free Minutes"
+        "label": "{freeTrialMinutes} Free Minutes"
       },
       {
         "label": "Automatic Language Detection"
@@ -376,7 +376,7 @@
     "upload": {
       "instruction": "Drop a video or audio file, or click to browse.",
       "button": "Upload File",
-      "specsFree": "Video up to 2 GB · Audio up to 1 GB · 45 min lifetime",
+      "specsFree": "Video up to 2 GB · Audio up to 1 GB · {freeTrialMinutes} min lifetime",
       "specsPaid": "Video up to 5 GB · Audio up to 1 GB · Limits vary by plan"
     },
     "record": {
@@ -543,7 +543,7 @@
         }
       },
       {
-        "label": "Uploaded video processing",
+        "label": "Original video minutes",
         "values": {
           "free": "{minutes, number} minutes total",
           "starter": "{minutes, number} minutes per month",
@@ -635,12 +635,12 @@
       {
         "name": "Free",
         "cadence": "one-time",
-        "summary": "Turn 45 minutes of uploaded video into AI-selected clips and export them as generated."
+        "summary": "Turn {freeTrialMinutes} minutes of video into clips — free. Export the AI-generated cuts."
       },
       {
         "name": "Creator",
         "cadence": "per month",
-        "summary": "Process up to 2,400 minutes of uploaded video every month, then edit and brand every clip.",
+        "summary": "Turn {creatorMonthlyMinutes} minutes of video into clips every month. Edit and brand your clips.",
         "purchaseNote": "Cancel anytime",
         "annualCadence": "per year"
       }
@@ -679,7 +679,8 @@
     "included": "Included",
     "paidIncludedTitle": "Compare Free and Creator",
     "paidIncludedDescription": "The cards focus on turning long videos into shorts. This table covers transcription, AI tools, upload limits, storage, and every other plan detail.",
-    "exportFormats": "TXT, DOCX, SRT, VTT, CSV"
+    "exportFormats": "TXT, DOCX, SRT, VTT, CSV",
+    "usageExplanation": "Based on your original video’s length. Transcription, AI highlight selection, and clip generation included."
   },
   "FAQ": {
     "label": "FAQ",
@@ -692,7 +693,7 @@
     "items": [
       {
         "q": "Is Scribix really free for video to text?",
-        "a": "Yes. Google sign-in gives you 45 lifetime transcription minutes with no credit card. Paid plans add monthly transcription minutes, AI notes, translation, and larger video uploads."
+        "a": "Yes. Google sign-in gives you {freeTrialMinutes} lifetime transcription minutes with no credit card. Paid plans add monthly transcription minutes, AI notes, translation, and larger video uploads."
       },
       {
         "q": "What video formats does Scribix support?",
@@ -732,11 +733,11 @@
     "kicker": "Ready when you are",
     "h2Part1": "Drop in a video.",
     "h2Part2": "<accent>We'll do the rest.</accent>",
-    "body": "Try it free with a Google sign-in — 45 minutes, no credit card. Processing time varies by file.",
+    "body": "Try it free with a Google sign-in — {freeTrialMinutes} minutes, no credit card. Processing time varies by file.",
     "primaryCta": "Upload a Video",
     "stats": [
       {
-        "value": "45 min",
+        "value": "{freeTrialMinutes} min",
         "label": "Free allowance"
       },
       {
@@ -1018,7 +1019,13 @@
       "createClipsFailed": "Could not open the clip workspace.",
       "back": "← Back to clips",
       "workspaceLabel": "Short-video workspace",
-      "workflow": { "label": "Clip creation stages", "transcript": "Transcript", "clips": "Clips", "editor": "Editor", "exports": "Exports" },
+      "workflow": {
+        "label": "Clip creation stages",
+        "transcript": "Transcript",
+        "clips": "Clips",
+        "editor": "Editor",
+        "exports": "Exports"
+      },
       "eyebrow": "AI clip finder",
       "shortlistTitle": "Your clips",
       "description": "Choose any clip to preview, make a few adjustments, and export it. Each clip keeps its own edits.",
@@ -1079,6 +1086,13 @@
         "upgrade": "Unlock editing"
       },
       "editor": {
+        "workspace": {
+          "tools": "Editing tools",
+          "framing": "Framing",
+          "captions": "Captions",
+          "cover": "Cover",
+          "content": "Content"
+        },
         "loadFailed": "The editor could not be loaded.",
         "reload": "Reload",
         "loading": "Restoring your edit…",
@@ -1115,24 +1129,211 @@
           "conflict": "Draft conflict"
         },
         "style": {
+          "visual": {
+            "previewSection": "Preview section {number} · {start}–{end}",
+            "previewWhole": "Preview entire clip",
+            "playWhole": "Play entire clip",
+            "backToSection": "Back to section preview",
+            "editingSection": "Editing {start}–{end}",
+            "playhead": "Playback position: {time}",
+            "switchAt": "Switch framing at {time}",
+            "switchHelp": "Move the playhead to where the picture should change.",
+            "boundary": "Boundary after section {number}",
+            "sectionsHelp": "Click the timeline to choose where to split. Drag a purple divider to change the timing.",
+            "autoSection": "Automatic",
+            "fullSection": "Full frame",
+            "manualSection": "Manual crop",
+            "restoreSection": "Use automatic framing for this section",
+            "saveSections": "Save adjustments",
+            "batchHelp": "Edit as many sections as you need, then save once. Cancel discards all changes made in this session.",
+            "draftStatus": "Preview only. Save or cancel before exporting.",
+            "playRange": "Play selected section",
+            "undo": "Undo last framing change",
+            "simpleHelp": "Choose how to frame your video.",
+            "wholeWarning": "These two options apply to the whole clip and replace manual crops.",
+            "manual": "Crop a section manually",
+            "manualHelp": "Choose a few seconds and position the picture yourself.",
+            "dragHelp": "Drag the picture to position it. Zoom out to keep more of the subject; empty space uses the canvas background. Changes apply only to this section.",
+            "cropBox": "Crop area — use arrow keys to move",
+            "fillSection": "Fill frame",
+            "zoom": "Zoom",
+            "onlyRange": "Only {start}–{end}",
+            "rangeHelp": "Drag the purple handles to choose when this crop starts and ends.",
+            "precise": "Enter exact times",
+            "start": "Start (seconds)",
+            "end": "End (seconds)",
+            "tooMany": "Too many separate adjustments. Choose a larger section.",
+            "apply": "Apply crop",
+            "cancel": "Cancel",
+            "previewHelp": "The video preview shows your draft. Apply saves it; Cancel keeps your previous framing.",
+            "splitHere": "Split here · {time}",
+            "mergePrevious": "Merge with previous",
+            "mergeNext": "Merge with next",
+            "mergeHelp": "Keeps the neighbouring section’s framing. No video is deleted."
+          },
           "advanced": "Advanced options",
           "uploadFailed": "The asset could not be uploaded. Use a supported file under 5 MB.",
           "removeFailed": "The asset could not be removed. Please try again.",
-          "framing": { "title": "Framing", "cut": "Cut {number}", "fill": "Fill", "fit": "Fit", "fillNote": "Fills the vertical frame. Drag the video preview or use the controls to choose the crop.", "fitNote": "Shows the complete source frame without cropping.", "dragToReframe": "Drag to reframe", "horizontal": "Horizontal focus", "vertical": "Vertical focus", "zoom": "Zoom", "reset": "Reset framing" },
+          "simple": {
+            "rangeQuestion": "Which part needs fixing?",
+            "rangeHelp": "Choose the seconds to adjust. Pictures outside this period keep their existing framing.",
+            "start": "Start (seconds)",
+            "end": "End (seconds)",
+            "invalid": "Enter a valid start and end within this clip. Too many ranges? Restore or reuse an existing range.",
+            "adjustRange": "Adjust these seconds",
+            "adjustWhole": "Adjust the whole clip",
+            "cancel": "Cancel",
+            "changeRange": "Adjust another time range",
+            "zoomHelp": "Drag the preview left or right. Zoom in above 1× to move it up or down.",
+            "autoSave": "Changes appear immediately and save automatically.",
+            "close": "Close adjustments",
+            "coverSet": "Cover set to {time}. Saving automatically."
+          },
+          "workspace": {
+            "playhead": "Playback position",
+            "adjustAt": "Adjust picture at {time}",
+            "chooseCover": "Choose cover",
+            "autoStatus": "Automatic framing is on",
+            "manualStatus": "Manual framing for this range",
+            "adjust": "Adjust picture",
+            "restoreAuto": "Restore automatic framing",
+            "wholeClip": "Whole clip · {time}",
+            "auto": "Automatic follow",
+            "fill": "Manual crop",
+            "fit": "Show full frame",
+            "rangeHelp": "Choose a time in the preview, then start a new range. Changes apply only to the selected range.",
+            "done": "Done",
+            "coverHelp": "Pause or scrub the preview on the left to choose your cover.",
+            "coverAt": "Set the {time} frame as cover"
+          },
+          "framing": {
+            "autoUnavailable": "Automatic analysis is unavailable. Showing the full frame; you can retry or adjust it manually.",
+            "auto": "Auto",
+            "analyze": "Analyze framing",
+            "analyzing": "Analyzing framing…",
+            "autoHelp": "Follows the visible speaker when confident; shows the full frame when uncertain. Manual adjustments apply only to the selected range.",
+            "autoMissing": "Automatic framing has not been analyzed yet. The full frame is shown until analysis is ready.",
+            "ranges": "Choose a range",
+            "adjustHelp": "Choose a time, then adjust the framing from that point onward.",
+            "rangeLimit": "The framing range limit has been reached. Merge ranges before adding another.",
+            "atEnd": "Move the playhead earlier to create a range before the clip ends.",
+            "atStart": "Already at the start of this range. Move the playhead forward to adjust another range.",
+            "editing": "Adjusting {start}–{end}. Other ranges stay unchanged.",
+            "split": "Adjust framing from here",
+            "rangeHelp": "Each range has its own framing. Move a boundary in seconds; merge to use the previous range. Zoom in to allow vertical movement.",
+            "boundary": "Boundary (s)",
+            "view": "View",
+            "merge": "Merge",
+            "title": "Framing",
+            "cut": "Cut {number}",
+            "fill": "Fill",
+            "fit": "Fit",
+            "fillNote": "Fills the vertical frame. Drag the video preview or use the controls to choose the crop.",
+            "fitNote": "Shows the complete source frame without cropping.",
+            "dragToReframe": "Drag to reframe",
+            "horizontal": "Horizontal focus",
+            "vertical": "Vertical focus",
+            "zoom": "Zoom",
+            "reset": "Reset framing"
+          },
           "captions": {
-            "title": "Captions", "enabled": "Show captions", "template": "Motion style", "karaoke": "Karaoke punch", "boxed": "Editorial box", "minimal": "Quiet minimal", "font": "Typeface", "defaultFont": "Scribix default", "customFont": "Custom font {number}", "textColor": "Text", "highlightColor": "Highlight", "position": "Vertical position", "lineWidth": "Characters per line", "lines": "Maximum lines", "uploadFont": "Upload TTF or OTF", "correction": "Correct transcript text", "cue": "Caption cue {number}"
+            "size": "Subtitle size",
+            "title": "Captions",
+            "enabled": "Show captions",
+            "template": "Motion style",
+            "karaoke": "Karaoke punch",
+            "boxed": "Editorial box",
+            "minimal": "Quiet minimal",
+            "font": "Typeface",
+            "defaultFont": "Scribix default",
+            "customFont": "Custom font {number}",
+            "textColor": "Text",
+            "highlightColor": "Highlight",
+            "position": "Vertical position",
+            "lineWidth": "Characters per line",
+            "lines": "Maximum lines",
+            "uploadFont": "Upload TTF or OTF",
+            "correction": "Correct transcript text",
+            "cue": "Caption cue {number}"
           },
           "brand": {
-            "title": "Brand", "template": "Brand layout", "none": "No brand overlay", "corner": "Corner mark", "signature": "Signature line", "logo": "Logo", "noLogo": "No logo", "customLogo": "Custom logo {number}", "accent": "Accent", "position": "Logo position", "topLeft": "Top left", "topRight": "Top right", "bottomLeft": "Bottom left", "bottomRight": "Bottom right", "scale": "Logo size", "uploadLogo": "Upload PNG, JPEG or WebP", "replaceLogo": "Replace logo", "selected": "Selected", "remove": "Remove", "removeLogo": "Remove {name}"
+            "title": "Brand",
+            "template": "Brand layout",
+            "none": "No brand overlay",
+            "corner": "Corner mark",
+            "signature": "Signature line",
+            "logo": "Logo",
+            "noLogo": "No logo",
+            "customLogo": "Custom logo {number}",
+            "accent": "Accent",
+            "position": "Logo position",
+            "topLeft": "Top left",
+            "topRight": "Top right",
+            "bottomLeft": "Bottom left",
+            "bottomRight": "Bottom right",
+            "scale": "Logo size",
+            "uploadLogo": "Upload PNG, JPEG or WebP",
+            "replaceLogo": "Replace logo",
+            "selected": "Selected",
+            "remove": "Remove",
+            "removeLogo": "Remove {name}"
           },
-          "audio": { "title": "Audio", "gain": "Volume", "fadeIn": "Fade in (ms)", "fadeOut": "Fade out (ms)", "normalize": "Normalize loudness in the final render", "normalizeNote": "The browser previews volume and fades; normalization is applied by the cloud renderer." },
-          "cover": { "title": "Cover", "time": "Timeline frame", "note": "The final renderer extracts the cover from this exact point in the finished timeline." }
+          "audio": {
+            "title": "Audio",
+            "gain": "Volume",
+            "fadeIn": "Fade in (ms)",
+            "fadeOut": "Fade out (ms)",
+            "normalize": "Normalize loudness in the final render",
+            "normalizeNote": "The browser previews volume and fades; normalization is applied by the cloud renderer."
+          },
+          "cover": {
+            "useCurrent": "Use current frame as cover",
+            "view": "View cover",
+            "title": "Cover",
+            "time": "Timeline frame",
+            "note": "The final renderer extracts the cover from this exact point in the finished timeline."
+          }
         },
         "finalRender": {
+          "downloadVideo": "Download video",
+          "moreActions": "Export options",
           "descriptionGenerated": "Scribix exports the AI-selected cut with automatic captions and vertical framing.",
           "descriptionArchived": "The original video is no longer stored. Download this finished export before it expires.",
-          "eyebrow": "Ready when you are", "title": "Export this clip", "description": "Scribix renders this clip from the original source with your current crop, captions, and styling.", "generate": "Export video", "exportUpdated": "Export updated video", "download": "Download export", "rendering": "Exporting…", "saveFirst": "Wait for the current edit to finish saving.", "failed": "The export request could not be completed.", "limit": "Your export limit is currently reached. Wait for an active export to finish or try again tomorrow.", "cancel": "Cancel", "retry": "Retry", "history": "Export history", "externalEdit": "Still needs external editing", "externalEditRecorded": "Feedback recorded", "availableUntil": "Available until {date}", "deleteExport": "Delete exported video", "deleteExportTitle": "Delete this exported video?", "deleteExportBody": "The video and cover will be permanently removed. Your editable clip remains while the original video is available.", "cancelDelete": "Cancel", "confirmDelete": "Delete export", "deletingExport": "Deleting…", "unavailable": "Source unavailable",
-          "status": { "draft": "Draft", "queued": "Queued", "preparing": "Preparing", "running": "Rendering", "uploading": "Uploading", "completed": "Ready", "failed": "Failed", "canceled": "Canceled" }
+          "eyebrow": "Ready when you are",
+          "title": "Export this clip",
+          "description": "Scribix renders this clip from the original source with your current crop, captions, and styling.",
+          "generate": "Export video",
+          "exportUpdated": "Export updated video",
+          "download": "Download export",
+          "downloadAgain": "Download again",
+          "statusUnavailable": "Could not refresh export status. Retrying automatically…",
+          "rendering": "Exporting…",
+          "saveFirst": "Wait for the current edit to finish saving.",
+          "failed": "The export request could not be completed.",
+          "limit": "Your export limit is currently reached. Wait for an active export to finish or try again tomorrow.",
+          "cancel": "Cancel",
+          "retry": "Retry",
+          "history": "Export history",
+          "externalEdit": "Still needs external editing",
+          "externalEditRecorded": "Feedback recorded",
+          "availableUntil": "Available until {date}",
+          "deleteExport": "Delete exported video",
+          "deleteExportTitle": "Delete this exported video?",
+          "deleteExportBody": "The video and cover will be permanently removed. Your editable clip remains while the original video is available.",
+          "cancelDelete": "Cancel",
+          "confirmDelete": "Delete export",
+          "deletingExport": "Deleting…",
+          "unavailable": "Source unavailable",
+          "status": {
+            "draft": "Draft",
+            "queued": "Queued",
+            "preparing": "Preparing",
+            "running": "Rendering",
+            "uploading": "Uploading",
+            "completed": "Ready",
+            "failed": "Failed",
+            "canceled": "Canceled"
+          }
         }
       }
     },
@@ -1224,8 +1425,8 @@
     "uploader": {
       "dropPrompt": "Drop a video or audio file",
       "dropVideoPrompt": "Drop a long video here",
-      "limits": "Uploads up to 1 GB · Free trial: 45 min lifetime",
-      "limitsFree": "Videos up to {size} · Audio up to 1 GB · Free trial: 45 min lifetime",
+      "limits": "Uploads up to 1 GB · Free trial: {freeTrialMinutes} min lifetime",
+      "limitsFree": "Videos up to {size} · Audio up to 1 GB · Free trial: {freeTrialMinutes} min lifetime",
       "limitsBasic": "Videos up to {size} · Audio up to 1 GB · Up to 10 hours per file",
       "limitsPro": "Videos up to {size} · Audio up to 1 GB · Up to 10 hours per file",
       "videoLimitsFree": "Up to {size} · MP4, MOV, WebM, AVI or MKV",
@@ -1345,12 +1546,12 @@
       "descriptionStart": "Scribix converts audio files into accurate, speaker-labeled text you can review, copy, and export. Sign in with Google, upload an audio file, and get a transcript with timestamps in",
       "stat": "Automatic language detection",
       "descriptionEnd": ".",
-      "primaryCta": "Try 45 Minutes Free",
+      "primaryCta": "Try {freeTrialMinutes} Minutes Free",
       "signedInPrimaryCta": "Upload Audio",
       "secondaryCta": "Need video to text?",
       "proof": [
         {
-          "label": "45 min free trial"
+          "label": "{freeTrialMinutes} min free trial"
         },
         {
           "label": "Automatic language detection"
@@ -1367,8 +1568,8 @@
       "uploadTab": "Upload File",
       "uploadHint": "Audio",
       "instruction": "Drop an audio file, or click to browse.",
-      "specs": "Free trial: 45 min · MP3 · WAV · M4A · No credit card",
-      "button": "Try 45 Minutes Free",
+      "specs": "Free trial: {freeTrialMinutes} min · MP3 · WAV · M4A · No credit card",
+      "button": "Try {freeTrialMinutes} Minutes Free",
       "signedInButton": "Upload Audio"
     },
     "quickAnswer": {
@@ -1402,7 +1603,7 @@
         },
         {
           "item": "Free trial",
-          "detail": "45 minutes with Google sign-in, no credit card"
+          "detail": "{freeTrialMinutes} minutes with Google sign-in, no credit card"
         },
         {
           "item": "Privacy",
@@ -1435,7 +1636,7 @@
       "steps": [
         {
           "title": "Sign in with Google.",
-          "body": "Your free trial starts with 45 transcription minutes and no credit card.",
+          "body": "Your free trial starts with {freeTrialMinutes} transcription minutes and no credit card.",
           "meta": "No credit card"
         },
         {
@@ -1578,7 +1779,7 @@
         },
         {
           "q": "Is the audio-to-text tool free to try?",
-          "a": "Yes. Scribix offers a 45-minute free trial with Google sign-in and no credit card."
+          "a": "Yes. Scribix offers a {freeTrialMinutes}-minute free trial with Google sign-in and no credit card."
         },
         {
           "q": "What audio formats does Scribix support?",
@@ -1614,7 +1815,7 @@
       "signedInPrimaryCta": "Upload Audio",
       "stats": [
         {
-          "value": "45 min",
+          "value": "{freeTrialMinutes} min",
           "label": "Trial"
         },
         {
@@ -1630,7 +1831,7 @@
     "jsonLd": {
       "appName": "Scribix Audio to Text",
       "appDescription": "Online audio-to-text transcription tool for converting uploaded audio into speaker-labeled transcripts with timestamps and export formats.",
-      "offerDescription": "45-minute free trial with Google sign-in and no credit card.",
+      "offerDescription": "{freeTrialMinutes}-minute free trial with Google sign-in and no credit card.",
       "featureList": [
         "Audio file upload",
         "Automatic language detection",
@@ -1668,7 +1869,7 @@
       "issueLabel": "Issue No.05 · AI Note Taker",
       "h1": "AI Note Taker",
       "description": "Upload a video or audio file, record through your microphone, or paste a YouTube URL with available captions. Scribix creates a speaker-labeled, timestamped transcript; Pro users can turn it into structured AI notes with an overview, key points, and action items.",
-      "primaryCta": "Start with 45 Free Minutes",
+      "primaryCta": "Start with {freeTrialMinutes} Free Minutes",
       "signedInPrimaryCta": "Create New Transcript",
       "secondaryCta": "View Pricing",
       "trust": [
@@ -1827,7 +2028,7 @@
         },
         {
           "q": "Is the AI note taker free?",
-          "a": "Scribix includes 45 lifetime transcription minutes with Google sign-in and no credit card. AI summaries and structured notes are available with Pro."
+          "a": "Scribix includes {freeTrialMinutes} lifetime transcription minutes with Google sign-in and no credit card. AI summaries and structured notes are available with Pro."
         },
         {
           "q": "Can I create notes from a YouTube video?",
@@ -1851,11 +2052,11 @@
       "kicker": "Ready when you are",
       "h2Part1": "Add the recording.",
       "h2Part2": "<accent>Leave with clear notes.</accent>",
-      "body": "Start with 45 free transcription minutes. Upgrade to Pro when you want structured AI notes with an overview, key points, and action items.",
+      "body": "Start with {freeTrialMinutes} free transcription minutes. Upgrade to Pro when you want structured AI notes with an overview, key points, and action items.",
       "primaryCta": "Start Taking Notes",
       "stats": [
         {
-          "value": "45 min",
+          "value": "{freeTrialMinutes} min",
           "label": "Free transcription"
         },
         {
@@ -1871,7 +2072,7 @@
     "jsonLd": {
       "appName": "Scribix AI Note Taker",
       "appDescription": "AI note-taking tool that turns uploaded audio, video, microphone recordings, and available YouTube captions into traceable transcripts and structured notes.",
-      "offerDescription": "45 lifetime transcription minutes are included with Google sign-in; AI notes are available with Pro.",
+      "offerDescription": "{freeTrialMinutes} lifetime transcription minutes are included with Google sign-in; AI notes are available with Pro.",
       "featureList": [
         "Audio and video upload",
         "Live microphone recording",
@@ -1933,7 +2134,7 @@
       "secondaryCta": "Need other audio formats?",
       "proof": [
         {
-          "label": "45 min free trial"
+          "label": "{freeTrialMinutes} min free trial"
         },
         {
           "label": "Automatic language detection"
@@ -1950,7 +2151,7 @@
       "uploadTab": "Upload File",
       "uploadHint": "MP3",
       "instruction": "Drop an MP3 file, or click to browse.",
-      "specs": "Free trial: 45 min · MP3 · No credit card",
+      "specs": "Free trial: {freeTrialMinutes} min · MP3 · No credit card",
       "button": "Convert MP3 to Text",
       "signedInButton": "Upload MP3"
     },
@@ -1985,7 +2186,7 @@
         },
         {
           "item": "Free trial",
-          "detail": "45 minutes with Google sign-in, no credit card"
+          "detail": "{freeTrialMinutes} minutes with Google sign-in, no credit card"
         },
         {
           "item": "Privacy",
@@ -2019,7 +2220,7 @@
       "steps": [
         {
           "title": "Sign in with Google.",
-          "body": "Your free trial starts with 45 transcription minutes and no credit card.",
+          "body": "Your free trial starts with {freeTrialMinutes} transcription minutes and no credit card.",
           "meta": "No credit card"
         },
         {
@@ -2162,7 +2363,7 @@
         },
         {
           "q": "Is the MP3-to-text tool free to try?",
-          "a": "Yes. Scribix offers a 45-minute free trial with Google sign-in and no credit card."
+          "a": "Yes. Scribix offers a {freeTrialMinutes}-minute free trial with Google sign-in and no credit card."
         },
         {
           "q": "What can I export the MP3 transcript as?",
@@ -2202,7 +2403,7 @@
       "signedInPrimaryCta": "Upload MP3",
       "stats": [
         {
-          "value": "45 min",
+          "value": "{freeTrialMinutes} min",
           "label": "Trial"
         },
         {
@@ -2218,7 +2419,7 @@
     "jsonLd": {
       "appName": "Scribix MP3 to Text",
       "appDescription": "Online MP3-to-text transcription tool for converting uploaded MP3 audio into speaker-labeled transcripts with timestamps and export formats.",
-      "offerDescription": "45-minute free trial with Google sign-in and no credit card.",
+      "offerDescription": "{freeTrialMinutes}-minute free trial with Google sign-in and no credit card.",
       "featureList": [
         "MP3 file upload",
         "Automatic language detection",

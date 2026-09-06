@@ -8,6 +8,8 @@ import { useHomeVideoLoop } from "./useHomeVideoLoop";
 import styles from "./VideoHomeShowcase.module.css";
 
 const BASE = "/media/home-variety";
+const MEDIA_REVISION = "20260906-framing-v4";
+const mediaAsset = (filename: string) => `${BASE}/${filename}?v=${MEDIA_REVISION}`;
 const LESSONS = [
   { id: 1, title: "What does freely licensed mean?", time: "00:30" },
   { id: 2, title: "Reusing an image", time: "04:54" },
@@ -98,8 +100,8 @@ function Media({
       ref={video}
       data-home-preview
       className={className}
-      src={src ?? `${BASE}/${id}.mp4`}
-      poster={poster ?? `${BASE}/${id}.jpg`}
+      src={src ?? mediaAsset(`${id}.mp4`)}
+      poster={poster ?? mediaAsset(`${id}.jpg`)}
       muted
       loop
       disablePictureInPicture
@@ -162,8 +164,8 @@ function FramingPreview() {
           <span className={styles.compareLabel}>{t("original")}</span>
           <video
             data-home-preview
-            src={`${BASE}/robotics.mp4`}
-            poster={`${BASE}/robotics.jpg`}
+            src={mediaAsset("robotics.mp4")}
+            poster={mediaAsset("robotics.jpg")}
             muted
             loop
             disablePictureInPicture
@@ -177,8 +179,8 @@ function FramingPreview() {
           <video
             data-home-preview
             className={styles.portrait}
-            src={`${BASE}/robotics-portrait.mp4`}
-            poster={`${BASE}/robotics-portrait.jpg`}
+            src={mediaAsset("robotics-portrait.mp4")}
+            poster={mediaAsset("robotics-portrait.jpg")}
             muted
             loop
             disablePictureInPicture
@@ -229,8 +231,8 @@ function CaptionPreview() {
           <video
             ref={video}
             data-home-preview
-            src={`${BASE}/captions.mp4`}
-            poster={`${BASE}/captions.jpg`}
+            src={mediaAsset("captions.mp4")}
+            poster={mediaAsset("captions.jpg")}
             muted
             loop
             playsInline

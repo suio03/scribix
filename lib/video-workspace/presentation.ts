@@ -28,6 +28,14 @@ export const VIDEO_LOGO_BOTTOM_PX = 154;
 export const VIDEO_LOGO_SIDE_PX = 65;
 export const VIDEO_SIGNATURE_HEIGHT_PX = 22;
 
+/** Zoom relative to fill that displays the entire source inside the portrait canvas. */
+export function fullFrameZoom(width: number, height: number): number {
+  if (width <= 0 || height <= 0) return 1;
+  const x = FINAL_VIDEO_PRESET.width / width;
+  const y = FINAL_VIDEO_PRESET.height / height;
+  return Math.min(x, y) / Math.max(x, y);
+}
+
 export function coverCropBox(
   sourceWidth: number,
   sourceHeight: number,

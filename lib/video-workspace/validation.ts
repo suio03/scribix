@@ -1,3 +1,5 @@
+import { CROP_ZOOM_LIMITS } from "./contracts";
+import { validAutoFramingPlan } from "./auto-framing";
 import {
   BRAND_TEMPLATE_IDS,
   CAPTION_TEMPLATE_IDS,
@@ -330,7 +332,7 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
       }
       const spec = requireObject(rawSpec, `$.segments.${segmentId}`, issues);
       if (!spec) continue;
-      hasOnlyKeys(spec, ["framingMode", "crop"], `$.segments.${segmentId}`, issues);
+      hasOnlyKeys(spec, ["framingMode", "crop", "framingRanges", "autoFraming"], `$.segments.${segmentId}`, issues);
       if (spec.framingMode !== undefined) {
         requireEnum(
           spec.framingMode,
@@ -339,12 +341,41 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
           issues
         );
       }
+      if (spec.autoFraming !== undefined && !validAutoFramingPlan(spec.autoFraming)) {
+        issues.push(issue(`$.segments.${segmentId}.autoFraming`, "invalid_auto_framing", "Invalid automatic framing plan."));
+      }
+      if (spec.framingRanges !== undefined) {
+        if (!Array.isArray(spec.framingRanges) || spec.framingRanges.length > VIDEO_WORKSPACE_LIMITS.maxFramingRangesPerSegment) {
+          issues.push(issue(`$.segments.${segmentId}.framingRanges`, "invalid_ranges", `Expected at most ${VIDEO_WORKSPACE_LIMITS.maxFramingRangesPerSegment} framing ranges.`));
+        } else {
+          let previous = -1;
+          for (const [index, raw] of spec.framingRanges.entries()) {
+            const path = `$.segments.${segmentId}.framingRanges[${index}]`;
+            const range = requireObject(raw, path, issues);
+            if (!range) continue;
+            hasOnlyKeys(range, ["sourceStartMs", "framingMode", "crop"], path, issues);
+            requireNumber(range.sourceStartMs, `${path}.sourceStartMs`, issues, 0, Number.MAX_SAFE_INTEGER);
+            if (typeof range.sourceStartMs === "number") {
+              if (range.sourceStartMs <= previous) issues.push(issue(path, "range_order", "Framing ranges must be ordered and unique."));
+              previous = range.sourceStartMs;
+            }
+            requireEnum(range.framingMode, FRAMING_MODES, `${path}.framingMode`, issues);
+            const position = requireObject(range.crop, `${path}.crop`, issues);
+            if (position) {
+              hasOnlyKeys(position, ["x", "y", "zoom"], `${path}.crop`, issues);
+              requireNumber(position.x, `${path}.crop.x`, issues, 0, 1);
+              requireNumber(position.y, `${path}.crop.y`, issues, 0, 1);
+              requireNumber(position.zoom, `${path}.crop.zoom`, issues, CROP_ZOOM_LIMITS.min, CROP_ZOOM_LIMITS.max);
+            }
+          }
+        }
+      }
       const crop = requireObject(spec.crop, `$.segments.${segmentId}.crop`, issues);
       if (!crop) continue;
       hasOnlyKeys(crop, ["x", "y", "zoom"], `$.segments.${segmentId}.crop`, issues);
       requireNumber(crop.x, `$.segments.${segmentId}.crop.x`, issues, 0, 1);
       requireNumber(crop.y, `$.segments.${segmentId}.crop.y`, issues, 0, 1);
-      requireNumber(crop.zoom, `$.segments.${segmentId}.crop.zoom`, issues, 1, 4);
+      requireNumber(crop.zoom, `$.segments.${segmentId}.crop.zoom`, issues, CROP_ZOOM_LIMITS.min, CROP_ZOOM_LIMITS.max);
     }
     for (const segmentId of edlIds) {
       if (!(segmentId in segmentSpecs)) {
@@ -355,7 +386,7 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
 
   const captions = requireObject(value.captions, "$.captions", issues);
   if (captions) {
-    hasOnlyKeys(captions, ["enabled", "templateId", "fontAssetId", "textColor", "highlightColor", "positionY", "maxCharsPerLine", "maxLines", "cues"], "$.captions", issues);
+    hasOnlyKeys(captions, ["enabled", "templateId", "fontAssetId", "fontScale", "textColor", "highlightColor", "positionY", "maxCharsPerLine", "maxLines", "cues"], "$.captions", issues);
     requireBoolean(captions.enabled, "$.captions.enabled", issues);
     requireEnum(captions.templateId, CAPTION_TEMPLATE_IDS, "$.captions.templateId", issues);
     requireNullableStableId(captions.fontAssetId, "$.captions.fontAssetId", issues);
@@ -365,6 +396,7 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
         issues.push(issue(`$.captions.${colorKey}`, "invalid_color", "Expected a six-digit hex color."));
       }
     }
+    if (captions.fontScale !== undefined) requireNumber(captions.fontScale, "$.captions.fontScale", issues, 0.5, 1.5);
     requireNumber(captions.positionY, "$.captions.positionY", issues, 0, 1);
     requireInteger(captions.maxCharsPerLine, "$.captions.maxCharsPerLine", issues, 8, 42);
     requireInteger(captions.maxLines, "$.captions.maxLines", issues, 1, 3);

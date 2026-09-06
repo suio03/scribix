@@ -20,16 +20,21 @@ M2 只生成和筛选候选，不生成 preview proxy，也不会自动触发最
 
 ## 受控 AI 输入
 
-服务端从 transcript 生成紧凑的只读参考行：
+服务端读取现有 R2 transcript 的完整 words，在内存生成句子编号和 word 索引映射：
 
 ```text
-row|start_ms|end_ms|speaker|word_start-word_end:spoken_word …
+s12|84.2-91.7|A|This is the original spoken sentence.
 ```
 
-输入中的 transcript 明确标记为不可信内容。换行、分隔符和异常空白会被规范化；输入预算为
-480,000 字符。超过预算时按时间轴均匀抽取行，而不是只保留视频开头。完整 word timestamp
-集合仍保留在服务端，专门用于最终对齐和验证。日志只记录字符数、token usage、request ID
-和稳定错误码，不记录 transcript 或候选正文。
+每行只有句子编号、近似秒数、speaker 和原文，不包含逐词时间戳。优先使用与真实 word
+边界一致的 AAI sentences；缺少有效句子标注的部分按标点、停顿和 speaker 切分。每个有效
+word 恰好归属一个句子。句子编号及首尾 word 索引仅保存在本次请求的内存中，不新增 R2
+副本或 D1 转写字段，也不需要 migration。
+
+输入中的 transcript 明确标记为不可信内容。换行、分隔符和异常空白会被规范化。单批输入
+上限为 100,000 字符；长文本按连续句子分批，相邻批次保留约 60 秒重叠，覆盖全部原文，
+不会均匀抽样或丢弃中间段落。单句本身超限时明确失败。批次候选统一排序、去重后进入二审。
+日志只记录字符数、token usage、request ID 和稳定错误码，不记录 transcript 或候选正文。
 
 ## OpenAI 两阶段输出边界
 
@@ -39,18 +44,20 @@ Responses API strict JSON Schema。聊天等其他 AI 功能的 nano 模型不�
 数值检查。实现遵循 OpenAI 的
 [Structured Outputs 文档](https://developers.openai.com/api/docs/guides/structured-outputs)。
 
-Provider 只返回候选内容和 source ranges；稳定 candidate ID 与 `schemaVersion` 由 Scribix
+Provider 只返回候选内容和 `startSentenceId` / `endSentenceId`；稳定 candidate ID 与 `schemaVersion` 由 Scribix
 服务端生成，模型不能选择数据库 ID。
 
-第一阶段读取完整受控 transcript，提出 0–5 个候选。第二阶段是独立调用，只能对每个候选执行
+第一阶段读取完整受控 transcript，提出 0–5 个候选。第二阶段只读取候选及前后各 45 秒
+范围内的完整句子；重叠上下文去重，每个候选仍只能在自己的上下文内调整。二审不接收
+第一轮的主题、hook 和推荐理由，避免依赖文案补足口播。第二阶段是独立调用，只能对每个候选执行
 `accept`、`adjust` 或 `reject`：
 
-- `accept` 保留第一阶段的原始 ranges。
-- `adjust` 只能修改 source ranges，用于补齐背景或收尾；不能改写主题、hook、reason 或 score。
-- `reject` 删除 45 秒内无法修复的候选。
+- `accept` 返回原始句子编号，保留第一阶段的原始范围。
+- `adjust` 只能修改首尾句子编号，且必须与原候选重叠，用于补齐背景或收尾；不能改写主题、hook、reason 或 score。
+- `reject` 将两个句子编号设为 null，删除 45 秒内无法修复的候选。
 
 二审必须恰好返回每个 candidate index 一次；缺失、重复、未知字段或非法 verdict 会使整个
-provider payload 在写入 D1 前失败。两次调用分别记录 token、reasoning token、cache hit 和估算费用。
+provider payload 在写入 D1 前失败。两阶段分别记录 token、reasoning token、cache hit 和估算费用；长文本第一阶段汇总各批次 usage。
 
 ## 服务端准入流水线
 
@@ -60,7 +67,7 @@ provider payload 在写入 D1 前失败。两次调用分别记录 token、reaso
 2. Terra 独立完整性二审；只允许接受、调整 ranges 或拒绝。
 3. 二审 strict JSON Schema、candidate index 完整性与本地 exact-key 校验。
 4. 原始时间范围越界、反向区间和 segment 数量检查。
-5. 起止时间吸附到最近的真实 word start/end；漂移超过 3 秒则拒绝该候选。
+5. 将有效句子编号直接映射到保留的真实 word 起止时间；拒绝未知、反向、不连续或超出该候选上下文的编号。显示的近似时间不参与反推，AI 新流程不依赖最近时间猜测。
 6. 单 segment 至少 2 秒；AI 候选总时长必须在 15–45 秒。
 7. 同一候选的 source ranges 不得重叠。
 8. 按 score 排序，以 source 时间覆盖率 80% 为阈值去除高度重复候选。
@@ -91,7 +98,8 @@ manual candidates，支持选择候选；付费用户可创建和删除 manual c
 
 ## 验证
 
-- 合同测试覆盖真实 word-boundary 对齐、连续候选、越界过滤、高重复去重、完整性二审的接受/调整/拒绝，以及未知字段、缺失或重复 decision 拒绝。
+- `npm run test:video-workspace` 覆盖精确句子/word 映射、缺失/部分句子标注、长文本完整覆盖、局部上下文隔离、连续候选、越界过滤、去重，以及接受/调整/拒绝和非法 decision。
+- `npm run test:ai-candidates` 用模拟 Responses API 验证请求 schema、两阶段实际载荷、分批 usage 与错误处理，不产生模型费用。
 - Locale key/type/ICU 参数一致性必须通过。
 - 全量 TypeScript 检查与 production build 必须通过。
 - 全部 migrations 必须能从空 D1 数据库应用到当前最新版本，且 foreign key check 为空。

@@ -25,6 +25,19 @@ Requirements:
 - `.dev.vars` populated from `.env.local.example`
 - local D1 migrations applied with `npm run db:migrate:local`
 
+Set `ASSEMBLYAI_COMPLETION_MODE=polling` in both `.env.local` and `.dev.vars`,
+alongside the existing `ASSEMBLYAI_API_KEY`. Local status requests fetch results
+directly from AssemblyAI without waiting for a webhook or the production
+15-minute recovery window. No ngrok is needed. Keep the upload waiting page open
+(or reopen it in the same browser tab to resume); Dashboard listings do not poll
+transcription status. Existing submitted jobs with a saved AssemblyAI ID can
+also recover this way without another upload.
+
+This setting also works with `npm run dev` for transcription, but the complete
+Clips export flow needs the queue and container environment below. Production
+explicitly sets `ASSEMBLYAI_COMPLETION_MODE=webhook` in `wrangler.jsonc` to override
+OpenNext's bundled local env defaults; local `.dev.vars` overrides it with `polling`.
+
 Build the OpenNext Worker once, then start the complete environment:
 
 ```bash
@@ -34,7 +47,12 @@ npm run dev:video-workspace
 
 Open `http://localhost:3000`. Changes to application code require rebuilding
 the OpenNext Worker; the dispatcher and render-container sources are watched by
-Wrangler. Keep test exports inside test projects because their source and latest
+Wrangler. Local rendering runs one job at a time; production permits ten jobs
+from ten different users, with one active job per user across previews and exports.
+Keep the workspace open when recovering a restarted local environment: authenticated
+polling re-enqueues stranded jobs at most once per project every 15 seconds.
+Successful result callbacks wake pending work immediately; production also runs
+recovery every minute. Keep test exports inside test projects because their source and latest
 final outputs are real objects in the shared remote R2 bucket.
 
 Run the disposable verification:
@@ -107,11 +125,15 @@ verification artifacts.
 ## Transcript-to-final completeness POC
 
 The completeness POC reuses a locally saved word-timestamp transcript. Terra
-first proposes 0–5 candidates, then a separate Terra request accepts, adjusts,
+first reads sentence IDs, approximate times, and spoken text to propose 0–5
+candidates. Word timestamps stay in memory for exact mapping. Long transcripts
+use overlapping contiguous batches without dropping source text. A separate
+Terra request sees only each candidate and its ±45-second sentence context,
+then accepts, adjusts,
 or rejects every proposal using spoken-content completeness as a hard gate.
 Titles and captions cannot repair missing context; an unrepairable candidate is
 removed rather than extended beyond 45 seconds. Both API calls use strict JSON
-Schema and `store: false`.
+Schema and `store: false`. Sentence mappings are not stored as extra R2 objects.
 
 Bundle and run the analysis without uploading the source video or audio again:
 
@@ -129,3 +151,13 @@ node --env-file=.env.local /tmp/scribix-completeness-poc.mjs \
 The output contains the first-pass candidates, every independent review
 decision, final word-aligned candidates, token usage, and transcript excerpts
 for local editorial inspection. It never logs transcript content.
+
+Automatic speaker-framing policy checks run inside the built video image:
+
+```sh
+docker run --rm --network none --entrypoint python3 \
+  -v "$PWD/scripts/video-workspace:/tests:ro" \
+  scribix-video-render:auto-framing /tests/test-speaker-framing.py
+```
+
+Build that local tag with `docker build -t scribix-video-render:auto-framing containers/video-preview`. The image includes pinned face and active-speaker models; see `docs/video-workspace/speaker-follow-plan.md` for real-footage verification and release limits.

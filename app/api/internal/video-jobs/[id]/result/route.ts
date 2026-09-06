@@ -1,3 +1,4 @@
+import { wakeRenderScheduler } from "@/lib/video-workspace/render-scheduling";
 import { cf } from "@/lib/cf";
 import type { FinalJobResult, PreviewJobFailure, PreviewJobResult } from "@/lib/video-workspace/contracts";
 import { bearerToken, verifyScopedJobToken } from "@/lib/video-workspace/job-auth";
@@ -26,6 +27,12 @@ export async function POST(request: Request, { params }: Params) {
   const result = kind === "final"
     ? await recordFinalJobResult(env.DB, env.SCRIBIX_MEDIA, id, body as FinalJobResult | PreviewJobFailure)
     : await recordPreviewJobResult(env.DB, env.SCRIBIX_MEDIA, id, body as PreviewJobResult | PreviewJobFailure);
+  if (result.ok) {
+    // The result is durable even if the wake-up fails; periodic recovery retries it.
+    await wakeRenderScheduler(env.DB, env.VIDEO_RENDER_QUEUE).catch(() => {
+      console.error(JSON.stringify({ event: "video_scheduler_wake_failed", jobId: id }));
+    });
+  }
   return result.ok
     ? Response.json({ ok: true })
     : Response.json({ error: result.error }, { status: 422 });

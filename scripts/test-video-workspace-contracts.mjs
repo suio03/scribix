@@ -23,6 +23,7 @@ const sources = [
   "lib/video-workspace/access.ts",
   "lib/upload-preflight.ts",
   "lib/video-workspace/validation.test.ts",
+  "lib/video-workspace/candidate-sentences.test.ts",
   "lib/video-workspace/job-auth.test.ts",
   "lib/video-workspace/timeline.test.ts",
   "lib/video-workspace/presentation.test.ts",
@@ -63,6 +64,7 @@ try {
 
   const testFiles = [
     join(outputDirectory, "video-workspace/validation.test.js"),
+    join(outputDirectory, "video-workspace/candidate-sentences.test.js"),
     join(outputDirectory, "video-workspace/job-auth.test.js"),
     join(outputDirectory, "video-workspace/timeline.test.js"),
     join(outputDirectory, "video-workspace/presentation.test.js"),

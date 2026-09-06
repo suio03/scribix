@@ -31,11 +31,21 @@ RUN mkdir -p /opt/scribix-models \
   && echo "${FACE_MODEL_SHA256}  /opt/scribix-models/blaze_face_full_range_v1.tflite" | sha256sum --check \
   && chmod 0444 /opt/scribix-models/blaze_face_full_range_v1.tflite
 
+# CPU-only active-speaker model; weights are pinned and verified at build time.
+RUN /opt/scribix-venv/bin/pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu "torch==2.6.0" \
+  && /opt/scribix-venv/bin/pip install --no-cache-dir "numpy==1.26.4" "opencv-contrib-python==4.10.0.84" "scipy==1.14.1" "python_speech_features==0.6" "gdown==5.2.0" \
+  && /opt/scribix-venv/bin/python -m gdown 1AbN9fCf9IexMxEKXLQY2KYBlb-IhSEea -O /opt/scribix-models/talknet.model \
+  && echo "d985ddd07dca08864a28337726f5b7d91b6426bebc7327f0e9b21cf9ff1cc937  /opt/scribix-models/talknet.model" | sha256sum --check \
+  && chmod 0444 /opt/scribix-models/talknet.model
+
 WORKDIR /app
-COPY --chown=node:node preview-render.mjs final-render.mjs poc-reframe.mjs poc-reframe.py worker.mjs ./
+COPY --chown=node:node preview-render.mjs final-render.mjs poc-reframe.mjs poc-reframe.py worker.mjs analyze-framing.mjs speaker-framing.py ./
+COPY --chown=node:node talknet ./talknet
 
 ENV PATH="/opt/scribix-venv/bin:${PATH}"
 
 USER node
 EXPOSE 8080
 ENTRYPOINT ["node", "/app/worker.mjs"]
+
+COPY framing_policy.py /app/framing_policy.py

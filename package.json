@@ -6,6 +6,12 @@
     "prebuild": "npm run check-locales",
     "check-locales": "node scripts/check-locales.mjs",
     "test:video-workspace": "node scripts/test-video-workspace-contracts.mjs",
+    "test:video-export-monitor": "node --test scripts/test-video-export-monitor.mjs",
+    "test:export-archive": "node --test scripts/export-archive.test.mjs",
+    "test:render-scope": "node --test scripts/test-render-scope.mjs",
+    "test:render-scheduling": "node --test scripts/test-render-scheduling.mjs",
+    "test:ai-candidates": "node --test scripts/test-openai-candidates.mjs",
+    "test:aai-completion": "node --test scripts/test-aai-completion.mjs",
     "prototype:video-workspace": "node scripts/video-workspace/ffmpeg-prototype.mjs",
     "test:video-preview": "node scripts/video-workspace/test-preview-render.mjs",
     "test:video-final": "node scripts/video-workspace/test-final-render.mjs",
@@ -36,7 +42,8 @@
     "db:migrate:remote": "wrangler d1 migrations apply scribix-db --remote",
     "deploy:cleanup": "wrangler deploy -c wrangler.cleanup.jsonc",
     "deploy:video-render": "wrangler deploy -c wrangler.video-render.jsonc",
-    "deploy:cloudflare-video-poc": "wrangler deploy -c wrangler.video-container-poc.jsonc --x-autoconfig=false"
+    "deploy:cloudflare-video-poc": "wrangler deploy -c wrangler.video-container-poc.jsonc --x-autoconfig=false",
+    "test:free-quota": "node --test scripts/test-free-quota.mjs"
   },
   "dependencies": {
     "@cloudflare/containers": "^0.3.7",

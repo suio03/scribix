@@ -2372,7 +2372,7 @@ details[open] .faq-icon {
   background: var(--generated);
 }
 
-#exports {
+.video-export-card {
   --paper: #fcfaff;
   --card: #201641;
   --ink: #17102f;
@@ -2525,3 +2525,24 @@ details[open] .faq-icon {
     backdrop-filter: none;
   }
 }
+
+.framing-range-handle::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 54px;
+  border: 2px solid white;
+  border-radius: 4px;
+  background: var(--accent);
+  pointer-events: auto;
+  cursor: ew-resize;
+}
+.framing-range-handle::-moz-range-thumb {
+  width: 10px;
+  height: 50px;
+  border: 2px solid white;
+  border-radius: 4px;
+  background: var(--accent);
+  pointer-events: auto;
+  cursor: ew-resize;
+}
+.framing-range-handle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

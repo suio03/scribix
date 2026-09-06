@@ -22,6 +22,7 @@ declare namespace Cloudflare {
 		GOOGLE_ID: string;
 		GOOGLE_SECRET: string;
 		ASSEMBLYAI_API_KEY: string;
+		ASSEMBLYAI_COMPLETION_MODE: string;
 		ASSEMBLYAI_WEBHOOK_URL: string;
 		NEXT_PUBLIC_APP_URL: string;
 		CLOUDFLARE_ACCOUNT_ID: string;

@@ -1,3 +1,4 @@
+import { parseAutoFramingPlan, type AutoFramingPlan } from "./auto-framing";
 import { newId } from "@/lib/ids";
 import {
   PREVIEW_PROXY_AUTO_CANDIDATES,
@@ -39,6 +40,7 @@ export type CandidatePreview = {
     proxySourceStartMs: number;
     proxySourceEndMs: number;
     proxyVersion: number;
+    autoFraming?: AutoFramingPlan;
   }>;
 };
 
@@ -140,7 +142,7 @@ export async function rebuildCandidatePreviewSegment(
   const latest = await db.prepare(
     `SELECT j.id, j.status, j.provider_job_id, j.proxy_source_start_ms,
             j.proxy_source_end_ms, j.proxy_version,
-            a.r2_key, a.expires_at, a.deleted_at
+            a.r2_key, a.expires_at, a.deleted_at, a.auto_framing_json
        FROM render_jobs j
        JOIN media_assets a
          ON a.id = j.output_asset_id AND a.user_id = j.user_id
@@ -163,6 +165,7 @@ export async function rebuildCandidatePreviewSegment(
       r2_key: string | null;
       expires_at: string | null;
       deleted_at: string | null;
+      auto_framing_json: string | null;
     }>();
   if (
     latest &&
@@ -449,7 +452,7 @@ export async function listCandidatePreviews(
     `SELECT j.candidate_id, j.segment_index, j.id AS job_id, j.status AS job_status,
             j.output_asset_id AS asset_id, a.status AS asset_status,
             j.source_start_ms, j.source_end_ms, j.proxy_source_start_ms,
-            j.proxy_source_end_ms, j.proxy_version, c.segments_json
+            j.proxy_source_end_ms, j.proxy_version, a.auto_framing_json, c.segments_json
        FROM render_jobs j
        JOIN media_assets a
          ON a.id = j.output_asset_id AND a.user_id = j.user_id
@@ -480,6 +483,7 @@ export async function listCandidatePreviews(
       proxy_source_end_ms: number;
       proxy_version: number;
       segments_json: string;
+      auto_framing_json: string | null;
     }>();
 
   const byCandidate = new Map<string, {
@@ -507,6 +511,7 @@ export async function listCandidatePreviews(
       proxySourceStartMs: row.proxy_source_start_ms,
       proxySourceEndMs: row.proxy_source_end_ms,
       proxyVersion: row.proxy_version,
+      autoFraming: parseAutoFramingPlan(row.auto_framing_json),
     });
     byCandidate.set(row.candidate_id, group);
   }

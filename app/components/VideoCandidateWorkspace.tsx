@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentProps } from "react";
 import {
   AlertCircle,
   AlertTriangle,
@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { VideoExportProvider } from "@/app/components/VideoExportProvider";
 import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
 import {
   VideoClipEditor,
@@ -30,7 +31,15 @@ import type { FinalRenderSummary } from "@/lib/video-workspace/final-jobs";
 
 type ProjectStatus = "draft" | "analyzing" | "candidates_ready" | "failed" | string;
 
-export function VideoCandidateWorkspace({
+export function VideoCandidateWorkspace(props: ComponentProps<typeof VideoCandidateWorkspaceContent>) {
+  return (
+    <VideoExportProvider key={props.projectId} projectId={props.projectId} initialRenders={props.initialRenders}>
+      <VideoCandidateWorkspaceContent {...props} />
+    </VideoExportProvider>
+  );
+}
+
+function VideoCandidateWorkspaceContent({
   projectId,
   initialStatus,
   sourceDurationMs,
@@ -39,7 +48,6 @@ export function VideoCandidateWorkspace({
   initialSelectedCandidateId,
   initialRenders,
   sourceAvailable,
-  sourceExpiresAt,
   canEdit,
 }: {
   projectId: string;
@@ -340,20 +348,12 @@ export function VideoCandidateWorkspace({
         ) : null}
       </div>
 
-      <div className={`mt-5 flex flex-wrap items-center gap-2 rounded-xl border px-4 py-3 text-[12px] ${
-        sourceAvailable
-          ? "border-line bg-card/60 text-ink/55"
-          : "border-amber-300/35 bg-amber-100/35 text-amber-900 dark:bg-amber-400/10 dark:text-amber-100"
-      }`}>
-        {sourceAvailable ? <Clock3 size={14} className="text-accent" /> : <Archive size={14} />}
-        <span>
-          {sourceAvailable && sourceExpiresAt
-            ? t("sourceAvailableUntil", { date: formatAssetDate(sourceExpiresAt) })
-            : sourceAvailable
-              ? t("sourceAvailable")
-              : t("sourceUnavailableBody")}
-        </span>
-      </div>
+      {!sourceAvailable ? (
+        <div className="mt-5 flex items-center gap-2 rounded-xl border border-amber-300/35 bg-amber-100/35 px-4 py-3 text-xs text-amber-900 dark:bg-amber-400/10 dark:text-amber-100">
+          <Archive size={14} />
+          <span>{t("sourceUnavailableBody")}</span>
+        </div>
+      ) : null}
 
       {error ? (
         <p className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-800">
@@ -452,7 +452,6 @@ export function VideoCandidateWorkspace({
             <ArchivedClipExport
               projectId={projectId}
               candidate={selectedCandidate}
-              renders={initialRenders.filter((render) => render.candidateId === selectedCandidate.id)}
               onExportDeleted={() => setCandidates((current) => (
                 current.filter((candidate) => candidate.id !== selectedCandidate.id)
               ))}
@@ -539,12 +538,10 @@ export function VideoCandidateWorkspace({
 function ArchivedClipExport({
   projectId,
   candidate,
-  renders,
   onExportDeleted,
 }: {
   projectId: string;
   candidate: StoredClipCandidate;
-  renders: FinalRenderSummary[];
   onExportDeleted: () => void;
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
@@ -566,7 +563,6 @@ function ArchivedClipExport({
         disabled
         generatedOnly
         sourceAvailable={false}
-        initialRenders={renders}
         onConflict={() => undefined}
         onExportDeleted={onExportDeleted}
       />
@@ -664,7 +660,8 @@ function CandidateTile({
     (total, segment) => total + segment.endMs - segment.startMs,
     0
   );
-  const processing = preview?.status === "queued" || preview?.status === "processing";
+  const queued = preview?.status === "queued";
+  const processing = preview?.status === "processing";
   const failed = preview?.status === "failed";
 
   return (
@@ -691,7 +688,9 @@ function CandidateTile({
             <CandidatePreviewFrame projectId={projectId} candidateId={candidate.id} />
           ) : (
             <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_35%,rgba(108,53,255,0.32),transparent_38%),linear-gradient(145deg,#201641,#09031b)] text-paper/45">
-              {processing || previewBusy ? (
+              {queued ? (
+                <Clock3 size={20} />
+              ) : processing || previewBusy ? (
                 <Loader2 size={20} className="animate-spin" />
               ) : failed ? (
                 <AlertCircle size={20} />
@@ -720,6 +719,8 @@ function CandidateTile({
           <span className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-ink/45">
             {pending ? (
               <><Loader2 size={10} className="animate-spin" />{t("editor.saveState.saving")}</>
+            ) : queued ? (
+              <><Clock3 size={10} />{t("editor.finalRender.status.queued")}</>
             ) : processing || previewBusy ? (
               <><Loader2 size={10} className="animate-spin" />{t("previewProcessing")}</>
             ) : failed ? (
@@ -830,10 +831,4 @@ function formatDuration(durationMs: number): string {
   if (durationMs < 60_000) return `${Math.round(durationMs / 1000)}s`;
   const seconds = Math.round(durationMs / 1000);
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
-}
-
-function formatAssetDate(value: string): string {
-  const normalized = value.includes("T") ? value : `${value.replace(" ", "T")}Z`;
-  const date = new Date(normalized);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString();
 }

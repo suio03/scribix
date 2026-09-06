@@ -197,6 +197,9 @@ export default async function PricingPage({
               supportUpgradeLabel={t("supportUpgradeLabel")}
               unavailableLabel={t("unavailableLabel")}
             />
+            <p className="mt-5 text-center text-sm leading-6 text-muted">
+              {t("usageExplanation")}
+            </p>
             <PlanComparison
               description={t("paidIncludedDescription")}
               extraRows={transcriptComparisonRows}
