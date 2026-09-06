@@ -1,3 +1,4 @@
+import { socialImages } from "@/lib/metadata-url";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
@@ -43,6 +44,7 @@ export async function generateMetadata({
       languages: homeLanguages(),
     },
     openGraph: {
+      images: socialImages,
       title: t("openGraphTitle"),
       description: t("openGraphDescription"),
       type: "website",
@@ -50,6 +52,7 @@ export async function generateMetadata({
       url: canonical,
     },
     twitter: {
+      images: socialImages,
       card: "summary_large_image",
       title: t("twitterTitle"),
       description: t("twitterDescription"),

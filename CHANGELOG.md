@@ -11,6 +11,7 @@
 - Aligned source-video and final-export retention copy with the implemented policies across all six locales.
 
 ### Fixed
+- Replaced runtime social-image rendering with the existing artwork as a static PNG to fix Cloudflare 500 responses; legacy image URLs redirect to the asset.
 - Included all 42 localized public pages and three English legal pages in the sitemap, added crawlable tool links, repaired the organization logo URL, and completed social metadata.
 
 ## [0.26.0] - 2026-08-06

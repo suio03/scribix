@@ -21,7 +21,7 @@ export function languageAlternates(path: string): Record<string, string> {
 }
 
 export const socialImages = [{
-  url: `${SITE}/opengraph-image`,
+  url: `${SITE}/brand/social.png`,
   width: 1200,
   height: 630,
   alt: "Scribix",

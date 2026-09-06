@@ -161,7 +161,7 @@ the one-time items that are already verified and unchanged.
   image, and legal-page Open Graph URLs match their canonical URLs.
 - [ ] Verify domain in Google Search Console + Bing Webmaster.
 - [ ] OG card preview looks right (`https://scribix.io` → opengraph-image
-  served from `app/[locale]/opengraph-image.tsx`).
+  redirects to the static `public/brand/social.png` asset).
 - [ ] Pricing, account usage, and Terms agree that yearly Creator receives 2,400
   minutes of uploaded video processing each month, resets monthly, and does not
   roll over.
