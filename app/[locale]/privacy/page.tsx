@@ -1,3 +1,6 @@
+import { PLANS } from "@/lib/plans";
+import { FINAL_EXPORT_RETENTION_DAYS } from "@/lib/video-workspace/retention";
+import { socialImages } from "@/lib/metadata-url";
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { LegalShell } from "@/app/components/LegalShell";
@@ -7,8 +10,20 @@ import { routing } from "@/i18n/routing";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How Scribix collects, uses, and protects your data.",
-  alternates: {
-    canonical: "https://scribix.io/privacy",
+  alternates: { canonical: "https://scribix.io/privacy" },
+  openGraph: {
+    title: "Privacy Policy",
+    description: "How Scribix collects, uses, and protects your data.",
+    url: "https://scribix.io/privacy",
+    siteName: "Scribix",
+    type: "website",
+    images: socialImages,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy",
+    description: "How Scribix collects, uses, and protects your data.",
+    images: socialImages,
   },
 };
 
@@ -24,7 +39,7 @@ export default async function PrivacyPage({
   setRequestLocale(locale);
 
   return (
-    <LegalShell title="Privacy Policy" updated="July 31, 2026">
+    <LegalShell title="Privacy Policy" updated="September 7, 2026">
       <p>
         This policy describes what data CENDRO LABS PTY LTD collects when operating
         Scribix, how we use it, and the choices you have. Plain-English summary first;
@@ -134,7 +149,14 @@ export default async function PrivacyPage({
       <H2>Retention</H2>
       <ul className="ml-5 list-disc space-y-2">
         <li>
-          <strong>Audio &amp; video:</strong> deleted automatically 14 days after upload.
+          <strong>Audio:</strong> deleted automatically 14 days after upload.
+        </li>
+        <li>
+          <strong>Original videos:</strong> kept for {PLANS.free.videoSourceRetentionDays} days
+          on Free and {PLANS.pro.videoSourceRetentionDays} days on paid plans.
+        </li>
+        <li>
+          <strong>Final videos and covers:</strong> expire {FINAL_EXPORT_RETENTION_DAYS} days after export.
         </li>
         <li>
           <strong>Transcripts:</strong> kept until you delete them or your account.

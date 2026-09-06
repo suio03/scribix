@@ -756,6 +756,14 @@
       "terms": "Conditions de service",
       "privacy": "Politique de confidentialité",
       "refunds": "Politique de remboursement"
+    },
+    "toolsLabel": "Outils",
+    "toolLabels": {
+      "videoToText": "Vidéo en texte",
+      "audioToText": "Audio en texte",
+      "mp3ToText": "MP3 en texte",
+      "youtubeToTranscript": "Transcription YouTube",
+      "aiNoteTaker": "Prise de notes IA"
     }
   },
   "Dashboard": {
@@ -883,7 +891,7 @@
     "viewer": {
       "back": "← Toutes les transcriptions",
       "audioExpiredLabel": "Audio expiré.",
-      "audioExpiredBody": "Les fichiers source sont conservés pendant 14 jours ; la transcription reste aussi longtemps que vous le souhaitez.",
+      "audioExpiredBody": "Les fichiers audio sont supprimés automatiquement après 14 jours. Les vidéos originales sont conservées {freeVideoRetentionDays} jours avec Free et {paidVideoRetentionDays} jours avec les offres payantes. Les transcriptions restent jusqu’à leur suppression ou la fermeture du compte.",
       "missing": "Le fichier de transcription est manquant du stockage.",
       "transcribingHint": "Transcription de votre audio en cours. Cela prend généralement environ une minute par heure d'entrée.",
       "workingHint": "Travail sur votre transcription en cours…",
@@ -1724,7 +1732,7 @@
         {
           "title": "Votre audio est-il privé?",
           "body": [
-            "Scribix utilise votre audio importé uniquement pour générer et livrer les transcriptions de votre compte. Les fichiers audio et vidéo sont supprimés automatiquement après 14 jours.",
+            "Les fichiers audio sont supprimés automatiquement après 14 jours. Les vidéos originales sont conservées {freeVideoRetentionDays} jours avec Free et {paidVideoRetentionDays} jours avec les offres payantes. Les transcriptions restent jusqu’à leur suppression ou la fermeture du compte.",
             "Les transcriptions restent dans votre compte jusqu’à leur suppression ou la fermeture du compte. Consultez la"
           ],
           "link": {
@@ -1803,7 +1811,7 @@
         },
         {
           "q": "Mon audio est-il stocké pour toujours?",
-          "a": "Non. La politique de confidentialité de Scribix indique que les fichiers audio et vidéo importés sont supprimés automatiquement après 14 jours. Les transcriptions restent dans votre compte jusqu’à leur suppression ou la fermeture du compte."
+          "a": "Les fichiers audio sont supprimés automatiquement après 14 jours. Les vidéos originales sont conservées {freeVideoRetentionDays} jours avec Free et {paidVideoRetentionDays} jours avec les offres payantes. Les transcriptions restent jusqu’à leur suppression ou la fermeture du compte."
         }
       ]
     },
@@ -1915,7 +1923,7 @@
         },
         {
           "title": "Une conservation clairement définie",
-          "body": "Les fichiers audio et vidéo importés sont automatiquement supprimés après 14 jours. Les transcriptions restent disponibles jusqu’à leur suppression ou la fermeture du compte."
+          "body": "Les fichiers audio sont supprimés automatiquement après 14 jours. Les vidéos originales sont conservées {freeVideoRetentionDays} jours avec Free et {paidVideoRetentionDays} jours avec les offres payantes. Les transcriptions restent jusqu’à leur suppression ou la fermeture du compte."
         }
       ]
     },
@@ -2040,7 +2048,7 @@
         },
         {
           "q": "Combien de temps Scribix conserve-t-il mes enregistrements ?",
-          "a": "Les fichiers audio et vidéo importés sont automatiquement supprimés après 14 jours. Les transcriptions restent dans votre compte jusqu’à leur suppression ou la fermeture du compte."
+          "a": "Les fichiers audio sont supprimés automatiquement après 14 jours. Les vidéos originales sont conservées {freeVideoRetentionDays} jours avec Free et {paidVideoRetentionDays} jours avec les offres payantes. Les transcriptions restent jusqu’à leur suppression ou la fermeture du compte."
         },
         {
           "q": "Puis-je exporter mes notes ?",
@@ -2064,7 +2072,7 @@
           "label": "Rubriques de notes IA"
         },
         {
-          "value": "14 jours",
+          "value": "Audio : 14 jours",
           "label": "Suppression des médias"
         }
       ]
@@ -2308,7 +2316,7 @@
         {
           "title": "Votre MP3 est-il privé ?",
           "body": [
-            "Scribix utilise votre MP3 importé uniquement pour générer et livrer des transcriptions dans votre compte. Les fichiers audio et vidéo sont supprimés automatiquement après 14 jours.",
+            "Les fichiers audio sont supprimés automatiquement après 14 jours. Les vidéos originales sont conservées {freeVideoRetentionDays} jours avec Free et {paidVideoRetentionDays} jours avec les offres payantes. Les transcriptions restent jusqu’à leur suppression ou la fermeture du compte.",
             "Les transcriptions restent dans votre compte jusqu’à ce que vous les supprimiez ou fermiez votre compte. Consultez la"
           ],
           "link": {
@@ -2387,7 +2395,7 @@
         },
         {
           "q": "Mon MP3 est-il conservé indéfiniment ?",
-          "a": "Non. La politique de confidentialité de Scribix indique que les fichiers audio et vidéo importés sont supprimés automatiquement après 14 jours. Les transcriptions restent dans votre compte jusqu’à ce que vous les supprimiez ou fermiez votre compte."
+          "a": "Les fichiers audio sont supprimés automatiquement après 14 jours. Les vidéos originales sont conservées {freeVideoRetentionDays} jours avec Free et {paidVideoRetentionDays} jours avec les offres payantes. Les transcriptions restent jusqu’à leur suppression ou la fermeture du compte."
         },
         {
           "q": "Ai-je besoin d’un compte pour convertir un MP3 en texte ?",

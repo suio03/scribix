@@ -1,3 +1,4 @@
+import { socialImages } from "@/lib/metadata-url";
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { LegalShell } from "@/app/components/LegalShell";
@@ -6,10 +7,21 @@ import { routing } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: "Refund Policy",
-  description:
-    "Scribix refund policy — 14-day refund request window and how to request a refund for a subscription.",
-  alternates: {
-    canonical: "https://scribix.io/refunds",
+  description: "Scribix refund policy — 14-day refund request window and how to request a refund for a subscription.",
+  alternates: { canonical: "https://scribix.io/refunds" },
+  openGraph: {
+    title: "Refund Policy",
+    description: "Scribix refund policy — 14-day refund request window and how to request a refund for a subscription.",
+    url: "https://scribix.io/refunds",
+    siteName: "Scribix",
+    type: "website",
+    images: socialImages,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Refund Policy",
+    description: "Scribix refund policy — 14-day refund request window and how to request a refund for a subscription.",
+    images: socialImages,
   },
 };
 

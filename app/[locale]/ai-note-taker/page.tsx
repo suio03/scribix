@@ -13,7 +13,7 @@ import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { TrackToolVisit } from "@/app/components/Track";
 import { UseCases } from "@/app/components/UseCases";
 import { getPathname } from "@/i18n/navigation";
-import { languageAlternates, urlFor } from "@/lib/metadata-url";
+import { languageAlternates, socialImages, urlFor } from "@/lib/metadata-url";
 
 const PATH = "/ai-note-taker";
 
@@ -49,6 +49,7 @@ export async function generateMetadata({
       languages: languageAlternates(PATH),
     },
     openGraph: {
+      images: socialImages,
       title: t("openGraphTitle"),
       description: t("openGraphDescription"),
       type: "website",
@@ -56,6 +57,7 @@ export async function generateMetadata({
       url: canonical,
     },
     twitter: {
+      images: socialImages,
       card: "summary_large_image",
       title: t("twitterTitle"),
       description: t("twitterDescription"),

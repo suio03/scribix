@@ -68,5 +68,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
-  return entries;
+  return entries.flatMap((entry) => {
+    if (!entry.alternates?.languages) return [entry];
+    const path = new URL(entry.url).pathname.replace(/\/$/, "");
+    return routing.locales.map((locale) => ({
+      ...entry,
+      url: urlFor(locale, path).href,
+    }));
+  });
 }

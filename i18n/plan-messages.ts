@@ -7,12 +7,14 @@ type MessageTree = { [key: string]: string | MessageTree | MessageTree[] };
 export function resolvePlanMessages(messages: MessageTree, locale: string): MessageTree {
   const number = new Intl.NumberFormat(locale);
   const facts: Record<string, string> = {
+    freeVideoRetentionDays: number.format(PLANS.free.videoSourceRetentionDays),
+    paidVideoRetentionDays: number.format(PLANS.pro.videoSourceRetentionDays),
     freeTrialMinutes: number.format(PLANS.free.minutesPerCycle),
     creatorMonthlyMinutes: number.format(PLANS.pro.monthly.minutesPerCycle),
   };
   function resolve(value: unknown): unknown {
     if (typeof value === "string") {
-      return value.replace(/\{(freeTrialMinutes|creatorMonthlyMinutes)\}/g,
+      return value.replace(/\{(freeTrialMinutes|creatorMonthlyMinutes|freeVideoRetentionDays|paidVideoRetentionDays)\}/g,
         (_match, key: string) => facts[key]);
     }
     if (Array.isArray(value)) return value.map(resolve);

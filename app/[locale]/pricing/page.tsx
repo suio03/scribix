@@ -1,3 +1,4 @@
+import { socialImages } from "@/lib/metadata-url";
 import type { Metadata } from "next";
 import {
   Captions,
@@ -82,7 +83,14 @@ export async function generateMetadata({
       canonical: canonical.toString(),
       languages: pathLanguages(PATH),
     },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("description", PRICING_FACTS),
+      images: socialImages,
+    },
     openGraph: {
+      images: socialImages,
       title: t("ogTitle"),
       description: t("ogDescription"),
       type: "website",

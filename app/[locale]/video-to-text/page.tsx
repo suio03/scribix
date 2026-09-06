@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { auth } from "@/auth";
 import { getPathname, Link } from "@/i18n/navigation";
-import { languageAlternates, urlFor } from "@/lib/metadata-url";
+import { languageAlternates, socialImages, urlFor } from "@/lib/metadata-url";
 import { FAQ } from "@/app/components/FAQ";
 import { Features } from "@/app/components/Features";
 import { FinalCTA } from "@/app/components/FinalCTA";
@@ -38,6 +38,7 @@ export async function generateMetadata({
       languages: languageAlternates(PATH),
     },
     openGraph: {
+      images: socialImages,
       title: t("openGraphTitle"),
       description: t("openGraphDescription"),
       type: "website",
@@ -45,6 +46,7 @@ export async function generateMetadata({
       url: canonical,
     },
     twitter: {
+      images: socialImages,
       card: "summary_large_image",
       title: t("twitterTitle"),
       description: t("twitterDescription"),

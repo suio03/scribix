@@ -2,6 +2,14 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "./Logo";
 
+const TOOL_LINKS = [
+  { key: "videoToText", href: "/video-to-text" },
+  { key: "audioToText", href: "/audio-to-text" },
+  { key: "mp3ToText", href: "/mp3-to-text" },
+  { key: "youtubeToTranscript", href: "/youtube-to-transcript" },
+  { key: "aiNoteTaker", href: "/ai-note-taker" },
+] as const;
+
 const LEGAL_LINKS = [
   { key: "terms", href: "/terms" },
   { key: "privacy", href: "/privacy" },
@@ -51,6 +59,18 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
             {t("tagline")}
           </p>
         </div>
+
+        <nav aria-label={t("toolsLabel")} className="mt-8">
+          <ul className="flex flex-wrap gap-x-6 gap-y-3 text-[13px] text-muted">
+            {TOOL_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="transition hover:text-ink">
+                  {t(`toolLabels.${link.key}`)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-line pt-6 text-[12.5px] text-muted sm:flex-row sm:items-center">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">

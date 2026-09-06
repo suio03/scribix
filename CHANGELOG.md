@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- Added the AI video workspace with candidate selection, per-clip editing, automatic framing, Cloudflare Container rendering, and video/cover downloads.
+- Added D1 migrations `0025`–`0037`; apply and verify them before deploying the video workspace.
+
+### Changed
+- Refreshed the homepage for AI video clipping while retaining dedicated transcription tool pages.
+- Aligned source-video and final-export retention copy with the implemented policies across all six locales.
+
+### Fixed
+- Included all 42 localized public pages and three English legal pages in the sitemap, added crawlable tool links, repaired the organization logo URL, and completed social metadata.
+
 ## [0.26.0] - 2026-08-06
 
 ### Added

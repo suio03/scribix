@@ -1,3 +1,6 @@
+import { PLANS } from "@/lib/plans";
+import { FINAL_EXPORT_RETENTION_DAYS } from "@/lib/video-workspace/retention";
+import { socialImages } from "@/lib/metadata-url";
 import type { Metadata } from "next";
 import NextLink from "next/link";
 import { setRequestLocale } from "next-intl/server";
@@ -7,9 +10,21 @@ import { routing } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "Terms of service for using Scribix transcription.",
-  alternates: {
-    canonical: "https://scribix.io/terms",
+  description: "Terms of service for using Scribix.",
+  alternates: { canonical: "https://scribix.io/terms" },
+  openGraph: {
+    title: "Terms of Service",
+    description: "Terms of service for using Scribix.",
+    url: "https://scribix.io/terms",
+    siteName: "Scribix",
+    type: "website",
+    images: socialImages,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Service",
+    description: "Terms of service for using Scribix.",
+    images: socialImages,
   },
 };
 
@@ -25,7 +40,7 @@ export default async function TermsPage({
   setRequestLocale(locale);
 
   return (
-    <LegalShell title="Terms of Service" updated="May 1, 2026">
+    <LegalShell title="Terms of Service" updated="September 7, 2026">
       <p>
         These terms govern your use of Scribix, a transcription product operated by
         CENDRO LABS PTY LTD (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), and
@@ -88,7 +103,10 @@ export default async function TermsPage({
 
       <H2>Storage &amp; Deletion</H2>
       <p>
-        Audio and video files are deleted automatically 14 days after upload. Transcripts are
+        Audio files are deleted automatically 14 days after upload. Original videos are kept
+        for {PLANS.free.videoSourceRetentionDays} days on Free and {PLANS.pro.videoSourceRetentionDays} days
+        on paid plans. Final videos and covers expire {FINAL_EXPORT_RETENTION_DAYS} days after export.
+        Transcripts are
         retained until you delete them or close your account. Deleting a transcript or your
         account removes our copies; operational processing records are purged on a regular
         cadence as part of standard operations.

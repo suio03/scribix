@@ -19,3 +19,10 @@ export function languageAlternates(path: string): Record<string, string> {
   }
   return languages;
 }
+
+export const socialImages = [{
+  url: `${SITE}/opengraph-image`,
+  width: 1200,
+  height: 630,
+  alt: "Scribix",
+}];

@@ -756,6 +756,14 @@
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",
       "refunds": "Refund Policy"
+    },
+    "toolsLabel": "Tools",
+    "toolLabels": {
+      "videoToText": "Video to Text",
+      "audioToText": "Audio to Text",
+      "mp3ToText": "MP3 to Text",
+      "youtubeToTranscript": "YouTube Transcript",
+      "aiNoteTaker": "AI Note Taker"
     }
   },
   "Dashboard": {
@@ -883,7 +891,7 @@
     "viewer": {
       "back": "← All transcripts",
       "audioExpiredLabel": "Audio expired.",
-      "audioExpiredBody": "Source files are kept for 14 days; the transcript stays as long as you want.",
+      "audioExpiredBody": "Audio is deleted automatically after 14 days. Original videos are kept for {freeVideoRetentionDays} days on Free and {paidVideoRetentionDays} days on paid plans. Transcripts stay until you delete them or close your account.",
       "missing": "Transcript file is missing from storage.",
       "transcribingHint": "Transcribing your audio. This usually takes about a minute per hour of input.",
       "workingHint": "Working on your transcript…",
@@ -1724,7 +1732,7 @@
         {
           "title": "Is your audio private?",
           "body": [
-            "Scribix uses your uploaded audio only to generate and deliver transcripts for your account. Audio and video files are deleted automatically after 14 days.",
+            "Audio is deleted automatically after 14 days. Original videos are kept for {freeVideoRetentionDays} days on Free and {paidVideoRetentionDays} days on paid plans. Transcripts stay until you delete them or close your account.",
             "Transcripts stay in your account until you delete them or close your account. Read the"
           ],
           "link": {
@@ -1803,7 +1811,7 @@
         },
         {
           "q": "Is my audio stored forever?",
-          "a": "No. Scribix's privacy policy says uploaded audio and video files are deleted automatically after 14 days. Transcripts stay in your account until you delete them or close your account."
+          "a": "Audio is deleted automatically after 14 days. Original videos are kept for {freeVideoRetentionDays} days on Free and {paidVideoRetentionDays} days on paid plans. Transcripts stay until you delete them or close your account."
         }
       ]
     },
@@ -1915,7 +1923,7 @@
         },
         {
           "title": "Clear retention controls",
-          "body": "Uploaded audio and video are deleted automatically after 14 days. Transcripts remain until you delete them or close your account."
+          "body": "Audio is deleted automatically after 14 days. Original videos are kept for {freeVideoRetentionDays} days on Free and {paidVideoRetentionDays} days on paid plans. Transcripts stay until you delete them or close your account."
         }
       ]
     },
@@ -2040,7 +2048,7 @@
         },
         {
           "q": "How long does Scribix keep my recordings?",
-          "a": "Uploaded audio and video files are deleted automatically after 14 days. Transcripts remain in your account until you delete them or close your account."
+          "a": "Audio is deleted automatically after 14 days. Original videos are kept for {freeVideoRetentionDays} days on Free and {paidVideoRetentionDays} days on paid plans. Transcripts stay until you delete them or close your account."
         },
         {
           "q": "Can I export my notes?",
@@ -2064,7 +2072,7 @@
           "label": "AI note sections"
         },
         {
-          "value": "14 days",
+          "value": "Audio: 14 days",
           "label": "Media auto-delete"
         }
       ]
@@ -2308,7 +2316,7 @@
         {
           "title": "Is your MP3 private?",
           "body": [
-            "Scribix uses your uploaded MP3 only to generate and deliver transcripts for your account. Audio and video files are deleted automatically after 14 days.",
+            "Audio is deleted automatically after 14 days. Original videos are kept for {freeVideoRetentionDays} days on Free and {paidVideoRetentionDays} days on paid plans. Transcripts stay until you delete them or close your account.",
             "Transcripts stay in your account until you delete them or close your account. Read the"
           ],
           "link": {
@@ -2387,7 +2395,7 @@
         },
         {
           "q": "Is my MP3 stored forever?",
-          "a": "No. Scribix's privacy policy says uploaded audio and video files are deleted automatically after 14 days. Transcripts stay in your account until you delete them or close your account."
+          "a": "Audio is deleted automatically after 14 days. Original videos are kept for {freeVideoRetentionDays} days on Free and {paidVideoRetentionDays} days on paid plans. Transcripts stay until you delete them or close your account."
         },
         {
           "q": "Do I need an account to convert MP3 to text?",
