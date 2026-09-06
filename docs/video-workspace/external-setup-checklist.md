@@ -4,8 +4,8 @@
 
 ## 1. Cloudflare D1 与 R2
 
-1. 先备份生产 D1，再确认待执行 migrations 为 `0025`–`0035`，运行 `npm run db:migrate:remote`。
-2. migration 后执行 `PRAGMA foreign_key_check`，确认无结果；检查两个 `render_jobs_final_*` triggers 存在。
+1. 先备份生产 D1，再运行 `npx wrangler d1 migrations list scribix-db --remote` 核对待执行列表。本次视频工作台所需 migrations 为 `0025`–`0037`；已应用的迁移无需重复执行，使用 `npm run db:migrate:remote` 应用剩余迁移。
+2. migration 后重新查询待执行列表，确认无待应用迁移；执行 `PRAGMA foreign_key_check`，确认无结果。检查两个 `render_jobs_final_*` triggers、`0036` 重建的 preview/final active-scope 唯一索引及 `0037` 新增的 `media_assets.auto_framing_json` 字段存在。
 3. `scribix-media` 保持 private。为浏览器直传配置 CORS，只允许实际产品 origin：
 
 ```json
@@ -46,7 +46,7 @@
 3. 对临时容量不足、冷启动和可重试 5xx 使用有上限的指数退避；穷尽重试进入 DLQ。不得因某个实例暂不可用而丢弃整个批次。
 4. job 成功、失败、取消或超时后强制销毁其 Container。唯一 job ID 不保留 warm instance；定期清理 stuck/orphan instances 和 R2 partial outputs。
 5. source 和 output 通过 Worker/R2 受控传输。R2 输出必须使用已知长度的 stream；禁止在 Worker 内缓冲超大成片，禁止把永久凭证传入容器。
-6. 初始生产 profile 为 1 vCPU / 3 GiB / 6 GB、最多 3 个单任务实例。上线后以真实 1080p 的 p50/p95、失败率和单位成本决定是否增配或扩容。
+6. 当前生产配置（`wrangler.video-render.jsonc`）为 1 vCPU / 3072 MiB / 6000 MB、最多 10 个单任务实例，`VIDEO_RENDER_MAX_CONTAINERS=10`；Queue consumer 的 `max_concurrency=1`、`max_batch_size=10`。本地配置仍限制为 1 个实例。上线后以真实 1080p 的 p50/p95、失败率和单位成本决定是否增配或扩容。
 7. POC 的公开 bearer endpoint 只用于隔离验证；生产入口必须经过 Scribix auth、ownership、job-scoped token 和内部 Queue 流程。
 
 ## 5. 部署与观测
