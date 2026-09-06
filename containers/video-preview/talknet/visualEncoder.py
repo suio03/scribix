@@ -67,7 +67,7 @@ class ResNet(nn.Module):
         self.layer3 = ResNetLayer(128, 256, stride=2)
         self.layer4 = ResNetLayer(256, 512, stride=2)
         self.avgpool = nn.AvgPool2d(kernel_size=(4,4), stride=(1,1))
-        
+
         return
 
 
@@ -148,7 +148,7 @@ class DSConv1d(nn.Module):
 class visualTCN(nn.Module):
     def __init__(self):
         super(visualTCN, self).__init__()
-        stacks = []        
+        stacks = []
         for x in range(5):
             stacks += [DSConv1d()]
         self.net = nn.Sequential(*stacks) # Visual Temporal Network V-TCN

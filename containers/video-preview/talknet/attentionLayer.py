@@ -8,7 +8,7 @@ class attentionLayer(nn.Module):
     def __init__(self, d_model, nhead, dropout=0.1):
         super(attentionLayer, self).__init__()
         self.self_attn = MultiheadAttention(d_model, nhead, dropout=dropout)
-        
+
         self.linear1 = nn.Linear(d_model, d_model * 4)
         self.dropout = nn.Dropout(dropout)
         self.linear2 = nn.Linear(d_model * 4, d_model)
