@@ -145,15 +145,20 @@ the one-time items that are already verified and unchanged.
 - [ ] **Cleanup log alert** — Cloudflare observability alerts on repeated
   `cleanup_r2_delete_failed` events; structured logs exist in code, but the
   persistent production alert must be configured separately.
-- [ ] **Retention policy copy** — update `/privacy` and `/terms` so audio's
-  14-day expiry and plan-specific 7/30/30-day original-video retention agree
-  with `lib/plans.ts` and the cleanup worker before production release.
+- [ ] **Retention policy copy** — verify deployed `/privacy`, `/terms`, tool FAQ
+  copy and FAQ JSON-LD agree with the implemented policy: audio 14 days, original
+  video 7/30/30 days by plan, final video/cover 30 days after export. Source copy
+  has been aligned; production verification remains required.
 
 ## Marketing
 
 - [ ] Submit `https://scribix.io/sitemap.xml` to Google Search Console.
-- [ ] Confirm the sitemap contains `/video-to-text` and `/ai-note-taker` with
-  all six locale alternates.
+- [ ] Confirm the deployed sitemap has 45 unique canonical URLs: seven public
+  routes in six locales, each with reciprocal alternates, plus three English legal
+  pages. Every URL must resolve successfully without a `noindex` signal.
+- [ ] Confirm public footers link to all five localized transcription tools,
+  `/brand/scribix.svg` returns an SVG, tool/pricing pages include a working social
+  image, and legal-page Open Graph URLs match their canonical URLs.
 - [ ] Verify domain in Google Search Console + Bing Webmaster.
 - [ ] OG card preview looks right (`https://scribix.io` → opengraph-image
   served from `app/[locale]/opengraph-image.tsx`).
