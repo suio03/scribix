@@ -1,9 +1,10 @@
+import { publicVideoProperties, type VideoAnalyticsEvent, type VideoAnalyticsProperties } from "./video-workspace/analytics-contract";
 import type { Tier } from "@/lib/plans";
 
 export type AskAiQuestionSource = "starter" | "typed";
 export type AskAiTranscriptSource = "upload" | "recording" | "youtube";
 
-export type PlausibleEvents = {
+export type PlausibleEvents = Record<VideoAnalyticsEvent, VideoAnalyticsProperties> & {
   tool_visit: { tool_slug: string };
   landing_cta_impression: { tool_slug: string };
   landing_cta_click: { tool_slug: string; signed_in: boolean };
@@ -228,6 +229,7 @@ declare global {
         props: PlausibleEvents[K];
       }
     ) => void;
+    gtag?: (command: "event", eventName: string, props: Record<string, unknown>) => void;
     clarity?: (
       command: "event" | "set",
       key: string,
@@ -236,9 +238,9 @@ declare global {
   }
 }
 
-function sendToClarity<K extends keyof PlausibleEvents>(
-  eventName: K,
-  props?: PlausibleEvents[K]
+function sendToClarity(
+  eventName: string,
+  props?: object
 ) {
   if (typeof window === "undefined" || !window.clarity) return;
 
@@ -265,6 +267,30 @@ export function trackEvent<K extends keyof PlausibleEvents>(
   props?: PlausibleEvents[K]
 ) {
   if (typeof window === "undefined") return;
+
+  if (eventName.startsWith("video_")) {
+    const safe = publicVideoProperties(props);
+    // The deployed legacy tracker has no URL override. Keep entity paths out
+    // of these events by using its endpoint with a fixed URL and no referrer.
+    try {
+      if (!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname)
+        && window.localStorage.getItem("plausible_ignore") !== "true") {
+        void fetch("https://actone.app/api/event", {
+          method: "POST", headers: { "content-type": "text/plain" },
+          body: JSON.stringify({ n: eventName, u: "https://scribix.io/video-workspace", d: "scribix.io", r: null, p: safe }),
+          keepalive: true, referrerPolicy: "no-referrer", credentials: "omit",
+        }).catch(() => undefined);
+      }
+    } catch { /* Best effort; storage may be blocked. */ }
+    try {
+      window.gtag?.("event", eventName, {
+        ...safe, page_location: "https://scribix.io/video-workspace",
+        page_referrer: "", page_title: "Video workspace",
+      });
+    } catch { /* Best effort. */ }
+    try { sendToClarity(eventName, safe); } catch { /* Best effort. */ }
+    return;
+  }
 
   try {
     window.plausible?.(eventName, {

@@ -16,7 +16,7 @@ import { ManualFramingEditor } from "@/app/components/ManualFramingEditor";
 import { framingAt } from "@/lib/video-workspace/auto-framing";
 import { VideoStyleControls } from "@/app/components/VideoStyleControls";
 import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
-import { trackVideoWorkspaceEvent } from "@/app/components/video-event-client";
+import { trackVideoFailure, trackVideoWorkspaceEvent } from "@/app/components/video-event-client";
 import type { EditorWorkspace } from "@/lib/video-workspace/editor";
 import {
   FINAL_VIDEO_PRESET,
@@ -137,7 +137,7 @@ export function VideoClipEditor({
         setSaveState(next.restoredDraft && savedSignature === nextSignature ? "saved" : "dirty");
       })
       .catch(() => {
-        if (active) setLoadError(true);
+        if (active) { trackVideoFailure("editor_load"); setLoadError(true); }
       });
     return () => {
       active = false;
@@ -172,10 +172,12 @@ export function VideoClipEditor({
         });
         const payload = await response.json() as { revision?: number; error?: string };
         if (response.status === 409) {
+          trackVideoFailure("editor_save", 409);
           setSaveState("conflict");
           return;
         }
         if (!response.ok || !Number.isInteger(payload.revision)) {
+          trackVideoFailure("editor_save", response.status);
           setSaveState("error");
           return;
         }
@@ -196,6 +198,7 @@ export function VideoClipEditor({
           });
         }
       } catch {
+        trackVideoFailure("editor_save");
         setSaveState("error");
       }
     }, 900);

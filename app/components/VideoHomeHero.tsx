@@ -11,6 +11,7 @@ import {
   useUpload,
 } from "./Uploader";
 import { useLoginModal } from "./LoginModal";
+import { trackVideoAction } from "./video-event-client";
 import { VideoHomeDemo } from "./VideoHomeDemo";
 
 const VIDEO_ACCEPT =
@@ -55,6 +56,7 @@ export function VideoHomeHero({
   const publicHero = !signedIn;
 
   const chooseVideo = () => {
+    trackVideoAction("video_home_cta_click");
     if (!signedIn) {
       openLogin(postSignInPath);
       return;
@@ -110,6 +112,7 @@ export function VideoHomeHero({
             <div className="tool-landing-actions mt-7 flex flex-col justify-center gap-3 sm:flex-row">
               <a
                 href="#upload"
+                onClick={() => trackVideoAction("video_home_cta_click")}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
               >
                 {t("primaryCta")}
@@ -145,7 +148,10 @@ export function VideoHomeHero({
                     event.preventDefault();
                     setDragOver(false);
                     const file = event.dataTransfer.files?.[0];
-                    if (file) acceptVideo(file);
+                    if (file) {
+                      trackVideoAction("video_home_cta_click");
+                      acceptVideo(file);
+                    }
                   }}
                   className={`audio-upload-dropzone rounded-2xl border border-dashed bg-paper/40 px-6 py-12 text-center transition sm:py-16 ${
                     dragOver ? "border-accent bg-accent/5" : "border-line"

@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { FinalRenderSummary } from "@/lib/video-workspace/final-jobs";
-import { trackVideoWorkspaceEvent } from "@/app/components/video-event-client";
+import { observeVideoRenderResults, trackVideoAction, trackVideoWorkspaceEvent } from "@/app/components/video-event-client";
 
 export const ACTIVE_EXPORT_STATUSES = new Set(["queued", "preparing", "running", "uploading"]);
 
@@ -25,6 +25,7 @@ export function VideoExportProvider({ projectId, initialRenders, children }: {
   const [downloadedIds, setDownloadedIds] = useState(new Set<string>());
   const [statusError, setStatusError] = useState(false);
   const pending = useRef(new Set<string>());
+  const observedStatuses = useRef(new Map(initialRenders.map((render) => [render.id, render.status])));
   const mounted = useRef(true);
   const refreshSequence = useRef(0);
   useEffect(() => {
@@ -38,6 +39,7 @@ export function VideoExportProvider({ projectId, initialRenders, children }: {
       if (!response.ok) throw new Error("render_list_failed");
       const payload = await response.json() as { renders: FinalRenderSummary[] };
       if (!mounted.current || sequence !== refreshSequence.current) return;
+      observeVideoRenderResults(observedStatuses.current, payload.renders);
       setRenders(payload.renders);
       setStatusError(false);
     } catch {
@@ -48,6 +50,10 @@ export function VideoExportProvider({ projectId, initialRenders, children }: {
     if (!mounted.current) return;
     // Ignore list responses started before this newly accepted request.
     ++refreshSequence.current;
+    if (ACTIVE_EXPORT_STATUSES.has(render.status) && !ACTIVE_EXPORT_STATUSES.has(observedStatuses.current.get(render.id) ?? "")) {
+      trackVideoAction("video_render_requested");
+    }
+    observedStatuses.current.set(render.id, render.status);
     pending.current.add(render.id);
     setRenders((current) => [render, ...current.filter((item) => item.id !== render.id)]);
   }, []);

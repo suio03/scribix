@@ -13,6 +13,7 @@ Because it targets the Workers runtime, all server code must be edge-compatible:
 ```bash
 npm run dev                 # Next dev server (webpack). User runs this themselves — don't auto-start it.
 npm run build               # Production Next build — the primary validation gate (there is no test runner).
+npm run test:video-tracking # Browser event filtering, collector isolation, and render transitions.
 npm run test:video-workspace # Video contracts, candidate completeness, limits, and operations tests.
 npm run test:video-security # Container image/config/security assertions; optional TRIVY_IMAGE scan.
 npm run preview             # OpenNext build + Cloudflare preview with REMOTE bindings
@@ -69,6 +70,10 @@ Preview and final jobs use Cloudflare Queue plus one Cloudflare Container per jo
 Editor time fields use original-video timecodes, and caption correction rows show each cue's original-source interval. Audio has no user controls: drafts are normalized to 0 dB gain, no loudness normalization, and no fades so final exports retain the original source sound. Uploaded logos can be selected, replaced, or removed; removal deletes both the project asset record and its R2 object.
 
 The current product information architecture separates video projects from transcript-only work. `/dashboard` lists video projects, `/dashboard/new` starts the video-clipping upload flow, and `/dashboard/transcripts` owns transcript-only creation and history. Authenticated product routes use `WorkspaceChrome` and `WorkspaceSidebar`; public and tool pages use `LandingChrome` with `ProductTopbar`, while the signed-out AI clipper homepage has its dedicated `VideoHomeHeader`. The approved Prism Pulse visual rules and semantic color roles live in `design-exploration/design-system.md`; keep fixed inverse styling for real source/output proof and export previews.
+
+## Video tracking
+
+Use the existing analytics platforms through `trackVideoAction` and `trackVideoFailure` in `app/components/video-event-client.ts`. Video events allow only approved plan, size, duration, elapsed-time and classified-error properties; entity IDs and content must not be exported. Render outcome events observe transitions through existing polling, so closed pages can miss outcomes and historical results are not replayed. Use existing render-job records for backend diagnostics. Do not introduce a separate tracking database or replay mechanism. Definitions, fixed event URL handling and verification are in `docs/video-workspace/tracking.md`.
 
 ## YouTube captions and extension
 

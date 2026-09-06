@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- Added browser tracking events across homepage CTA, upload, candidates, editing and exports, with bounded properties for existing Plausible, GA4 and Clarity destinations. No database migration is required.
 - Added the AI video workspace with candidate selection, per-clip editing, automatic framing, Cloudflare Container rendering, and video/cover downloads.
 - Added D1 migrations `0025`–`0037`; apply and verify them before deploying the video workspace.
 

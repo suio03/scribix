@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { Clock3, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { trackVideoAction } from "./video-event-client";
 import { trackEvent, UPLOAD_PIPELINE_VERSION } from "@/lib/analytics";
 import { AUDIO_EXTENSIONS, VIDEO_EXTENSIONS } from "@/lib/media-upload";
 import { PLANS, type Tier } from "@/lib/plans";
@@ -378,6 +379,9 @@ export function useUpload({
             step: "multipart_init",
           };
           trackEvent("direct_video_upload_started", directProps);
+          trackVideoAction("video_upload_started", {
+            plan_tier: tier, file_size_mb: fileSizeMb(file.size), duration_sec: uploadDurationSec,
+          });
         }
 
         step = directVideo ? "multipart init" : "single upload init";
@@ -407,6 +411,7 @@ export function useUpload({
         };
         transcriptId = init.transcriptId;
         videoProjectId = init.projectId;
+        if (videoProjectId) trackVideoAction("video_project_created", { plan_tier: tier });
 
         step = directVideo ? "uploading video" : "uploading audio";
         setPhase("uploading");
@@ -437,6 +442,10 @@ export function useUpload({
             durationSec: uploadDurationSec,
             startedAt: uploadStartedAt,
           }));
+          trackVideoAction("video_upload_completed", {
+            plan_tier: tier, file_size_mb: fileSizeMb(file.size), duration_sec: uploadDurationSec,
+            elapsed_ms: Date.now() - uploadStartedAt,
+          });
           directUploadCompleted = true;
           activeDirectUploadRef.current = null;
         } else {
@@ -588,6 +597,10 @@ export function useUpload({
           });
         }
         if (directVideo && directUploadStarted && !directUploadCompleted) {
+          trackVideoAction("video_upload_failed", {
+            plan_tier: tier, elapsed_ms: Date.now() - uploadStartedAt,
+            file_size_mb: fileSizeMb(file.size), error_code: "upload_failed",
+          });
           trackEvent("direct_video_upload_failed", {
             ...directVideoAnalytics({
               fallbackReason,

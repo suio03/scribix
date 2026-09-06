@@ -3,6 +3,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { trackVideoAction } from "./video-event-client";
 import { Logo } from "./Logo";
 import { useLoginModal } from "./LoginModal";
 
@@ -43,6 +44,7 @@ export function VideoHomeHeader({ postSignInPath }: { postSignInPath: string }) 
           </button>
           <a
             href="#upload"
+            onClick={() => trackVideoAction("video_home_cta_click")}
             className="inline-flex items-center gap-2 rounded-full bg-[#f7f5f0] px-4 py-2.5 text-[13px] font-semibold text-[#11110f] transition hover:-translate-y-0.5 hover:bg-white"
           >
             {headerT("tryFree")}

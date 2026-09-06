@@ -1,5 +1,6 @@
 "use client";
 
+import { trackVideoAction, trackVideoFailure } from "./video-event-client";
 import { useState } from "react";
 import { Clapperboard, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -15,16 +16,20 @@ export function CreateVideoProjectButton({ transcriptId }: { transcriptId: strin
     if (busy) return;
     setBusy(true);
     setError(false);
+    let status = 0;
     try {
       const response = await fetch("/api/video-projects", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ transcriptId }),
       });
-      const payload = (await response.json()) as { projectId?: string };
+      status = response.status;
+      const payload = (await response.json()) as { projectId?: string; existing?: boolean };
       if (!response.ok || !payload.projectId) throw new Error("project_create_failed");
+      if (payload.existing === false) trackVideoAction("video_project_created");
       router.push(`/dashboard/video-projects/${payload.projectId}`);
     } catch {
+      trackVideoFailure("project", status);
       setError(true);
       setBusy(false);
     }

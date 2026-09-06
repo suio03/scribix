@@ -8,6 +8,7 @@ Scribix is a Next.js App Router project deployed through OpenNext on Cloudflare.
 
 - `npm run dev`: start the Next.js dev server using webpack.
 - `npm run check-locales`: verify locale key/type/array-length parity, message placeholders, and structural-field boundaries.
+- `npm run test:video-tracking`: verify event property filtering, collector isolation, and render-transition tracking with mocked collectors.
 - `npm run test:video-workspace`: run the video workspace contract, validation, access, and rendering-boundary tests.
 - `npm run build`: run the production Next.js build; use this as baseline validation.
 - `npm run build:cloudflare`: build the OpenNext Worker used by the full local video export environment.
@@ -27,6 +28,8 @@ Scribix is a Next.js App Router project deployed through OpenNext on Cloudflare.
 Use TypeScript with `strict` enabled and the `@/*` path alias for root imports. Follow existing two-space indentation, double-quoted strings, named exports, and PascalCase component filenames such as `TranscriptViewer.tsx`. Route handlers export HTTP methods from `route.ts`. Add `"use client"` only where browser APIs or hooks require it. Follow the approved Prism Pulse system in `design-exploration/design-system.md` and reuse semantic Tailwind tokens such as `bg-paper`, `border-line`, and `font-display`; fixed inverse colors are reserved for media and proof surfaces whose appearance must not change with the app theme.
 
 Homepage media behavior, source licenses and proof-versus-demo boundaries are documented in `docs/homepage-media.md`; follow that guide when changing marketing videos.
+
+Video tracking uses the existing analytics platforms and browser action/status events. Keep event properties within the allowlist in `lib/video-workspace/analytics-contract.ts`; do not add tracking tables or replay infrastructure. Event semantics and validation live in `docs/video-workspace/tracking.md`.
 
 ## Internationalization Boundaries
 

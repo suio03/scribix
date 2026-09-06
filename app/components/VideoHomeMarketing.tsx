@@ -1,3 +1,4 @@
+import { VideoUploadLink } from "./VideoUploadLink";
 import Image from "next/image";
 import {
   AudioLines,
@@ -202,13 +203,12 @@ export async function VideoHomeMarketing() {
               <p className="mt-6 max-w-[52ch] text-[16px] leading-[1.75] text-muted">
                 {t("final.body")}
               </p>
-              <a
-                href="#video-upload"
+              <VideoUploadLink
                 className="mt-8 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[14px] font-semibold text-paper transition hover:-translate-y-0.5 hover:bg-accent"
               >
                 {t("final.cta")}
                 <CloudUpload size={16} strokeWidth={1.8} />
-              </a>
+              </VideoUploadLink>
             </div>
             <div
               className="relative mx-auto hidden h-[330px] w-[200px] lg:block"

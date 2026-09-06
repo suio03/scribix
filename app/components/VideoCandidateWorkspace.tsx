@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { trackVideoAction, trackVideoFailure } from "./video-event-client";
 import { VideoExportProvider } from "@/app/components/VideoExportProvider";
 import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
 import {
@@ -203,6 +204,9 @@ function VideoCandidateWorkspaceContent({
     if (generating) return;
     setStatus("analyzing");
     setError(false);
+    const startedAt = Date.now();
+    trackVideoAction("video_candidates_started");
+    let requestStatus = 0;
     try {
       const response = await fetch(`/api/video-projects/${projectId}/candidates`, {
         method: "POST",
@@ -212,13 +216,18 @@ function VideoCandidateWorkspaceContent({
         candidates?: StoredClipCandidate[];
         previews?: CandidatePreview[];
       };
+      requestStatus = response.status;
       if (!response.ok || !payload.candidates) throw new Error("candidate_generation_failed");
+      trackVideoAction(payload.status === "editing" ? "video_manual_clip_ready" : "video_candidates_completed", {
+        elapsed_ms: Date.now() - startedAt,
+      });
       replaceWorkspace(
         payload.candidates,
         payload.previews ?? [],
         payload.status ?? "candidates_ready"
       );
     } catch {
+      trackVideoFailure("generation", requestStatus);
       setStatus(candidates.length > 0 ? "candidates_ready" : "failed");
       setError(true);
     }
@@ -228,6 +237,7 @@ function VideoCandidateWorkspaceContent({
     if (manualBusy || generating) return;
     setManualBusy(true);
     setError(false);
+    let requestStatus = 0;
     try {
       const response = await fetch(`/api/video-projects/${projectId}/candidates`, {
         method: "POST",
@@ -240,6 +250,7 @@ function VideoCandidateWorkspaceContent({
         previews?: CandidatePreview[];
         candidateId?: string;
       };
+      requestStatus = response.status;
       if (!response.ok || !payload.candidates?.some((candidate) => (
         candidate.origin === "manual"
       ))) {
@@ -250,8 +261,10 @@ function VideoCandidateWorkspaceContent({
         payload.previews ?? [],
         payload.status ?? "editing"
       );
+      trackVideoAction("video_manual_clip_ready");
       if (payload.candidateId) setSelectedCandidateId(payload.candidateId);
     } catch {
+      trackVideoFailure("manual", requestStatus);
       setError(true);
     } finally {
       setManualBusy(false);
@@ -281,6 +294,7 @@ function VideoCandidateWorkspaceContent({
   };
 
   const selectCandidate = (candidateId: string) => {
+    trackVideoAction("video_candidate_selected");
     if (candidateId === selectedCandidateId) {
       editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       return;

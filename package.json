@@ -5,6 +5,7 @@
   "scripts": {
     "prebuild": "npm run check-locales",
     "check-locales": "node scripts/check-locales.mjs",
+    "test:video-tracking": "node --test scripts/test-video-tracking.mjs",
     "test:video-workspace": "node scripts/test-video-workspace-contracts.mjs",
     "test:video-export-monitor": "node --test scripts/test-video-export-monitor.mjs",
     "test:export-archive": "node --test scripts/export-archive.test.mjs",

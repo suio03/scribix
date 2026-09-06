@@ -1,5 +1,6 @@
 "use client";
 
+import { trackVideoFailure } from "./video-event-client";
 import { Download, Film, MoreHorizontal, Loader2, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -76,18 +77,21 @@ export function FinalRenderPanel({
         }),
       });
       if (response.status === 409) {
+        trackVideoFailure("export", 409);
         if (generatedOnly) setError("generic");
         else onConflict();
         return;
       }
       const payload = await response.json() as { render?: FinalRenderSummary; error?: string };
       if (response.status === 429) {
+        trackVideoFailure("export", 429);
         setError("limit");
         return;
       }
       if (!response.ok || !payload.render) throw new Error("render_create_failed");
       watch(payload.render);
     } catch {
+      trackVideoFailure("export");
       setError("generic");
     } finally {
       setBusy(false);
@@ -103,6 +107,7 @@ export function FinalRenderPanel({
         { method }
       );
       if (response.status === 429) {
+        trackVideoFailure("export", 429);
         setError("limit");
         return;
       }
@@ -115,6 +120,7 @@ export function FinalRenderPanel({
         onExportDeleted?.();
       }
     } catch {
+      trackVideoFailure("export");
       setError("generic");
     } finally {
       setBusy(false);
