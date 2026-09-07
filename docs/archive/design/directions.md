@@ -1,5 +1,7 @@
 # Scribix design theses
 
+> 历史归档（2026-09-08）：保留当时的方案和验证记录；下文的状态、额度、限制、部署结论及待办不代表当前事实。现行资料见 [文档导航](../../README.md)。文中的代码路径以仓库根目录为基准。
+
 All four directions use the same homepage content, actions, data, and functional order. They are intentionally different in composition, hierarchy, typography, color behavior, material, shape, imagery, and motion.
 
 #### 01 — Prism Pulse

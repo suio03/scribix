@@ -8,6 +8,7 @@
 - Added D1 migrations `0025`–`0037`; apply and verify them before deploying the video workspace.
 
 ### Changed
+- Organized current documentation, archived historical plans and design studies, and recorded acquisition and clipping-product research; removed obsolete logo exploration assets while preserving production masters.
 - Refreshed the homepage for AI video clipping while retaining dedicated transcription tool pages.
 - Aligned source-video and final-export retention copy with the implemented policies across all six locales.
 

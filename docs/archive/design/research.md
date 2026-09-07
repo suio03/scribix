@@ -1,5 +1,7 @@
 # Scribix visual direction research
 
+> 历史归档（2026-09-08）：保留当时的方案和验证记录；下文的状态、额度、限制、部署结论及待办不代表当前事实。现行资料见 [文档导航](../../README.md)。文中的代码路径以仓库根目录为基准。
+
 Research date: 2026-09-03
 Surface: public marketing homepage for a desktop-first web product
 

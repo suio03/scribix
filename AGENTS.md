@@ -10,7 +10,7 @@ Scribix is a Next.js App Router project deployed through OpenNext on Cloudflare.
 - `npm run check-locales`: verify locale key/type/array-length parity, message placeholders, and structural-field boundaries.
 - `npm run test:video-tracking`: verify event property filtering, collector isolation, and render-transition tracking with mocked collectors.
 - `npm run test:video-workspace`: run the video workspace contract, validation, access, and rendering-boundary tests.
-- `npm run build`: run the production Next.js build; use this as baseline validation.
+- `npm run build`: run the production Next.js build; baseline validation for application code or configuration changes.
 - `npm run build:cloudflare`: build the OpenNext Worker used by the full local video export environment.
 - `npm run dev:video-workspace`: run the app, local D1/Queue/Container bindings, and the shared remote media bucket after the Cloudflare build.
 - `npm run start`: serve a previously built Next.js app.
@@ -37,7 +37,7 @@ Keep `messages/*.json` limited to user-facing copy and localized format template
 
 ## Testing Guidelines
 
-There is no dedicated test runner or `npm test` script. For changes, run `npm run build` and manually verify affected flows in `npm run dev`, especially upload, recording, transcript status/export, billing, auth, and localized pages. If adding tests, colocate them near the code or use `__tests__/`, name files `*.test.ts` or `*.test.tsx`, and add the command to `package.json`.
+There is no dedicated test runner or `npm test` script; use the existing targeted scripts above. Run `npm run build` for application code or configuration changes. Run `check-locales` for locale changes and the relevant video tests for video tracking or workspace changes. Inspect affected UI and interaction behavior in `npm run dev`. Documentation-only or comment-only edits need content and reference checks, not an application build. If adding tests, colocate them near the code or use `__tests__/`, name files `*.test.ts` or `*.test.tsx`, and add the command to `package.json`.
 
 ## Commit & Pull Request Guidelines
 

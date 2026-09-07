@@ -1,5 +1,7 @@
 # Scribix v1 — Historical Implementation Plan
 
+> 历史归档（2026-09-08）：保留当时的方案和验证记录；下文的状态、额度、限制、部署结论及待办不代表当前事实。现行资料见 [文档导航](../../README.md)。文中的代码路径以仓库根目录为基准。
+
 Reference architecture: `/Users/laughingli/Documents/side-projects/pixfy`. We borrow the patterns, polish what's worth polishing, and drop what doesn't apply to a transcription product.
 
 This document is an archived v1 planning artifact. It preserves early design context, but it is not the current source of truth for implementation, billing, quotas, or operations. Prefer the code, `CLAUDE.md`, `docs/manual-setup.md`, and `docs/runbooks/` for current facts.

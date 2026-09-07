@@ -6,7 +6,7 @@ JSON for every job we ever submitted. This monthly job purges them and then
 hard-deletes the soft-deleted rows.
 
 This satisfies GDPR Article 17's "without undue delay" with a defined cadence.
-See `docs/progress.md` §11 for the design rationale (per-delete API call
+See `docs/archive/plans/progress.md` §11 for the design rationale (per-delete API call
 replaced by monthly bulk).
 
 ## When

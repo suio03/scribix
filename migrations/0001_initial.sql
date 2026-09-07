@@ -1,4 +1,4 @@
--- Scribix v1 initial schema. Source of truth: docs/progress.md §5.
+-- Scribix v1 initial schema. Historical design: docs/archive/plans/progress.md §5.
 
 -- Users
 CREATE TABLE users (

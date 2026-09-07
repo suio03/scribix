@@ -1,11 +1,13 @@
 # Scribix Collections 与 Transcript AI Workspace 实施计划
 
+> 未来规划：Collections 与 Ask AI v2 尚未作为本次工作实施；本文不代表当前产品合同或开发承诺。Ask AI 现行边界见 [现行说明](../transcript-ask-ai.md)。
+
 > 状态：Collections 尚未实施；Transcript Ask AI v1 已完成，后续仅保留 v2 规划
 > 创建日期：2026-07-27  
 > 当前范围：第一阶段、第二阶段  
 > 延后范围：第三阶段 Collection AI 及场景化能力
 
-Ask AI v1 的已实现边界与验证项以 `docs/plan-transcript-ask-ai.md` 为准。本文件中的 Ask AI 多会话、引用和结构化 AI Notes 仅表示未来 v2 方向。
+Ask AI v1 的已实现边界与验证项以 `docs/transcript-ask-ai.md` 为准。本文件中的 Ask AI 多会话、引用和结构化 AI Notes 仅表示未来 v2 方向。
 
 ## 1. 已确认的产品方向
 
@@ -80,7 +82,7 @@ Ask AI v1 的已实现边界与验证项以 `docs/plan-transcript-ask-ai.md` 为
 
 - 当前 `GET/POST/DELETE /api/transcripts/[id]/chat` 为每份已完成 transcript 提供一个持久化对话，Transcript Workspace 默认显示 Ask AI，并可切换 AI Notes；Export 位于独立 modal。
 - Ask AI v1 没有 citations、多会话或 Collection 范围检索。Free 与 grandfathered Starter 账户终身 3 次成功提问，Pro 每 allowance period 300 次。
-- Privacy、删除语义和匿名 analytics 已覆盖 Ask AI；当前实现与剩余生产验证以 `docs/plan-transcript-ask-ai.md` 为准。
+- Privacy、删除语义和匿名 analytics 已覆盖 Ask AI；当前实现与剩余生产验证以 `docs/transcript-ask-ai.md` 为准。
 
 ## 5. 当前明确不做的内容
 
