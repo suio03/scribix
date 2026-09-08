@@ -44,7 +44,8 @@
     "deploy:cleanup": "wrangler deploy -c wrangler.cleanup.jsonc",
     "deploy:video-render": "wrangler deploy -c wrangler.video-render.jsonc",
     "deploy:cloudflare-video-poc": "wrangler deploy -c wrangler.video-container-poc.jsonc --x-autoconfig=false",
-    "test:free-quota": "node --test scripts/test-free-quota.mjs"
+    "test:free-quota": "node --test scripts/test-free-quota.mjs",
+    "test:payments": "node --test tests/payment-notifications.test.cjs"
   },
   "dependencies": {
     "@cloudflare/containers": "^0.3.7",

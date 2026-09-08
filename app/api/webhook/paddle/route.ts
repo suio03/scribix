@@ -1,3 +1,5 @@
+import { sendPaymentNotification } from "@/lib/payment-notification";
+import { paddlePaymentDetails, paddlePaymentKind, type PaddlePaymentData } from "@/lib/paddle-payment-notification";
 import { cf } from "@/lib/cf";
 import { discordAlert } from "@/lib/discord";
 import { getPaddleTransaction, paddleEnvironment, verifyPaddleSignature } from "@/lib/paddle";
@@ -12,7 +14,7 @@ type PaddleWebhookEvent = {
   data?: PaddleTransaction | PaddleSubscription | PaddleAdjustment;
 };
 
-type PaddleTransaction = {
+type PaddleTransaction = PaddlePaymentData & {
   id?: string;
   status?: string;
   customer_id?: string | null;
@@ -69,6 +71,8 @@ type PaddlePeriod = {
 
 type UserBillingRow = {
   id: string;
+  email: string;
+  country: string | null;
   tier: Tier;
   billing_cycle: BillingCycle | null;
   customer_id: string | null;
@@ -79,6 +83,7 @@ type UserBillingRow = {
 
 const HANDLED_EVENT_TYPES = new Set([
   "transaction.completed",
+  "transaction.payment_failed",
   "subscription.activated",
   "subscription.updated",
   "subscription.canceled",
@@ -317,8 +322,11 @@ async function processPaddleEvent(env: CloudflareEnv, event: PaddleWebhookEvent)
     case "subscription.paused":
       await handleSubscriptionEnded(env, event.data as PaddleSubscription, event.occurred_at);
       return;
+    case "transaction.payment_failed":
+      await notifyTransaction(env, event.data as PaddleTransaction, true);
+      return;
     case "subscription.past_due":
-      await handleSubscriptionPastDue(env, event.data as PaddleSubscription);
+      // The transaction.payment_failed event owns the failure alert (includes amount/reason).
       return;
     case "adjustment.created":
     case "adjustment.updated":
@@ -417,13 +425,7 @@ async function handleTransactionCompleted(
     ),
   ]);
 
-  await discordAlert("checkout_success", {
-    Project: "scribix",
-    userId,
-    tier: plan.tier,
-    cycle: plan.cycle,
-    transactionId,
-  });
+  await notifyTransaction(env, transaction, false, userId);
 }
 
 async function handleAdjustment(
@@ -571,13 +573,22 @@ async function handleSubscriptionEnded(
   });
 }
 
-async function handleSubscriptionPastDue(env: CloudflareEnv, subscription: PaddleSubscription) {
-  const user = await findBillingUser(env.DB, subscription.custom_data?.userId, subscription.customer_id);
-  await discordAlert("payment_failed", {
-    userId: user?.id,
-    customerId: subscription.customer_id,
-    subscriptionId: subscription.id,
+async function notifyTransaction(env: CloudflareEnv, transaction: PaddleTransaction, failed: boolean, resolvedUserId?: string) {
+  const plan = findPaddlePlanByPriceId(env, priceIdFromTransaction(transaction,
+    (id) => Boolean(findPaddlePlanByPriceId(env, id))));
+  let user: UserBillingRow | null = null;
+  try {
+    user = await findBillingUser(env.DB, resolvedUserId || transaction.custom_data?.userId, transaction.customer_id);
+  } catch { console.error("Payment notification account lookup failed"); }
+  const details = await paddlePaymentDetails(transaction, user, {
+    apiKey: env.PADDLE_API_KEY, environment: env.NEXT_PUBLIC_PADDLE_ENV,
   });
+  await sendPaymentNotification({
+    project: "Scribix", provider: "Paddle", failed,
+    kind: paddlePaymentKind(transaction.origin, true),
+    plan: plan ? (plan.tier === "pro" ? "Creator" : "Starter") : undefined, cycle: plan?.cycle,
+    sandbox: env.NEXT_PUBLIC_PADDLE_ENV !== "production", ...details,
+  }, env.DISCORD_CHECKOUT_WEBHOOK_URL);
 }
 
 async function findBillingUser(
@@ -588,7 +599,7 @@ async function findBillingUser(
   if (userId) {
     const byId = await db
       .prepare(
-        `SELECT id, tier, billing_cycle, customer_id, subscription_id, period_started_at, period_ends_at
+        `SELECT id, email, country, tier, billing_cycle, customer_id, subscription_id, period_started_at, period_ends_at
            FROM users
           WHERE id = ?1 AND deleted_at IS NULL`
       )
@@ -599,7 +610,7 @@ async function findBillingUser(
   if (customerId?.startsWith("ctm_")) {
     return db
       .prepare(
-        `SELECT id, tier, billing_cycle, customer_id, subscription_id, period_started_at, period_ends_at
+        `SELECT id, email, country, tier, billing_cycle, customer_id, subscription_id, period_started_at, period_ends_at
            FROM users
           WHERE customer_id = ?1 AND deleted_at IS NULL`
       )
