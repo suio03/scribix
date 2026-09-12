@@ -26,6 +26,8 @@ import {
 } from "@/app/components/VideoClipEditor";
 import { Link } from "@/i18n/navigation";
 import type { StoredClipCandidate } from "@/lib/video-workspace/candidates";
+import { SelectionRequestForm } from "./SelectionRequestForm";
+import { DEFAULT_SELECTION, type SelectionRequirements, type SelectionState } from "@/lib/video-workspace/selection";
 import { VIDEO_WORKSPACE_LIMITS } from "@/lib/video-workspace/contracts";
 import type { CandidatePreview } from "@/lib/video-workspace/preview-jobs";
 import type { FinalRenderSummary } from "@/lib/video-workspace/final-jobs";
@@ -63,6 +65,13 @@ function VideoCandidateWorkspaceContent({
   canEdit: boolean;
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
+  const ts = useTranslations("Dashboard.videoCandidates.selection");
+  const [requirements, setRequirements] = useState<SelectionRequirements>(DEFAULT_SELECTION);
+  const [selection, setSelection] = useState<SelectionState | null>(null);
+  const [transcriptId, setTranscriptId] = useState<string | null>(null);
+  const [transcriptReady, setTranscriptReady] = useState(false);
+  const [selectionLoaded, setSelectionLoaded] = useState(false);
+  const [unsupported, setUnsupported] = useState(false);
   const [status, setStatus] = useState<ProjectStatus>(initialStatus);
   const [candidates, setCandidates] = useState(initialCandidates);
   const [previews, setPreviews] = useState(initialPreviews);
@@ -80,7 +89,7 @@ function VideoCandidateWorkspaceContent({
   const [deleteBusy, setDeleteBusy] = useState(false);
   const autoStartedRef = useRef(false);
   const editorRef = useRef<HTMLDivElement>(null);
-  const generating = sourceAvailable && status === "analyzing";
+  const generating = sourceAvailable && (status === "analyzing" || status === "waiting");
   const shortSource = Boolean(
     canEdit && sourceDurationMs &&
     sourceDurationMs <= VIDEO_WORKSPACE_LIMITS.directEditMaxSourceDurationMs
@@ -92,6 +101,21 @@ function VideoCandidateWorkspaceContent({
   const previewsActive = previews.some((preview) => (
     preview.status === "queued" || preview.status === "processing"
   ));
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/video-projects/${projectId}/candidates`).then(async response => {
+      if (!response.ok) return;
+      const data = await response.json() as { selection?: SelectionState; status?: string; transcriptReady?: boolean; transcriptId?: string };
+      if (cancelled) return;
+      if (data.selection) { setSelection(data.selection); setRequirements(data.selection.requirements); }
+      if (data.status) setStatus(data.status);
+      setTranscriptReady(Boolean(data.transcriptReady));
+      setTranscriptId(data.transcriptId ?? null);
+      setSelectionLoaded(true);
+    }).catch(() => setError(true));
+    return () => { cancelled = true; };
+  }, [projectId]);
 
   const deleteCustomClip = async () => {
     if (!candidateToDelete || deleteBusy) return;
@@ -121,16 +145,21 @@ function VideoCandidateWorkspaceContent({
   };
 
   useEffect(() => {
-    if (!generating) return;
+    if (!generating && (transcriptReady || !transcriptId)) return;
     const poll = window.setInterval(async () => {
       try {
+        if (!transcriptReady && transcriptId) await fetch(`/api/transcripts/${transcriptId}/status`, { cache: "no-store" });
         const response = await fetch(`/api/video-projects/${projectId}/candidates`);
         if (!response.ok) return;
         const payload = (await response.json()) as {
+          transcriptReady?: boolean;
+          selection?: SelectionState;
           status?: string;
           candidates?: StoredClipCandidate[];
           previews?: CandidatePreview[];
         };
+        if (payload.selection) setSelection(payload.selection);
+        setTranscriptReady(Boolean(payload.transcriptReady));
         if (payload.status && payload.status !== "analyzing") {
           setStatus(payload.status);
           if (payload.candidates) setCandidates(payload.candidates);
@@ -141,7 +170,7 @@ function VideoCandidateWorkspaceContent({
       }
     }, 3_000);
     return () => window.clearInterval(poll);
-  }, [generating, projectId]);
+  }, [generating, projectId, transcriptReady, transcriptId]);
 
   useEffect(() => {
     if (!previewsActive) return;
@@ -201,24 +230,32 @@ function VideoCandidateWorkspaceContent({
   };
 
   const generate = async () => {
-    if (generating) return;
+    if (status === "analyzing") return;
+    setUnsupported(false);
     setStatus("analyzing");
     setError(false);
     const startedAt = Date.now();
-    trackVideoAction("video_candidates_started");
+    if (status !== "waiting") trackVideoAction("video_candidates_started");
     let requestStatus = 0;
     try {
       const response = await fetch(`/api/video-projects/${projectId}/candidates`, {
         method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ requirements, requestId: crypto.randomUUID(), adjust: selection?.outcome === "empty" }),
       });
       const payload = (await response.json()) as {
+        selection?: SelectionState;
+        error?: string;
         status?: string;
         candidates?: StoredClipCandidate[];
         previews?: CandidatePreview[];
       };
       requestStatus = response.status;
+      if (payload.selection) setSelection(payload.selection);
+      if (payload.error === "unsupported_selection") { setUnsupported(true); setStatus("draft"); return; }
+      if (payload.error === "candidate_generation_active") return;
       if (!response.ok || !payload.candidates) throw new Error("candidate_generation_failed");
-      trackVideoAction(payload.status === "editing" ? "video_manual_clip_ready" : "video_candidates_completed", {
+      if (payload.status !== "waiting") trackVideoAction(payload.status === "editing" ? "video_manual_clip_ready" : "video_candidates_completed", {
         elapsed_ms: Date.now() - startedAt,
       });
       replaceWorkspace(
@@ -227,6 +264,13 @@ function VideoCandidateWorkspaceContent({
         payload.status ?? "candidates_ready"
       );
     } catch {
+      try {
+        const current = await fetch(`/api/video-projects/${projectId}/candidates`).then(response => response.json()) as { selection?: SelectionState; status?: string; candidates?: StoredClipCandidate[]; previews?: CandidatePreview[] };
+        if (current.status === "analyzing" || (current.candidates?.length ?? 0) > 0) {
+          replaceWorkspace(current.candidates ?? [], current.previews ?? [], current.status ?? "candidates_ready"); return;
+        }
+        if (current.selection) { setSelection(current.selection); setRequirements(current.selection.requirements); }
+      } catch { /* The original error remains visible. */ }
       trackVideoFailure("generation", requestStatus);
       setStatus(candidates.length > 0 ? "candidates_ready" : "failed");
       setError(true);
@@ -312,12 +356,16 @@ function VideoCandidateWorkspaceContent({
 
   useEffect(() => {
     if (
-      !sourceAvailable || autoStartedRef.current || status !== "draft" || candidates.length > 0 ||
+      !shortSource || !transcriptReady || !sourceAvailable || autoStartedRef.current || status !== "draft" || candidates.length > 0 ||
       generating || manualBusy
     ) return;
     autoStartedRef.current = true;
-    void (shortSource ? startManualEdit() : generate());
-  }, [candidates.length, generating, manualBusy, shortSource, sourceAvailable, status]);
+    void startManualEdit();
+  }, [candidates.length, generating, manualBusy, shortSource, sourceAvailable, status, transcriptReady]);
+
+  useEffect(() => {
+    if (status === "waiting" && transcriptReady) void generate();
+  }, [status, transcriptReady]);
 
   return (
     <section id="clips" className="mt-9 scroll-mt-6">
@@ -349,18 +397,14 @@ function VideoCandidateWorkspaceContent({
               {manualBusy ? t("directEditing") : t("createCustomClip")}
             </button>
           ) : null
-        ) : status === "failed" ? (
-          <button
-            type="button"
-            onClick={() => void generate()}
-            disabled={generating}
-            className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-[12px] font-medium text-ink transition hover:border-ink/35 hover:bg-ink hover:text-paper disabled:cursor-wait disabled:opacity-40"
-          >
-            {generating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
-            {generating ? t("generating") : t("tryAgain")}
-          </button>
         ) : null}
       </div>
+
+      {status === "transcript_failed" ? <p role="alert" className="mt-5 rounded-xl border border-line p-4 text-sm">{ts("transcriptFailed")} {transcriptId ? <Link className="underline" href={`/dashboard/transcripts/${transcriptId}`}>{ts("reviewTranscript")}</Link> : null}</p> : null}
+      {selectionLoaded && status !== "transcript_failed" && sourceAvailable && !shortSource && !generating && candidates.length === 0 && selection?.outcome !== "matched" ? (
+        <SelectionRequestForm requirements={requirements} selection={selection} unsupported={unsupported} onChange={setRequirements} onStart={() => void generate()} />
+      ) : null}
+      {candidates.length > 0 && selection ? <p className="mt-4 text-sm text-ink/60">{ts("summary")}: {selection.requirements.mode === "auto" ? ts("auto") : `${selection.requirements.topic} · ${ts(`kinds.${selection.requirements.kind}`)}`}</p> : null}
 
       {!sourceAvailable ? (
         <div className="mt-5 flex items-center gap-2 rounded-xl border border-amber-300/35 bg-amber-100/35 px-4 py-3 text-xs text-amber-900 dark:bg-amber-400/10 dark:text-amber-100">
@@ -370,12 +414,12 @@ function VideoCandidateWorkspaceContent({
       ) : null}
 
       {error ? (
-        <p className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-800">
+        <p role="alert" className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-800">
           {t("requestFailed")}
         </p>
       ) : null}
 
-      {generating ? <CandidateSkeleton label={t("analyzingBody")} /> : null}
+      {generating ? <CandidateSkeleton label={status === "waiting" ? ts("waiting") : t("analyzingBody")} /> : null}
 
       {!sourceAvailable && candidates.length === 0 ? (
         <div className="mt-8 grid min-h-64 place-items-center rounded-2xl border border-dashed border-line bg-card/35 px-6 text-center">
@@ -389,7 +433,7 @@ function VideoCandidateWorkspaceContent({
         </div>
       ) : null}
 
-      {sourceAvailable && !generating && candidates.length === 0 ? (
+      {sourceAvailable && shortSource && !generating && candidates.length === 0 ? (
         <div className="mt-8 grid min-h-64 place-items-center rounded-2xl border border-dashed border-line bg-card/35 px-6 text-center">
           <div className="max-w-md py-12">
             <span className="mx-auto inline-grid size-11 place-items-center rounded-full border border-line bg-paper text-accent">
@@ -730,6 +774,7 @@ function CandidateTile({
           <p className="line-clamp-2 min-h-10 text-[12px] font-semibold leading-5 text-ink">
             {candidate.origin === "manual" ? t("manualTitle") : candidate.theme}
           </p>
+          {candidate.origin === "ai" ? <p className="mt-2 text-xs leading-5 text-ink/60">{candidate.reason}</p> : null}
           <span className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-ink/45">
             {pending ? (
               <><Loader2 size={10} className="animate-spin" />{t("editor.saveState.saving")}</>
@@ -830,7 +875,7 @@ async function fetchCandidatePreview(projectId: string, candidateId: string): Pr
 
 function CandidateSkeleton({ label }: { label: string }) {
   return (
-    <div className="mt-8 overflow-hidden rounded-2xl border border-line bg-card">
+    <div role="status" aria-live="polite" className="mt-8 overflow-hidden rounded-2xl border border-line bg-card">
       <div className="grid min-h-56 place-items-center bg-[linear-gradient(90deg,transparent,rgba(14,13,11,0.025),transparent)] px-6 text-center">
         <div>
           <Loader2 className="mx-auto animate-spin text-accent" size={22} />

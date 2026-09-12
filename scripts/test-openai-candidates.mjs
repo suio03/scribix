@@ -165,3 +165,39 @@ test("review also bounds the same production cache key", async () => {
   assert.equal(f.requests[0].prompt_cache_key, f.requests[1].prompt_cache_key);
   assert.equal(f.requests[1].prompt_cache_key.length, 64);
 });
+
+test("specific topic/category is untrusted input in every analysis batch and the independent review", async () => {
+  const requirements = { mode: "specific", topic: "lessons from a failed business", kind: "story" };
+  const f = fixture([completed({ supported: true }), completed({ candidates: [proposal()] }), completed({ reviews: [{ candidateIndex: 0, verdict: "reject", completenessScore: 0.1, completenessReason: "Related topic, but no complete requested story.", startSentenceId: null, endSentenceId: null }] })]);
+  const analysis = f.mapping.buildCandidateAnalysisInput(transcript(), 600_000);
+  const generated = await f.api.generateCandidatesWithOpenAI(analysis, { requirements });
+  const reviewed = await f.api.reviewCandidatesWithOpenAI(analysis, generated.candidates, { requirements });
+  assert.equal(reviewed.candidates.candidates.length, 0);
+  for (const request of f.requests.slice(1)) {
+    assert.ok(request.input[0].content[0].text.includes(JSON.stringify(requirements)));
+    assert.ok(!request.instructions.includes(requirements.topic));
+    assert.match(request.instructions, /Never fall back/);
+  }
+  assert.equal(generated.usage.totalTokens, 260);
+  assert.ok(!JSON.stringify(f.logs).includes(requirements.topic));
+});
+test("unsupported visual/production selection is rejected before transcript analysis", async () => {
+  const f = fixture([completed({ supported: false })]);
+  await assert.rejects(f.api.generateCandidatesWithOpenAI(f.mapping.buildCandidateAnalysisInput(transcript()), { requirements: { mode: "specific", topic: "Find red shirts and add music", kind: "any" } }), error => error.providerCode === "unsupported_selection" && error.usage.totalTokens === 130);
+  assert.equal(f.requests.length, 1);
+  assert.ok(!f.requests[0].input[0].content[0].text.includes("s0|"));
+});
+test("long specific searches apply identical filters to every batch without filler", async () => {
+  const responses = [completed({ supported: true })];
+  const f = fixture(responses);
+  const analysis = f.mapping.buildCandidateAnalysisInput(transcript(90, true));
+  analysis.batches.forEach(() => responses.push(completed({ candidates: [] })));
+  const requirements = { mode: "specific", topic: "Unsupported source claim; do not invent it", kind: "opinion" };
+  const result = await f.api.generateCandidatesWithOpenAI(analysis, { requirements });
+  assert.equal(result.candidates.candidates.length, 0);
+  assert.equal(f.requests.length, analysis.batches.length + 1);
+  f.requests.slice(1).forEach(request => {
+    assert.ok(request.input[0].content[0].text.endsWith(JSON.stringify(requirements)));
+    assert.ok(request.input[0].content[0].text.length <= 100000);
+  });
+});

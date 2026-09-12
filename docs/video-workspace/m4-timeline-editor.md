@@ -63,3 +63,7 @@ npm run build
 ```
 
 Apply migrations to a fresh isolated local D1 database when validating the full schema chain. No remote migration or deployment is part of the local milestone.
+
+## Publish preparation (2026-09-08)
+
+The saved per-clip draft now includes `publishDraft`, guarded by the same revision as the EDL and Render Spec. Prepare to publish generates opening titles, independent cover text and editable post copy together; manual changes survive regeneration. Optional `openingTitle` and `coverTitle` render fields default off for legacy drafts. Content edits retain copy with a review notice; removed cover frames remap to the beginning. Copy and cover changes do not invalidate video dependencies. See [publish preparation](publish-preparation.md) for concurrency, snapshot, permission and validation contracts.

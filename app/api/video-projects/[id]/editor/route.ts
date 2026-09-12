@@ -49,7 +49,8 @@ export async function PUT(request: Request, { params }: Params) {
     body.candidateId,
     body.expectedRevision,
     body.edl,
-    body.renderSpec
+    body.renderSpec,
+    body.publishDraft
   );
   if (!result.ok) {
     const status = result.error === "draft_conflict"
@@ -119,7 +120,7 @@ function upgradeRequired(): Response {
 }
 
 async function readBody(request: Request): Promise<
-  | { candidateId: string; expectedRevision: number; edl: unknown; renderSpec: unknown }
+  | { candidateId: string; expectedRevision: number; edl: unknown; renderSpec: unknown; publishDraft?: unknown }
   | Response
 > {
   let body: Record<string, unknown>;
@@ -145,5 +146,6 @@ async function readBody(request: Request): Promise<
     expectedRevision: Number(body.expectedRevision),
     edl: body.edl,
     renderSpec: body.renderSpec,
+    publishDraft: body.publishDraft,
   };
 }

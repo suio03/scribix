@@ -8,7 +8,7 @@ M6 将当前候选已保存的 project version 变成不可变 final render job�
 - `POST /api/video-projects/:id/renders`：创建或复用同一 version 的 final job。
 - `DELETE /api/video-projects/:id/renders/:jobId`：取消排队中/执行中的任务，或删除已完成导出的 R2 视频与封面。
 - `POST /api/video-projects/:id/renders/:jobId`：重试可重试失败或已取消的任务。
-- `GET /api/video-projects/:id/renders/:jobId/download`：下载 ZIP；付费用户包含 MP4 与 JPEG cover，Free 只包含 MP4。
+- `GET /api/video-projects/:id/renders/:jobId/download`：下载 ZIP；付费用户包含 MP4、独立 JPEG cover 及已保存的 UTF-8 发布文案，Free 只包含 MP4。
 
 创建接口接受 `candidateId`、`expectedRevision` 与 `idempotencyKey`。revision 负责阻止用过期草稿发起渲染；candidate ownership、idempotency key 和 version 唯一性共同避免不同候选串用草稿或重复输出。Container 使用的对象 URL 有效期为 60 分钟；用户下载通过受认证的打包接口读取当前可用资产。
 
@@ -31,7 +31,7 @@ Cloudflare Queue dispatcher 同时处理 preview 与 final 两类任务。final 
 3. 标准化视频编码；音频保持原始响度和起止，不应用标准化或淡入淡出，无音轨输入自动补静音。
 4. 生成带逐字 timing 的 ASS 动态字幕，并应用模板、断行、安全区和自定义字体。
 5. 应用品牌署名和 Logo；音频使用固定的原音兼容参数。
-6. 一次编码为 1080 × 1920 H.264/AAC MP4，并从指定 timeline 时间生成封面。
+6. 编码为 1080 × 1920 H.264/AAC MP4；从指定 timeline 对应的原始源帧独立合成封面，不包含字幕或开头标题。
 7. 用 `ffprobe` 校验尺寸、codec、时长和音轨后上传，再回调结果。
 
 最终渲染不会读取 preview proxy，也不会把 proxy 作为中间转码源。
@@ -104,3 +104,7 @@ Targeted tests cover split inheritance, immutable undo snapshots, adjacent bound
 Selecting a manual framing section now scopes the main preview and its scrubber to that section. Playback stops at its end; replay starts at the section start. The player shows the section number and tenth-second bounds, with an entire-clip preview toggle. Selecting a section again returns to scoped preview. The duplicate right-panel playback button was removed; draft crops continue to appear live before saving.
 
 The numbered framing timeline now accepts position clicks directly, seeks the main preview, and offers Split here plus Merge with previous (or next for the first section) immediately below it. The duplicate editing playhead slider was removed. A playhead marker shows the selected time. Merge keeps the neighbour’s framing and all footage, cannot cross source cuts, and participates in session Undo. Browser checks covered click-to-seek, five-to-six section splitting, merging back to five, and undo; test drafts were restored without saving. Targeted merge tests, six-locale validation, and the Cloudflare build pass.
+
+## Publish assets (2026-09-08)
+
+Opening titles use shared browser/ASS layout and bundled fonts. Video and cover can independently reuse valid outputs and retain successful uploads after partial failure. Scoped asset callbacks are enabled only by `supportsPartialAssets`, preserving old-app lease compatibility. Publishing copy is frozen in the render version or a revision-checked download package; editing later cannot change the requested package. See [publish preparation](publish-preparation.md) for exact dependencies and migration → Container → application release order. Historical validation notes above apply to their original revisions.

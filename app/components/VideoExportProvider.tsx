@@ -11,7 +11,7 @@ type ExportContext = {
   downloadedIds: Set<string>;
   statusError: boolean;
   refresh: () => Promise<void>;
-  watch: (render: FinalRenderSummary) => void;
+  watch: (render: FinalRenderSummary, format?: "video" | "package") => void;
   forget: (id: string) => void;
 };
 const Context = createContext<ExportContext | null>(null);
@@ -24,7 +24,7 @@ export function VideoExportProvider({ projectId, initialRenders, children }: {
   const [renders, setRenders] = useState(initialRenders);
   const [downloadedIds, setDownloadedIds] = useState(new Set<string>());
   const [statusError, setStatusError] = useState(false);
-  const pending = useRef(new Set<string>());
+  const pending = useRef(new Map<string, "video" | "package">());
   const observedStatuses = useRef(new Map(initialRenders.map((render) => [render.id, render.status])));
   const mounted = useRef(true);
   const refreshSequence = useRef(0);
@@ -46,7 +46,7 @@ export function VideoExportProvider({ projectId, initialRenders, children }: {
       if (mounted.current && sequence === refreshSequence.current) setStatusError(true);
     }
   }, [projectId]);
-  const watch = useCallback((render: FinalRenderSummary) => {
+  const watch = useCallback((render: FinalRenderSummary, format: "video" | "package" = "package") => {
     if (!mounted.current) return;
     // Ignore list responses started before this newly accepted request.
     ++refreshSequence.current;
@@ -54,7 +54,7 @@ export function VideoExportProvider({ projectId, initialRenders, children }: {
       trackVideoAction("video_render_requested");
     }
     observedStatuses.current.set(render.id, render.status);
-    pending.current.add(render.id);
+    pending.current.set(render.id, format);
     setRenders((current) => [render, ...current.filter((item) => item.id !== render.id)]);
   }, []);
   const forget = useCallback((id: string) => { pending.current.delete(id); }, []);
@@ -70,15 +70,16 @@ export function VideoExportProvider({ projectId, initialRenders, children }: {
   useEffect(() => {
     for (const render of renders) {
       if (!pending.current.has(render.id) || ACTIVE_EXPORT_STATUSES.has(render.status)) continue;
+      const format = pending.current.get(render.id) ?? "package";
       pending.current.delete(render.id);
       if (render.status !== "completed" || !render.videoUrl) continue;
       const link = document.createElement("a");
-      link.href = `/api/video-projects/${projectId}/renders/${render.id}/download`;
+      link.href = `/api/video-projects/${projectId}/renders/${render.id}/download${format === "video" ? "?format=video" : ""}`;
       link.download = "";
       document.body.appendChild(link);
       link.click();
       link.remove();
-      recordVideoDownload(projectId, render);
+      recordVideoDownload(projectId, render, format);
       setDownloadedIds((current) => new Set(current).add(render.id));
     }
   }, [projectId, renders]);
@@ -92,11 +93,11 @@ export function useVideoExports() {
   return context;
 }
 
-export function recordVideoDownload(projectId: string, render: FinalRenderSummary) {
+export function recordVideoDownload(projectId: string, render: FinalRenderSummary, assetKind: "video" | "package" = "package") {
   trackVideoWorkspaceEvent(projectId, {
     eventName: "render_downloaded",
-    eventKey: `render-download:${render.id}:package`,
+    eventKey: `render-download:${render.id}:${assetKind}`,
     renderJobId: render.id,
-    properties: { assetKind: "package" },
+    properties: { assetKind },
   });
 }

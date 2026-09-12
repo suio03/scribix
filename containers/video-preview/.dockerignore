@@ -14,3 +14,7 @@
 !talknet/
 !talknet/**
 !framing_policy.py
+!title-layout.mjs
+!fonts/
+!fonts/**
+!title-font-metrics.mjs

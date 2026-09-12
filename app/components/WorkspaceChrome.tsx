@@ -1,10 +1,12 @@
+import { auth } from "@/auth";
+import { clipflightEnabled } from "@/lib/clipflight";
 import type { ReactNode } from "react";
 import { ProductTopbar } from "./ProductTopbar";
 import { SidebarProvider } from "./SidebarContext";
 import type { SidebarUsage } from "./sidebarUsage";
 import { WorkspaceSidebar } from "./WorkspaceSidebar";
 
-export function WorkspaceChrome({
+export async function WorkspaceChrome({
   children,
   signOutRedirect = "/",
   usage,
@@ -17,10 +19,14 @@ export function WorkspaceChrome({
   userImage?: string | null;
   userLabel?: string | null;
 }) {
+  const session = await auth();
+  const socialEnabled = Boolean(session?.user?.id && clipflightEnabled(session.user.id));
+
   return (
     <SidebarProvider>
       <div className="workspace-shell neutral-page-background min-h-screen">
         <WorkspaceSidebar
+          socialEnabled={socialEnabled}
           signOutRedirect={signOutRedirect}
           usage={usage}
           userImage={userImage}

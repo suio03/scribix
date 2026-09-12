@@ -39,8 +39,9 @@ RUN /opt/scribix-venv/bin/pip install --no-cache-dir --index-url https://downloa
   && chmod 0444 /opt/scribix-models/talknet.model
 
 WORKDIR /app
-COPY --chown=node:node preview-render.mjs final-render.mjs poc-reframe.mjs poc-reframe.py worker.mjs analyze-framing.mjs speaker-framing.py ./
+COPY --chown=node:node preview-render.mjs final-render.mjs title-layout.mjs title-font-metrics.mjs poc-reframe.mjs poc-reframe.py worker.mjs analyze-framing.mjs speaker-framing.py ./
 COPY --chown=node:node talknet ./talknet
+COPY --chown=node:node fonts ./fonts
 
 ENV PATH="/opt/scribix-venv/bin:${PATH}"
 

@@ -136,7 +136,18 @@ export type CaptionCue = {
   words: CaptionWord[];
 };
 
+export type TitleOverlay = {
+  enabled: boolean;
+  text: string;
+  durationMs: number;
+  fontScale: number;
+  positionY: number;
+  color: string;
+};
+
 export type RenderSpec = {
+  openingTitle?: TitleOverlay;
+  coverTitle?: TitleOverlay;
   schemaVersion: typeof VIDEO_WORKSPACE_SCHEMA_VERSION;
   outputPresetId: typeof FINAL_VIDEO_PRESET.id;
   canvas: {
@@ -259,6 +270,9 @@ export type PreviewJobLease = {
 };
 
 export type FinalJobLease = {
+  supportsPartialAssets?: boolean;
+  reusableVideoUrl?: string;
+  reusableCoverUrl?: string;
   schemaVersion: typeof VIDEO_WORKSPACE_SCHEMA_VERSION;
   jobId: string;
   kind: "final";

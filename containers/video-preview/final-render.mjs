@@ -1,5 +1,6 @@
+import { titleLayout } from "./title-layout.mjs";
 import { spawn } from "node:child_process";
-import { readFile, writeFile } from "node:fs/promises";
+import { copyFile, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { probeMedia, renderError } from "./preview-render.mjs";
 
@@ -31,10 +32,12 @@ export async function renderFinal({
   logoPath = null,
   fontPath = null,
   reframePlan = null,
+  allowPartial = false,
 }) {
   const outputPath = join(workingDirectory, "final-9x16.mp4");
   const coverPath = join(workingDirectory, "cover.jpg");
   const subtitlePath = join(workingDirectory, "captions.ass");
+  await copyFile(new URL("./fonts/NotoSansJP-Bold.ttf", import.meta.url), join(workingDirectory, "NotoSansJP-Bold.ttf"));
   const source = await probeMedia(sourceInput);
   const segments = expandFramingSegments(lease.edl, lease.renderSpec);
   if (segments.some((segment) => segment.sourceEndMs > source.durationMs + 250)) {
@@ -119,8 +122,8 @@ export async function renderFinal({
     );
     videoLabel = "branded";
   }
-  if (lease.renderSpec.captions.enabled && lease.renderSpec.captions.cues.length > 0) {
-    const fontsDir = fontPath ? `:fontsdir='${escapeFilterPath(workingDirectory)}'` : "";
+  if ((lease.renderSpec.captions.enabled && lease.renderSpec.captions.cues.length > 0) || lease.renderSpec.openingTitle?.enabled) {
+    const fontsDir = `:fontsdir='${escapeFilterPath(workingDirectory)}'`;
     filters.push(
       `[${videoLabel}]subtitles=filename='${escapeFilterPath(subtitlePath)}'${fontsDir}[captioned]`
     );
@@ -170,8 +173,16 @@ export async function renderFinal({
     "-y",
     outputPath
   );
-  await run("ffmpeg", args, "render_failed", 55 * 60 * 1000);
-  const output = await probeMedia(outputPath);
+  let output = null;
+  let videoError = null;
+  let coverError = null;
+  try {
+  if (lease.reusableVideoUrl) {
+    await downloadAsset(lease.reusableVideoUrl, outputPath, 1024 * 1024 * 1024);
+  } else {
+    await run("ffmpeg", args, "render_failed", 55 * 60 * 1000);
+  }
+  output = await probeMedia(outputPath);
   if (
     output.width !== 1080 || output.height !== 1920 ||
     output.videoCodec !== "h264" || output.audioCodec !== "aac" ||
@@ -179,16 +190,12 @@ export async function renderFinal({
   ) {
     throw renderError("render_failed");
   }
-  await run("ffmpeg", [
-    "-hide_banner", "-nostdin", "-loglevel", "warning",
-    "-ss", seconds(lease.renderSpec.coverTimelineMs),
-    "-i", outputPath,
-    "-frames:v", "1",
-    "-q:v", "2",
-    "-y",
-    coverPath,
-  ], "render_failed", 2 * 60 * 1000);
-  return { outputPath, coverPath, output };
+  } catch (error) { if (!allowPartial) throw error; videoError = error; }
+  try {
+    if (lease.reusableCoverUrl) await downloadAsset(lease.reusableCoverUrl, coverPath);
+    else await renderIndependentCover({ lease, workingDirectory, sourceInput, source, segments, logoPath, fontPath, coverPath });
+  } catch (error) { if (!allowPartial) throw error; coverError = error; }
+  return { outputPath, coverPath, output, videoError, coverError };
 }
 
 export async function downloadAsset(url, path, maxBytes = 5 * 1024 * 1024) {
@@ -214,7 +221,7 @@ export function buildAss(edl, renderSpec, customFontName = null) {
     cursorMs += segment.sourceEndMs - segment.sourceStartMs;
   }
   const segmentById = new Map(edl.segments.map((segment) => [segment.id, segment]));
-  const events = captions.cues.flatMap((cue) => {
+  const events = (captions.enabled ? captions.cues : []).flatMap((cue) => {
     const segment = segmentById.get(cue.segmentId);
     const timelineStart = timelineStarts.get(cue.segmentId);
     if (!segment || timelineStart === undefined) return [];
@@ -248,7 +255,7 @@ export function buildAss(edl, renderSpec, customFontName = null) {
       return [`Dialogue: 0,${assTime(startMs)},${assTime(endMs)},Default,,0,0,0,,{\\an5\\pos(540,${positionY})}${text}`];
     });
   });
-  return `${header}\n${events.join("\n")}\n`;
+  return `${header}\n${[...events, ...titleAssEvents(renderSpec.openingTitle, renderSpec.captions.positionY)].join("\n")}\n`;
 }
 
 async function fontFamilyName(path) {
@@ -489,4 +496,55 @@ function autoCropExpression(points, sourceStartMs) {
     expression = `if(lt(t,${preciseDecimal((points[i + 1].sourceMs - sourceStartMs) / 1000)}),${preciseDecimal(points[i].crop.x)},${expression})`;
   }
   return expression;
+}
+
+export function titleAssEvents(overlay, captionPositionY = 0.78, cover = false) {
+  if (!overlay?.enabled || !overlay.text.trim()) return [];
+  const layout = titleLayout(overlay, captionPositionY, cover);
+  const center = layout.positionY * 1920;
+  return layout.lines.map((line, index) => {
+    const y = center + (index - (layout.lines.length - 1) / 2) * layout.lineHeight;
+    const text = line.replace(/\\/g, "＼").replace(/[{}]/g, "");
+    return `Dialogue: 2,0:00:00.00,${assTime(cover ? 1000 : overlay.durationMs)},Default,,0,0,0,,{\\an5\\pos(540,${Math.round(y)})\\fnNoto Sans JP\\fs${layout.fontSize}\\b1\\bord2\\shad2\\c${assColor(overlay.color)}}${text}`;
+  });
+}
+
+async function renderIndependentCover({ lease, workingDirectory, sourceInput, source, segments, logoPath, fontPath, coverPath }) {
+  let remaining = lease.renderSpec.coverTimelineMs;
+  let segment = segments[segments.length - 1];
+  for (const item of segments) {
+    if (remaining < item.sourceEndMs - item.sourceStartMs) { segment = item; break; }
+    remaining -= item.sourceEndMs - item.sourceStartMs;
+  }
+  const sourceMs = Math.min(segment.sourceEndMs - 1, segment.sourceStartMs + remaining);
+  let crop = segment.framing.crop;
+  if (segment.autoPoints?.length) {
+    const before = segment.autoPoints.filter(p => p.sourceMs <= sourceMs).at(-1) ?? segment.autoPoints[0];
+    crop = { ...crop, x: before.crop.x };
+  }
+  const spec = lease.renderSpec;
+  const filters = [];
+  const base = segment.framing.framingMode === "fit"
+    ? `scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=${spec.canvas.backgroundColor}`
+    : framedVideoFilter(source, crop, spec.canvas.backgroundColor);
+  filters.push(`[0:v]${base},setsar=1[frame]`);
+  let label = "frame";
+  if (spec.brand.templateId === "signature-v1") {
+    filters.push(`[${label}]drawbox=x=0:y=ih-22:w=iw:h=22:color=${spec.brand.accentColor}:t=fill[brand]`); label = "brand";
+  }
+  const args = ["-hide_banner", "-nostdin", "-loglevel", "warning", "-ss", seconds(sourceMs), "-i", sourceInput];
+  if (logoPath && spec.brand.templateId) {
+    args.push("-i", logoPath);
+    const { x, y } = logoOverlay(spec.brand.logoPosition);
+    filters.push(`[1:v]scale=${even(Math.max(54, Math.round(1080 * spec.brand.logoScale)))}:-2[logo]`);
+    filters.push(`[${label}][logo]overlay=x=${x}:y=${y}[withlogo]`); label = "withlogo";
+  }
+  if (spec.coverTitle?.enabled) {
+    const path = join(workingDirectory, "cover.ass");
+    const blank = buildAss(lease.edl, { ...spec, openingTitle: undefined, captions: { ...spec.captions, enabled: false } });
+    await writeFile(path, [blank, ...titleAssEvents(spec.coverTitle, 0.78, true)].join("\n"));
+    filters.push(`[${label}]setpts=PTS-STARTPTS,subtitles=filename='${escapeFilterPath(path)}'${`:fontsdir='${escapeFilterPath(workingDirectory)}'`}[titled]`); label = "titled";
+  }
+  args.push("-filter_complex", filters.join(";"), "-map", `[${label}]`, "-frames:v", "1", "-q:v", "2", "-y", coverPath);
+  await run("ffmpeg", args, "render_failed", 2 * 60 * 1000);
 }

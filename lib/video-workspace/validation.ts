@@ -298,7 +298,7 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
   if (!value) return { success: false, issues };
   hasOnlyKeys(
     value,
-    ["schemaVersion", "outputPresetId", "canvas", "segments", "captions", "brand", "audio", "coverTimelineMs"],
+    ["schemaVersion", "outputPresetId", "canvas", "segments", "captions", "brand", "audio", "coverTimelineMs", "openingTitle", "coverTitle"],
     "$",
     issues
   );
@@ -427,6 +427,18 @@ export function validateRenderSpec(input: unknown, edl: Edl): ContractResult<Ren
     requireInteger(audio.fadeOutMs, "$.audio.fadeOutMs", issues, 0, 10_000);
   }
 
+  for (const key of ["openingTitle", "coverTitle"] as const) {
+    if (value[key] === undefined) continue;
+    const overlay = requireObject(value[key], `$.${key}`, issues);
+    if (!overlay) continue;
+    hasOnlyKeys(overlay, ["enabled", "text", "durationMs", "fontScale", "positionY", "color"], `$.${key}`, issues);
+    requireBoolean(overlay.enabled, `$.${key}.enabled`, issues);
+    if (typeof overlay.text !== "string" || Array.from(overlay.text).length > 120) issues.push(issue(`$.${key}.text`, "invalid_text", "Title must be at most 120 characters."));
+    requireInteger(overlay.durationMs, `$.${key}.durationMs`, issues, 500, 10_000);
+    requireNumber(overlay.fontScale, `$.${key}.fontScale`, issues, 0.6, 1.5);
+    requireNumber(overlay.positionY, `$.${key}.positionY`, issues, 0.1, 0.9);
+    if (typeof overlay.color !== "string" || !/^#[0-9a-fA-F]{6}$/.test(overlay.color)) issues.push(issue(`$.${key}.color`, "invalid_color", "Use a hex color."));
+  }
   const timelineDurationMs = edlTimelineDurationMs(edl);
   requireInteger(value.coverTimelineMs, "$.coverTimelineMs", issues, 0, Math.max(0, timelineDurationMs - 1));
   return issues.length > 0

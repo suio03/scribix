@@ -1,3 +1,4 @@
+import { DEFAULT_SELECTION, parseSelection, type SelectionRequirements, type SelectionState } from "@/lib/video-workspace/selection";
 import { recoverProjectRenderQueue } from "@/lib/video-workspace/render-scheduling";
 import { auth } from "@/auth";
 import type { AaiTranscript } from "@/lib/aai";
@@ -42,6 +43,10 @@ type CandidateProjectRow = {
   source_status: string | null;
   source_expires_at: string | null;
   updated_at: string;
+  selection_json: string | null;
+  selection_request_id: string | null;
+  selection_outcome: SelectionState["outcome"];
+  selection_adjustments: number;
 };
 
 export async function GET(_: Request, { params }: Params) {
@@ -60,7 +65,10 @@ export async function GET(_: Request, { params }: Params) {
   const candidateIds = new Set(candidates.map((candidate) => candidate.id));
   const previews = allPreviews.filter((preview) => candidateIds.has(preview.candidateId));
   return Response.json({
-    status: effectiveProjectStatus(context.project),
+    status: context.project.transcript_status === "error" ? "transcript_failed" : context.project.selection_outcome === "waiting" ? "waiting" : effectiveProjectStatus(context.project),
+    transcriptReady: context.project.transcript_status === "completed",
+    transcriptId: context.project.transcript_id,
+    selection: selectionState(context.project),
     candidates,
     previews,
   });
@@ -72,12 +80,6 @@ export async function POST(request: Request, { params }: Params) {
   const { env, project, user } = context;
 
   if (
-    project.transcript_status !== "completed" ||
-    !project.transcript_r2_key
-  ) {
-    return Response.json({ error: "transcript_not_ready" }, { status: 409 });
-  }
-  if (
     project.source_status !== "ready" ||
     sourceExpired(project.source_expires_at)
   ) {
@@ -87,11 +89,30 @@ export async function POST(request: Request, { params }: Params) {
     return Response.json({ error: "candidate_generation_active" }, { status: 409 });
   }
 
-  const mode = await candidateRequestMode(request);
-  if (mode instanceof Response) return mode;
+  let body: { mode?: unknown; requirements?: unknown; requestId?: unknown; adjust?: unknown } = {};
+  try {
+    if (request.headers.get("content-type")?.includes("application/json")) body = await request.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error();
+  } catch { return Response.json({ error: "invalid_candidate_request" }, { status: 400 }); }
+  const mode = body.mode ?? "ai";
+  if (mode !== "ai" && mode !== "manual") return Response.json({ error: "invalid_candidate_request" }, { status: 400 });
+  let requirements: SelectionRequirements;
+  try { requirements = parseSelection(body.requirements); }
+  catch { return Response.json({ error: "invalid_selection" }, { status: 400 }); }
+  if ((body.requestId !== undefined && (typeof body.requestId !== "string" || !/^[a-zA-Z0-9_-]{8,100}$/.test(body.requestId))) ||
+      (body.adjust !== undefined && typeof body.adjust !== "boolean")) return Response.json({ error: "invalid_candidate_request" }, { status: 400 });
+  const executionId = typeof body.requestId === "string" && /^[a-zA-Z0-9_-]{8,100}$/.test(body.requestId)
+    ? body.requestId : crypto.randomUUID();
   const access = videoWorkspaceAccessFor(user.tier);
   if (mode === "manual" && !access.canEditClips) {
     return Response.json({ error: "upgrade_required" }, { status: 402 });
+  }
+  if (project.transcript_status !== "completed" || !project.transcript_r2_key) {
+    if (mode === "manual") return Response.json({ error: "transcript_not_ready" }, { status: 409 });
+    await env.DB.prepare(`UPDATE video_projects SET selection_json = ?1, selection_request_id = ?2, selection_outcome = 'waiting'
+      WHERE id = ?3 AND user_id = ?4 AND deleted_at IS NULL AND selection_outcome = 'idle'`)
+      .bind(JSON.stringify(requirements), executionId, project.id, user.id).run();
+    return GET(request, { params });
   }
   const sourceDurationMs = project.source_duration_ms;
   if (!sourceDurationMs || sourceDurationMs < 250) {
@@ -99,7 +120,7 @@ export async function POST(request: Request, { params }: Params) {
   }
   const existingCandidates = await listClipCandidates(env.DB, user.id, project.id);
   if (mode === "ai" && aiCandidateGenerationBlocked(
-    project.status,
+    project.selection_outcome === "matched" ? "candidates_ready" : project.status === "candidates_ready" ? "draft" : project.status,
     existingCandidates.map((candidate) => candidate.origin)
   )) {
     return Response.json({ error: "candidates_already_generated" }, { status: 409 });
@@ -137,22 +158,33 @@ export async function POST(request: Request, { params }: Params) {
     return Response.json({ status: "editing", candidates, previews, candidateId });
   }
 
+  const previousSelection = selectionState(project);
+  if (project.selection_request_id === executionId && ["matched", "empty"].includes(project.selection_outcome)) {
+    return GET(request, { params });
+  }
+  const adjustment = body.adjust === true;
+  if (adjustment && (project.selection_outcome !== "empty" || !project.selection_adjustments)) {
+    return Response.json({ error: "selection_locked" }, { status: 409 });
+  }
+  if (!adjustment && project.selection_outcome === "empty") {
+    return GET(request, { params });
+  }
+  // Failed/stale executions can retry only the same stored direction.
+  if (!adjustment && project.selection_json) requirements = parseSelection(JSON.parse(project.selection_json));
   const claimed = await env.DB.prepare(
     `UPDATE video_projects
-        SET status = 'analyzing', updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?1
-        AND user_id = ?2
-        AND deleted_at IS NULL
-        AND (
-          status IN ('draft', 'candidates_ready', 'editing', 'failed')
-          OR (status = 'analyzing' AND updated_at < datetime('now', '-10 minutes'))
-        )`
-  )
-    .bind(project.id, user.id)
-    .run();
-  if (!claimed.meta?.changes) {
-    return Response.json({ error: "invalid_project_state" }, { status: 409 });
-  }
+        SET status = 'analyzing', updated_at = CURRENT_TIMESTAMP,
+            selection_json = ?3, selection_request_id = ?4, selection_outcome = 'running',
+            selection_adjustments = selection_adjustments - ?5
+      WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL
+        AND selection_outcome = ?6 AND selection_adjustments = ?7
+        AND selection_request_id IS ?8
+        AND (status IN ('draft', 'candidates_ready', 'failed')
+          OR (status = 'analyzing' AND updated_at < datetime('now', '-10 minutes')))
+        AND NOT EXISTS (SELECT 1 FROM clip_candidates WHERE project_id = ?1 AND origin = 'ai')`
+  ).bind(project.id, user.id, JSON.stringify(requirements), executionId, adjustment ? 1 : 0,
+    project.selection_outcome, project.selection_adjustments, project.selection_request_id).run();
+  if (!claimed.meta?.changes) return Response.json({ error: "candidate_generation_active" }, { status: 409 });
 
   const requestId = `clips_${crypto.randomUUID()}`;
   const reviewRequestId = `${requestId}_review`;
@@ -175,6 +207,7 @@ export async function POST(request: Request, { params }: Params) {
     const cacheKey = await promptCacheKey(project.transcript_id);
     providerResult = await generateCandidatesWithOpenAI(analysisInput, {
       requestId,
+      requirements,
       promptCacheKey: cacheKey,
       maxCandidates: candidateLimitForSourceDuration(analysisInput.sourceDurationMs),
     });
@@ -195,6 +228,7 @@ export async function POST(request: Request, { params }: Params) {
       providerResult.candidates,
       {
         requestId: reviewRequestId,
+        requirements,
         promptCacheKey: cacheKey,
       }
     );
@@ -224,7 +258,8 @@ export async function POST(request: Request, { params }: Params) {
       analysisInput.words,
       analysisInput.sourceDurationMs
     );
-    await replaceClipCandidates(env.DB, user.id, project.id, candidateSet);
+    const committed = await replaceClipCandidates(env.DB, user.id, project.id, candidateSet, executionId);
+    if (!committed) return GET(request, { params });
     const candidates = await listClipCandidates(env.DB, user.id, project.id);
     try {
       await queueAutomaticCandidatePreviews(
@@ -247,6 +282,7 @@ export async function POST(request: Request, { params }: Params) {
       candidates,
       previews,
       transcriptTruncated: analysisInput.truncated,
+      selection: { requirements, requestId: executionId, outcome: candidates.length ? "matched" : "empty", adjustmentsRemaining: project.selection_adjustments - (adjustment ? 1 : 0) },
     });
   } catch (error) {
     const providerError = error instanceof OpenAICandidateError ? error : null;
@@ -254,8 +290,12 @@ export async function POST(request: Request, { params }: Params) {
       env.DB,
       user.id,
       project.id,
-      existingCandidates.length > 0
+      existingCandidates.length > 0,
+      executionId
     );
+    if (providerError?.providerCode === "unsupported_selection") {
+      await env.DB.prepare(`UPDATE video_projects SET selection_json = ?1, selection_request_id = ?2, selection_outcome = ?3, selection_adjustments = ?4 WHERE id = ?5 AND user_id = ?6 AND selection_request_id = ?7`).bind(project.selection_json, project.selection_request_id, previousSelection.outcome, project.selection_adjustments, project.id, user.id, executionId).run();
+    }
     if (stage !== "persistence") {
       const failedResult = stage === "review" ? reviewResult : providerResult;
       await recordUsageBestEffort({
@@ -290,31 +330,19 @@ export async function POST(request: Request, { params }: Params) {
               ? "completeness_review_failed"
               : "unknown"),
     }));
-    return candidateErrorResponse(error, requestId);
+    return providerError?.providerCode === "unsupported_selection"
+      ? Response.json({ error: "unsupported_selection" }, { status: 422 })
+      : candidateErrorResponse(error, requestId);
   }
 }
 
-async function candidateRequestMode(
-  request: Request
-): Promise<"ai" | "manual" | Response> {
-  if (!request.headers.get("content-type")?.includes("application/json")) {
-    return "ai";
-  }
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return Response.json({ error: "invalid_json" }, { status: 400 });
-  }
-  if (!body || typeof body !== "object" || Array.isArray(body)) {
-    return Response.json({ error: "invalid_candidate_request" }, { status: 400 });
-  }
-  const mode = (body as { mode?: unknown }).mode;
-  return mode === undefined || mode === "ai"
-    ? "ai"
-    : mode === "manual"
-      ? "manual"
-      : Response.json({ error: "invalid_candidate_request" }, { status: 400 });
+function selectionState(project: CandidateProjectRow): SelectionState {
+  return {
+    requirements: project.selection_json ? parseSelection(JSON.parse(project.selection_json)) : DEFAULT_SELECTION,
+    requestId: project.selection_request_id,
+    outcome: project.selection_outcome === "running" && candidateGenerationStale(project.updated_at) ? "failed" : project.selection_outcome,
+    adjustmentsRemaining: project.selection_adjustments,
+  };
 }
 
 async function candidateContext(params: Params["params"]): Promise<
@@ -337,7 +365,7 @@ async function candidateContext(params: Params["params"]): Promise<
             t.status AS transcript_status, t.transcript_r2_key,
             a.duration_ms AS source_duration_ms,
             a.status AS source_status, a.expires_at AS source_expires_at,
-            p.updated_at
+            p.updated_at, p.selection_json, p.selection_request_id, p.selection_outcome, p.selection_adjustments
        FROM video_projects p
        JOIN transcripts t
          ON t.id = p.transcript_id AND t.user_id = p.user_id
@@ -359,14 +387,15 @@ async function restoreProjectStatus(
   db: D1Database,
   userId: string,
   projectId: string,
-  hasCandidates: boolean
+  hasCandidates: boolean,
+  executionId: string
 ): Promise<void> {
   await db.prepare(
     `UPDATE video_projects
-        SET status = ?1, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?2 AND user_id = ?3 AND status = 'analyzing'`
+        SET status = ?1, selection_outcome = 'failed', updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?2 AND user_id = ?3 AND status = 'analyzing' AND selection_request_id = ?4`
   )
-    .bind(hasCandidates ? "candidates_ready" : "failed", projectId, userId)
+    .bind(hasCandidates ? "candidates_ready" : "failed", projectId, userId, executionId)
     .run();
 }
 

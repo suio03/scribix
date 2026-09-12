@@ -626,3 +626,12 @@ test("manual zoom-out is accepted and zero scale is rejected", () => {
   value.segments.seg_01.crop.zoom = 0;
   assert.equal(validateRenderSpec(value, edl).success, false);
 });
+
+test("optional publishing overlays preserve old drafts and reject unsafe rendering values", () => {
+  assert.equal(validateRenderSpec(renderSpec, edl).success, true);
+  const overlay = { enabled: true, text: "公開前に確認する", durationMs: 3000, fontScale: 1, positionY: 0.22, color: "#FFFFFF" };
+  assert.equal(validateRenderSpec({ ...renderSpec, openingTitle: overlay, coverTitle: overlay }, edl).success, true);
+  for (const change of [{ text: "字".repeat(121) }, { durationMs: 0 }, { fontScale: Infinity }, { positionY: -1 }, { color: "red:evil=1" }, { injected: true }]) {
+    assert.equal(validateRenderSpec({ ...renderSpec, openingTitle: { ...overlay, ...change } }, edl).success, false);
+  }
+});

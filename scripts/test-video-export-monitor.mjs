@@ -54,7 +54,7 @@ function workspace(initialRenders = []) {
     require(name) {
       if (name === "react") return react;
       if (name === "react/jsx-runtime") return { jsx: (type, props) => ({ type, props }) };
-      if (name.endsWith("video-event-client")) return { trackVideoWorkspaceEvent() {} };
+      if (name.endsWith("video-event-client")) return { trackVideoWorkspaceEvent() {}, trackVideoAction() {}, observeVideoRenderResults() {} };
       throw new Error(name);
     },
     fetch: async () => ({ ok: !failRefresh, json: async () => ({ renders: responseRenders }) }),
@@ -121,4 +121,12 @@ test("temporary status failure keeps pending download intent and clears after re
   await context.refresh();
   assert.equal(app.render().statusError, false);
   assert.equal(app.downloads.length, 1);
+});
+
+
+test("video-only intent stays with the requested job across panel changes", async () => {
+  const app = workspace(); let context = app.render(); await context.refresh(); context = app.render();
+  context.watch(job("video-only"), "video"); context = app.render();
+  app.respond([job("video-only", "completed")]); await context.refresh(); app.render();
+  assert.equal(app.downloads[0], "/api/video-projects/project/renders/video-only/download?format=video");
 });

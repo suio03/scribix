@@ -67,17 +67,18 @@ export async function replaceClipCandidates(
   db: D1Database,
   userId: string,
   projectId: string,
-  candidateSet: CandidateSet
-): Promise<void> {
+  candidateSet: CandidateSet,
+  executionId?: string
+): Promise<boolean> {
   const statements = [
     db.prepare(
-      `DELETE FROM clip_candidates WHERE project_id = ?1 AND user_id = ?2`
-    ).bind(projectId, userId),
+      `DELETE FROM clip_candidates WHERE project_id = ?1 AND user_id = ?2 AND (?3 IS NULL OR EXISTS (SELECT 1 FROM video_projects WHERE id = ?1 AND selection_request_id = ?3 AND selection_outcome = 'running'))`
+    ).bind(projectId, userId, executionId ?? null),
     ...candidateSet.candidates.map((candidate, rank) =>
       db.prepare(
         `INSERT INTO clip_candidates
            (id, user_id, project_id, rank, theme, hook, reason, score, segments_json)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)`
+         SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9 WHERE ?10 IS NULL OR EXISTS (SELECT 1 FROM video_projects WHERE id = ?3 AND user_id = ?2 AND selection_request_id = ?10 AND selection_outcome = 'running')`
       ).bind(
         candidate.id,
         userId,
@@ -87,16 +88,18 @@ export async function replaceClipCandidates(
         candidate.hook,
         candidate.reason,
         candidate.score,
-        JSON.stringify(candidate.segments)
+        JSON.stringify(candidate.segments),
+        executionId ?? null
       )
     ),
     db.prepare(
       `UPDATE video_projects
-          SET status = 'candidates_ready', updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL`
-    ).bind(projectId, userId),
+          SET status = 'candidates_ready', selection_outcome = ?4, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL AND (?3 IS NULL OR (selection_request_id = ?3 AND selection_outcome = 'running'))`
+    ).bind(projectId, userId, executionId ?? null, candidateSet.candidates.length ? 'matched' : 'empty'),
   ];
-  await db.batch(statements);
+  const results = await db.batch(statements);
+  return Boolean(results[results.length - 1].meta.changes);
 }
 
 export async function createManualClipCandidate(

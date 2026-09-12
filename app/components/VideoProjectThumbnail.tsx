@@ -29,6 +29,7 @@ export function VideoProjectThumbnail({ projectId, available, children }: {
       if (!video) return;
       video.onloadedmetadata = null;
       video.onseeked = null;
+      video.onloadeddata = null;
       video.onerror = null;
       video.removeAttribute("src");
       video.load();
@@ -39,11 +40,7 @@ export function VideoProjectThumbnail({ projectId, available, children }: {
       observer.disconnect();
       void (async () => {
         try {
-          const response = await fetch(`/api/video-projects/${projectId}/source`, {
-            signal: controller.signal,
-          });
-          if (!response.ok) return;
-          const { url } = await response.json() as { url: string };
+          const url = `/api/video-projects/${projectId}/source?format=media`;
           if (controller.signal.aborted) return;
           video = document.createElement("video");
           video.crossOrigin = "anonymous";
@@ -58,8 +55,8 @@ export function VideoProjectThumbnail({ projectId, available, children }: {
             }
             video.currentTime = Math.min(3, video.duration / 4);
           };
-          video.onseeked = () => {
-            if (!video || !video.videoWidth || !video.videoHeight) return;
+          const capture = () => {
+            if (!video || video.seeking || video.readyState < 2 || !video.videoWidth || !video.videoHeight) return;
             try {
               const canvas = document.createElement("canvas");
               const scale = 320 / Math.max(video.videoWidth, video.videoHeight);
@@ -88,9 +85,18 @@ export function VideoProjectThumbnail({ projectId, available, children }: {
               release();
             }
           };
-          video.onerror = release;
-          timeout = setTimeout(release, 20_000);
+          video.onseeked = capture;
+          video.onloadeddata = capture;
+          video.onerror = () => {
+            console.warn("Video thumbnail could not load", projectId, video?.error?.code);
+            release();
+          };
+          timeout = setTimeout(() => {
+            console.warn("Video thumbnail timed out", { projectId, readyState: video?.readyState });
+            release();
+          }, 20_000);
           video.src = url;
+          video.load();
         } catch {
           release();
         }

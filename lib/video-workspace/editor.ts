@@ -1,3 +1,4 @@
+import { parsePublishDraft, type PublishDraft } from "./publish";
 import type { AaiTranscript } from "@/lib/aai";
 import { newId } from "@/lib/ids";
 import { presignGet } from "@/lib/r2";
@@ -30,6 +31,7 @@ type EditorProjectRow = {
 };
 
 type EditorCandidateRow = {
+  publish_draft_json: string | null;
   id: string;
   theme: string;
   origin: "ai" | "manual";
@@ -41,6 +43,7 @@ type EditorCandidateRow = {
 };
 
 export type EditorWorkspace = {
+  publishDraft: PublishDraft | null;
   candidateId: string;
   clipTitle: string;
   revision: number;
@@ -191,6 +194,7 @@ export async function loadEditorWorkspace(
   return {
     ok: true,
     workspace: {
+      publishDraft: candidate.publish_draft_json ? parsePublishDraft(JSON.parse(candidate.publish_draft_json)) : null,
       candidateId,
       clipTitle: candidate.theme,
       revision: candidate.draft_revision,
@@ -213,7 +217,9 @@ export async function saveProjectDraft(
   candidateId: string,
   expectedRevision: number,
   edlInput: unknown,
-  renderSpecInput: unknown
+  renderSpecInput: unknown,
+  publishDraftInput?: unknown,
+  generationExecutionId?: string
 ): Promise<SaveDraftResult> {
   const project = await editorProject(db, userId, projectId);
   if (!project) return { ok: false, error: "project_not_found" };
@@ -261,21 +267,26 @@ export async function saveProjectDraft(
   if (!Number.isInteger(expectedRevision) || expectedRevision < 0) {
     return { ok: false, error: "draft_conflict", revision: candidate.draft_revision };
   }
+  let publishDraftJson = candidate.publish_draft_json;
+  try {
+    if (publishDraftInput !== undefined) publishDraftJson = JSON.stringify(parsePublishDraft(publishDraftInput));
+  } catch { return { ok: false, error: "invalid_render_spec" }; }
   const edlJson = JSON.stringify(edlResult.data);
   const renderSpecJson = JSON.stringify(renderSpecResult.data);
   const nextRevision = expectedRevision + 1;
   const saved = await db.batch([
     db.prepare(
       `UPDATE clip_candidates
-          SET draft_edl_json = ?1,
+          SET publish_draft_json = ?7, draft_edl_json = ?1,
               draft_render_spec_json = ?2,
               draft_revision = draft_revision + 1
         WHERE id = ?3
           AND project_id = ?4
           AND user_id = ?5
           AND draft_revision = ?6
-          AND status <> 'deleted'`
-    ).bind(edlJson, renderSpecJson, candidateId, projectId, userId, expectedRevision),
+          AND status <> 'deleted'
+          AND (?8 IS NULL OR EXISTS (SELECT 1 FROM publish_generation_limits WHERE user_id = ?5 AND execution_id = ?8 AND lease_until > unixepoch()))`
+    ).bind(edlJson, renderSpecJson, candidateId, projectId, userId, expectedRevision, publishDraftJson, generationExecutionId ?? null),
     db.prepare(
       `UPDATE video_projects
           SET draft_candidate_id = ?1,
@@ -394,8 +405,8 @@ export async function snapshotProjectDraft(
       db.prepare(
         `INSERT INTO project_versions
            (id, user_id, project_id, candidate_id, version, edl_json,
-            render_spec_json, created_by)
-         SELECT ?1, user_id, id, ?5, ?2, draft_edl_json, draft_render_spec_json, ?3
+            render_spec_json, created_by, publish_draft_json)
+         SELECT ?1, user_id, id, ?5, ?2, draft_edl_json, draft_render_spec_json, ?3, (SELECT publish_draft_json FROM clip_candidates WHERE id = ?5 AND user_id = ?3)
            FROM video_projects
           WHERE id = ?4
             AND user_id = ?3
@@ -542,7 +553,7 @@ function editorCandidate(
   candidateId: string
 ): Promise<EditorCandidateRow | null> {
   return db.prepare(
-    `SELECT id, theme, origin, segments_json, status, draft_revision,
+    `SELECT id, theme, origin, segments_json, status, draft_revision, publish_draft_json,
             draft_edl_json, draft_render_spec_json
        FROM clip_candidates
       WHERE id = ?1

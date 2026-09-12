@@ -73,7 +73,7 @@ provider payload 在写入 D1 前失败。两阶段分别记录 token、reasonin
 8. 按 score 排序，以 source 时间覆盖率 80% 为阈值去除高度重复候选。
 9. 再次通过共享 `ClipCandidate` contract 后才能写入 D1。
 
-如果没有候选完整通过，服务端保存空候选集并显示“未发现足够完整的精彩片段”，不会把空结果当作 provider 失败，也不会为了凑数放宽质量门槛。用户仍可从 original source 建立手动剪辑；任何无效 candidate payload 都不会进入后续 preview/render pipeline。
+如果没有候选完整通过，服务端保存空候选集并显示无匹配结果及剩余调整机会，不会把空结果当作 provider 失败，也不会为了凑数放宽质量门槛。用户仍可从 original source 建立手动剪辑；任何无效 candidate payload 都不会进入后续 preview/render pipeline。
 
 ## API 与状态
 
@@ -84,7 +84,7 @@ provider payload 在写入 D1 前失败。两阶段分别记录 token、reasonin
   `accepted` 或 `rejected`。
 
 AI 生成时 project 原子切换为 `analyzing`，阻止同一项目重复请求。短源视频和显式 manual 模式不调用 AI。超过 10 分钟的 analyzing
-状态可安全重试；一旦已有 AI candidates 或项目进入候选/编辑状态，服务端返回
+状态可按原条件安全重试；零匹配允许一次显式调整，成功产生过 AI candidates 后服务端返回
 `candidates_already_generated`，避免无上限重复消耗 AI。首次生成失败不会写入部分候选。
 
 反馈当前同时更新候选状态，并写入 `clip_candidate_feedback_events` 事件表。事件不依赖候选
@@ -103,3 +103,7 @@ manual candidates，支持选择候选；付费用户可创建和删除 manual c
 - Locale key/type/ICU 参数一致性必须通过。
 - 全量 TypeScript 检查与 production build 必须通过。
 - 全部 migrations 必须能从空 D1 数据库应用到当前最新版本，且 foreign key check 为空。
+
+## 首期按需求选片（2026-09-08）
+
+长视频工作台改为用户明确点击开始，支持自动推荐或主题与类型条件；转写期间可提交并保存待执行需求。条件进入所有分析批次和完整性复审，零匹配最多一次调整，技术失败按原条件重试。成功结果保持原批次。执行状态、API 字段、兼容与验证见[发布准备约定](publish-preparation.md)。

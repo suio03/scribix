@@ -64,8 +64,8 @@ export async function leaseFinalJob(
   }
   if (
     !job.output_r2_key || !job.cover_r2_key ||
-    !["pending", "uploading"].includes(job.output_status) ||
-    !["pending", "uploading"].includes(job.cover_status)
+    !["pending", "uploading", "ready"].includes(job.output_status) ||
+    !["pending", "uploading", "ready"].includes(job.cover_status)
   ) {
     await failFinalJob(db, jobId, "asset_missing");
     return { ok: false, error: "asset_missing" };
@@ -115,6 +115,29 @@ export async function leaseFinalJob(
     .bind(jobId)
     .run();
   if (!claimed.meta?.changes) return { ok: false, error: "job_not_available" };
+  // Cover changes reuse an owned, unexpired video with identical video dependencies.
+  const reusable = await db.prepare(`SELECT a.r2_key FROM render_jobs j
+    JOIN project_versions v ON v.id = j.project_version_id AND v.user_id = j.user_id
+    JOIN media_assets a ON a.id = j.output_asset_id AND a.user_id = j.user_id
+    WHERE j.user_id = ?1 AND j.project_id = ?2 AND v.candidate_id = ?3
+      AND j.id <> ?4 AND j.status = 'completed' AND a.status = 'ready' AND a.deleted_at IS NULL
+      AND (a.expires_at IS NULL OR a.expires_at > CURRENT_TIMESTAMP)
+      AND v.edl_json = ?5
+      AND json_remove(v.render_spec_json, '$.coverTitle', '$.coverTimelineMs') = json_remove(?6, '$.coverTitle', '$.coverTimelineMs')
+    ORDER BY j.created_at DESC LIMIT 1`).bind(job.user_id, job.project_id, job.candidate_id, jobId, job.edl_json, job.render_spec_json).first<{ r2_key: string }>();
+  const videoKey = job.output_status === "ready" ? job.output_r2_key : reusable?.r2_key;
+  const reusableVideoUrl = videoKey ? await presignGet(videoKey, FINAL_RENDER_URL_TTL_SECONDS) : undefined;
+  const previousCover = job.cover_status === "ready" ? null : await db.prepare(`SELECT a.r2_key FROM render_jobs j
+    JOIN project_versions v ON v.id = j.project_version_id AND v.user_id = j.user_id
+    JOIN media_assets a ON a.id = j.cover_asset_id AND a.user_id = j.user_id
+    WHERE j.user_id = ?1 AND j.project_id = ?2 AND v.candidate_id = ?3 AND j.id <> ?4
+      AND j.status = 'completed' AND a.status = 'ready' AND a.deleted_at IS NULL
+      AND (a.expires_at IS NULL OR a.expires_at > CURRENT_TIMESTAMP) AND v.edl_json = ?5
+      AND json_type(v.render_spec_json, '$.coverTitle') = 'object'
+      AND json_remove(v.render_spec_json, '$.captions', '$.openingTitle', '$.audio') = json_remove(?6, '$.captions', '$.openingTitle', '$.audio')
+    ORDER BY j.created_at DESC LIMIT 1`).bind(job.user_id, job.project_id, job.candidate_id, jobId, job.edl_json, job.render_spec_json).first<{ r2_key: string }>();
+  const coverKey = job.cover_status === "ready" ? job.cover_r2_key : previousCover?.r2_key;
+  const reusableCoverUrl = coverKey ? await presignGet(coverKey, FINAL_RENDER_URL_TTL_SECONDS) : undefined;
   const [sourceUrl, outputVideoUrl, outputCoverUrl, logoUrl, fontUrl] = await Promise.all([
     presignGet(job.source_r2_key, FINAL_RENDER_URL_TTL_SECONDS),
     presignPut(job.output_r2_key, FINAL_RENDER_URL_TTL_SECONDS),
@@ -128,6 +151,9 @@ export async function leaseFinalJob(
       schemaVersion: VIDEO_WORKSPACE_SCHEMA_VERSION,
       jobId,
       kind: "final",
+      supportsPartialAssets: true,
+      reusableVideoUrl,
+      reusableCoverUrl,
       sourceUrl,
       outputVideoUrl,
       outputCoverUrl,
@@ -173,7 +199,8 @@ export async function recordFinalJobResult(
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const job = await finalJob(db, jobId);
   if (!job) return { ok: false, error: "job_not_found" };
-  if (job.status === "completed" && result.status === "completed") return { ok: true };
+  if (job.status === "completed") return { ok: true };
+  if (job.status === "canceled") return { ok: false, error: "job_not_available" };
   if (result.status === "failed") {
     if (!(RENDER_ERROR_CODES as readonly string[]).includes(result.errorCode)) {
       return { ok: false, error: "invalid_error_code" };
@@ -410,4 +437,23 @@ function sourceExpired(expiresAt: string | null): boolean {
   const value = expiresAt.includes("T") ? expiresAt : `${expiresAt.replace(" ", "T")}Z`;
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) && timestamp <= Date.now();
+}
+
+/** Persist each uploaded material before the other one can fail. Job-scoped auth is required by the route. */
+export async function recordFinalAsset(db: D1Database, bucket: R2Bucket, jobId: string, input: unknown): Promise<boolean> {
+  const job = await finalJob(db, jobId);
+  if (!job || !["running", "uploading"].includes(job.status) || !input || typeof input !== "object") return false;
+  const value = input as { kind?: string; output?: { bytes?: number; durationMs?: number; width?: number; height?: number; videoCodec?: string; audioCodec?: string; mimeType?: string } };
+  const output = value.output;
+  if (!["video", "cover"].includes(value.kind ?? "") || !output || !Number.isInteger(output.bytes) || Number(output.bytes) <= 0 || output.width !== 1080 || output.height !== 1920) return false;
+  const video = value.kind === "video";
+  if (video && (!Number.isInteger(output.durationMs) || Math.abs(Number(output.durationMs) - edlTimelineDurationMs(JSON.parse(job.edl_json))) > 1000 || output.videoCodec !== "h264" || output.audioCodec !== "aac")) return false;
+  if (!video && output.mimeType !== "image/jpeg") return false;
+  const object = await bucket.head(video ? job.output_r2_key : job.cover_r2_key);
+  if (!object || object.size !== output.bytes) return false;
+  const saved = await db.prepare(`UPDATE media_assets SET status = 'ready', bytes = ?1, width = 1080, height = 1920, duration_ms = ?2, expires_at = ?3
+    WHERE id = ?4 AND user_id = ?5 AND status IN ('pending', 'uploading', 'ready')
+      AND EXISTS (SELECT 1 FROM render_jobs WHERE id = ?6 AND status IN ('running', 'uploading'))`)
+    .bind(object.size, video ? output.durationMs : null, finalExportExpiresAt(), video ? job.output_asset_id : job.cover_asset_id, job.user_id, jobId).run();
+  return Boolean(saved.meta.changes);
 }

@@ -82,36 +82,32 @@ async function runFinal(lease) {
     workingDirectory,
     logoPath,
     fontPath,
+    allowPartial: lease.supportsPartialAssets === true,
   });
   await markUploading();
-  const [video, cover] = await Promise.all([
-    readFile(rendered.outputPath),
-    readFile(rendered.coverPath),
+  const videoOutput = rendered.output ? {
+    bytes: 0, durationMs: rendered.output.durationMs, width: rendered.output.width,
+    height: rendered.output.height, videoCodec: rendered.output.videoCodec, audioCodec: rendered.output.audioCodec,
+  } : null;
+  const coverOutput = { bytes: 0, width: 1080, height: 1920, mimeType: "image/jpeg" };
+  const uploaded = await Promise.allSettled([
+    savePart("video", rendered.videoError, rendered.outputPath, lease.outputVideoUrl, "video/mp4", videoOutput),
+    savePart("cover", rendered.coverError, rendered.coverPath, lease.outputCoverUrl, "image/jpeg", coverOutput),
   ]);
-  await Promise.all([
-    upload(lease.outputVideoUrl, "video/mp4", video),
-    upload(lease.outputCoverUrl, "image/jpeg", cover),
-  ]);
+  const failed = uploaded.find(result => result.status === "rejected");
+  if (failed) throw failed.reason;
+  async function savePart(kind, error, path, url, type, output) {
+    if (error) throw error;
+    const file = await readFile(path);
+    output.bytes = file.byteLength;
+    await upload(url, type, file);
+    if (lease.supportsPartialAssets) await requestJson(`${jobUrl}/assets`, { method: "POST", headers: { authorization, "content-type": "application/json" }, body: JSON.stringify({ kind, output }) });
+  }
   await complete({
     status: "completed",
-    output: {
-      video: {
-        bytes: video.byteLength,
-        durationMs: rendered.output.durationMs,
-        width: rendered.output.width,
-        height: rendered.output.height,
-        videoCodec: rendered.output.videoCodec,
-        audioCodec: rendered.output.audioCodec,
-      },
-      cover: {
-        bytes: cover.byteLength,
-        width: 1080,
-        height: 1920,
-        mimeType: "image/jpeg",
-      },
-    },
+    output: { video: videoOutput, cover: coverOutput },
   });
-  console.log(JSON.stringify({ event: "video_final_completed", jobId, bytes: video.byteLength, durationMs: rendered.output.durationMs }));
+  console.log(JSON.stringify({ event: "video_final_completed", jobId, bytes: videoOutput.bytes, durationMs: rendered.output.durationMs }));
 }
 
 async function markUploading() {

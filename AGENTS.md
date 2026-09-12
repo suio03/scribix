@@ -10,6 +10,8 @@ Scribix is a Next.js App Router project deployed through OpenNext on Cloudflare.
 - `npm run check-locales`: verify locale key/type/array-length parity, message placeholders, and structural-field boundaries.
 - `npm run test:video-tracking`: verify event property filtering, collector isolation, and render-transition tracking with mocked collectors.
 - `npm run test:video-workspace`: run the video workspace contract, validation, access, and rendering-boundary tests.
+- `npm run test:publish-workflow`: verify selection state, publishing drafts, concurrency, permissions, immutable packages, and partial-asset recovery against SQLite migrations.
+- `npm run test:publish-render`: verify title/cover composition and real MP4/JPG/text output with a libass-enabled FFmpeg (or the local Container).
 - `npm run build`: run the production Next.js build; baseline validation for application code or configuration changes.
 - `npm run build:cloudflare`: build the OpenNext Worker used by the full local video export environment.
 - `npm run dev:video-workspace`: run the app, local D1/Queue/Container bindings, and the shared remote media bucket after the Cloudflare build.
@@ -46,3 +48,5 @@ Recent history uses short imperative commits, often Conventional Commit prefixes
 ## Security & Configuration Tips
 
 Do not commit secrets or local credential files such as `worker-secrets.env`. Treat `wrangler.jsonc`, `wrangler.cleanup.jsonc`, migrations, and `cloudflare-env.d.ts` as deployment-sensitive; update generated types after binding changes and document required remote migrations in the PR.
+
+Publishing preparation, selection state, material dependencies and migration/Container compatibility are documented in `docs/video-workspace/publish-preparation.md`.

@@ -548,7 +548,7 @@ function batchCandidateSentences(sentences: CandidateSentence[]): CandidateAnaly
     let chars = SENTENCE_INPUT_HEADER.length;
     while (last < sentences.length) {
       const extra = sentenceLine(sentences[last]).length + 1;
-      if (chars + extra > AI_CLIP_INPUT_CHAR_LIMIT) break;
+      if (chars + extra > AI_CLIP_INPUT_CHAR_LIMIT - 2_000) break;
       chars += extra;
       last += 1;
     }

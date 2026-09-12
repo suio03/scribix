@@ -1,4 +1,7 @@
 "use client";
+import { PublishPreparation } from "./PublishPreparation";
+import { mergePublishDraft, remapCoverFrame, publishContentKey, type PublishDraft } from "@/lib/video-workspace/publish";
+import { PublishTitleOverlay } from "./PublishTitleOverlay";
 
 import {
   CircleAlert,
@@ -72,6 +75,13 @@ export function VideoClipEditor({
   onTitleChange?: (title: string) => void;
 }) {
   const t = useTranslations("Dashboard.videoCandidates.editor");
+  const tp = useTranslations("Dashboard.videoCandidates.publish");
+  const [publishDraft, setPublishDraft] = useState<PublishDraft | null>(null);
+  const [publishBusy, setPublishBusy] = useState(false);
+  const [publishError, setPublishError] = useState(false);
+  const [coverFrameRemoved, setCoverFrameRemoved] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
+  const currentSignature = useRef("");
   const [panel, setPanel] = useState<"framing" | "captions" | "cover" | "content">("framing");
   const [controlsHost, setControlsHost] = useState<HTMLDivElement | null>(null);
   const [workspace, setWorkspace] = useState<EditorWorkspace | null>(null);
@@ -122,17 +132,19 @@ export function VideoClipEditor({
         const displayClipTitle = next.clipTitle === "manual_source"
           ? t("customClipTitle")
           : next.clipTitle;
-        const savedSignature = draftSignature(next.edl, next.renderSpec);
+        const savedSignature = draftSignature(next.edl, next.renderSpec, next.publishDraft);
         const nextRenderSpec = {
           ...next.renderSpec,
           audio: ORIGINAL_AUDIO_SETTINGS,
         };
-        const nextSignature = draftSignature(next.edl, nextRenderSpec);
+        const nextSignature = draftSignature(next.edl, nextRenderSpec, next.publishDraft);
         lastSavedRef.current = next.restoredDraft ? savedSignature : "";
         setWorkspace({ ...next, clipTitle: displayClipTitle });
         setClipTitle(displayClipTitle);
         setEdl(next.edl);
         setRenderSpec(nextRenderSpec);
+        setPublishDraft(next.publishDraft);
+        setPublishOpen(Boolean(next.publishDraft));
         setRevision(next.revision);
         setSaveState(next.restoredDraft && savedSignature === nextSignature ? "saved" : "dirty");
       })
@@ -145,12 +157,14 @@ export function VideoClipEditor({
   }, [candidateId, projectId, reloadKey, t]);
 
   const signature = useMemo(
-    () => edl && renderSpec ? draftSignature(edl, renderSpec) : "",
-    [edl, renderSpec]
+    () => edl && renderSpec ? draftSignature(edl, renderSpec, publishDraft) : "",
+    [edl, renderSpec, publishDraft]
   );
 
+  currentSignature.current = signature;
+
   useEffect(() => {
-    if (!edl || !renderSpec || !signature) return;
+    if (!edl || !renderSpec || !signature || publishBusy) return;
     if (signature === lastSavedRef.current) {
       if (saveState === "dirty") setSaveState("saved");
       return;
@@ -168,6 +182,7 @@ export function VideoClipEditor({
             expectedRevision: revision,
             edl,
             renderSpec,
+            publishDraft,
           }),
         });
         const payload = await response.json() as { revision?: number; error?: string };
@@ -203,7 +218,7 @@ export function VideoClipEditor({
       }
     }, 900);
     return () => window.clearTimeout(timer);
-  }, [candidateId, edl, projectId, renderSpec, revision, saveState, signature]);
+  }, [candidateId, edl, projectId, renderSpec, revision, saveState, signature, publishDraft, publishBusy]);
 
   useEffect(() => {
     if (!workspace || !edl || saveState !== "saved") return;
@@ -287,9 +302,45 @@ export function VideoClipEditor({
   }, [candidateId, edl, projectId, proxyRefreshIds]);
 
   const updateEdl = useCallback((updater: (current: Edl) => Edl) => {
-    setEdl((current) => current ? updater(current) : current);
+    if (!edl || !renderSpec) return;
+    const next = updater(edl);
+    const cover = remapCoverFrame(edl, next, renderSpec.coverTimelineMs);
+    setCoverFrameRemoved(cover.removed);
+    setRenderSpec({ ...renderSpec, coverTimelineMs: cover.timelineMs });
+    setEdl(next);
     setSaveState((current) => current === "conflict" ? current : "dirty");
-  }, []);
+  }, [edl, renderSpec]);
+
+  const preparePublish = async (mode: "all" | "titles" | "copy" = "all") => {
+    if (publishBusy || saveState !== "saved" || framingDraftActive) return;
+    if (mode === "all" && publishDraft) { setPublishOpen(true); return; }
+    setPublishBusy(true); setPublishError(false);
+    const startedSignature = currentSignature.current;
+    const startedSpec = renderSpec;
+    try {
+      const response = await fetch(`/api/video-projects/${projectId}/publish`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ candidateId, expectedRevision: revision, mode }),
+      });
+      if (response.status === 409) { setSaveState("conflict"); return; }
+      if (!response.ok) throw new Error("publish_failed");
+      const next = await response.json() as EditorWorkspace;
+      setRevision(next.revision);
+      lastSavedRef.current = draftSignature(next.edl, next.renderSpec, next.publishDraft);
+      if (startedSignature !== currentSignature.current) {
+        setRenderSpec(current => current ? {
+          ...current,
+          openingTitle: JSON.stringify(current.openingTitle) === JSON.stringify(startedSpec?.openingTitle) ? next.renderSpec.openingTitle : current.openingTitle,
+          coverTitle: JSON.stringify(current.coverTitle) === JSON.stringify(startedSpec?.coverTitle) ? next.renderSpec.coverTitle : current.coverTitle,
+        } : next.renderSpec);
+        setPublishDraft(current => next.publishDraft ? mergePublishDraft(current, next.publishDraft, next.publishDraft.contentKey, mode) : current);
+        setSaveState("dirty");
+      } else {
+        setRenderSpec(next.renderSpec); setPublishDraft(next.publishDraft); setSaveState("saved");
+      }
+      setPublishOpen(true);
+    } catch { setPublishError(true); } finally { setPublishBusy(false); }
+  };
 
   const updateRenderSpec = useCallback((next: RenderSpec) => {
     setRenderSpec(next);
@@ -480,17 +531,23 @@ export function VideoClipEditor({
         </div>
         <div className="flex flex-wrap items-center gap-4">
         {framingDraftActive ? <p className="max-w-52 text-xs text-ink/60">{t("style.visual.draftStatus")}</p> : <SaveIndicator state={saveState} t={t} onReload={() => setReloadKey((value) => value + 1)} />}
+          {!publishOpen ? <button type="button" onClick={() => void preparePublish()} disabled={saveState !== "saved" || framingDraftActive || publishBusy} className="rounded-lg bg-accent px-4 py-3 text-sm font-semibold text-white disabled:opacity-40">{tp(publishBusy ? "generating" : "prepare")}</button> : null}
           <FinalRenderPanel compact
+            publishReady={Boolean(publishDraft)}
+            secondary={!publishOpen}
             projectId={projectId}
             candidateId={candidateId}
             revision={revision}
-            disabled={saveState !== "saved" || framingDraftActive}
+            disabled={saveState !== "saved" || framingDraftActive || publishBusy}
             disabledReason={framingDraftActive ? t("style.visual.draftStatus") : undefined}
             onConflict={() => setSaveState("conflict")}
           />
         </div>
       </div>
 
+      {coverFrameRemoved ? <p role="status" className="mb-4 text-sm">{tp("coverRemoved")}</p> : null}
+      {publishBusy ? <p role="status" className="mb-4 text-sm">{tp("waiting")}</p> : null}
+      {publishError ? <p role="alert" className="mb-4 text-sm text-red-600">{tp("failed")}</p> : null}
       <div className="grid gap-7 lg:grid-cols-[minmax(280px,1fr)_minmax(340px,1fr)]">
         <div className="lg:sticky lg:top-6 lg:self-start">
           <ContinuousProxyPlayer
@@ -514,6 +571,7 @@ export function VideoClipEditor({
             <span>{t("continuousTimeline")}</span>
             <span>{formatDuration(totalDuration)}</span>
           </div>
+          {publishOpen ? <div className="mt-5 rounded-xl border border-line bg-card p-4"><p className="mb-3 text-sm font-medium">{tp("coverTitle")}</p><CoverFrame timeline={timeline} renderSpec={renderSpec} assets={workspace.assets} /></div> : null}
           {proxyRefreshIds.length > 0 ? (
             <p className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-5 text-amber-800">
               <CircleAlert size={13} className="mt-0.5 shrink-0" />
@@ -523,6 +581,7 @@ export function VideoClipEditor({
         </div>
 
         <div className="min-w-0 self-start rounded-2xl border border-line bg-card lg:max-h-[72vh] lg:overflow-y-auto">
+          {publishOpen && publishDraft ? <PublishPreparation draft={publishDraft} spec={renderSpec} stale={publishDraft.contentKey !== publishContentKey(edl, renderSpec)} busy={publishBusy || saveState !== "saved"} onDraft={next => { setPublishDraft(next); setSaveState("dirty"); }} onSpec={updateRenderSpec} onGenerate={mode => void preparePublish(mode)} onReviewed={() => { setPublishDraft({ ...publishDraft, contentKey: publishContentKey(edl, renderSpec) }); setSaveState("dirty"); }} /> : null}
           <div className="sticky top-0 z-10 grid grid-cols-4 border-b border-line bg-card p-2" role="group" aria-label={t("workspace.tools")}>
             {(["framing", "captions", "cover", "content"] as const).map(item => <button type="button" key={item} aria-pressed={panel === item} onClick={() => setPanel(item)} className="rounded-lg px-2 py-3 text-sm font-medium text-ink/60 transition hover:bg-ink/5 aria-pressed:bg-accent/10 aria-pressed:text-accent">{t(`workspace.${item}`)}</button>)}
           </div>
@@ -980,6 +1039,7 @@ function ContinuousProxyPlayer({
       />
       {activeSegment ? (
         <PreviewOverlays
+          timelineMs={timelineMs}
           segmentId={activeSegment.id}
           sourceMs={sourceMs}
           renderSpec={renderSpec}
@@ -1092,22 +1152,26 @@ function CoverFrame({ timeline, renderSpec, assets }: { timeline: TimelineSegmen
   const style = framing.framingMode === "fit" || !dimensions ? { width: "100%", height: "100%", objectFit: "contain" as const } : browserCropStyle(coverCropBox(dimensions.width, dimensions.height, framing.crop));
   return <div className="relative mx-auto aspect-[9/16] w-32 overflow-hidden rounded-lg [container-type:inline-size]" style={{ backgroundColor: renderSpec.canvas.backgroundColor }}>
     <video ref={video} src={position.proxyUrl} muted playsInline preload="metadata" onLoadedMetadata={seek} style={style} className="absolute max-w-none" />
-    <PreviewOverlays segmentId={position.id} sourceMs={sourceMs} renderSpec={renderSpec} assets={assets} />
+    <PreviewOverlays cover timelineMs={renderSpec.coverTimelineMs} segmentId={position.id} sourceMs={sourceMs} renderSpec={renderSpec} assets={assets} />
   </div>;
 }
 
 function PreviewOverlays({
+  timelineMs = 0,
+  cover = false,
   segmentId,
   sourceMs,
   renderSpec,
   assets,
 }: {
+  timelineMs?: number;
+  cover?: boolean;
   segmentId: string;
   sourceMs: number;
   renderSpec: RenderSpec;
   assets: EditorWorkspace["assets"];
 }) {
-  const cue = renderSpec.captions.enabled ? renderSpec.captions.cues.find((item) => (
+  const cue = !cover && renderSpec.captions.enabled ? renderSpec.captions.cues.find((item) => (
     item.segmentId === segmentId &&
     sourceMs >= item.sourceStartMs &&
     sourceMs < item.sourceEndMs
@@ -1140,6 +1204,7 @@ function PreviewOverlays({
   };
   return (
     <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
+      <PublishTitleOverlay spec={renderSpec} timeMs={timelineMs} cover={cover} />
       {font ? <style>{`@font-face{font-family:"${fontFamily}";src:url("${font.url}") format("truetype");font-display:swap;}`}</style> : null}
       <div className="absolute inset-[5%] rounded-md border border-dashed border-white/20" />
       {renderSpec.brand.templateId === "signature-v1" ? (
@@ -1231,8 +1296,8 @@ function EditorNotice({ children, tone }: { children: React.ReactNode; tone: "er
   return <div className={`flex min-h-32 items-center justify-center gap-3 border-t border-line px-6 text-[12px] ${tone === "error" ? "bg-red-50 text-red-700" : ""}`}>{children}</div>;
 }
 
-function draftSignature(edl: Edl, renderSpec: RenderSpec): string {
-  return JSON.stringify({ edl, renderSpec });
+function draftSignature(edl: Edl, renderSpec: RenderSpec, publishDraft: PublishDraft | null = null): string {
+  return JSON.stringify({ edl, renderSpec, publishDraft });
 }
 
 function clamp01(value: number): number {

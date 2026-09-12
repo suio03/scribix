@@ -266,6 +266,7 @@ async function sweepExpiredVideoSources(env: Env, nowIso: string): Promise<Sweep
         AND a.r2_key IS NOT NULL
         AND a.expires_at IS NOT NULL
         AND a.expires_at <= ?1
+        AND a.social_hold_until <= unixepoch()
         AND p.deleted_at IS NULL
         AND NOT EXISTS (
           SELECT 1 FROM render_jobs j
@@ -303,6 +304,16 @@ async function sweepExpiredVideoSources(env: Env, nowIso: string): Promise<Sweep
   return stats;
 }
 
+// A negative deadline is an exclusive cleanup lease; submissions can only hold
+// a nonnegative row. The same D1 CAS prevents a stale sweep from deleting a held MP4.
+async function claimSocialAssetCleanup(env: Env, assetId: string, userId: string) {
+  const now = Math.floor(Date.now() / 1000);
+  const row = await env.DB.prepare(`UPDATE media_assets SET social_hold_until = ?
+    WHERE id = ? AND user_id = ? AND social_hold_until BETWEEN ? AND ? RETURNING id`)
+    .bind(-(now + 600), assetId, userId, -now, now).first();
+  return Boolean(row);
+}
+
 async function sweepExpiredFinalAssets(env: Env, nowIso: string): Promise<SweepStats> {
   const rows = await env.DB.prepare(
     `SELECT a.id AS asset_id, a.user_id, a.project_id, a.kind, a.r2_key
@@ -313,12 +324,14 @@ async function sweepExpiredFinalAssets(env: Env, nowIso: string): Promise<SweepS
         AND a.r2_key IS NOT NULL
         AND a.expires_at IS NOT NULL
         AND a.expires_at <= ?1
+        AND a.social_hold_until <= unixepoch()
       ORDER BY a.expires_at ASC
       LIMIT 200`
   ).bind(nowIso).all<SupersededFinalAssetRow>();
   const stats: SweepStats = { scanned: rows.results.length, deleted: 0, failed: 0, retry: 0 };
   for (const asset of rows.results) {
     try {
+      if (!await claimSocialAssetCleanup(env, asset.asset_id, asset.user_id)) continue;
       await env.SCRIBIX_MEDIA.delete(asset.r2_key);
       const updated = await env.DB.batch([
         env.DB.prepare(
@@ -376,6 +389,7 @@ async function sweepExpiredPreviewProxies(env: Env, nowIso: string): Promise<Swe
         AND a.r2_key IS NOT NULL
         AND a.expires_at IS NOT NULL
         AND a.expires_at <= ?1
+        AND a.social_hold_until <= unixepoch()
         AND NOT EXISTS (
           SELECT 1 FROM render_jobs j
            WHERE j.output_asset_id = a.id
@@ -438,6 +452,7 @@ async function sweepOrphanVideoAssets(env: Env): Promise<SweepStats> {
   const stats: SweepStats = { scanned: rows.results.length, deleted: 0, failed: 0, retry: 0 };
   for (const asset of rows.results) {
     try {
+      if (!await claimSocialAssetCleanup(env, asset.asset_id, asset.user_id)) continue;
       await env.SCRIBIX_MEDIA.delete(asset.r2_key);
       const updated = await env.DB.prepare(
         `UPDATE media_assets
@@ -472,6 +487,7 @@ async function sweepSupersededFinalAssets(env: Env): Promise<SweepStats> {
       WHERE j.kind = 'final'
         AND j.superseded_at IS NOT NULL
         AND a.kind IN ('final_video', 'cover')
+        AND a.social_hold_until <= unixepoch()
         AND a.status = 'ready'
         AND a.deleted_at IS NULL
         AND a.r2_key IS NOT NULL
@@ -481,6 +497,7 @@ async function sweepSupersededFinalAssets(env: Env): Promise<SweepStats> {
   const stats: SweepStats = { scanned: rows.results.length, deleted: 0, failed: 0, retry: 0 };
   for (const asset of rows.results) {
     try {
+      if (!await claimSocialAssetCleanup(env, asset.asset_id, asset.user_id)) continue;
       await env.SCRIBIX_MEDIA.delete(asset.r2_key);
       const updated = await env.DB.prepare(
         `UPDATE media_assets

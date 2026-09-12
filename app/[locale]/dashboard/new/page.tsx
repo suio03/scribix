@@ -1,3 +1,5 @@
+import { clipflightEnabled } from "@/lib/clipflight";
+import { PublishingAccounts } from "@/app/components/PublishingAccounts";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Uploader } from "@/app/components/Uploader";
 import { TrackToolVisit } from "@/app/components/Track";
@@ -53,6 +55,7 @@ export default async function NewProjectPage() {
           videoOnly
         />
       </section>
+      {session?.user?.id && clipflightEnabled(session.user.id) && <PublishingAccounts compact />}
     </main>
   );
 }

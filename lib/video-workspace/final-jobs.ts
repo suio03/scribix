@@ -32,6 +32,9 @@ export type FinalRenderSummary = {
   projectVersionId: string;
   version: number;
   isCurrent: boolean;
+  isVideoCurrent?: boolean;
+  isCoverCurrent?: boolean;
+  isCopyCurrent?: boolean;
   status: string;
   attempt: number;
   errorCode: string | null;
@@ -397,7 +400,7 @@ export async function retryFinalRender(
         `UPDATE media_assets
           SET status = 'pending', bytes = NULL, duration_ms = NULL,
               width = NULL, height = NULL, deleted_at = NULL
-          WHERE id IN (?1, ?2) AND user_id = ?3`
+          WHERE id IN (?1, ?2) AND user_id = ?3 AND status <> 'ready'`
       ).bind(job.output_asset_id, job.cover_asset_id, userId),
       db.prepare(
         `UPDATE video_projects SET status = 'rendering', updated_at = CURRENT_TIMESTAMP
@@ -431,6 +434,13 @@ async function finalRenderSummary(
                AND candidate.draft_render_spec_json = v.render_spec_json
               THEN 1 ELSE 0
             END AS is_current,
+            CASE WHEN candidate.draft_edl_json = v.edl_json
+              AND json_remove(candidate.draft_render_spec_json, '$.coverTitle', '$.coverTimelineMs') = json_remove(v.render_spec_json, '$.coverTitle', '$.coverTimelineMs')
+              THEN 1 ELSE 0 END AS is_video_current,
+            CASE WHEN candidate.draft_edl_json = v.edl_json
+              AND json_remove(candidate.draft_render_spec_json, '$.captions', '$.openingTitle', '$.audio') = json_remove(v.render_spec_json, '$.captions', '$.openingTitle', '$.audio')
+              THEN 1 ELSE 0 END AS is_cover_current,
+            CASE WHEN candidate.publish_draft_json IS v.publish_draft_json THEN 1 ELSE 0 END AS is_copy_current,
             video.r2_key AS video_r2_key, video.status AS video_status,
             video.expires_at AS video_expires_at,
             cover.r2_key AS cover_r2_key, cover.status AS cover_status,
@@ -455,6 +465,9 @@ async function finalRenderSummary(
       project_version_id: string;
       version: number;
       is_current: number;
+      is_video_current: number;
+      is_cover_current: number;
+      is_copy_current: number;
       status: string;
       attempt: number;
       error_code: string | null;
@@ -469,21 +482,22 @@ async function finalRenderSummary(
     }>();
   if (!row) throw new Error("final_render_not_found");
   const expiresAt = earliestTimestamp(row.video_expires_at, row.cover_expires_at);
-  const ready = row.status === "completed" && row.video_status === "ready" &&
-    row.cover_status === "ready" && !timestampExpired(expiresAt);
-  const expiresInSec = ready ? 15 * 60 : null;
-  const [videoUrl, coverUrl] = ready
-    ? await Promise.all([
-        presignGet(row.video_r2_key, expiresInSec as number),
-        presignGet(row.cover_r2_key, expiresInSec as number),
-      ])
-    : [null, null];
+  const videoReady = row.video_status === "ready" && !timestampExpired(row.video_expires_at);
+  const coverReady = row.cover_status === "ready" && !timestampExpired(row.cover_expires_at);
+  const expiresInSec = videoReady || coverReady ? 15 * 60 : null;
+  const [videoUrl, coverUrl] = await Promise.all([
+    videoReady ? presignGet(row.video_r2_key, 15 * 60) : null,
+    coverReady ? presignGet(row.cover_r2_key, 15 * 60) : null,
+  ]);
   return {
     id: row.id,
     candidateId: row.candidate_id,
     projectVersionId: row.project_version_id,
     version: row.version,
     isCurrent: row.is_current === 1,
+    isVideoCurrent: row.is_video_current === 1,
+    isCoverCurrent: row.is_cover_current === 1,
+    isCopyCurrent: row.is_copy_current === 1,
     status: row.status,
     attempt: row.attempt,
     errorCode: row.error_code,

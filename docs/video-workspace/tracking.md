@@ -35,3 +35,9 @@ The deployed legacy Plausible script always attaches the full current URL and do
 - Run the live upload → candidates/manual clip → save → export → download flow and verify collector requests and dashboard receipt. Check safe properties, failed/retried jobs and repeated status polls.
 
 The automated tests use mocked collectors and send no real analytics. Live receipt has not yet been verified for this change.
+
+## Publish flow (2026-09-08)
+
+Candidate start follows an explicit request (or persisted pending request); waiting for transcription is not candidate completion. Resuming that request does not add another start. Successful empty results still count as completion. Upload navigation may happen before transcription completes; the existing in-browser poll continues to observe completion while mounted. Closing the page can lose browser observations.
+
+Selection requirements and generated/edited publishing text never enter event properties. Existing AI usage records capture cost; the new selection, quota and package records are operational state, not tracking tables. Video-only downloads use the existing `assetKind: video`; full downloads use `package`. Download remains an initiation signal, not publication. The tracking schema itself is unchanged; the overall feature requires the migration and Container release described in [publish preparation](publish-preparation.md).

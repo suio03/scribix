@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
-import { Clapperboard, FileText, FolderKanban, X } from "lucide-react";
+import { Clapperboard, FileText, FolderKanban, Link2, Send, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { getPathname, Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -19,14 +19,17 @@ export function WorkspaceSidebar({
   usage,
   userImage,
   userLabel,
+  socialEnabled = false,
 }: {
   signOutRedirect: string;
   usage?: SidebarUsage;
   userImage?: string | null;
   userLabel?: string | null;
+  socialEnabled?: boolean;
 }) {
   const topNavT = useTranslations("TopNav");
   const sidebarT = useTranslations("Sidebar");
+  const distributionT = useTranslations("DistributionNav");
   const dashboardT = useTranslations("Dashboard.list");
   const locale = useLocale();
   const pathname = usePathname();
@@ -123,6 +126,8 @@ export function WorkspaceSidebar({
               label={dashboardT("filterTranscripts")}
               onNavigate={closeMobile}
             />
+            {socialEnabled && <WorkspaceLink active={pathname === "/dashboard/accounts"} href="/dashboard/accounts" icon={Link2} label={sidebarT("publishingAccounts")} onNavigate={closeMobile} />}
+            {socialEnabled && <WorkspaceLink active={pathname === "/dashboard/publish" || pathname === "/dashboard/publishing"} href="/dashboard/publishing" icon={Send} label={distributionT("navigation")} onNavigate={closeMobile} />}
           </div>
         </nav>
 

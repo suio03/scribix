@@ -537,6 +537,10 @@ export function useUpload({
             startedAt: uploadStartedAt,
           }));
         }
+        if (videoProjectId) {
+          clearPendingProcessing(transcriptId);
+          router.push(`/dashboard/video-projects/${videoProjectId}`);
+        }
         const finalStatus = await pollStatus(transcriptId, t);
         if (finalStatus === "completed") {
           clearPendingProcessing(transcriptId);
@@ -559,9 +563,7 @@ export function useUpload({
               startedAt: uploadStartedAt,
             }));
           }
-          router.push(videoProjectId
-            ? `/dashboard/video-projects/${videoProjectId}`
-            : `/dashboard/transcripts/${transcriptId}`);
+          if (!videoProjectId) router.push(`/dashboard/transcripts/${transcriptId}`);
         } else {
           throw new Error(t("transcriptionGeneric", { status: finalStatus }));
         }
@@ -643,6 +645,7 @@ export function useUpload({
     const pending = readPendingProcessing();
     if (!pending) return;
     recoveryStartedRef.current = true;
+    if (pending.projectId) { clearPendingProcessing(pending.transcriptId); router.push(`/dashboard/video-projects/${pending.projectId}`); return; }
     setFilename(pending.filename);
     setUploadError(null);
     setPhase("polling");
@@ -750,6 +753,10 @@ export function useUpload({
           }
           savePendingProcessing(submit);
           setPhase("polling");
+          if (submit.projectId) {
+            clearPendingProcessing(submit.transcriptId);
+            router.push(`/dashboard/video-projects/${submit.projectId}`);
+          }
           await pollStatus(submit.transcriptId, t);
           clearPendingProcessing(submit.transcriptId);
           trackEvent("transcribe_success", {
@@ -763,9 +770,7 @@ export function useUpload({
             upload_elapsed_sec: elapsedSec(submit.startedAt),
             upload_pipeline_version: UPLOAD_PIPELINE_VERSION,
           });
-          router.push(submit.projectId
-            ? `/dashboard/video-projects/${submit.projectId}`
-            : `/dashboard/transcripts/${submit.transcriptId}`);
+          if (!submit.projectId) router.push(`/dashboard/transcripts/${submit.transcriptId}`);
         })
         .catch((error) => {
           const detail = uploadErrorDetail(error, "submitting transcript", t);

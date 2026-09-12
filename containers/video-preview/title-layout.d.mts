@@ -1,0 +1,1 @@
+export function titleLayout(overlay: { text: string; fontScale?: number; positionY?: number }, captionPositionY?: number, cover?: boolean): { lines: string[]; fontSize: number; positionY: number; lineHeight: number };

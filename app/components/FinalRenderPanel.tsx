@@ -1,5 +1,6 @@
 "use client";
 
+import { PublishLink } from "./publishing/PublishLink";
 import { trackVideoFailure } from "./video-event-client";
 import { Download, Film, MoreHorizontal, Loader2, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -10,6 +11,8 @@ import { ACTIVE_EXPORT_STATUSES as ACTIVE, recordVideoDownload, useVideoExports 
 
 export function FinalRenderPanel({
   compact = false,
+  publishReady = false,
+  secondary = false,
   projectId,
   candidateId,
   revision,
@@ -21,6 +24,8 @@ export function FinalRenderPanel({
   onExportDeleted,
 }: {
   compact?: boolean;
+  publishReady?: boolean;
+  secondary?: boolean;
   projectId: string;
   candidateId: string;
   revision: number;
@@ -31,6 +36,7 @@ export function FinalRenderPanel({
   onConflict: () => void;
   onExportDeleted?: () => void;
 }) {
+  const tp = useTranslations("Dashboard.videoCandidates.publish");
   const t = useTranslations("Dashboard.videoCandidates.editor.finalRender");
   const { renders, downloadedIds, statusError, refresh, watch, forget } = useVideoExports();
   const menuRef = useRef<HTMLDetailsElement>(null);
@@ -89,7 +95,7 @@ export function FinalRenderPanel({
         return;
       }
       if (!response.ok || !payload.render) throw new Error("render_create_failed");
-      watch(payload.render);
+      watch(payload.render, secondary || generatedOnly ? "video" : "package");
     } catch {
       trackVideoFailure("export");
       setError("generic");
@@ -112,7 +118,7 @@ export function FinalRenderPanel({
         return;
       }
       if (!response.ok) throw new Error("render_update_failed");
-      if (method === "POST") watch({ ...render, status: "queued" });
+      if (method === "POST") watch({ ...render, status: "queued" }, secondary || generatedOnly ? "video" : "package");
       else forget(render.id);
       await refresh();
       if (method === "DELETE" && render.status === "completed") {
@@ -127,23 +133,39 @@ export function FinalRenderPanel({
     }
   };
 
+  const downloadPackage = async () => {
+    if (!latestReady || busy || disabled) return;
+    setBusy(true); setError(null);
+    try {
+      const response = await fetch(`/api/video-projects/${projectId}/renders/${latestReady.id}/download`, {
+        method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ expectedRevision: revision }),
+      });
+      if (response.status === 409) { onConflict(); return; }
+      if (!response.ok) throw new Error("package_failed");
+      const payload = await response.json() as { url: string };
+      const link = document.createElement("a"); link.href = payload.url; link.download = ""; link.click();
+      recordVideoDownload(projectId, latestReady);
+    } catch { setError("generic"); } finally { setBusy(false); }
+  };
+
   const downloadUrl = latestReady && ((!disabled && latestReady.isCurrent) || !sourceAvailable)
     ? `/api/video-projects/${projectId}/renders/${latestReady.id}/download`
     : null;
 
   if (compact) {
-    const actionClass = "inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50";
+    const actionClass = "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 " + (secondary ? "border border-line text-ink" : "bg-accent text-white");
     return (
       <section id="exports" className="relative text-ink">
-        <div className="flex items-center gap-2">
-          {downloadUrl && latestReady && !active ? (
-            <a href={downloadUrl} download onClick={() => recordVideoDownload(projectId, latestReady)} className={actionClass}>
-              <Download size={16} />{t("downloadVideo")}
+        <PublishLink projectId={projectId} candidateId={candidateId} disabled={disabled} renderJobId={candidateRenders.find(render => render.videoUrl && render.isVideoCurrent === true)?.id} />
+        <div className="flex flex-wrap items-center gap-2">
+          {downloadUrl && latestReady && !active && publishReady ? <button type="button" disabled={busy || disabled} onClick={() => void downloadPackage()} className={actionClass}><Download size={16} />{tp("downloadAll")}</button> : downloadUrl && latestReady && !active ? (
+            <a href={`${downloadUrl}?format=video`} download onClick={() => recordVideoDownload(projectId, latestReady, "video")} className={actionClass}>
+              <Download size={16} />{tp(secondary ? "videoOnly" : "videoDownload")}
             </a>
           ) : (
             <button type="button" title={disabled ? (disabledReason ?? t("saveFirst")) : undefined} disabled={busy || disabled || active || !sourceAvailable} onClick={() => void start()} className={actionClass}>
               {busy || active ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
-              {t(busy || active ? "rendering" : !sourceAvailable ? "unavailable" : "generate")}
+              {busy || active ? t("rendering") : secondary ? tp("videoOnly") : publishReady ? tp("generateFiles") : t(!sourceAvailable ? "unavailable" : "generate")}
             </button>
           )}
           {latestReady || activeRender ? (
@@ -175,6 +197,18 @@ export function FinalRenderPanel({
             </details>
           ) : null}
         </div>
+        {publishReady && candidateRenders[0] ? <ul aria-live="polite" className="mt-3 space-y-1 text-xs">
+          {(["video", "cover"] as const).map(kind => {
+            const render = candidateRenders[0];
+            const ready = kind === "video" ? render.videoUrl : render.coverUrl;
+            return <li key={kind} className="flex flex-wrap gap-2"><span>{tp(kind === "video" ? "videoDownload" : "coverDownload")}: {tp(ready ? "ready" : render.status === "failed" ? "partFailed" : "partWaiting")}</span>{ready ? <a href={`/api/video-projects/${projectId}/renders/${render.id}/download?format=${kind}`} download className="underline">{tp("getFile")}</a> : null}</li>;
+          })}
+          <li>{tp("postTitle")}: {tp("ready")}</li>
+        </ul> : null}
+        {latestReady && !latestReady.isCurrent ? <p role="status" className="mt-2 max-w-72 text-xs text-amber-700 dark:text-amber-200">{tp(latestReady.isVideoCurrent === true ? "coverChanged" : "videoChanged")}</p> : null}
+        {publishReady && latestReady?.isCopyCurrent === false ? <p role="status" className="mt-2 max-w-72 text-xs text-ink/60">{tp("copyChanged")}</p> : null}
+        {active ? <p role="status" className="mt-2 max-w-72 text-xs">{tp("exportWaiting")}</p> : null}
+        {candidateRenders.find(render => render.status === "failed") && !active ? <button type="button" disabled={busy} onClick={() => void mutate(candidateRenders.find(render => render.status === "failed")!, "POST")} className="mt-2 text-xs underline">{tp("retryFiles")}</button> : null}
         {statusError || error ? <p role="alert" className="mt-2 max-w-64 text-xs text-red-600">{t(error ? error === "limit" ? "limit" : "failed" : "statusUnavailable")}</p> : null}
       </section>
     );
@@ -182,6 +216,7 @@ export function FinalRenderPanel({
 
   return (
     <section id="exports" className="video-export-card scroll-mt-6 rounded-xl border border-ink bg-ink p-5 text-paper shadow-[0_18px_44px_-30px_rgba(0,0,0,0.8)]">
+      <PublishLink projectId={projectId} candidateId={candidateId} disabled={disabled} renderJobId={candidateRenders.find(render => render.videoUrl && render.isVideoCurrent === true)?.id} />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div hidden={compact}>
           <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-paper/45">{t("eyebrow")}</p>
