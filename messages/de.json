@@ -3148,7 +3148,13 @@
     "platformSettings": "Plattformeinstellungen",
     "platformReady": "Bereit",
     "platformIncomplete": "Angaben prüfen",
-    "platformUnavailable": "Nicht verfügbar"
+    "platformUnavailable": "Nicht verfügbar",
+    "dismissNotice": "Mitteilung schließen",
+    "refreshAccess": "Zugriff erneuern",
+    "refreshingAccess": "Wird erneuert…",
+    "accessRefreshed": "Zugriff für {name} erneuert.",
+    "refreshFailed": "Der Zugriff konnte nicht erneuert werden. Dein Kanal bleibt erhalten. Versuche es später erneut.",
+    "refreshReconnect": "Diese Verbindung muss erneut autorisiert werden. Wähle Erneut verbinden."
   },
   "DistributionNav": {
     "navigation": "Veröffentlichen",

@@ -380,24 +380,20 @@ export function YouTubeIcon({ className }: Pick<IconProps, "className">) {
   );
 }
 
-export function LinkedInIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-      <path d="M7.5 10v7M7.5 7h.01M11 17v-7M11 13a3 3 0 0 1 6 0v4" />
-    </Svg>
-  );
+export function LinkedInIcon({size = 20, className}: IconProps) {
+  return <img src="/brand/linkedin.png" alt="" aria-hidden="true" width={size} height={size} className={className} style={{objectFit: "contain", flexShrink: 0}} />;
 }
 
-type CompactPlatform = Exclude<Platform, "youtube">;
+type CompactPlatform = Platform;
 
 const COMPACT_PLATFORM_ICONS = {
+  youtube: YouTubeIcon,
   instagram: InstagramIcon,
   tiktok: TikTokIcon,
   linkedin: LinkedInIcon,
 } satisfies Record<CompactPlatform, ComponentType<IconProps>>;
 
-/** YouTube's official mark cannot fit below its 20px visible-height minimum. */
+/** YouTube retains its official clear-space canvas even in compact contexts. */
 export function supportsCompactPlatformIcon(
   platform: Platform,
 ): platform is CompactPlatform {
@@ -455,4 +451,10 @@ export function LogoMark({ size = 22, className }: IconProps) {
       />
     </svg>
   );
+}
+
+export function UnlinkIcon(props: IconProps) {
+  return <Svg {...props}>
+    <path d="m18 6 3-3M18 2v2M20 6h2M6 18l-3 3M2 18h2M6 20v2M8 16l-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0M16 8l1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" />
+  </Svg>;
 }

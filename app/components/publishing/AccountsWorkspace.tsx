@@ -8,16 +8,18 @@ import type { AccountProviderSummary, PublicAccount } from "./shared/accounts";
 import type { Platform } from "./shared/specs";
 import { ActionDialog } from "./ActionDialog";
 import { ConnectDialog } from "./ConnectDialog";
-import { startConnection, disconnectPlatformAccount, getAccounts, getPosts, type SessionUser } from "./api";
+import { startConnection, refreshPlatformAccount, PublishingRequestError, disconnectPlatformAccount, getAccounts, getPosts, type SessionUser } from "./api";
 const consumeFocusPlatforms = (): Platform[] => [];
 import { userFacingError } from "./user-facing-error";
 import {
   AlertIcon,
+  CloseIcon,
+  UnlinkIcon,
+  RefreshIcon,
   CompactPlatformIcon,
   LinkIcon,
   MoreHorizontalIcon,
   PlusIcon,
-  supportsCompactPlatformIcon,
   YouTubeIcon,
 } from "./icons";
 
@@ -118,6 +120,8 @@ function initialConnectionError() {
     providers: [],
     error: null,
   });
+  const [refreshingAccountId, setRefreshingAccountId] = useState<string | null>(null);
+  const [dismissedReauth, setDismissedReauth] = useState(false);
   const [disconnectingAccountId, setDisconnectingAccountId] = useState<string | null>(null);
   const [pendingDisconnect, setPendingDisconnect] = useState<PendingDisconnect | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
@@ -258,6 +262,32 @@ function initialConnectionError() {
     startAuthorization(platform);
   }
 
+  function dismissError() {
+    setActionError(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("socialConnection");
+    url.searchParams.delete("connectionError");
+    window.history.replaceState(window.history.state, "", url);
+  }
+
+  async function refreshAccount(channel: Channel) {
+    setRefreshingAccountId(channel.id);
+    setActionMessage(null);
+    setActionError(null);
+    try {
+      const result = await refreshPlatformAccount(channel.id);
+      setState(current => ({...current, providers: current.providers.map(provider => ({
+        ...provider, accounts: provider.accounts.map(account => account.connectionId === channel.connectionId
+          ? {...account, expiresAt: result.expiresAt} : account),
+      }))}));
+      setActionMessage(tx("accessRefreshed", {name: channelName(channel)}));
+    } catch (error) {
+      setActionError(tx(error instanceof PublishingRequestError && error.status === 409 ? "refreshReconnect" : "refreshFailed"));
+    } finally {
+      setRefreshingAccountId(null);
+    }
+  }
+
   async function disconnectAccount(request: PendingDisconnect) {
     setDisconnectingAccountId(request.accountId);
     setActionMessage(null);
@@ -316,15 +346,17 @@ function initialConnectionError() {
           <div className="info-banner" role="status">
             <LinkIcon size={18} />
             <span>{actionMessage}</span>
+            <button type="button" className="btn btn--ghost btn--sm" aria-label={tx("dismissNotice")} onClick={() => setActionMessage(null)}><CloseIcon size={18} /></button>
           </div>
         ) : null}
         {actionError ? (
           <div className="info-banner info-banner--error" role="alert">
             <AlertIcon size={18} />
             <span>{actionError}</span>
+            <button type="button" className="btn btn--ghost btn--sm" aria-label={tx("dismissNotice")} onClick={dismissError}><CloseIcon size={18} /></button>
           </div>
         ) : null}
-        {needsReauthCount > 0 ? (
+        {needsReauthCount > 0 && !dismissedReauth ? (
           <div className="info-banner info-banner--error" role="status">
             <AlertIcon size={18} />
             <span>
@@ -332,6 +364,7 @@ function initialConnectionError() {
                 ? tx("m9d42d2485a")
                 : tx("m892cbd5808", {v0: needsReauthCount})}
             </span>
+            <button type="button" className="btn btn--ghost btn--sm" aria-label={tx("dismissNotice")} onClick={() => setDismissedReauth(true)}><CloseIcon size={18} /></button>
           </div>
         ) : null}
 
@@ -428,24 +461,17 @@ function initialConnectionError() {
                         ) : (
                           PLATFORM_CODES[channel.platform]
                         )}
-                        {supportsCompactPlatformIcon(channel.platform) ? (
-                          <span className="channel-avatar__badge" aria-hidden="true">
-                            <CompactPlatformIcon platform={channel.platform} size={13} />
-                          </span>
-                        ) : null}
                       </span>
 
                       <div className="channel-card__identity">
                         <span className="channel-card__platform">
-                          <CompactPlatformIcon platform={channel.platform} size={15} />
+                          <span className="channel-card__platform-icon"><CompactPlatformIcon platform={channel.platform} size={20} /></span>
                           {PLATFORM_LABELS[channel.platform]}
                         </span>
                         <strong title={name}>{name}</strong>
-                        {channel.username ? (
-                          <span className="channel-card__username" title={channel.username}>
-                            {channel.username}
+                        <span className="channel-card__username" title={channel.username ?? undefined}>
+                            {channel.username || "\u00a0"}
                           </span>
-                        ) : null}
                       </div>
 
                       <div
@@ -464,10 +490,29 @@ function initialConnectionError() {
                         </button>
                         {isMenuOpen ? (
                           <div className="channel-card__menu" role="menu" aria-label={tx("m2fcb3663ef", {v0: name})}>
+                            {channel.canAutoRefresh && !needsReauth ? (
+                              <button className="channel-card__menu-action" role="menuitem" type="button"
+                                disabled={refreshingAccountId !== null || disconnectingAccountId !== null}
+                                onClick={() => void refreshAccount(channel)}>
+                                <RefreshIcon size={16} />
+                                {tx(refreshingAccountId === channel.id ? "refreshingAccess" : "refreshAccess")}
+                              </button>
+                            ) : null}
+                            {needsReauth || !channel.canAutoRefresh ? (
+                              <button
+                                className="channel-card__menu-action" role="menuitem"
+                                type="button"
+                                onClick={() => { setOpenMenuAccountId(null); startReauthorization(channel.platform); }}
+                              >
+                                <LinkIcon size={16} />
+                                {tx("reconnectPlatform", {platform: PLATFORM_LABELS[channel.platform]})}
+                              </button>
+                            ) : null}
+
                             <button
                               type="button"
                               role="menuitem"
-                              disabled={disconnectingAccountId !== null}
+                              disabled={disconnectingAccountId !== null || refreshingAccountId !== null}
                               onClick={() => {
                                 setOpenMenuAccountId(null);
                                 setPendingDisconnect({
@@ -478,6 +523,7 @@ function initialConnectionError() {
                                 });
                               }}
                             >
+                              <UnlinkIcon size={16} />
                               {tx("med28e0686e")}</button>
                           </div>
                         ) : null}
@@ -497,15 +543,6 @@ function initialConnectionError() {
                       ) : null}
                     </div>
 
-                    {needsReauth ? (
-                      <button
-                        className="btn btn--secondary btn--sm channel-card__reconnect"
-                        type="button"
-                        onClick={() => startReauthorization(channel.platform)}
-                      >
-                        {tx("reconnectPlatform", {platform: PLATFORM_LABELS[channel.platform]})}
-                      </button>
-                    ) : null}
                   </li>
                 );
               })}

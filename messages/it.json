@@ -3148,7 +3148,13 @@
     "platformSettings": "Impostazioni delle piattaforme",
     "platformReady": "Pronto",
     "platformIncomplete": "Da verificare",
-    "platformUnavailable": "Non disponibile"
+    "platformUnavailable": "Non disponibile",
+    "dismissNotice": "Chiudi notifica",
+    "refreshAccess": "Rinnova accesso",
+    "refreshingAccess": "Rinnovo…",
+    "accessRefreshed": "Accesso rinnovato per {name}.",
+    "refreshFailed": "Impossibile rinnovare l’accesso. Il tuo canale viene mantenuto. Riprova più tardi.",
+    "refreshReconnect": "Questa connessione richiede una nuova autorizzazione. Usa Riconnetti."
   },
   "DistributionNav": {
     "navigation": "Pubblicazione",

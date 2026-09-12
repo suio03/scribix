@@ -63,3 +63,7 @@ export async function createPost(input: PostInput, draft: ComposeDraft) {
     throw error;
   }
 }
+
+export function refreshPlatformAccount(accountId: string) {
+  return json<{ok: true; expiresAt: number | null}>("/api/social/connections", mutation("PATCH", {accountId}));
+}

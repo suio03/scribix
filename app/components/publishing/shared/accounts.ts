@@ -9,6 +9,7 @@ export type PublicAccount = {
   username: string | null;
   avatarUrl: string | null;
   status: "active" | "needs_reauth";
+  canAutoRefresh?: boolean;
   expiresAt: number | null;
 };
 

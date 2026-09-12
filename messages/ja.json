@@ -3148,7 +3148,13 @@
     "platformSettings": "プラットフォーム設定",
     "platformReady": "準備完了",
     "platformIncomplete": "確認が必要",
-    "platformUnavailable": "利用不可"
+    "platformUnavailable": "利用不可",
+    "dismissNotice": "通知を閉じる",
+    "refreshAccess": "アクセスを更新",
+    "refreshingAccess": "更新中…",
+    "accessRefreshed": "{name} のアクセスを更新しました。",
+    "refreshFailed": "アクセスを更新できませんでした。チャンネルは保持されています。後でもう一度お試しください。",
+    "refreshReconnect": "この接続には再認証が必要です。再接続してください。"
   },
   "DistributionNav": {
     "navigation": "公開",

@@ -3148,7 +3148,13 @@
     "platformSettings": "Paramètres des plateformes",
     "platformReady": "Prêt",
     "platformIncomplete": "À vérifier",
-    "platformUnavailable": "Indisponible"
+    "platformUnavailable": "Indisponible",
+    "dismissNotice": "Fermer la notification",
+    "refreshAccess": "Renouveler l’accès",
+    "refreshingAccess": "Renouvellement…",
+    "accessRefreshed": "Accès renouvelé pour {name}.",
+    "refreshFailed": "Impossible de renouveler l’accès. Votre chaîne est conservée. Réessayez plus tard.",
+    "refreshReconnect": "Cette connexion nécessite une nouvelle autorisation. Utilisez Reconnecter."
   },
   "DistributionNav": {
     "navigation": "Publication",

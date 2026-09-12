@@ -67,5 +67,16 @@ async function DELETE(request: Request, { params }: Params = { params: Promise.r
   return Response.json(response.ok ? await response.json() : { error: response.status === 409 ? "social_account_busy" : "social_service_unavailable" }, { status: response.ok ? 200 : response.status === 409 ? 409 : 502 });
 }
 
-return { GET, POST, DELETE };
+async function PATCH(request: Request, { params }: Params = { params: Promise.resolve({ id: "" }) }) {
+  if (!validSocialOrigin(request)) return Response.json({ error: "invalid_origin" }, { status: 403 });
+  const current = await context(params);
+  if (!current) return Response.json({ error: "not_found" }, { status: 404 });
+  const body = await request.json().catch(() => null) as {accountId?: unknown} | null;
+  if (typeof body?.accountId !== "string" || !body.accountId || body.accountId.length > 128)
+    return Response.json({ error: "invalid_request" }, { status: 400 });
+  const response = await clipflightRequest(current.user.id, `/accounts/${encodeURIComponent(body.accountId)}/refresh`, { method: "POST" });
+  return Response.json(response.ok ? await response.json() : { error: response.status === 409 ? "social_reconnect_required" : "social_service_unavailable" },
+    { status: response.ok ? 200 : response.status === 409 ? 409 : 502, headers: { "Cache-Control": "no-store" } });
+}
+return { GET, POST, DELETE, PATCH };
 }

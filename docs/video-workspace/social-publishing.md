@@ -141,3 +141,9 @@ render test passed with `/usr/local/bin/ffmpeg` (libass enabled), producing MP4,
 JPG and ZIP and verifying reusable video and partial-failure behavior. The default
 `/opt/homebrew/bin/ffmpeg` lacks the required subtitles filter on this machine.
 These checks do not establish remote Scribix deployment or real LinkedIn posting.
+
+### Channel feedback and manual renewal (2026-09-13)
+
+Connection/disconnect feedback can be dismissed; dismissing an OAuth error also removes its callback query marker. Channels with refresh credentials expose Refresh access; other channels retain Reconnect. The authenticated, same-origin PATCH `/api/social/connections` adapter forwards to ClipFlight POST `/api/v1/accounts/:id/refresh`. The backend scopes the account to the external user's workspace and reuses its encrypted token service; only expiry metadata reaches the browser. Shared-grant channel expiry updates together. Refresh errors preserve existing connections.
+
+This integration requires the new Teleo external refresh route to be deployed. Local verification does not establish a successful real-provider renewal; no deployment or GitHub push is included in this change.

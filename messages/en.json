@@ -3148,7 +3148,13 @@
     "platformSettings": "Platform settings",
     "platformReady": "Ready",
     "platformIncomplete": "Needs attention",
-    "platformUnavailable": "Unavailable"
+    "platformUnavailable": "Unavailable",
+    "dismissNotice": "Dismiss notification",
+    "refreshAccess": "Refresh access",
+    "refreshingAccess": "Refreshing…",
+    "accessRefreshed": "Access refreshed for {name}.",
+    "refreshFailed": "Could not refresh access. Your channel is preserved. Try again later.",
+    "refreshReconnect": "This connection requires authorization again. Use Reconnect."
   },
   "DistributionNav": {
     "navigation": "Publishing",
