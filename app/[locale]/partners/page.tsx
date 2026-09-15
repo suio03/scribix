@@ -1,0 +1,78 @@
+import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
+import { Shell } from "@/app/components/Shell";
+import { ProductTopbar } from "@/app/components/ProductTopbar";
+import { Footer } from "@/app/components/Footer";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getPartners } from "@/lib/partners";
+import { renderPartners, type PartnerLink } from "@/lib/partner-links-renderer";
+
+export const dynamic = "force-dynamic";
+
+const title = "Partners & Directories — Scribix";
+const description = "Explore the partners and directories listed by Scribix, all in one place.";
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: "https://scribix.io/partners", languages: {} },
+  openGraph: { title, description, url: "https://scribix.io/partners" },
+  twitter: { title, description },
+};
+
+export default async function PartnersPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  if (locale !== "en") redirect("/partners");
+  setRequestLocale(locale);
+  let links: PartnerLink[] = [];
+  let unavailable = false;
+  try {
+    links = await getPartners();
+  } catch {
+    unavailable = true;
+  }
+
+  return (
+    <Shell>
+    <ProductTopbar />
+    <main className="bg-paper text-ink">
+      <div className="mx-auto max-w-[1100px] px-6 pb-24 pt-16 sm:pt-24">
+        <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-[13px] text-muted transition-colors hover:text-ink">
+          <span aria-hidden="true">←</span> Back to Scribix
+        </Link>
+        <header className="mb-10 mt-8 border-b border-line pb-10 sm:mb-12 sm:pb-14">
+          <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.2em] text-accent">The Scribix directory</p>
+          <h1 className="max-w-[700px] font-display text-5xl leading-[1.05] sm:text-7xl">
+            Partners <span className="italic text-muted">&amp; directories</span>
+          </h1>
+          <div className="mt-7 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <p className="max-w-[520px] text-[16px] leading-7 text-muted">
+              Browse our full list of partners and directories. Follow a name or badge to visit their website.
+            </p>
+            {!unavailable && links.length > 0 && (
+              <p className="shrink-0 text-[12px] uppercase tracking-[0.12em] text-muted">{links.length} listings</p>
+            )}
+          </div>
+        </header>
+        {unavailable ? (
+          <div className="border border-line bg-card p-8 text-muted">
+            <h2 className="font-display text-2xl text-ink">The directory is temporarily unavailable</h2>
+            <p className="mt-3 text-sm leading-6">Please try again in a moment.</p>
+            <a href="/partners" className="mt-5 inline-flex min-h-11 items-center text-sm text-ink underline underline-offset-4">Try again</a>
+          </div>
+        ) : links.length ? (
+          <div className="text-muted" dangerouslySetInnerHTML={{ __html: renderPartners(links, "directory") }} />
+        ) : (
+          <p className="py-8 text-muted">There are no partner listings yet. Please check back soon.</p>
+        )}
+        <div className="mt-14 border-t border-line pt-7">
+          <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-sm text-muted transition-colors hover:text-ink">
+            <span aria-hidden="true">←</span> Back to Scribix
+          </Link>
+        </div>
+      </div>
+    </main>
+    <Footer />
+    </Shell>
+  );
+}

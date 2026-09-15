@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const aiNoteTakerModified = new Date("2026-07-23T00:00:00.000Z");
   const legalContentModified = new Date("2026-05-01T00:00:00.000Z");
   const entries: MetadataRoute.Sitemap = [
+    { url: "https://scribix.io/partners", changeFrequency: "weekly", priority: 0.4 },
     {
       url: urlFor(routing.defaultLocale, "").href,
       lastModified: homeContentModified,

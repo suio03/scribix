@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { useLocale } from "next-intl";
 
 const EMPTY_HTML = { __html: "" };
@@ -40,12 +41,17 @@ export default function HomePartners() {
 
   if (!isHome) return null;
   return (
-    <div
-      ref={container}
-      data-partner-links-slot="home"
-      className="text-muted"
-      suppressHydrationWarning
-      dangerouslySetInnerHTML={EMPTY_HTML}
-    />
+    <div>
+      <div
+        ref={container}
+        data-partner-links-slot="home"
+        className="text-muted"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={EMPTY_HTML}
+      />
+      <Link href="/partners" className="inline-flex min-h-11 items-center gap-2 text-[13px] text-muted underline underline-offset-4 transition-colors hover:text-ink">
+        View all partners <span aria-hidden="true">→</span>
+      </Link>
+    </div>
   );
 }

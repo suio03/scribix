@@ -47,8 +47,7 @@ export function prepareLinks(data: unknown): PartnerLink[] {
     && !!link.label.trim() && safeUrl(link.url)
     && (link.type !== 'badge' || safeUrl(link.image_src)));
   links.sort((a, b) => timestamp(b) - timestamp(a)
-    // Unknown historical dates retain their explicit legacy order.
-    || (!timestamp(a) && !timestamp(b) ? (a.sort_order || 0) - (b.sort_order || 0) : 0)
+    // Older API responses omit creation times; increasing IDs preserve insertion order.
     || (id(a) < id(b) ? 1 : id(a) > id(b) ? -1 : 0));
   const seen = new Set<string>();
   return links.filter(link => { const identity = key(link); if (seen.has(identity)) return false; seen.add(identity); return true; });
@@ -81,24 +80,24 @@ const CSS = `[data-partner-links-list]{border-top:1px solid color-mix(in srgb,cu
 [data-partner-links-list] li{display:flex;align-items:center;min-width:0;max-width:100%;margin:0;padding:0}
 [data-partner-links-list] a{display:inline-flex;align-items:center;min-height:44px;max-width:100%;color:inherit;text-decoration:none;text-underline-offset:3px;overflow-wrap:anywhere}
 [data-partner-links-list] a:hover{text-decoration:underline}
-[data-partner-links-list] a:focus-visible,[data-partner-links-list] summary:focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:2px}
+[data-partner-links-list] a:focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:2px}
 [data-partner-links-list] .partner-badge{width:180px;max-width:100%;gap:8px}
 [data-partner-links-list] img{display:block;width:180px;max-width:100%;height:32px;object-fit:contain;object-position:left center}
 [data-partner-links-list] .partner-badge-icon img{width:32px;height:32px;flex:0 0 32px}
 [data-partner-links-list] .partner-badge-icon span{min-width:0}
-[data-partner-links-list] details{margin-top:12px}
-[data-partner-links-list] summary{cursor:pointer;min-height:44px;padding-block:12px;width:fit-content}
-[data-partner-links-list] details[open] summary{margin-bottom:8px}
-[data-partner-links-list] details[open]>ul{border-top:1px solid color-mix(in srgb,currentColor 14%,transparent);padding-top:16px}
-[data-partner-links-list] .partner-less{display:none}
-[data-partner-links-list] details[open] .partner-more{display:none}
-[data-partner-links-list] details[open] .partner-less{display:inline}
+[data-partner-links-list][data-partner-layout="directory"]{border-top:0;padding:0;font-size:15px}
+[data-partner-layout="directory"] ul{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 32px}
+[data-partner-layout="directory"] li{min-height:100px;border-bottom:1px solid color-mix(in srgb,currentColor 16%,transparent);padding:20px 0}
+[data-partner-layout="directory"] a{min-height:52px;width:100%}
+[data-partner-layout="directory"] .partner-badge{width:100%}
+[data-partner-layout="directory"] img{width:180px;height:40px}
+[data-partner-layout="directory"] .partner-badge-icon img{width:32px;height:32px}
+@media(max-width:800px){[data-partner-layout="directory"] ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){[data-partner-links-list] ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}}
 @media(max-width:360px){[data-partner-links-list] ul{grid-template-columns:minmax(0,1fr)}}`;
-export function renderPartners(data: unknown): string {
+export function renderPartners(data: unknown, layout: "home" | "directory" = "home"): string {
   const links = prepareLinks(data);
   if (!links.length) return '';
-  const latest = links.slice(0, VISIBLE_COUNT).map(renderLink).join('');
-  const more = links.slice(VISIBLE_COUNT);
-  return `<section data-partner-links-list aria-label="Partners and directories"><style>${CSS}</style><h2>Partners &amp; directories</h2><ul>${latest}</ul>${more.length ? `<details><summary><span class="partner-more">More partners (${more.length})</span><span class="partner-less">Show fewer partners</span></summary><ul>${more.map(renderLink).join('')}</ul></details>` : ''}</section>`;
+  const displayed = layout === 'home' ? links.slice(0, VISIBLE_COUNT) : links;
+  return `<section data-partner-links-list data-partner-layout="${layout}" aria-label="Partners and directories"><style>${CSS}</style>${layout === 'home' ? '<h2>Partners &amp; directories</h2>' : ''}<ul>${displayed.map(renderLink).join('')}</ul></section>`;
 }
