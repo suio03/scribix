@@ -1,40 +1,35 @@
-# Scribix 文档导航
+# Scribix 文档
 
-现行合同和操作说明保留在对应主题目录；历史方案放在 `archive/`，尚未实施的提案放在 `roadmap/`，调研结论放在 `research/`。归档中的额度、价格、部署状态和未勾选项不是当前事实。生产状态必须用实际部署及验证记录确认。
+日常从下面六个入口开始；产品状态只在 plan 更新，实现约束在主题文档更新，部署结果以实际记录为准。
 
-## 现行规范与操作
-
-| 内容 | 入口 |
+| 要做什么 | 入口 |
 | --- | --- |
-| 项目开发约定 | [AGENTS.md](../AGENTS.md)、[CLAUDE.md](../CLAUDE.md) |
-| 设计系统与标准值 | [设计规范](../design-exploration/design-system.md)、[tokens](../design-exploration/tokens.json) |
-| 当前 Logo 母版 | [使用规范](../logo-exploration-round-6/production/USAGE.md) |
-| 配置与外部依赖 | [manual-setup](manual-setup.md) |
-| 发布、监控及删除 | [发布检查](runbooks/launch-checklist.md)、[发布后监控](runbooks/post-release-monitoring.md)、[AAI 删除](runbooks/aai-bulk-delete.md) |
-| 视频实现与发布检查 | [视频工作台导航](video-workspace/README.md) |
-| Transcript Ask AI | [现行说明与待验证项](transcript-ask-ai.md) |
-| 首页素材与授权 | [homepage-media](homepage-media.md) |
-| 扩展开发与发布 | [源码 README](../chrome-extension-youtube-transcript/README.md)、[发布说明](browser-extension-publishing.md)、[Firefox 打包 README](firefox-extension-source-readme.md) |
+| 看功能现状和接下来做什么 | [产品 plan](roadmap/video-product-plan.md) |
+| 修改视频选片、编辑、渲染或发布 | [视频技术导航](video-workspace/README.md) |
+| 配置环境和外部服务 | [环境配置](manual-setup.md) |
+| 上线与运行维护 | [发布检查](runbooks/launch-checklist.md) · [监控](runbooks/post-release-monitoring.md) · [AAI 删除](runbooks/aai-bulk-delete.md) |
+| 开发规范与设计 | [AGENTS](../AGENTS.md) · [Claude 补充](../CLAUDE.md) · [设计系统](../design-exploration/design-system.md) |
+| 修改转写 AI 或浏览器扩展 | [Ask AI](transcript-ask-ai.md) · [扩展开发](../chrome-extension-youtube-transcript/README.md) · [扩展发布](browser-extension-publishing.md) |
 
-`firefox-extension-source-readme.md` 是构建脚本输入；第三方源码中的 README 与 LICENSE 仍与源码一起保留。根目录 [CHANGELOG](../CHANGELOG.md) 保留发布历史。
+## 专项资料：需要时查
 
-## 未来规划与研究
+- [首页素材与授权](homepage-media.md)、[Logo 使用](../logo-exploration-round-6/production/USAGE.md)、[设计 tokens](../design-exploration/tokens.json)。
+- [付款通知](payment-notifications.md)。
+- [Collections 与 Transcript AI v2 提案](roadmap/collections-transcript-ai.md)：尚未实施，不是现行合同。
+- [竞品调研](research/2026-09-08-clipping-competitor-product-research.md)、[博客与 SEO](research/2026-09-07-blog-seo-acquisition-summary.md)、[关键词数据](research/2026-09-07-video-seo-keywords.json)、[Google Ads](research/2026-09-07-google-ads-launch-research.md)：保留研究日期，不作为当前功能状态或已开始投放的证据。
 
-- [Collections 与 Transcript AI v2 提案](roadmap/collections-transcript-ai.md)：未实施，不应当作现行合同。
-- [长视频剪辑功能优先级](research/2026-09-08-clipping-product-roadmap.md)及[竞品功能证据](research/2026-09-08-clipping-competitor-product-research.md)：产品建议，包含竞品功能、Scribix 改进项与延伸设想，不是全部逐项验证的竞品功能。
-- [博客、SEO 与非广告获客](research/2026-09-07-blog-seo-acquisition-summary.md)及[关键词原始数据](research/2026-09-07-video-seo-keywords.json)。
-- [Google Ads 调研](research/2026-09-07-google-ads-launch-research.md)：建议与研究记录，不代表已开始投放。
+<details>
+<summary>历史资料与构建附件（不作为日常待办）</summary>
 
-## 历史归档
+- 历史计划：[转录 v1](archive/plans/progress.md)、[视频原计划](archive/plans/plan-ai-short-video-workspace.md)、[M0](archive/plans/m0-foundation.md)、[Ask AI v1](archive/plans/plan-transcript-ask-ai.md)。
+- [首期发布准备设计](archive/plans/publish-preparation-design.md)：保留当时的交互决策和验收设计；当前待验收状态以产品 plan 及技术记录为准。
+- 历史设计：[方向](archive/design/directions.md)、[研究](archive/design/research.md)、[原型评审](archive/design/prism-pulse-refinement.md)。
+- [隔离 Container POC](archive/research/cloudflare-containers-poc.md)：保留原始测量，旧待办不是当前开发清单。
+- [CHANGELOG](../CHANGELOG.md) 保留版本记录；[Firefox reviewer README](firefox-extension-source-readme.md) 是构建脚本输入。
+- 源码旁 README、字体说明、第三方 LICENSE 保留原位置，避免影响构建、授权和维护。
 
-| 历史内容 | 保存位置 | 当前应读 |
-| --- | --- | --- |
-| 早期转录产品 v1 计划 | [progress](archive/plans/progress.md) | 配置、运维与代码 |
-| 视频工作台总实施计划 | [原计划](archive/plans/plan-ai-short-video-workspace.md) | 视频工作台主题文档 |
-| M0 初始合同与原型记录 | [原记录](archive/plans/m0-foundation.md) | 当前代码合同及视频导航 |
-| Ask AI v1 实施过程 | [原计划](archive/plans/plan-transcript-ask-ai.md) | Ask AI 现行说明 |
-| 四个设计方向 | [directions](archive/design/directions.md) | 已批准的设计系统 |
-| 视觉参考研究 | [research](archive/design/research.md) | 已批准的设计系统 |
-| Prism Pulse 原型评审 | [refinement](archive/design/prism-pulse-refinement.md) | 已批准的设计系统 |
+</details>
 
-设计 HTML 原型保留原位置，相关文档链接已指向归档。今后只更新现行合同；归档用于查决策背景，不继续累积开发待办。
+## 维护规则
+
+现行视频说明按主题合并，旧 M1–M9 文件已移除，仓库引用已更新；不要恢复按开发阶段分散记录的结构。新增功能优先补充现有主题，避免另开计划、进度和状态表。历史文档只用于追溯，额度、价格、待办和部署记录不作为当前事实。

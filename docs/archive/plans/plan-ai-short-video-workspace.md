@@ -72,7 +72,7 @@
 - 已确认：原视频 Free 保存 7 天/5 GiB、Basic 30 天/25 GiB、Creator（后端 tier `pro`）30 天/100 GiB；到期后保留 transcript、EDL、Render Spec 和成片，重新渲染要求重新上传匹配的原视频。
 - 第一版是否只接受桌面浏览器编辑。建议优先桌面 Chrome/Edge，移动端先支持查看结果和下载。
 - 是否保留 AI 标题、描述和 Hashtags。当前建议交给已有分发平台，Scribix 只保留 clip 的内部名称/主题。
-- 已确认：Cloud 执行供应商方向改为 Cloudflare Containers；Render Job 协议保持供应商无关。隔离 POC 已验证 FFmpeg 功能与成本，生产接入仍需完成 Queue、容量重试、DLQ 和调度迁移，详见 `docs/video-workspace/cloudflare-containers-poc.md`。
+- 已确认：Cloud 执行供应商方向改为 Cloudflare Containers；Render Job 协议保持供应商无关。隔离 POC 已验证 FFmpeg 功能与成本，生产接入仍需完成 Queue、容量重试、DLQ 和调度迁移，详见 `docs/archive/research/cloudflare-containers-poc.md`。
 - 已确认：AI 候选允许为 0 个，质量优先，绝不为了达到候选数量而补弱片段。
 - 已确认：Free 无论原视频长度都先走 AI 候选，只能选择、预览并原样导出 AI 生成结果，不能编辑 clip 或添加品牌；Creator 与 legacy Basic 在原视频不超过 45 秒时可直接编辑完整原视频。45 秒以上至 3 分钟最多 3 个 AI 候选，超过 3 分钟最多 5 个。
 - 已确认：AI 候选总时长为 15–45 秒；用户只能从 original source 手动调整当前候选边界，最终时间线仍受 60 秒 contract 上限约束。最多 3 个 segments 的校验仅用于已有数据兼容。
@@ -698,7 +698,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 
 本地状态：container 已成功构建并通过 FFmpeg fixture；“发布”保持未完成，需先创建
 生产 Cloudflare Queue/DLQ、Containers binding、Queue consumer 和最小权限 secrets，详见
-`docs/video-workspace/m3-preview-proxy.md` 与 `cloudflare-containers-poc.md`。目前只部署了隔离 POC，
+`docs/video-workspace/rendering.md` 与 [cloudflare-containers-poc](../research/cloudflare-containers-poc.md)。目前只部署了隔离 POC，
 未执行生产 remote migration 或 deployment；现有 AWS-shaped dispatcher 仍需替换。
 
 完成标准：
@@ -715,7 +715,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [x] 实现 transcript/word boundary 对齐操作。
 - [x] 实现每个候选独立的 draft autosave 和 candidate-scoped version snapshot。
 
-本地实现详见 `docs/video-workspace/m4-timeline-editor.md`。远程 migration 与 deployment
+本地实现详见 `docs/video-workspace/editing-and-framing.md`。远程 migration 与 deployment
 在全部里程碑完成后统一执行。
 
 完成标准：
@@ -735,7 +735,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [x] 为每个模板实现 Browser Preview adapter。
 
 浏览器适配器、受控 Render Spec 字段和品牌资产上传约束详见
-`docs/video-workspace/m5-browser-preview.md`。
+`docs/video-workspace/editing-and-framing.md`。
 
 完成标准：
 
@@ -754,7 +754,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [x] 实现取消、重试、超时和幂等行为。
 
 本地实现、任务协议、API 与部署边界详见
-`docs/video-workspace/m6-final-render.md`。远程 migration、生产 Container 发布和 Queue consumer
+`docs/video-workspace/rendering.md`。远程 migration、生产 Container 发布和 Queue consumer
 接入在全部里程碑完成后统一执行。
 
 完成标准：
@@ -772,7 +772,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [x] 为模板变更加 screenshot/golden regression。
 
 共享呈现契约、同帧截图对比和允许差异详见
-`docs/video-workspace/m7-preview-render-consistency.md`。
+`docs/video-workspace/rendering.md`。
 
 完成标准：
 
@@ -789,7 +789,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [x] 记录每次成功 render 的成本估算。
 
 安全控制、监控事件、告警建议、成本模型和待启用的外部控制详见
-`docs/video-workspace/m8-operations.md`。
+`docs/video-workspace/operations.md`。
 
 完成标准：
 
@@ -806,7 +806,7 @@ Storage retention 作为套餐能力或上限，不按每次 R2 请求向用户�
 - [ ] 确认隐私、保留、套餐和成本后再扩大开放。
 
 24 条本地基准、rollout 开关、指标口径、阶段阈值和真实试点步骤详见
-`docs/video-workspace/m9-pilot-rollout.md`。剩余未勾选项需要真实用户、生产数据或
+`docs/video-workspace/operations.md`。剩余未勾选项需要真实用户、生产数据或
 法律/商业确认，不能由本地代码验证替代。
 
 完成标准：

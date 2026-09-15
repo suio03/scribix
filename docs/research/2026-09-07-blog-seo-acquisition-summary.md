@@ -2,7 +2,7 @@
 
 调研日期：2026-09-07。关键词范围：美国市场、英语搜索。本文整理本次项目代码检查、竞品公开页面研究，以及用户已打开的 Google Ads Keyword Planner、SEMrush、Similarweb 数据。
 
-状态：研究与建议，尚未实现或发布本文提出的页面。关键词原始记录见 [video-seo-keywords.json](./2026-09-07-video-seo-keywords.json)。
+状态：研究与建议，尚未实现或发布本文提出的页面。关键词原始记录见 [video-seo-keywords.json](2026-09-07-video-seo-keywords.json)。
 
 ## 1. 核心结论
 
@@ -184,4 +184,4 @@ OpusClip 比较文章与替代方案落地页内容重叠时，应先做一个�
 - 内容上线后的真实查询、点击和使用数据，用于调整优先级。
 - 竞品非广告渠道的实际流量贡献与转化数据；现有公开页面证据不足以推断哪个渠道最有效。
 
-原始关键词记录保留了 31 个 SEMrush 候选、Google Ads 区间、Similarweb 选定记录、来源差异与 12 个 Autocomplete 种子结果，见 [研究数据 JSON](./2026-09-07-video-seo-keywords.json)。
+原始关键词记录保留了 31 个 SEMrush 候选、Google Ads 区间、Similarweb 选定记录、来源差异与 12 个 Autocomplete 种子结果，见 [研究数据 JSON](2026-09-07-video-seo-keywords.json)。

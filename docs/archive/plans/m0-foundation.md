@@ -80,7 +80,7 @@ libass 的 FFmpeg build；在该镜像通过 ASS 路径前，字幕 parity 仍�
 
 - 编辑器首发桌面 Chrome/Edge；移动端只查看和下载。
 - AI 只保存 clip 内部名称/主题，不生成面向社交平台的描述和 hashtags。
-- Job contract 保持 provider-neutral；首个生产实现目标已改为 Cloudflare Queue + Containers，隔离 POC 结果见 `cloudflare-containers-poc.md`。
+- Job contract 保持 provider-neutral；首个生产实现目标已改为 Cloudflare Queue + Containers，隔离 POC 结果见 [cloudflare-containers-poc](../research/cloudflare-containers-poc.md)。
 
 已确认：
 

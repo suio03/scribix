@@ -26,7 +26,7 @@
 
 用户已打开的 Google Ads Keyword Planner 显示美国、英语、Google；搜索量日期范围沿用前次核实的 2025-08 至 2026-07。竞价显示币种为 **AU$**。页面提示当前账户广告均未投放，但未逐一审计已有广告系列是否属于 Scribix。
 
-关键词搜索量与 SEMrush CPC 来自 [此前原始数据](./2026-09-07-video-seo-keywords.json)。本次补读 Google 页首出价区间。未取得 Scribix 实际广告 CPC、付费转化率、留存、完整贡献毛利或 Google Ads 预测结果。
+关键词搜索量与 SEMrush CPC 来自 [此前原始数据](2026-09-07-video-seo-keywords.json)。本次补读 Google 页首出价区间。未取得 Scribix 实际广告 CPC、付费转化率、留存、完整贡献毛利或 Google Ads 预测结果。
 
 ### 追踪代码
 

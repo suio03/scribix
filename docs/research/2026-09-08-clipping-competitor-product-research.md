@@ -4,6 +4,8 @@
 
 依据为官方产品页、帮助中心、API 文档，以及 Scribix 当前本地代码。没有使用同一素材在各付费产品中跑成片，因此本文能确认公开功能和交互设计，不能确认实际选片质量、速度、效果排名或功能带来的收入提升。厂商的 viral、增长倍数和准确率宣称不作为效果证据；部分功能有套餐、平台或 Beta 限制。
 
+> 本文保留 2026-09-08 调研与实施前代码快照，不继续更新功能差距和执行优先级。标题、发布文案、意图选片及社交发布已有后续实现；当前状态与顺序见[产品 plan](../roadmap/video-product-plan.md)。
+
 ## 1. 结论
 
 Scribix 值得围绕长视频剪辑增加功能，但选择标准应是：它是否明显减少用户从原视频到愿意发布之间的工作。
@@ -68,9 +70,9 @@ Scribix 值得围绕长视频剪辑增加功能，但选择标准应是：它是
 代码与项目资料：
 
 - [候选生成](../../lib/video-workspace/candidate-generation.ts)、[候选合同](../../lib/video-workspace/contracts.ts)、[候选工作台](../../app/components/VideoCandidateWorkspace.tsx)。
-- [AI 候选规则与复审](../video-workspace/m2-ai-candidates.md)、[编辑器行为](../video-workspace/m4-timeline-editor.md)。
+- [AI 候选规则与复审](../video-workspace/data-and-selection.md#selection)、[编辑器行为](../video-workspace/editing-and-framing.md#editing)。
 - [视频编辑器](../../app/components/VideoClipEditor.tsx)、[默认编辑规格](../../lib/video-workspace/editor.ts)。
-- [自动画面分析](../../containers/video-preview/speaker-framing.py)、[说话人跟随边界](../video-workspace/speaker-follow-plan.md)。
+- [自动画面分析](../../containers/video-preview/speaker-framing.py)、[说话人跟随边界](../video-workspace/editing-and-framing.md#framing)。
 
 所以需要补的部分既包括新功能，也包括把已有能力连接成用户容易理解和完成的流程。
 

@@ -49,4 +49,4 @@ Recent history uses short imperative commits, often Conventional Commit prefixes
 
 Do not commit secrets or local credential files such as `worker-secrets.env`. Treat `wrangler.jsonc`, `wrangler.cleanup.jsonc`, migrations, and `cloudflare-env.d.ts` as deployment-sensitive; update generated types after binding changes and document required remote migrations in the PR.
 
-Publishing preparation, selection state, material dependencies and migration/Container compatibility are documented in `docs/video-workspace/publish-preparation.md`.
+Publishing preparation, selection state, material dependencies and migration/Container compatibility are documented in `docs/video-workspace/publish-preparation.md`. Social integration and platform acceptance live in `docs/video-workspace/social-publishing.md`; feature status and priorities are maintained in `docs/roadmap/video-product-plan.md`.

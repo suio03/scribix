@@ -3,6 +3,8 @@
 > 日期：2026-09-02
 > 结论：功能与单任务成本达标；可以作为生产执行层方向继续推进，但生产接入前必须加入 Queue、容量重试和完整观测。
 
+> 2026-09-14 归档：下文保留当日测量和阶段待办，不描述当前实现。现行调度和验收见[部署与运维](../../video-workspace/operations.md)。
+
 ## 目标与边界
 
 本 POC 只验证隔离的 Cloudflare Worker、R2 和 Containers 链路，不连接 Scribix 正式用户、生产 D1 或生产媒体桶。执行模型是一份 FFmpeg render job 对应一个容器实例，POC `max_instances` 为 3。

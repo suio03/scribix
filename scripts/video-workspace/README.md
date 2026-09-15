@@ -160,4 +160,4 @@ docker run --rm --network none --entrypoint python3 \
   scribix-video-render:auto-framing /tests/test-speaker-framing.py
 ```
 
-Build that local tag with `docker build -t scribix-video-render:auto-framing containers/video-preview`. The image includes pinned face and active-speaker models; see `docs/video-workspace/speaker-follow-plan.md` for real-footage verification and release limits.
+Build that local tag with `docker build -t scribix-video-render:auto-framing containers/video-preview`. The image includes pinned face and active-speaker models; see `docs/video-workspace/editing-and-framing.md` for real-footage verification and release limits.

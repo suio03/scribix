@@ -17,8 +17,10 @@ the one-time items that are already verified and unchanged.
   `0020_partial_transcripts.sql` through `0024_ai_usage_events.sql` are listed
   as applied.
 - [ ] Before releasing the video workspace lifecycle, confirm migrations
-  `0025_video_workspace.sql` through `0037_auto_framing.sql` are applied,
-  including the `0036` render-scope index repair and `0037` auto-framing field.
+  `0025_video_workspace.sql` through `0040_independent_social_accounts.sql` are applied,
+  including both `0037_auto_framing.sql` and `0037_publish_preparation.sql`.
+  Follow the [video and publishing release dependencies](../video-workspace/operations.md#deployment),
+  including the compatible Container and external publishing service acceptance.
   Verify with `npx wrangler d1 migrations list scribix-db --remote`.
 - [ ] `npm run deploy:cleanup` deployed the hourly cleanup Worker and its cron is visible in Cloudflare.
 

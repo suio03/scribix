@@ -8,26 +8,9 @@ A Next.js (App Router, React 19) AI video clipping and transcription SaaS deploy
 
 Because it targets the Workers runtime, all server code must be edge-compatible: use `fetch` (no Node networking), and reach Cloudflare bindings through `await cf()` (`lib/cf.ts`), never assume Node globals.
 
-## Commands
+## Shared working conventions
 
-```bash
-npm run dev                 # Next dev server (webpack). User runs this themselves — don't auto-start it.
-npm run build               # Production Next build — the primary validation gate (there is no test runner).
-npm run test:video-tracking # Browser event filtering, collector isolation, and render transitions.
-npm run test:video-workspace # Video contracts, candidate completeness, limits, and operations tests.
-npm run test:video-security # Container image/config/security assertions; optional TRIVY_IMAGE scan.
-npm run preview             # OpenNext build + Cloudflare preview with REMOTE bindings
-npm run deploy              # OpenNext build + deploy to Cloudflare
-npm run cf-typegen          # Regenerate cloudflare-env.d.ts after changing wrangler bindings
-npm run db:migrate:local    # Apply D1 migrations locally
-npm run db:migrate:remote   # Apply D1 migrations to remote D1
-npm run deploy:cleanup      # Deploy the separate cleanup Worker (wrangler.cleanup.jsonc)
-npm run deploy:video-render # Deploy the production Queue consumer + Cloudflare Container.
-npm run extension:all:zip   # Build production Chrome, Edge, and Firefox extension ZIPs
-npm run extension:firefox:source # Build the Firefox reviewer source ZIP
-```
-
-There is **no test framework or `npm test`**. Validate changes with `npm run build` plus manual checks of affected flows (upload, record, transcript status/export, billing, auth, localized pages).
+Follow [AGENTS.md](AGENTS.md) for repository commands, validation, coding style, i18n and deployment-sensitive files. Documentation-only changes need content and reference checks; application changes require the documented build and relevant targeted tests. There is no generic `npm test` command.
 
 ## Transcription lifecycle (the core flow)
 
@@ -63,17 +46,15 @@ Free and grandfathered Starter (`basic`) accounts receive 3 successful questions
 
 ## AI video workspace
 
-Video uploads retain the original source and create a dormant video project. Free always uses AI candidate generation, including for sources up to 45 seconds; Creator and grandfathered Basic may enter the editor directly for a source up to 45 seconds. Longer sources use `gpt-5.6-terra` with medium reasoning for candidate generation and an independent completeness review: return 0–3 candidates for sources up to 3 minutes or 0–5 for longer sources, never fill a quota with weak clips. AI recommendations are generated once per project; the UI does not offer unmetered regeneration and the API rejects another AI generation after candidates exist. Every AI candidate is one continuous 15–45 second source segment. Free can select, preview, and export an AI-generated candidate exactly as generated, but cannot open clip editing or brand controls. Paid tiers can adjust original-source start/end, drag the Fill preview to reframe, switch to Fit, and apply brand controls. Paid users may keep one manual candidate at a time, delete it, and create another; AI recommendations are not individually deletable. The current editor does not expose add, delete, or reorder controls inside a cut. The EDL contract still validates up to 3 segments and 60 seconds for stored compatibility. `lib/video-workspace/access.ts` is the shared policy source, and server routes enforce the boundary instead of trusting hidden UI.
+Start with [video workspace navigation](docs/video-workspace/README.md) for current implementation contracts. [The product plan](docs/roadmap/video-product-plan.md) owns feature status and priorities; dated competitor research is not the current backlog.
 
-Preview and final jobs use Cloudflare Queue plus one Cloudflare Container per job. The current profile is 1 vCPU / 3072 MiB / 6000 MB with `max_instances=10` in production (1 locally); capacity errors must retry through Queue/DLQ. The image contains pinned FFmpeg, MediaPipe Tasks, and the face model. Final rendering uses the saved Fill/Fit framing choice: Fill can use conservative single-speaker smart crop or the user's crop, while Fit keeps the full frame over a blurred background. The workspace shows every candidate in one top selector. Paid tiers load one editor at a time and store autosaved drafts per candidate; Free receives a generated-clip export surface instead. Each candidate exposes only its latest completed export. A newer export supersedes and removes the previous video/cover, while the latest package remains downloadable for 30 days and may be deleted earlier. The download endpoint returns a ZIP containing MP4 plus cover for paid users and MP4 only for Free. Free final-render requests are rebuilt from the selected AI candidate on the server, browser-supplied edits are ignored, manual-origin candidates and old edited-render retries are rejected, and cover URLs are not exposed. Removing or expiring the original source also removes preview proxies and archives the project: transcript text and unexpired final exports remain, but editing and re-export stop. Deleting the video project removes all project media while preserving transcript text. Local end-to-end testing has exercised remote Cloudflare Containers. This does not establish that the production app bindings and callbacks have been validated. Apply and verify production D1 migrations `0025`–`0037` before deploying the app; a Git push alone does not apply migrations or establish deployment success. Current architecture and operational steps live under `docs/video-workspace/`.
+Keep `lib/video-workspace/contracts.ts`, `lib/plans.ts` and `lib/video-workspace/access.ts` authoritative for limits and permissions. Video uploads retain the original source; preview and final work uses Cloudflare Queue and job-scoped Containers. Editing uses original-source time and independent per-candidate drafts. See the topic documents for lifecycle, framing, editing, output and recovery details.
 
-Editor time fields use original-video timecodes, and caption correction rows show each cue's original-source interval. Audio has no user controls: drafts are normalized to 0 dB gain, no loudness normalization, and no fades so final exports retain the original source sound. Uploaded logos can be selected, replaced, or removed; removal deletes both the project asset record and its R2 object.
+[Publish preparation](docs/video-workspace/publish-preparation.md) owns selection conditions, titles, cover/copy dependencies and immutable downloads. [Social publishing](docs/video-workspace/social-publishing.md) owns account integration, platform availability and acceptance. Local code or a deployed external service does not establish production Scribix readiness; follow the [external setup checklist](docs/video-workspace/operations.md#deployment) before release.
 
-The current product information architecture separates video projects from transcript-only work. `/dashboard` lists video projects, `/dashboard/new` starts the video-clipping upload flow, and `/dashboard/transcripts` owns transcript-only creation and history. Authenticated product routes use `WorkspaceChrome` and `WorkspaceSidebar`; public and tool pages use `LandingChrome` with `ProductTopbar`, while the signed-out AI clipper homepage has its dedicated `VideoHomeHeader`. The approved Prism Pulse visual rules and semantic color roles live in `design-exploration/design-system.md`; keep fixed inverse styling for real source/output proof and export previews.
+Use the existing analytics platforms and [video tracking contract](docs/video-workspace/tracking.md); never introduce a separate tracking database or replay infrastructure. Keep entity IDs and user content out of event properties.
 
-## Video tracking
-
-Use the existing analytics platforms through `trackVideoAction` and `trackVideoFailure` in `app/components/video-event-client.ts`. Video events allow only approved plan, size, duration, elapsed-time and classified-error properties; entity IDs and content must not be exported. Render outcome events observe transitions through existing polling, so closed pages can miss outcomes and historical results are not replayed. Use existing render-job records for backend diagnostics. Do not introduce a separate tracking database or replay mechanism. Definitions, fixed event URL handling and verification are in `docs/video-workspace/tracking.md`.
+The product separates `/dashboard` video projects, `/dashboard/new` video uploads and `/dashboard/transcripts` transcript-only work. Shell and publishing navigation are resolved centrally in `WorkspaceChrome`; design rules live in [the approved design system](design-exploration/design-system.md).
 
 ## YouTube captions and extension
 

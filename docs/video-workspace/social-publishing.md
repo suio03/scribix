@@ -1,24 +1,26 @@
 # Scribix social publishing through ClipFlight
 
-Scribix remains local; the ClipFlight API was deployed and the dedicated local integration enabled on 2026-09-11. No real-platform acceptance has been performed.
+Current record summary, 2026-09-14 (not a new remote check): Scribix changes remain local in the latest evidence. YouTube and LinkedIn adapters are implemented; TikTok is paused pending explicit Direct Post audit approval. The owner confirmed YouTube public-publishing verification, but a complete new-project Scribix acceptance is not established. Real LinkedIn OAuth/publication and provider access renewal remain unconfirmed. The external ClipFlight / Teleo API has deployment evidence; the newest refresh route still has a deployment dependency.
+
+The dated sections below retain setup and acceptance evidence. Later dated records supersede earlier blockers; they do not prove a tunnel or local server is still running. Product status and next steps are summarized in the [product plan](../roadmap/video-product-plan.md).
 
 The existing `/publish` route still generates copy. New `/social/connections` and `/social/posts` routes live below `/api/video-projects/:id` and derive user identity from the Scribix session. The fixed OAuth return is `/api/social/callback`.
 
-`CLIPFLIGHT_API_KEY` must be a server-side secret for the dedicated Scribix application. `CLIPFLIGHT_OWNER_USER_IDS` is a comma-separated pilot allowlist; no account is enabled by default. ClipFlight pins its application return URL to `https://scribix.io/api/social/callback` and accepts only the configured Scribix R2 account and `/scribix-media/` prefix. No additional purchase is required to publish an owned final MP4.
+`CLIPFLIGHT_API_KEY` must be a server-side secret for the dedicated Scribix application. Publishing is available to every signed-in user when `CLIPFLIGHT_API_KEY` is configured, in both local and production environments. There is no user-ID allowlist; routes still enforce authentication and ownership, and upstream requests retain per-user isolation. The dedicated application pins an exact return URL: the configured local integration uses `https://local.scribix.io/api/social/callback`; production must explicitly configure its production callback. Source access is restricted to the configured Scribix R2 account and `/scribix-media/` prefix. No additional purchase is required to publish an owned final MP4.
 
 The submission freezes the final render version and publishing inputs. Video dependencies exclude cover-only settings and copy. Final MP4 readiness does not depend on cover/ZIP completion. The signed source request is encrypted using a key derived from the application credential and retained only until submission acceptance or expiry. Rotating that credential invalidates any unsent encrypted submissions; let those expire and submit again after checking the platform result.
 
 The source asset receives a one-hour automatic-cleanup hold. Cleanup and submission use mutually exclusive D1 leases to prevent a stale sweep deleting held media. Explicit user deletion can still make a pending import fail. Platform upload initialization with an uncertain result is never automatically repeated. Safe target retries are limited to failures before platform initialization.
 
-The six-language panel reuses `FinalRenderPanel`, including ready videos whose cover generation failed. Copy is preserved in session storage through account connection redirects. TikTok privacy requires an explicit choice; interactions default off. Server creator-info checks run again before TikTok initialization. YouTube processing and visibility must be confirmed by the platform before the external API reports publication success.
+The six-language flow uses independent accounts, compose and history workspaces; the editor links to compose for a current exported video, including a ready MP4 whose cover generation failed. Copy is preserved in session storage through account connection redirects. TikTok privacy requires an explicit choice; interactions default off. Server creator-info checks run again before TikTok initialization. YouTube processing and visibility must be confirmed by the platform before the external API reports publication success.
 
-Release dependencies:
+Release dependencies (reconcile applied migrations against the actual remote state):
 
-1. Apply and verify `0037`, `0038`, `0039` in Scribix and `0014`, `0015`, `0016` in ClipFlight. Remote read-only checks on 2026-09-10 found all six pending.
+1. Follow the [Scribix migration checklist](operations.md#deployment), including both `0037` files and `0038`–`0040`. ClipFlight / Teleo needs `0014`–`0018` for this integration; later dated records below establish deployment of those external migrations, superseding the 2026-09-10 pending snapshot. The access-refresh route has a separate outstanding deployment dependency.
 2. Deploy the compatible video Container described in `publish-preparation.md`, then the schema-dependent app and cleanup Worker.
-3. Provision the dedicated application credential and owner pilot ID. Verify `https://app.clipflight.com/platform-media/` in TikTok and explicitly enable pull delivery in ClipFlight.
-4. Use ClipFlight main/Cloudflare Builds and Scribix's existing `npm run deploy` script. No deployment has been performed in this implementation session.
-5. Owner reviews visuals, connects both correct accounts from Scribix and publishes an owned video publicly on each platform. Record both final video links and submission IDs. Only after that acceptance may the pilot gate be broadened.
+3. Configure the dedicated application credential and exact return URL for the target environment. Before restoring TikTok, confirm Direct Post audit approval separately from URL/pull verification and App review; verify the delivery configuration in ClipFlight.
+4. Use ClipFlight main/Cloudflare Builds and Scribix's existing `npm run deploy` script when deploying the respective service. External deployment evidence is recorded below; Scribix production deployment is not established by these local implementation records.
+5. Owner reviews visuals and verifies each enabled platform with the correct account and an owned video. Record final video links and submission IDs for the Scribix flow; keep TikTok disabled until explicit Direct Post approval. Complete the relevant platform acceptance before production launch.
 
 Validation: `test:publish-workflow` includes real SQLite tests for immutable social submission, free-tier final-video access, cover independence, cross-user denial and OAuth return replay. Run it with `test:video-workspace`, `check-locales` and `build:cloudflare`. These do not replace live streaming, OAuth, public visibility or visual acceptance.
 
@@ -128,7 +130,7 @@ and does not establish real-platform acceptance.
 
 Scribix uses the same default Fetch behavior for its service adapter. Publishing
 navigation is resolved centrally in `WorkspaceChrome`, keeping signed-in landing,
-tool, pricing and dashboard sidebars consistent for enabled pilot accounts.
+tool, pricing and dashboard sidebars consistent for signed-in accounts when the publishing service is configured.
 Scribix changes remain local; successful real LinkedIn OAuth and video publication
 have not yet been confirmed in this task.
 
@@ -147,3 +149,9 @@ These checks do not establish remote Scribix deployment or real LinkedIn posting
 Connection/disconnect feedback can be dismissed; dismissing an OAuth error also removes its callback query marker. Channels with refresh credentials expose Refresh access; other channels retain Reconnect. The authenticated, same-origin PATCH `/api/social/connections` adapter forwards to ClipFlight POST `/api/v1/accounts/:id/refresh`. The backend scopes the account to the external user's workspace and reuses its encrypted token service; only expiry metadata reaches the browser. Shared-grant channel expiry updates together. Refresh errors preserve existing connections.
 
 This integration requires the new Teleo external refresh route to be deployed. Local verification does not establish a successful real-provider renewal; no deployment or GitHub push is included in this change.
+
+### 2026-09-15: remove the user pilot gate
+
+At the product owner’s request, removed the user-ID allowlist for local and production use. Earlier pilot-only records above describe historical behavior. The service credential, authenticated user, ownership checks and platform-specific availability still apply. TikTok remains paused under its existing platform approval gate. No production deployment or real platform publication was performed as part of this change.
+
+Verification: all 30 publishing workflow tests and the OpenNext production build passed. In Chrome ai-publisher at localhost:3000, the signed-in publishing page displayed both sidebar entries (Publishing accounts and Publishing) and the Channels / New post / History navigation. This verifies entry visibility, not successful platform publication.
