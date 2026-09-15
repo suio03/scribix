@@ -5,7 +5,6 @@ import { Shell } from "../components/Shell";
 import { getSidebarUsage } from "../components/sidebarUsage";
 import { LandingChrome } from "../components/LandingChrome";
 import { GoogleOneTap } from "../components/GoogleOneTap";
-import { Partners } from "../components/Partners";
 import { TrackToolVisit } from "../components/Track";
 import { VideoHomeHero } from "../components/VideoHomeHero";
 import { VideoHomeMarketing } from "../components/VideoHomeMarketing";
@@ -98,7 +97,6 @@ export default async function HomePage({
           />
         }
         marketing={<VideoHomeMarketing />}
-        publicFooterExtra={<Partners />}
       />
     </Shell>
   );

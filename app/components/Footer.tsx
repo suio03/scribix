@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "./Logo";
+import HomePartners from "./HomePartners";
 
 const TOOL_LINKS = [
   { key: "videoToText", href: "/video-to-text" },
@@ -32,6 +33,7 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
         <div className="mx-auto flex max-w-[1100px] flex-col gap-3 text-[12.5px] text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} CENDRO LABS PTY LTD.</p>
           <ul className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <li><a href="/partners" className="transition hover:text-ink">Partners</a></li>
             {legal.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="transition hover:text-ink">
@@ -79,6 +81,7 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
               ·
             </span>
             <ul className="flex items-center gap-4">
+              <li><a href="/partners" className="transition hover:text-ink">Partners</a></li>
               {legal.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="transition hover:text-ink">
@@ -89,6 +92,7 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
             </ul>
           </div>
         </div>
+        <HomePartners />
       </div>
     </footer>
   );

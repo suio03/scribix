@@ -10,7 +10,6 @@ import { Generator } from "@/app/components/Generator";
 import { GoogleOneTap } from "@/app/components/GoogleOneTap";
 import { HowItWorks } from "@/app/components/HowItWorks";
 import { LandingChrome } from "@/app/components/LandingChrome";
-import { Partners } from "@/app/components/Partners";
 import { Shell } from "@/app/components/Shell";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { TrackToolVisit } from "@/app/components/Track";
@@ -125,7 +124,6 @@ export default async function VideoToTextPage({
             <FinalCTA />
           </>
         }
-        publicFooterExtra={<Partners />}
       />
     </Shell>
   );
