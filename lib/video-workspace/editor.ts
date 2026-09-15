@@ -48,6 +48,7 @@ export type EditorWorkspace = {
   clipTitle: string;
   revision: number;
   restoredDraft: boolean;
+  analysisUpdated?: boolean;
   sourceDurationMs: number;
   edl: Edl;
   renderSpec: RenderSpec;
@@ -187,9 +188,17 @@ export async function loadEditorWorkspace(
       }))
     : [];
 
+  let analysisUpdated = false;
   for (const segment of edl.segments) {
     const analysis = preview?.segments.find(item => `s${item.segmentIndex}` === segment.id)?.autoFraming;
-    if (analysis && !activeDraft && !renderSpec.segments[segment.id].autoFraming) renderSpec.segments[segment.id] = { ...renderSpec.segments[segment.id], autoFraming: analysis };
+    const savedAnalysis = renderSpec.segments[segment.id].autoFraming;
+    // A saved fallback is not a successful analysis. Adopt a repaired plan while
+    // preserving the user's crop mode and manual ranges.
+    if (analysis && ((!savedAnalysis) ||
+      (savedAnalysis?.analyzer === "analysis-unavailable-v1" && analysis.analyzer !== "analysis-unavailable-v1"))) {
+      renderSpec.segments[segment.id] = { ...renderSpec.segments[segment.id], autoFraming: analysis };
+      analysisUpdated = true;
+    }
   }
   return {
     ok: true,
@@ -199,6 +208,7 @@ export async function loadEditorWorkspace(
       clipTitle: candidate.theme,
       revision: candidate.draft_revision,
       restoredDraft: activeDraft,
+      analysisUpdated,
       sourceDurationMs: project.source_duration_ms,
       edl,
       renderSpec,

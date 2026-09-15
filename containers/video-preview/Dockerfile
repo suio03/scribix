@@ -1,7 +1,8 @@
 FROM node:22.15.0-bookworm-slim@sha256:557e52a0fcb928ee113df7e1fb5d4f60c1341dbda53f55e3d815ca10807efdce
 
 ARG FFMPEG_VERSION="7:5.1.9-0+deb12u1"
-ARG MEDIAPIPE_VERSION="1.0.1"
+# 1.x Linux wheels abort with SIGILL under local AMD64 emulation without AVX.
+ARG MEDIAPIPE_VERSION="0.10.21"
 ARG FACE_MODEL_URL="https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_full_range/float16/1/blaze_face_full_range.tflite"
 ARG FACE_MODEL_SHA256="3698b18f063835bc609069ef052228fbe86d9c9a6dc8dcb7c7c2d69aed2b181b"
 
@@ -22,7 +23,7 @@ RUN apt-get update \
 
 RUN python3 -m venv /opt/scribix-venv \
   && /opt/scribix-venv/bin/pip install --no-cache-dir --upgrade pip \
-  && /opt/scribix-venv/bin/pip install --no-cache-dir "mediapipe==${MEDIAPIPE_VERSION}" \
+  && /opt/scribix-venv/bin/pip install --no-cache-dir "mediapipe==${MEDIAPIPE_VERSION}" "jax==0.4.30" "jaxlib==0.4.30" "numpy==1.26.4" "opencv-contrib-python==4.10.0.84" \
   && /opt/scribix-venv/bin/python -c "from mediapipe.tasks.python import vision; assert vision.FaceDetector"
 
 RUN mkdir -p /opt/scribix-models \
@@ -50,3 +51,7 @@ EXPOSE 8080
 ENTRYPOINT ["node", "/app/worker.mjs"]
 
 COPY framing_policy.py /app/framing_policy.py
+
+# Exercise the real Node -> Python process boundary, not just a Python import.
+# PID 1 signal behavior can conceal native model startup failures in ad-hoc tests.
+RUN node -e 'const {spawnSync}=require("node:child_process"); const result=spawnSync("python3",["-c","import mediapipe as mp; import numpy as np; detector=mp.solutions.face_detection.FaceDetection(model_selection=1); detector.process(np.zeros((360,640,3),dtype=np.uint8)); detector.close()"],{stdio:"inherit"}); if(result.status!==0) process.exit(1);'

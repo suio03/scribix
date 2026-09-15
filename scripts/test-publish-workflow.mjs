@@ -152,11 +152,12 @@ test("concurrent tabs and late old execution cannot overwrite current results", 
 function publishFixture(t) {
   const f = database(); t.after(f.dispose);
   const user = { id: "u", tier: "pro" };
+  let preview = null;
   const mocks = {
     "@/lib/r2": { presignGet: async () => "https://example.test/source" },
     "./asset-access": { presignOwnedAssetGet: async () => ({ ok: false }) },
     "./brand-assets": { listBrandAssets: async () => [] },
-    "./preview-jobs": { candidatePreview: async () => null },
+    "./preview-jobs": { candidatePreview: async () => preview },
   };
   const editor = loadModule("lib/video-workspace/editor.ts", mocks);
   const clipEdl = { schemaVersion: 1, segments: [{ id: "s0", sourceStartMs: 0, sourceEndMs: 29900, order: 0 }] };
@@ -172,7 +173,7 @@ function publishFixture(t) {
     "@/lib/openai-publish": { generatePublishMaterials: async (input, requestId) => { calls++; return provider({ input, requestId }); } },
   });
   const post = body => route.POST(new Request("http://local/api", { method: "POST", body: JSON.stringify({ candidateId: "c", expectedRevision: 1, ...body }) }), { params: Promise.resolve({ id: "p" }) });
-  return { ...f, user, editor, clipEdl, renderSpec, bucket, post, calls: () => calls, provider: fn => { provider = fn; }, save: () => editor.saveProjectDraft(f.db, "u", "p", "c", 0, clipEdl, renderSpec) };
+  return { ...f, setPreview: value => { preview = value; }, user, editor, clipEdl, renderSpec, bucket, post, calls: () => calls, provider: fn => { provider = fn; }, save: () => editor.saveProjectDraft(f.db, "u", "p", "c", 0, clipEdl, renderSpec) };
 }
 test("publishing saves all materials and reopens without another model call; free is denied", async t => {
   const f = publishFixture(t); assert.equal((await f.save()).ok, true);
@@ -419,9 +420,33 @@ test("compose retains the same submission after uncertain transport and across r
 });
 
 
+test("Publishing accepts any signed-in identity and preserves upstream user isolation", async () => {
+  const env = { CLIPFLIGHT_API_KEY: "fixture" };
+  const users = [];
+  const api = loadModule("lib/clipflight.ts", { "server-only": {} }, {
+    process: { env }, Headers, AbortSignal,
+    fetch: async (_url, init) => {
+      users.push(init.headers.get("X-External-User-Id"));
+      return Response.json({ accounts: [] });
+    },
+  });
+  for (const id of ["existing-user", "new-user"]) {
+    assert.equal(api.clipflightEnabled(id), true);
+    assert.equal((await api.clipflightRequest(id, "/accounts")).status, 200);
+  }
+  for (const id of ["", "   "]) {
+    assert.equal(api.clipflightEnabled(id), false);
+    assert.equal((await api.clipflightRequest(id, "/accounts")).status, 404);
+  }
+  env.CLIPFLIGHT_API_KEY = "";
+  assert.equal(api.clipflightEnabled("new-user"), false);
+  assert.equal((await api.clipflightRequest("new-user", "/accounts")).status, 404);
+  assert.deepEqual(users, ["existing-user", "new-user"]);
+});
+
 test("TikTok pause blocks connections, hidden targets, stored posts and retries at transport boundary", async () => {
   const calls = [];
-  const env = { CLIPFLIGHT_API_KEY: "fixture", CLIPFLIGHT_OWNER_USER_IDS: "owner", CLIPFLIGHT_TIKTOK_PUBLISH_ENABLED: "false" };
+  const env = { CLIPFLIGHT_API_KEY: "fixture", CLIPFLIGHT_TIKTOK_PUBLISH_ENABLED: "false" };
   const api = loadModule("lib/clipflight.ts", { "server-only": {} }, {
     process: { env }, Headers, AbortSignal,
     fetch: async (url, init) => {
@@ -501,4 +526,30 @@ test("LinkedIn discovery and video checks reuse the provider contract while TikT
   assert.ok(blocked({sizeBytes: 500_000_001}).includes("FILE_TOO_LARGE"));
   assert.ok(blocked({durationMs: 1800_001}).includes("DURATION_TOO_LONG"));
   assert.ok(blocked({videoCodec: "av01"}).includes("VIDEO_CODEC_UNSUPPORTED"));
+});
+
+
+test("repaired framing replaces saved fallback and missing plans while preserving manual choices", async t => {
+  const f = publishFixture(t);
+  const fallback = { schemaVersion: 1, analyzer: "analysis-unavailable-v1", sourceStartMs: 0, sourceEndMs: 29900, points: [{ sourceMs: 0, framingMode: "fit", crop: { x: .5, y: .5, zoom: 1 } }] };
+  const repaired = { ...fallback, analyzer: "mediapipe-talknet-v5", points: [{ sourceMs: 0, framingMode: "fill", crop: { x: .52, y: .5, zoom: 1 } }] };
+  f.renderSpec.segments.s0.framingMode = "fit";
+  f.renderSpec.segments.s0.autoFraming = fallback;
+  assert.equal((await f.save()).ok, true);
+  f.setPreview({ status: "ready", segments: [{ segmentIndex: 0, autoFraming: repaired }] });
+  const result = await f.editor.loadEditorWorkspace(f.db, f.bucket, "u", "p", "c");
+  assert.equal(result.ok, true);
+  assert.equal(result.workspace.analysisUpdated, true);
+  assert.equal(result.workspace.renderSpec.segments.s0.framingMode, "fit");
+  assert.deepEqual(plain(result.workspace.renderSpec.segments.s0.autoFraming), repaired);
+  assert.deepEqual(plain(result.workspace.renderSpec.captions), plain(f.renderSpec.captions));
+  const saved = await f.editor.saveProjectDraft(f.db, "u", "p", "c", 1, result.workspace.edl, result.workspace.renderSpec);
+  assert.equal(saved.ok, true);
+  const next = await f.editor.loadEditorWorkspace(f.db, f.bucket, "u", "p", "c");
+  assert.equal(next.workspace.analysisUpdated, false);
+  delete next.workspace.renderSpec.segments.s0.autoFraming;
+  assert.equal((await f.editor.saveProjectDraft(f.db, "u", "p", "c", 2, next.workspace.edl, next.workspace.renderSpec)).ok, true);
+  const missing = await f.editor.loadEditorWorkspace(f.db, f.bucket, "u", "p", "c");
+  assert.equal(missing.workspace.analysisUpdated, true);
+  assert.equal(missing.workspace.renderSpec.segments.s0.autoFraming.analyzer, repaired.analyzer);
 });

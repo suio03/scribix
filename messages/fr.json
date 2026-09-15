@@ -1116,7 +1116,7 @@
         "pause": "Mettre l’aperçu en pause",
         "previewMissing": "Chaque segment restant doit avoir un aperçu prêt pour la lecture continue.",
         "continuousTimeline": "Timeline virtuelle",
-        "proxyRefreshing": "Cette coupe dépasse les marges actuelles. Un remplacement est en préparation ; le montage est déjà enregistré.",
+        "proxyRefreshing": "Préparation de l’aperçu de votre extrait enregistré. Vous pourrez le lire dès qu’il sera prêt.",
         "segment": "Coupe {number}",
         "sourceRange": "Vidéo originale",
         "start": "Heure de début dans la vidéo originale",

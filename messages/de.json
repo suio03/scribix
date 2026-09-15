@@ -1116,7 +1116,7 @@
         "pause": "Vorschau pausieren",
         "previewMissing": "Für die durchgehende Wiedergabe benötigt jeder verbleibende Abschnitt eine fertige Vorschau.",
         "continuousTimeline": "Virtuelle Timeline",
-        "proxyRefreshing": "Dieser Schnitt liegt außerhalb der Vorschaugrenzen. Ein Ersatz wird vorbereitet; die Bearbeitung ist bereits gespeichert.",
+        "proxyRefreshing": "Die Vorschau deines gespeicherten Clips wird vorbereitet. Du kannst ihn abspielen, sobald sie bereit ist.",
         "segment": "Schnitt {number}",
         "sourceRange": "Originalvideo",
         "start": "Startzeit im Originalvideo",

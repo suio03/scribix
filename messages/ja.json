@@ -1116,7 +1116,7 @@
         "pause": "プレビューを一時停止",
         "previewMissing": "連続再生には、残っているすべてのセグメントのプレビューが必要です。",
         "continuousTimeline": "仮想タイムライン",
-        "proxyRefreshing": "このカットは現在のハンドル範囲外です。代替プレビューを準備中です。編集内容は保存済みです。",
+        "proxyRefreshing": "保存済みのクリップのプレビューを準備しています。準備ができ次第、再生できます。",
         "segment": "カット {number}",
         "sourceRange": "元動画",
         "start": "元動画の開始時間",

@@ -1116,7 +1116,7 @@
         "pause": "Metti in pausa l’anteprima",
         "previewMissing": "Ogni segmento rimasto richiede un’anteprima pronta per la riproduzione continua.",
         "continuousTimeline": "Timeline virtuale",
-        "proxyRefreshing": "Questo taglio supera i margini correnti. È in preparazione un sostituto; la modifica è già salvata.",
+        "proxyRefreshing": "Preparazione dell’anteprima della clip salvata. Potrai riprodurla quando sarà pronta.",
         "segment": "Taglio {number}",
         "sourceRange": "Video originale",
         "start": "Ora di inizio nel video originale",

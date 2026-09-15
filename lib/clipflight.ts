@@ -1,8 +1,7 @@
 import "server-only";
 
 export function clipflightEnabled(userId: string) {
-  const owners = (process.env.CLIPFLIGHT_OWNER_USER_IDS ?? "").split(",").map(value => value.trim()).filter(Boolean);
-  return Boolean(process.env.CLIPFLIGHT_API_KEY && owners.includes(userId));
+  return Boolean(process.env.CLIPFLIGHT_API_KEY && userId.trim());
 }
 
 export function tiktokPublishingEnabled() {

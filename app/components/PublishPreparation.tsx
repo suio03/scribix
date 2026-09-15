@@ -24,10 +24,10 @@ export function PublishPreparation({ draft, spec, stale, busy, onDraft, onSpec, 
     try { await navigator.clipboard.writeText(text); setCopyState("copied"); }
     catch { setCopyState("copyFailed"); }
   };
-  return <section className="mb-5 space-y-5 rounded-2xl border border-accent/20 bg-paper p-5">
-    <h3 className="font-display text-lg font-semibold">{t("title")}</h3>
+  return <section className="space-y-4">
+
     {stale ? <p role="status" className="text-sm text-amber-700 dark:text-amber-200">{t("stale")} <button type="button" onClick={onReviewed} className="underline">{t("reviewed")}</button></p> : null}
-    {(["openingTitle", "coverTitle"] as const).map(key => <div key={key}>
+    {(["openingTitle", "coverTitle"] as const).map(key => <details key={key} className="rounded-xl border border-line p-4"><summary className="cursor-pointer text-sm font-semibold">{t(key)}</summary><div className="pt-3">
       <label className="text-sm font-medium">{t(key)}<input value={spec[key]?.text ?? ""} onChange={e => overlay(key, { text: Array.from(e.target.value).slice(0, PUBLISH_LIMITS.title).join("") })} className={inputClass} /></label>
       <label className="mt-2 flex items-center gap-2 text-sm"><input type="checkbox" aria-label={`${t(key)}: ${t("show")}`} checked={spec[key]?.enabled ?? false} onChange={e => overlay(key, { enabled: e.target.checked })} />{t("show")}</label>
       {key === "openingTitle" ? <div className="mt-3 flex flex-wrap gap-2">{draft.titles.map((title, i) => <button type="button" key={i} className={buttonClass} onClick={() => overlay(key, { text: title, enabled: true })}>{title}</button>)}<button disabled={busy} type="button" className={buttonClass} onClick={() => onGenerate("titles")}>{t("regenerateTitles")}</button></div> : null}
@@ -37,8 +37,8 @@ export function PublishPreparation({ draft, spec, stale, busy, onDraft, onSpec, 
         <label>{t("color")}<input aria-label={t("color")} type="color" value={spec[key]?.color ?? "#FFFFFF"} onChange={e => overlay(key, { color: e.target.value })} className="ml-2" /></label>
         {key === "openingTitle" ? <label>{t("duration")}<input aria-label={t("duration")} type="number" min="0.5" max="10" step="0.5" value={(spec[key]?.durationMs ?? 3000) / 1000} onChange={e => overlay(key, { durationMs: Math.max(500, Math.min(10000, Number(e.target.value) * 1000)) })} className={inputClass} /></label> : null}
       </div></details>
-    </div>)}
-    <div className="space-y-3">
+    </div></details>)}
+    <div className="space-y-3 rounded-xl border border-line p-4">
       <label className="block text-sm font-medium">{t("postTitle")}<input maxLength={PUBLISH_LIMITS.title} value={draft.title} onChange={e => edit("title", e.target.value)} className={inputClass} /></label>
       <button type="button" className={buttonClass} onClick={() => void copy(draft.title)}>{t("copyTitle")}</button>
       <label className="block text-sm font-medium">{t("body")}<textarea maxLength={PUBLISH_LIMITS.body} rows={4} value={draft.body} onChange={e => edit("body", e.target.value)} className={inputClass} /></label>

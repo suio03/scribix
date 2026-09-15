@@ -16,6 +16,18 @@ class SpeakerFramingPolicyTest(unittest.TestCase):
         self.two = [[[40, 80, 55, 60], [520, 80, 55, 60]]] * 10
         self.one = [[[300, 80, 55, 60]]] * 10
 
+    def test_three_people_select_middle_speaker_without_wide_fallback(self):
+        boxes = [[40, 80, 40, 45], [300, 80, 40, 45], [560, 80, 40, 45]]
+        windows = [{"sourceMs": i*2000, "tracks": [
+            {"id": j, "score": score, "boxes": [boxes[j]]*10}
+            for j, score in enumerate([.1, .98, .15])
+        ]} for i in range(3)]
+        points = module.frame_track_windows(windows, 640, 360)
+        self.assertEqual(len(points), 1)
+        self.assertEqual(points[0]["framingMode"], "fill")
+        self.assertGreater(points[0]["crop"]["x"], .4)
+        self.assertLess(points[0]["crop"]["x"], .6)
+
     def test_speaking_face_can_be_on_either_side(self):
         self.assertLess(module.select_crop(self.two, [.95, .05], 640, 360)["x"], .2)
         self.assertGreater(module.select_crop(self.two, [.05, .95], 640, 360)["x"], .8)

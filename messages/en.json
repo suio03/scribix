@@ -1116,7 +1116,7 @@
         "pause": "Pause preview",
         "previewMissing": "Every remaining segment needs a ready preview before continuous playback is available.",
         "continuousTimeline": "Preview",
-        "proxyRefreshing": "This cut moved beyond the current preview handles. A replacement segment is being prepared; the edit is already saved.",
+        "proxyRefreshing": "Preparing the preview for your saved clip. Playback will be available when it is ready.",
         "segment": "Cut {number}",
         "sourceRange": "Original video",
         "start": "Original video start time",

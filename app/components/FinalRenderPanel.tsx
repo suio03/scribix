@@ -156,8 +156,9 @@ export function FinalRenderPanel({
     const actionClass = "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 " + (secondary ? "border border-line text-ink" : "bg-accent text-white");
     return (
       <section id="exports" className="relative text-ink">
-        <PublishLink projectId={projectId} candidateId={candidateId} disabled={disabled} renderJobId={candidateRenders.find(render => render.videoUrl && render.isVideoCurrent === true)?.id} />
         <div className="flex flex-wrap items-center gap-2">
+        <PublishLink projectId={projectId} candidateId={candidateId} disabled={disabled} renderJobId={candidateRenders.find(render => render.videoUrl && render.isVideoCurrent === true)?.id} />
+
           {downloadUrl && latestReady && !active && publishReady ? <button type="button" disabled={busy || disabled} onClick={() => void downloadPackage()} className={actionClass}><Download size={16} />{tp("downloadAll")}</button> : downloadUrl && latestReady && !active ? (
             <a href={`${downloadUrl}?format=video`} download onClick={() => recordVideoDownload(projectId, latestReady, "video")} className={actionClass}>
               <Download size={16} />{tp(secondary ? "videoOnly" : "videoDownload")}
@@ -197,14 +198,14 @@ export function FinalRenderPanel({
             </details>
           ) : null}
         </div>
-        {publishReady && candidateRenders[0] ? <ul aria-live="polite" className="mt-3 space-y-1 text-xs">
+        {publishReady && candidateRenders[0] ? <details className="mt-3 text-xs text-ink/60"><summary className="w-fit cursor-pointer py-1">{t("moreActions")}</summary><ul aria-live="polite" className="mt-2 space-y-2">
           {(["video", "cover"] as const).map(kind => {
             const render = candidateRenders[0];
             const ready = kind === "video" ? render.videoUrl : render.coverUrl;
             return <li key={kind} className="flex flex-wrap gap-2"><span>{tp(kind === "video" ? "videoDownload" : "coverDownload")}: {tp(ready ? "ready" : render.status === "failed" ? "partFailed" : "partWaiting")}</span>{ready ? <a href={`/api/video-projects/${projectId}/renders/${render.id}/download?format=${kind}`} download className="underline">{tp("getFile")}</a> : null}</li>;
           })}
           <li>{tp("postTitle")}: {tp("ready")}</li>
-        </ul> : null}
+        </ul></details> : null}
         {latestReady && !latestReady.isCurrent ? <p role="status" className="mt-2 max-w-72 text-xs text-amber-700 dark:text-amber-200">{tp(latestReady.isVideoCurrent === true ? "coverChanged" : "videoChanged")}</p> : null}
         {publishReady && latestReady?.isCopyCurrent === false ? <p role="status" className="mt-2 max-w-72 text-xs text-ink/60">{tp("copyChanged")}</p> : null}
         {active ? <p role="status" className="mt-2 max-w-72 text-xs">{tp("exportWaiting")}</p> : null}

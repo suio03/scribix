@@ -100,8 +100,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async jwt({ token, profile, user }) {
+      // D1 users are keyed by Google sub; OAuth user.id is a generated UUID.
       if (profile?.sub) token.sub = profile.sub;
-      if (user?.id) token.sub = user.id;
+      else if (user?.id) token.sub = user.id;
       return token;
     },
     async session({ session, token }) {

@@ -5,6 +5,7 @@
   "scripts": {
     "prebuild": "npm run check-locales",
     "check-locales": "node scripts/check-locales.mjs",
+    "test:auth": "node --test scripts/auth.test.mjs",
     "test:video-tracking": "node --test scripts/test-video-tracking.mjs",
     "test:video-workspace": "node scripts/test-video-workspace-contracts.mjs",
     "test:video-export-monitor": "node --test scripts/test-video-export-monitor.mjs",
@@ -47,7 +48,8 @@
     "test:free-quota": "node --test scripts/test-free-quota.mjs",
     "test:payments": "node --test tests/payment-notifications.test.cjs",
     "test:publish-workflow": "node --test scripts/test-publish-workflow.mjs",
-    "test:publish-render": "node scripts/video-workspace/test-publish-render.mjs"
+    "test:publish-render": "node scripts/video-workspace/test-publish-render.mjs",
+    "test:framing-analysis": "node --test scripts/analyze-framing.test.mjs"
   },
   "dependencies": {
     "@cloudflare/containers": "^0.3.7",

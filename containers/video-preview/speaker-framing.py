@@ -12,8 +12,6 @@ from pathlib import Path
 import cv2
 import mediapipe as mp
 import numpy as np
-from mediapipe.tasks import python
-from mediapipe.tasks.python import vision
 
 FPS = 25
 WINDOW_FRAMES = 50
@@ -62,7 +60,7 @@ class SpeakerModel:
 from framing_policy import link_face_tracks, track_box_at, frame_track_windows
 
 
-def analyze(input_path, source_start, duration, face_model, speaker_model, directory):
+def analyze(input_path, source_start, duration, speaker_model, directory):
     normalized = str(Path(directory) / "framing-input.mp4")
     subprocess.run(["ffmpeg", "-v", "error", "-i", input_path, "-vf", "fps=25,scale=640:-2",
                     "-an", "-c:v", "libx264", "-preset", "ultrafast", "-y", normalized], check=True, timeout=300)
@@ -73,8 +71,9 @@ def analyze(input_path, source_start, duration, face_model, speaker_model, direc
     cuts = sorted(set(round(float(t)*FPS) for t in re.findall(r"pts_time:([0-9.]+)", cuts_result.stderr)))
     audio_result = subprocess.run(["ffmpeg", "-v", "error", "-i", input_path, "-vn", "-ac", "1", "-ar", "16000", "-f", "s16le", "-"], capture_output=True, timeout=120)
     audio = np.frombuffer(audio_result.stdout, dtype=np.int16) if audio_result.returncode == 0 else np.array([], dtype=np.int16)
-    detector = vision.FaceDetector.create_from_options(vision.FaceDetectorOptions(
-        base_options=python.BaseOptions(model_asset_path=face_model), min_detection_confidence=.55))
+    # 0.10.x Tasks hard-codes short-range tensor shapes. Use its bundled
+    # full-range graph, which matches the full-range model and supports wide shots.
+    detector = mp.solutions.face_detection.FaceDetection(model_selection=1, min_detection_confidence=.55)
     video = cv2.VideoCapture(normalized)
     model = None
     points = []
@@ -91,8 +90,13 @@ def analyze(input_path, source_start, duration, face_model, speaker_model, direc
                 if not ok:
                     break
                 if (frame_offset-shot_start) % DETECT_EVERY == 0:
-                    result = detector.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
-                    rows.append([[d.bounding_box.origin_x, d.bounding_box.origin_y, d.bounding_box.width, d.bounding_box.height] for d in result.detections])
+                    result = detector.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+                    height, width = frame.shape[:2]
+                    rows.append([[d.location_data.relative_bounding_box.xmin * width,
+                                  d.location_data.relative_bounding_box.ymin * height,
+                                  d.location_data.relative_bounding_box.width * width,
+                                  d.location_data.relative_bounding_box.height * height]
+                                 for d in (result.detections or [])])
                 frame_offset += 1
             if frame_offset == shot_start:
                 break
@@ -144,7 +148,7 @@ def analyze(input_path, source_start, duration, face_model, speaker_model, direc
         detector.close()
     if not points:
         raise RuntimeError("no_frames")
-    return {"schemaVersion": 1, "analyzer": "mediapipe-talknet-v4", "sourceStartMs": source_start,
+    return {"schemaVersion": 1, "analyzer": "mediapipe-talknet-v5", "sourceStartMs": source_start,
             "sourceEndMs": source_start + duration, "points": points}
 
 
@@ -154,8 +158,7 @@ if __name__ == "__main__":
     parser.add_argument("--source-start", type=int, required=True)
     parser.add_argument("--duration", type=int, required=True)
     parser.add_argument("--output", required=True)
-    parser.add_argument("--face-model", default="/opt/scribix-models/blaze_face_full_range_v1.tflite")
     parser.add_argument("--speaker-model", default="/opt/scribix-models/talknet.model")
     args = parser.parse_args()
-    plan = analyze(args.input, args.source_start, args.duration, args.face_model, args.speaker_model, str(Path(args.output).parent))
+    plan = analyze(args.input, args.source_start, args.duration, args.speaker_model, str(Path(args.output).parent))
     Path(args.output).write_text(json.dumps(plan))

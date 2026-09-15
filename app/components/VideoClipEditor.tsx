@@ -138,15 +138,15 @@ export function VideoClipEditor({
           audio: ORIGINAL_AUDIO_SETTINGS,
         };
         const nextSignature = draftSignature(next.edl, nextRenderSpec, next.publishDraft);
-        lastSavedRef.current = next.restoredDraft ? savedSignature : "";
+        lastSavedRef.current = next.restoredDraft && !next.analysisUpdated ? savedSignature : "";
         setWorkspace({ ...next, clipTitle: displayClipTitle });
         setClipTitle(displayClipTitle);
         setEdl(next.edl);
         setRenderSpec(nextRenderSpec);
         setPublishDraft(next.publishDraft);
-        setPublishOpen(Boolean(next.publishDraft));
+        setPublishOpen(false);
         setRevision(next.revision);
-        setSaveState(next.restoredDraft && savedSignature === nextSignature ? "saved" : "dirty");
+        setSaveState(next.restoredDraft && !next.analysisUpdated && savedSignature === nextSignature ? "saved" : "dirty");
       })
       .catch(() => {
         if (active) { trackVideoFailure("editor_load"); setLoadError(true); }
@@ -500,15 +500,10 @@ export function VideoClipEditor({
   );
 
   return (
-    <section id="editor" className="scroll-mt-6 bg-[linear-gradient(135deg,rgba(14,13,11,0.025),transparent_55%)] px-5 py-6 sm:px-7 sm:py-7">
+    <section id="editor" className="scroll-mt-6 px-4 py-5 sm:px-6 sm:py-6">
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-line pb-5">
         <div className="min-w-0 flex-1 basis-64">
-          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
-            <Scissors size={12} />
-            {t("eyebrow")}
-          </div>
-          <h4 className="mt-1 font-display text-xl font-semibold text-ink">{t("title")}</h4>
-          <label className="mt-3 block w-full max-w-lg">
+          <label className="block w-full max-w-lg">
             <span className="sr-only">{t("clipTitle")}</span>
             <input
               type="text"
@@ -531,24 +526,18 @@ export function VideoClipEditor({
         </div>
         <div className="flex flex-wrap items-center gap-4">
         {framingDraftActive ? <p className="max-w-52 text-xs text-ink/60">{t("style.visual.draftStatus")}</p> : <SaveIndicator state={saveState} t={t} onReload={() => setReloadKey((value) => value + 1)} />}
-          {!publishOpen ? <button type="button" onClick={() => void preparePublish()} disabled={saveState !== "saved" || framingDraftActive || publishBusy} className="rounded-lg bg-accent px-4 py-3 text-sm font-semibold text-white disabled:opacity-40">{tp(publishBusy ? "generating" : "prepare")}</button> : null}
-          <FinalRenderPanel compact
-            publishReady={Boolean(publishDraft)}
-            secondary={!publishOpen}
-            projectId={projectId}
-            candidateId={candidateId}
-            revision={revision}
-            disabled={saveState !== "saved" || framingDraftActive || publishBusy}
-            disabledReason={framingDraftActive ? t("style.visual.draftStatus") : undefined}
-            onConflict={() => setSaveState("conflict")}
-          />
+
         </div>
       </div>
 
       {coverFrameRemoved ? <p role="status" className="mb-4 text-sm">{tp("coverRemoved")}</p> : null}
       {publishBusy ? <p role="status" className="mb-4 text-sm">{tp("waiting")}</p> : null}
       {publishError ? <p role="alert" className="mb-4 text-sm text-red-600">{tp("failed")}</p> : null}
-      <div className="grid gap-7 lg:grid-cols-[minmax(280px,1fr)_minmax(340px,1fr)]">
+      <div className="mb-5 flex gap-1 border-b border-line" role="group" aria-label={t("workspace.tools")}>
+        <button type="button" aria-pressed={!publishOpen} onClick={() => setPublishOpen(false)} className="min-h-11 border-b-2 border-transparent px-4 text-sm font-semibold text-ink/60 aria-pressed:border-accent aria-pressed:text-accent">{t("title")}</button>
+        <button type="button" aria-pressed={publishOpen} disabled={saveState !== "saved" || framingDraftActive || publishBusy} onClick={() => void preparePublish()} className="min-h-11 border-b-2 border-transparent px-4 text-sm font-semibold text-ink/60 aria-pressed:border-accent aria-pressed:text-accent disabled:opacity-40">{tp(publishBusy ? "generating" : publishDraft ? "title" : "prepare")}</button>
+      </div>
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(260px,0.85fr)_minmax(0,1.15fr)]">
         <div className="lg:sticky lg:top-6 lg:self-start">
           <ContinuousProxyPlayer
             panel={panel}
@@ -566,12 +555,12 @@ export function VideoClipEditor({
               dragToReframe: t("style.framing.dragToReframe"),
             }}
           />
-          {proxyRefreshError ? <p role="alert" className="mt-3 text-xs text-red-600">{t("style.framing.autoUnavailable")}</p> : null}
+          {(proxyRefreshError || Object.values(renderSpec.segments).some(segment => segment.framingMode === "auto" && segment.autoFraming?.analyzer === "analysis-unavailable-v1")) && proxyRefreshIds.length === 0 ? <p role="alert" className="mt-3 text-xs text-red-600">{t("style.framing.autoUnavailable")}</p> : null}
           <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.1em] text-ink/45">
             <span>{t("continuousTimeline")}</span>
             <span>{formatDuration(totalDuration)}</span>
           </div>
-          {publishOpen ? <div className="mt-5 rounded-xl border border-line bg-card p-4"><p className="mb-3 text-sm font-medium">{tp("coverTitle")}</p><CoverFrame timeline={timeline} renderSpec={renderSpec} assets={workspace.assets} /></div> : null}
+
           {proxyRefreshIds.length > 0 ? (
             <p className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-5 text-amber-800">
               <CircleAlert size={13} className="mt-0.5 shrink-0" />
@@ -580,9 +569,10 @@ export function VideoClipEditor({
           ) : null}
         </div>
 
-        <div className="min-w-0 self-start rounded-2xl border border-line bg-card lg:max-h-[72vh] lg:overflow-y-auto">
+        <div className="min-w-0 self-start">
           {publishOpen && publishDraft ? <PublishPreparation draft={publishDraft} spec={renderSpec} stale={publishDraft.contentKey !== publishContentKey(edl, renderSpec)} busy={publishBusy || saveState !== "saved"} onDraft={next => { setPublishDraft(next); setSaveState("dirty"); }} onSpec={updateRenderSpec} onGenerate={mode => void preparePublish(mode)} onReviewed={() => { setPublishDraft({ ...publishDraft, contentKey: publishContentKey(edl, renderSpec) }); setSaveState("dirty"); }} /> : null}
-          <div className="sticky top-0 z-10 grid grid-cols-4 border-b border-line bg-card p-2" role="group" aria-label={t("workspace.tools")}>
+          <div hidden={publishOpen}>
+          <div className="grid grid-cols-2 gap-1 rounded-xl bg-paper p-1 sm:grid-cols-4" role="group" aria-label={t("workspace.tools")}>
             {(["framing", "captions", "cover", "content"] as const).map(item => <button type="button" key={item} aria-pressed={panel === item} onClick={() => setPanel(item)} className="rounded-lg px-2 py-3 text-sm font-medium text-ink/60 transition hover:bg-ink/5 aria-pressed:bg-accent/10 aria-pressed:text-accent">{t(`workspace.${item}`)}</button>)}
           </div>
           <div ref={setControlsHost} hidden={panel !== "framing" && panel !== "cover"} />
@@ -622,7 +612,21 @@ export function VideoClipEditor({
           />
           </div>
 
+          </div>
+          {publishOpen ? <details className="mt-4 rounded-xl border border-line p-4"><summary className="cursor-pointer text-sm font-medium">{tp("coverTitle")}</summary><div className="pt-4"><CoverFrame timeline={timeline} renderSpec={renderSpec} assets={workspace.assets} /></div></details> : null}
         </div>
+      </div>
+      <div className="mt-6 border-t border-line pt-4">
+          <FinalRenderPanel compact
+            publishReady={Boolean(publishDraft)}
+            secondary={!publishOpen}
+            projectId={projectId}
+            candidateId={candidateId}
+            revision={revision}
+            disabled={saveState !== "saved" || framingDraftActive || publishBusy}
+            disabledReason={framingDraftActive ? t("style.visual.draftStatus") : undefined}
+            onConflict={() => setSaveState("conflict")}
+          />
       </div>
     </section>
   );

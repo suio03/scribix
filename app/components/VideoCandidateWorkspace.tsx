@@ -368,16 +368,16 @@ function VideoCandidateWorkspaceContent({
   }, [status, transcriptReady]);
 
   return (
-    <section id="clips" className="mt-9 scroll-mt-6">
-      <div className="flex flex-col justify-between gap-5 border-b border-line pb-6 sm:flex-row sm:items-end">
+    <section id="clips" className="mt-6 scroll-mt-6">
+      <div className="flex flex-col justify-between gap-3 pb-3 sm:flex-row sm:items-end">
         <div className="max-w-2xl">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+          <p className="sr-only">
             {t("eyebrow")}
           </p>
-          <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink">
+          <h2 className="font-display text-lg font-semibold tracking-tight text-ink">
             {t("shortlistTitle")}
           </h2>
-          <p className="mt-2 text-[14px] leading-6 text-ink/60">
+          <p className="mt-1 text-xs leading-5 text-ink/60">
             {t(!sourceAvailable
               ? "archivedDescription"
               : canEdit
@@ -469,7 +469,7 @@ function VideoCandidateWorkspaceContent({
           <div
             role="listbox"
             aria-label={t("shortlistTitle")}
-            className="mt-7 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5"
+            className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5"
           >
             {candidates.map((candidate, index) => {
               const preview = previews.find((item) => item.candidateId === candidate.id) ?? null;
@@ -496,7 +496,7 @@ function VideoCandidateWorkspaceContent({
               );
             })}
           </div>
-          {sourceAvailable ? (
+          {sourceAvailable && previews.some(preview => preview.status === "queued" || preview.status === "processing") ? (
             <p className="mt-3 text-[11px] leading-5 text-ink/45">
               {t("previewPending")}
             </p>
@@ -505,7 +505,7 @@ function VideoCandidateWorkspaceContent({
       ) : null}
 
       {selectedCandidate ? (
-        <div ref={editorRef} className="mt-8 scroll-mt-6 overflow-hidden rounded-2xl border border-line bg-card shadow-[0_28px_80px_-56px_rgba(14,13,11,0.7)]">
+        <div ref={editorRef} className="mt-5 scroll-mt-6 rounded-2xl border border-line bg-card shadow-[0_28px_80px_-56px_rgba(14,13,11,0.7)]">
           {!sourceAvailable ? (
             <ArchivedClipExport
               projectId={projectId}
@@ -770,11 +770,11 @@ function CandidateTile({
             </span>
           )}
         </div>
-        <div className="min-w-0 p-3">
+        <div className="min-w-0 p-2.5">
           <p className="line-clamp-2 min-h-10 text-[12px] font-semibold leading-5 text-ink">
             {candidate.origin === "manual" ? t("manualTitle") : candidate.theme}
           </p>
-          {candidate.origin === "ai" ? <p className="mt-2 text-xs leading-5 text-ink/60">{candidate.reason}</p> : null}
+          {candidate.origin === "ai" ? <p className="sr-only">{candidate.reason}</p> : null}
           <span className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-ink/45">
             {pending ? (
               <><Loader2 size={10} className="animate-spin" />{t("editor.saveState.saving")}</>

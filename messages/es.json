@@ -1116,7 +1116,7 @@
         "pause": "Pausar vista previa",
         "previewMissing": "Cada segmento restante necesita una vista previa lista para la reproducción continua.",
         "continuousTimeline": "Línea de tiempo virtual",
-        "proxyRefreshing": "Este corte salió de los márgenes actuales. Se está preparando un reemplazo; la edición ya está guardada.",
+        "proxyRefreshing": "Preparando la vista previa de tu clip guardado. Podrás reproducirlo cuando esté listo.",
         "segment": "Corte {number}",
         "sourceRange": "Vídeo original",
         "start": "Hora de inicio en el vídeo original",

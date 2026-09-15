@@ -50,7 +50,7 @@ async function runPreview(lease) {
   const source = await probeMedia(lease.sourceUrl);
   await renderProxy({ input: lease.sourceUrl, output: outputPath, segment: lease.segment, source });
   const output = await probeMedia(outputPath);
-  const autoFraming = await analyzeFraming({ input: outputPath,
+  const autoFraming = await analyzeFraming({ input: outputPath, jobId,
     sourceStartMs: lease.segment.proxySourceStartMs,
     durationMs: lease.segment.proxySourceEndMs - lease.segment.proxySourceStartMs,
     workingDirectory });
