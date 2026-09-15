@@ -9,20 +9,22 @@ async function context() {
   const env = await cf(); const user = await getOrCreateCurrentUser(env.DB, session);
   return user && clipflightEnabled(user.id) ? {env, user} : null;
 }
-export async function GET() {
+export async function GET(request: Request) {
   const c = await context(); if (!c) return Response.json({error: "not_found"}, {status: 404});
+  const task = new URL(request.url).searchParams.get("task");
   const rows = await c.env.DB.prepare(`SELECT s.*, t.title AS project_title FROM social_submissions s
     LEFT JOIN video_projects p ON p.id = s.project_id AND p.user_id = s.user_id
     LEFT JOIN transcripts t ON t.id = p.transcript_id AND t.user_id = s.user_id
-    WHERE s.user_id = ? ORDER BY s.created_at DESC LIMIT 30`).bind(c.user.id).all<SocialSubmission & {created_at: number; render_job_id: string; project_title: string | null}>();
+    WHERE s.user_id = ? AND (? IS NULL OR s.batch_id = ?) ORDER BY s.created_at DESC LIMIT 30`).bind(c.user.id, task, task).all<SocialSubmission & {batch_id: string | null; display_json: string | null; created_at: number; render_job_id: string; project_title: string | null}>();
   let refreshed = 0;
   const posts = [];
   for (const row of rows.results) {
+    const display = row.display_json ? JSON.parse(row.display_json) : null;
     const cached = row.result_json ? JSON.parse(row.result_json) : null;
     const terminal = cached && ["published", "partial", "failed", "canceled"].includes(cached.status);
     const result = !terminal && refreshed++ < 3 ? await refreshSocialSubmission(c.env.DB, row) : cached;
-    posts.push({id: row.remote_post_id ?? row.id, mediaId: row.render_job_id, caption: "", status: "submitting", createdAt: row.created_at,
-      ...result, media: {filename: row.project_title, width: null, height: null, ...result?.media}, targets: result?.targets ?? []});
+    posts.push({id: row.remote_post_id ?? row.id, mediaId: row.render_job_id, status: "submitting", createdAt: row.created_at,
+      ...result, batchId: row.batch_id, submissionId: row.id, media: {width: null, height: null, ...result?.media, filename: display?.title ?? row.project_title ?? result?.media?.filename}, caption: display?.caption ?? result?.caption ?? "", targets: result?.targets?.length ? result.targets : display ? [{id: row.id, platform: display.platform, status: result?.status ?? "submitting", accountName: display.platform === "youtube" ? "YouTube" : "LinkedIn", errorCode: result?.errorCode}] : []});
   }
   return Response.json({posts}, {headers: {"Cache-Control": "no-store"}});
 }

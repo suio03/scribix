@@ -2,6 +2,11 @@
 
 Current record summary, 2026-09-14 (not a new remote check): Scribix changes remain local in the latest evidence. YouTube and LinkedIn adapters are implemented; TikTok is paused pending explicit Direct Post audit approval. The owner confirmed YouTube public-publishing verification, but a complete new-project Scribix acceptance is not established. Real LinkedIn OAuth/publication and provider access renewal remain unconfirmed. The external ClipFlight / Teleo API has deployment evidence; the newest refresh route still has a deployment dependency.
 
+
+Local UI update, 2026-09-15: the earlier in-page dialog was replaced by a dedicated `/dashboard/publish` page carrying the selected project and clip. A stale video is generated automatically without starting a download. Account checkboxes choose multiple destinations; platform tabs edit independent captions and settings without changing those selections. One user action sends separate immutable submissions, each with the matching caption. The persisted batch skips accepted submissions on retry and keeps original request IDs after response loss or reload. History reports platform publication results. No public post or new OAuth authorization was performed during this UI verification. Scheduling and custom platform cover upload remain unsupported. Run `test:platform-batch` for caption separation and retry safety.
+
+Earlier local evidence: Clip 4 generation and transition to the platform form were verified, along with caption switching and account-management return. These checks were performed before the modal was replaced; the replacement page flow was then verified locally: editor-to-publish navigation, two selected accounts, tab switching without deselection, independent captions surviving editor return and reload, and account-management return. The final submit button was not clicked.
+
 The dated sections below retain setup and acceptance evidence. Later dated records supersede earlier blockers; they do not prove a tunnel or local server is still running. Product status and next steps are summarized in the [product plan](../roadmap/video-product-plan.md).
 
 The existing `/publish` route still generates copy. New `/social/connections` and `/social/posts` routes live below `/api/video-projects/:id` and derive user identity from the Scribix session. The fixed OAuth return is `/api/social/callback`.
@@ -155,3 +160,16 @@ This integration requires the new Teleo external refresh route to be deployed. L
 At the product owner’s request, removed the user-ID allowlist for local and production use. Earlier pilot-only records above describe historical behavior. The service credential, authenticated user, ownership checks and platform-specific availability still apply. TikTok remains paused under its existing platform approval gate. No production deployment or real platform publication was performed as part of this change.
 
 Verification: all 30 publishing workflow tests and the OpenNext production build passed. In Chrome ai-publisher at localhost:3000, the signed-in publishing page displayed both sidebar entries (Publishing accounts and Publishing) and the Channels / New post / History navigation. This verifies entry visibility, not successful platform publication.
+
+### Unified task progress — 2026-09-15 local change
+
+Apply `0041_social_publish_batches.sql` before deploying this version. New
+platform submissions share a batch ID and display as one history card with
+independent captions and retry targets. The submission response accepts the
+persisted request without waiting for media transfer; Worker background work
+starts the transfer, and progress reads recover unfinished work. Browser-local
+requests resume with their original IDs. The localhost-only publishing demo
+performs no uploads or posts. See the publishing component README for recovery
+limits. Existing ungrouped history is not retroactively merged.
+
+Navigation refinement: Channels is the sole sidebar entry for account management; Publishing contains only New post and History. Submission opens History with the current task highlighted among all records. There is no separate progress screen; the task query preserves recovery and highlighting. The local demo follows the same New post → History navigation.

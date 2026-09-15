@@ -33,9 +33,9 @@ export async function getTikTokCreatorInfo(accountId: string, signal?: AbortSign
 }
 // The integration accepts at most one channel per supported platform. The service enforces this too.
 export function getPublishPolicy(signal?: AbortSignal) { return json<{maxTargets: number; tiktokPublishingEnabled: boolean}>("/api/social/availability", {signal}); }
-export async function getPosts(signal?: AbortSignal) { return (await json<{posts: PublicPost[]}>("/api/social/posts", {signal})).posts; }
+export async function getPosts(signal?: AbortSignal, batchId?: string) { return (await json<{posts: PublicPost[]}>(`/api/social/posts${batchId ? `?task=${encodeURIComponent(batchId)}` : ""}`, {signal})).posts; }
 export function retryPost(postId: string, targetId: string) { return json("/api/social/posts", mutation("PATCH", {postId, targetId})); }
-type PostInput = {mediaId: string; caption: string; accountIds: string[]; youtubeTitle?: string; youtube?: {privacyStatus: YouTubePrivacyStatus; selfDeclaredMadeForKids: boolean; communityGuidelinesCertified: boolean}; tiktok?: {accountId: string; privacyLevel: TikTokPrivacyLevel; allowComment: boolean; allowDuet: boolean; allowStitch: boolean; isAigc: boolean; brandOrganic: boolean; brandedContent: boolean}[]};
+export type PostInput = {batchId?: string; platform?: string; title?: string; mediaId: string; caption: string; accountIds: string[]; youtubeTitle?: string; youtube?: {privacyStatus: YouTubePrivacyStatus; selfDeclaredMadeForKids: boolean; communityGuidelinesCertified: boolean}; tiktok?: {accountId: string; privacyLevel: TikTokPrivacyLevel; allowComment: boolean; allowDuet: boolean; allowStitch: boolean; isAigc: boolean; brandOrganic: boolean; brandedContent: boolean}[]};
 // Retain the exact request across uncertain transport outcomes; changing the form cannot duplicate it.
 const pending = new Map<string, {body: object; fingerprint: string}>();
 export function hasPendingPost(key: string) {
@@ -45,12 +45,12 @@ export function hasPendingPost(key: string) {
   return pending.has(key);
 }
 function clearPending(key: string) { pending.delete(key); try {sessionStorage.removeItem(key + ":pending");} catch {} }
-export async function createPost(input: PostInput, draft: ComposeDraft) {
+export async function createPost(input: PostInput, draft: ComposeDraft, submissionId?: string) {
   const key = draft.storageKey;
   hasPendingPost(key);
   let request = pending.get(key);
   if (!request) {
-    request = {body: {...input, submissionId: crypto.randomUUID(), renderJobId: draft.media.id, expectedRevision: draft.revision, confirmed: true}, fingerprint: JSON.stringify(input)};
+    request = {body: {...input, submissionId: submissionId ?? crypto.randomUUID(), renderJobId: draft.media.id, expectedRevision: draft.revision, confirmed: true}, fingerprint: JSON.stringify(input)};
     pending.set(key, request);
     try {sessionStorage.setItem(key + ":pending", JSON.stringify(request));} catch {}
   }

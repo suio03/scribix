@@ -49,7 +49,8 @@
     "test:payments": "node --test tests/payment-notifications.test.cjs",
     "test:publish-workflow": "node --test scripts/test-publish-workflow.mjs",
     "test:publish-render": "node scripts/video-workspace/test-publish-render.mjs",
-    "test:framing-analysis": "node --test scripts/analyze-framing.test.mjs"
+    "test:framing-analysis": "node --test scripts/analyze-framing.test.mjs",
+    "test:platform-batch": "node --test scripts/test-platform-batch.mjs"
   },
   "dependencies": {
     "@cloudflare/containers": "^0.3.7",

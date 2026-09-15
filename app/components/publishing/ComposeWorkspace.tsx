@@ -35,6 +35,10 @@ import {
   CheckIcon,
   CompactPlatformIcon,
 } from "./icons";
+import { clearCompletedBatch, readPlatformBatch, submitPlatformBatch, type PlatformBatch } from "./platform-batch";
+
+const batchStorage = { getItem: (key: string) => sessionStorage.getItem(key), setItem: (key: string, value: string) => sessionStorage.setItem(key, value) };
+
 import { userFacingError } from "./user-facing-error";
 
 const CAPTION_LIMIT = 2200;
@@ -70,15 +74,18 @@ export type ComposeDraft = {
   candidateId: string;
   revision: number;
   storageKey: string;
+  copyStorageKey?: string;
 };
 
-export function ComposeWorkspace({draft, onNewPost, onConnectChannel, onPublished}: {
+export function ComposeWorkspace({draft, onNewPost, onConnectChannel, onPublished, onStart}: {
   draft: ComposeDraft | null;
   onNewPost: () => void;
   onConnectChannel: () => void;
   onPublished: (postId: string) => void;
+  onStart?: (draft: ComposeDraft, submissions: import("./platform-batch").PlatformSubmission[]) => void;
 }) {
  const tx = useTranslations("Distribution");
+ const ta = useTranslations("ClipActions");
 function initialTikTokAccountSettings(
   settings?: PublicPost["targets"][number]["settings"],
 ): TikTokAccountSettings {
@@ -127,17 +134,15 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
   SELF_ONLY: tx("m7631b141ae"),
 };
 
-  const [confirmed, setConfirmed] = useState(false);
   const [settingsPlatform, setSettingsPlatform] = useState<(typeof PUBLISH_PLATFORMS)[number]>("youtube");
   const [transportPending, setTransportPending] = useState(false);
   const [restoredKey, setRestoredKey] = useState<string | null>(null);
   const [caption, setCaption] = useState("");
+  const [platformCaptions, setPlatformCaptions] = useState<Record<string, string>>({});
   const [youtubeTitle, setYoutubeTitle] = useState("");
   const [youtubePrivacyStatus, setYoutubePrivacyStatus] =
     useState<YouTubePrivacyStatus>("private");
   const [youtubeMadeForKids, setYoutubeMadeForKids] = useState<boolean | null>(null);
-  const [youtubeCommunityGuidelinesCertified, setYoutubeCommunityGuidelinesCertified] =
-    useState(false);
   const [accounts, setAccounts] = useState<PublishAccount[]>([]);
   const [tiktokPublishingEnabled, setTiktokPublishingEnabled] = useState(false);
   const [publishTargetLimit, setPublishTargetLimit] = useState<number | null>(null);
@@ -150,6 +155,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
   const [accountQuery, setAccountQuery] = useState("");
   const [accountsError, setAccountsError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [batch, setBatch] = useState<PlatformBatch | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [tiktokAccountSettings, setTikTokAccountSettings] = useState<
@@ -212,6 +218,10 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
   );
   const settingsPlatforms = PUBLISH_PLATFORMS.filter(platform => selectedPlatforms.has(platform));
   const activeSettingsPlatform = settingsPlatforms.includes(settingsPlatform) ? settingsPlatform : settingsPlatforms[0];
+  const captionFor = (platform: string) => platformCaptions[platform] ?? caption;
+  const activeCaption = activeSettingsPlatform ? captionFor(activeSettingsPlatform) : caption;
+  const captionsValid = settingsPlatforms.every(platform => captionFor(platform).length <= CAPTION_LIMIT);
+  const batchComplete = Boolean(batch && batch.entries.every(entry => entry.postId));
   const youtubeSelected = selectedPlatforms.has("youtube");
   const tiktokSelected = selectedPlatforms.has("tiktok");
   const atTargetLimit =
@@ -225,7 +235,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
   );
   const youtubeSettingsReady =
     !youtubeSelected ||
-    (youtubeMadeForKids !== null && youtubeCommunityGuidelinesCertified);
+    youtubeMadeForKids !== null;
   const tiktokSettingsReady =
     !tiktokSelected ||
     (!tiktokCommercialInvalid &&
@@ -250,7 +260,6 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
       setYoutubeTitle("");
       setYoutubePrivacyStatus("private");
       setYoutubeMadeForKids(null);
-      setYoutubeCommunityGuidelinesCertified(false);
       setTikTokAccountSettings({});
       setTikTokIsAigc(false);
       setTikTokCommercial(false);
@@ -264,13 +273,13 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
     setPreviewUrl(url);
     let copy = {caption: draft.caption, title: draft.title};
     try {
-      const saved = JSON.parse(sessionStorage.getItem(draft.storageKey) ?? sessionStorage.getItem(`scribix:social-draft:${draft.projectId}:${draft.candidateId}`) ?? "null");
+      const saved = JSON.parse(sessionStorage.getItem(draft.storageKey) ?? (draft.copyStorageKey ? sessionStorage.getItem(draft.copyStorageKey) : null) ?? sessionStorage.getItem(`scribix:social-draft:${draft.projectId}:${draft.candidateId}`) ?? "null");
+      if (saved?.platformCaptions && typeof saved.platformCaptions === "object") setPlatformCaptions(Object.fromEntries(Object.entries(saved.platformCaptions).filter(([, value]) => typeof value === "string")) as Record<string, string>);
       if (typeof saved?.caption === "string" && typeof saved?.title === "string") copy = saved;
       if (saved?.settings) {
         const fields = saved.settings;
         if (["private", "public", "unlisted"].includes(fields.youtubePrivacyStatus)) setYoutubePrivacyStatus(fields.youtubePrivacyStatus);
         if (typeof fields.youtubeMadeForKids === "boolean") setYoutubeMadeForKids(fields.youtubeMadeForKids);
-        setYoutubeCommunityGuidelinesCertified(fields.youtubeCommunityGuidelinesCertified === true);
         setTikTokIsAigc(fields.tiktokIsAigc === true);
         setTikTokCommercial(fields.tiktokCommercial === true);
         setTikTokBrandOrganic(fields.tiktokBrandOrganic === true);
@@ -286,8 +295,9 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
     } catch { /* A fresh draft also works without browser storage. */ }
     setCaption(copy.caption);
     setYoutubeTitle(copy.title);
-    setConfirmed(false);
+
     setTransportPending(hasPendingPost(draft.storageKey));
+    setBatch(readPlatformBatch(draft, batchStorage));
     setRestoredKey(draft.storageKey);
     return draft.file ? () => URL.revokeObjectURL(url) : undefined;
   }, [draft]);
@@ -439,8 +449,13 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
     const tiktokSettings = Object.fromEntries(Object.entries(tiktokAccountSettings).map(([id, settings]) => [id, {
       privacyLevel: settings.privacyLevel, allowComment: settings.allowComment, allowDuet: settings.allowDuet, allowStitch: settings.allowStitch,
     }]));
-    try { sessionStorage.setItem(draft.storageKey, JSON.stringify({caption, title: youtubeTitle, settings: {selectedAccounts, youtubePrivacyStatus, youtubeMadeForKids, youtubeCommunityGuidelinesCertified, tiktokIsAigc, tiktokCommercial, tiktokBrandOrganic, tiktokBrandedContent, tiktokSettings}})); } catch { /* Keep edits in memory when storage is unavailable. */ }
-  }, [draft, restoredKey, caption, youtubeTitle, selectedAccounts, youtubePrivacyStatus, youtubeMadeForKids, youtubeCommunityGuidelinesCertified, tiktokIsAigc, tiktokCommercial, tiktokBrandOrganic, tiktokBrandedContent, tiktokAccountSettings]);
+    try {
+      const saved = JSON.stringify({caption, platformCaptions, title: youtubeTitle, settings: {selectedAccounts, youtubePrivacyStatus, youtubeMadeForKids, tiktokIsAigc, tiktokCommercial, tiktokBrandOrganic, tiktokBrandedContent, tiktokSettings}});
+      sessionStorage.setItem(draft.storageKey, saved);
+      if (draft.copyStorageKey) sessionStorage.setItem(draft.copyStorageKey, saved);
+    } catch { /* Keep edits in memory when storage is unavailable. */ }
+
+  }, [draft, restoredKey, caption, platformCaptions, youtubeTitle, selectedAccounts, youtubePrivacyStatus, youtubeMadeForKids, tiktokIsAigc, tiktokCommercial, tiktokBrandOrganic, tiktokBrandedContent, tiktokAccountSettings]);
 
   function updateTikTokAccount(
     accountId: string,
@@ -487,13 +502,8 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
     });
   }
 
-  function saveCopy(nextCaption: string, nextTitle: string) {
-    if (!draft) return;
-
-    setConfirmed(false);
-  }
-
   function toggleAccount(account: PublishAccount) {
+
     setSelectedAccounts((current) => {
       const selectedIds = current[account.platform];
 
@@ -521,7 +531,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
     event.preventDefault();
 
     if (
-      !draft || (!transportPending && (
+      !draft || (!transportPending && !batch && (
       selected.length === 0 ||
       publishTargetLimit === null ||
       selected.length > publishTargetLimit ||
@@ -531,7 +541,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
           youtubeTitle.trim().length > YOUTUBE_TITLE_LIMIT)) ||
       !youtubeSettingsReady ||
       !tiktokSettingsReady || (tiktokSelected && !tiktokPublishingEnabled) ||
-      !confirmed || caption.length > CAPTION_LIMIT)) ||
+      !captionsValid)) ||
       isSubmitting
     ) {
       return;
@@ -551,8 +561,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
             ? {
                 privacyStatus: youtubePrivacyStatus,
                 selfDeclaredMadeForKids: youtubeMadeForKids,
-                communityGuidelinesCertified:
-                  youtubeCommunityGuidelinesCertified,
+                communityGuidelinesCertified: true,
               }
             : undefined,
         tiktok:
@@ -573,9 +582,27 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
               })
             : undefined,
       } as const;
-      const result = await createPost(input, draft);
-      try { sessionStorage.removeItem(draft.storageKey); } catch { /* Publishing already succeeded. */ }
-      onPublished(result.postId);
+      if (transportPending) {
+        const result = await createPost(input, draft);
+        setTransportPending(false);
+        onPublished(result.postId);
+        return;
+      }
+      const submissions = settingsPlatforms.map(platform => ({
+          platform,
+          input: {
+            ...input,
+            caption: captionFor(platform),
+            accountIds: selectedAccounts[platform],
+            youtubeTitle: platform === "youtube" ? input.youtubeTitle : undefined,
+            youtube: platform === "youtube" ? input.youtube : undefined,
+            tiktok: platform === "tiktok" ? input.tiktok : undefined,
+          },
+        }));
+      if (onStart && !batch) { onStart(draft, submissions); return; }
+      const result = await submitPlatformBatch({draft, storage: batchStorage, send: createPost, onUpdate: setBatch, submissions});
+      if (result.entries.every(entry => entry.postId)) onPublished(result.entries[0].postId!);
+      else setSubmitError(ta("partialFailure"));
     } catch (error) {
       setTransportPending(hasPendingPost(draft.storageKey));
       setSubmitError(error instanceof PublishingRequestError && error.status === 409 ? tx("draftChanged") : userFacingError(error, tx("m991060f638")));
@@ -595,7 +622,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
           youtubeTitle.trim().length <= YOUTUBE_TITLE_LIMIT)) &&
       youtubeSettingsReady &&
       tiktokSettingsReady && (!tiktokSelected || tiktokPublishingEnabled) &&
-      confirmed && caption.length <= CAPTION_LIMIT &&
+      captionsValid &&
       !isSubmitting,
   );
   const routeLabel = PUBLISH_PLATFORMS.flatMap((platform) => {
@@ -604,7 +631,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
     const label =
       platform === "youtube"
           ? "YouTube"
-          : "TikTok";
+          : platform === "linkedin" ? "LinkedIn" : "TikTok";
     return [tx("ma79fb214ea", {v0: count, v1: label})];
   })
     .join(" + ");
@@ -612,7 +639,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
   return (
     <div className="publishing-workspace">
 
-      <main className="app-main">
+      <div className="app-main">
         <div className="page-head">
           <div>
             <p className="eyebrow">
@@ -620,12 +647,13 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
             <h1 className="page-head__title">
               {tx("maee74b8bc2")}</h1>
             <p className="page-head__sub">
-              {tx("m3553ce0bcd")}</p>
+              {ta("choosePlatform")}</p>
           </div>
         </div>
 
+
         {draft ? (
-          <form onSubmit={handleSubmit}><fieldset className="compose-grid" disabled={isSubmitting || transportPending}>
+          <form onSubmit={handleSubmit}><fieldset className="compose-grid" disabled={isSubmitting || transportPending || Boolean(batch)}>
             <section className="card" aria-label={tx("m60031f31d8")}>
               <div className="card__body">
                 <div className="reel-preview">
@@ -671,12 +699,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
                       {formatBytes(draft.media.sizeBytes)}
                     </strong>
                   </div>
-                  <div className="stat">
-                    <span className="stat__label">{tx("m9a299dfc0e")}</span>
-                    <strong className="stat__value">
-                      {draft.media.videoCodec ?? "—"}
-                    </strong>
-                  </div>
+
                 </div>
                 {selectedBlocks.length > 0 ? (
                   <div className="compose-block" role="alert">
@@ -808,31 +831,15 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
                     >
                       {tx("mf4ee28f03c")}</button>
                   )}
+                  {accounts.length > 0 ? <button className="btn btn--secondary" type="button" onClick={onConnectChannel}>{ta("accounts")}</button> : null}
                   {accountsError ? <p className="error-message">{accountsError}</p> : null}
                 </fieldset>
 
-                <div className="field">
-                  <div className="field__label">
-                    <label htmlFor="publish-caption">{tx("mc1d9aa9b43")}</label>
-                    <span className={caption.length > CAPTION_LIMIT ? "is-over" : "field__hint"}>
-                      {caption.length.toLocaleString()} / {CAPTION_LIMIT.toLocaleString()}
-                    </span>
-                  </div>
-                  <textarea
-                    id="publish-caption"
-                    className="textarea"
-                    value={caption}
-                    maxLength={CAPTION_LIMIT}
-                    placeholder={tx("mf1704ea464")}
-                    onChange={(event) => { setCaption(event.target.value); saveCopy(event.target.value, youtubeTitle); }}
-                  />
-                </div>
-
                 {settingsPlatforms.length > 0 && <div className="platform-settings-tabs" role="tablist" aria-label={tx("platformSettings")}>
                   {settingsPlatforms.map(platform => {
-                    const ready = platform === "youtube"
+                    const ready = captionFor(platform).length <= CAPTION_LIMIT && (platform === "youtube"
                       ? youtubeSettingsReady && youtubeTitle.trim().length > 0 && youtubeTitle.trim().length <= YOUTUBE_TITLE_LIMIT
-                      : platform === "linkedin" || (tiktokSettingsReady && tiktokPublishingEnabled);
+                      : platform === "linkedin" || (tiktokSettingsReady && tiktokPublishingEnabled));
                     const unavailable = platform === "tiktok" && !tiktokPublishingEnabled;
                     return <button key={platform} id={`settings-tab-${platform}`} type="button" role="tab"
                       aria-selected={activeSettingsPlatform === platform} aria-controls={`settings-panel-${platform}`}
@@ -855,10 +862,29 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
                   })}
                 </div>}
 
-                {activeSettingsPlatform === "linkedin" && <section role="tabpanel" id="settings-panel-linkedin" aria-labelledby="settings-tab-linkedin" tabIndex={0}><p className="field__hint">{tx("linkedinPublicProfile")}</p></section>}
+                {activeSettingsPlatform ? <div role="tabpanel" id={`settings-panel-${activeSettingsPlatform}`} aria-labelledby={`settings-tab-${activeSettingsPlatform}`} tabIndex={0}>
+                {activeSettingsPlatform && <div className="field">
+                  <div className="field__label">
+                    <label htmlFor="publish-caption">{activeSettingsPlatform ? `${SPECS[activeSettingsPlatform].label} · ` : ""}{tx("mc1d9aa9b43")}</label>
+                    <span className={activeCaption.length > CAPTION_LIMIT ? "is-over" : "field__hint"}>
+                      {activeCaption.length.toLocaleString()} / {CAPTION_LIMIT.toLocaleString()}
+                    </span>
+                  </div>
+                  <textarea
+                    id="publish-caption"
+                    className="textarea"
+                    value={activeCaption}
+                    maxLength={CAPTION_LIMIT}
+                    placeholder={tx("mf1704ea464")}
+                    onChange={(event) => { if (activeSettingsPlatform) setPlatformCaptions(current => ({ ...current, [activeSettingsPlatform]: event.target.value }));  }}
+                  />
+                </div>
+
+                }
+                {activeSettingsPlatform === "linkedin" && <section><p className="field__hint">{tx("linkedinPublicProfile")}</p></section>}
 
                 {youtubeSelected && activeSettingsPlatform === "youtube" ? (
-                  <section className="youtube-settings" role="tabpanel" id="settings-panel-youtube" aria-labelledby="settings-tab-youtube" tabIndex={0}>
+                  <section className="youtube-settings">
                     <div className="section-head">
                       <div>
                         <h2 className="section-head__title">{tx("mdcca45b754")}</h2>
@@ -880,7 +906,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
                         value={youtubeTitle}
                         maxLength={YOUTUBE_TITLE_LIMIT}
                         placeholder={tx("mfb4a69dbce")}
-                        onChange={(event) => { setYoutubeTitle(event.target.value); saveCopy(caption, event.target.value); }}
+                        onChange={(event) => { setYoutubeTitle(event.target.value);  }}
                       />
                     </div>
 
@@ -934,31 +960,12 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
                       </div>
                     </div>
 
-                    <label className="youtube-certification">
-                      <input
-                        type="checkbox"
-                        required
-                        checked={youtubeCommunityGuidelinesCertified}
-                        onChange={(event) =>
-                          setYoutubeCommunityGuidelinesCertified(event.target.checked)
-                        }
-                      />
-                      <span>
-                        {tx("m9721906c2c")}{" "}
-                        <a
-                          href="https://www.youtube.com/howyoutubeworks/policies/community-guidelines/"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {tx("m75343669fd")}</a>
-                        .
-                      </span>
-                    </label>
+
                   </section>
                 ) : null}
 
                 {tiktokSelected && activeSettingsPlatform === "tiktok" ? (
-                  <section className="tiktok-settings" role="tabpanel" id="settings-panel-tiktok" aria-labelledby="settings-tab-tiktok" tabIndex={0}>
+                  <section className="tiktok-settings">
                     {!tiktokPublishingEnabled && <p className="info-banner" role="status">{tx("tiktokPending")}</p>}
                     <div className="section-head">
                       <div>
@@ -1214,6 +1221,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
 
 
 
+                </div> : null}
                 <div className="release-summary">
                   <span className="stat__label">{tx("m18e03e2a37")}</span>
                   <strong>{routeLabel || tx("noChannels")}</strong>
@@ -1228,13 +1236,18 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
                   </small>
                 </div>
 
-                <label className="tiktok-option"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} /><span>{tx("m43f2418a6a")}</span></label>
+
 
               </div>
             </section>
-          </fieldset><div className="publishing-submit">                <button className="btn btn--primary btn--block" type="submit" disabled={isSubmitting || (!canPublish && !transportPending)}>
+          </fieldset>
+          {batch ? <ul aria-live="polite" className="my-4 space-y-2 text-sm">{batch.entries.map(entry => <li key={entry.platform}>{SPECS[entry.platform as Platform].label}: {ta(entry.postId ? "sent" : entry.failed ? "sendFailed" : "sending")}</li>)}</ul> : null}
+          {batchComplete && draft ? <button className="btn btn--secondary" type="button" onClick={() => { if (clearCompletedBatch(draft, batchStorage)) { setBatch(null);  setSubmitError(null); } }}>{ta("newPost")}</button> : null}
+          <div className="publishing-submit">
+                {(batch ? batch.entries.some(entry => entry.platform === "youtube") : youtubeSelected) && !batchComplete ? <p id="youtube-publish-notice" className="mb-3 text-sm leading-6 text-ink/60">{ta.rich("youtubeNotice", {terms: chunks => <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer" className="text-accent underline">{chunks}</a>})}</p> : null}
+                <button aria-describedby={(batch ? batch.entries.some(entry => entry.platform === "youtube") : youtubeSelected) && !batchComplete ? "youtube-publish-notice" : undefined} className="btn btn--primary btn--block" type="submit" disabled={isSubmitting || (!canPublish && !transportPending && !batch)}>
                   <span>
-                    {isSubmitting ? tx("mfd3fdecb64") : transportPending ? tx("m9f5cd8a2e8") : tx("m18addbd67d")}
+                    {isSubmitting ? tx("mfd3fdecb64") : transportPending ? tx("m9f5cd8a2e8") : batchComplete ? ta("viewStatus") : batch ? ta("retryRemaining") : settingsPlatforms.length > 1 ? ta("publishMany", {count: settingsPlatforms.length}) : settingsPlatforms[0] ? ta("publishOne", {platform: SPECS[settingsPlatforms[0]].label}) : ta("publish")}
                   </span>
                   <ArrowRightIcon size={16} />
                 </button>
@@ -1251,7 +1264,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
               {tx("chooseClip")}</button>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

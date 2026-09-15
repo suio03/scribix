@@ -130,3 +130,14 @@ test("video-only intent stays with the requested job across panel changes", asyn
   app.respond([job("video-only", "completed")]); await context.refresh(); app.render();
   assert.equal(app.downloads[0], "/api/video-projects/project/renders/video-only/download?format=video");
 });
+
+
+test("publishing preparation is monitored without starting a download", async () => {
+  const app = workspace(); let context = app.render(); await context.refresh(); context = app.render();
+  context.watch(job("publishing"), null);
+  context = app.render();
+  assert.equal(context.renders[0].id, "publishing");
+  app.respond([job("publishing", "completed")]);
+  await context.refresh(); app.render();
+  assert.equal(app.downloads.length, 0);
+});

@@ -1,11 +1,13 @@
 // Adapted from ClipFlight (Teleo), commit cb83f86. See README.md.
 "use client";
+import {Link} from "@/i18n/navigation";
 import {useTranslations} from "next-intl";
 
 import { useEffect, useState } from "react";
 
 import type { PublicPost } from "./shared/posts";
 import { getPosts, retryPost, type SessionUser } from "./api";
+import { groupPublishPosts } from "./publish-task";
 import { nextHistoryPollDelay } from "./history-polling";
 import { ArrowRightIcon, ClockIcon, RefreshIcon, TrashIcon } from "./icons";
 import { userFacingError, userFacingMessage } from "./user-facing-error";
@@ -26,8 +28,9 @@ const STATUS_TONE: Record<string, string> = {
   canceled: "neutral",
 };
 
-export function HistoryWorkspace({highlightedPostId, onNewPost}: {highlightedPostId: string | null; onNewPost: () => void}) {
+export function HistoryWorkspace({highlightedPostId, onNewPost, loadPosts = getPosts, progress = false, retryTarget = retryPost, pollMs, initialPosts = []}: {highlightedPostId: string | null; onNewPost: () => void; loadPosts?: (signal?: AbortSignal) => Promise<PublicPost[]>; progress?: boolean; retryTarget?: typeof retryPost; pollMs?: number; initialPosts?: PublicPost[]}) {
  const tx = useTranslations("Distribution");
+ const flow = useTranslations("PublishFlow");
  const social = useTranslations("SocialPublishing");
 function formatTime(timestamp: number | null) {
   if (timestamp === null) {
@@ -44,13 +47,14 @@ function formatTime(timestamp: number | null) {
 }
 function statusLabel(status: string) {
   const labels: Record<string, string> = {
-    submitting: tx("mc5d34a465b"),
-    importing: tx("m3892eea621"),
-    accepted: tx("m61a0572c48"),
+    waiting: flow("waiting"),
+    submitting: flow("saving"),
+    importing: flow("preparing"),
+    accepted: flow("preparing"),
     publishing: tx("m338b45a675"),
     pending: tx("m6a599877d7"),
-    validating: tx("mf61e59d62b"),
-    initializing: tx("m3ec2f2ac13"),
+    validating: flow("preparing"),
+    initializing: flow("preparing"),
     processing: tx("me63451d3cf"),
     partial: tx("m521e7e207e"),
     published: tx("m483bf2075c"),
@@ -58,7 +62,7 @@ function statusLabel(status: string) {
     scheduled: tx("m1cd1bdad46"),
     canceled: tx("mf840ac65b3"),
   };
-  return labels[status] ?? status;
+  return labels[status] ?? tx("preparing");
 }
 function platformAbbreviation(platform: PublicPost["targets"][number]["platform"]) {
   return platform === "youtube" ? "YT" : platform === "tiktok" ? "TK" : platform === "linkedin" ? "LI" : "IG";
@@ -107,7 +111,7 @@ function targetDetail(target: PublicPost["targets"][number]) {
     : statusDetails[target.status] ?? tx("preparing");
 }
 
-  const [posts, setPosts] = useState<PublicPost[]>([]);
+  const [posts, setPosts] = useState<PublicPost[]>(() => groupPublishPosts(initialPosts));
   const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -117,7 +121,7 @@ function targetDetail(target: PublicPost["targets"][number]) {
     setError(null);
 
     try {
-      await retryPost(postId, targetId);
+      await retryTarget(postId, targetId);
       setRefreshKey((value) => value + 1);
     } catch (caught) {
       setError(userFacingError(caught, tx("m4b5120f763")));
@@ -132,17 +136,17 @@ function targetDetail(target: PublicPost["targets"][number]) {
 
     async function refresh() {
       try {
-        const nextPosts = await getPosts(controller.signal);
+        const nextPosts = await loadPosts(controller.signal);
         if (controller.signal.aborted) {
           return;
         }
-        setPosts(nextPosts);
+        setPosts(groupPublishPosts(nextPosts));
         setPhase("ready");
         setError(null);
 
         const nextDelay = nextHistoryPollDelay(nextPosts);
         if (nextDelay !== null) {
-          timeout = window.setTimeout(refresh, nextDelay);
+          timeout = window.setTimeout(refresh, pollMs ?? nextDelay);
         }
       } catch (caught) {
         if (!(caught instanceof DOMException && caught.name === "AbortError")) {
@@ -159,7 +163,7 @@ function targetDetail(target: PublicPost["targets"][number]) {
         window.clearTimeout(timeout);
       }
     };
-  }, [refreshKey]);
+  }, [refreshKey, loadPosts, pollMs]);
 
   return (
     <div className="publishing-workspace">
@@ -167,13 +171,13 @@ function targetDetail(target: PublicPost["targets"][number]) {
       <main className="app-main">
         <div className="page-head">
           <div>
-            <h1 className="page-head__title">{tx("m90ccd64974")}</h1>
+            <h1 className="page-head__title">{progress ? flow("progress") : tx("m90ccd64974")}</h1>
             <p className="page-head__sub">
-              {tx("m72b297586a")}</p>
+              {progress ? flow("progressHint") : tx("m72b297586a")}</p>
           </div>
           <div className="page-head__actions">
             <span className={`pill pill--${phase === "loading" ? "neutral" : phase === "error" ? "danger" : "ok"}`}>
-              {phase === "loading" ? tx("m8f26c6520d") : phase === "error" ? tx("mb2d616f4ec") : tx("m82fb1d5144")}
+              {phase === "loading" ? tx("m8f26c6520d") : phase === "error" ? tx("mb2d616f4ec") : nextHistoryPollDelay(posts) !== null ? flow("updating") : tx("m82fb1d5144")}
             </span>
             <button className="btn btn--secondary btn--sm" type="button" onClick={() => setRefreshKey((value) => value + 1)}>
               <RefreshIcon size={16} />
@@ -209,7 +213,7 @@ function targetDetail(target: PublicPost["targets"][number]) {
                 <div className="card__head">
                   <div className="flight-entry-title">
                     <span className="stat__label">{String(index + 1).padStart(2, "0")}</span>
-                    <strong>{filename}</strong>
+                    <strong>{post.batchId && post.batchId !== "demo" && !progress ? <Link className="hover:text-accent hover:underline" href={`/dashboard/publishing?task=${encodeURIComponent(post.batchId)}`}>{filename}</Link> : filename}</strong>
                     <span className="stat__label">{formatTime(post.createdAt)}</span>
                   </div>
                   <div className="flight-entry-actions">
@@ -254,7 +258,8 @@ function targetDetail(target: PublicPost["targets"][number]) {
                             {statusLabel(target.status)}
                           </span>
                         </div>
-                        <small>{targetDetail(target)}</small>
+                        {(target.errorMessage || target.accountDisconnected) && <small>{targetDetail(target)}</small>}
+                        {target.caption && <details className="mt-2 text-sm"><summary className="cursor-pointer text-accent">{flow("postText")}</summary><p className="mt-2 whitespace-pre-wrap">{target.caption}</p></details>}
                       </div>
                       <div className="target-action">
                         {target.permalink ? (
@@ -268,14 +273,12 @@ function targetDetail(target: PublicPost["targets"][number]) {
                             className="btn btn--secondary btn--sm"
                             type="button"
                             disabled={retryingTargetId !== null}
-                            onClick={() => void retryFailedTarget(post.id, target.id)}
+                            onClick={() => void retryFailedTarget(target.postId ?? post.id, target.id)}
                           >
                             <RefreshIcon size={14} />
                             <span>{retryingTargetId === target.id ? tx("m2310131bb9") : tx("m9f5cd8a2e8")}</span>
                           </button>
-                        ) : (
-                          <span className="stat__label">{statusLabel(target.status)}</span>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   ))}

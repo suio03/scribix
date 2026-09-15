@@ -11,7 +11,7 @@ type ExportContext = {
   downloadedIds: Set<string>;
   statusError: boolean;
   refresh: () => Promise<void>;
-  watch: (render: FinalRenderSummary, format?: "video" | "package") => void;
+  watch: (render: FinalRenderSummary, format?: "video" | "package" | null) => void;
   forget: (id: string) => void;
 };
 const Context = createContext<ExportContext | null>(null);
@@ -46,7 +46,7 @@ export function VideoExportProvider({ projectId, initialRenders, children }: {
       if (mounted.current && sequence === refreshSequence.current) setStatusError(true);
     }
   }, [projectId]);
-  const watch = useCallback((render: FinalRenderSummary, format: "video" | "package" = "package") => {
+  const watch = useCallback((render: FinalRenderSummary, format: "video" | "package" | null = "package") => {
     if (!mounted.current) return;
     // Ignore list responses started before this newly accepted request.
     ++refreshSequence.current;
@@ -54,7 +54,7 @@ export function VideoExportProvider({ projectId, initialRenders, children }: {
       trackVideoAction("video_render_requested");
     }
     observedStatuses.current.set(render.id, render.status);
-    pending.current.set(render.id, format);
+    if (format) pending.current.set(render.id, format);
     setRenders((current) => [render, ...current.filter((item) => item.id !== render.id)]);
   }, []);
   const forget = useCallback((id: string) => { pending.current.delete(id); }, []);

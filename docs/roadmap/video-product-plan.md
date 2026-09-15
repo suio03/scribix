@@ -15,6 +15,8 @@
 
 实现依据：[选片](../../lib/video-workspace/selection.ts)、[代码合同](../../lib/video-workspace/contracts.ts)、[编辑](../video-workspace/editing-and-framing.md#editing)、[字幕与样式](../video-workspace/editing-and-framing.md#styles)、[发布准备](../video-workspace/publish-preparation.md)、[社交发布](../video-workspace/social-publishing.md)、[发布界面接入边界](../../app/components/publishing/README.md)。竞品证据保留在 [2026-09-08 调研](../research/2026-09-08-clipping-competitor-product-research.md)，其中本地差距是当日快照。
 
+2026-09-15 编辑／发布入口调整：统一视频编辑区；字幕工具包含开场标题，封面工具包含封面文字；底部提供「下载」「发布」。发布跳转到独立页面并带入当前视频，必要时自动生成。账号复选框选择发布目标，平台标签仅切换文案与专属设置；一次提交到多个平台，文案分别保存，重试跳过已成功提交的平台。此前的弹窗／单平台提交方案已被此流程替代。提交后直接进入 History，同一次操作按任务合并展示各平台进度、文案与重试；侧栏统一使用 Channels，Publishing 内只保留 New post / History。localhost 提供不上传、不发帖的演示。开发验证未额外执行真实平台发布；定时发布与平台封面上传仍不在已接入范围内。
+
 ## 1. 按流程的功能清单
 
 ### 导入素材

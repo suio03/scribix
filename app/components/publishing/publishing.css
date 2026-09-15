@@ -1590,9 +1590,9 @@
 .publishing-workspace .section-head { text-align:left; align-items:flex-start; }
 .publishing-workspace .section-head__sub { font-size:13px; line-height:1.6; }
 .publishing-workspace .platform-settings-tabs {display:flex; flex-wrap:wrap; gap:8px; border-bottom:1px solid var(--line); padding-bottom:12px;}
-.publishing-workspace .platform-settings-tabs [role=tab] {display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-height:44px; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); text-align:left;}
+.publishing-workspace .platform-settings-tabs [role=tab] {flex:1 1 140px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-height:44px; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); text-align:left;}
 .publishing-workspace .platform-settings-tabs [aria-selected=true] {border-color:var(--accent); background:var(--brand-tint);}
-.publishing-workspace .platform-settings-tabs small {color:var(--muted); font-size:11px;}
+.publishing-workspace .platform-settings-tabs small {flex-basis:100%; padding-inline-start:24px; color:var(--muted); font-size:11px;}
 .publishing-workspace .platform-settings-tabs .platform-settings-ready {color:var(--ok-text);}
 .publishing-workspace [role=tabpanel] {border-top:0; padding-top:0;}
 

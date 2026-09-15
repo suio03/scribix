@@ -292,9 +292,10 @@ test("social publishing freezes the owned MP4 without requiring a completed cove
   const f = await renderFixture(t); f.user.tier = "free";
   f.run([{ sql: "UPDATE media_assets SET status='ready' WHERE id='video'" }, { sql: "UPDATE render_jobs SET status='failed' WHERE id='job'" }]);
   const encrypted = [];
+  const background = [];
   const route = loadModule("app/api/video-projects/[id]/social/posts/route.ts", {
     "@/auth": { auth: async () => ({ user: { id: f.user.id } }) },
-    "@/lib/cf": { cf: async () => ({ DB: f.db, SCRIBIX_MEDIA: { head: async () => ({ size: 100 }) } }) },
+    "@/lib/cf": { cfBackground: async work => {background.push(work);}, cf: async () => ({ DB: f.db, SCRIBIX_MEDIA: { head: async () => ({ size: 100 }) } }) },
     "@/lib/current-user": { getOrCreateCurrentUser: async () => f.user },
     "@/lib/clipflight": { clipflightEnabled: () => true },
     "@/lib/r2": { presignGet: async () => "https://fixture/source.mp4?signature=private" },
@@ -312,6 +313,14 @@ test("social publishing freezes the owned MP4 without requiring a completed cove
   assert.ok(asset.social_hold_until > Date.now() / 1000);
   assert.equal((await submit({ ...body, caption: "Changed" })).status, 409);
   assert.equal((await submit({ ...body, submissionId: "00000000-0000-4000-8000-000000000002", expectedRevision: -1 })).status, 409);
+  const grouped = {...body, submissionId: "00000000-0000-4000-8000-000000000003", batchId: "00000000-0000-4000-8000-000000000009", platform: "youtube", title: "Selected clip"};
+  assert.equal((await submit(grouped)).status, 202);
+  assert.equal(background.length, 1, "provider transfer is scheduled outside the response");
+  const groupedRow = await f.db.prepare("SELECT batch_id, display_json FROM social_submissions WHERE id=?").bind(grouped.submissionId).first();
+  assert.equal(groupedRow.batch_id, grouped.batchId);
+  assert.equal(JSON.parse(groupedRow.display_json).caption, "Frozen copy");
+  assert.equal((await submit({...grouped, batchId: "not-a-task"})).status, 400);
+  assert.equal((await submit({...grouped, title: "Changed"})).status, 409);
   f.user.id = "other"; assert.equal((await submit(body)).status, 404);
 });
 
@@ -388,9 +397,12 @@ test("independent history scopes records and retries to the current user", async
     "@/lib/clipflight":{clipflightEnabled:()=>true,clipflightRequest:async()=>{remoteCalls++;return Response.json({ok:true});}},
     "@/lib/social-submissions":{refreshSocialSubmission:async()=>{throw new Error("terminal posts must remain cached");}},
   });
-  const result = await (await route.GET()).json(); assert.equal(result.posts.length,1); assert.equal(result.posts[0].media.filename,"Test");
+  const result = await (await route.GET(new Request("https://scribix.io/api/social/posts"))).json(); assert.equal(result.posts.length,1); assert.equal(result.posts[0].media.filename,"Test");
+  f.run([{sql: "UPDATE social_submissions SET batch_id='owned-task' WHERE id='submission'"}]);
+  assert.equal((await (await route.GET(new Request("https://scribix.io/api/social/posts?task=owned-task"))).json()).posts.length, 1);
+  assert.equal((await (await route.GET(new Request("https://scribix.io/api/social/posts?task=missing-task"))).json()).posts.length, 0);
   const retry = () => route.PATCH(new Request("https://scribix.io/api/social/posts",{method:"PATCH",headers:{Origin:"https://scribix.io"},body:JSON.stringify({postId:"remote",targetId:"target"})}));
-  userId="other"; assert.equal((await (await route.GET()).json()).posts.length,0); assert.equal((await retry()).status,404); assert.equal(remoteCalls,0);
+  userId="other"; assert.equal((await (await route.GET(new Request("https://scribix.io/api/social/posts"))).json()).posts.length,0); assert.equal((await retry()).status,404); assert.equal(remoteCalls,0);
   userId="u"; assert.equal((await retry()).status,202); assert.equal(remoteCalls,1);
 });
 
@@ -552,4 +564,18 @@ test("repaired framing replaces saved fallback and missing plans while preservin
   const missing = await f.editor.loadEditorWorkspace(f.db, f.bucket, "u", "p", "c");
   assert.equal(missing.workspace.analysisUpdated, true);
   assert.equal(missing.workspace.renderSpec.segments.s0.autoFraming.analyzer, repaired.analyzer);
+});
+
+test("platform batch request IDs reach the server even after a successful response is lost locally", async () => {
+  const bodies = [];
+  const globals = {sessionStorage: {getItem: () => null, setItem: () => {}, removeItem: () => {}}, fetch: async (_url, init) => {
+    bodies.push(JSON.parse(init.body)); return Response.json({post: {id: "remote"}});
+  }};
+  const draft = {storageKey: "batch:youtube", projectId: "project", revision: 4, media: {id: "render"}};
+  const input = {mediaId: "render", caption: "YouTube copy", accountIds: ["youtube-account"]};
+  const submissionId = "a64b6e8f-bce1-4798-8dda-ef768f49d77f";
+  await loadModule("app/components/publishing/api.ts", {}, globals).createPost(input, draft, submissionId);
+  await loadModule("app/components/publishing/api.ts", {}, globals).createPost(input, draft, submissionId);
+  assert.equal(bodies[0].submissionId, submissionId);
+  assert.deepEqual(bodies[0], bodies[1]);
 });

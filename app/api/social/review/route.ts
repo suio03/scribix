@@ -23,6 +23,7 @@ export async function GET(request: Request) {
   if (!row || !await env.SCRIBIX_MEDIA.head(row.r2_key)) return Response.json({error: "render_unavailable"}, {status: 409});
   const copy = row.publish_draft_json ? JSON.parse(row.publish_draft_json) : null;
   return Response.json({projectId: row.project_id, candidateId: row.candidate_id, revision: row.draft_revision, storageKey: `scribix:compose:${user.id}:${row.project_id}:${row.candidate_id}:${row.id}`,
+    copyStorageKey: `scribix:platform-copy:${user.id}:${row.project_id}:${row.candidate_id}`,
     previewUrl: await presignGet(row.r2_key, 3600), title: copy?.title || row.title,
     caption: copy ? [copy.body, copy.tags?.map((tag: string) => `#${tag.replace(/^#/, "")}`).join(" ")].filter(Boolean).join("\n\n") : "",
     media: {id: row.id, filename: row.title, sizeBytes: row.bytes, contentType: "video/mp4", durationMs: row.duration_ms, width: row.width, height: row.height,

@@ -1,6 +1,6 @@
 import { validSocialOrigin } from "@/lib/social-origin";
 import { auth } from "@/auth";
-import { cf } from "@/lib/cf";
+import { cf, cfBackground } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { clipflightEnabled, clipflightRequest } from "@/lib/clipflight";
 import { presignGet } from "@/lib/r2";
@@ -24,9 +24,10 @@ export async function POST(request: Request, { params }: Params) {
   if (!validSocialOrigin(request)) return Response.json({ error: "invalid_origin" }, { status: 403 });
   const c = await context(params); if (!c) return Response.json({ error: "not_found" }, { status: 404 });
   if (Number(request.headers.get("Content-Length")) > 32768) return Response.json({ error: "invalid_request" }, { status: 413 });
-  const body = await request.json().catch(() => null) as { submissionId: string; renderJobId: string; expectedRevision: number; confirmed: boolean; accountIds: string[]; caption: string; youtubeTitle?: string; youtube?: object; tiktok?: object[] } | null;
+  const body = await request.json().catch(() => null) as { batchId?: string; platform?: string; title?: string; submissionId: string; renderJobId: string; expectedRevision: number; confirmed: boolean; accountIds: string[]; caption: string; youtubeTitle?: string; youtube?: object; tiktok?: object[] } | null;
   if (!body || typeof body.submissionId !== "string" || !/^[a-f0-9-]{36}$/.test(body.submissionId) || typeof body.renderJobId !== "string" || !Number.isInteger(body.expectedRevision) || body.confirmed !== true)
     return Response.json({ error: "invalid_request" }, { status: 400 });
+  if (body.batchId !== undefined && (!/^[a-f0-9-]{36}$/.test(body.batchId) || !["youtube", "linkedin"].includes(body.platform ?? "") || typeof body.title !== "string" || body.title.length > 500)) return Response.json({error: "invalid_request"}, {status: 400});
   const hash = await socialRequestHash(body);
   let saved = await c.env.DB.prepare("SELECT * FROM social_submissions WHERE id = ? AND user_id = ? AND project_id = ?").bind(body.submissionId, c.user.id, c.id).first<SocialSubmission & { request_hash: string }>();
   if (saved && saved.request_hash !== hash) return Response.json({ error: "submission_conflict" }, { status: 409 });
@@ -48,14 +49,16 @@ export async function POST(request: Request, { params }: Params) {
       media: { url: await presignGet(asset.r2_key, 3600), sizeBytes: head.size, contentType: "video/mp4", expiresAt: now + 3600 } };
     await c.env.DB.batch([
       c.env.DB.prepare("UPDATE media_assets SET social_hold_until = MAX(social_hold_until, ?) WHERE id = ? AND user_id = ? AND social_hold_until >= 0 AND status = 'ready' AND deleted_at IS NULL AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)").bind(now + 3600, asset.id, c.user.id),
-      c.env.DB.prepare(`INSERT INTO social_submissions (id, user_id, project_id, render_job_id, request_hash, request_encrypted, created_at, expires_at)
-        SELECT ?, ?, ?, ?, ?, ?, ?, ? FROM media_assets WHERE id = ? AND user_id = ? AND social_hold_until >= ? AND status = 'ready' AND deleted_at IS NULL
-        ON CONFLICT(id) DO NOTHING`).bind(body.submissionId, c.user.id, c.id, body.renderJobId, hash, await encryptSocialRequest(payload), now, now + 3600, asset.id, c.user.id, now + 3600),
+      c.env.DB.prepare(`INSERT INTO social_submissions (id, user_id, project_id, render_job_id, request_hash, request_encrypted, created_at, expires_at, batch_id, display_json)
+        SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM media_assets WHERE id = ? AND user_id = ? AND social_hold_until >= ? AND status = 'ready' AND deleted_at IS NULL
+        ON CONFLICT(id) DO NOTHING`).bind(body.submissionId, c.user.id, c.id, body.renderJobId, hash, await encryptSocialRequest(payload), now, now + 3600, body.batchId ?? null, body.batchId ? JSON.stringify({platform: body.platform, title: body.title, caption: body.caption}) : null, asset.id, c.user.id, now + 3600),
     ]);
     saved = await c.env.DB.prepare("SELECT * FROM social_submissions WHERE id = ? AND user_id = ? AND project_id = ?").bind(body.submissionId, c.user.id, c.id).first<SocialSubmission & { request_hash: string }>();
   }
   if (!saved || saved.request_hash !== hash) return Response.json({ error: "submission_conflict" }, { status: 409 });
-  const post = await refreshSocialSubmission(c.env.DB, saved);
+  // The progress page advances the persisted request; accepting it must not wait on a provider upload.
+  if (body.batchId && !saved.remote_post_id && saved.request_encrypted) await cfBackground(() => refreshSocialSubmission(c.env.DB, saved!));
+  const post = body.batchId ? {id: saved.remote_post_id ?? saved.id, status: "submitting"} : await refreshSocialSubmission(c.env.DB, saved);
   return Response.json({ post }, { status: 202, headers: { "Cache-Control": "no-store" } });
 }
 

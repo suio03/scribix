@@ -80,6 +80,10 @@ function VideoCandidateWorkspaceContent({
       ? initialSelectedCandidateId
       : initialCandidates[0]?.id ?? null
   ));
+  useEffect(() => {
+    const candidate = new URLSearchParams(window.location.search).get("candidateId");
+    if (candidate && initialCandidates.some(item => item.id === candidate)) setSelectedCandidateId(candidate);
+  }, [initialCandidates]);
   const [pendingCandidateId, setPendingCandidateId] = useState<string | null>(null);
   const [editorSaveState, setEditorSaveState] = useState<VideoEditorSaveState>("saved");
   const [error, setError] = useState(false);

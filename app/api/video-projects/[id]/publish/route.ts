@@ -49,7 +49,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     if (Array.from(new Intl.Segmenter(undefined, { granularity: "sentence" }).segment(generatedBody)).filter(sentence => sentence.segment.trim()).length > 3) throw new Error("invalid_output");
     const spec = { ...workspace.renderSpec };
     const overlay = (text: string): TitleOverlay => ({ enabled: true, text, durationMs: 3000, fontScale: 1, positionY: 0.22, color: workspace.renderSpec.brand.templateId ? workspace.renderSpec.brand.accentColor : "#FFFFFF" });
-    if (mode !== "copy" && !draft.edited.opening) spec.openingTitle = { ...(spec.openingTitle ?? overlay(draft.titles[0])), text: draft.titles[0] };
+    if (mode !== "copy" && !draft.edited.opening && !(spec.openingTitle && !workspace.publishDraft)) spec.openingTitle = { ...(spec.openingTitle ?? overlay(draft.titles[0])), text: draft.titles[0] };
     if (!spec.coverTitle) spec.coverTitle = overlay(spec.openingTitle?.text ?? draft.titles[0]);
     const lease = await env.DB.prepare("SELECT execution_id FROM publish_generation_limits WHERE user_id = ?1 AND execution_id = ?2 AND lease_until > ?3").bind(user.id, executionId, Math.floor(Date.now() / 1000)).first();
     if (!lease) return Response.json({ error: "generation_expired" }, { status: 409 });

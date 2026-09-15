@@ -1,6 +1,6 @@
 "use client";
 import { PublishPreparation } from "./PublishPreparation";
-import { mergePublishDraft, remapCoverFrame, publishContentKey, type PublishDraft } from "@/lib/video-workspace/publish";
+import { mergePublishDraft, remapCoverFrame, type PublishDraft } from "@/lib/video-workspace/publish";
 import { PublishTitleOverlay } from "./PublishTitleOverlay";
 
 import {
@@ -80,7 +80,6 @@ export function VideoClipEditor({
   const [publishBusy, setPublishBusy] = useState(false);
   const [publishError, setPublishError] = useState(false);
   const [coverFrameRemoved, setCoverFrameRemoved] = useState(false);
-  const [publishOpen, setPublishOpen] = useState(false);
   const currentSignature = useRef("");
   const [panel, setPanel] = useState<"framing" | "captions" | "cover" | "content">("framing");
   const [controlsHost, setControlsHost] = useState<HTMLDivElement | null>(null);
@@ -144,7 +143,6 @@ export function VideoClipEditor({
         setEdl(next.edl);
         setRenderSpec(nextRenderSpec);
         setPublishDraft(next.publishDraft);
-        setPublishOpen(false);
         setRevision(next.revision);
         setSaveState(next.restoredDraft && !next.analysisUpdated && savedSignature === nextSignature ? "saved" : "dirty");
       })
@@ -313,7 +311,7 @@ export function VideoClipEditor({
 
   const preparePublish = async (mode: "all" | "titles" | "copy" = "all") => {
     if (publishBusy || saveState !== "saved" || framingDraftActive) return;
-    if (mode === "all" && publishDraft) { setPublishOpen(true); return; }
+    if (mode === "all" && publishDraft) return;
     setPublishBusy(true); setPublishError(false);
     const startedSignature = currentSignature.current;
     const startedSpec = renderSpec;
@@ -338,7 +336,6 @@ export function VideoClipEditor({
       } else {
         setRenderSpec(next.renderSpec); setPublishDraft(next.publishDraft); setSaveState("saved");
       }
-      setPublishOpen(true);
     } catch { setPublishError(true); } finally { setPublishBusy(false); }
   };
 
@@ -533,10 +530,6 @@ export function VideoClipEditor({
       {coverFrameRemoved ? <p role="status" className="mb-4 text-sm">{tp("coverRemoved")}</p> : null}
       {publishBusy ? <p role="status" className="mb-4 text-sm">{tp("waiting")}</p> : null}
       {publishError ? <p role="alert" className="mb-4 text-sm text-red-600">{tp("failed")}</p> : null}
-      <div className="mb-5 flex gap-1 border-b border-line" role="group" aria-label={t("workspace.tools")}>
-        <button type="button" aria-pressed={!publishOpen} onClick={() => setPublishOpen(false)} className="min-h-11 border-b-2 border-transparent px-4 text-sm font-semibold text-ink/60 aria-pressed:border-accent aria-pressed:text-accent">{t("title")}</button>
-        <button type="button" aria-pressed={publishOpen} disabled={saveState !== "saved" || framingDraftActive || publishBusy} onClick={() => void preparePublish()} className="min-h-11 border-b-2 border-transparent px-4 text-sm font-semibold text-ink/60 aria-pressed:border-accent aria-pressed:text-accent disabled:opacity-40">{tp(publishBusy ? "generating" : publishDraft ? "title" : "prepare")}</button>
-      </div>
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(260px,0.85fr)_minmax(0,1.15fr)]">
         <div className="lg:sticky lg:top-6 lg:self-start">
           <ContinuousProxyPlayer
@@ -570,8 +563,6 @@ export function VideoClipEditor({
         </div>
 
         <div className="min-w-0 self-start">
-          {publishOpen && publishDraft ? <PublishPreparation draft={publishDraft} spec={renderSpec} stale={publishDraft.contentKey !== publishContentKey(edl, renderSpec)} busy={publishBusy || saveState !== "saved"} onDraft={next => { setPublishDraft(next); setSaveState("dirty"); }} onSpec={updateRenderSpec} onGenerate={mode => void preparePublish(mode)} onReviewed={() => { setPublishDraft({ ...publishDraft, contentKey: publishContentKey(edl, renderSpec) }); setSaveState("dirty"); }} /> : null}
-          <div hidden={publishOpen}>
           <div className="grid grid-cols-2 gap-1 rounded-xl bg-paper p-1 sm:grid-cols-4" role="group" aria-label={t("workspace.tools")}>
             {(["framing", "captions", "cover", "content"] as const).map(item => <button type="button" key={item} aria-pressed={panel === item} onClick={() => setPanel(item)} className="rounded-lg px-2 py-3 text-sm font-medium text-ink/60 transition hover:bg-ink/5 aria-pressed:bg-accent/10 aria-pressed:text-accent">{t(`workspace.${item}`)}</button>)}
           </div>
@@ -612,14 +603,13 @@ export function VideoClipEditor({
           />
           </div>
 
-          </div>
-          {publishOpen ? <details className="mt-4 rounded-xl border border-line p-4"><summary className="cursor-pointer text-sm font-medium">{tp("coverTitle")}</summary><div className="pt-4"><CoverFrame timeline={timeline} renderSpec={renderSpec} assets={workspace.assets} /></div></details> : null}
+          {(panel === "captions" || panel === "cover") ? <div className="mt-4"><PublishPreparation section={panel === "cover" ? "coverTitle" : "openingTitle"} draft={publishDraft} spec={renderSpec} busy={publishBusy || saveState !== "saved"} onDraft={next => { setPublishDraft(next); setSaveState("dirty"); }} onSpec={updateRenderSpec} onGenerate={mode => void preparePublish(mode)} /></div> : null}
         </div>
       </div>
       <div className="mt-6 border-t border-line pt-4">
           <FinalRenderPanel compact
             publishReady={Boolean(publishDraft)}
-            secondary={!publishOpen}
+            secondary
             projectId={projectId}
             candidateId={candidateId}
             revision={revision}

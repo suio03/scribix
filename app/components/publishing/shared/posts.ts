@@ -1,5 +1,7 @@
 export type PublicPost = {
   id: string;
+  batchId?: string | null;
+  submissionId?: string;
   errorCode?: string;
   mediaId: string;
   caption: string;
@@ -20,6 +22,8 @@ export type PublicPost = {
     sourceDeletedAt: number | null;
   };
   targets: Array<{
+    postId?: string;
+    caption?: string;
     canRetry?: boolean;
     id: string;
     accountId: string;

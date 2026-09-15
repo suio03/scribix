@@ -36,6 +36,7 @@ export function FinalRenderPanel({
   onConflict: () => void;
   onExportDeleted?: () => void;
 }) {
+  const ta = useTranslations("ClipActions");
   const tp = useTranslations("Dashboard.videoCandidates.publish");
   const t = useTranslations("Dashboard.videoCandidates.editor.finalRender");
   const { renders, downloadedIds, statusError, refresh, watch, forget } = useVideoExports();
@@ -95,7 +96,7 @@ export function FinalRenderPanel({
         return;
       }
       if (!response.ok || !payload.render) throw new Error("render_create_failed");
-      watch(payload.render, secondary || generatedOnly ? "video" : "package");
+      watch(payload.render, compact || secondary || generatedOnly ? "video" : "package");
     } catch {
       trackVideoFailure("export");
       setError("generic");
@@ -153,71 +154,31 @@ export function FinalRenderPanel({
     : null;
 
   if (compact) {
-    const actionClass = "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50 " + (secondary ? "border border-line text-ink" : "bg-accent text-white");
+    const video = candidateRenders.find(item => item.videoUrl && item.isVideoCurrent);
+    const cover = candidateRenders.find(item => item.coverUrl && item.isCoverCurrent);
+    const actionClass = "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-line px-4 py-2 text-sm font-semibold transition hover:bg-ink/5 disabled:cursor-not-allowed disabled:opacity-50";
     return (
       <section id="exports" className="relative text-ink">
         <div className="flex flex-wrap items-center gap-2">
-        <PublishLink projectId={projectId} candidateId={candidateId} disabled={disabled} renderJobId={candidateRenders.find(render => render.videoUrl && render.isVideoCurrent === true)?.id} />
-
-          {downloadUrl && latestReady && !active && publishReady ? <button type="button" disabled={busy || disabled} onClick={() => void downloadPackage()} className={actionClass}><Download size={16} />{tp("downloadAll")}</button> : downloadUrl && latestReady && !active ? (
-            <a href={`${downloadUrl}?format=video`} download onClick={() => recordVideoDownload(projectId, latestReady, "video")} className={actionClass}>
-              <Download size={16} />{tp(secondary ? "videoOnly" : "videoDownload")}
-            </a>
-          ) : (
-            <button type="button" title={disabled ? (disabledReason ?? t("saveFirst")) : undefined} disabled={busy || disabled || active || !sourceAvailable} onClick={() => void start()} className={actionClass}>
-              {busy || active ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
-              {busy || active ? t("rendering") : secondary ? tp("videoOnly") : publishReady ? tp("generateFiles") : t(!sourceAvailable ? "unavailable" : "generate")}
-            </button>
-          )}
-          {latestReady || activeRender ? (
-            <details ref={menuRef} className="relative" onKeyDown={event => {
-              if (event.key === "Escape" && menuRef.current) {
-                menuRef.current.open = false;
-                setConfirmDelete(false);
-                menuRef.current.querySelector("summary")?.focus();
-              }
-            }}>
-              <summary aria-label={t("moreActions")} title={t("moreActions")} className="grid size-10 cursor-pointer list-none place-items-center rounded-lg border border-line bg-card text-ink/60 hover:bg-ink/5 focus-visible:outline-2 focus-visible:outline-accent [&::-webkit-details-marker]:hidden">
-                <MoreHorizontal size={18} />
-              </summary>
-              <div className="absolute right-0 top-full z-40 mt-2 w-72 max-w-[85vw] rounded-xl border border-line bg-card p-3 shadow-lg">
-                {activeRender ? <button type="button" disabled={busy} onClick={() => void mutate(activeRender, "DELETE")} className="flex items-center gap-2 px-1 py-2 text-sm text-ink/70"><X size={14} />{t("cancel")}</button> : null}
-                {latestReady ? (
-                  <div>
-                    {confirmDelete ? <>
-                      <p className="text-sm font-medium">{t("deleteExportTitle")}</p>
-                      <p className="mt-1 text-xs leading-5 text-ink/60">{t("deleteExportBody")}</p>
-                      <div className="mt-3 flex gap-3">
-                        <button type="button" disabled={busy} onClick={() => setConfirmDelete(false)} className="rounded-lg border border-line px-3 py-2 text-xs">{t("cancelDelete")}</button>
-                        <button type="button" disabled={busy} onClick={() => void mutate(latestReady, "DELETE")} className="rounded-lg bg-red-600 px-3 py-2 text-xs text-white">{t(busy ? "deletingExport" : "confirmDelete")}</button>
-                      </div>
-                    </> : <button type="button" disabled={busy} onClick={() => setConfirmDelete(true)} className="flex items-center gap-2 text-xs text-red-600"><Trash2 size={14} />{t("deleteExport")}</button>}
-                  </div>
-                ) : null}
-              </div>
-            </details>
-          ) : null}
+          {video && !disabled ? <a href={`/api/video-projects/${projectId}/renders/${video.id}/download?format=video`} download onClick={() => recordVideoDownload(projectId, video, "video")} className={actionClass}><Download size={16} />{ta("download")}</a> : <button type="button" title={disabled ? disabledReason ?? ta("saveFirst") : undefined} disabled={busy || disabled || active || !sourceAvailable} onClick={() => void start()} className={actionClass}>{busy || active ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}{ta(busy || active ? "preparingVideo" : "download")}</button>}
+          <PublishLink projectId={projectId} candidateId={candidateId} disabled={disabled} />
+          {cover || (downloadUrl && publishReady) || activeRender ? <details ref={menuRef} onKeyDown={event => { if (event.key === "Escape" && menuRef.current) { menuRef.current.open = false; menuRef.current.querySelector("summary")?.focus(); } }}>
+            <summary aria-label={ta("moreDownloads")} className="grid size-10 cursor-pointer list-none place-items-center rounded-lg border border-line text-ink/60 hover:bg-ink/5 [&::-webkit-details-marker]:hidden"><MoreHorizontal size={18} /></summary>
+            <div className="absolute bottom-full left-0 z-40 mb-2 w-72 max-w-full rounded-xl border border-line bg-card p-2 shadow-lg">
+              {cover && !disabled ? <a href={`/api/video-projects/${projectId}/renders/${cover.id}/download?format=cover`} download className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-ink/5"><Download size={14} />{ta("downloadCover")}</a> : null}
+              {downloadUrl && publishReady ? <button type="button" disabled={busy || disabled} onClick={() => void downloadPackage()} className="flex min-h-10 w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-ink/5"><Download size={14} />{ta("downloadAll")}</button> : null}
+              {activeRender ? <button type="button" disabled={busy} onClick={() => void mutate(activeRender, "DELETE")} className="flex min-h-10 w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-ink/5"><X size={14} />{ta("cancelDownload")}</button> : null}
+            </div>
+          </details> : null}
         </div>
-        {publishReady && candidateRenders[0] ? <details className="mt-3 text-xs text-ink/60"><summary className="w-fit cursor-pointer py-1">{t("moreActions")}</summary><ul aria-live="polite" className="mt-2 space-y-2">
-          {(["video", "cover"] as const).map(kind => {
-            const render = candidateRenders[0];
-            const ready = kind === "video" ? render.videoUrl : render.coverUrl;
-            return <li key={kind} className="flex flex-wrap gap-2"><span>{tp(kind === "video" ? "videoDownload" : "coverDownload")}: {tp(ready ? "ready" : render.status === "failed" ? "partFailed" : "partWaiting")}</span>{ready ? <a href={`/api/video-projects/${projectId}/renders/${render.id}/download?format=${kind}`} download className="underline">{tp("getFile")}</a> : null}</li>;
-          })}
-          <li>{tp("postTitle")}: {tp("ready")}</li>
-        </ul></details> : null}
-        {latestReady && !latestReady.isCurrent ? <p role="status" className="mt-2 max-w-72 text-xs text-amber-700 dark:text-amber-200">{tp(latestReady.isVideoCurrent === true ? "coverChanged" : "videoChanged")}</p> : null}
-        {publishReady && latestReady?.isCopyCurrent === false ? <p role="status" className="mt-2 max-w-72 text-xs text-ink/60">{tp("copyChanged")}</p> : null}
-        {active ? <p role="status" className="mt-2 max-w-72 text-xs">{tp("exportWaiting")}</p> : null}
-        {candidateRenders.find(render => render.status === "failed") && !active ? <button type="button" disabled={busy} onClick={() => void mutate(candidateRenders.find(render => render.status === "failed")!, "POST")} className="mt-2 text-xs underline">{tp("retryFiles")}</button> : null}
-        {statusError || error ? <p role="alert" className="mt-2 max-w-64 text-xs text-red-600">{t(error ? error === "limit" ? "limit" : "failed" : "statusUnavailable")}</p> : null}
+        {statusError || error ? <p role="alert" className="mt-2 max-w-sm text-xs text-red-600">{t(error ? error === "limit" ? "limit" : "failed" : "statusUnavailable")}</p> : null}
       </section>
     );
   }
 
   return (
     <section id="exports" className="video-export-card scroll-mt-6 rounded-xl border border-ink bg-ink p-5 text-paper shadow-[0_18px_44px_-30px_rgba(0,0,0,0.8)]">
-      <PublishLink projectId={projectId} candidateId={candidateId} disabled={disabled} renderJobId={candidateRenders.find(render => render.videoUrl && render.isVideoCurrent === true)?.id} />
+      <PublishLink projectId={projectId} candidateId={candidateId} disabled={disabled} />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div hidden={compact}>
           <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-paper/45">{t("eyebrow")}</p>
