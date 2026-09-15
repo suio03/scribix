@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "./Logo";
+import HomePartners from "./HomePartners";
 
 const TOOL_LINKS = [
   { key: "videoToText", href: "/video-to-text" },
@@ -89,6 +90,7 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
             </ul>
           </div>
         </div>
+        <HomePartners />
       </div>
     </footer>
   );
