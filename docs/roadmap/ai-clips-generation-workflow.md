@@ -1,6 +1,6 @@
 # AI Clips 第一阶段：三小时分析与动态批量选片
 
-更新：2026-09-17。本文取代此前按视频时长规定候选数量的探索参数。实施状态与证据见 [验证记录](../video-workspace/ai-analysis-validation.md)。新链路默认关闭；未部署，三小时真实端到端能力尚未验收。
+更新：2026-09-17。本文取代此前按视频时长规定候选数量的探索参数。实施状态与证据见 [验证记录](../video-workspace/ai-analysis-validation.md)。初始新链路默认关闭。2026-09-18 用户授权全量部署并开启：独立 Worker 通过 CLI 发布，应用开关随 GitHub 提交发布；三小时真实端到端能力仍由用户手动验收。
 
 ## 目标与范围
 
@@ -60,7 +60,7 @@ AI、编辑片段和最终时间轴都支持 90 秒；预览保留前后各 5 �
 
 ## 发布顺序与回滚
 
-1. 应用 D1 migration `0042_ai_analysis_tasks.sql`。
+1. 先运行 `npx wrangler queues create scribix-ai-clips` 创建远程队列，再应用 D1 migrations `0042_ai_analysis_tasks.sql` 和 `0043_clip_review_mark.sql`。应用即使保持批量开关关闭，也依赖新增字段；仅推送应用代码不足以完成发布。
 2. 发布支持 90 秒的媒体镜像和独立 `wrangler.ai-clips.jsonc` worker，配置现有 OpenAI／AssemblyAI 密钥。
 3. 发布应用（Queue producer 和生成的环境类型已加入），保持 `AI_CLIPS_BATCH_ENABLED=false`。
 4. 验证后开启服务端开关。

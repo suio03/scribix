@@ -32,6 +32,10 @@ function loadWranglerVars(path) {
 function validateProductionEnv(vars) {
   requireValue(vars, "NEXT_PUBLIC_APP_URL");
   requireValue(vars, "NEXTAUTH_URL");
+  requireValue(vars, "AUTH_URL");
+  if (vars.AUTH_URL !== vars.NEXTAUTH_URL || vars.AUTH_URL !== vars.NEXT_PUBLIC_APP_URL || new URL(vars.AUTH_URL).protocol !== "https:") {
+    throw new Error("Production AUTH_URL, NEXTAUTH_URL and NEXT_PUBLIC_APP_URL must match the HTTPS production origin.");
+  }
   requireValue(vars, "EDGE_EXTENSION_ID");
   requireValue(vars, "NEXT_PUBLIC_PADDLE_ENV");
   requireValue(vars, "NEXT_PUBLIC_PADDLE_CLIENT_TOKEN");

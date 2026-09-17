@@ -76,3 +76,17 @@ npm run benchmark:ai-analysis -- --transcript /path/transcript.json --duration-m
 ## 2026-09-17 生成与审阅流程更新
 
 生成前长度、字幕、标题、构图设置以及列表／网格审阅已本地接通，具体行为与验证见 [竞品流程落地](clip-workflow.md)。已有 clips 不重分析即可使用新浏览界面；此项不代表三小时内容质量已验收。
+
+## 2026-09-18 自动部署依赖修复
+
+Cloudflare Builds 在部署 `e073f15` 时报告远程 `scribix-ai-clips` Queue 不存在。已在 Scribix 账户创建该队列，并成功应用远程 D1 migrations `0042_ai_analysis_tasks.sql` 与 `0043_clip_review_mark.sql`。迁移前 Time Travel 书签：`00001d9b-00000006-000050e9-cf2bb453a1480af3be96c36f495fb3f5`。这些是远程依赖准备，不能视为新版应用部署成功。
+
+批量分析开关保持 `false`；独立分析 Worker 与密钥部署、媒体兼容性和三小时真实验收仍是开启新链路前的要求。用户随后明确授权“部署”，`npm run deploy` 已成功。应用版本 `326e49d2-21aa-4d10-b377-7e7b288903a4` 于 2026-09-17 14:47:26 UTC 承接 100% 流量，包含 `e073f15` 应用代码。远程回查确认 Queue producer 正确，`AI_CLIPS_BATCH_ENABLED=false`。首页与 auth providers 返回 200，匿名 social availability 返回 404。仅完成应用部署，不能据此宣称独立分析 Worker、媒体更新、真实社交发布或三小时端到端能力已验收。
+
+## 2026-09-18 全量发布（用户明确授权，用户手动验收）
+
+- AI analysis Worker：`224d59d4-3fd4-46c4-a974-5b571e239e83`，既有 OpenAI／AssemblyAI 密钥已配置，Queue consumer 和每分钟恢复 Cron 已发布。
+- Media dispatcher：`3196165e-c80c-4cda-a596-5038ce17c793`，Container 镜像已构建并上传；部署工具报告 Container application 无需变更。Docker Keychain 冲突通过临时隔离配置解决，未修改用户原配置。
+- Cleanup Worker：`3a37786d-3a55-486f-a1a4-a670d7325355`，小时 Cron 已发布。
+- 主应用只通过 commit/push 交由 GitHub / Cloudflare Builds 发布；本次不使用 CLI 部署主应用。生产 `AUTH_URL=https://scribix.io` 明确覆盖本地值，部署脚本要求三个生产 origin 一致；`AI_CLIPS_BATCH_ENABLED=true` 随提交开启。
+- 按用户要求未追加测试、线上探测或真实素材验证；CLI 成功回执只证明部署完成，不证明产品验收。应用部署结果以 Cloudflare Builds 为准。
