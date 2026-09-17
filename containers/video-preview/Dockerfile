@@ -46,6 +46,21 @@ COPY --chown=node:node fonts ./fonts
 
 ENV PATH="/opt/scribix-venv/bin:${PATH}"
 
+# Apply distribution security updates and remove package managers unused at runtime.
+# MediaPipe 0.10.21 retains the full-range graph needed by speaker tracking.
+# Its Python protobuf gencode is compatible with the patched 5.x runtime:
+# https://protobuf.dev/support/cross-version-runtime-guarantee/#python-specific-guarantees
+# Install the runtime explicitly after MediaPipe's conservative protobuf<5 resolver pin.
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y \
+  && rm -rf /var/lib/apt/lists/* /usr/local/lib/node_modules /opt/yarn-* \
+  && /opt/scribix-venv/bin/pip install --no-cache-dir --no-deps "protobuf==5.29.6" "msgpack==1.2.1" \
+  && rm -rf /usr/share/python-wheels /usr/lib/python3/dist-packages/setuptools* /usr/lib/python3/dist-packages/pkg_resources /usr/lib/python3/dist-packages/pip* \
+    /opt/scribix-venv/lib/python3.11/site-packages/pip* /opt/scribix-venv/lib/python3.11/site-packages/setuptools* /opt/scribix-venv/lib/python3.11/site-packages/pkg_resources /opt/scribix-venv/lib/python3.11/site-packages/wheel*
+
+# Keep graph text serialization compatible with MediaPipe's bundled C++ protobuf.
+ENV PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+
 USER node
 EXPOSE 8080
 ENTRYPOINT ["node", "/app/worker.mjs"]

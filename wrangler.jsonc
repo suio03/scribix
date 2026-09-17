@@ -20,7 +20,28 @@
     "enabled": true
   },
 
+  "secrets": {
+    "required": [
+      "ASSEMBLYAI_API_KEY",
+      "AUTH_SECRET",
+      "DISCORD_CHECKOUT_WEBHOOK_URL",
+      "DISCORD_ERROR_WEBHOOK_URL",
+      "DISCORD_FEEDBACK_WEBHOOK_URL",
+      "GOOGLE_ID",
+      "GOOGLE_SECRET",
+      "OPENAI_API_KEY",
+      "PADDLE_API_KEY",
+      "PADDLE_WEBHOOK_SECRET",
+      "R2_ACCESS_KEY_ID",
+      "R2_SECRET_ACCESS_KEY",
+      "VIDEO_WORKER_SIGNING_SECRET",
+      "YOUTUBE_CAPTION_SERVICE_TOKEN",
+      "CLIPFLIGHT_API_KEY"
+    ]
+  },
+
   "vars": {
+    "CLIPFLIGHT_TIKTOK_PUBLISH_ENABLED": "true",
     "VIDEO_WORKSPACE_ROLLOUT_PERCENT": "100",
     "VIDEO_WORKSPACE_PILOT_USER_IDS": "",
     "NEXT_PUBLIC_APP_URL": "https://scribix.io",

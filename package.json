@@ -39,7 +39,7 @@
     "extension:firefox:zip": "node scripts/build-extension.mjs firefox prod --zip",
     "extension:firefox:source": "node scripts/build-firefox-source.mjs",
     "extension:all:zip": "node scripts/build-extension.mjs all prod --zip",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv --strict-vars false cloudflare-env.d.ts",
     "db:migrate:local": "wrangler d1 migrations apply scribix-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply scribix-db --remote",
     "deploy:cleanup": "wrangler deploy -c wrangler.cleanup.jsonc",

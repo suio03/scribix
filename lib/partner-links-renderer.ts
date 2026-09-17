@@ -95,9 +95,17 @@ const CSS = `[data-partner-links-list]{border-top:1px solid color-mix(in srgb,cu
 @media(max-width:800px){[data-partner-layout="directory"] ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){[data-partner-links-list] ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}}
 @media(max-width:360px){[data-partner-links-list] ul{grid-template-columns:minmax(0,1fr)}}`;
+// Findly's reciprocal badge stays visible in the homepage footer permanently.
+function isFooterOnly(link: PartnerLink): boolean {
+  return new URL(link.url).hostname.replace(/^www\./, '') === 'findly.tools';
+}
 export function renderPartners(data: unknown, layout: "home" | "directory" = "home"): string {
   const links = prepareLinks(data);
-  if (!links.length) return '';
-  const displayed = layout === 'home' ? links.slice(0, VISIBLE_COUNT) : links;
+  const pinned = links.filter(isFooterOnly);
+  const regular = links.filter(link => !isFooterOnly(link));
+  const displayed = layout === 'home'
+    ? [...pinned, ...regular.slice(0, Math.max(0, VISIBLE_COUNT - pinned.length))]
+    : regular;
+  if (!displayed.length) return '';
   return `<section data-partner-links-list data-partner-layout="${layout}" aria-label="Partners and directories"><style>${CSS}</style>${layout === 'home' ? '<h2>Partners &amp; directories</h2>' : ''}<ul>${displayed.map(renderLink).join('')}</ul></section>`;
 }
