@@ -29,4 +29,15 @@ Final local image: `sha256:fcdc076b79699afa44de91e18a6bd2a78802e4ef354857812b6b9
 
 Next.js/OpenNext build, six-language parity, publish workflow, video workspace, platform batch, auth, AI candidates, export monitor, tracking and framing diagnostics passed. Real MP4/JPG/ZIP composition and 24-case rendering benchmark passed. The final 15/30/45-second real-source matrix passed at 1080×1920 H.264/AAC under 1 CPU / 3 GiB, taking 29.0 / 68.8 / 117.3 seconds locally under AMD64 emulation. This does not establish production latency. Remote migration readback found no pending migrations or foreign-key violations; required tables, nullable project callback, batch ID, asset hold, framing field, concurrency triggers and scope indexes are present.
 
-Production Worker deployment results are recorded below after deployment.
+## Completed production deployment
+
+- Release commit: `e60aaf8` on `main`, pushed and remote SHA verified.
+- Scribix Worker: `dd4c909d-7e8f-4b28-8458-f0f31e0c0d42`.
+- Render dispatcher: `9538acb5-9624-498f-bba5-86ca9257d23c`.
+- Container application: `a0331bd1-c9b2-4522-baac-0f9d20868582`; registry manifest `sha256:085e02ea3e8c153d25653b91a2cff1a861ef3512d78ef16de5d902ac49b99328`, built from the scanned local image above.
+- Cleanup Worker: `04ff1019-fd42-4d45-97b0-3e4dc1c05ca1`.
+
+Readback confirmed the active Scribix version contains the dedicated secret, `CLIPFLIGHT_TIKTOK_PUBLISH_ENABLED=true` and production `NEXTAUTH_URL`. The homepage returns 200; Google auth provider metadata returns 200 with the existing production callback. Explicit `/en/` publishing/account URLs redirect to their canonical default-language routes. Anonymous social availability is correctly denied. These are operational checks, not signed-in UI or real-provider acceptance.
+
+Owner acceptance starts at `/dashboard/accounts` to connect production channels, then `/dashboard/publishing` to publish an owned exported clip. No OAuth grant or public/private test post was submitted during deployment. The existing local development work was preserved byte-for-byte for all 27 previously modified tracked files.
+
