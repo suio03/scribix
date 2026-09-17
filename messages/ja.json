@@ -3361,5 +3361,28 @@
     "closePreview": "プレビューを閉じる",
     "previousClip": "前のクリップ",
     "nextClip": "次のクリップ"
+  },
+  "SocialAccess": {
+    "paid": "有料",
+    "title": "有料プランで公開",
+    "body": "有料プランでチャンネル連携、動画の公開、投稿予約を利用できます。",
+    "upgrade": "アップグレードして公開",
+    "unlock": "ソーシャル機能を解放",
+    "workspaceTitle": "動画もチャンネルも、ひとつの場所で。",
+    "benefitChannels": "YouTube、TikTok、LinkedIn をまとめて連携。",
+    "benefitPublish": "ツールを切り替えずに完成したクリップを公開。",
+    "benefitSchedule": "公開日時を選び、投稿スケジュールを管理。",
+    "example": "機能プレビュー · 表示はサンプルです",
+    "exampleClip": "完成したクリップ",
+    "manageChannels": "ソーシャルチャンネルを管理",
+    "connect": "チャンネルを連携",
+    "schedulePost": "投稿を予約",
+    "newPost": "新しい投稿",
+    "platformFilter": "すべてのプラットフォーム",
+    "content": "コンテンツ",
+    "unlockHistory": "投稿履歴を解放",
+    "calendarHint": "カレンダーを閲覧できます。投稿予約にはアップグレードが必要です。",
+    "channelHint": "アカウントを連携して Scribix から完成したクリップを公開できます。",
+    "pro": "Pro"
   }
 }

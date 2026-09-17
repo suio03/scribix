@@ -1,3 +1,4 @@
+import { canUseSocialMedia, socialUpgradeRequired } from "@/lib/social-access";
 import { PUBLISH_PLATFORMS } from "@/app/components/publishing/shared/specs";
 import { validSocialOrigin } from "@/lib/social-origin";
 import { auth } from "@/auth";
@@ -21,6 +22,7 @@ async function context(params?: Params["params"]) {
 async function GET(request: Request, { params }: Params = { params: Promise.resolve({ id: "" }) }) {
   const current = await context(params);
   if (!current) return Response.json({ error: "not_found" }, { status: 404 });
+  if (!canUseSocialMedia(current.user.tier)) return socialUpgradeRequired();
   const accountId = new URL(request.url).searchParams.get("creatorInfo");
   if (accountId) {
     if (accountId.length > 128) return Response.json({ error: "invalid_request" }, { status: 400 });
@@ -36,6 +38,7 @@ async function POST(request: Request, { params }: Params = { params: Promise.res
   if (!validSocialOrigin(request)) return Response.json({ error: "invalid_origin" }, { status: 403 });
   const current = await context(params);
   if (!current) return Response.json({ error: "not_found" }, { status: 404 });
+  if (!canUseSocialMedia(current.user.tier)) return socialUpgradeRequired();
   const body = await request.json().catch(() => null) as { platform?: string; locale?: string; accountId?: string } | null;
   if (!PUBLISH_PLATFORMS.some(platform => platform === body?.platform) || !["en", "fr", "es", "it", "ja", "de"].includes(body?.locale ?? ""))
     return Response.json({ error: "invalid_request" }, { status: 400 });
@@ -61,6 +64,7 @@ async function DELETE(request: Request, { params }: Params = { params: Promise.r
   if (!validSocialOrigin(request)) return Response.json({ error: "invalid_origin" }, { status: 403 });
   const current = await context(params);
   if (!current) return Response.json({ error: "not_found" }, { status: 404 });
+  if (!canUseSocialMedia(current.user.tier)) return socialUpgradeRequired();
   const body = await request.json().catch(() => null) as { platform?: string; locale?: string; accountId?: string } | null;
   if (typeof body?.accountId !== "string" || body.accountId.length > 128) return Response.json({ error: "invalid_request" }, { status: 400 });
   const response = await clipflightRequest(current.user.id, `/accounts/${encodeURIComponent(body.accountId)}`, { method: "DELETE" });
@@ -71,6 +75,7 @@ async function PATCH(request: Request, { params }: Params = { params: Promise.re
   if (!validSocialOrigin(request)) return Response.json({ error: "invalid_origin" }, { status: 403 });
   const current = await context(params);
   if (!current) return Response.json({ error: "not_found" }, { status: 404 });
+  if (!canUseSocialMedia(current.user.tier)) return socialUpgradeRequired();
   const body = await request.json().catch(() => null) as {accountId?: unknown} | null;
   if (typeof body?.accountId !== "string" || !body.accountId || body.accountId.length > 128)
     return Response.json({ error: "invalid_request" }, { status: 400 });

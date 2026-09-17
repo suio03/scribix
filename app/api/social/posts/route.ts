@@ -1,3 +1,4 @@
+import { canUseSocialMedia, socialUpgradeRequired } from "@/lib/social-access";
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
@@ -11,6 +12,7 @@ async function context() {
 }
 export async function GET(request: Request) {
   const c = await context(); if (!c) return Response.json({error: "not_found"}, {status: 404});
+  if (!canUseSocialMedia(c.user.tier)) return socialUpgradeRequired();
   const planner = new URL(request.url).searchParams.get("planner") === "1";
   const task = new URL(request.url).searchParams.get("task");
   const rows = await c.env.DB.prepare(`SELECT s.*, t.title AS project_title FROM social_submissions s
@@ -33,6 +35,7 @@ export async function GET(request: Request) {
 export async function PATCH(request: Request) {
   if (!validSocialOrigin(request)) return Response.json({error: "invalid_origin"}, {status: 403});
   const c = await context(); if (!c) return Response.json({error: "not_found"}, {status: 404});
+  if (!canUseSocialMedia(c.user.tier)) return socialUpgradeRequired();
   const body = await request.json().catch(() => null) as {postId?: string; targetId?: string} | null;
   if (typeof body?.postId !== "string" || typeof body?.targetId !== "string" || body.targetId.length > 128) return Response.json({error: "invalid_request"}, {status: 400});
   const row = await c.env.DB.prepare("SELECT id, remote_post_id FROM social_submissions WHERE user_id = ? AND remote_post_id = ?").bind(c.user.id, body.postId).first<{id: string; remote_post_id: string}>();

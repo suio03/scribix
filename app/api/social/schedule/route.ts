@@ -1,3 +1,4 @@
+import { canUseSocialMedia, socialUpgradeRequired } from "@/lib/social-access";
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
@@ -10,6 +11,7 @@ async function update(request: Request) {
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user || !clipflightEnabled(user.id)) return Response.json({error: "not_found"}, {status: 404});
+  if (!canUseSocialMedia(user.tier)) return socialUpgradeRequired();
   const body = await request.json().catch(() => null) as {postId?: string; scheduledAt?: number; timezone?: string} | null;
   if (typeof body?.postId !== "string" || body.postId.length > 128) return Response.json({error: "invalid_request"}, {status: 400});
   const row = await env.DB.prepare("SELECT id FROM social_submissions WHERE user_id = ? AND remote_post_id = ?").bind(user.id, body.postId).first<{id: string}>();

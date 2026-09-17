@@ -1,3 +1,4 @@
+import { canUseSocialMedia, socialUpgradeRequired } from "@/lib/social-access";
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
@@ -7,6 +8,7 @@ export async function GET(request: Request) {
   const session = await auth(); if (!session) return Response.json({error: "unauthorized"}, {status: 401});
   const env = await cf(); const user = await getOrCreateCurrentUser(env.DB, session);
   if (!user || !clipflightEnabled(user.id)) return Response.json({error: "not_found"}, {status: 404});
+  if (!canUseSocialMedia(user.tier)) return socialUpgradeRequired();
   const q = new URL(request.url).searchParams;
   const row = await env.DB.prepare(`SELECT j.id, j.project_id, c.id AS candidate_id, c.draft_revision, c.publish_draft_json,
     a.r2_key, a.bytes, a.width, a.height, a.duration_ms, c.theme AS title

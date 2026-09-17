@@ -3361,5 +3361,28 @@
     "closePreview": "Vorschau schließen",
     "previousClip": "Vorheriger Clip",
     "nextClip": "Nächster Clip"
+  },
+  "SocialAccess": {
+    "paid": "Bezahlt",
+    "title": "Mit einem kostenpflichtigen Tarif veröffentlichen",
+    "body": "Verbinde deine Kanäle, veröffentliche Videos und plane Beiträge mit einem kostenpflichtigen Tarif.",
+    "upgrade": "Zum Veröffentlichen upgraden",
+    "unlock": "Social Media freischalten",
+    "workspaceTitle": "Deine Clips. Deine Kanäle. Ein Arbeitsbereich.",
+    "benefitChannels": "Verbinde YouTube, TikTok und LinkedIn an einem Ort.",
+    "benefitPublish": "Veröffentliche fertige Clips ohne Werkzeugwechsel.",
+    "benefitSchedule": "Plane Veröffentlichungen und verwalte deinen Zeitplan.",
+    "example": "Funktionsvorschau · nur zur Veranschaulichung",
+    "exampleClip": "Dein fertiger Clip",
+    "manageChannels": "Social-Media-Kanäle verwalten",
+    "connect": "Kanal verbinden",
+    "schedulePost": "Beitrag planen",
+    "newPost": "Neuer Beitrag",
+    "platformFilter": "Alle Plattformen",
+    "content": "Inhalt",
+    "unlockHistory": "Veröffentlichungsverlauf freischalten",
+    "calendarHint": "Durchsuche den Kalender. Upgrade zum Planen von Beiträgen.",
+    "channelHint": "Verbinde dein Konto, um fertige Clips aus Scribix zu veröffentlichen.",
+    "pro": "Pro"
   }
 }

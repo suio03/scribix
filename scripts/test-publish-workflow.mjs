@@ -13,7 +13,7 @@ function loadModule(path, mocks = {}, globals = {}, cache = new Map()) {
   const key = resolve(root, path);
   if (cache.has(key)) return cache.get(key);
   const module = { exports: {} }; cache.set(key, module.exports);
-  const compiled = ts.transpileModule(readFileSync(key, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+  const compiled = ts.transpileModule(readFileSync(key, "utf8"), { fileName: key, compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX } }).outputText;
   vm.runInNewContext(compiled, { module, exports: module.exports, Response, Request, Headers, URL, TextEncoder, crypto: globalThis.crypto,
     console: { info() {}, error() {} }, process: { env: {} }, ...globals,
     require(name) {
@@ -288,7 +288,7 @@ test("selection enforces ownership, source expiry and request identifier types",
   assert.equal((await f.post({})).status, 410); assert.equal(f.calls.length, 0);
 });
 
-test("social publishing freezes the owned MP4 without requiring a completed cover or a paid tier", async t => {
+test("social publishing requires a paid tier and freezes the owned MP4 without a completed cover", async t => {
   const f = await renderFixture(t); f.user.tier = "free";
   f.run([{ sql: "UPDATE media_assets SET status='ready' WHERE id='video'" }, { sql: "UPDATE render_jobs SET status='failed' WHERE id='job'" }]);
   const encrypted = [];
@@ -305,6 +305,9 @@ test("social publishing freezes the owned MP4 without requiring a completed cove
   const params = { params: Promise.resolve({ id: "p" }) };
   const body = { submissionId: "00000000-0000-4000-8000-000000000001", renderJobId: "job", expectedRevision: f.workspace.revision, confirmed: true, caption: "Frozen copy", accountIds: ["account"] };
   const submit = value => route.POST(new Request("https://scribix.io/api", { method: "POST", headers: { Origin: "https://scribix.io" }, body: JSON.stringify(value) }), params);
+  assert.equal((await submit(body)).status, 402);
+  assert.equal(encrypted.length, 0);
+  f.user.tier = "basic";
   assert.equal((await submit(body)).status, 202);
   assert.equal((await submit(body)).status, 202);
   assert.equal(encrypted.length, 1);
@@ -339,7 +342,7 @@ test("Scribix connection return rejects another user and consumes the saved stat
   f.run([{ sql: "INSERT INTO social_connection_returns (state_hash,user_id,project_id,locale,connection_session_id,created_at,expires_at) VALUES ('digest','u','p','ja','external-session',0,unixepoch()+600)" }]);
   const route = loadModule("app/api/social/callback/route.ts", {
     "@/auth": { auth: async () => ({ user: { id: userId } }) }, "@/lib/cf": { cf: async () => ({ DB: f.db }) },
-    "@/lib/current-user": { getOrCreateCurrentUser: async () => ({ id: userId }) },
+    "@/lib/current-user": { getOrCreateCurrentUser: async () => ({ id: userId, tier: "pro" }) },
     "@/lib/clipflight": { socialStateHash: async () => "digest", clipflightRequest: async () => { lookups++; return Response.json({ session: { status: "connected" } }); } },
   });
   const request = () => new Request(`https://scribix.io/api/social/callback?state=${"a".repeat(64)}&connectionSessionId=external-session`);
@@ -355,7 +358,7 @@ test("account connections work before upload and return to the localized account
   const mocks = {
     "@/auth": { auth: async () => ({ user: { id: userId } }) },
     "@/lib/cf": { cf: async () => ({ DB: f.db }) },
-    "@/lib/current-user": { getOrCreateCurrentUser: async () => ({ id: userId }) },
+    "@/lib/current-user": { getOrCreateCurrentUser: async () => ({ id: userId, tier: "pro" }) },
     "@/lib/clipflight": {
       clipflightEnabled: () => enabled, socialStateHash: async () => "account-digest",
       clipflightRequest: async (_user, path, options) => {
@@ -403,7 +406,7 @@ test("independent history scopes records and retries to the current user", async
   f.run([{sql: "INSERT INTO social_submissions(id,user_id,project_id,render_job_id,request_hash,created_at,expires_at,remote_post_id,result_json) VALUES('submission','u','p','render','hash',?,?,'remote',?)", values:[now,now+3600,JSON.stringify({id:"remote",status:"published",caption:"Published copy",targets:[]})]}]);
   const route = loadModule("app/api/social/posts/route.ts", {
     "@/auth":{auth:async()=>({user:{id:userId}})}, "@/lib/cf":{cf:async()=>({DB:f.db})},
-    "@/lib/current-user":{getOrCreateCurrentUser:async()=>({id:userId})},
+    "@/lib/current-user":{getOrCreateCurrentUser:async()=>({id:userId,tier:"pro"})},
     "@/lib/clipflight":{clipflightEnabled:()=>true,clipflightRequest:async()=>{remoteCalls++;return Response.json({ok:true});}},
     "@/lib/social-submissions":{refreshSocialSubmission:async()=>{throw new Error("terminal posts must remain cached");}},
   });
@@ -424,6 +427,7 @@ test("compose review accepts current video with failed cover, rejects changed cl
     "@/lib/current-user":{getOrCreateCurrentUser:async()=>f.user},"@/lib/clipflight":{clipflightEnabled:()=>true},"@/lib/r2":{presignGet:async()=>"https://fixture/video"},
   });
   const request=()=>new Request("https://scribix.io/api/social/review?projectId=p&candidateId=c&renderJobId=job");
+  assert.equal((await route.GET(request())).status,402); f.user.tier="pro";
   let response=await route.GET(request());assert.equal(response.status,200);const draft=await response.json();assert.equal(draft.media.id,"job");assert.ok(draft.storageKey.includes(":u:p:c:job"));
   f.user.id="other";assert.equal((await route.GET(request())).status,409);f.user.id="u";
   f.run([{sql:"UPDATE clip_candidates SET draft_edl_json='{}' WHERE id='c'"}]);assert.equal((await route.GET(request())).status,409);
@@ -716,4 +720,55 @@ test("free review can read owned clips but cannot save or snapshot edits", async
   assert.equal((await route.GET(new Request("http://local/editor?candidateId=c"),params)).status,402);
   for(const method of ["PUT","POST"])assert.equal((await route[method](new Request("http://local/editor?view=review",{method,body:"{}"}),params)).status,402);
   assert.equal(reads,1);
+});
+
+
+test("free social APIs reject before external requests or database mutations", async t => {
+  const f=database();t.after(f.dispose);let external=0;
+  const mocks={
+    "@/lib/social-submissions":{},
+    "@/lib/r2":{},
+    "@/auth":{auth:async()=>({user:{id:"u"}})},
+    "@/lib/cf":{cf:async()=>({DB:f.db})},
+    "@/lib/current-user":{getOrCreateCurrentUser:async()=>({id:"u",tier:"free"})},
+    "@/lib/clipflight":{clipflightEnabled:()=>true,clipflightRequest:async()=>{external++;throw new Error("must not call provider");},socialSchedulingEnabled:async()=>{external++;return true;}},
+  };
+  const cases=[
+    ["app/api/social/availability/route.ts",["GET"]],
+    ["app/api/social/connections/route.ts",["GET","POST","PATCH","DELETE"]],
+    ["app/api/video-projects/[id]/social/connections/route.ts",["GET","POST","PATCH","DELETE"]],
+    ["app/api/social/posts/route.ts",["GET","PATCH"]],
+    ["app/api/video-projects/[id]/social/posts/route.ts",["GET","POST","PATCH"]],
+    ["app/api/social/schedule/route.ts",["PATCH","DELETE"]],
+    ["app/api/social/review/route.ts",["GET"]],
+    ["app/api/social/callback/route.ts",["GET"]],
+  ];
+  for(const [path,methods] of cases){
+    const route=loadModule(path,mocks);
+    for(const method of methods){
+      const response=await route[method](new Request("https://scribix.io/api/social/test",{method,headers:{Origin:"https://scribix.io"},...(method!=="GET"?{body:"{}"}:{})}),{params:Promise.resolve({id:"p"})});
+      assert.equal(response.status,402,`${path} ${method}`);
+      assert.equal((await response.json()).error,"upgrade_required");
+    }
+  }
+  assert.equal(external,0);
+  assert.equal((await f.db.prepare("SELECT count(*) AS n FROM social_submissions").first()).n,0);
+  assert.equal((await f.db.prepare("SELECT count(*) AS n FROM social_connection_returns").first()).n,0);
+});
+
+
+test("social page gate hides protected children for free and unknown tiers", async () => {
+  let tier="free";
+  const jsx=(type,props)=>({type,props});
+  const gate=loadModule("app/components/publishing/SocialAccessGate.tsx",{
+    "react/jsx-runtime":{jsx,jsxs:jsx},
+    "./SocialWorkspacePreview":{SocialWorkspacePreview:"SocialWorkspacePreview"},
+    "next-intl/server":{getTranslations:async()=>key=>key},
+    "@/i18n/navigation":{Link:"a"},
+    "@/lib/cf":{cf:async()=>({DB:{}})},
+    "@/lib/current-user":{getOrCreateCurrentUser:async()=>({id:"u",tier})},
+  });
+  const children={protected:true};
+  for(const value of ["free",undefined]){tier=value;const result=await gate.SocialAccessGate({session:{},children});assert.equal(result.type,"main");assert.ok(!JSON.stringify(result).includes('"protected"'));assert.equal(result.props.children.type,'SocialWorkspacePreview');assert.equal(result.props.children.props.view,'posts');}
+  for(const value of ["basic","pro"]){tier=value;assert.equal(await gate.SocialAccessGate({session:{},children}),children);}
 });

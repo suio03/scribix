@@ -1,3 +1,4 @@
+import { canUseSocialMedia, socialUpgradeRequired } from "@/lib/social-access";
 import { MIN_SCHEDULE_DELAY_SECONDS, MAX_SCHEDULE_DELAY_SECONDS } from "@/lib/social-scheduling";
 import { validSocialOrigin } from "@/lib/social-origin";
 import { auth } from "@/auth";
@@ -16,6 +17,7 @@ async function context(params: Params["params"]) {
 }
 export async function GET(_request: Request, { params }: Params) {
   const c = await context(params); if (!c) return Response.json({ error: "not_found" }, { status: 404 });
+  if (!canUseSocialMedia(c.user.tier)) return socialUpgradeRequired();
   const rows = await c.env.DB.prepare("SELECT * FROM social_submissions WHERE user_id = ? AND project_id = ? ORDER BY created_at DESC LIMIT 10").bind(c.user.id, c.id).all<SocialSubmission>();
   const posts = [];
   for (const row of rows.results) posts.push(await refreshSocialSubmission(c.env.DB, row));
@@ -24,6 +26,7 @@ export async function GET(_request: Request, { params }: Params) {
 export async function POST(request: Request, { params }: Params) {
   if (!validSocialOrigin(request)) return Response.json({ error: "invalid_origin" }, { status: 403 });
   const c = await context(params); if (!c) return Response.json({ error: "not_found" }, { status: 404 });
+  if (!canUseSocialMedia(c.user.tier)) return socialUpgradeRequired();
   if (Number(request.headers.get("Content-Length")) > 32768) return Response.json({ error: "invalid_request" }, { status: 413 });
   const body = await request.json().catch(() => null) as { mode?: "now" | "schedule"; scheduledAt?: number; timezone?: string; batchId?: string; platform?: string; title?: string; submissionId: string; renderJobId: string; expectedRevision: number; confirmed: boolean; accountIds: string[]; caption: string; youtubeTitle?: string; youtube?: object; tiktok?: object[] } | null;
   if (!body || typeof body.submissionId !== "string" || !/^[a-f0-9-]{36}$/.test(body.submissionId) || typeof body.renderJobId !== "string" || !Number.isInteger(body.expectedRevision) || body.confirmed !== true)
@@ -73,6 +76,7 @@ export async function POST(request: Request, { params }: Params) {
 export async function PATCH(request: Request, { params }: Params) {
   if (!validSocialOrigin(request)) return Response.json({ error: "invalid_origin" }, { status: 403 });
   const c = await context(params); if (!c) return Response.json({ error: "not_found" }, { status: 404 });
+  if (!canUseSocialMedia(c.user.tier)) return socialUpgradeRequired();
   const body = await request.json().catch(() => null) as { postId?: string; targetId?: string } | null;
   if (!body || typeof body.postId !== "string" || typeof body.targetId !== "string" || body.targetId.length > 128) return Response.json({ error: "invalid_request" }, { status: 400 });
   const row = await c.env.DB.prepare("SELECT remote_post_id FROM social_submissions WHERE remote_post_id = ? AND user_id = ? AND project_id = ?").bind(body.postId, c.user.id, c.id).first<{ remote_post_id: string }>();

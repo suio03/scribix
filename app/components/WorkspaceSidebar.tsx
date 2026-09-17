@@ -1,4 +1,5 @@
 "use client";
+import { canUseSocialMedia } from "@/lib/social-access";
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -29,6 +30,8 @@ export function WorkspaceSidebar({
 }) {
   const topNavT = useTranslations("TopNav");
   const sidebarT = useTranslations("Sidebar");
+  const socialT = useTranslations("SocialAccess");
+  const socialPaid = canUseSocialMedia(usage?.tier);
   const workspaceT = useTranslations("WorkspaceNav");
   const dashboardT = useTranslations("Dashboard.list");
   const locale = useLocale();
@@ -129,7 +132,7 @@ export function WorkspaceSidebar({
             />
           </div>
           {socialEnabled && <>
-            <p className="px-3 pb-2 pt-7 font-mono text-[9px] uppercase tracking-[0.18em] text-muted">{workspaceT("social")}</p>
+            <p className="px-3 pb-2 pt-7 font-mono text-[9px] uppercase tracking-[0.18em] text-muted">{workspaceT("social")} {!socialPaid && <span className="ml-2 rounded bg-accent/10 px-1.5 py-0.5 text-accent">{socialT("pro")}</span>}</p>
             <div className="grid gap-1">
               <WorkspaceLink active={pathname === "/dashboard/publish" || pathname === "/dashboard/publishing"} href="/dashboard/publishing" icon={Send} label={workspaceT("posts")} onNavigate={closeMobile} />
               <WorkspaceLink active={pathname === "/dashboard/planner"} href="/dashboard/planner" icon={CalendarDays} label={workspaceT("planner")} onNavigate={closeMobile} />

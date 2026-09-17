@@ -1,8 +1,14 @@
+import { canUseSocialMedia, socialUpgradeRequired } from "@/lib/social-access";
+import { cf } from "@/lib/cf";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { PUBLISH_PLATFORMS } from "@/app/components/publishing/shared/specs";
 import {auth} from "@/auth";
 import {clipflightEnabled, tiktokPublishingEnabled, socialSchedulingEnabled} from "@/lib/clipflight";
 export async function GET() {
  const session = await auth();
  if (!session?.user?.id || !clipflightEnabled(session.user.id)) return new Response(null, {status:404});
+ const { DB } = await cf();
+ const user = await getOrCreateCurrentUser(DB, session);
+ if (!canUseSocialMedia(user?.tier)) return socialUpgradeRequired();
  return Response.json({schedulingEnabled: await socialSchedulingEnabled(session.user.id), maxTargets:PUBLISH_PLATFORMS.filter(platform => platform !== "tiktok" || tiktokPublishingEnabled()).length, tiktokPublishingEnabled:tiktokPublishingEnabled()}, {headers:{"Cache-Control":"no-store"}});
 }

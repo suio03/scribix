@@ -3361,5 +3361,28 @@
     "closePreview": "Cerrar vista previa",
     "previousClip": "Clip anterior",
     "nextClip": "Siguiente clip"
+  },
+  "SocialAccess": {
+    "paid": "De pago",
+    "title": "Publica con un plan de pago",
+    "body": "Conecta tus canales, publica vídeos y programa publicaciones con un plan de pago.",
+    "upgrade": "Mejora tu plan para publicar",
+    "unlock": "Desbloquear redes sociales",
+    "workspaceTitle": "Tus clips. Tus canales. Un solo espacio.",
+    "benefitChannels": "Conecta YouTube, TikTok y LinkedIn en un solo lugar.",
+    "benefitPublish": "Publica tus clips terminados sin cambiar de herramienta.",
+    "benefitSchedule": "Elige cuándo publicar y gestiona tu calendario.",
+    "example": "Vista previa · solo ilustrativa",
+    "exampleClip": "Tu clip terminado",
+    "manageChannels": "Gestiona tus canales sociales",
+    "connect": "Conectar canal",
+    "schedulePost": "Programar publicación",
+    "newPost": "Nueva publicación",
+    "platformFilter": "Todas las plataformas",
+    "content": "Contenido",
+    "unlockHistory": "Desbloquea tu historial de publicaciones",
+    "calendarHint": "Explora el calendario. Mejora tu plan para programar publicaciones.",
+    "channelHint": "Conecta tu cuenta para publicar clips terminados desde Scribix.",
+    "pro": "Pro"
   }
 }

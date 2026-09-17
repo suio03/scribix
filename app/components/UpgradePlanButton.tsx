@@ -8,11 +8,13 @@ export function UpgradePlanButton({
   children,
   className,
   onOpen,
+  "aria-label": ariaLabel,
 }: {
   checkoutSuccessPath: string;
   children: React.ReactNode;
   className: string;
   onOpen?: () => void;
+  "aria-label"?: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -20,6 +22,7 @@ export function UpgradePlanButton({
     <>
       <button
         type="button"
+        aria-label={ariaLabel}
         onClick={() => {
           onOpen?.();
           setOpen(true);

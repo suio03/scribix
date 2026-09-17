@@ -1,3 +1,4 @@
+import { canUseSocialMedia, socialUpgradeRequired } from "@/lib/social-access";
 import { socialOrigin } from "@/lib/social-origin";
 import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
@@ -9,6 +10,7 @@ export async function GET(request: Request) {
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
   const env = await cf();
   const user = await getOrCreateCurrentUser(env.DB, session);
+  if (user && !canUseSocialMedia(user.tier)) return socialUpgradeRequired();
   const url = new URL(request.url);
   const state = url.searchParams.get("state");
   const id = url.searchParams.get("connectionSessionId");
