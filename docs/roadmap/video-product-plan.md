@@ -4,6 +4,8 @@
 
 目标：帮助持续更新播客、访谈和知识内容的个人及小团队，把一期内容做成一组完整、风格一致、可发布的短视频。竞品沿连续工作流扩展会有功能重叠；我们的验证重点是内容完整性、人工修改时间和下一次真实使用。
 
+2026-09-17 批量选片专项（本地实现，默认关闭，未部署，三小时真实素材未验收）：[AI Clips 生成与交付实施方案](ai-clips-generation-workflow.md)记录 180 分钟分析范围、资源预算、持久化任务、动态候选和按需预览；本阶段只包含单条编辑与导出。验证证据见 [后台分析验证记录](../video-workspace/ai-analysis-validation.md)。
+
 ## 状态口径与依据
 
 - **已有**：本地代码已有用户流程，仍需按对应技术记录核对验收和部署。
@@ -36,8 +38,9 @@
 | AI 推荐与完整性复审 | 已有 | 允许零候选；验证独立可理解、重复主题与采用率，并根据采用数量和主题覆盖判断当前候选数量是否足够 |
 | 按主题和内容类型找片 | 已有 | 首次支持建议、观点、故事、问答等讲话内容条件 |
 | 推荐理由与候选预览 | 已有 | 展示可核对理由，不把分数包装成爆款概率 |
-| 手动指定片段 | 已有 | 付费用户可保留一个手动候选；沿用权限合同 |
-| 用户选择目标时长 | 部分已有 | AI 15–45 秒、手动编辑最多 60 秒；先比较较宽范围是否提高采用率，再决定可选长度 |
+| 从原视频手动创建片段 | 本地实现 | Original video 工作区提供连续段落转写、短语搜索、按词定位、文字范围与双手柄／精确起止时间选择；可追加独立片段，最多 90 秒，沿用付费编辑权限；不依赖 AI 候选 |
+| 用户选择目标时长 | 本地实现 | Auto 15–90 秒，另有 15–30、30–60、60–90 秒；复审后服务端校验档位，手动编辑最多 90 秒 |
+| 生成前外观设置与结果审阅 | 本地实现 | 字幕样式、开场标题、构图；默认列表／大预览、网格、收藏／排除、筛选排序、原文范围与独立编辑入口；见 [流程与验证](../video-workspace/clip-workflow.md) |
 | 同一素材继续找片、换主题找片 | 部分已有 | 零匹配允许一次调整；成功产出后不能换方向；后续需保留草稿、去重并明确额度 |
 | 按说话人筛选 | 未实现 | 不能把画面跟随当成说话人内容筛选 |
 
@@ -86,7 +89,7 @@
 | 独立账号管理与发布页 | 已接入／待验收 | 上传前可连接；拥有的最新成片可进入发布页；当前受试点名单限制 |
 | YouTube 发布 | 已接入／待完整验收 | 有负责人确认公开发布验证的记录；补齐 Scribix 新项目全流程证据 |
 | LinkedIn 个人主页视频发布 | 已接入／待真实验收 | 外部适配已有部署记录，真实 OAuth 与视频发布未确认 |
-| TikTok 发布 | 已接入／暂停 | 最近记录为 Direct Post 审核中；明确批准后才恢复开关 |
+| TikTok 发布 | 已部署／待真实发布验收 | 2026-09-17 Direct Post 已批准，生产集成与开关已部署；账号授权及真实发布由用户验收，见 [部署记录](../video-workspace/tiktok-production-release-2026-09-17.md) |
 | Instagram 等更多平台 | 未接入可用流程 | 图标和类型定义不算接入；按实际渠道需求扩展 |
 | 发布历史、状态、安全重试 | 已接入／待验收 | 当前最近 30 条记录；不确定的平台初始化不能盲目重试 |
 | 账号断开、重新连接与访问刷新 | 部分已有 | 已有入口；手动刷新仍有外部服务部署与真实续期待办 |
@@ -140,3 +143,11 @@ A 中遇到候选不完整、画面不可用或导出故障，先修复阻断问
 - [首期方案](../archive/plans/publish-preparation-design.md) 保留选片与单片发布准备的交互决策和验收要求，不再维护另一份功能状态表。
 - 部署前读 [外部检查清单](../video-workspace/operations.md#deployment)，平台状态与验收证据读 [社交发布记录](../video-workspace/social-publishing.md)。本表仅在有代码或验收证据时更新状态，记录日期。
 - SEO、博客、获客和 Google Ads 保留各自调研；本计划不自动开启投放。
+
+2026-09-16 原视频选片第一阶段：项目提供 Original video / Clips 入口；原视频范围选定后才创建手动 clip，取消短视频打开后自动创建默认片段。用户可追加多个手动片段，AI 候选保存保留手动片段。此段为第一阶段记录；生成前长度设置与结果审阅已在后续本地实现，见 [当前流程](../video-workspace/clip-workflow.md)。成功后反复换主题仍未实现。使用既有测试视频创建了 00:06.12–00:11.10 的手动测试片段，原有五条候选保留。
+
+### 2026-09-16 workspace / Planner update
+
+Home now contains upload and recent projects; Projects is a separate library. Sidebar separates Create and Social media (Posts, Planner, Channels). Manual source selection is secondary. The subsequent local generation settings and review workflow are documented in [clip-workflow.md](../video-workspace/clip-workflow.md).
+
+Planner and schedule submission are implemented locally together with Teleo's external schedule bridge. Both apps still need the normal release process; real scheduled publishing from Scribix has not been accepted against production. Month view, mobile list, rescheduling and cancellation are included; Teleo's week view, drag/drop and full scheduled-content editing remain outside this first integration.

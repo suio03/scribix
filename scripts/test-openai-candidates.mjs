@@ -18,7 +18,7 @@ function fixture(responses) {
       compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
     });
     vm.runInNewContext(outputText, {
-      exports, Response, crypto: globalThis.crypto, TextEncoder,
+      exports, Response, AbortSignal, crypto: globalThis.crypto, TextEncoder,
       process: { env: { OPENAI_API_KEY: "test-only" } },
       console: { info: (line) => logs.push(JSON.parse(line)) },
       require(name) {
@@ -200,4 +200,15 @@ test("long specific searches apply identical filters to every batch without fill
     assert.ok(request.input[0].content[0].text.endsWith(JSON.stringify(requirements)));
     assert.ok(request.input[0].content[0].text.length <= 100000);
   });
+});
+
+test("requested length is applied after review even when the model accepts an out-of-range clip", async () => {
+  const f=fixture([completed({candidates:[proposal()]}),completed({reviews:[{candidateIndex:0,verdict:"accept",completenessScore:0.9,completenessReason:"Complete.",startSentenceId:"s10",endSentenceId:"s12"}]})]);
+  const analysis=f.mapping.buildCandidateAnalysisInput(transcript());
+  const requirements={mode:"auto",topic:"",kind:"any",generation:{length:"long",captions:"none",headline:false,framing:"fit"}};
+  const generated=await f.api.generateCandidatesWithOpenAI(analysis,{requirements});
+  const reviewed=await f.api.reviewCandidatesWithOpenAI(analysis,generated.candidates,{requirements});
+  assert.equal(reviewed.candidates.candidates.length,0);
+  assert.equal(reviewed.reviews[0].verdict,"reject");
+  assert.match(f.requests[1].input[0].content[0].text,/60–90 seconds/);
 });

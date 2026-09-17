@@ -1,5 +1,6 @@
 // Adapted from ClipFlight (Teleo), commit cb83f86. See README.md.
 "use client";
+import { MIN_SCHEDULE_DELAY_SECONDS } from "@/lib/social-scheduling";
 import {useTranslations} from "next-intl";
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
@@ -86,6 +87,13 @@ export function ComposeWorkspace({draft, onNewPost, onConnectChannel, onPublishe
 }) {
  const tx = useTranslations("Distribution");
  const ta = useTranslations("ClipActions");
+ const planner = useTranslations("Planner");
+ const [schedulingEnabled, setSchedulingEnabled] = useState(false);
+ const [publishMode, setPublishMode] = useState<"now" | "schedule">("now");
+ const [scheduleTime, setScheduleTime] = useState("");
+ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+ const scheduledAt = Math.floor(new Date(scheduleTime).getTime() / 1000);
+ const scheduleReady = publishMode === "now" || (schedulingEnabled && Number.isFinite(scheduledAt) && scheduledAt >= Date.now() / 1000 + MIN_SCHEDULE_DELAY_SECONDS);
 function initialTikTokAccountSettings(
   settings?: PublicPost["targets"][number]["settings"],
 ): TikTokAccountSettings {
@@ -333,6 +341,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
           );
         setAccounts(activeAccounts);
         setPublishTargetLimit(policy.maxTargets);
+        setSchedulingEnabled(policy.schedulingEnabled);
         setTiktokPublishingEnabled(policy.tiktokPublishingEnabled);
         setSelectedAccounts((current) => {
           const kept: SelectedAccounts = {
@@ -588,10 +597,14 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
         onPublished(result.postId);
         return;
       }
+      if (!scheduleReady) return;
       const submissions = settingsPlatforms.map(platform => ({
           platform,
           input: {
             ...input,
+            mode: publishMode,
+            scheduledAt: publishMode === "schedule" ? scheduledAt : undefined,
+            timezone: publishMode === "schedule" ? timezone : undefined,
             caption: captionFor(platform),
             accountIds: selectedAccounts[platform],
             youtubeTitle: platform === "youtube" ? input.youtubeTitle : undefined,
@@ -611,7 +624,7 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
     }
   }
 
-  const canPublish = Boolean(
+  const canPublish = scheduleReady && Boolean(
     draft &&
       selected.length > 0 &&
       publishTargetLimit !== null &&
@@ -1244,10 +1257,16 @@ const TIKTOK_PRIVACY_LABELS: Record<TikTokPrivacyLevel, string> = {
           {batch ? <ul aria-live="polite" className="my-4 space-y-2 text-sm">{batch.entries.map(entry => <li key={entry.platform}>{SPECS[entry.platform as Platform].label}: {ta(entry.postId ? "sent" : entry.failed ? "sendFailed" : "sending")}</li>)}</ul> : null}
           {batchComplete && draft ? <button className="btn btn--secondary" type="button" onClick={() => { if (clearCompletedBatch(draft, batchStorage)) { setBatch(null);  setSubmitError(null); } }}>{ta("newPost")}</button> : null}
           <div className="publishing-submit">
+            <div className="mb-6 rounded-xl border border-line p-4">
+              <label className="mr-6 inline-flex items-center gap-2"><input type="radio" name="publishMode" checked={publishMode === "now"} disabled={isSubmitting || Boolean(batch)} onChange={() => setPublishMode("now")} />{planner("now")}</label>
+              <label className="inline-flex items-center gap-2"><input type="radio" name="publishMode" checked={publishMode === "schedule"} disabled={!schedulingEnabled || isSubmitting || Boolean(batch)} onChange={() => setPublishMode("schedule")} />{planner("later")}</label>
+              {!schedulingEnabled && <p className="mt-2 text-sm text-muted">{planner("unavailable")}</p>}
+              {publishMode === "schedule" && <div className="mt-4"><label className="block text-sm">{planner("dateTime")}<input className="mt-2 block w-full rounded-lg border border-line bg-paper p-3" type="datetime-local" value={scheduleTime} disabled={isSubmitting || Boolean(batch)} onChange={event => setScheduleTime(event.target.value)} /></label><p className="mt-2 text-sm text-muted">{timezone} · {planner("minimum", {minutes: MIN_SCHEDULE_DELAY_SECONDS / 60})}</p></div>}
+            </div>
                 {(batch ? batch.entries.some(entry => entry.platform === "youtube") : youtubeSelected) && !batchComplete ? <p id="youtube-publish-notice" className="mb-3 text-sm leading-6 text-ink/60">{ta.rich("youtubeNotice", {terms: chunks => <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer" className="text-accent underline">{chunks}</a>})}</p> : null}
                 <button aria-describedby={(batch ? batch.entries.some(entry => entry.platform === "youtube") : youtubeSelected) && !batchComplete ? "youtube-publish-notice" : undefined} className="btn btn--primary btn--block" type="submit" disabled={isSubmitting || (!canPublish && !transportPending && !batch)}>
                   <span>
-                    {isSubmitting ? tx("mfd3fdecb64") : transportPending ? tx("m9f5cd8a2e8") : batchComplete ? ta("viewStatus") : batch ? ta("retryRemaining") : settingsPlatforms.length > 1 ? ta("publishMany", {count: settingsPlatforms.length}) : settingsPlatforms[0] ? ta("publishOne", {platform: SPECS[settingsPlatforms[0]].label}) : ta("publish")}
+                    {isSubmitting ? tx("mfd3fdecb64") : transportPending ? tx("m9f5cd8a2e8") : batchComplete ? ta("viewStatus") : batch ? ta("retryRemaining") : publishMode === "schedule" ? planner("schedule") : settingsPlatforms.length > 1 ? ta("publishMany", {count: settingsPlatforms.length}) : settingsPlatforms[0] ? ta("publishOne", {platform: SPECS[settingsPlatforms[0]].label}) : ta("publish")}
                   </span>
                   <ArrowRightIcon size={16} />
                 </button>

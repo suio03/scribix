@@ -10,6 +10,9 @@ export function tiktokPublishingEnabled() {
 
 export async function clipflightRequest(userId: string, path: string, init: RequestInit = {}): Promise<Response> {
   if (!clipflightEnabled(userId)) return Response.json({ error: "social_publishing_unavailable" }, { status: 404 });
+  if (path === "/posts" && init.method === "POST" && typeof init.body === "string" && JSON.parse(init.body).mode === "schedule") {
+    if (!await socialSchedulingEnabled(userId)) return Response.json({error: "scheduling_unavailable"}, {status: 503});
+  }
   // Apply the pause at the shared transport boundary, including stored submissions and retries.
   if (!tiktokPublishingEnabled()) {
     const unavailable = () => Response.json({ error: "tiktok_publishing_unavailable" }, { status: 403 });
@@ -50,4 +53,11 @@ export async function clipflightRequest(userId: string, path: string, init: Requ
 export async function socialStateHash(state: string) {
   const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(state));
   return Array.from(new Uint8Array(hash), b => b.toString(16).padStart(2, "0")).join("");
+}
+
+export async function socialSchedulingEnabled(userId: string): Promise<boolean> {
+  const response = await clipflightRequest(userId, "/publishing-capabilities");
+  if (!response.ok) return false;
+  const value = await response.json().catch(() => null) as {scheduling?: boolean} | null;
+  return value?.scheduling === true;
 }

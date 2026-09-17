@@ -10,6 +10,7 @@ import { ACTIVE_EXPORT_STATUSES as ACTIVE, recordVideoDownload, useVideoExports 
 
 
 export function FinalRenderPanel({
+  prepareDraft,
   compact = false,
   publishReady = false,
   secondary = false,
@@ -23,6 +24,7 @@ export function FinalRenderPanel({
   onConflict,
   onExportDeleted,
 }: {
+  prepareDraft?: () => Promise<number>;
   compact?: boolean;
   publishReady?: boolean;
   secondary?: boolean;
@@ -74,12 +76,13 @@ export function FinalRenderPanel({
     setBusy(true);
     setError(null);
     try {
+      const exportRevision = prepareDraft ? await prepareDraft() : revision;
       const response = await fetch(`/api/video-projects/${projectId}/renders`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           candidateId,
-          expectedRevision: revision,
+          expectedRevision: exportRevision,
           idempotencyKey: `final:${projectId}:${crypto.randomUUID()}`,
         }),
       });

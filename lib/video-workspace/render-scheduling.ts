@@ -39,7 +39,7 @@ export async function claimNextRenderJob(db: D1Database, limit: number): Promise
        ORDER BY COALESCE((
          SELECT MAX(history.provider_submitted_at) FROM render_jobs history
          WHERE history.user_id = waiting.user_id
-       ), '') ASC, waiting.created_at ASC, waiting.id ASC
+       ), '') ASC, waiting.priority DESC, waiting.created_at ASC, waiting.id ASC
        LIMIT 1
      )
        AND (SELECT COUNT(*) FROM render_jobs

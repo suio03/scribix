@@ -1,3 +1,4 @@
+import { applyGeneration, parseGeneration } from "./generation-settings";
 import { parsePublishDraft, type PublishDraft } from "./publish";
 import type { AaiTranscript } from "@/lib/aai";
 import { newId } from "@/lib/ids";
@@ -19,6 +20,7 @@ import type { ProxyTimelineSource, TranscriptWordBoundary } from "./timeline";
 import { validateEdl, validateRenderSpec, type ContractIssue } from "./validation";
 
 type EditorProjectRow = {
+  selection_json: string | null;
   id: string;
   transcript_r2_key: string | null;
   source_duration_ms: number | null;
@@ -34,6 +36,7 @@ type EditorCandidateRow = {
   publish_draft_json: string | null;
   id: string;
   theme: string;
+  hook: string;
   origin: "ai" | "manual";
   segments_json: string;
   status: string;
@@ -162,7 +165,7 @@ export async function loadEditorWorkspace(
   if (!transcriptObject) return { ok: false, error: "transcript_not_ready" };
   const transcript = (await transcriptObject.json()) as AaiTranscript;
   const words = relevantWords(transcript, edl);
-  if (!restored) renderSpec = defaultRenderSpec(edl, words);
+  if (!restored) renderSpec = generatedRenderSpec(edl, words, project, candidate);
   const proxies = preview
     ? await Promise.all(preview.segments.map(async (segment) => {
         if (segment.jobStatus !== "completed" || segment.assetStatus !== "ready") {
@@ -363,7 +366,7 @@ export async function prepareGeneratedCandidateDraft(
   if (!transcriptObject) return { ok: false, error: "transcript_not_ready" };
   const transcript = (await transcriptObject.json()) as AaiTranscript;
   const edl = edlFromCandidate(segments);
-  const renderSpec = defaultRenderSpec(edl, relevantWords(transcript, edl));
+  const renderSpec = generatedRenderSpec(edl, relevantWords(transcript, edl), project, candidate);
   const preview = await candidatePreview(db, userId, projectId, candidateId);
   for (const segment of edl.segments) {
     const analysis = preview?.segments.find(item => `s${item.segmentIndex}` === segment.id)?.autoFraming;
@@ -538,7 +541,7 @@ function editorProject(
   projectId: string
 ): Promise<EditorProjectRow | null> {
   return db.prepare(
-    `SELECT p.id, t.transcript_r2_key, a.duration_ms AS source_duration_ms,
+    `SELECT p.id, p.selection_json, t.transcript_r2_key, a.duration_ms AS source_duration_ms,
             a.status AS source_status, a.expires_at AS source_expires_at,
             p.draft_candidate_id, p.draft_revision, p.draft_edl_json,
             p.draft_render_spec_json
@@ -563,7 +566,7 @@ function editorCandidate(
   candidateId: string
 ): Promise<EditorCandidateRow | null> {
   return db.prepare(
-    `SELECT id, theme, origin, segments_json, status, draft_revision, publish_draft_json,
+    `SELECT id, theme, hook, origin, segments_json, status, draft_revision, publish_draft_json,
             draft_edl_json, draft_render_spec_json
        FROM clip_candidates
       WHERE id = ?1
@@ -694,4 +697,10 @@ function sourceExpired(expiresAt: string | null): boolean {
   const value = expiresAt.includes("T") ? expiresAt : `${expiresAt.replace(" ", "T")}Z`;
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) && timestamp <= Date.now();
+}
+
+function generatedRenderSpec(edl: Edl, words: TranscriptWordBoundary[], project: EditorProjectRow, candidate: EditorCandidateRow): RenderSpec {
+  const spec = defaultRenderSpec(edl, words);
+  if (candidate.origin !== "ai" || !project.selection_json) return spec;
+  try { return applyGeneration(spec, parseGeneration(JSON.parse(project.selection_json).generation), candidate.hook || candidate.theme); } catch { return spec; }
 }

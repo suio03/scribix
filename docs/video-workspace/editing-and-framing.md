@@ -53,10 +53,10 @@ Migration `0028_video_editor_drafts.sql` adds the active project draft mirror. M
 
 - Only one candidate is selected for the singular project draft at a time.
 - Start and end controls step across real transcript word boundaries or accept millisecond-precise original-video timecodes such as `02:03.637`.
-- Boundary changes always reference the uploaded original source. AI cuts start at no more than 45 seconds; manual boundary edits may extend the timeline to the 60-second contract limit.
+- Boundary changes always reference the uploaded original source. AI cuts and manual boundary edits share the 90-second contract limit; the short-source direct-edit threshold remains 45 seconds.
 - Auto follows the saved analysis; Fit preserves the full source frame. Manual section editing supports dragging and zooming within a 9:16 canvas. The current section workflow is described below; it replaces early axis-slider controls.
 - The current product does not expose add, delete, or reorder controls for cuts. Existing multi-segment drafts remain valid and play in their stored order, but ordinary editing stays focused on one understandable source range.
-- A paid user can keep one manual candidate at a time, delete it as a unit, and then create another. Deleting it removes its draft versions, render jobs, and stored outputs; AI candidates are preserved as the original recommendations.
+- Paid users can create multiple independent manual candidates from the Original video workspace, without first generating AI candidates. Select word boundaries or enter start/end times (up to 90 seconds), preview the original range, then create the candidate. The source-clips endpoint checks ownership, expiry, edit access and immutable request IDs. The legacy default-range endpoint still reuses its existing manual candidate. Deleting a selected custom clip removes only its associated drafts, jobs and outputs; other manual and AI candidates are preserved. AI candidate replacement now preserves manual candidates.
 - Changes inside proxy handles update immediately without media processing.
 - Changes beyond handles are saved immediately, then queue a replacement for that segment only. The editor polls until the new signed proxy covers the edited range.
 - Autosave waits 900 ms after an edit. A revision conflict requires an explicit reload.

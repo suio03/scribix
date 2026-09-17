@@ -1,0 +1,58 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "compatibility_date": "2026-07-01",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "triggers": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "scribix-db",
+      "database_id": "c031ef5c-899a-426a-897a-279e011be78d"
+    }
+  ],
+  "name": "scribix-ai-clips",
+  "main": "workers/ai-clips.ts",
+  "r2_buckets": [
+    {
+      "binding": "SCRIBIX_MEDIA",
+      "bucket_name": "scribix-media",
+      "remote": true
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "AI_CLIPS_QUEUE",
+        "queue": "scribix-ai-clips"
+      },
+      {
+        "binding": "VIDEO_RENDER_QUEUE",
+        "queue": "scribix-video-render"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "scribix-ai-clips",
+        "max_batch_size": 1,
+        "max_concurrency": 4,
+        "max_retries": 3
+      }
+    ]
+  },
+  "secrets": {
+    "required": [
+      "OPENAI_API_KEY",
+      "ASSEMBLYAI_API_KEY"
+    ]
+  }
+}

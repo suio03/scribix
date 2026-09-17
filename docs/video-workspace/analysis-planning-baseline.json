@@ -1,0 +1,191 @@
+{
+  "kind": "offline-planning-only",
+  "measuredAt": "2026-09-17T09:38:49.707Z",
+  "paidProviderCalls": 0,
+  "rows": [
+    {
+      "name": "0.5m-sparse",
+      "range": {
+        "startMs": 0,
+        "endMs": 30000
+      },
+      "synthetic": true,
+      "planningMs": 0.3598749999999953,
+      "batches": 1,
+      "maxBatchChars": 400,
+      "status": "planned",
+      "discoveryCalls": 0,
+      "reviewed": null,
+      "finalCount": null,
+      "humanKeepCount": null,
+      "topicCoverage": null,
+      "candidateReadyMs": null,
+      "firstPreviewMs": null,
+      "framingMs": null,
+      "exportMs": null,
+      "actualCost": null,
+      "editorialAcceptance": false
+    },
+    {
+      "name": "0.5m-dense",
+      "range": {
+        "startMs": 0,
+        "endMs": 30000
+      },
+      "synthetic": true,
+      "planningMs": 0.10487499999999983,
+      "batches": 1,
+      "maxBatchChars": 1525,
+      "status": "planned",
+      "discoveryCalls": 0,
+      "reviewed": null,
+      "finalCount": null,
+      "humanKeepCount": null,
+      "topicCoverage": null,
+      "candidateReadyMs": null,
+      "firstPreviewMs": null,
+      "framingMs": null,
+      "exportMs": null,
+      "actualCost": null,
+      "editorialAcceptance": false
+    },
+    {
+      "name": "30m-sparse",
+      "range": {
+        "startMs": 0,
+        "endMs": 1800000
+      },
+      "synthetic": true,
+      "planningMs": 1.2862090000000066,
+      "batches": 4,
+      "maxBatchChars": 3823,
+      "status": "planned",
+      "discoveryCalls": 0,
+      "reviewed": null,
+      "finalCount": null,
+      "humanKeepCount": null,
+      "topicCoverage": null,
+      "candidateReadyMs": null,
+      "firstPreviewMs": null,
+      "framingMs": null,
+      "exportMs": null,
+      "actualCost": null,
+      "editorialAcceptance": false
+    },
+    {
+      "name": "30m-dense",
+      "range": {
+        "startMs": 0,
+        "endMs": 1800000
+      },
+      "synthetic": true,
+      "planningMs": 4.777374999999999,
+      "batches": 5,
+      "maxBatchChars": 19999,
+      "status": "planned",
+      "discoveryCalls": 0,
+      "reviewed": null,
+      "finalCount": null,
+      "humanKeepCount": null,
+      "topicCoverage": null,
+      "candidateReadyMs": null,
+      "firstPreviewMs": null,
+      "framingMs": null,
+      "exportMs": null,
+      "actualCost": null,
+      "editorialAcceptance": false
+    },
+    {
+      "name": "60m-sparse",
+      "range": {
+        "startMs": 0,
+        "endMs": 3600000
+      },
+      "synthetic": true,
+      "planningMs": 0.8341250000000002,
+      "batches": 7,
+      "maxBatchChars": 3856,
+      "status": "planned",
+      "discoveryCalls": 0,
+      "reviewed": null,
+      "finalCount": null,
+      "humanKeepCount": null,
+      "topicCoverage": null,
+      "candidateReadyMs": null,
+      "firstPreviewMs": null,
+      "framingMs": null,
+      "exportMs": null,
+      "actualCost": null,
+      "editorialAcceptance": false
+    },
+    {
+      "name": "60m-dense",
+      "range": {
+        "startMs": 0,
+        "endMs": 3600000
+      },
+      "synthetic": true,
+      "planningMs": 6.351249999999993,
+      "batches": 11,
+      "maxBatchChars": 19999,
+      "status": "planned",
+      "discoveryCalls": 0,
+      "reviewed": null,
+      "finalCount": null,
+      "humanKeepCount": null,
+      "topicCoverage": null,
+      "candidateReadyMs": null,
+      "firstPreviewMs": null,
+      "framingMs": null,
+      "exportMs": null,
+      "actualCost": null,
+      "editorialAcceptance": false
+    },
+    {
+      "name": "180m-sparse",
+      "range": {
+        "startMs": 0,
+        "endMs": 10800000
+      },
+      "synthetic": true,
+      "planningMs": 2.382708000000008,
+      "batches": 22,
+      "maxBatchChars": 3922,
+      "status": "planned",
+      "discoveryCalls": 0,
+      "reviewed": null,
+      "finalCount": null,
+      "humanKeepCount": null,
+      "topicCoverage": null,
+      "candidateReadyMs": null,
+      "firstPreviewMs": null,
+      "framingMs": null,
+      "exportMs": null,
+      "actualCost": null,
+      "editorialAcceptance": false
+    },
+    {
+      "name": "180m-dense",
+      "range": {
+        "startMs": 0,
+        "endMs": 10800000
+      },
+      "synthetic": true,
+      "planningMs": 15.859583999999998,
+      "batches": 32,
+      "maxBatchChars": 19999,
+      "status": "planned",
+      "discoveryCalls": 0,
+      "reviewed": null,
+      "finalCount": null,
+      "humanKeepCount": null,
+      "topicCoverage": null,
+      "candidateReadyMs": null,
+      "firstPreviewMs": null,
+      "framingMs": null,
+      "exportMs": null,
+      "actualCost": null,
+      "editorialAcceptance": false
+    }
+  ]
+}

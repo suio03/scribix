@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ComponentProps } from "react";
 import {
+  LayoutGrid, List, ArrowLeft, Heart,
   AlertCircle,
   AlertTriangle,
   Archive,
@@ -25,7 +26,15 @@ import {
   type VideoEditorSaveState,
 } from "@/app/components/VideoClipEditor";
 import { Link } from "@/i18n/navigation";
+import type { AnalysisTaskView } from "@/lib/video-workspace/analysis-tasks";
+import { AI_CLIP_MIN_DURATION_MS } from "@/lib/video-workspace/candidate-generation";
+import { AI_ANALYSIS } from "@/lib/video-workspace/analysis-config";
 import type { StoredClipCandidate } from "@/lib/video-workspace/candidates";
+import { SourceClipWorkspace } from "./SourceClipWorkspace";
+import { GenerationSettingsPanel } from "./GenerationSettingsPanel";
+import { ClipPreviewDialog } from "./ClipPreviewDialog";
+import { ClipStyledPoster } from "./ClipStyledPoster";
+import { ClipReviewPreview, clipTime } from "./ClipReviewPreview";
 import { SelectionRequestForm } from "./SelectionRequestForm";
 import { DEFAULT_SELECTION, type SelectionRequirements, type SelectionState } from "@/lib/video-workspace/selection";
 import { VIDEO_WORKSPACE_LIMITS } from "@/lib/video-workspace/contracts";
@@ -65,8 +74,21 @@ function VideoCandidateWorkspaceContent({
   canEdit: boolean;
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
+  const tw = useTranslations("ClipWorkflow");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [layout, setLayout] = useState<"list" | "grid">("list");
+  const [filter, setFilter] = useState("all");
+  const [sort, setSort] = useState("recommended");
+  const sourceT = useTranslations("SourceClips");
+  const [workspaceTab, setWorkspaceTab] = useState<"source" | "clips">("clips");
   const ts = useTranslations("Dashboard.videoCandidates.selection");
   const [requirements, setRequirements] = useState<SelectionRequirements>(DEFAULT_SELECTION);
+  const [batchEnabled, setBatchEnabled] = useState(false);
+  const [task, setTask] = useState<AnalysisTaskView | null>(null);
+  const [rangeStart, setRangeStart] = useState(0);
+  const [rangeEnd, setRangeEnd] = useState((sourceDurationMs ?? 0) / 1000);
+  const [rangeError, setRangeError] = useState<false | "invalid" | "dense">(false);
   const [selection, setSelection] = useState<SelectionState | null>(null);
   const [transcriptId, setTranscriptId] = useState<string | null>(null);
   const [transcriptReady, setTranscriptReady] = useState(false);
@@ -82,16 +104,15 @@ function VideoCandidateWorkspaceContent({
   ));
   useEffect(() => {
     const candidate = new URLSearchParams(window.location.search).get("candidateId");
-    if (candidate && initialCandidates.some(item => item.id === candidate)) setSelectedCandidateId(candidate);
+    if (candidate && initialCandidates.some(item => item.id === candidate)) {setSelectedCandidateId(candidate); setWorkspaceTab("clips");}
   }, [initialCandidates]);
   const [pendingCandidateId, setPendingCandidateId] = useState<string | null>(null);
   const [editorSaveState, setEditorSaveState] = useState<VideoEditorSaveState>("saved");
   const [error, setError] = useState(false);
+  const promotedPreviews = useRef(new Set<string>());
   const [previewBusy, setPreviewBusy] = useState<string | null>(null);
-  const [manualBusy, setManualBusy] = useState(false);
   const [candidateToDelete, setCandidateToDelete] = useState<string | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
-  const autoStartedRef = useRef(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const generating = sourceAvailable && (status === "analyzing" || status === "waiting");
   const shortSource = Boolean(
@@ -101,7 +122,6 @@ function VideoCandidateWorkspaceContent({
   const selectedCandidate = candidates.find((candidate) => (
     candidate.id === selectedCandidateId
   )) ?? null;
-  const hasManualCandidate = candidates.some((candidate) => candidate.origin === "manual");
   const previewsActive = previews.some((preview) => (
     preview.status === "queued" || preview.status === "processing"
   ));
@@ -110,9 +130,11 @@ function VideoCandidateWorkspaceContent({
     let cancelled = false;
     fetch(`/api/video-projects/${projectId}/candidates`).then(async response => {
       if (!response.ok) return;
-      const data = await response.json() as { selection?: SelectionState; status?: string; transcriptReady?: boolean; transcriptId?: string };
+      const data = await response.json() as { task?: AnalysisTaskView; batchAnalysisEnabled?: boolean; selection?: SelectionState; status?: string; transcriptReady?: boolean; transcriptId?: string };
       if (cancelled) return;
-      if (data.selection) { setSelection(data.selection); setRequirements(data.selection.requirements); }
+      setBatchEnabled(Boolean(data.batchAnalysisEnabled));
+      if (data.task) {setTask(data.task);setRangeStart(data.task.range.startMs / 1000);setRangeEnd(data.task.range.endMs / 1000);}
+      if (data.selection) { setSelection(data.selection); if (data.selection.outcome !== "idle") setRequirements(data.selection.requirements); }
       if (data.status) setStatus(data.status);
       setTranscriptReady(Boolean(data.transcriptReady));
       setTranscriptId(data.transcriptId ?? null);
@@ -156,15 +178,17 @@ function VideoCandidateWorkspaceContent({
         const response = await fetch(`/api/video-projects/${projectId}/candidates`);
         if (!response.ok) return;
         const payload = (await response.json()) as {
+          task?: AnalysisTaskView;
           transcriptReady?: boolean;
           selection?: SelectionState;
           status?: string;
           candidates?: StoredClipCandidate[];
           previews?: CandidatePreview[];
         };
+        if (payload.task) setTask(payload.task);
         if (payload.selection) setSelection(payload.selection);
         setTranscriptReady(Boolean(payload.transcriptReady));
-        if (payload.status && payload.status !== "analyzing") {
+        if (payload.status) {
           setStatus(payload.status);
           if (payload.candidates) setCandidates(payload.candidates);
           if (payload.previews) setPreviews(payload.previews);
@@ -235,6 +259,8 @@ function VideoCandidateWorkspaceContent({
 
   const generate = async () => {
     if (status === "analyzing") return;
+    if (batchEnabled && !shortSource && !task?.canRetry && (!Number.isFinite(rangeStart) || !Number.isFinite(rangeEnd) || rangeStart < 0 || rangeEnd <= rangeStart || rangeEnd * 1000 > (sourceDurationMs ?? 0) || (rangeEnd-rangeStart)*1000 > AI_ANALYSIS.maxRangeMs)) {setRangeError("invalid");return;}
+    setRangeError(false);
     setUnsupported(false);
     setStatus("analyzing");
     setError(false);
@@ -245,9 +271,10 @@ function VideoCandidateWorkspaceContent({
       const response = await fetch(`/api/video-projects/${projectId}/candidates`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ requirements, requestId: crypto.randomUUID(), adjust: selection?.outcome === "empty" }),
+        body: JSON.stringify({ requirements, requestId: task?.canRetry ? task.requestId : crypto.randomUUID(), retry: Boolean(task?.canRetry), adjust: selection?.outcome === "empty", ...(batchEnabled && !shortSource ? {analysisRange: {startMs: Math.round(rangeStart*1000), endMs: Math.round(rangeEnd*1000)}} : {}) }),
       });
       const payload = (await response.json()) as {
+        task?: AnalysisTaskView;
         selection?: SelectionState;
         error?: string;
         status?: string;
@@ -255,11 +282,13 @@ function VideoCandidateWorkspaceContent({
         previews?: CandidatePreview[];
       };
       requestStatus = response.status;
+      if (payload.task) setTask(payload.task);
       if (payload.selection) setSelection(payload.selection);
+      if (payload.error === "analysis_input_too_large" || payload.error === "invalid_analysis_range") {setRangeError(payload.error === "analysis_input_too_large" ? "dense" : "invalid");setStatus("draft");return;}
       if (payload.error === "unsupported_selection") { setUnsupported(true); setStatus("draft"); return; }
       if (payload.error === "candidate_generation_active") return;
       if (!response.ok || !payload.candidates) throw new Error("candidate_generation_failed");
-      if (payload.status !== "waiting") trackVideoAction(payload.status === "editing" ? "video_manual_clip_ready" : "video_candidates_completed", {
+      if (payload.status !== "waiting" && payload.status !== "analyzing") trackVideoAction(payload.status === "editing" ? "video_manual_clip_ready" : "video_candidates_completed", {
         elapsed_ms: Date.now() - startedAt,
       });
       replaceWorkspace(
@@ -278,44 +307,6 @@ function VideoCandidateWorkspaceContent({
       trackVideoFailure("generation", requestStatus);
       setStatus(candidates.length > 0 ? "candidates_ready" : "failed");
       setError(true);
-    }
-  };
-
-  const startManualEdit = async () => {
-    if (manualBusy || generating) return;
-    setManualBusy(true);
-    setError(false);
-    let requestStatus = 0;
-    try {
-      const response = await fetch(`/api/video-projects/${projectId}/candidates`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ mode: "manual" }),
-      });
-      const payload = (await response.json()) as {
-        status?: string;
-        candidates?: StoredClipCandidate[];
-        previews?: CandidatePreview[];
-        candidateId?: string;
-      };
-      requestStatus = response.status;
-      if (!response.ok || !payload.candidates?.some((candidate) => (
-        candidate.origin === "manual"
-      ))) {
-        throw new Error("manual_editor_failed");
-      }
-      replaceWorkspace(
-        payload.candidates,
-        payload.previews ?? [],
-        payload.status ?? "editing"
-      );
-      trackVideoAction("video_manual_clip_ready");
-      if (payload.candidateId) setSelectedCandidateId(payload.candidateId);
-    } catch {
-      trackVideoFailure("manual", requestStatus);
-      setError(true);
-    } finally {
-      setManualBusy(false);
     }
   };
 
@@ -341,10 +332,14 @@ function VideoCandidateWorkspaceContent({
     }
   };
 
+  const visibleCandidates = candidates.filter(c=>filter==="all" || c.reviewMark===filter).slice().sort((a,b)=>sort==="chronological"?a.segments[0].startMs-b.segments[0].startMs:sort==="shortest"?clipDuration(a)-clipDuration(b):sort==="longest"?clipDuration(b)-clipDuration(a):a.rank-b.rank);
+  const reviewIndex = visibleCandidates.findIndex(c => c.id === selectedCandidateId);
+
   const selectCandidate = (candidateId: string) => {
     trackVideoAction("video_candidate_selected");
+    if (layout === "grid") setPreviewOpen(true);
     if (candidateId === selectedCandidateId) {
-      editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
       return;
     }
     if (editorSaveState === "dirty" || editorSaveState === "saving") {
@@ -352,28 +347,36 @@ function VideoCandidateWorkspaceContent({
       return;
     }
     setSelectedCandidateId(candidateId);
+    setEditing(false);
     setPendingCandidateId(null);
-    window.requestAnimationFrame(() => {
+    if (layout === "list" && window.innerWidth < 1024) window.requestAnimationFrame(() => {
       editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   };
 
   useEffect(() => {
-    if (
-      !shortSource || !transcriptReady || !sourceAvailable || autoStartedRef.current || status !== "draft" || candidates.length > 0 ||
-      generating || manualBusy
-    ) return;
-    autoStartedRef.current = true;
-    void startManualEdit();
-  }, [candidates.length, generating, manualBusy, shortSource, sourceAvailable, status, transcriptReady]);
+    if (!selectedCandidateId || !sourceAvailable || previewBusy || !candidates.length) return;
+    const preview = previews.find(item=>item.candidateId===selectedCandidateId);
+    const key = `${selectedCandidateId}:${preview?.segments[0]?.jobId ?? "new"}`;
+    if ((!preview || ["not_requested", "queued"].includes(preview.status)) && !promotedPreviews.current.has(key)) {
+      promotedPreviews.current.add(key);
+      void requestPreview(selectedCandidateId);
+    }
+  }, [selectedCandidateId, sourceAvailable, previews, previewBusy, candidates.length]);
 
   useEffect(() => {
-    if (status === "waiting" && transcriptReady) void generate();
-  }, [status, transcriptReady]);
+    if (!task && !batchEnabled && status === "waiting" && transcriptReady) void generate();
+  }, [status, transcriptReady, task, batchEnabled]);
 
   return (
-    <section id="clips" className="mt-6 scroll-mt-6">
-      <div className="flex flex-col justify-between gap-3 pb-3 sm:flex-row sm:items-end">
+    <section id="clips" className="mt-3 scroll-mt-6">
+      <div className="mb-1 flex gap-2 border-b border-line pb-1" role="tablist" aria-label={sourceT("navigation")}>
+        <button role="tab" aria-selected={workspaceTab === "clips"} className={`rounded-lg px-4 py-2 text-sm font-semibold ${workspaceTab === "clips" ? "bg-accent/15 text-accent" : "text-muted"}`} onClick={()=>setWorkspaceTab("clips")}>{sourceT("clips",{count:candidates.length})}</button>
+        {sourceAvailable && <button role="tab" aria-selected={workspaceTab === "source"} className={`rounded-lg px-4 py-2 text-sm font-semibold ${workspaceTab === "source" ? "bg-accent/15 text-accent" : "text-muted"}`} onClick={()=>setWorkspaceTab("source")}>{sourceT("manualSelection")}</button>}
+      </div>
+      {sourceAvailable && <div hidden={workspaceTab !== "source"}><SourceClipWorkspace active={workspaceTab === "source"} projectId={projectId} canEdit={canEdit} onCreated={(items,id)=>{setCandidates(items);setSelectedCandidateId(id);setWorkspaceTab("clips");setEditing(true);setPreviewOpen(false);setEditorSaveState("saved");}} /></div>}
+      <div hidden={workspaceTab !== "clips"}>
+      <div className={candidates.length ? "hidden" : "flex flex-col justify-between gap-3 pb-3 sm:flex-row sm:items-end"}>
         <div className="max-w-2xl">
           <p className="sr-only">
             {t("eyebrow")}
@@ -390,25 +393,33 @@ function VideoCandidateWorkspaceContent({
           </p>
         </div>
         {sourceAvailable && candidates.length > 0 ? (
-          canEdit && !hasManualCandidate ? (
+          canEdit ? (
             <button
               type="button"
-              onClick={() => void startManualEdit()}
-              disabled={manualBusy}
+              onClick={() => setWorkspaceTab("source")}
               className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-[12px] font-medium text-ink transition hover:border-ink/35 hover:bg-ink hover:text-paper disabled:cursor-wait disabled:opacity-40"
             >
-              {manualBusy ? <Loader2 size={14} className="animate-spin" /> : <Scissors size={14} />}
-              {manualBusy ? t("directEditing") : t("createCustomClip")}
+              <Scissors size={14} />
+              {t("createCustomClip")}
             </button>
           ) : null
         ) : null}
       </div>
 
       {status === "transcript_failed" ? <p role="alert" className="mt-5 rounded-xl border border-line p-4 text-sm">{ts("transcriptFailed")} {transcriptId ? <Link className="underline" href={`/dashboard/transcripts/${transcriptId}`}>{ts("reviewTranscript")}</Link> : null}</p> : null}
-      {selectionLoaded && status !== "transcript_failed" && sourceAvailable && !shortSource && !generating && candidates.length === 0 && selection?.outcome !== "matched" ? (
-        <SelectionRequestForm requirements={requirements} selection={selection} unsupported={unsupported} onChange={setRequirements} onStart={() => void generate()} />
+      {selectionLoaded && status !== "transcript_failed" && sourceAvailable && !shortSource && !generating && !candidates.some(candidate => candidate.origin === "ai") && selection?.outcome !== "matched" ? (
+        <div>
+          {batchEnabled ? <fieldset disabled={Boolean(task && ["waiting","running","failed"].includes(task.status))} className="mt-4 flex flex-wrap gap-4 rounded-xl border border-line p-4">
+            <legend className="text-sm">{ts("analysisRange")}</legend>
+            <label className="text-sm">{ts("rangeStart")}<input type="number" min={0} step={1} value={rangeStart} onChange={event=>setRangeStart(Number(event.target.value))} className="ml-2 w-28 rounded border border-line bg-paper p-2" /></label>
+            <label className="text-sm">{ts("rangeEnd")}<input type="number" min={0} step={1} value={rangeEnd} onChange={event=>setRangeEnd(Number(event.target.value))} className="ml-2 w-28 rounded border border-line bg-paper p-2" /></label>
+            <p className="w-full text-xs text-muted">{ts("rangeHint",{minutes:AI_ANALYSIS.maxRangeMs/60_000,minSeconds:AI_CLIP_MIN_DURATION_MS/1000,maxSeconds:VIDEO_WORKSPACE_LIMITS.maxAiCandidateDurationMs/1000})}</p>
+          </fieldset> : null}
+          {rangeError ? <p role="alert" className="mt-2 text-sm text-red-600">{rangeError === "dense" ? ts("rangeDense") : ts("rangeInvalid",{minutes:AI_ANALYSIS.maxRangeMs/60_000})}</p> : null}
+          {task?.status !== "failed" || task.canRetry ? <SelectionRequestForm requirements={requirements} selection={selection} unsupported={unsupported} onChange={setRequirements} onStart={() => void generate()}><GenerationSettingsPanel projectId={projectId} value={requirements} onChange={setRequirements} disabled={Boolean(task && ["waiting","running","failed"].includes(task.status))} durationMs={sourceDurationMs ?? 0}/></SelectionRequestForm> : null}
+        </div>
       ) : null}
-      {candidates.length > 0 && selection ? <p className="mt-4 text-sm text-ink/60">{ts("summary")}: {selection.requirements.mode === "auto" ? ts("auto") : `${selection.requirements.topic} · ${ts(`kinds.${selection.requirements.kind}`)}`}</p> : null}
+      {candidates.length > 0 && selection ? <p className="sr-only">{ts("summary")}: {selection.requirements.mode === "auto" ? ts("auto") : `${selection.requirements.topic} · ${ts(`kinds.${selection.requirements.kind}`)}`}</p> : null}
 
       {!sourceAvailable ? (
         <div className="mt-5 flex items-center gap-2 rounded-xl border border-amber-300/35 bg-amber-100/35 px-4 py-3 text-xs text-amber-900 dark:bg-amber-400/10 dark:text-amber-100">
@@ -423,6 +434,14 @@ function VideoCandidateWorkspaceContent({
         </p>
       ) : null}
 
+      {task ? <details open={task.status!=="completed" || Boolean(task.limitedReason)} className="mt-2 text-xs text-muted"><summary className="cursor-pointer py-1">{ts(`phases.${task.phase}`)} · {ts("batchProgress",{completed:task.completedBatches,total:task.totalBatches})}</summary><div role="status" className="mt-2 space-y-1">
+        <p>{ts(`phases.${task.phase}`)} · {ts("batchProgress",{completed:task.completedBatches,total:task.totalBatches})}</p>
+        <p>{ts("rangeSummary",{start:task.range.startMs/1000,end:task.range.endMs/1000})}</p>
+        {task.limitedReason ? <p>{ts("limited")}</p> : null}
+        {task.errorCode ? <p>{ts(task.errorCode === "unsupported_selection" ? "unsupported" : task.errorCode === "analysis_input_too_large" ? "rangeDense" : "partialFailed")} <code>{task.errorCode}</code></p> : null}
+        {task.steps.filter(step=>["failed","limited"].includes(step.status)).map(step=><p key={step.id}>{step.ranges.map(range=>ts("rangeSummary",{start:range.startMs/1000,end:range.endMs/1000})).join(" · ")} — {step.error_code ?? ts("limited")}</p>)}
+        {generating ? <p>{ts("canLeave")}</p> : null}
+      </div></details> : null}
       {generating ? <CandidateSkeleton label={status === "waiting" ? ts("waiting") : t("analyzingBody")} /> : null}
 
       {!sourceAvailable && candidates.length === 0 ? (
@@ -456,87 +475,32 @@ function VideoCandidateWorkspaceContent({
             {canEdit && status === "candidates_ready" ? (
               <button
                 type="button"
-                onClick={() => void startManualEdit()}
-                disabled={manualBusy}
-                className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[12px] font-semibold text-paper transition hover:bg-accent disabled:opacity-40"
+                onClick={() => setWorkspaceTab("source")}
+                  className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[12px] font-semibold text-paper transition hover:bg-accent disabled:opacity-40"
               >
-                {manualBusy ? <Loader2 size={14} className="animate-spin" /> : <Scissors size={14} />}
-                {manualBusy ? t("directEditing") : t("directEdit")}
+                <Scissors size={14} />
+                {t("directEdit")}
               </button>
             ) : null}
           </div>
         </div>
       ) : null}
 
-      {!generating && candidates.length > 0 ? (
-        <>
-          <div
-            role="listbox"
-            aria-label={t("shortlistTitle")}
-            className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-5"
-          >
-            {candidates.map((candidate, index) => {
-              const preview = previews.find((item) => item.candidateId === candidate.id) ?? null;
-              return (
-                <CandidateTile
-                  key={candidate.id}
-                  projectId={projectId}
-                  candidate={candidate}
-                  number={index + 1}
-                  selected={candidate.id === selectedCandidateId}
-                  pending={candidate.id === pendingCandidateId}
-                  preview={preview}
-                  previewBusy={candidate.id === previewBusy}
-                  sourceAvailable={sourceAvailable}
-                  coverUrl={initialRenders.find((render) => (
-                    render.candidateId === candidate.id && render.videoUrl
-                  ))?.coverUrl ?? null}
-                  onSelect={selectCandidate}
-                  onRequestPreview={requestPreview}
-                  onDelete={candidate.origin === "manual"
-                    ? () => setCandidateToDelete(candidate.id)
-                    : undefined}
-                />
-              );
-            })}
-          </div>
-          {sourceAvailable && previews.some(preview => preview.status === "queued" || preview.status === "processing") ? (
-            <p className="mt-3 text-[11px] leading-5 text-ink/45">
-              {t("previewPending")}
-            </p>
-          ) : null}
-        </>
-      ) : null}
-
-      {selectedCandidate ? (
-        <div ref={editorRef} className="mt-5 scroll-mt-6 rounded-2xl border border-line bg-card shadow-[0_28px_80px_-56px_rgba(14,13,11,0.7)]">
-          {!sourceAvailable ? (
-            <ArchivedClipExport
-              projectId={projectId}
-              candidate={selectedCandidate}
-              onExportDeleted={() => setCandidates((current) => (
-                current.filter((candidate) => candidate.id !== selectedCandidate.id)
-              ))}
-            />
-          ) : canEdit ? (
-            <VideoClipEditor
-              key={selectedCandidate.id}
-              projectId={projectId}
-              candidateId={selectedCandidate.id}
-              onSaveStateChange={setEditorSaveState}
-              onTitleChange={(title) => setCandidates((current) => current.map((candidate) => (
-                candidate.id === selectedCandidate.id ? { ...candidate, theme: title } : candidate
-              )))}
-            />
-          ) : (
-            <FreeCandidateExport
-              key={selectedCandidate.id}
-              projectId={projectId}
-              candidate={selectedCandidate}
-            />
-          )}
+      {!generating && candidates.length > 0 ? <>
+        {editing ? <div className="mb-4 mt-4 flex items-center justify-between border-b border-line pb-4"><button type="button" disabled={editorSaveState !== "saved"} onClick={()=>{setEditing(false);if(layout==="grid")setPreviewOpen(true);}} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line px-4 text-sm font-semibold disabled:opacity-40"><ArrowLeft size={16}/>{tw("back")}</button><span className="text-xs text-muted">{tw("editing")}</span></div> : <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-y border-line py-2">
+          <div className="flex items-center gap-3"><div className="flex rounded-lg border border-line p-1">{(["list","grid"] as const).map(view=><button key={view} aria-label={tw(view)} aria-pressed={layout===view} onClick={()=>{setLayout(view);setPreviewOpen(false);}} className="grid size-10 place-items-center rounded-md text-muted hover:text-ink aria-pressed:bg-accent/10 aria-pressed:text-accent">{view==="list"?<List size={18}/>:<LayoutGrid size={18}/>}</button>)}</div><span className="text-sm font-semibold">{sourceT("clips",{count:candidates.length})}</span></div>
+          <div className="flex gap-2"><select aria-label={tw("filter")} value={filter} onChange={e=>setFilter(e.target.value)} className="min-h-11 rounded-lg border border-line bg-card px-3 text-sm">{["all","keep","discard"].map(v=><option key={v} value={v}>{tw(v)}</option>)}</select><select aria-label={tw("sort")} value={sort} onChange={e=>setSort(e.target.value)} className="min-h-11 rounded-lg border border-line bg-card px-3 text-sm">{["recommended","chronological","shortest","longest"].map(v=><option key={v} value={v}>{tw(v)}</option>)}</select></div>
+        </div>}
+        <div className={!editing && layout==="list" ? "mt-0 grid items-start overflow-hidden rounded-b-2xl border-x border-b border-line bg-card lg:h-[calc(100dvh-250px)] lg:min-h-[500px] lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)]" : "mt-4"}>
+          {!editing ? <div className={layout==="list" ? "max-h-[340px] overflow-y-auto border-b border-line lg:h-full lg:max-h-none lg:border-b-0 lg:border-r" : "grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4"} role="listbox" aria-label={t("shortlistTitle")}>
+            {visibleCandidates.map(candidate=><CandidateTile key={candidate.id} layout={layout} projectId={projectId} candidate={candidate} number={candidate.rank+1} selected={candidate.id===selectedCandidateId} pending={candidate.id===pendingCandidateId} preview={previews.find(p=>p.candidateId===candidate.id)??null} previewBusy={candidate.id===previewBusy} sourceAvailable={sourceAvailable} coverUrl={initialRenders.find(r=>r.candidateId===candidate.id && r.videoUrl)?.coverUrl??null} onSelect={selectCandidate} onRequestPreview={requestPreview} onDelete={candidate.origin==="manual"?()=>setCandidateToDelete(candidate.id):undefined}/>)}
+            {!candidates.some(c=>filter==="all" || c.reviewMark===filter) ? <p className="p-6 text-sm text-muted">{tw("noResults")}</p> : null}
+          </div> : null}
+          {selectedCandidate && (layout === "list" || editing || previewOpen) ? <ClipPreviewDialog modal={layout === "grid" && !editing} onClose={()=>setPreviewOpen(false)} onPrevious={reviewIndex>0?()=>selectCandidate(visibleCandidates[reviewIndex-1].id):undefined} onNext={reviewIndex>=0 && reviewIndex<visibleCandidates.length-1?()=>selectCandidate(visibleCandidates[reviewIndex+1].id):undefined}><div ref={editorRef} className={editing ? "mt-5 scroll-mt-6 rounded-2xl border border-line bg-card" : "min-w-0 scroll-mt-6 lg:h-full lg:overflow-y-auto"}>
+            {!sourceAvailable ? <ArchivedClipExport projectId={projectId} candidate={selectedCandidate} onExportDeleted={()=>setCandidates(current=>current.filter(c=>c.id!==selectedCandidate.id))}/> : editing && canEdit ? <VideoClipEditor key={selectedCandidate.id} projectId={projectId} candidateId={selectedCandidate.id} onSaveStateChange={setEditorSaveState} onTitleChange={title=>setCandidates(current=>current.map(c=>c.id===selectedCandidate.id?{...c,theme:title}:c))}/> : <ClipReviewPreview key={selectedCandidate.id} projectId={projectId} candidate={selectedCandidate} canEdit={canEdit} previewStatus={previews.find(p=>p.candidateId===selectedCandidate.id)?.status} onEdit={()=>{setPreviewOpen(false);setEditing(true);editorRef.current?.scrollIntoView({behavior:"smooth",block:"start"});}} onMark={async reviewMark=>{const r=await fetch(`/api/video-projects/${projectId}/candidates/${selectedCandidate.id}`,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({reviewMark})});if(!r.ok){setError(true);return;}setCandidates(current=>current.map(c=>c.id===selectedCandidate.id?{...c,reviewMark}:c));}}/>}
+          </div></ClipPreviewDialog> : null}
         </div>
-      ) : null}
+      </> : null}
       {candidateToDelete ? (
         <div
           className="surface-modal-backdrop fixed inset-0 z-[70] flex items-center justify-center bg-ink/45 px-4 py-6 backdrop-blur-sm"
@@ -593,6 +557,7 @@ function VideoCandidateWorkspaceContent({
           </div>
         </div>
       ) : null}
+      </div>
     </section>
   );
 }
@@ -614,7 +579,7 @@ function ArchivedClipExport({
           {t("sourceUnavailableEyebrow")}
         </p>
         <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink">
-          {candidate.origin === "manual" ? t("manualTitle") : candidate.theme}
+          {candidate.theme === "manual_source" ? t("manualTitle") : candidate.theme}
         </h3>
         <p className="mt-2 text-[13px] leading-6 text-ink/60">{t("archivedClipBody")}</p>
       </div>
@@ -691,6 +656,7 @@ function FreeCandidateExport({
 }
 
 function CandidateTile({
+  layout,
   projectId,
   candidate,
   number,
@@ -716,6 +682,7 @@ function CandidateTile({
   onSelect: (candidateId: string) => void;
   onRequestPreview: (candidateId: string) => Promise<void>;
   onDelete?: () => void;
+  layout: "list" | "grid";
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
   const durationMs = candidate.segments.reduce(
@@ -733,13 +700,13 @@ function CandidateTile({
         role="option"
         aria-selected={selected}
         onClick={() => onSelect(candidate.id)}
-        className={`w-full overflow-hidden rounded-xl border bg-card text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
+        className={`w-full overflow-hidden border bg-card text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${layout === "list" ? "flex items-center gap-3 rounded-none border-x-0 border-t-0 p-3 min-h-24" : "rounded-xl"} ${
           selected
-            ? "border-accent shadow-[0_12px_36px_-24px_rgba(108,53,255,0.9)]"
+            ? "border-accent bg-accent/[0.07]"
             : "border-line hover:-translate-y-0.5 hover:border-ink/30"
         }`}
       >
-        <div className="fixed-media-surface relative aspect-video overflow-hidden bg-ink">
+        <div className={`fixed-media-surface relative shrink-0 overflow-hidden bg-black ${layout === "list" ? "aspect-video w-24 rounded-lg" : "aspect-[9/16]"}`}>
           {coverUrl ? (
             <div
               aria-hidden
@@ -747,7 +714,7 @@ function CandidateTile({
               style={{ backgroundImage: `url(${JSON.stringify(coverUrl).slice(1, -1)})` }}
             />
           ) : preview?.status === "ready" ? (
-            <CandidatePreviewFrame projectId={projectId} candidateId={candidate.id} />
+            layout === "grid" ? <ClipStyledPoster projectId={projectId} candidateId={candidate.id}/> : <CandidatePreviewFrame projectId={projectId} candidateId={candidate.id} />
           ) : (
             <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_35%,rgba(108,53,255,0.32),transparent_38%),linear-gradient(145deg,#201641,#09031b)] text-paper/45">
               {queued ? (
@@ -774,11 +741,11 @@ function CandidateTile({
             </span>
           )}
         </div>
-        <div className="min-w-0 p-2.5">
-          <p className="line-clamp-2 min-h-10 text-[12px] font-semibold leading-5 text-ink">
+        <div className="min-w-0 flex-1 p-2.5">
+          <p className="line-clamp-2 text-[12px] font-semibold leading-5 text-ink">
             {candidate.origin === "manual" ? t("manualTitle") : candidate.theme}
           </p>
-          {candidate.origin === "ai" ? <p className="sr-only">{candidate.reason}</p> : null}
+          <p className="mt-1 font-mono text-[11px] text-muted">{candidate.segments.map(s=>`${clipTime(s.startMs)} – ${clipTime(s.endMs)}`).join(" · ")}</p>{candidate.reviewMark==="keep" ? <Heart size={13} className="mt-1 text-accent" fill="currentColor"/> : null}
           <span className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-ink/45">
             {pending ? (
               <><Loader2 size={10} className="animate-spin" />{t("editor.saveState.saving")}</>
@@ -819,49 +786,27 @@ function CandidateTile({
   );
 }
 
-function CandidatePreviewFrame({
-  projectId,
-  candidateId,
-}: {
-  projectId: string;
-  candidateId: string;
-}) {
+const thumbnailCache = new Map<string, string>();
+function CandidatePreviewFrame({ projectId, candidateId }: { projectId: string; candidateId: string }) {
+  const key = projectId + ":" + candidateId;
+  const host = useRef<HTMLDivElement>(null);
+  const [image, setImage] = useState<string | null>(()=>thumbnailCache.get(key) ?? null);
   const [url, setUrl] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    fetchCandidatePreview(projectId, candidateId)
-      .then((nextUrl) => {
-        if (active) setUrl(nextUrl);
-      })
-      .catch(() => {
-        if (active) setFailed(true);
-      });
-    return () => {
-      active = false;
-    };
-  }, [candidateId, projectId]);
-
-  if (!url || failed) {
-    return (
-      <div className="absolute inset-0 grid place-items-center bg-[linear-gradient(145deg,#201641,#09031b)] text-paper/45">
-        {failed ? <AlertCircle size={18} /> : <Loader2 size={18} className="animate-spin" />}
-      </div>
-    );
-  }
-  return (
-    <video
-      muted
-      playsInline
-      preload="metadata"
-      src={url}
-      onLoadedMetadata={(event) => {
-        event.currentTarget.currentTime = Math.min(0.1, event.currentTarget.duration || 0);
-      }}
-      className="absolute inset-0 size-full object-cover opacity-80 transition duration-300 group-hover:scale-[1.02] group-hover:opacity-100"
-    />
-  );
+  useEffect(()=>{
+    if (image || !host.current) return;
+    let active=true;
+    const observer=new IntersectionObserver(entries=>{
+      if(!entries.some(e=>e.isIntersecting))return;
+      observer.disconnect();
+      fetchCandidatePreview(projectId,candidateId).then(url=>{if(active)setUrl(url);}).catch(()=>{if(active)setFailed(true);});
+    },{rootMargin:"80px"});
+    observer.observe(host.current);
+    return ()=>{active=false;observer.disconnect();};
+  },[projectId,candidateId,image]);
+  return <div ref={host} className="absolute inset-0">
+    {image ? <img src={image} alt="" className="size-full object-cover"/> : url && !failed ? <video muted playsInline crossOrigin="anonymous" preload="metadata" src={url} onLoadedMetadata={e=>{e.currentTarget.currentTime=Math.min(5,e.currentTarget.duration/2);}} onError={()=>setFailed(true)} onSeeked={e=>{try{const video=e.currentTarget;const canvas=document.createElement("canvas");canvas.width=320;canvas.height=Math.round(320*video.videoHeight/video.videoWidth);canvas.getContext("2d")!.drawImage(video,0,0,canvas.width,canvas.height);const data=canvas.toDataURL("image/jpeg",0.75);if(thumbnailCache.size>=120)thumbnailCache.delete(thumbnailCache.keys().next().value!);thumbnailCache.set(key,data);setImage(data);}catch{setFailed(true);}}} className="size-full object-cover"/> : <div className="grid size-full place-items-center bg-black text-white/50">{failed?<Film size={20}/>:<Loader2 size={18} className="animate-spin"/>}</div>}
+  </div>;
 }
 
 async function fetchCandidatePreview(projectId: string, candidateId: string): Promise<string> {
@@ -895,3 +840,5 @@ function formatDuration(durationMs: number): string {
   const seconds = Math.round(durationMs / 1000);
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
+
+function clipDuration(candidate: StoredClipCandidate) { return candidate.segments.reduce((n,s)=>n+s.endMs-s.startMs,0); }

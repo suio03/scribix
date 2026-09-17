@@ -30,6 +30,7 @@ const STATUS_TONE: Record<string, string> = {
 
 export function HistoryWorkspace({highlightedPostId, onNewPost, loadPosts = getPosts, progress = false, retryTarget = retryPost, pollMs, initialPosts = []}: {highlightedPostId: string | null; onNewPost: () => void; loadPosts?: (signal?: AbortSignal) => Promise<PublicPost[]>; progress?: boolean; retryTarget?: typeof retryPost; pollMs?: number; initialPosts?: PublicPost[]}) {
  const tx = useTranslations("Distribution");
+ const nav = useTranslations("WorkspaceNav");
  const flow = useTranslations("PublishFlow");
  const social = useTranslations("SocialPublishing");
 function formatTime(timestamp: number | null) {
@@ -171,7 +172,7 @@ function targetDetail(target: PublicPost["targets"][number]) {
       <main className="app-main">
         <div className="page-head">
           <div>
-            <h1 className="page-head__title">{progress ? flow("progress") : tx("m90ccd64974")}</h1>
+            <h1 className="page-head__title">{progress ? flow("progress") : nav("posts")}</h1>
             <p className="page-head__sub">
               {progress ? flow("progressHint") : tx("m72b297586a")}</p>
           </div>

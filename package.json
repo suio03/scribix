@@ -25,7 +25,7 @@
     "poc:cloudflare-video:remote": "node scripts/video-workspace/run-cloudflare-container-remote-poc.mjs",
     "poc:smart-reframe": "node scripts/video-workspace/smart-reframe-poc.mjs",
     "build:cloudflare": "opennextjs-cloudflare build",
-    "dev:video-workspace": "MINIFLARE_CONTAINER_EGRESS_IMAGE=cloudflare/proxy-everything:3cb1195 wrangler dev -c wrangler.jsonc -c wrangler.video-render.local.jsonc --persist-to .wrangler/state --port 3000",
+    "dev:video-workspace": "MINIFLARE_CONTAINER_EGRESS_IMAGE=cloudflare/proxy-everything:3cb1195 wrangler dev -c wrangler.jsonc -c wrangler.video-render.local.jsonc -c wrangler.ai-clips.jsonc --persist-to .wrangler/state --port 3000",
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
@@ -50,7 +50,10 @@
     "test:publish-workflow": "node --test scripts/test-publish-workflow.mjs",
     "test:publish-render": "node scripts/video-workspace/test-publish-render.mjs",
     "test:framing-analysis": "node --test scripts/analyze-framing.test.mjs",
-    "test:platform-batch": "node --test scripts/test-platform-batch.mjs"
+    "test:platform-batch": "node --test scripts/test-platform-batch.mjs",
+    "test:ai-analysis": "node --test scripts/test-ai-analysis.mjs",
+    "test:video-90s": "node scripts/video-workspace/test-90-second-render.mjs",
+    "benchmark:ai-analysis": "node scripts/video-workspace/analysis-benchmark.mjs"
   },
   "dependencies": {
     "@cloudflare/containers": "^0.3.7",

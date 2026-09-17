@@ -95,19 +95,19 @@ export default async function VideoProjectPage({ params }: Params) {
   const previews = allPreviews.filter((preview) => candidateIds.has(preview.candidateId));
 
   return (
-    <main className="product-surface-refresh mx-auto max-w-[1180px] px-4 py-6 sm:px-6 sm:py-8">
+    <main className="product-surface-refresh mx-auto max-w-[1440px] px-4 py-4 sm:px-6 sm:py-5">
       <Link
         href="/dashboard"
         className="text-[13px] text-ink/55 transition hover:text-ink"
       >
         {t("back")}
       </Link>
-      <div className="mt-5 flex items-start justify-between gap-5">
-        <div className="max-w-3xl">
+      <div className="mt-2 flex items-start justify-between gap-5">
+        <div className="min-w-0 flex-1">
           <p className="sr-only">
             {t("workspaceLabel")}
           </p>
-          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink">
+          <h1 title={project.title} className="truncate font-display text-lg font-semibold tracking-tight text-ink">
             {project.title}
           </h1>
         </div>

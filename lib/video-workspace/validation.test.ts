@@ -229,7 +229,7 @@ test("AI candidate generation is available only before a successful analysis", (
   assert.equal(aiCandidateGenerationBlocked("draft", []), false);
   assert.equal(aiCandidateGenerationBlocked("failed", []), false);
   assert.equal(aiCandidateGenerationBlocked("candidates_ready", []), true);
-  assert.equal(aiCandidateGenerationBlocked("editing", ["manual"]), true);
+  assert.equal(aiCandidateGenerationBlocked("editing", ["manual"]), false);
   assert.equal(aiCandidateGenerationBlocked("failed", ["ai"]), true);
 });
 
@@ -250,10 +250,10 @@ test("short-video duration policy adapts candidate count without padding", () =>
   assert.deepEqual(result.candidates, []);
 });
 
-test("AI candidates stop at 45 seconds and edited timelines stop at 60 seconds", () => {
+test("AI candidates and edited timelines stop at 90 seconds", () => {
   const analysis = buildCandidateAnalysisInput(candidateTranscriptFixture(), 120_000);
   const provider = parseProviderCandidateSet({
-    candidates: [providerCandidate(0.9, 10_000, 56_000)],
+    candidates: [providerCandidate(0.9, 10_000, 101_000)],
   });
   const candidates = alignAndValidateCandidateSet(
     provider,
@@ -264,11 +264,11 @@ test("AI candidates stop at 45 seconds and edited timelines stop at 60 seconds",
 
   assert.equal(validateEdl({
     schemaVersion: 1,
-    segments: [{ id: "s0", sourceStartMs: 0, sourceEndMs: 60_000, order: 0 }],
+    segments: [{ id: "s0", sourceStartMs: 0, sourceEndMs: 90_000, order: 0 }],
   }, { sourceDurationMs: 120_000 }).success, true);
   assert.equal(validateEdl({
     schemaVersion: 1,
-    segments: [{ id: "s0", sourceStartMs: 0, sourceEndMs: 60_001, order: 0 }],
+    segments: [{ id: "s0", sourceStartMs: 0, sourceEndMs: 90_001, order: 0 }],
   }, { sourceDurationMs: 120_000 }).success, false);
 });
 

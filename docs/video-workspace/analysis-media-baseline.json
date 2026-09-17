@@ -1,0 +1,16 @@
+{
+  "fixture": "synthetic-engineering-only",
+  "realSourceAcceptance": false,
+  "previewMs": 58604.889668,
+  "finalMs": 152153.424703,
+  "output": {
+    "durationMs": 90000,
+    "bytes": 25052721,
+    "width": 1080,
+    "height": 1920,
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "hasAudio": true
+  },
+  "coverBytes": 68964
+}

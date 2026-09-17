@@ -32,10 +32,10 @@ export async function getTikTokCreatorInfo(accountId: string, signal?: AbortSign
   return (await json<{creator: TikTokCreatorInfo}>(`/api/social/connections?creatorInfo=${encodeURIComponent(accountId)}`, {signal})).creator;
 }
 // The integration accepts at most one channel per supported platform. The service enforces this too.
-export function getPublishPolicy(signal?: AbortSignal) { return json<{maxTargets: number; tiktokPublishingEnabled: boolean}>("/api/social/availability", {signal}); }
-export async function getPosts(signal?: AbortSignal, batchId?: string) { return (await json<{posts: PublicPost[]}>(`/api/social/posts${batchId ? `?task=${encodeURIComponent(batchId)}` : ""}`, {signal})).posts; }
+export function getPublishPolicy(signal?: AbortSignal) { return json<{schedulingEnabled: boolean; maxTargets: number; tiktokPublishingEnabled: boolean}>("/api/social/availability", {signal}); }
+export async function getPosts(signal?: AbortSignal, batchId?: string, planner = false) { return (await json<{posts: PublicPost[]}>(`/api/social/posts${batchId ? `?task=${encodeURIComponent(batchId)}` : planner ? "?planner=1" : ""}`, {signal})).posts; }
 export function retryPost(postId: string, targetId: string) { return json("/api/social/posts", mutation("PATCH", {postId, targetId})); }
-export type PostInput = {batchId?: string; platform?: string; title?: string; mediaId: string; caption: string; accountIds: string[]; youtubeTitle?: string; youtube?: {privacyStatus: YouTubePrivacyStatus; selfDeclaredMadeForKids: boolean; communityGuidelinesCertified: boolean}; tiktok?: {accountId: string; privacyLevel: TikTokPrivacyLevel; allowComment: boolean; allowDuet: boolean; allowStitch: boolean; isAigc: boolean; brandOrganic: boolean; brandedContent: boolean}[]};
+export type PostInput = {mode?: "now" | "schedule"; scheduledAt?: number; timezone?: string; batchId?: string; platform?: string; title?: string; mediaId: string; caption: string; accountIds: string[]; youtubeTitle?: string; youtube?: {privacyStatus: YouTubePrivacyStatus; selfDeclaredMadeForKids: boolean; communityGuidelinesCertified: boolean}; tiktok?: {accountId: string; privacyLevel: TikTokPrivacyLevel; allowComment: boolean; allowDuet: boolean; allowStitch: boolean; isAigc: boolean; brandOrganic: boolean; brandedContent: boolean}[]};
 // Retain the exact request across uncertain transport outcomes; changing the form cannot duplicate it.
 const pending = new Map<string, {body: object; fingerprint: string}>();
 export function hasPendingPost(key: string) {
@@ -66,4 +66,11 @@ export async function createPost(input: PostInput, draft: ComposeDraft, submissi
 
 export function refreshPlatformAccount(accountId: string) {
   return json<{ok: true; expiresAt: number | null}>("/api/social/connections", mutation("PATCH", {accountId}));
+}
+
+export function changeSchedule(postId: string, scheduledAt: number, timezone: string) {
+  return json("/api/social/schedule", mutation("PATCH", {postId, scheduledAt, timezone}));
+}
+export function cancelSchedule(postId: string) {
+  return json("/api/social/schedule", mutation("DELETE", {postId}));
 }

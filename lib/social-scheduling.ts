@@ -1,0 +1,2 @@
+export const MIN_SCHEDULE_DELAY_SECONDS = 5 * 60;
+export const MAX_SCHEDULE_DELAY_SECONDS = 365 * 24 * 60 * 60;

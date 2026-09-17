@@ -4,6 +4,7 @@ import type { CandidateSet, ClipCandidate } from "./contracts";
 export type ClipCandidateOrigin = "ai" | "manual";
 
 export type StoredClipCandidate = ClipCandidate & {
+  reviewMark?: "keep" | "discard" | null;
   rank: number;
   origin: ClipCandidateOrigin;
   status: "suggested" | "accepted" | "rejected";
@@ -11,6 +12,7 @@ export type StoredClipCandidate = ClipCandidate & {
 };
 
 type CandidateRow = {
+  review_mark: "keep" | "discard" | null;
   id: string;
   rank: number;
   theme: string;
@@ -29,7 +31,7 @@ export async function listClipCandidates(
   projectId: string
 ): Promise<StoredClipCandidate[]> {
   const { results } = await db.prepare(
-    `SELECT c.id, c.rank, c.theme, c.hook, c.reason, c.score, c.origin,
+    `SELECT c.id, c.review_mark, c.rank, c.theme, c.hook, c.reason, c.score, c.origin,
             c.segments_json, c.status, c.created_at
        FROM clip_candidates c
        JOIN video_projects p
@@ -49,6 +51,7 @@ export async function listClipCandidates(
       ? [{
           schemaVersion: 1 as const,
           id: row.id,
+          reviewMark: row.review_mark ?? null,
           rank: row.rank,
           origin: row.origin,
           theme: row.theme,
@@ -68,17 +71,20 @@ export async function replaceClipCandidates(
   userId: string,
   projectId: string,
   candidateSet: CandidateSet,
-  executionId?: string
+  executionId?: string,
+  fence?: {taskId:string;token:string}
 ): Promise<boolean> {
+  const guard = (index: number) => fence ? ` AND EXISTS (SELECT 1 FROM ai_analysis_tasks WHERE id = ?${index} AND lease_token = ?${index+1} AND lease_until > unixepoch())` : "";
+  const fenceBindings = fence ? [fence.taskId, fence.token] : [];
   const statements = [
     db.prepare(
-      `DELETE FROM clip_candidates WHERE project_id = ?1 AND user_id = ?2 AND (?3 IS NULL OR EXISTS (SELECT 1 FROM video_projects WHERE id = ?1 AND selection_request_id = ?3 AND selection_outcome = 'running'))`
-    ).bind(projectId, userId, executionId ?? null),
+      `DELETE FROM clip_candidates WHERE origin = 'ai' AND project_id = ?1 AND user_id = ?2 AND (?3 IS NULL OR EXISTS (SELECT 1 FROM video_projects WHERE id = ?1 AND selection_request_id = ?3 AND selection_outcome = 'running'))${guard(4)}`
+    ).bind(projectId, userId, executionId ?? null, ...fenceBindings),
     ...candidateSet.candidates.map((candidate, rank) =>
       db.prepare(
         `INSERT INTO clip_candidates
            (id, user_id, project_id, rank, theme, hook, reason, score, segments_json)
-         SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9 WHERE ?10 IS NULL OR EXISTS (SELECT 1 FROM video_projects WHERE id = ?3 AND user_id = ?2 AND selection_request_id = ?10 AND selection_outcome = 'running')`
+         SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9 WHERE ?10 IS NULL OR EXISTS (SELECT 1 FROM video_projects WHERE id = ?3 AND user_id = ?2 AND selection_request_id = ?10 AND selection_outcome = 'running')${guard(11)}`
       ).bind(
         candidate.id,
         userId,
@@ -89,14 +95,15 @@ export async function replaceClipCandidates(
         candidate.reason,
         candidate.score,
         JSON.stringify(candidate.segments),
-        executionId ?? null
+        executionId ?? null,
+        ...fenceBindings
       )
     ),
     db.prepare(
       `UPDATE video_projects
           SET status = 'candidates_ready', selection_outcome = ?4, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL AND (?3 IS NULL OR (selection_request_id = ?3 AND selection_outcome = 'running'))`
-    ).bind(projectId, userId, executionId ?? null, candidateSet.candidates.length ? 'matched' : 'empty'),
+        WHERE id = ?1 AND user_id = ?2 AND deleted_at IS NULL AND (?3 IS NULL OR (selection_request_id = ?3 AND selection_outcome = 'running'))${guard(5)}`
+    ).bind(projectId, userId, executionId ?? null, candidateSet.candidates.length ? 'matched' : 'empty', ...fenceBindings),
   ];
   const results = await db.batch(statements);
   return Boolean(results[results.length - 1].meta.changes);

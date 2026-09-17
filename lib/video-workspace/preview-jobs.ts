@@ -12,6 +12,7 @@ import {
 import { VideoWorkspaceR2 } from "./r2-keys";
 
 type PreviewCandidateRow = {
+  origin: "ai" | "manual";
   id: string;
   rank: number;
   segments_json: string;
@@ -75,7 +76,8 @@ export async function queueAutomaticCandidatePreviews(
     queue,
     userId,
     projectId,
-    candidates.slice(0, PREVIEW_PROXY_AUTO_CANDIDATES)
+    candidates.filter(candidate=>candidate.origin === "ai").slice(0, PREVIEW_PROXY_AUTO_CANDIDATES),
+    0
   );
 }
 
@@ -88,6 +90,7 @@ export async function queueCandidatePreviews(
 ): Promise<QueueCandidatePreviewsResult> {
   const candidates = await candidateRows(db, userId, projectId, [candidateId]);
   if (candidates.length === 0) return { ok: false, error: "candidate_not_found" };
+  await db.prepare("UPDATE render_jobs SET priority=1 WHERE project_id=?1 AND user_id=?2 AND candidate_id=?3 AND status='queued'").bind(projectId,userId,candidateId).run();
   return queueCandidateRows(db, queue, userId, projectId, candidates);
 }
 
@@ -303,7 +306,8 @@ async function queueCandidateRows(
   queue: Queue<RenderDispatchMessage>,
   userId: string,
   projectId: string,
-  candidates: PreviewCandidateRow[]
+  candidates: PreviewCandidateRow[],
+  priority = 1
 ): Promise<QueueCandidatePreviewsResult> {
   const project = await previewProject(db, userId, projectId);
   if (!project) return { ok: false, error: "project_not_found" };
@@ -402,10 +406,10 @@ async function queueCandidateRows(
                 segment_index, segment_id, source_start_ms, source_end_ms,
                 proxy_source_start_ms, proxy_source_end_ms, proxy_version,
                 kind, preset_id, scope_key, status, idempotency_key,
-                output_asset_id, queued_at)
+                output_asset_id, queued_at, priority)
              VALUES
                (?1, ?2, ?3, NULL, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11,
-                'preview', ?12, ?13, 'queued', ?14, ?15, CURRENT_TIMESTAMP)`
+                'preview', ?12, ?13, 'queued', ?14, ?15, CURRENT_TIMESTAMP, ?16)`
           ).bind(
             jobId,
             userId,
@@ -421,7 +425,8 @@ async function queueCandidateRows(
             PREVIEW_PROXY_PRESET.id,
             `candidate:${candidate.id}:segment:${segmentIndex}:v${proxyVersion}`,
             idempotencyKey,
-            assetId
+            assetId,
+            priority
           ),
         ]);
       } catch (error) {
@@ -558,7 +563,7 @@ function candidateRows(
     ? `AND c.id IN (${candidateIds.map((_, index) => `?${index + 3}`).join(",")})`
     : "";
   return db.prepare(
-    `SELECT c.id, c.rank, c.segments_json
+    `SELECT c.id, c.rank, c.segments_json, c.origin
        FROM clip_candidates c
        JOIN video_projects p
          ON p.id = c.project_id AND p.user_id = c.user_id

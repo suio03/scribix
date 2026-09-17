@@ -1,8 +1,9 @@
+import { MIN_SCHEDULE_DELAY_SECONDS, MAX_SCHEDULE_DELAY_SECONDS } from "@/lib/social-scheduling";
 import { validSocialOrigin } from "@/lib/social-origin";
 import { auth } from "@/auth";
 import { cf, cfBackground } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { clipflightEnabled, clipflightRequest } from "@/lib/clipflight";
+import { clipflightEnabled, clipflightRequest, socialSchedulingEnabled } from "@/lib/clipflight";
 import { presignGet } from "@/lib/r2";
 import { encryptSocialRequest, refreshSocialSubmission, socialRequestHash, type SocialSubmission } from "@/lib/social-submissions";
 type Params = { params: Promise<{ id: string }> };
@@ -24,13 +25,20 @@ export async function POST(request: Request, { params }: Params) {
   if (!validSocialOrigin(request)) return Response.json({ error: "invalid_origin" }, { status: 403 });
   const c = await context(params); if (!c) return Response.json({ error: "not_found" }, { status: 404 });
   if (Number(request.headers.get("Content-Length")) > 32768) return Response.json({ error: "invalid_request" }, { status: 413 });
-  const body = await request.json().catch(() => null) as { batchId?: string; platform?: string; title?: string; submissionId: string; renderJobId: string; expectedRevision: number; confirmed: boolean; accountIds: string[]; caption: string; youtubeTitle?: string; youtube?: object; tiktok?: object[] } | null;
+  const body = await request.json().catch(() => null) as { mode?: "now" | "schedule"; scheduledAt?: number; timezone?: string; batchId?: string; platform?: string; title?: string; submissionId: string; renderJobId: string; expectedRevision: number; confirmed: boolean; accountIds: string[]; caption: string; youtubeTitle?: string; youtube?: object; tiktok?: object[] } | null;
   if (!body || typeof body.submissionId !== "string" || !/^[a-f0-9-]{36}$/.test(body.submissionId) || typeof body.renderJobId !== "string" || !Number.isInteger(body.expectedRevision) || body.confirmed !== true)
     return Response.json({ error: "invalid_request" }, { status: 400 });
   if (body.batchId !== undefined && (!/^[a-f0-9-]{36}$/.test(body.batchId) || !["youtube", "linkedin"].includes(body.platform ?? "") || typeof body.title !== "string" || body.title.length > 500)) return Response.json({error: "invalid_request"}, {status: 400});
   const hash = await socialRequestHash(body);
   let saved = await c.env.DB.prepare("SELECT * FROM social_submissions WHERE id = ? AND user_id = ? AND project_id = ?").bind(body.submissionId, c.user.id, c.id).first<SocialSubmission & { request_hash: string }>();
   if (saved && saved.request_hash !== hash) return Response.json({ error: "submission_conflict" }, { status: 409 });
+  if (!saved && body.mode !== undefined && body.mode !== "now" && body.mode !== "schedule") return Response.json({error: "invalid_request"}, {status: 400});
+  if (!saved && body.mode === "schedule") {
+    if (!await socialSchedulingEnabled(c.user.id)) return Response.json({error: "scheduling_unavailable"}, {status: 503});
+    const now = Math.floor(Date.now() / 1000);
+    if (!Number.isSafeInteger(body.scheduledAt) || body.scheduledAt! < now + MIN_SCHEDULE_DELAY_SECONDS || body.scheduledAt! > now + MAX_SCHEDULE_DELAY_SECONDS || typeof body.timezone !== "string") return Response.json({error: "invalid_schedule"}, {status: 400});
+    try { new Intl.DateTimeFormat("en", {timeZone: body.timezone}); } catch { return Response.json({error: "invalid_schedule"}, {status: 400}); }
+  }
   if (!saved) {
     const asset = await c.env.DB.prepare(`SELECT a.id, a.r2_key FROM render_jobs j
       JOIN project_versions v ON v.id = j.project_version_id AND v.user_id = j.user_id
@@ -45,7 +53,7 @@ export async function POST(request: Request, { params }: Params) {
     const head = await c.env.SCRIBIX_MEDIA.head(asset.r2_key);
     if (!head) return Response.json({ error: "render_asset_missing" }, { status: 410 });
     const now = Math.floor(Date.now() / 1000);
-    const payload = { accountIds: body.accountIds, caption: body.caption, youtubeTitle: body.youtubeTitle, youtube: body.youtube, tiktok: body.tiktok, confirmed: true,
+    const payload = { mode: body.mode ?? "now", scheduledAt: body.scheduledAt, timezone: body.timezone, accountIds: body.accountIds, caption: body.caption, youtubeTitle: body.youtubeTitle, youtube: body.youtube, tiktok: body.tiktok, confirmed: true,
       media: { url: await presignGet(asset.r2_key, 3600), sizeBytes: head.size, contentType: "video/mp4", expiresAt: now + 3600 } };
     await c.env.DB.batch([
       c.env.DB.prepare("UPDATE media_assets SET social_hold_until = MAX(social_hold_until, ?) WHERE id = ? AND user_id = ? AND social_hold_until >= 0 AND status = 'ready' AND deleted_at IS NULL AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)").bind(now + 3600, asset.id, c.user.id),

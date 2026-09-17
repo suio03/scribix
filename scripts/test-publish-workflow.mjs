@@ -107,7 +107,7 @@ function routeFixture(t) {
     "@/lib/video-workspace/preview-jobs": { listCandidatePreviews: async () => [], queueAutomaticCandidatePreviews: async () => {}, queueCandidatePreviews: async () => {} },
   });
   const params = { params: Promise.resolve({ id: "p" }) };
-  return { ...databaseFixture, calls, user, ProviderError, generate(fn) { generate = fn; }, post: body => route.POST(new Request("http://local/api", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }), params), get: () => route.GET(new Request("http://local/api"), params) };
+  return { ...databaseFixture, env, calls, user, ProviderError, generate(fn) { generate = fn; }, post: body => route.POST(new Request("http://local/api", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }), params), get: () => route.GET(new Request("http://local/api"), params) };
 }
 test("zero matches grants exactly one explicit direction change; unchanged retries do not spend it", async t => {
   const f = routeFixture(t);
@@ -139,7 +139,7 @@ test("concurrent tabs and late old execution cannot overwrite current results", 
   const f = routeFixture(t); let resolveFirst; let started;
   const startedPromise = new Promise(resolve => { started = resolve; });
   f.generate(async () => { started(); return new Promise(resolve => { resolveFirst = resolve; }); });
-  const first = f.post({ requestId: "first-request" }); await startedPromise;
+  const first = f.post({ requestId: "first-request" }); await Promise.race([startedPromise, first.then(async response => { throw new Error(`generation did not start: ${response.status} ${await response.text()}`); })]);
   assert.equal((await f.post({ requestId: "other-request" })).status, 409);
   f.run([{ sql: "UPDATE video_projects SET updated_at=datetime('now','-11 minutes')" }]);
   f.generate(async () => ({ candidates: { candidates: [{ theme: "New", hook: "New", reason: "Complete", score: 0.9, segments: [{ startMs: 0, endMs: 29900 }] }] }, usage: null }));
@@ -292,12 +292,13 @@ test("social publishing freezes the owned MP4 without requiring a completed cove
   const f = await renderFixture(t); f.user.tier = "free";
   f.run([{ sql: "UPDATE media_assets SET status='ready' WHERE id='video'" }, { sql: "UPDATE render_jobs SET status='failed' WHERE id='job'" }]);
   const encrypted = [];
+  let schedulingEnabled = true;
   const background = [];
   const route = loadModule("app/api/video-projects/[id]/social/posts/route.ts", {
     "@/auth": { auth: async () => ({ user: { id: f.user.id } }) },
     "@/lib/cf": { cfBackground: async work => {background.push(work);}, cf: async () => ({ DB: f.db, SCRIBIX_MEDIA: { head: async () => ({ size: 100 }) } }) },
     "@/lib/current-user": { getOrCreateCurrentUser: async () => f.user },
-    "@/lib/clipflight": { clipflightEnabled: () => true },
+    "@/lib/clipflight": { clipflightEnabled: () => true, socialSchedulingEnabled: async () => schedulingEnabled },
     "@/lib/r2": { presignGet: async () => "https://fixture/source.mp4?signature=private" },
     "@/lib/social-submissions": { socialRequestHash: async value => JSON.stringify(value), encryptSocialRequest: async value => { encrypted.push(value); return "ciphertext"; }, refreshSocialSubmission: async (_db, row) => ({ id: row.id, status: "submitting" }) },
   });
@@ -321,6 +322,15 @@ test("social publishing freezes the owned MP4 without requiring a completed cove
   assert.equal(JSON.parse(groupedRow.display_json).caption, "Frozen copy");
   assert.equal((await submit({...grouped, batchId: "not-a-task"})).status, 400);
   assert.equal((await submit({...grouped, title: "Changed"})).status, 409);
+  const schedule = {...grouped, submissionId: "00000000-0000-4000-8000-000000000004", mode: "schedule", scheduledAt: Math.floor(Date.now()/1000)+3600, timezone: "Australia/Melbourne"};
+  schedulingEnabled = false;
+  assert.equal((await submit(schedule)).status, 503, "legacy service cannot receive scheduled content");
+  schedulingEnabled = true;
+  assert.equal((await submit({...schedule, scheduledAt: 1})).status, 400);
+  assert.equal((await submit(schedule)).status, 202);
+  assert.equal(encrypted.at(-1).mode, "schedule");
+  assert.equal(encrypted.at(-1).scheduledAt, schedule.scheduledAt);
+  assert.equal((await submit({...schedule, scheduledAt: schedule.scheduledAt+60})).status, 409);
   f.user.id = "other"; assert.equal((await submit(body)).status, 404);
 });
 
@@ -578,4 +588,132 @@ test("platform batch request IDs reach the server even after a successful respon
   await loadModule("app/components/publishing/api.ts", {}, globals).createPost(input, draft, submissionId);
   assert.equal(bodies[0].submissionId, submissionId);
   assert.deepEqual(bodies[0], bodies[1]);
+});
+
+test("source selection creates independent clips before AI and preserves them through AI selection", async t => {
+  const f=database();t.after(f.dispose);let user={id:"u",tier:"basic"};let present=true;
+  f.run([{sql:"UPDATE media_assets SET r2_key='source.mp4' WHERE id='a'"}]);
+  const route=loadModule("app/api/video-projects/[id]/source-clips/route.ts",{
+    "@/auth":{auth:async()=>({user:{id:user.id}})},
+    "@/lib/cf":{cf:async()=>({DB:f.db,SCRIBIX_MEDIA:{head:async()=>present?{size:123}:null,get:async()=>({json:async()=>({words:[{text:"Hello",start:1000,end:1500},{text:"world",start:1600,end:2000}]})})}})},
+    "@/lib/current-user":{getOrCreateCurrentUser:async()=>user},
+  });
+  const params={params:Promise.resolve({id:"p"})};
+  const read=()=>route.GET(new Request("https://scribix.io/api/video-projects/p/source-clips"),params);
+  const submit=body=>route.POST(new Request("https://scribix.io/api/video-projects/p/source-clips",{method:"POST",headers:{origin:"https://scribix.io","content-type":"application/json"},body:JSON.stringify(body)}),params);
+  assert.equal((await (await read()).json()).words.length,2);
+  assert.equal((await f.db.prepare("SELECT count(*) AS n FROM clip_candidates").first()).n,0,"viewing the source creates no clips");
+  const body={requestId:"00000000-0000-4000-8000-000000000021",startMs:90000,endMs:120000};
+  assert.equal((await submit(body)).status,201);
+  assert.equal((await submit(body)).status,201);
+  assert.equal((await submit({...body,endMs:121000})).status,409);
+  assert.equal((await submit({...body,requestId:"00000000-0000-4000-8000-000000000022",startMs:120000,endMs:150000})).status,201);
+  assert.equal((await f.db.prepare("SELECT count(*) AS n FROM clip_candidates").first()).n,2);
+  const candidates=loadModule("lib/video-workspace/candidates.ts");
+  await candidates.replaceClipCandidates(f.db,"u","p",{candidates:[]});
+  const saved=await f.db.prepare("SELECT segments_json FROM clip_candidates WHERE id=?").bind(body.requestId).first();
+  assert.deepEqual(JSON.parse(saved.segments_json),[{startMs:90000,endMs:120000}]);
+  assert.equal((await submit({...body,requestId:"00000000-0000-4000-8000-000000000023",startMs:0,endMs:90000})).status,201);
+  assert.equal((await submit({...body,startMs:0,endMs:91000})).status,400);
+  assert.equal((await submit({...body,startMs:-1})).status,400);
+  user={id:"u",tier:"free"};assert.equal((await submit(body)).status,402);
+  user={id:"other",tier:"basic"};assert.equal((await read()).status,404);assert.equal((await submit(body)).status,404);
+  user={id:"u",tier:"basic"};present=false;assert.equal((await submit(body)).status,410);
+});
+
+test("an older publishing service never receives a schedule as publish-now", async () => {
+  const calls = [];
+  const service = loadModule("lib/clipflight.ts", {"server-only": {}}, {
+    process: {env: {CLIPFLIGHT_API_KEY: "test-only", CLIPFLIGHT_TIKTOK_PUBLISH_ENABLED: "true"}},
+    AbortSignal,
+    fetch: async (url, options) => {calls.push([url, options.method]); return Response.json({error:"not_found"}, {status:404});},
+  });
+  const response = await service.clipflightRequest("user", "/posts", {method:"POST", body:JSON.stringify({mode:"schedule", scheduledAt:123})});
+  assert.equal(response.status, 503);
+  assert.equal(calls.length, 1);
+  assert.ok(calls[0][0].endsWith("/publishing-capabilities"));
+});
+
+test("schedule mutations only forward owned posts and invalidate shared history", async t => {
+  const f = await renderFixture(t);
+  f.run([{sql:"INSERT INTO social_submissions (id,user_id,project_id,render_job_id,request_hash,remote_post_id,created_at,expires_at,result_json) VALUES ('submission',?,'p','job','hash','remote',0,9999999999,'{}')",values:[f.user.id]}]);
+  const calls=[];
+  const route=loadModule("app/api/social/schedule/route.ts", {
+    "@/auth":{auth:async()=>({user:{id:f.user.id}})},
+    "@/lib/cf":{cf:async()=>({DB:f.db})},
+    "@/lib/current-user":{getOrCreateCurrentUser:async()=>f.user},
+    "@/lib/clipflight":{clipflightEnabled:()=>true,clipflightRequest:async(...args)=>{calls.push(args);return Response.json({ok:true});}},
+  });
+  const request=(postId,method="PATCH")=>new Request("https://scribix.io/api/social/schedule",{method,headers:{Origin:"https://scribix.io"},body:JSON.stringify({postId,scheduledAt:9999999999,timezone:"Australia/Melbourne"})});
+  assert.equal((await route.PATCH(request("unowned"))).status,404);
+  assert.equal(calls.length,0);
+  assert.equal((await route.PATCH(request("remote"))).status,200);
+  assert.equal((await f.db.prepare("SELECT result_json FROM social_submissions WHERE id='submission'").first()).result_json,null);
+  assert.equal((await route.DELETE(request("remote","DELETE"))).status,200);
+  assert.equal(calls[1][2].method,"DELETE");
+});
+
+test("batch API returns 202, preserves request identity and rejects overlong implicit ranges", async t => {
+  const f=routeFixture(t);
+  f.env.AI_CLIPS_BATCH_ENABLED="true";
+  f.env.AI_CLIPS_QUEUE={send:async()=>{}};
+  const first=await f.post({requestId:"batch-request",requirements:{mode:"specific",topic:"original",kind:"advice"}});
+  assert.equal(first.status,202);
+  const accepted=await first.json();assert.equal(accepted.task.range.endMs,180000);assert.equal(f.calls.length,0);
+  f.env.AI_CLIPS_BATCH_ENABLED="false";
+  const repeated=await f.post({requestId:"batch-request",requirements:{mode:"specific",topic:"changed",kind:"story"}});
+  assert.equal(repeated.status,202);const same=await repeated.json();assert.equal(same.task.id,accepted.task.id);assert.equal(same.selection.requirements.topic,"original");
+  assert.equal((await f.post({requestId:"other-request"})).status,409);
+  const other=routeFixture(t);other.env.AI_CLIPS_BATCH_ENABLED="true";other.env.AI_CLIPS_QUEUE={send:async()=>{}};
+  other.run([{sql:"UPDATE media_assets SET duration_ms=10800001 WHERE id='a'"}]);
+  assert.equal((await other.post({requestId:"long-request"})).status,400);
+  assert.equal((await other.post({requestId:"range-request",analysisRange:{startMs:0,endMs:10800000}})).status,202);
+  assert.equal(other.calls.length,0);
+});
+
+test("generation settings survive auto mode and seed new clips without replacing saved edits", async t => {
+  const generation={length:"long",captions:"minimal-v1",headline:true,framing:"fit"};
+  const parsed=selection.parseSelection({mode:"auto",topic:"ignored",kind:"any",generation});
+  assert.deepEqual(plain(parsed.generation),generation);
+  assert.match(selection.selectionPrompt(parsed),/60–90 seconds/);
+  assert.throws(()=>selection.parseSelection({...parsed,generation:{...generation,length:"unlimited"}}));
+  const f=publishFixture(t);
+  f.run([{sql:"UPDATE video_projects SET selection_json=?",values:[JSON.stringify(parsed)]}]);
+  const first=await f.editor.loadEditorWorkspace(f.db,f.bucket,"u","p","c");
+  assert.equal(first.workspace.renderSpec.captions.templateId,"minimal-v1");
+  assert.equal(first.workspace.renderSpec.segments.s0.framingMode,"fit");
+  assert.equal(first.workspace.renderSpec.openingTitle.text,"Opening");
+  await f.editor.saveProjectDraft(f.db,"u","p","c",0,first.workspace.edl,{...first.workspace.renderSpec,captions:{...first.workspace.renderSpec.captions,enabled:false}});
+  f.run([{sql:"UPDATE video_projects SET selection_json=?",values:[JSON.stringify({...parsed,generation:{...generation,captions:"boxed-v1"}})]}]);
+  const saved=await f.editor.loadEditorWorkspace(f.db,f.bucket,"u","p","c");
+  assert.equal(saved.workspace.renderSpec.captions.enabled,false);
+  assert.equal(saved.workspace.renderSpec.captions.templateId,"minimal-v1");
+});
+
+test("review marks persist independently across candidates and cannot touch another owner", async t => {
+  const f=publishFixture(t);
+  f.run([{sql:"INSERT INTO clip_candidates(id,user_id,project_id,rank,theme,hook,reason,score,segments_json) SELECT 'c2',user_id,project_id,1,theme,hook,reason,score,segments_json FROM clip_candidates WHERE id='c'"}]);
+  const route=loadModule("app/api/video-projects/[id]/candidates/[candidateId]/route.ts",{"@/auth":{auth:async()=>({user:{id:f.user.id}})},"@/lib/cf":{cf:async()=>({DB:f.db})},"@/lib/current-user":{getOrCreateCurrentUser:async()=>f.user}});
+  const patch=(id,mark)=>route.PATCH(new Request("http://local/api",{method:"PATCH",body:JSON.stringify({reviewMark:mark})}),{params:Promise.resolve({id:"p",candidateId:id})});
+  assert.equal((await patch("c","keep")).status,200);
+  assert.equal((await patch("c2","keep")).status,200);
+  assert.equal((await f.db.prepare("SELECT COUNT(*) n FROM clip_candidates WHERE review_mark='keep'").first()).n,2);
+  assert.equal((await patch("c",null)).status,200);
+  f.user.id="other";assert.equal((await patch("c2","discard")).status,404);
+  assert.equal((await f.db.prepare("SELECT review_mark FROM clip_candidates WHERE id='c2'").first()).review_mark,"keep");
+});
+
+test("free review can read owned clips but cannot save or snapshot edits", async () => {
+  let reads=0;
+  const route=loadModule("app/api/video-projects/[id]/editor/route.ts", {
+    "@/auth":{auth:async()=>({user:{id:"u"}})},
+    "@/lib/cf":{cf:async()=>({DB:{},SCRIBIX_MEDIA:{}})},
+    "@/lib/current-user":{getOrCreateCurrentUser:async()=>({id:"u",tier:"free"})},
+    "@/lib/video-workspace/editor":{loadEditorWorkspace:async()=>{reads++;return {ok:true,workspace:{revision:0}};},saveProjectDraft:()=>assert.fail("review cannot save"),snapshotProjectDraft:()=>assert.fail("review cannot snapshot")},
+  });
+  const params={params:Promise.resolve({id:"p"})};
+  assert.equal((await route.GET(new Request("http://local/editor?candidateId=c&view=review"),params)).status,200);
+  assert.equal((await route.GET(new Request("http://local/editor?candidateId=c"),params)).status,402);
+  for(const method of ["PUT","POST"])assert.equal((await route[method](new Request("http://local/editor?view=review",{method,body:"{}"}),params)).status,402);
+  assert.equal(reads,1);
 });

@@ -1,7 +1,9 @@
 "use client";
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { SELECTION_KINDS, SELECTION_TOPIC_LIMIT, type SelectionRequirements, type SelectionState } from "@/lib/video-workspace/selection";
-export function SelectionRequestForm({ requirements, selection, unsupported, onChange, onStart }: {
+export function SelectionRequestForm({ requirements, selection, unsupported, onChange, onStart, children }: {
+  children?: ReactNode;
   requirements: SelectionRequirements; selection: SelectionState | null; unsupported: boolean;
   onChange: (requirements: SelectionRequirements) => void; onStart: () => void;
 }) {
@@ -18,6 +20,7 @@ export function SelectionRequestForm({ requirements, selection, unsupported, onC
               <label className="block text-sm">{ts("kind")}<select value={requirements.kind} onChange={event => onChange({ ...requirements, kind: event.target.value as SelectionRequirements["kind"] })} className="ml-3 rounded-lg border border-line bg-paper p-2">{SELECTION_KINDS.map(kind => <option key={kind} value={kind}>{ts(`kinds.${kind}`)}</option>)}</select></label>
             </div> : null}
           </fieldset>
+          {children}
           <p className="mt-3 text-sm text-ink/60">{ts("scope")}</p>
           {unsupported ? <p role="alert" className="mt-3 text-sm text-red-600">{ts("unsupported")}</p> : null}
           {selection?.outcome === "empty" ? <p role="status" className="mt-3 text-sm">{ts(selection.adjustmentsRemaining ? "empty" : "exhausted")}</p> : null}

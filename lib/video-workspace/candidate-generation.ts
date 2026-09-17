@@ -1,3 +1,4 @@
+import { AI_ANALYSIS, type AnalysisRange } from "./analysis-config";
 import {
   VIDEO_WORKSPACE_LIMITS,
   VIDEO_WORKSPACE_SCHEMA_VERSION,
@@ -26,7 +27,7 @@ type CandidateTranscript = {
   paragraphs?: AnalysisSegment[];
 };
 
-export const AI_CLIP_CANDIDATE_COUNT = VIDEO_WORKSPACE_LIMITS.maxCandidates;
+export const AI_CLIP_CANDIDATE_COUNT = 5;
 export const AI_CLIP_MIN_DURATION_MS = 15_000;
 export const AI_CLIP_MAX_DURATION_MS = VIDEO_WORKSPACE_LIMITS.maxAiCandidateDurationMs;
 export const AI_CLIP_MAX_SEGMENTS = 1;
@@ -51,6 +52,8 @@ export type TranscriptWordBoundary = {
 };
 
 export type ProviderCandidate = {
+  topicGroup?: number;
+  topicCluster?: number;
   theme: string;
   hook: string;
   reason: string;
@@ -126,7 +129,6 @@ export function aiCandidateGenerationBlocked(
 ): boolean {
   return (
     projectStatus === "candidates_ready" ||
-    projectStatus === "editing" ||
     candidateOrigins.includes("ai")
   );
 }
@@ -139,7 +141,8 @@ export function candidateLimitForSourceDuration(sourceDurationMs: number): numbe
 
 export function buildCandidateAnalysisInput(
   transcript: CandidateTranscript,
-  sourceDurationMs?: number | null
+  sourceDurationMs?: number | null,
+  range?: AnalysisRange
 ): CandidateAnalysisInput {
   const words = normalizeTranscriptWords(transcript.words, sourceDurationMs);
   if (words.length === 0) {
@@ -153,8 +156,9 @@ export function buildCandidateAnalysisInput(
     sourceDurationMs ?? 0,
     words[words.length - 1].endMs
   );
-  const sentences = buildCandidateSentences(transcript, words);
-  const batches = batchCandidateSentences(sentences);
+  const sentences = buildCandidateSentences(transcript, words).filter(sentence => !range || (sentence.startMs >= range.startMs && sentence.endMs <= range.endMs));
+  const batches = batchCandidateSentences(sentences, Boolean(range));
+  if (range && batches.length > AI_ANALYSIS.maxDiscoveryCalls) throw oversizedAnalysisInput();
   return {
     text: formatSentenceInput(sentences),
     truncated: false,
@@ -318,7 +322,7 @@ export function parseProviderCandidateSet(
   if (
     !Number.isInteger(maxCandidates) ||
     maxCandidates < 0 ||
-    maxCandidates > AI_CLIP_CANDIDATE_COUNT
+    maxCandidates > AI_ANALYSIS.maxReviewCandidates
   ) {
     throw invalidProviderOutput();
   }
@@ -540,7 +544,7 @@ function formatSentenceInput(sentences: CandidateSentence[]): string {
   return [SENTENCE_INPUT_HEADER, ...sentences.map(sentenceLine)].join("\n");
 }
 
-function batchCandidateSentences(sentences: CandidateSentence[]): CandidateAnalysisBatch[] {
+export function batchCandidateSentences(sentences: CandidateSentence[], bounded = false): CandidateAnalysisBatch[] {
   const batches: CandidateAnalysisBatch[] = [];
   let first = 0;
   while (first < sentences.length) {
@@ -548,7 +552,8 @@ function batchCandidateSentences(sentences: CandidateSentence[]): CandidateAnaly
     let chars = SENTENCE_INPUT_HEADER.length;
     while (last < sentences.length) {
       const extra = sentenceLine(sentences[last]).length + 1;
-      if (chars + extra > AI_CLIP_INPUT_CHAR_LIMIT - 2_000) break;
+      if (chars + extra > (bounded ? AI_ANALYSIS.batchChars : AI_CLIP_INPUT_CHAR_LIMIT - 2_000)) break;
+      if (bounded && last > first && sentences[last].endMs - sentences[first].startMs > AI_ANALYSIS.batchMs) break;
       chars += extra;
       last += 1;
     }
@@ -556,9 +561,9 @@ function batchCandidateSentences(sentences: CandidateSentence[]): CandidateAnaly
     const group = sentences.slice(first, last);
     batches.push({ text: formatSentenceInput(group), sentences: group });
     if (last === sentences.length) break;
-    const overlapStart = group[group.length - 1].endMs - ANALYSIS_BATCH_OVERLAP_MS;
+    const overlapStart = group[group.length - 1].endMs - (bounded ? AI_ANALYSIS.overlapMs : ANALYSIS_BATCH_OVERLAP_MS);
     let next = last;
-    while (next > first + 1 && sentences[next - 1].endMs > overlapStart) next -= 1;
+    while (next > first + 1 && sentences[next - 1].startMs >= overlapStart) next -= 1;
     first = next;
   }
   return batches;

@@ -40,7 +40,7 @@ export function groupPublishPosts(posts: PublicPost[]): PublicPost[] {
     const targets = items.flatMap(post => post.targets.map(target => ({...target, postId: post.id, caption: post.caption})));
     const states = targets.length ? targets.map(target => target.status) : items.map(post => post.status);
     const terminal = states.every(status => ["published", "failed", "canceled"].includes(status));
-    const status = states.every(status => status === "published") ? "published" : terminal ? states.includes("published") ? "partial" : "failed" : "publishing";
+    const status = states.every(status => status === "scheduled") ? "scheduled" : states.every(status => status === "canceled") ? "canceled" : states.every(status => status === "published") ? "published" : terminal ? states.includes("published") ? "partial" : "failed" : "publishing";
     return {...items[0], id, targets, status: items.length === 1 ? items[0].status : status};
   });
 }

@@ -41,6 +41,7 @@
   },
 
   "vars": {
+    "AI_CLIPS_BATCH_ENABLED": "false",
     "CLIPFLIGHT_TIKTOK_PUBLISH_ENABLED": "true",
     "VIDEO_WORKSPACE_ROLLOUT_PERCENT": "100",
     "VIDEO_WORKSPACE_PILOT_USER_IDS": "",
@@ -79,6 +80,7 @@
 
   "queues": {
     "producers": [
+      { "binding": "AI_CLIPS_QUEUE", "queue": "scribix-ai-clips" },
       {
         "binding": "VIDEO_RENDER_QUEUE",
         "queue": "scribix-video-render"

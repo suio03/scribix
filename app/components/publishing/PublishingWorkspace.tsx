@@ -45,9 +45,7 @@ export function PublishingWorkspace({view, userId, allowDemo = false}: {allowDem
   }, [demo, view, projectId, candidateId, query, attempt, returnKey, requestId]);
   const library = () => router.push("/dashboard");
   return <div className="mx-auto max-w-[1320px] px-4 py-8 sm:px-8">
-    {view !== "accounts" && <nav aria-label={t("navigation")} className="mb-8 flex flex-wrap gap-2 border-b border-line pb-4">
-      {([['compose', '/dashboard/publish'], ['history', '/dashboard/publishing']] as const).map(([key, href]) => <Link key={key} href={demo ? `${href}?demo=1` : key === "compose" && resume ? resume : href} aria-current={key === view ? "page" : undefined} className={`rounded-lg px-4 py-2 text-sm font-semibold ${key === view ? "bg-accent/15 text-accent" : "text-muted hover:bg-card"}`}>{t(key)}</Link>)}
-    </nav>}
+    {!demo && view === "history" && <div className="mb-6 flex justify-end"><Link className="rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-[var(--action-text)]" href={resume ?? "/dashboard/publish"}>{t("compose")}</Link></div>}
     {view === "accounts" && resume && <Link className="mb-5 inline-block text-sm text-accent underline" href={resume}>{ta("backToPublish")}</Link>}
     {view === "accounts" && <AccountsWorkspace onNewPost={library} />}
     {!demo && view === "history" && !taskId && <HistoryWorkspace highlightedPostId={search.get("post")} onNewPost={library} />}

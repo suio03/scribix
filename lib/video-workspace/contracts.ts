@@ -3,14 +3,14 @@ import type { AutoFramingPlan } from "./auto-framing";
 export const VIDEO_WORKSPACE_SCHEMA_VERSION = 1 as const;
 
 export const VIDEO_WORKSPACE_LIMITS = {
-  maxCandidates: 5,
+  maxCandidates: 120,
   maxSegments: 3,
   maxFramingRangesPerSegment: 100,
-  maxAiCandidateDurationMs: 45_000,
+  maxAiCandidateDurationMs: 90_000,
   directEditMaxSourceDurationMs: 45_000,
   minSegmentDurationMs: 250,
-  maxSegmentDurationMs: 60_000,
-  maxTimelineDurationMs: 60_000,
+  maxSegmentDurationMs: 90_000,
+  maxTimelineDurationMs: 90_000,
   maxSourceDurationMs: 12 * 60 * 60 * 1000,
   maxActiveFinalJobsPerUser: 2,
   maxFinalJobsPerUserPerDay: 20,
@@ -37,7 +37,7 @@ export const PREVIEW_PROXY_PRESET = {
   handleDurationMs: 5_000,
 } as const;
 
-export const PREVIEW_PROXY_AUTO_CANDIDATES = VIDEO_WORKSPACE_LIMITS.maxCandidates;
+export const PREVIEW_PROXY_AUTO_CANDIDATES = 5;
 export const PREVIEW_PROXY_RETENTION_DAYS = 7 as const;
 export const PREVIEW_PROXY_URL_TTL_SECONDS = 15 * 60;
 export const FINAL_RENDER_URL_TTL_SECONDS = 60 * 60;

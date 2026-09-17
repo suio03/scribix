@@ -42,7 +42,7 @@ async function fixture(t, userCount = 10, jobsPerUser = 5) {
   };
   await sql(`CREATE TABLE video_projects(id TEXT PRIMARY KEY, deleted_at TEXT);
     CREATE TABLE render_jobs(id TEXT PRIMARY KEY, user_id TEXT, project_id TEXT,
-      kind TEXT, status TEXT DEFAULT 'queued', provider TEXT, provider_job_id TEXT,
+      kind TEXT, priority INTEGER NOT NULL DEFAULT 1, status TEXT DEFAULT 'queued', provider TEXT, provider_job_id TEXT,
       attempt INTEGER DEFAULT 0, error_code TEXT, provider_submitted_at TEXT,
       queued_at TEXT DEFAULT '2026-01-01 00:00:00', created_at TEXT DEFAULT '2026-01-01 00:00:00',
       updated_at TEXT DEFAULT '2026-01-01 00:00:00', started_at TEXT, completed_at TEXT,
@@ -205,4 +205,12 @@ test("a completed signed result wakes the next user without waiting for the cron
   assert.equal(f.messages.length, 1);
   const next = await scheduling.claimNextRenderJob(f.db, 1);
   assert.notEqual(next.user_id, claimed.user_id);
+});
+
+test("active opens and exports outrank automatic warmups within a user without preemption", async t => {
+  const f=await fixture(t,1,3);
+  await f.sql("UPDATE render_jobs SET priority=0");
+  await f.sql("UPDATE render_jobs SET priority=1 WHERE id='u00-j2'");
+  assert.equal((await scheduling.claimNextRenderJob(f.db,10)).id,'u00-j2');
+  assert.equal(await scheduling.claimNextRenderJob(f.db,10),null);
 });

@@ -56,7 +56,7 @@ test("repeated phrases map by stable IDs to exact words, not rounded display tim
 test("invalid IDs, missing intermediate sentences, reversed and overlong ranges are rejected", () => {
   const analysis = buildCandidateAnalysisInput(fixture(), 600_000);
   for (const candidate of [proposal("s010", "s12"), proposal("s999", "s1000"),
-    proposal("s12", "s10"), proposal("s0", "s5"), proposal("s0", "s0"),
+    proposal("s12", "s10"), proposal("s0", "s9"), proposal("s0", "s0"),
     { ...proposal(), startMs: 100_123 }]) {
     assert.throws(() => parseSentenceCandidateSet({ candidates: [candidate] }, analysis.sentences), CandidateGenerationError);
   }
@@ -94,7 +94,7 @@ test("review rejects cross-candidate context jumps, altered accepts, duplicates 
   const valid = decision(1, "accept", "s40", "s42");
   for (const bad of [decision(0, "adjust", "s40", "s42"), decision(0, "adjust", "s6", "s8"),
     decision(0, "accept", "s9", "s12"), decision(0, "reject", "s10", "s12"),
-    decision(0, "adjust", "s9", "s14"), decision(-1, "reject", null, null)]) {
+    decision(0, "adjust", "s6", "s15"), decision(-1, "reject", null, null)]) {
     assert.throws(() => parseSentenceCandidateReviewResult({ reviews: [bad, valid] }, proposed, context), CandidateGenerationError);
   }
   assert.throws(() => parseSentenceCandidateReviewResult({ reviews: [valid] }, proposed, context), CandidateGenerationError);

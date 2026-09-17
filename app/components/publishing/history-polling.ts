@@ -18,7 +18,7 @@ export function nextHistoryPollDelay(posts: PollablePost[]) {
   );
 
   if (!hasActive) {
-    return null;
+    return posts.some(post => post.status === "scheduled") ? 60000 : null;
   }
 
   const hasEarlyState = posts.some(

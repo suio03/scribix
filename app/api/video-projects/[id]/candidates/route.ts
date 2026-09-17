@@ -1,3 +1,5 @@
+import { latestAnalysisTask, submitAnalysisTask, retryAnalysisTask } from "@/lib/video-workspace/analysis-tasks";
+import { parseAnalysisRange } from "@/lib/video-workspace/analysis-config";
 import { DEFAULT_SELECTION, parseSelection, type SelectionRequirements, type SelectionState } from "@/lib/video-workspace/selection";
 import { recoverProjectRenderQueue } from "@/lib/video-workspace/render-scheduling";
 import { auth } from "@/auth";
@@ -58,6 +60,8 @@ export async function GET(_: Request, { params }: Params) {
     listClipCandidates(context.env.DB, context.user.id, context.project.id),
     listCandidatePreviews(context.env.DB, context.user.id, context.project.id),
   ]);
+  const task = await latestAnalysisTask(context.env.DB, context.project.id, context.user.id);
+  const taskActive = task && ["waiting", "running"].includes(task.status);
   const access = videoWorkspaceAccessFor(context.user.tier);
   const candidates = access.canEditClips
     ? allCandidates
@@ -65,10 +69,12 @@ export async function GET(_: Request, { params }: Params) {
   const candidateIds = new Set(candidates.map((candidate) => candidate.id));
   const previews = allPreviews.filter((preview) => candidateIds.has(preview.candidateId));
   return Response.json({
-    status: context.project.transcript_status === "error" ? "transcript_failed" : context.project.selection_outcome === "waiting" ? "waiting" : effectiveProjectStatus(context.project),
+    batchAnalysisEnabled: context.env.AI_CLIPS_BATCH_ENABLED === "true",
+    task,
+    status: context.project.transcript_status === "error" ? "transcript_failed" : taskActive ? (context.project.transcript_status === "completed" ? "analyzing" : "waiting") : task?.status === "failed" ? "failed" : context.project.selection_outcome === "waiting" ? "waiting" : effectiveProjectStatus(context.project),
     transcriptReady: context.project.transcript_status === "completed",
     transcriptId: context.project.transcript_id,
-    selection: selectionState(context.project),
+    selection: { ...selectionState(context.project), ...(taskActive ? {outcome: context.project.transcript_status === "completed" ? "running" : "waiting"} : task?.status === "failed" ? {outcome:"failed"} : {}) },
     candidates,
     previews,
   });
@@ -85,11 +91,8 @@ export async function POST(request: Request, { params }: Params) {
   ) {
     return Response.json({ error: "source_video_missing" }, { status: 410 });
   }
-  if (project.status === "analyzing" && !candidateGenerationStale(project.updated_at)) {
-    return Response.json({ error: "candidate_generation_active" }, { status: 409 });
-  }
 
-  let body: { mode?: unknown; requirements?: unknown; requestId?: unknown; adjust?: unknown } = {};
+  let body: { mode?: unknown; requirements?: unknown; requestId?: unknown; adjust?: unknown; analysisRange?: unknown; retry?: unknown } = {};
   try {
     if (request.headers.get("content-type")?.includes("application/json")) body = await request.json();
     if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error();
@@ -100,12 +103,45 @@ export async function POST(request: Request, { params }: Params) {
   try { requirements = parseSelection(body.requirements); }
   catch { return Response.json({ error: "invalid_selection" }, { status: 400 }); }
   if ((body.requestId !== undefined && (typeof body.requestId !== "string" || !/^[a-zA-Z0-9_-]{8,100}$/.test(body.requestId))) ||
-      (body.adjust !== undefined && typeof body.adjust !== "boolean")) return Response.json({ error: "invalid_candidate_request" }, { status: 400 });
+      (body.adjust !== undefined && typeof body.adjust !== "boolean") ||
+      (body.retry !== undefined && typeof body.retry !== "boolean")) return Response.json({ error: "invalid_candidate_request" }, { status: 400 });
   const executionId = typeof body.requestId === "string" && /^[a-zA-Z0-9_-]{8,100}$/.test(body.requestId)
     ? body.requestId : crypto.randomUUID();
   const access = videoWorkspaceAccessFor(user.tier);
   if (mode === "manual" && !access.canEditClips) {
     return Response.json({ error: "upgrade_required" }, { status: 402 });
+  }
+  const requestedTask = mode === "ai" && typeof body.requestId === "string" ? await latestAnalysisTask(env.DB, project.id, user.id, body.requestId) : null;
+  if (requestedTask) {
+    if (body.retry === true) await retryAnalysisTask(env.DB, project.id, user.id, requestedTask.requestId);
+    await env.AI_CLIPS_QUEUE.send({wake:true}).catch(() => {});
+    const snapshot = await (await GET(request,{params})).json() as Record<string, unknown>;
+    return Response.json({...snapshot,task:await latestAnalysisTask(env.DB,project.id,user.id,requestedTask.requestId)},{status:202});
+  }
+  if (body.retry === true) return Response.json({error:"analysis_task_not_found"},{status:404});
+  const currentTask = mode === "ai" ? await latestAnalysisTask(env.DB, project.id, user.id) : null;
+  const useBatch = mode === "ai" && !(access.canEditClips && project.source_duration_ms && project.source_duration_ms <= DIRECT_EDIT_MAX_SOURCE_DURATION_MS);
+  if (currentTask && ["waiting","running","failed"].includes(currentTask.status)) return Response.json({error:"candidate_generation_active"},{status:409});
+  if (useBatch && env.AI_CLIPS_BATCH_ENABLED === "true") {
+    let range;
+    try {range = parseAnalysisRange(body.analysisRange,project.source_duration_ms ?? 0);}
+    catch {return Response.json({error:"invalid_analysis_range"},{status:400});}
+    if (project.transcript_status === "completed" && project.transcript_r2_key) {
+      const object = await env.SCRIBIX_MEDIA.get(project.transcript_r2_key);
+      if (!object) return Response.json({error:"word_timestamps_missing"},{status:422});
+      try {buildCandidateAnalysisInput(await object.json() as AaiTranscript,project.source_duration_ms,range);}
+      catch(error) {return Response.json({error:error instanceof CandidateGenerationError ? error.code : "invalid_candidate_request"},{status:422});}
+    }
+    try {
+      await submitAnalysisTask(env.DB,{projectId:project.id,userId:user.id,transcriptId:project.transcript_id,requestId:executionId,requirements,range,adjust:body.adjust===true});
+    } catch {return Response.json({error:"candidate_generation_active"},{status:409});}
+    await env.AI_CLIPS_QUEUE.send({wake:true}).catch(() => {});
+    const response = await GET(request,{params});
+    return new Response(response.body,{status:202,headers:response.headers});
+  }
+  if (body.analysisRange !== undefined) return Response.json({error:"batch_analysis_disabled"},{status:409});
+  if (mode === "ai" && project.status === "analyzing" && !candidateGenerationStale(project.updated_at)) {
+    return Response.json({ error: "candidate_generation_active" }, { status: 409 });
   }
   if (project.transcript_status !== "completed" || !project.transcript_r2_key) {
     if (mode === "manual") return Response.json({ error: "transcript_not_ready" }, { status: 409 });

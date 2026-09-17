@@ -744,7 +744,8 @@ function BoundaryInput({
   );
 }
 
-function ContinuousProxyPlayer({
+export function ContinuousProxyPlayer({
+  readOnly = false,
   panel, setPanel, controlsHost,
   onDraftActive,
   timeline,
@@ -753,6 +754,7 @@ function ContinuousProxyPlayer({
   onChange,
   labels,
 }: {
+  readOnly?: boolean;
   panel: "framing" | "captions" | "cover" | "content";
   setPanel: (panel: "framing" | "captions" | "cover" | "content") => void;
   controlsHost: HTMLDivElement | null;
@@ -877,10 +879,11 @@ function ContinuousProxyPlayer({
   };
 
   useEffect(() => {
+    if (readOnly) return;
     seekTimeline(renderSpec.coverTimelineMs);
     // The cover control is an explicit seek request; other style edits do not move playback.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [renderSpec.coverTimelineMs]);
+  }, [renderSpec.coverTimelineMs, readOnly]);
 
   const advance = () => {
     if (!playing || switchingRef.current) return;
@@ -977,7 +980,7 @@ function ContinuousProxyPlayer({
   }, [playing, activeSlot, activeIndex, timeline]);
 
   if (timeline.length === 0) {
-    return <div className="fixed-media-surface grid aspect-[9/16] w-full max-w-[min(100%,calc(56vh*9/16))] place-items-center rounded-xl bg-ink px-6 text-center text-[12px] text-paper/55">{labels.previewMissing}</div>;
+    return <div className="fixed-media-surface grid aspect-[9/16] w-full max-w-[min(100%,calc(62vh*9/16))] place-items-center rounded-xl bg-ink px-6 text-center text-[12px] text-paper/55">{labels.previewMissing}</div>;
   }
   const mediaStyle = (slot: 0 | 1) => {
     const dimensions = videoDimensions[slot];
@@ -1004,10 +1007,10 @@ function ContinuousProxyPlayer({
   };
 
   return (
-    <div className="space-y-3">
+    <div className={readOnly ? "flex h-full min-h-0 flex-col items-center gap-2" : "space-y-3"}>
     <div
       style={{ backgroundColor: renderSpec.canvas.backgroundColor }}
-      className="relative mx-auto aspect-[9/16] w-full max-w-[min(100%,calc(56vh*9/16))] overflow-hidden rounded-xl [container-type:inline-size] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]"
+      className={`relative mx-auto aspect-[9/16] overflow-hidden rounded-xl [container-type:inline-size] ${readOnly ? "h-[calc(100%-66px)] max-w-full shrink-0" : "w-full max-w-[min(100%,calc(56vh*9/16))] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]"}`}
     >
       <video
         ref={videos[0]}
@@ -1034,6 +1037,7 @@ function ContinuousProxyPlayer({
       {activeSegment ? (
         <PreviewOverlays
           timelineMs={timelineMs}
+          guides={!readOnly}
           segmentId={activeSegment.id}
           sourceMs={sourceMs}
           renderSpec={renderSpec}
@@ -1064,7 +1068,7 @@ function ContinuousProxyPlayer({
         </span>
       </button>
     </div>
-      <div className="rounded-xl border border-line bg-card px-4 py-3">
+      <div className={readOnly ? "w-full shrink-0 px-2 py-1" : "rounded-xl border border-line bg-card px-4 py-3"}>
         {adjusting && previewSection ? <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs">
           <span className="font-medium text-ink">{playbackScope ? t("visual.previewSection", { number: playbackScope.number, start: formatSectionTimestamp(playbackScope.start), end: formatSectionTimestamp(playbackScope.end) }) : t("visual.previewWhole")}</span>
           <button type="button" className="text-accent underline" onClick={() => { setPlaying(false); setPreviewWholeClip(!previewWholeClip); playbackScopeRef.current = null; seekTimeline(previewWholeClip ? previewSection.start : 0); }}>{t(previewWholeClip ? "visual.backToSection" : "visual.playWhole")}</button>
@@ -1086,11 +1090,11 @@ function ContinuousProxyPlayer({
         </div>
 
       </div>
-    <div className="flex flex-wrap justify-center gap-2">
+    {!readOnly ? <div className="flex flex-wrap justify-center gap-2">
       <button type="button" onClick={() => { setPlaying(false); setPanel("cover"); setCoverSet(true); onChange({ ...renderSpec, coverTimelineMs: Math.min(Math.round(timelineMs), durationMs - 1) }); }} className="rounded-lg border border-line bg-card px-3 py-2 text-xs font-medium text-ink">{t("workspace.coverAt", { time: formatTimestamp(timelineMs) })}</button>
 
-    </div>
-    {activeSegment && activeCrop && controlsHost ? createPortal(
+    </div> : null}
+    {activeSegment && activeCrop && controlsHost && !readOnly ? createPortal(
       <div className="space-y-4 p-5 text-sm text-ink">
       {panel === "framing" ? <>
         <h5 className="font-display text-lg font-semibold">{t("framing.title")}</h5>
@@ -1150,9 +1154,10 @@ function CoverFrame({ timeline, renderSpec, assets }: { timeline: TimelineSegmen
   </div>;
 }
 
-function PreviewOverlays({
+export function PreviewOverlays({
   timelineMs = 0,
   cover = false,
+  guides = true,
   segmentId,
   sourceMs,
   renderSpec,
@@ -1160,6 +1165,7 @@ function PreviewOverlays({
 }: {
   timelineMs?: number;
   cover?: boolean;
+  guides?: boolean;
   segmentId: string;
   sourceMs: number;
   renderSpec: RenderSpec;
@@ -1200,7 +1206,7 @@ function PreviewOverlays({
     <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
       <PublishTitleOverlay spec={renderSpec} timeMs={timelineMs} cover={cover} />
       {font ? <style>{`@font-face{font-family:"${fontFamily}";src:url("${font.url}") format("truetype");font-display:swap;}`}</style> : null}
-      <div className="absolute inset-[5%] rounded-md border border-dashed border-white/20" />
+      {guides ? <div className="absolute inset-[5%] rounded-md border border-dashed border-white/20" /> : null}
       {renderSpec.brand.templateId === "signature-v1" ? (
         <div
           className="absolute inset-x-0 bottom-0"

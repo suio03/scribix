@@ -15,7 +15,7 @@ export type AaiResultRow = {
 };
 
 export async function applyAaiResult(
-  env: CloudflareEnv,
+  env: Pick<CloudflareEnv, "DB" | "SCRIBIX_MEDIA">,
   row: AaiResultRow,
   aai: Awaited<ReturnType<typeof getTranscript>>
 ): Promise<void> {

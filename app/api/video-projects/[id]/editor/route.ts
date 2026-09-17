@@ -13,7 +13,7 @@ type Params = { params: Promise<{ id: string }> };
 export async function GET(request: Request, { params }: Params) {
   const context = await editorContext(params);
   if (context instanceof Response) return context;
-  if (!context.canEdit) return upgradeRequired();
+  if (!context.canEdit && new URL(request.url).searchParams.get("view") !== "review") return upgradeRequired();
   const candidateId = new URL(request.url).searchParams.get("candidateId");
   if (!candidateId) {
     return Response.json({ error: "candidate_id_required" }, { status: 400 });

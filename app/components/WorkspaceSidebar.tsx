@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
-import { Clapperboard, FileText, FolderKanban, Link2, Send, X } from "lucide-react";
+import { CalendarDays, Home, Plus, FileText, FolderKanban, Link2, Send, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { getPathname, Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -29,7 +29,7 @@ export function WorkspaceSidebar({
 }) {
   const topNavT = useTranslations("TopNav");
   const sidebarT = useTranslations("Sidebar");
-  const distributionT = useTranslations("DistributionNav");
+  const workspaceT = useTranslations("WorkspaceNav");
   const dashboardT = useTranslations("Dashboard.list");
   const locale = useLocale();
   const pathname = usePathname();
@@ -43,7 +43,7 @@ export function WorkspaceSidebar({
 
   const closeMobile = () => setOpen(false);
   const createActive = pathname === "/dashboard/new";
-  const projectsActive = pathname === "/dashboard" || pathname.startsWith("/dashboard/video-projects/");
+  const projectsActive = pathname === "/dashboard/projects" || pathname.startsWith("/dashboard/video-projects/");
   const transcriptsActive = pathname.startsWith("/dashboard/transcripts");
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export function WorkspaceSidebar({
           </button>
         </div>
 
-        <nav className="flex-1 px-3 py-5" aria-label={topNavT("primaryNav")}>
+        <nav className="flex-1 overflow-y-auto px-3 py-5" aria-label={topNavT("primaryNav")}>
           <Link
             href="/dashboard/new"
             onClick={closeMobile}
@@ -104,19 +104,20 @@ export function WorkspaceSidebar({
                 : "bg-ink text-paper hover:bg-accent"
             }`}
           >
-            <Clapperboard size={17} strokeWidth={1.9} />
-            {topNavT("createClips")}
+            <Plus size={17} strokeWidth={1.9} />
+            {workspaceT("newProject")}
           </Link>
 
+          <div className="mt-4"><WorkspaceLink active={pathname === "/dashboard"} href="/dashboard" icon={Home} label={workspaceT("home")} onNavigate={closeMobile} /></div>
           <p className="px-3 pb-2 pt-7 font-mono text-[9px] uppercase tracking-[0.18em] text-muted">
-            {dashboardT("eyebrow")}
+            {workspaceT("create")}
           </p>
           <div className="grid gap-1">
             <WorkspaceLink
               active={projectsActive}
-              href="/dashboard"
+              href="/dashboard/projects"
               icon={FolderKanban}
-              label={sidebarT("myLibrary")}
+              label={workspaceT("projects")}
               onNavigate={closeMobile}
             />
             <WorkspaceLink
@@ -126,9 +127,15 @@ export function WorkspaceSidebar({
               label={dashboardT("filterTranscripts")}
               onNavigate={closeMobile}
             />
-            {socialEnabled && <WorkspaceLink active={pathname === "/dashboard/accounts"} href="/dashboard/accounts" icon={Link2} label={sidebarT("publishingAccounts")} onNavigate={closeMobile} />}
-            {socialEnabled && <WorkspaceLink active={pathname === "/dashboard/publish" || pathname === "/dashboard/publishing"} href="/dashboard/publishing" icon={Send} label={distributionT("navigation")} onNavigate={closeMobile} />}
           </div>
+          {socialEnabled && <>
+            <p className="px-3 pb-2 pt-7 font-mono text-[9px] uppercase tracking-[0.18em] text-muted">{workspaceT("social")}</p>
+            <div className="grid gap-1">
+              <WorkspaceLink active={pathname === "/dashboard/publish" || pathname === "/dashboard/publishing"} href="/dashboard/publishing" icon={Send} label={workspaceT("posts")} onNavigate={closeMobile} />
+              <WorkspaceLink active={pathname === "/dashboard/planner"} href="/dashboard/planner" icon={CalendarDays} label={workspaceT("planner")} onNavigate={closeMobile} />
+              <WorkspaceLink active={pathname === "/dashboard/accounts"} href="/dashboard/accounts" icon={Link2} label={workspaceT("channels")} onNavigate={closeMobile} />
+            </div>
+          </>}
         </nav>
 
         <div className="border-t border-line p-3">
