@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { GUIDES } from "@/lib/guides/content";
 import { routing } from "@/i18n/routing";
 import { languageAlternates, urlFor } from "@/lib/metadata-url";
 
@@ -69,12 +70,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
-  return entries.flatMap((entry) => {
+  const guideContent: MetadataRoute.Sitemap = [
+    { url: urlFor("en", "/guides").href, changeFrequency: "weekly", priority: 0.6 },
+    { url: urlFor("en", "/podcast-clip-maker").href, changeFrequency: "monthly", priority: 0.8 },
+    ...GUIDES.map((guide) => ({ url: urlFor("en", `/guides/${guide.slug}`).href, lastModified: new Date(guide.published), changeFrequency: "monthly" as const, priority: 0.6 })),
+  ];
+
+  const localizedContent = guideContent.flatMap(entry => {
+    const path = new URL(entry.url).pathname;
+    return routing.locales.map(locale => ({ ...entry, url: urlFor(locale, path).href, alternates: { languages: languageAlternates(path) } }));
+  });
+
+  return [...localizedContent, ...entries.flatMap((entry) => {
     if (!entry.alternates?.languages) return [entry];
     const path = new URL(entry.url).pathname.replace(/\/$/, "");
     return routing.locales.map((locale) => ({
       ...entry,
       url: urlFor(locale, path).href,
     }));
-  });
+  })];
 }

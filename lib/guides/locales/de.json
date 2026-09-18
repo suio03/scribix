@@ -1,0 +1,304 @@
+{
+  "ui": {
+    "skip": "Zum Inhalt",
+    "home": "Scribix-Startseite",
+    "nav": "Hauptnavigation",
+    "guides": "Anleitungen",
+    "pricing": "Preise",
+    "create": "Clips erstellen",
+    "practice": "Jetzt ausprobieren",
+    "ctaTitle": "Ein Gespräch. Ein Ausschnitt, der für sich steht.",
+    "ctaBody": "Finde mit Scribix passende Ausschnitte, prüfe den Schnitt und exportiere ein Hochkantvideo. Die Bearbeitungsfunktionen erfordern einen kostenpflichtigen Tarif.",
+    "ctaLink": "Podcast-Clips mit Scribix erstellen",
+    "all": "Alle Anleitungen",
+    "preview": "Lokale Vorschau · Echte Screenshots und ein exportiertes Beispiel. Noch nicht veröffentlicht.",
+    "by": "Von Scribix",
+    "print": "Drucken / als PDF speichern",
+    "printHelp": "Drucke die Checkliste oder wähle im Druckdialog „Als PDF speichern“. Keine E-Mail-Adresse nötig.",
+    "watch": "So funktioniert der Ablauf",
+    "duration": "41 Sekunden · Demo ohne Ton",
+    "walkthroughLabel": "Demonstration: Podcast-Clips erstellen",
+    "videoFallback": "Video herunterladen",
+    "toc": "In dieser Anleitung",
+    "checkHelp": "Deine Häkchen bleiben nur für diesen Besuch erhalten. Drucke für den nächsten Clip eine leere Checkliste aus.",
+    "enlarge": "Bild vergrößern",
+    "enlargeHelp": "Wähle das Bild aus, um es zu vergrößern.",
+    "exportLabel": "Tatsächlich exportierter Podcast-Clip mit Ton und Untertiteln",
+    "download": "MP4-Beispiel herunterladen",
+    "missing": "Ohne Zusammenhang",
+    "setup": "Mit dem nötigen Kontext",
+    "review": "Prüfen",
+    "next": "Nächster Schritt",
+    "nextLink": "Podcast-Clip mit Scribix erstellen und prüfen",
+    "episode": "Folge",
+    "range": "Clip / Zeitbereich",
+    "decision": "Entscheidung: □ Behalten　□ Überarbeiten　□ Verwerfen",
+    "changes": "Nötige Änderungen",
+    "fieldNotes": "Scribix / Praxiswissen für Creator",
+    "indexTitle": "Gute Clips beginnen mit der richtigen Auswahl.",
+    "indexIntro": "Praktische Anleitungen, um aus langen Gesprächen verständliche Kurzvideos zu machen. Wähle den Ausschnitt, bewahre die Aussage und prüfe das Ergebnis.",
+    "indexMeta": "Anleitungen für bessere Podcast-Clips",
+    "indexDescription": "Lerne, abgeschlossene Gesprächsausschnitte auszuwählen, Podcast-Clips zu prüfen und Hochkantvideos für die Veröffentlichung vorzubereiten.",
+    "edition": "Deutsche Ausgabe",
+    "list": "Die Anleitungen",
+    "cardLabel": "Clip-Check",
+    "cardLines": [
+      "01 — Kontext erhalten.",
+      "02 — Aussage bewahren.",
+      "03 — Datei prüfen."
+    ],
+    "cardFoot": "Eine Checkliste für die Arbeit im Editor",
+    "read": "Anleitung lesen",
+    "previewBadge": "Vorschau",
+    "previewTitle": "Vorschau: Podcast-Tutorial",
+    "previewBody": "Sieh dir die Demo und echte Screenshots an und spiele den exportierten Clip mit Ton ab.",
+    "checklistLink": "Checkliste für Podcast-Clips öffnen",
+    "mediaNote": "Aufnahme, Untertitel und Screenshots bleiben in ihrer Originalsprache."
+  },
+  "podcast": {
+    "metaTitle": "Podcast-Clips mit KI erstellen",
+    "description": "Mach aus Video-Podcasts und Interviews vertikale Clips. Prüfe KI-Vorschläge, bearbeite Schnitt und Untertitel und exportiere das fertige Video.",
+    "label": "Podcast-Clips mit KI erstellen",
+    "title": "Ein langes Gespräch. Ein Moment zum Teilen.",
+    "intro": "Erstelle Hochkant-Clips aus Video-Podcasts und Interviews. Scribix schlägt Ausschnitte vor; du entscheidest, welche eine vollständige Aussage enthalten.",
+    "upload": "Video hochladen",
+    "free": "Free enthält {minutes} Verarbeitungsminuten. Bearbeitungen erfordern einen kostenpflichtigen Tarif.",
+    "checkLabel": "Der redaktionelle Check",
+    "checkTitle": "Versteht man das auch ohne die ganze Folge?",
+    "checkBody": "Lass die Frage drin, wenn sie gebraucht wird, und die Antwort, die etwas vermittelt. Der Gedanke sollte vollständig ankommen.",
+    "checkLink": "Checkliste für Podcast-Clips verwenden",
+    "workflowLabel": "Von der Folge zur fertigen Datei",
+    "workflowTitle": "Die KI schlägt vor. Du triffst die Auswahl.",
+    "steps": [
+      {
+        "title": "Mit dem Gespräch anfangen.",
+        "body": "Lade deinen Video-Podcast oder dein Interview hoch. Scribix analysiert das Transkript und schlägt Ausschnitte zur Prüfung vor."
+      },
+      {
+        "title": "Die Aussage vollständig halten.",
+        "body": "Sieh dir jeden Vorschlag im Zusammenhang an. Mit einem kostenpflichtigen Tarif kannst du Anfang, Ende, Untertitel und Bildausschnitt anpassen."
+      },
+      {
+        "title": "Den fertigen Clip prüfen.",
+        "body": "Exportiere Video und Cover. Spiele die heruntergeladene Datei mit Ton ab und lade sie danach auf die gewünschte Plattform hoch."
+      }
+    ],
+    "editLabel": "Mit einem kostenpflichtigen Tarif bearbeiten",
+    "editTitle": "Die Details gehören zur Aussage.",
+    "editBody": "Ein guter Clip ist mehr als nur kurz. Prüfe Wortlaut, Bild und fertige Datei, bevor du ihn teilst.",
+    "plans": "Free und kostenpflichtige Tarife vergleichen",
+    "features": [
+      {
+        "title": "Einen natürlichen Anfang und Schluss finden",
+        "body": "Finde die passenden Wörter im Transkript und passe die Schnittpunkte im Originalvideo an."
+      },
+      {
+        "title": "Untertitel gut lesbar gestalten",
+        "body": "Korrigiere Namen und Begriffe, wähle einen Stil und prüfe die Position im Bild."
+      },
+      {
+        "title": "Die sprechende Person im Bild halten",
+        "body": "Prüfe das Hochkantformat und erweitere den Ausschnitt, wenn wichtige Informationen verloren gehen."
+      }
+    ],
+    "faqTitle": "Vor deinem ersten Clip",
+    "faqs": [
+      {
+        "question": "Kann ich das kostenlos ausprobieren?",
+        "answer": "Free enthält ein einmaliges Kontingent von {minutes} Minuten für hochgeladene Medien. KI-Clips kannst du unverändert exportieren. Bearbeitung und Branding erfordern einen kostenpflichtigen Tarif."
+      },
+      {
+        "question": "Brauche ich einen Video-Podcast?",
+        "answer": "Dieser Ablauf beginnt mit einer gefilmten Podcast-Folge, einem Interview oder einem Gespräch. Für reine Audiofolgen verwendest du Audio zu Text; das ist ein eigener Ablauf."
+      },
+      {
+        "question": "Kann ich einen YouTube-Link für Clips einfügen?",
+        "answer": "Starte mit einer Videodatei auf deinem Gerät. Das YouTube-Transkriptionswerkzeug importiert Untertitel, nicht das Originalvideo zum Schneiden."
+      },
+      {
+        "question": "Kann ich die KI-Vorschläge bearbeiten?",
+        "answer": "Mit einem kostenpflichtigen Tarif kannst du Schnittpunkte, Untertiteltext und -stil sowie den Bildausschnitt ändern. Prüfe den Gesprächskontext, damit die Aussage erhalten bleibt."
+      },
+      {
+        "question": "Garantiert Scribix eine bestimmte Zahl an Clips oder Aufrufen?",
+        "answer": "Nein. Geeignete Ausschnitte hängen von der Aufnahme ab. Prüfe Kontext und Relevanz; ein Vorschlag ist keine Prognose für Aufrufe oder Interaktionen."
+      }
+    ],
+    "audioHint": "Du brauchst nur das Transkript?",
+    "audioLink": "Audio zu Text ausprobieren",
+    "endLabel": "Mit einer Aufnahme starten",
+    "endTitle": "Finde deinen nächsten Ausschnitt zum Teilen.",
+    "endCta": "Podcast-Clips erstellen"
+  },
+  "guides": {
+    "checklist": {
+      "title": "Ein guter Podcast-Clip enthält einen vollständigen Gedanken.",
+      "metadataTitle": "Podcast-Clip-Checkliste: Was du vor der Veröffentlichung prüfen solltest",
+      "description": "Prüfe Kontext, Schnitt, Untertitel, Bildausschnitt und Export. Eine praktische Checkliste mit Druckversion.",
+      "intro": "Entscheide, was du behältst, überarbeitest oder verwirfst. Diese Checkliste passt zu KI-Vorschlägen genauso wie zu selbst geschnittenen Clips.",
+      "category": "Auswahl und Prüfung",
+      "readingTime": "7 Min. Lesezeit",
+      "printTitle": "Checkliste für Podcast-Clips",
+      "sections": [
+        {
+          "title": "01 / Der Test ohne Vorwissen",
+          "body": "Spiele den Clip ab, ohne vorher den Rest des Gesprächs zu hören. Versteht jemand ohne Vorwissen, um wen oder was es geht und was die Aussage ist? Wenn nicht, ergänze den Kontext vor der Überschrift.\n\nAchte auf Einstiege wie „deshalb“ oder „der zweite Punkt“. Hole die tatsächlich gesprochenen Erklärungen aus der Quelle dazu und höre den neuen Einstieg noch einmal an.",
+          "example": {
+            "before": "Deshalb habe ich damit aufgehört.",
+            "after": "Ich habe während des Interviews jede Frage neu formuliert. Deshalb habe ich damit aufgehört.",
+            "explanation": "Ein Formulierungsbeispiel, kein Produktergebnis. Die zweite Fassung benennt die Gewohnheit. Ergänze bei echten Clips nur Kontext aus der Aufnahme und erfinde keine Aussagen."
+          },
+          "checks": [
+            "Das Thema ist ohne das vorherige Gespräch verständlich.",
+            "Der erste Satz gibt einen Grund, weiterzuhören."
+          ]
+        },
+        {
+          "title": "02 / Die Antwort behalten, nicht nur die Frage",
+          "body": "Eine provokante Frage allein macht noch keinen vollständigen Clip. Behalte Antwort, Beispiel oder Schlussfolgerung. Wenn du einen Teaser erstellst, kennzeichne ihn entsprechend.\n\nHöre beide Schnittpunkte im Original an. Auch ein Schnitt zwischen Wörtern kann einen Atemzug oder eine Einschränkung abschneiden. Verlängere den Ausschnitt oder wähle einen anderen.",
+          "checks": [
+            "Antwort oder Auflösung sind enthalten.",
+            "Anfang und Ende klingen natürlich."
+          ]
+        },
+        {
+          "title": "03 / Prüfen, was der Schnitt weglässt",
+          "body": "Höre das Gespräch vor und nach dem Ausschnitt. Vielleicht zitiert die Person jemanden, beschreibt einen Fehler oder schränkt die Aussage im nächsten Satz ein. Der Clip muss den Sinn erhalten.\n\nPrüfe die Überschrift separat und erkenne gesponserte Passagen. Eine gut formulierte Werbung ist nicht automatisch ein redaktionelles Highlight.",
+          "checks": [
+            "Der Schnitt erhält die Aussage und notwendige Einschränkungen.",
+            "Die Überschrift beschreibt den Clip korrekt.",
+            "Gesponserte Inhalte sind erkannt und bewusst ausgewählt."
+          ]
+        },
+        {
+          "title": "04 / Jedem Clip eine eigene Aufgabe geben",
+          "body": "Vergleiche die ausgewählten Clips. Eine Erklärung, eine persönliche Geschichte und ein begründeter Widerspruch bieten oft mehr Abwechslung als drei Fassungen derselben Antwort.\n\nBeschreibe in einem Satz, warum du jeden Ausschnitt teilen würdest. Wenn dir nur „interessanter Moment“ einfällt, prüfe die Auswahl noch einmal. Weniger kann hilfreicher sein.",
+          "checks": [
+            "Der Clip ergänzt eine eigenständige Idee, Geschichte oder Perspektive.",
+            "Ich kann den Nutzen für mein Publikum erklären."
+          ]
+        },
+        {
+          "title": "05 / Das gesamte Hochkantbild ansehen",
+          "body": "Prüfe den ganzen Clip einschließlich Kameraschnitten, Gesten und Sprecherwechseln. Achte auch auf erwähnte Folien oder Gegenstände.\n\nWähle einen weiteren Ausschnitt oder das vollständige Quellbild, wenn ein enger Zuschnitt wichtige Informationen entfernt. Kontrolliere die Vorschau in der Ziel-App, deren Oberfläche Teile des Videos verdecken kann.",
+          "checks": [
+            "Personen und wichtige Bildinformationen bleiben sichtbar.",
+            "Untertitel und Überschriften verdecken keine Gesichter oder wichtigen Details."
+          ]
+        },
+        {
+          "title": "06 / Untertitel mit dem Ton abgleichen",
+          "body": "Prüfe beim Zuhören Namen, Zahlen, Fachbegriffe und Verneinungen. Kleine Fehler können den Sinn verändern, ohne der Rechtschreibprüfung aufzufallen.\n\nKontrolliere Zeilenumbrüche, Kontrast und Timing auf einem Smartphone. Der Text sollte der Quelle entsprechen und nicht mit einer zusätzlichen Überschrift konkurrieren.",
+          "checks": [
+            "Namen, Zahlen, Verneinungen und Fachbegriffe stimmen mit dem Ton überein.",
+            "Untertitel sind lesbar und folgen dem Gesprochenen."
+          ]
+        },
+        {
+          "title": "07 / Die tatsächliche Exportdatei prüfen",
+          "body": "Spiele den Download von Anfang bis Ende mit Ton ab. Prüfe erste und letzte Bilder, Untertitel, Bildausschnitt und Audio. Verwende die neueste Fassung.\n\nKläre die Nutzungsrechte für Aufnahme und hinzugefügte Medien. Cover und Beitragstext müssen zum fertigen Schnitt passen. Benenne die Datei eindeutig und prüfe die Vorschau vor dem Veröffentlichen.",
+          "checks": [
+            "Die heruntergeladene Datei läuft vollständig mit Ton.",
+            "Cover und Beitragstext passen zur endgültigen Fassung.",
+            "Ich darf die Aufnahme und hinzugefügten Medien veröffentlichen."
+          ]
+        }
+      ]
+    },
+    "tutorial": {
+      "title": "Podcast-Clips für TikTok erstellen.",
+      "metadataTitle": "So erstellst du Podcast-Clips für TikTok",
+      "description": "Wähle einen vollständigen Ausschnitt, prüfe Hochkantformat und Untertitel und exportiere deinen TikTok-Clip mit Scribix.",
+      "intro": "Ein guter Podcast-Clip ist auch ohne die ganze Folge verständlich. Wähle einen Gedanken und stimme Schnitt, Bild und Untertitel darauf ab. Diese Anleitung beginnt mit einem Video-Podcast oder Interview und endet beim Download. Das Hochladen auf TikTok ist ein eigener Schritt.",
+      "category": "Podcast-Anleitung",
+      "readingTime": "6 Min. Lesezeit",
+      "walkthroughCaption": "Vom vorhandenen Projekt zur Exportdatei: Auswahl, Text, Bildausschnitt und Untertitel. Die Demo kombiniert echte Screenshots und Videos; ihre Länge bildet keine Verarbeitungszeit ab. Quelle: Changeover Podcast, bereitgestellte Aufnahme für diese lokale Vorschau.",
+      "sections": [
+        {
+          "title": "Bevor du anfängst",
+          "body": "Verwende eine Aufnahme, die du veröffentlichen darfst, und behalte den Originalton zum Prüfen der Schnitte und Untertitel. Reine Audiofolgen gehören in den Transkriptionsablauf.\n\nMit Free kannst du KI-Clips unverändert exportieren. Schnitt, Untertitel, Bildausschnitt und Branding erfordern einen kostenpflichtigen Tarif. Starte mit einer lokalen Videodatei: Das YouTube-Werkzeug importiert Untertitel, kein Video."
+        },
+        {
+          "title": "1. Podcast-Aufnahme hochladen",
+          "body": "Wähle die Datei auf deinem Gerät und folge dem Upload- und Verarbeitungsstatus. Lass die Seite während der Übertragung geöffnet.\n\nFür dieses Beispiel haben wir ein bereits hochgeladenes Projekt geöffnet. Ein neuer Upload ist nicht Teil der Demo. Beginne mit einer Aufnahme und vergleiche die Ergebnisse mit dem Original, statt nur die Clip-Anzahl zu bewerten."
+        },
+        {
+          "title": "2. Einen eigenständig verständlichen Ausschnitt wählen",
+          "body": "Spiele jeden Vorschlag vor dem Bearbeiten ab. Ist das Thema klar? Enthält er eine Antwort, Erklärung oder Schlussfolgerung? Beschreibt der Titel die Aussage richtig?\n\nHöre den Kontext, wenn der Einstieg unklar ist oder eine Frage fehlt. Erkenne Werbung und Wiederholungen und nutze die Checkliste für eine abwechslungsreiche Auswahl.",
+          "imageAlt": "Vier vorgeschlagene Clips mit dem ersten ausgewählten Clip in Scribix",
+          "imageCaption": "Die 9:47 Minuten lange Aufnahme enthielt vier Vorschläge. Der erste, 00:01.663–00:59.087, behandelt die Ruhe des Spielers. Die anderen beschäftigen sich mit Taktik, weiteren Spielern und seiner Außenwirkung."
+        },
+        {
+          "title": "3. Anfang und Ende verfeinern",
+          "body": "Mit einem kostenpflichtigen Tarif kannst du anhand des Transkripts natürliche Schnittpunkte finden. Behalte die Frage, wenn die Antwort sie braucht, und den Satz, der den Gedanken abschließt.\n\nHöre den neuen Schnitt mit Ton. Ein sauberer Textschnitt kann einen Atemzug unterbrechen oder eine Einschränkung entfernen. Wähle einen anderen Moment, wenn kein vollständiger Gedanke erhalten bleibt.",
+          "imageAlt": "Content-Bereich mit Transkript und Quellzeitpunkten",
+          "imageCaption": "Öffne Edit clip und danach Content, um Text und Quellzeitbereich zu prüfen. In diesem Beispiel bleibt der Bereich bei 00:01.663–00:59.087."
+        },
+        {
+          "title": "4. Das Hochkantbild prüfen",
+          "body": "Sieh dir den ganzen Ausschnitt an, nicht nur das erste Bild. Prüfe Kamera- und Sprecherwechsel, Gesten und erwähnte Gegenstände.\n\nEin weiterer Bildausschnitt kann besser sein, wenn beide Personen oder eine Präsentation sichtbar bleiben müssen. Prüfe jeden Übergang auch bei automatischer Bildführung.",
+          "imageAlt": "Bildausschnitt-Einstellungen neben der Hochkantvorschau",
+          "imageCaption": "Framing bietet Automatic follow, Show full frame und Crop a section manually. Hier ist die automatische Bildführung gewählt. Schwarze Bereiche bleiben sichtbar; prüfe die Kameraschnitte vor weiteren Anpassungen."
+        },
+        {
+          "title": "5. Untertitel prüfen und gestalten",
+          "body": "Höre zu und lies Namen, Zahlen, Fachbegriffe und Verneinungen mit. Korrigiere den Wortlaut, bevor du den Stil auswählst.\n\nPrüfe auf dem Smartphone Zeilenumbrüche, Kontrast, Timing und Position. Verdecke das Gesicht nicht und kontrolliere zusätzlich die TikTok-Vorschau mit eingeblendeter Oberfläche.",
+          "imageAlt": "Stil, Farbe, Größe und Position der Untertitel",
+          "imageCaption": "Das Beispiel nutzt Karaoke punch, weiße Schrift und gelbe Hervorhebung. Unter Correct transcript text kannst du den Wortlaut prüfen. Gleiche Namen vor der Veröffentlichung mit dem Ton ab."
+        },
+        {
+          "title": "6. Exportieren und die Datei prüfen",
+          "body": "Wähle Download. Preparing your video zeigt an, dass die Datei vorbereitet wird. Lade sie herunter, sobald sie fertig ist. Das Beispiel unten wurde während dieser Demonstration exportiert.\n\nSpiele es vollständig mit Ton ab und prüfe Schnitt, Untertitel, Bild sowie Anfang und Ende. Exportiere nach Änderungen eine neue Fassung und gleiche Cover und Beitragstext damit ab.",
+          "videoCaption": "Der echte 57-sekündige Hochkant-Export mit Originalton und Untertiteln. Prüfe Kamerawechsel, Wortlaut und Bildausschnitt. Dieser Vorschlag wurde unverändert exportiert; nutze die obigen Prüfschritte für deinen eigenen Clip. Quelle: Changeover Podcast."
+        },
+        {
+          "title": "Vor der Veröffentlichung",
+          "body": "Prüfe die Datei in TikTok mit dessen Oberfläche und bestätige Zielgruppe und Beitragsdetails. Diese Anleitung setzt weder ein verbundenes Konto noch einen geprüften direkten Veröffentlichungsablauf voraus.\n\nDu musst nicht jeden Vorschlag veröffentlichen. Wähle klare, korrekte und hilfreiche Ausschnitte und beginne mit deinem eigenen Video-Podcast."
+        }
+      ]
+    }
+  },
+  "demo": {
+    "brand": "Scribix",
+    "footer": "ECHTES PROJEKT / LOKALE DEMO",
+    "credit": "Quelle: Changeover Podcast / bereitgestellte Aufnahme",
+    "cta": "Wählen. Bearbeiten. Teilen.",
+    "scenes": [
+      {
+        "label": "ORIGINALAUFNAHME",
+        "title": "Ein Podcast.\nMehr Möglichkeiten.",
+        "body": "Starte mit einem Gespräch,\ndas du teilen möchtest."
+      },
+      {
+        "label": "01 / AUSWAHL",
+        "title": "Ein vollständiger\nGedanke.",
+        "body": "Vergleiche die Vorschläge.\nBewahre den Kontext."
+      },
+      {
+        "label": "02 / PRÜFUNG",
+        "title": "Den Wortlaut\nprüfen.",
+        "body": "Gleiche Anfang und Ende\nmit der Quelle ab."
+      },
+      {
+        "label": "03 / BILDAUSSCHNITT",
+        "title": "Die sprechende\nPerson im Bild.",
+        "body": "Prüfe das Hochkantformat.\nPasse einzelne Abschnitte an."
+      },
+      {
+        "label": "04 / UNTERTITEL",
+        "title": "Jedes Wort\ngut lesbar.",
+        "body": "Prüfe den Text,\ndann wähle den Stil."
+      },
+      {
+        "label": "05 / EXPORT",
+        "title": "Vom Editor\nzur fertigen Datei.",
+        "body": "Ein echter Scribix-Export.\nVor dem Veröffentlichen prüfen."
+      },
+      {
+        "label": "SCRIBIX / PODCAST-CLIPS",
+        "title": "Dein nächster Clip\nbeginnt hier.",
+        "body": "Wähle einen Moment zum Teilen."
+      }
+    ]
+  }
+}

@@ -1,0 +1,304 @@
+{
+  "ui": {
+    "skip": "Ir al contenido",
+    "home": "Inicio de Scribix",
+    "nav": "Navegación principal",
+    "guides": "Guías",
+    "pricing": "Precios",
+    "create": "Crear clips",
+    "practice": "Ponlo en práctica",
+    "ctaTitle": "Una conversación. Una idea que se entiende sola.",
+    "ctaBody": "Encuentra fragmentos con Scribix, revisa el corte y exporta un video vertical. Las herramientas de edición requieren un plan de pago.",
+    "ctaLink": "Descubrir el creador de clips de podcast",
+    "all": "Todas las guías",
+    "preview": "Vista previa local · Capturas reales y un ejemplo exportado. Aún sin publicar.",
+    "by": "Por Scribix",
+    "print": "Imprimir / guardar como PDF",
+    "printHelp": "Imprime la lista o selecciona «Guardar como PDF» en el diálogo de impresión. No necesitas dejar tu correo.",
+    "watch": "Ver el proceso",
+    "duration": "41 segundos · Demostración sin sonido",
+    "walkthroughLabel": "Demostración de creación de clips de podcast",
+    "videoFallback": "Descargar el video",
+    "toc": "En esta guía",
+    "checkHelp": "Las casillas se conservan solo durante esta visita. Imprime una copia en blanco para el próximo clip.",
+    "enlarge": "Ampliar imagen",
+    "enlargeHelp": "Selecciona la imagen para ampliarla.",
+    "exportLabel": "Clip de podcast exportado con audio y subtítulos",
+    "download": "Descargar el ejemplo en MP4",
+    "missing": "Sin contexto",
+    "setup": "Con el contexto necesario",
+    "review": "Revisión",
+    "next": "Siguiente paso",
+    "nextLink": "Crear y revisar un clip de podcast con Scribix",
+    "episode": "Episodio",
+    "range": "Clip / intervalo",
+    "decision": "Decisión: □ Conservar　□ Corregir　□ Descartar",
+    "changes": "Cambios pendientes",
+    "fieldNotes": "Scribix / Guías para creadores",
+    "indexTitle": "Un buen clip empieza con una buena elección.",
+    "indexIntro": "Guías prácticas para convertir conversaciones largas en videos cortos que se entienden. Elige el momento, conserva el sentido y revisa el resultado.",
+    "indexMeta": "Guías para crear mejores clips de podcast",
+    "indexDescription": "Aprende a elegir fragmentos completos, revisar clips de podcast y preparar videos verticales para publicarlos.",
+    "edition": "Edición en español",
+    "list": "Las guías",
+    "cardLabel": "Revisa tu clip",
+    "cardLines": [
+      "01 — Conserva el contexto.",
+      "02 — Respeta el sentido.",
+      "03 — Revisa el archivo."
+    ],
+    "cardFoot": "Una lista para tener a mano mientras editas",
+    "read": "Leer la guía",
+    "previewBadge": "Vista previa",
+    "previewTitle": "Vista previa del tutorial de podcast",
+    "previewBody": "Mira la demostración, consulta las capturas reales y reproduce el clip exportado con sonido.",
+    "checklistLink": "Abrir la lista de revisión de clips",
+    "mediaNote": "La grabación, sus subtítulos y las capturas conservan su idioma original."
+  },
+  "podcast": {
+    "metaTitle": "Crea clips de podcast con IA",
+    "description": "Convierte podcasts en video y entrevistas en clips verticales. Revisa los momentos sugeridos por la IA, ajusta el corte y los subtítulos y exporta.",
+    "label": "Creador de clips de podcast con IA",
+    "title": "Una conversación larga. Un momento para compartir.",
+    "intro": "Crea clips verticales a partir de podcasts en video y entrevistas. Scribix propone los momentos; tú eliges los que cuentan una idea completa.",
+    "upload": "Subir tu video",
+    "free": "Free incluye {minutes} minutos de procesamiento. Para editar necesitas un plan de pago.",
+    "checkLabel": "La revisión editorial",
+    "checkTitle": "¿Se entiende sin haber escuchado el episodio completo?",
+    "checkBody": "Conserva la pregunta cuando haga falta y la respuesta que aporta valor. Deja al público con una idea completa.",
+    "checkLink": "Usar la lista de revisión de clips",
+    "workflowLabel": "Del episodio al archivo final",
+    "workflowTitle": "La IA propone. Tú decides qué contar.",
+    "steps": [
+      {
+        "title": "Empieza por la conversación.",
+        "body": "Sube tu podcast en video o entrevista. Scribix analiza la transcripción y propone fragmentos para que los revises."
+      },
+      {
+        "title": "Conserva la idea completa.",
+        "body": "Mira cada propuesta en contexto. Con un plan de pago puedes ajustar el inicio y el final, corregir subtítulos y cambiar el encuadre vertical."
+      },
+      {
+        "title": "Revisa el clip terminado.",
+        "body": "Exporta el video y la portada. Reproduce la descarga con sonido y después súbela a la plataforma que prefieras."
+      }
+    ],
+    "editLabel": "Ajusta los detalles con un plan de pago",
+    "editTitle": "Los detalles también cuentan.",
+    "editBody": "Un clip útil necesita algo más que una duración corta. Revisa las palabras, la imagen y el archivo final antes de compartirlo.",
+    "plans": "Comparar Free y los planes de pago",
+    "features": [
+      {
+        "title": "Busca un inicio y un final naturales",
+        "body": "Localiza las palabras en la transcripción y ajusta los puntos de corte en el video original."
+      },
+      {
+        "title": "Haz que los subtítulos se lean bien",
+        "body": "Corrige nombres y términos, elige un estilo y comprueba la posición del texto sobre la imagen."
+      },
+      {
+        "title": "Mantén a la persona en cuadro",
+        "body": "Revisa el encuadre vertical y ajústalo si un recorte cerrado elimina información importante."
+      }
+    ],
+    "faqTitle": "Antes de tu primer clip",
+    "faqs": [
+      {
+        "question": "¿Puedo probarlo gratis?",
+        "answer": "Free incluye una asignación única de {minutes} minutos para procesar archivos subidos. Puedes exportar los clips de IA tal como se generan. La edición y los controles de marca requieren un plan de pago."
+      },
+      {
+        "question": "¿Necesito un podcast en video?",
+        "answer": "Este proceso parte de un podcast grabado en video, una entrevista o una conversación filmada. Si solo tienes audio, usa la herramienta de audio a texto; es un proceso diferente."
+      },
+      {
+        "question": "¿Puedo pegar un enlace de YouTube para crear clips?",
+        "answer": "Empieza con un archivo de video de tu dispositivo. La herramienta de transcripción de YouTube importa subtítulos, no el video original para recortarlo."
+      },
+      {
+        "question": "¿Puedo cambiar los clips que selecciona la IA?",
+        "answer": "Con un plan de pago puedes ajustar los puntos de corte, el texto y estilo de los subtítulos y el encuadre. Revisa la conversación completa para conservar el sentido."
+      },
+      {
+        "question": "¿Scribix garantiza una cantidad de clips o de visualizaciones?",
+        "answer": "No. Los momentos útiles dependen de la grabación. Evalúa el contexto y la relevancia de cada propuesta; no son predicciones de visualizaciones ni de interacción."
+      }
+    ],
+    "audioHint": "¿Solo necesitas la transcripción?",
+    "audioLink": "Probar audio a texto",
+    "endLabel": "Empieza con una grabación",
+    "endTitle": "Encuentra tu próximo momento para compartir.",
+    "endCta": "Crear clips de podcast"
+  },
+  "guides": {
+    "checklist": {
+      "title": "Un buen clip de podcast conserva una idea completa.",
+      "metadataTitle": "Lista de revisión para clips de podcast",
+      "description": "Revisa el contexto, los cortes, los subtítulos, el encuadre y el archivo final antes de publicar. Incluye una lista imprimible.",
+      "intro": "Decide qué conservar, corregir o descartar. Esta lista sirve tanto para clips seleccionados por IA como para los que editas tú.",
+      "category": "Selección y revisión",
+      "readingTime": "7 min de lectura",
+      "printTitle": "Lista de revisión de clips de podcast",
+      "sections": [
+        {
+          "title": "01 / Comprueba si se entiende por sí solo",
+          "body": "Reproduce el clip sin escuchar lo anterior. ¿Alguien que no conoce el programa puede explicar de quién o de qué se habla y cuál es la idea? Si no, añade contexto antes de buscar un título llamativo.\n\nAtención a comienzos como «por eso» o «la segunda cosa». Recupera las palabras necesarias de la grabación original y vuelve a escuchar desde el nuevo inicio.",
+          "example": {
+            "before": "Por eso dejé de hacerlo.",
+            "after": "Reescribía cada pregunta durante la entrevista. Por eso dejé de hacerlo.",
+            "explanation": "Ejemplo de redacción, no un resultado del producto. La segunda versión identifica el hábito. En un clip real, recupera el contexto de la fuente; no inventes palabras del hablante."
+          },
+          "checks": [
+            "El tema se entiende sin la conversación anterior.",
+            "La primera frase da una razón para seguir escuchando."
+          ]
+        },
+        {
+          "title": "02 / Conserva la respuesta, no solo la pregunta",
+          "body": "Una pregunta provocadora no basta. Conserva la respuesta, el ejemplo o la conclusión que hace útil el fragmento. Si preparas un adelanto, preséntalo como tal.\n\nEscucha ambos puntos de corte en el original. Un corte entre palabras puede interrumpir una respiración o quitar un matiz. Amplía el intervalo o busca otro momento.",
+          "checks": [
+            "El clip incluye la respuesta o la conclusión.",
+            "El inicio y el final suenan naturales."
+          ]
+        },
+        {
+          "title": "03 / Revisa lo que queda fuera",
+          "body": "Escucha lo anterior y lo posterior. La persona puede estar citando a alguien, contando un error o matizando la idea en la siguiente frase. El formato corto debe conservar el sentido.\n\nRevisa el título por separado e identifica las menciones patrocinadas. Un anuncio bien contado no es necesariamente un buen fragmento editorial.",
+          "checks": [
+            "El corte conserva el significado y los matices esenciales.",
+            "El título describe fielmente el clip.",
+            "El contenido patrocinado está identificado y elegido a propósito."
+          ]
+        },
+        {
+          "title": "04 / Dale una función distinta a cada clip",
+          "body": "Compara los clips elegidos. Una explicación, una historia personal y un desacuerdo pueden aportar más variedad que tres cortes de la misma respuesta.\n\nExplica en una frase por qué compartirías cada fragmento. Si solo puedes decir «es interesante», revisa la selección. Es mejor conservar menos clips que repetir ideas.",
+          "checks": [
+            "Este clip aporta una idea, historia o perspectiva distinta.",
+            "Puedo explicar por qué le resulta útil a mi público."
+          ]
+        },
+        {
+          "title": "05 / Revisa todo el encuadre vertical",
+          "body": "Mira el clip entero, incluidos los cambios de cámara, los gestos y los turnos de palabra. Comprueba también las diapositivas y objetos que se mencionan.\n\nUsa un encuadre más amplio o muestra la imagen completa si el recorte pierde información importante. Revisa después la vista previa en la plataforma: su interfaz puede cubrir parte del video.",
+          "checks": [
+            "Las personas y la información visual importante siguen visibles.",
+            "Los subtítulos y títulos no tapan caras ni detalles esenciales."
+          ]
+        },
+        {
+          "title": "06 / Compara cada subtítulo con el audio",
+          "body": "Comprueba nombres, cifras, términos técnicos y negaciones mientras escuchas. Un error pequeño puede cambiar el sentido y pasar inadvertido al corrector.\n\nEn una pantalla de móvil, revisa saltos de línea, contraste y sincronización. Mantén el texto fiel a la fuente y evita que el título compita con los subtítulos.",
+          "checks": [
+            "Los nombres, cifras, negaciones y términos coinciden con el audio.",
+            "Los subtítulos se leen bien y siguen el ritmo del habla."
+          ]
+        },
+        {
+          "title": "07 / Revisa el archivo que vas a publicar",
+          "body": "Abre el archivo descargado y míralo entero con sonido. Comprueba las primeras y últimas imágenes, el encuadre, los subtítulos y el audio. Usa la última versión.\n\nConfirma que puedes publicar la grabación y los recursos añadidos. Revisa la portada y el texto de la publicación, identifica bien el archivo y previsualízalo antes de publicar.",
+          "checks": [
+            "El archivo descargado se reproduce correctamente con sonido de principio a fin.",
+            "La portada y el texto corresponden a esta versión final.",
+            "Tengo permiso para publicar la grabación y los recursos añadidos."
+          ]
+        }
+      ]
+    },
+    "tutorial": {
+      "title": "Cómo crear clips de podcast para TikTok.",
+      "metadataTitle": "Cómo crear clips de podcast para TikTok",
+      "description": "Elige un fragmento completo, revisa el encuadre vertical y los subtítulos y exporta un clip para TikTok con Scribix.",
+      "intro": "Un buen clip da suficiente contexto a quien no ha escuchado el episodio. Elige una idea y ajusta el corte, la imagen y los subtítulos. Esta guía parte de un podcast en video o una entrevista y termina con la descarga del archivo. Subirlo a TikTok es un paso aparte.",
+      "category": "Tutorial de podcast",
+      "readingTime": "6 min de lectura",
+      "walkthroughCaption": "De un proyecto existente al clip exportado: selección, texto, encuadre y subtítulos. La demostración combina capturas y videos reales; su duración no representa el tiempo de procesamiento. Fuente: Changeover Podcast, grabación facilitada para esta vista previa local.",
+      "sections": [
+        {
+          "title": "Antes de empezar",
+          "body": "Usa una grabación que tengas permiso para publicar y conserva su audio para revisar el corte y los subtítulos. Un episodio solo de audio corresponde al proceso de transcripción.\n\nFree permite exportar clips de IA sin cambios. Para editar cortes, subtítulos, encuadre y marca hace falta un plan de pago. Empieza con un archivo local: la herramienta de YouTube importa subtítulos, no videos."
+        },
+        {
+          "title": "1. Sube la grabación del podcast",
+          "body": "Selecciona el archivo de tu dispositivo y sigue el estado de subida y procesamiento. Mantén la página abierta mientras se transfiere.\n\nAquí retomamos un proyecto ya subido; la demostración no incluye una nueva subida. Empieza con una grabación y compara los resultados con la conversación, sin valorar solo la cantidad de clips."
+        },
+        {
+          "title": "2. Elige un momento que se entienda solo",
+          "body": "Reproduce cada propuesta antes de editarla. ¿Se entiende el tema? ¿Contiene una respuesta, explicación o conclusión? ¿El título refleja lo que se dice?\n\nEscucha el contexto si comienza con una referencia poco clara o responde a una pregunta ausente. Identifica anuncios y repeticiones y usa la lista de revisión para elegir fragmentos distintos.",
+          "imageAlt": "Cuatro clips propuestos y el primero seleccionado en Scribix",
+          "imageCaption": "La grabación de 9 min 47 s ya tenía cuatro propuestas. Abrimos la primera, de 00:01.663 a 00:59.087, sobre la calma del jugador. Las otras tratan de táctica, otros jugadores y su imagen."
+        },
+        {
+          "title": "3. Ajusta el inicio y el final",
+          "body": "Con un plan de pago, usa la transcripción y los puntos de corte para encontrar un inicio natural. Incluye la pregunta si es necesaria y conserva la frase que completa la idea.\n\nEscucha el nuevo corte. Un límite limpio en el texto puede interrumpir una respiración o eliminar un matiz. Si no consigues una idea completa, elige otro fragmento.",
+          "imageAlt": "Panel Content con transcripción e inicio y final en la grabación original",
+          "imageCaption": "Abre Edit clip y después Content para revisar las palabras y el intervalo original. En este ejemplo se mantiene 00:01.663–00:59.087."
+        },
+        {
+          "title": "4. Comprueba el encuadre vertical",
+          "body": "Mira todo el clip, no solo la primera imagen. Revisa los cambios de cámara, de hablante y los gestos. Mantén visibles los elementos a los que se hace referencia.\n\nUn encuadre más amplio puede funcionar mejor si deben verse dos personas o una presentación. Comprueba cada transición, incluso con encuadre automático.",
+          "imageAlt": "Controles de encuadre junto a la vista previa vertical",
+          "imageCaption": "Framing ofrece Automatic follow, Show full frame y Crop a section manually. Aquí está seleccionado el seguimiento automático. El resultado conserva bandas negras; revisa los cambios de cámara antes de ajustar."
+        },
+        {
+          "title": "5. Revisa el texto y el estilo de los subtítulos",
+          "body": "Escucha mientras lees los nombres, cifras, términos técnicos y negaciones. Corrige el texto antes de elegir el estilo.\n\nEn una pantalla de móvil, comprueba saltos de línea, contraste, sincronización y posición. Evita tapar la cara y revisa de nuevo en TikTok, donde la interfaz se superpone al video.",
+          "imageAlt": "Ajustes de estilo, color, tamaño y posición de subtítulos",
+          "imageCaption": "El ejemplo usa Karaoke punch, texto blanco y resaltado amarillo. Abre Correct transcript text para revisar el texto. Contrasta los nombres con el audio antes de publicar."
+        },
+        {
+          "title": "6. Exporta y revisa el archivo final",
+          "body": "Selecciona Download. Preparing your video indica que se está generando el archivo; descárgalo cuando esté listo. El ejemplo de abajo se exportó durante esta demostración.\n\nReprodúcelo entero con sonido y revisa cortes, subtítulos, encuadre e inicio y final. Si editas después, exporta otra versión y comprueba que la portada y el texto correspondan al archivo actualizado.",
+          "videoCaption": "Exportación vertical real de 57 segundos, con audio original y subtítulos. Revisa los cambios de cámara, el texto y el encuadre. Este candidato se exportó sin cambios; aplica las comprobaciones anteriores a tu propio clip. Fuente: Changeover Podcast."
+        },
+        {
+          "title": "Antes de publicar",
+          "body": "Previsualiza el archivo en TikTok con su interfaz y confirma el público y los detalles de la publicación. Esta guía no presupone una cuenta conectada ni un proceso de publicación directa validado.\n\nNo necesitas publicar todos los clips sugeridos. Prioriza los momentos claros, fieles y útiles y empieza con tu propio podcast en video."
+        }
+      ]
+    }
+  },
+  "demo": {
+    "brand": "Scribix",
+    "footer": "ESPACIO REAL / DEMOSTRACIÓN LOCAL",
+    "credit": "Fuente: Changeover Podcast / grabación facilitada",
+    "cta": "Elige. Ajusta. Comparte.",
+    "scenes": [
+      {
+        "label": "GRABACIÓN ORIGINAL",
+        "title": "Un podcast.\nMás posibilidades.",
+        "body": "Empieza con una conversación\nque valga la pena compartir."
+      },
+      {
+        "label": "01 / SELECCIÓN",
+        "title": "Encuentra una\nidea completa.",
+        "body": "Compara las propuestas.\nConserva el contexto."
+      },
+      {
+        "label": "02 / REVISIÓN",
+        "title": "Revisa\nlas palabras.",
+        "body": "Comprueba el inicio y el final\nen la grabación original."
+      },
+      {
+        "label": "03 / ENCUADRE",
+        "title": "Mantén a la persona\nen cuadro.",
+        "body": "Revisa el encuadre vertical.\nAjusta donde haga falta."
+      },
+      {
+        "label": "04 / SUBTÍTULOS",
+        "title": "Que cada palabra\nse lea bien.",
+        "body": "Revisa el texto y después\nelige el estilo."
+      },
+      {
+        "label": "05 / EXPORTACIÓN",
+        "title": "Del editor\nal clip final.",
+        "body": "Exportación real de Scribix.\nRevisa antes de publicar."
+      },
+      {
+        "label": "SCRIBIX / CLIPS DE PODCAST",
+        "title": "Tu próximo clip\nempieza aquí.",
+        "body": "Elige un momento para compartir."
+      }
+    ]
+  }
+}

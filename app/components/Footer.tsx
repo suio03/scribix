@@ -22,6 +22,7 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
     getLocale(),
     getTranslations("Footer"),
   ]);
+  const guidesT = await getTranslations("GuidesNav");
   const legal = LEGAL_LINKS.filter(
     (link) => !("englishOnly" in link) || locale === "en"
   );
@@ -64,6 +65,8 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
 
         <nav aria-label={t("toolsLabel")} className="mt-8">
           <ul className="flex flex-wrap gap-x-6 gap-y-3 text-[13px] text-muted">
+            <li><Link href="/guides" className="transition hover:text-ink">{guidesT("guides")}</Link></li>
+            <li><Link href="/podcast-clip-maker" className="transition hover:text-ink">{guidesT("podcast")}</Link></li>
             {TOOL_LINKS.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="transition hover:text-ink">

@@ -3384,5 +3384,9 @@
     "calendarHint": "カレンダーを閲覧できます。投稿予約にはアップグレードが必要です。",
     "channelHint": "アカウントを連携して Scribix から完成したクリップを公開できます。",
     "pro": "Pro"
+  },
+  "GuidesNav": {
+    "guides": "ガイド",
+    "podcast": "AIでポッドキャストの切り抜きを作成"
   }
 }

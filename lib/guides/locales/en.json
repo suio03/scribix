@@ -1,0 +1,304 @@
+{
+  "guides": {
+    "checklist": {
+      "title": "A podcast clip worth sharing starts with a complete thought.",
+      "metadataTitle": "Podcast Clip Checklist: What to Check Before Publishing",
+      "description": "A practical podcast clip checklist: review context, the cut, captions, framing, and the final file before you publish. Includes a printable review sheet.",
+      "intro": "Use this checklist to decide what to keep, what to fix, and what to leave out. It works whether your first cut comes from AI or from you.",
+      "category": "Selection & review",
+      "readingTime": "7 min read",
+      "printTitle": "Podcast clip checklist",
+      "sections": [
+        {
+          "title": "01 / Start with the listener test",
+          "body": "Play the candidate without watching the preceding conversation. Can someone who has never heard your podcast explain who or what the speaker is talking about, and what point they are making? If not, the clip needs more context before it needs a stronger headline.\n\nListen for openings such as ‘that’s why,’ ‘he did it,’ or ‘the second thing.’ They can work when the subject is already clear, but often signal that the real beginning sits a few sentences earlier. Add only the setup that the thought needs, then watch again from the new starting point.",
+          "checks": [
+            "The subject is clear without the previous conversation.",
+            "The first sentence gives the listener a reason to keep watching."
+          ],
+          "example": {
+            "before": "That’s why I stopped doing it.",
+            "after": "I used to rewrite every interview question during the recording. That’s why I stopped doing it.",
+            "explanation": "Illustrative writing example, not a product result. The second version identifies the habit. In a real clip, recover the speaker’s actual setup from the source; do not invent a sentence or make them say something new."
+          }
+        },
+        {
+          "title": "02 / Keep the answer, not just the question",
+          "body": "A provocative question can be a good opening, but it is not automatically a complete clip. Keep the answer, example, or conclusion that makes the moment useful on its own. If you are intentionally making a teaser, make that promise clear instead of presenting it as a complete explanation.\n\nCheck both boundaries by listening to the original audio. A cut can fall between transcript words and still interrupt a breath, qualification, or conclusion. Extend it when needed. If no clean, self-contained cut is available, choose another moment.",
+          "checks": [
+            "The answer or payoff is present.",
+            "The start and end sound natural when played aloud."
+          ]
+        },
+        {
+          "title": "03 / Check what the cut leaves out",
+          "body": "Read or listen to the surrounding conversation before approving a candidate. A speaker might be quoting someone, describing a mistake, or making a point that they qualify in the next sentence. A shorter clip should still represent what they meant.\n\nReview the proposed headline separately. A title that sounds compelling but changes the topic is a reason to rewrite the title. Also identify sponsor reads and calls to buy a product; do not mistake a polished advertisement for an editorial highlight.",
+          "checks": [
+            "The cut preserves the speaker’s meaning and any essential qualification.",
+            "The title describes this clip accurately.",
+            "Sponsor content is identified and selected intentionally."
+          ]
+        },
+        {
+          "title": "04 / Give each clip a different job",
+          "body": "Compare the clips you plan to keep. Three cuts of the same answer may add less variety than a useful explanation, a personal story, and a thoughtful disagreement. Choose based on what each clip contributes, not how many candidates the tool produced.\n\nWrite one sentence describing why you would share each candidate. If you cannot name its value without a generic phrase such as ‘interesting moment,’ revisit the selection. Keep fewer clips when that produces a clearer, more useful set.",
+          "checks": [
+            "This clip adds a distinct idea, story, or perspective to the set.",
+            "I can explain why my audience would find it useful."
+          ]
+        },
+        {
+          "title": "05 / Watch the whole vertical frame",
+          "body": "Play the entire clip, including camera cuts, gestures, and changes of speaker. A crop that works at the start may hide someone later. Check both people in a conversation, and look for slides or objects that the speaker refers to.\n\nIf a tight portrait crop loses essential information, use a wider composition or fit the complete source frame where your editor supports it. A visible face is not enough if the example being discussed has disappeared. Preview the video in the destination app before posting, because interface overlays can cover the image.",
+          "checks": [
+            "People and essential visual information remain visible throughout.",
+            "Captions and titles do not cover faces or important details."
+          ]
+        },
+        {
+          "title": "06 / Read every caption against the audio",
+          "body": "Check names, numbers, technical terms, and short words such as ‘not.’ These can change the meaning even when most of the transcript is correct. Listen while reading rather than relying only on spellcheck.\n\nReview the captions at a phone-sized display. Check line breaks, contrast, and timing, especially when the speaker talks quickly. Keep the wording faithful to the source and avoid adding a headline that competes with the captions for attention.",
+          "checks": [
+            "Names, numbers, negations, and specialist terms match the audio.",
+            "Captions remain readable and follow the speech."
+          ]
+        },
+        {
+          "title": "07 / Review the file you will actually publish",
+          "body": "Open the downloaded video and play it from beginning to end with sound. Check the first and last frames, caption timing, framing, and audio. The file you approve should be the latest version, not an earlier download from before your final edits.\n\nConfirm that you have permission to use the recording and any added media. Check the cover and post copy against the finished cut. Save the reviewed file with a name that makes its version clear, then preview the upload in your destination app before publishing.",
+          "checks": [
+            "The downloaded file plays correctly with sound from start to finish.",
+            "The cover and post copy match this final version.",
+            "I have permission to publish the recording and added media."
+          ]
+        }
+      ]
+    },
+    "tutorial": {
+      "title": "How to clip podcasts for TikTok.",
+      "metadataTitle": "How to Clip Podcasts for TikTok",
+      "description": "Choose a complete podcast moment, refine its vertical framing and captions, and export a clip for TikTok with Scribix.",
+      "intro": "A good podcast clip gives someone who missed the full episode enough context to understand one useful idea. Start with the moment you want to share, then refine the cut, picture and captions around it. This guide covers making a vertical video from a filmed podcast or interview in Scribix and downloading the finished file. Uploading that file to TikTok is a separate step.",
+      "category": "Podcast workflow",
+      "readingTime": "6 min read",
+      "walkthroughCaption": "From an existing podcast project to a downloadable clip: compare candidates, review the words, inspect framing and captions, then view the actual export. The overview combines real screenshots and footage; it does not show processing time. Source: Changeover Podcast, user-provided recording for this local preview.",
+      "sections": [
+        {
+          "title": "Before you start",
+          "body": "Use a video recording that you have permission to publish. Keep the original audio: you will need to listen to the speaker while reviewing the cut and checking the captions. An audio-only episode belongs in the transcription workflow, rather than this video-clipping workflow.\n\nFree accounts can export AI-generated clips as-is. Adjusting clip boundaries, captions, framing and branding requires a paid plan. Check current plans before following the editing steps below.\n\nStart with a local video file. The YouTube transcript tool imports captions; it does not import the original YouTube video into this clipping workflow."
+        },
+        {
+          "title": "1. Upload your podcast recording",
+          "body": "Open Scribix and choose the video file from your device. Follow the upload and processing status shown on screen. Keep the upload page open while the file is being transferred.\n\nFor the example below, we resumed an already uploaded project. The upload instructions explain how to start your own project; a new upload is not shown in the demonstration.\n\nBegin with one recording so that you can review the results against the original conversation. Do not judge the job by the number of clips it produces: some episodes contain more self-contained moments than others."
+        },
+        {
+          "title": "2. Choose a moment that makes sense on its own",
+          "body": "Play a suggested clip before editing it. Ask three questions:\n\nIs the subject clear to someone who has not heard the episode?\n\nDoes the clip contain an answer, explanation, story or conclusion?\n\nDoes the headline accurately describe what the speaker says?\n\nListen to the surrounding conversation when a candidate opens with a vague reference or a reply to an unheard question. Watch for sponsor reads and repeated versions of the same idea. Keep the candidates that offer something distinct to your audience.\n\nThe podcast clip checklist gives you a repeatable review for these decisions.",
+          "imageAlt": "Four podcast candidates and the selected clip in Scribix",
+          "imageCaption": "This 9 min 47 sec recording already had four candidates. We opened the first, covering 00:01.663–00:59.087. Its topic is the player’s composure; the other candidates discuss tactics, other players and relatability."
+        },
+        {
+          "title": "3. Refine the start and finish",
+          "body": "With a paid plan, use the transcript and clip boundaries to find a natural opening. Include the question or setup if the answer depends on it. At the end, keep the sentence that completes the point rather than stopping immediately after the most dramatic phrase.\n\nPlay the new cut with sound. A boundary that looks neat in text can still interrupt a breath or remove a qualification. If you cannot recover a complete thought within a useful clip, choose a different moment.",
+          "imageAlt": "Content panel showing transcript and source start and end controls",
+          "imageCaption": "Choose Edit clip, then Content to review the transcript and original video start/end times. The source range in this example stays at 00:01.663–00:59.087."
+        },
+        {
+          "title": "4. Check the vertical picture",
+          "body": "Watch the whole portrait composition, not just its first frame. Follow changes of speaker, camera cuts and gestures. Check that the crop keeps the person and anything they refer to visible.\n\nAdjust the framing when it loses important information. A wider composition can be preferable to a close-up when two people or a presentation need to remain in view. Do not assume that automatic framing has handled every transition correctly.",
+          "imageAlt": "Framing controls beside the portrait podcast preview",
+          "imageCaption": "The Framing panel offers Automatic follow, Show full frame and Crop a section manually. Automatic follow was already selected here. This output retains black space above and below the picture; review camera changes before deciding whether to adjust it."
+        },
+        {
+          "title": "5. Correct and style the captions",
+          "body": "Listen while reading the captions. Pay particular attention to names, numbers, specialist terms and words such as “not.” Correct the text before choosing the style.\n\nReview the result at a phone-sized display. Check line breaks, contrast, timing and placement. Avoid covering the speaker’s face or making an opening title compete with the captions. Check placement again in TikTok’s upload preview, where the app adds its own interface.",
+          "imageAlt": "Captions panel with motion style, colors, size and position controls",
+          "imageCaption": "This example uses Karaoke punch, white text and a yellow highlight. Open Correct transcript text to review wording. Check the spoken names against the audio before publishing."
+        },
+        {
+          "title": "6. Export and review the actual file",
+          "body": "Choose Download in the clip editor. While the render is running, the control shows Preparing your video. When the file is ready, use Download to save it. The example below was generated from this project during the walkthrough.\n\nGenerate the finished clip and download it. Play the downloaded video from beginning to end with sound. Check the cut, captions, framing, first and last frames, and audio.\n\nMake sure your cover and post copy describe this final version. If you change the clip after exporting, create and review the updated file before publishing. Keep the approved download clearly named so that you do not upload an older draft.",
+          "videoCaption": "The actual 57-second portrait export, with original audio and captions. Play it to review the camera changes, wording and framing. This candidate was exported as-is; use the checks above before publishing your own clip. Source: Changeover Podcast."
+        },
+        {
+          "title": "Before you post",
+          "body": "Preview the file in TikTok and check how the video looks with the platform interface around it. Confirm your intended audience and post details there. This walkthrough does not assume that your Scribix account is connected to TikTok or that a direct publishing flow has been tested.\n\nYou do not need to publish every suggested clip. A smaller set of clear, accurate moments can serve your audience better than a batch you have not reviewed.\n\nStart with your video podcast."
+        }
+      ]
+    }
+  },
+  "ui": {
+    "skip": "Skip to content",
+    "home": "Scribix home",
+    "nav": "Main navigation",
+    "guides": "Guides",
+    "pricing": "Pricing",
+    "create": "Create clips",
+    "practice": "Put it into practice",
+    "ctaTitle": "Bring a conversation. Find a complete moment.",
+    "ctaBody": "Use Scribix to find candidate clips, review the cut, and export a vertical video. Editing controls require a paid plan.",
+    "ctaLink": "Explore the podcast clip maker",
+    "all": "All guides",
+    "preview": "Local preview · Real screenshots and an exported example. Not published yet.",
+    "by": "By Scribix",
+    "print": "Print / save as PDF",
+    "printHelp": "Print a review sheet or choose “Save as PDF” in your print dialog. No email required.",
+    "watch": "Watch the workflow",
+    "duration": "41 seconds · Silent overview",
+    "walkthroughLabel": "Podcast clipping workflow overview",
+    "videoFallback": "Download the video",
+    "toc": "In this guide",
+    "checkHelp": "Checks are saved for this visit only. Print a blank copy for your next clip.",
+    "enlarge": "Enlarge image",
+    "enlargeHelp": "Select the image to enlarge it.",
+    "exportLabel": "Actual exported podcast clip with audio and captions",
+    "download": "Download the example MP4",
+    "missing": "Missing context",
+    "setup": "With the setup",
+    "review": "Review",
+    "next": "Next step",
+    "nextLink": "Make and review a podcast clip with Scribix",
+    "episode": "Episode",
+    "range": "Clip / time range",
+    "decision": "Decision: □ Keep　□ Revise　□ Skip",
+    "changes": "Changes needed",
+    "fieldNotes": "Scribix / Field notes for creators",
+    "indexTitle": "Good clips start with good decisions.",
+    "indexIntro": "Practical guides for turning long conversations into short videos that make sense. Choose the moment. Keep the meaning. Review the result.",
+    "indexMeta": "Guides for Better Podcast Clips",
+    "indexDescription": "Practical guides to choosing complete podcast moments, reviewing your clips, and preparing vertical videos for publication.",
+    "edition": "English edition",
+    "list": "The guides",
+    "cardLabel": "The clip review",
+    "cardLines": [
+      "01 — Keep the context.",
+      "02 — Keep the meaning.",
+      "03 — Check the file."
+    ],
+    "cardFoot": "A checklist to keep beside your editor",
+    "read": "Read the guide",
+    "previewBadge": "Preview",
+    "previewTitle": "Podcast workflow preview",
+    "previewBody": "Watch the walkthrough, inspect real screenshots and play the exported clip with sound.",
+    "checklistLink": "Open the podcast clip checklist",
+    "mediaNote": "The recording, its captions and the screenshots retain their original language."
+  },
+  "podcast": {
+    "metaTitle": "AI Podcast Clip Maker — Review, Refine & Export",
+    "description": "Turn video podcasts and interviews into vertical clips with Scribix. Review AI-selected moments, refine the cut and captions, and export a finished video.",
+    "label": "AI podcast clip maker",
+    "title": "A long conversation. A moment worth sharing.",
+    "intro": "Turn video podcasts and interviews into vertical clips. Let Scribix suggest the moments, then decide which ones tell a complete story.",
+    "upload": "Upload your video",
+    "free": "{minutes} processing minutes included on Free. Editing requires a paid plan.",
+    "checkLabel": "The editorial check",
+    "checkTitle": "Would this make sense to someone who missed the whole episode?",
+    "checkBody": "Keep the question when it matters. Keep the answer that delivers. Leave the listener with a complete thought.",
+    "checkLink": "Use the podcast clip checklist",
+    "workflowLabel": "From episode to export",
+    "workflowTitle": "AI suggests. You make the editorial decisions.",
+    "steps": [
+      {
+        "title": "Start with the conversation.",
+        "body": "Upload your video podcast or interview. Scribix analyzes the transcript to suggest candidate moments for you to review."
+      },
+      {
+        "title": "Keep the thought complete.",
+        "body": "Watch each candidate in context. With a paid plan, adjust the start and end, correct captions, and refine the vertical framing."
+      },
+      {
+        "title": "Review the finished clip.",
+        "body": "Export the video and cover image. Play the downloaded file with sound, then upload it to your preferred social platform."
+      }
+    ],
+    "editLabel": "Refine with a paid plan",
+    "editTitle": "The details are part of the story.",
+    "editBody": "A useful clip needs more than a short duration. Review the words, the picture, and the final file before it reaches your audience.",
+    "plans": "Compare Free and paid plans",
+    "features": [
+      {
+        "title": "Find a natural start and finish",
+        "body": "Use the transcript to locate the words you need, then adjust the boundaries in the original video."
+      },
+      {
+        "title": "Make the words readable",
+        "body": "Correct names and terms, choose a caption style, and check placement against the picture."
+      },
+      {
+        "title": "Keep the speaker in frame",
+        "body": "Review the vertical composition and adjust it when a tight crop loses important context."
+      }
+    ],
+    "faqTitle": "Before your first clip",
+    "faqs": [
+      {
+        "question": "Can I try the podcast clip maker for free?",
+        "answer": "Free includes {minutes} minutes of uploaded media processing as a one-time allowance. You can export AI-generated clips as-is. Editing and brand controls require a paid plan."
+      },
+      {
+        "question": "Do I need a video podcast?",
+        "answer": "Start with a filmed podcast, interview or conversation. For audio-only episodes, use audio to text to work with the transcript; that is a separate workflow."
+      },
+      {
+        "question": "Can I paste a YouTube link to make clips?",
+        "answer": "This clipping workflow starts with a local video file. The YouTube transcript tool imports captions, not the original video for clipping."
+      },
+      {
+        "question": "Can I change the clips the AI selects?",
+        "answer": "With a paid plan, adjust the boundaries, caption text and style, and framing. Review the surrounding conversation to preserve the speaker’s meaning."
+      },
+      {
+        "question": "Does Scribix guarantee a certain number of clips or views?",
+        "answer": "No. Useful moments depend on the recording. Review suggestions for context and relevance; a suggested clip is not a prediction of views or engagement."
+      }
+    ],
+    "audioHint": "Only need a transcript?",
+    "audioLink": "Try audio to text",
+    "endLabel": "Start with one recording",
+    "endTitle": "Find your next complete moment.",
+    "endCta": "Create podcast clips"
+  },
+  "demo": {
+    "brand": "Scribix",
+    "footer": "REAL WORKSPACE / LOCAL DEMONSTRATION",
+    "credit": "Source: Changeover Podcast / user-provided recording",
+    "cta": "Clip. Refine. Share.",
+    "scenes": [
+      {
+        "label": "SOURCE RECORDING",
+        "title": "One podcast.\nMore possibilities.",
+        "body": "Start with a conversation\nworth sharing."
+      },
+      {
+        "label": "01 / SELECT",
+        "title": "Find the\ncomplete idea.",
+        "body": "Compare the candidates.\nChoose a moment with context."
+      },
+      {
+        "label": "02 / REVIEW",
+        "title": "Review the\nactual words.",
+        "body": "Check the opening and ending\nagainst the source range."
+      },
+      {
+        "label": "03 / FRAME",
+        "title": "Give the speaker\nroom to speak.",
+        "body": "Review vertical framing.\nAdjust sections when needed."
+      },
+      {
+        "label": "04 / CAPTIONS",
+        "title": "Make every\nword readable.",
+        "body": "Check the transcript, then\nchoose your caption style."
+      },
+      {
+        "label": "05 / EXPORTED RESULT",
+        "title": "From the editor\nto a real clip.",
+        "body": "Actual Scribix export.\nReview before publishing."
+      },
+      {
+        "label": "SCRIBIX / PODCAST CLIPS",
+        "title": "Your next short\nstarts here.",
+        "body": "Choose a moment. Make it yours."
+      }
+    ]
+  }
+}

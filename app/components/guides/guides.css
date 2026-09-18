@@ -1,0 +1,150 @@
+.guide-surface {
+  line-height: 1.7;
+}
+.guide-surface :is(a, button, input):focus-visible {
+  outline: 3px solid var(--generated);
+  outline-offset: 5px;
+}
+.guide-skip {
+  position: absolute;
+  top: -100px;
+  left: 20px;
+  z-index: 100;
+  background: var(--card);
+  padding: 12px 20px;
+}
+.guide-skip:focus {
+  top: 12px;
+}
+.guide-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border-radius: 12px;
+  padding: 11px 20px;
+  background: var(--accent);
+  color: var(--action-text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: background 180ms;
+}
+.guide-button:hover {
+  background: var(--accent-hover);
+}
+.guide-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.guide-title {
+  font-size: clamp(2.65rem, 5.8vw, 5.5rem);
+  font-weight: 650;
+  line-height: 1.02;
+  letter-spacing: -0.065em;
+  text-wrap: balance;
+}
+.guide-article section {
+  scroll-margin-top: 28px;
+}
+.guide-article h2 {
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+.guide-article p {
+  margin-top: 20px;
+}
+.guide-article p + p {
+  margin-top: 16px;
+}
+.guide-article .guide-eyebrow {
+  margin-top: 0;
+}
+.guide-check {
+  accent-color: var(--accent);
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  margin-top: 4px;
+}
+.guide-toc a {
+  display: block;
+  padding: 7px 0;
+  color: var(--muted);
+}
+.guide-toc a:hover {
+  color: var(--accent);
+}
+.guide-print-sheet {
+  display: none;
+}
+@media (max-width: 639px) {
+  .guide-navigation .guide-button {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-surface * {
+    transition: none !important;
+  }
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm;
+  }
+  .guide-surface {
+    --ink: #17122c;
+    --muted: #514c60;
+    --line: #ccc;
+    color: #17122c;
+    background: white;
+    font-size: 10pt;
+    line-height: 1.35;
+  }
+  .guide-navigation,
+  .guide-footer,
+  .guide-article-header,
+  .guide-reading-layout,
+  .guide-cta,
+  .guide-skip {
+    display: none !important;
+  }
+  .guide-print-sheet {
+    display: block;
+  }
+  .guide-print-sheet .guide-print-title {
+    font-size: 22pt;
+    font-weight: 650;
+    letter-spacing: -0.04em;
+    margin: 10px 0;
+  }
+  .guide-print-sheet h2 {
+    font-weight: 600;
+    margin: 12px 0 5px;
+  }
+  .guide-print-sheet section {
+    break-inside: avoid;
+  }
+  .guide-print-sheet li {
+    list-style: none;
+    margin: 4px 0;
+  }
+  .guide-print-sheet li::before {
+    content: "□";
+    padding-right: 8px;
+  }
+}
+
+/* Long translated titles must fit both narrow screens and printed sheets. */
+.guide-title, .guide-article h2 { overflow-wrap: anywhere; }
+:lang(ja) .guide-title { letter-spacing: -0.025em; line-height: 1.2; word-break: normal; overflow-wrap: normal; }
+:lang(ja) .guide-article h2 { letter-spacing: 0; line-height: 1.5; }
+@media print { .guide-media { display: none !important; } }

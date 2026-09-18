@@ -3384,5 +3384,9 @@
     "calendarHint": "Parcourez le calendrier. Passez à une offre payante pour programmer vos publications.",
     "channelHint": "Connectez votre compte pour publier vos clips depuis Scribix.",
     "pro": "Pro"
+  },
+  "GuidesNav": {
+    "guides": "Guides",
+    "podcast": "Création d’extraits de podcast avec l’IA"
   }
 }

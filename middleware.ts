@@ -10,19 +10,22 @@ export default function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const parts = pathname.split("/").filter(Boolean);
 
-  if (parts.length === 1 && SINGLE_LANGUAGE_PATHS.has(parts[0])) {
+  const isEnglishContent = (segments: string[]) =>
+    (segments.length === 1 && SINGLE_LANGUAGE_PATHS.has(segments[0]));
+
+  if (isEnglishContent(parts)) {
     const url = request.nextUrl.clone();
-    url.pathname = `/${routing.defaultLocale}/${parts[0]}`;
+    url.pathname = `/${routing.defaultLocale}/${parts.join("/")}`;
     return NextResponse.rewrite(url);
   }
 
   if (
-    parts.length === 2 &&
+    parts.length >= 2 &&
     routing.locales.includes(parts[0] as (typeof routing.locales)[number]) &&
-    SINGLE_LANGUAGE_PATHS.has(parts[1])
+    isEnglishContent(parts.slice(1))
   ) {
     const url = request.nextUrl.clone();
-    url.pathname = `/${parts[1]}`;
+    url.pathname = `/${parts.slice(1).join("/")}`;
     url.search = search;
     return NextResponse.redirect(url);
   }

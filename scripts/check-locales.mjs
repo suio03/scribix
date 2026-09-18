@@ -151,12 +151,21 @@ for (const [locale, messages] of messagesByLocale) {
   compareObjectShape(referenceMessages, messages, "", locale, errors);
 }
 
+// Guide copy is loaded only by content routes, not the global client provider.
+const guideDir = path.join(projectRoot, "lib/guides/locales");
+const guideReference = JSON.parse(await readFile(path.join(guideDir, referenceLocale), "utf8"));
+for (const locale of localeFiles) {
+  const copy = JSON.parse(await readFile(path.join(guideDir, locale), "utf8"));
+  checkForbiddenStructuralKeys(copy, "Guides", locale, errors);
+  compareObjectShape(guideReference, copy, "Guides", locale, errors);
+}
+
 if (errors.length > 0) {
   console.error("Locale validation failed:\n");
   for (const error of errors) console.error(`- ${error}`);
   process.exitCode = 1;
 } else {
   console.log(
-    `Locale validation passed for ${localeFiles.length} files (keys, types, array lengths, and ICU arguments).`
+    `Locale validation passed for ${localeFiles.length} app + guide dictionaries (keys, types, array lengths, and ICU arguments).`
   );
 }

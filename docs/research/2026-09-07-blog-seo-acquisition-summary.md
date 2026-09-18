@@ -1,12 +1,14 @@
-# Scribix Blog、长尾 SEO 与非广告获客调研总结
+# Scribix 内容规划：Guides、长尾 SEO 与非广告获客
 
-调研日期：2026-09-07。关键词范围：美国市场、英语搜索。本文整理本次项目代码检查、竞品公开页面研究，以及用户已打开的 Google Ads Keyword Planner、SEMrush、Similarweb 数据。
+初始调研：2026-09-07；规划更新：2026-09-18。关键词范围：美国市场、英语搜索。关键词指标保留 9 月 7 日 Google Ads Keyword Planner、SEMrush、Similarweb 的原始口径，本次未重新测量。
 
-状态：研究与建议，尚未实现或发布本文提出的页面。关键词原始记录见 [video-seo-keywords.json](2026-09-07-video-seo-keywords.json)。
+本文是内容选题、优先级和执行路线的唯一维护入口。9 月 18 日竞品内容观察已合并；[竞品调研](2026-09-18-competitor-content-acquisition.md)仅保留证据，不维护另一份计划。
+
+状态：2026-09-18 已完成首批页面与内容的本地实现，尚未部署。Guides、选片清单与播客功能页可本地预览；TikTok 教程为仅开发环境可见的草稿。随后用户授权使用已登录的 3000 和现有素材，现已完成真实截图、重新导出和截图动画演示；采用截图编排视频，不做连续录屏。关键词原始记录见 [video-seo-keywords.json](2026-09-07-video-seo-keywords.json)。
 
 ## 1. 核心结论
 
-Scribix 应围绕「把长视频变成可发布的短视频」建立内容中心。第一阶段组合是：少量高意图功能落地页、包含真实操作证据的教程与比较文章，再把这些内容用于 YouTube 演示、社区答疑和客户案例传播。
+Scribix 应围绕「把长视频变成可发布的短视频」建立内容中心。第一阶段组合是：少量高意图功能落地页、真实操作教程、问题修复、可复用清单与案例实测。内容入口使用 Guides，英语优先；同一份获授权素材用于文章、操作演示、修正前后对比和检查清单。
 
 建议优先顺序：
 
@@ -37,7 +39,7 @@ Scribix 可以先沿用代码管理内容的方式，补上文章索引和可复
 
 ## 3. Scribix 当前基础与内容边界
 
-研究时首页定位为 AI Video Clipper / Turn Long Videos into Shorts。现有 SEO 页面仍主要覆盖 video-to-text、audio-to-text、mp3-to-text、youtube-to-transcript 和 ai-note-taker，尚未看到 Blog 路由与内容索引。
+9 月 7 日研究时首页定位为 AI Video Clipper / Turn Long Videos into Shorts。现有 SEO 页面仍主要覆盖 video-to-text、audio-to-text、mp3-to-text、youtube-to-transcript 和 ai-note-taker，尚未看到 Blog 路由与内容索引。
 
 实施时需要遵守以下事实边界：
 
@@ -107,9 +109,9 @@ Autocomplete 出现了 `free`、`no watermark`、`online`、`for TikTok`、`for 
 
 暂不优先覆盖：泛 AI video generator / faceless video、与产品无关的素材下载、未兑现的免费无水印承诺，以及只有泛定义或空泛 Top 10 列表的文章。泛知识更可能直接被搜索摘要回答，这是内容策略判断，本次未测量其 AI 搜索点击损失。
 
-## 5. 建议的网站与 Blog 结构
+## 5. 网站结构与内容顺序
 
-以下路径均为建议，尚未实现。
+以下为统一路由规划；`/guides`、选片清单和 `/podcast-clip-maker` 已本地实现，其他页面按下文状态推进。
 
 | 路径 | 承接意图 | 内容重点 |
 | --- | --- | --- |
@@ -117,31 +119,44 @@ Autocomplete 出现了 `free`、`no watermark`、`online`、`for TikTok`、`for 
 | `/podcast-clip-maker` | podcast clip maker / generator / clipper | 播客输入、选片、构图、字幕和导出示例 |
 | `/horizontal-video-to-vertical` | landscape to portrait / horizontal to vertical | 不同画面类型的竖屏结果和调整方式 |
 | `/alternatives/opus-clip` | opus clip alternative | 同素材实测、工作流差异、适用人群 |
-| `/blog` 与 `/blog/...` | 教程、故障排查、参考与案例 | 有独立价值的解释和可复现证据 |
+| `/guides` 与 `/guides/...` | 教程、故障排查、参考与案例 | 有独立价值的解释和可复现证据 |
 
 实际实现沿用 `app/[locale]` 和当前 URL / i18n 约定。相同意图的 maker、generator、clipper 等词由一个页面承接，避免重复内容和内部竞争。
 
-Blog 基础设施应包括文章索引、统一布局、作者与日期、目录、相关内容、工具内链、metadata、canonical、按实际翻译生成的 hreflang、结构化数据与 sitemap。第一阶段不必引入编辑后台。
+统一使用 Guides，不同时维护 Blog 和 Guides 两套入口；名称本身不代表 SEO 优势。Guides 基础设施应包括文章索引、统一布局、作者与日期、目录、相关内容、工具内链、metadata、canonical、按实际翻译生成的 hreflang、结构化数据与 sitemap。第一阶段不必引入编辑后台。
 
-### 第一批四篇内容
+### 首批内容制作顺序
 
-| 内容 | 需求依据 | 必须准备的证据 |
-| --- | --- | --- |
-| How to clip podcasts for TikTok | SEMrush 40 / KD 24 | 原始素材、选片理由、构图、字幕、导出完整过程 |
-| How to turn long videos into shorts | Similarweb Avg. volume 131 / KD 45，最近 28 天 <50 | 展示为什么选择这些片段，以及何时需要调整 |
-| How to convert horizontal video to vertical without cutting off speakers | 来自横屏转竖屏词簇；完整标题不是已验证的精确关键词 | 单人、双人、演示文稿的实际处理结果 |
-| OpusClip vs Scribix for podcast clips | 来自 opus clip alternative 390 / KD 26；完整标题未单独量测 | 同一输入素材，记录日期、套餐、步骤、输出与限制 |
+以下关键词量沿用第 4 节，完整标题没有自动继承精确搜索量。发布以证据齐备为准，不强制等前一篇完成才推进独立任务。
 
-OpusClip 比较文章与替代方案落地页内容重叠时，应先做一个完整页面；有独立搜索意图和内容价值时再拆分。
+| 顺序 | 内容 | 需求依据 | 交付与证据 |
+| --- | --- | --- | --- |
+| 1 | How to Clip Podcasts for TikTok | SEMrush 40 / KD 24 | `/guides/how-to-clip-podcasts-for-tiktok`；获授权输入、选片理由、边界修正、构图、字幕、真实导出；配套操作演示 |
+| 2 | How to Convert Horizontal Video to Vertical Without Cutting Off Speakers | 横屏转竖屏词簇；完整标题未量测 | 裁切与保留全画面的对照；单人、双人和屏幕内容按实际能力说明，不承诺不存在的布局 |
+| 3 | Podcast Clip Checklist | 编辑选题，未验证搜索量 | 指代、上下文、答案完整性、广告、重复、标题忠实度的检查方法；正文直接可用，附可打印／下载清单，初期不强制留邮箱 |
+| 4 | 一期访谈最终保留哪些片段，为什么 | 编辑选题，未验证搜索量 | 同素材案例、保留／放弃理由和修正前后结果；只有完整计时才写耗时；自有实验不称客户案例 |
+| 5 | OpusClip vs Scribix for Podcast Clips | opus clip alternative 390 / KD 26；完整标题未量测 | 同素材同任务，记录日期、套餐、设置、步骤、最终文件和限制；证据齐备后发布 |
 
-后续可探索字幕安全区、自动与人工选片、webinar 切片案例、发布前检查表。没有实测搜索量的标题应标记为编辑选题，不能包装成已验证关键词。
+OpusClip 比较文章与替代方案落地页内容重叠时，先做一个完整页面；有独立搜索意图和内容价值时再拆分。9 月 16 日竞品操作记录是准备材料，尚不足以证明 Scribix 与竞品最终输出的全面对比。
+
+How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Avg. volume 131 / KD 45、最近 28 天 <50 的证据保留，有独立材料再做，避免与首篇只是换标题。
+
+### 后续选题与维护边界
+
+- 优先围绕播客／访谈的连续任务延伸：开头缺上下文、人物裁掉、字幕挡脸、发布前检查。先用案例中的章节回答，再按独立意图决定是否拆页。
+- 平台规格、字幕安全区可小范围做，发布前核查官方来源，标明核查日期；需随规则变化维护。
+- Reels、webinar、客户故事按产品能力、授权素材和使用数据再扩展。
+- 泛社媒灵感、热点、大规模行业内容和数据研究后置；小样本实验不能包装成行业普遍规律。
+- 价格、免费额度和竞品功能比较定期复核；不直接复制竞品过期表格。
 
 ## 6. 竞品的非广告获客方式
 
-以下依据公开渠道和页面观察，证明竞品正在使用这些方式；本次没有取得渠道贡献、转化率或 ROI 数据。长尾页和比较页本身属于 SEO，另列渠道是为了区分内容建设和内容分发。
+以下结合 9 月 7 日与 9 月 18 日公开页面观察，证明相关内容和入口存在；历史培训或社群入口不证明当前持续运营。本次没有取得页面流量、渠道贡献、转化率或 ROI 数据。长尾页和比较页本身属于 SEO，另列渠道是为了区分内容建设和内容分发。
 
 | 方式 | 观察到的竞品实践 | Scribix 可以怎么做 |
 | --- | --- | --- |
+| 平台问题与垂直内容 | Quso 的灵感文章、sermon 任务内容簇；Vizard 的 Shorts 问题指南 | 围绕播客连续任务组织内容，避免无差别扩展泛流量主题 |
+| 数据研究 | Opus Research Hub 覆盖发布时间、时长和标签；样本量为厂商自报 | 后续积累透明实验与数据，不把厂商成绩作为我们的效果承诺 |
 | 联盟推荐 | 三家都有 affiliate；Repurpose 与 Opus 提供推广素材 / 资源 | 产品转化稳定后找垂直创作者合作；佣金属于获客成本 |
 | 免费工具入口 | Repurpose 免费工具库、Vizard 工具矩阵、Opus 工具页 | 优先使用现有可独立完成任务的能力，入口连接切片主流程 |
 | 教学视频与培训 | Opus Learning Center；Vizard 工具页教程；Repurpose 支持与培训内容 | 同一份实测素材用于教程文章、YouTube 演示和短片 |
@@ -150,7 +165,9 @@ OpusClip 比较文章与替代方案落地页内容重叠时，应先做一个�
 | 可下载资料 | Repurpose 视频规格与变现指南 / cheat sheet | 制作短视频发布检查表、字幕安全区示意、播客选片清单 |
 | 平台与生态合作 | Repurpose 跨平台分发定位、YouTube Shorts 专题活动 | 长期方向；先验证产品与目标工作流的匹配 |
 
-来源：
+9 月 18 日逐项页面、日期和证据限制见 [竞品内容调研](2026-09-18-competitor-content-acquisition.md)。其新增结论已体现在第 5 节制作顺序和第 7 节执行路线。
+
+9 月 7 日来源：
 
 - Repurpose：[免费工具](https://repurpose.io/freetools/)、[联盟推广工具包](https://repurpose.io/your-affiliate-toolkit/)、[YouTube Shorts 专题](https://repurpose.io/grow-youtube-shorts/)、[视频尺寸与时长资料](https://support.repurpose.io/en/article/video-sizes-and-max-lengths-19sx2ra/)、[2026 变现指南](https://repurpose.io/2026-social-media-monetization-guide-cheat-sheet/)、[支持与培训入口](https://support.repurpose.io/en/)。
 - OpusClip：[联盟计划](https://www.opus.pro/affiliate)、[联盟资源](https://affiliateresources.opus.pro/)、[Learning Center](https://www.opus.pro/learning-center)、[播客切片工具页](https://www.opus.pro/tools/ai-podcast-clip-generator)。
@@ -158,21 +175,42 @@ OpusClip 比较文章与替代方案落地页内容重叠时，应先做一个�
 
 ### Scribix 的渠道投入顺序
 
-1. **YouTube 实操演示、已有社区中的具体问题答疑**：和首批教程共用素材，先验证能否带来实际使用。
+1. **实操演示、可复用清单、已有社区中的具体问题答疑**：和首批教程共用素材，先验证能否带来实际使用；对外发布按实际授权执行。
 2. **浏览器扩展商店入口**：利用现有扩展资产；先核实上架状态、描述和跳转流程，同时考虑字幕用户与切片用户的需求差异。
 3. **真实客户案例**：积累可检查、获授权的结果，再用于页面与分发。
-4. **小规模联盟推荐、可下载资料**：在转化路径明确后试验；邮件后续触达需用户主动订阅。
+4. **小规模联盟推荐、邮件订阅资料**：在转化路径明确后试验；首批无邮箱门槛的清单不等待此阶段，邮件后续触达需用户主动订阅。
 5. **自建社区、大型平台合作**：后置，避免初期承担过多持续运营成本。
 
-## 7. 建议执行路线
+## 7. 执行路线与当前起步任务
 
-| 阶段 | 交付内容 | 验证重点 |
+### 按交付条件推进
+
+| 阶段 | 交付内容 | 完成条件 |
 | --- | --- | --- |
-| 第 1–2 周 | Blog 基础、播客功能页、TikTok 播客教程及配套演示视频 | 页面可索引；从内容到上传和首次导出的路径可用 |
-| 第 3–4 周 | 横屏转竖屏功能页与教程；完成 OpusClip 同素材测试 | 结果准确、内容与功能匹配、比较有证据 |
-| 第 2 个月 | 发布比较内容，按实际数据决定 Reels / webinar / 字幕选题 | 查询词、内容引流后的首次导出、重复使用与付费转化 |
+| 首批 | Guides 基础、播客功能页、TikTok 播客教程、检查清单与配套演示 | 内容与产品事实一致；真实素材和导出可核查；页面及从内容到上传、首次导出的路径可用 |
+| 第二批 | 横屏转竖屏功能页与教程、同素材案例；补齐竞品对照实验 | 画面取舍和选片理由有实例；记录限制与人工修正；不以演示代替实测 |
+| 证据成熟后 | 发布比较内容；按查询与使用数据决定 Reels / webinar / 字幕内容 | 比较基于当日套餐与最终文件，选题有独立价值，已有页面及时更新 |
 
-这是建议排期，不是已经开始执行的计划。衡量重点应是首次导出、重复使用和付费转化，同时用搜索曝光、查询词与点击判断覆盖效果。低流量阶段需要积累样本，不能凭几次访问决定方向。
+这是实施顺序，不是已经完成的交付或固定周数承诺。衡量重点应是首次导出、重复使用和付费转化，同时用搜索曝光、查询词与点击判断覆盖效果。低流量阶段需要积累样本，不能凭几次访问决定方向。
+
+### 2026-09-18 可开始的任务
+
+本节是首批交付状态的维护入口；本地实现不等于生产发布。2026-09-18 先完成页面、内容和本地验证；随后按用户授权使用现有项目制作截图动画演示。
+
+| 优先级 | 任务 | 当日可推进的产物 | 依赖／状态 |
+| --- | --- | --- | --- |
+| 1 | Guides 基础模板 | 英语索引、文章布局、目录、作者／日期、工具入口、metadata 与已发布内容的 sitemap 接入 | 已本地实现；六语言入口与模板、各语言 canonical、互相对应的 hreflang、Article／面包屑和 sitemap；首页及页脚已接入 |
+| 2 | Podcast Clip Checklist | 完整英文稿与可打印清单，附清楚的选片判断方法 | 已本地实现；7 个审阅章节、16 个勾选项、示意文本例子和打印／另存 PDF 版式 |
+| 3 | 首篇 TikTok 播客教程 | 完整结构、非实测说明初稿、截图清单、演示脚本；再补真实输出 | 页面及六语言稿已完成；仅开发环境预览并 noindex，生产返回 404、索引和 sitemap 排除；已在 Guide 内嵌入 41 秒演示、4 张可放大截图及可播放／下载的 57 秒真实成片；新上传、逐句音频核对及公开素材许可仍待补齐 |
+| 4 | 播客功能页 | 对应关键词与已验证产品能力的文案／页面初稿，与 Guide 互链 | 页面与文案已本地实现；连接上传入口、清单与套餐，免费分钟数来自 lib/plans.ts；未添加未经验证的效果截图 |
+
+页面和内容准备后，已使用现有播客项目完成候选／内容／构图／字幕截图与真实导出，并制作统一品牌版式的截图动画演示；未重新上传，未对外发布。正文维护在 `lib/guides/locales/*.json`，由 `lib/guides/content.ts` 组合共享结构；[教程制作备注](../content/how-to-clip-podcasts-for-tiktok.md)只保留证据清单与演示脚本，不另维护进度表。
+
+首批英文版验证（本地化前）：`npm run build`（含六语言 parity）通过；Chrome ai-publisher 中检查桌面／390px 手机布局、深色主题、勾选、FAQ 和打印版式；本地生产模式验证 3 个公开页面、仅英语 canonical／hreflang、带查询参数的语言重定向、未知文章及教程草稿 404、sitemap 排除草稿。构建保留既有 middleware 弃用和 YouTube caption token 配置提示；本轮不涉及 YouTube 导入。未部署；后续素材制作复用已上传项目，采集真实界面并导出 57.43 秒的 1080×1920 有声成片。配套 41 秒、1920×1080 静音演示位于 `.artifacts/podcast-tutorial-2026-09-18/scribix-podcast-demo.mp4`；证据与复现命令见教程制作备注。
+
+素材起点：检查 [首页素材记录](../homepage-media.md) 中的获授权访谈／讲座原片及本地 master 是否仍可用。首页十秒静音循环只适合画面演示，不替代完整有声教程输入；真实项目输出与人工选段展示继续保持区分。先前测试视频也不能仅因用于内部调研就认定可公开使用。
+
+教程先覆盖上传、调整和导出；直接发布到 TikTok 等外部平台的步骤，需相应真实账号全流程验收后再写入。功能、部署与验收状态以 [产品 plan](../roadmap/video-product-plan.md) 和对应技术记录为准。
 
 分析沿用现有平台和事件体系，遵守 [tracking.md](../video-workspace/tracking.md) 与 `lib/video-workspace/analytics-contract.ts`，不新增追踪表或回放基础设施。
 
@@ -185,3 +223,29 @@ OpusClip 比较文章与替代方案落地页内容重叠时，应先做一个�
 - 竞品非广告渠道的实际流量贡献与转化数据；现有公开页面证据不足以推断哪个渠道最有效。
 
 原始关键词记录保留了 31 个 SEMrush 候选、Google Ads 区间、Similarweb 选定记录、来源差异与 12 个 Autocomplete 种子结果，见 [研究数据 JSON](2026-09-07-video-seo-keywords.json)。
+
+
+### 六语言本地化 — 2026-09-18
+
+用户确认直接覆盖现有六语言；随后明确原始播客字幕不需翻译，本轮不再进行音频转写或字幕改写。范围为 Guides 索引、TikTok 教程、可打印检查清单、播客功能页、媒体说明、导航及演示外层文案。源视频、源字幕和真实产品截图共用，页面说明其保留原语。未部署；教程延续本地预览状态。
+
+调研针对表达与意图，不包含搜索量、难度或母语用户访谈。法语以法国、日语以日本、德语以德国、意大利语以意大利的材料为主；西语跨地区参考，正文选用易理解的通用表达（video、subir、descargar），不声称代表每个国家的首选词。
+
+| 语言 | 采用的表达与区别 | 直接证据（本轮核查） |
+| --- | --- | --- |
+| fr | `extraits de podcast` 描述内容片段；`clip vidéo` 表示输出；`cadrage` / `sous-titres`；教程用 créer、importer、télécharger | [Ausha 帮助](https://help.ausha.co/fr/articles/5159114-comment-creer-personnaliser-et-telecharger-le-clip-video-d-un-episode)、[Riverside 法语站](https://riverside.com/fr) |
+| es | `clips de podcast` / `videos cortos`；动作用 crear、subir、descargar；`subtítulos` 不与社交帖文说明混淆 | [Clippum](https://www.clippum.com/)、[Filmora 西语创作者教程](https://www.youtube.com/watch?v=YrVRqmihjfs) |
+| it | `clip` / `videopodcast` / `video brevi`；动作用 creare、caricare、esportare；画面用 inquadratura | [Spotify 意大利语帮助](https://support.spotify.com/it/creators/article/clips/)、[Francesco Oggiano 的实际创作者用法](https://fraoggiano.substack.com/p/siamo-nella-clip-economy)、[Rai Clip 栏目](https://www.raiplaysound.it/programmi/radio2socialclub/clip/archivio) |
+| de | `Podcast-Clips` 为主，`Kurzvideos` / `Hochkantvideo` 说明格式；`Bildausschnitt` / `Untertitel`；直接使用 du | [Podigee 创作者指南](https://www.podigee.com/de/geld-verdienen-mit-podcasts-der-ultimative-guide/)、[ClipFlap 德语页面](https://clipflap.com/de) |
+| ja | `切り抜き動画` 表示剪出片段，`ショート動画` 表示短视频格式；`縦型動画` / `字幕` / `書き出す`；避免机械写成「クリップメーカー」 | [日本创作者实操文章](https://note.com/arkb/n/nf349a4d3e411)、[Radio Choppit](https://radio.choppit.studio/) |
+
+以上页面只提供用词证据，不把竞品的音频转视频、链接导入或效果承诺移植到 Scribix。尤其日语与法语资料中有音频可视化场景，本文仍限定视频源剪辑。标题保留具体教程意图，不声称某词搜索量最高。
+
+维护入口：`lib/guides/locales/*.json` 仅存可翻译内容；路由、章节 ID、素材、顺序和草稿状态统一在 `lib/guides/registry.ts`。新增字典已纳入 `npm run check-locales` 的字段、数组与占位符校验。各语言套餐分钟数仍由 `lib/plans.ts` 注入。教程、检查清单和功能页使用同语言链接，所有公开 Guide 内容使用 reciprocal hreflang 与自引用 canonical；草稿仍排除 sitemap。
+
+本地化验收：`npm run build` 与扩展后的 `check-locales` 通过；18 个生产内容页面逐一检查 200、自引用 canonical、6 语言 + x-default、页面 lang；六语言教程草稿在生产 404、开发环境 200，未知 slug 404，sitemap 不收录草稿。五个本地化视频均为 41 秒 1920×1080 静音视频、完整解码成功且 HTTP Range 返回 206。Chrome ai-publisher 验证日语/德语 390px 无横向溢出、语言切换保持文章路径、德语视频实际播放、清单 16 项勾选及 7 节本地化打印内容。临时 3002 验证服务已关闭，3000 保持运行。
+
+
+### 2026-09-19 教程发布
+
+用户明确要求 TikTok 教程上线。六语言教程已从草稿转为公开文章，接入 Guides、Article／面包屑及 sitemap；保留现有真实导出、截图和原始字幕。同步移除五个非英语播客落地页 metadata 标题中的重复品牌后缀。以下发布结果以生产验证为准；不再将此前开发环境预览状态作为当前状态。

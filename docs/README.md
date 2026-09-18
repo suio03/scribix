@@ -16,7 +16,8 @@
 - [首页素材与授权](homepage-media.md)、[Logo 使用](../logo-exploration-round-6/production/USAGE.md)、[设计 tokens](../design-exploration/tokens.json)。
 - [付款通知](payment-notifications.md)。
 - [Collections 与 Transcript AI v2 提案](roadmap/collections-transcript-ai.md)：尚未实施，不是现行合同。
-- [竞品调研](research/2026-09-08-clipping-competitor-product-research.md)、[博客与 SEO](research/2026-09-07-blog-seo-acquisition-summary.md)、[关键词数据](research/2026-09-07-video-seo-keywords.json)、[Google Ads](research/2026-09-07-google-ads-launch-research.md)：保留研究日期，不作为当前功能状态或已开始投放的证据。
+- [竞品调研](research/2026-09-08-clipping-competitor-product-research.md)、[内容规划（唯一维护入口）](research/2026-09-07-blog-seo-acquisition-summary.md)、[关键词数据](research/2026-09-07-video-seo-keywords.json)、[Google Ads](research/2026-09-07-google-ads-launch-research.md)：保留研究日期，不作为当前功能状态或已开始投放的证据。
+- [竞品内容获客方式](research/2026-09-18-competitor-content-acquisition.md)：教程、案例、研究、下载资料与内容分发的公开样本与证据；执行计划统一见内容规划，不含页面级流量验证。
 
 <details>
 <summary>历史资料与构建附件（不作为日常待办）</summary>

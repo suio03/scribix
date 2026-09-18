@@ -1,0 +1,304 @@
+{
+  "ui": {
+    "skip": "Aller au contenu",
+    "home": "Accueil Scribix",
+    "nav": "Navigation principale",
+    "guides": "Guides",
+    "pricing": "Tarifs",
+    "create": "Créer des extraits",
+    "practice": "À vous de jouer",
+    "ctaTitle": "Une conversation, un extrait qui se comprend seul.",
+    "ctaBody": "Repérez des passages avec Scribix, vérifiez le montage et exportez une vidéo verticale. Les outils de montage nécessitent une offre payante.",
+    "ctaLink": "Découvrir la création d’extraits de podcast",
+    "all": "Tous les guides",
+    "preview": "Aperçu local · Captures réelles et exemple exporté. Pas encore publié.",
+    "by": "Par Scribix",
+    "print": "Imprimer / enregistrer en PDF",
+    "printHelp": "Imprimez la fiche ou choisissez « Enregistrer au format PDF » dans la fenêtre d’impression. Aucune adresse e-mail demandée.",
+    "watch": "Voir les étapes en vidéo",
+    "duration": "41 secondes · Démonstration sans son",
+    "walkthroughLabel": "Démonstration de création d’extraits de podcast",
+    "videoFallback": "Télécharger la vidéo",
+    "toc": "Dans ce guide",
+    "checkHelp": "Vos cases cochées sont conservées uniquement pendant cette visite. Imprimez une fiche vierge pour le prochain extrait.",
+    "enlarge": "Agrandir l’image",
+    "enlargeHelp": "Sélectionnez l’image pour l’agrandir.",
+    "exportLabel": "Extrait de podcast exporté, avec son et sous-titres",
+    "download": "Télécharger l’exemple en MP4",
+    "missing": "Sans le contexte",
+    "setup": "Avec le contexte",
+    "review": "Vérification",
+    "next": "Pour continuer",
+    "nextLink": "Créer et vérifier un extrait de podcast avec Scribix",
+    "episode": "Épisode",
+    "range": "Extrait / minutage",
+    "decision": "Décision : □ Garder　□ Retoucher　□ Écarter",
+    "changes": "Modifications à prévoir",
+    "fieldNotes": "Scribix / Conseils aux créateurs",
+    "indexTitle": "Un bon extrait commence par le bon choix.",
+    "indexIntro": "Des conseils concrets pour tirer de longues conversations des vidéos courtes qui gardent leur sens. Choisissez le passage, préservez le propos et vérifiez le résultat.",
+    "indexMeta": "Guides pour créer de meilleurs extraits de podcast",
+    "indexDescription": "Apprenez à choisir un passage complet, à vérifier vos extraits de podcast et à préparer des vidéos verticales pour les réseaux sociaux.",
+    "edition": "Édition française",
+    "list": "Les guides",
+    "cardLabel": "Avant de publier",
+    "cardLines": [
+      "01 — Garder le contexte.",
+      "02 — Préserver le sens.",
+      "03 — Vérifier le fichier."
+    ],
+    "cardFoot": "Une checklist à garder près de votre logiciel de montage",
+    "read": "Lire le guide",
+    "previewBadge": "Aperçu",
+    "previewTitle": "Aperçu du tutoriel podcast",
+    "previewBody": "Regardez la démonstration, consultez les captures réelles et lancez l’extrait exporté avec le son.",
+    "checklistLink": "Ouvrir la checklist des extraits de podcast",
+    "mediaNote": "L’enregistrement, ses sous-titres et les captures restent dans leur langue d’origine."
+  },
+  "podcast": {
+    "metaTitle": "Créer des extraits de podcast avec l’IA",
+    "description": "Transformez vos podcasts vidéo et interviews en extraits verticaux. Vérifiez les passages proposés, ajustez le montage et les sous-titres, puis exportez.",
+    "label": "Création d’extraits de podcast avec l’IA",
+    "title": "Une longue conversation. Un passage à partager.",
+    "intro": "Créez des vidéos verticales à partir de vos podcasts filmés et interviews. Scribix propose des passages ; vous choisissez ceux qui racontent quelque chose de complet.",
+    "upload": "Importer votre vidéo",
+    "free": "{minutes} minutes de traitement incluses dans Free. Une offre payante est nécessaire pour le montage.",
+    "checkLabel": "Le bon réflexe éditorial",
+    "checkTitle": "Cet extrait est-il compréhensible sans avoir écouté l’épisode ?",
+    "checkBody": "Gardez la question si elle est nécessaire, puis la réponse qui apporte quelque chose. Le public doit pouvoir suivre l’idée jusqu’au bout.",
+    "checkLink": "Utiliser la checklist des extraits de podcast",
+    "workflowLabel": "De l’épisode au fichier final",
+    "workflowTitle": "L’IA propose. Vous choisissez le montage.",
+    "steps": [
+      {
+        "title": "Partez de la conversation.",
+        "body": "Importez votre podcast vidéo ou votre interview. Scribix analyse la transcription pour vous proposer des passages à examiner."
+      },
+      {
+        "title": "Gardez une idée complète.",
+        "body": "Regardez chaque proposition dans son contexte. Avec une offre payante, ajustez le début, la fin, les sous-titres et le cadrage vertical."
+      },
+      {
+        "title": "Vérifiez le fichier final.",
+        "body": "Exportez la vidéo et sa couverture. Regardez le fichier téléchargé avec le son avant de l’importer sur le réseau social de votre choix."
+      }
+    ],
+    "editLabel": "Affiner avec une offre payante",
+    "editTitle": "Les détails font partie du propos.",
+    "editBody": "Un extrait utile ne se résume pas à sa durée. Vérifiez les mots, le cadrage et le fichier final avant de le partager.",
+    "plans": "Comparer Free et les offres payantes",
+    "features": [
+      {
+        "title": "Trouver un début et une fin naturels",
+        "body": "Repérez les mots dans la transcription, puis ajustez les points de coupe dans la vidéo source."
+      },
+      {
+        "title": "Rendre les sous-titres lisibles",
+        "body": "Corrigez les noms et les termes, choisissez un style et vérifiez la position du texte dans l’image."
+      },
+      {
+        "title": "Garder la personne dans le cadre",
+        "body": "Vérifiez le cadrage vertical et élargissez-le si un recadrage serré masque un élément important."
+      }
+    ],
+    "faqTitle": "Avant votre premier extrait",
+    "faqs": [
+      {
+        "question": "Puis-je essayer gratuitement ?",
+        "answer": "Free comprend un crédit unique de {minutes} minutes de traitement des fichiers importés. Vous pouvez exporter les extraits générés par l’IA tels quels. Le montage et la personnalisation de marque nécessitent une offre payante."
+      },
+      {
+        "question": "Faut-il un podcast vidéo ?",
+        "answer": "Ce parcours utilise un podcast filmé, une interview ou une conversation enregistrée en vidéo. Pour un épisode uniquement audio, utilisez l’outil de transcription audio : il s’agit d’un autre parcours."
+      },
+      {
+        "question": "Puis-je coller un lien YouTube pour créer des extraits ?",
+        "answer": "Partez d’un fichier vidéo sur votre appareil. L’outil de transcription YouTube importe les sous-titres, pas la vidéo originale pour le montage."
+      },
+      {
+        "question": "Puis-je modifier les extraits proposés par l’IA ?",
+        "answer": "Une offre payante permet d’ajuster les points de coupe, le texte et le style des sous-titres ainsi que le cadrage. Vérifiez le contexte pour respecter le sens des propos."
+      },
+      {
+        "question": "Scribix garantit-il un nombre d’extraits ou de vues ?",
+        "answer": "Non. Les passages utiles dépendent de l’enregistrement. Évaluez leur clarté et leur intérêt pour votre public ; une proposition ne prédit ni les vues ni l’engagement."
+      }
+    ],
+    "audioHint": "Besoin seulement de la transcription ?",
+    "audioLink": "Essayer la transcription audio",
+    "endLabel": "Commencez avec un enregistrement",
+    "endTitle": "Trouvez votre prochain passage à partager.",
+    "endCta": "Créer des extraits de podcast"
+  },
+  "guides": {
+    "checklist": {
+      "title": "Un extrait de podcast à partager garde une idée complète.",
+      "metadataTitle": "Checklist : vérifier un extrait de podcast avant publication",
+      "description": "Une checklist pratique pour vérifier le contexte, les coupes, les sous-titres, le cadrage et le fichier final. Avec une fiche à imprimer.",
+      "intro": "Décidez ce qu’il faut garder, corriger ou écarter. Cette checklist fonctionne aussi bien avec un premier montage réalisé par l’IA qu’avec vos propres coupes.",
+      "category": "Sélection et vérification",
+      "readingTime": "7 min de lecture",
+      "printTitle": "Checklist des extraits de podcast",
+      "sections": [
+        {
+          "title": "01 / Le test de la première écoute",
+          "body": "Lancez l’extrait sans écouter ce qui précède. Une personne qui ne connaît pas l’émission peut-elle comprendre de qui ou de quoi on parle, et quel est le propos ? Sinon, ajoutez le contexte avant de chercher un titre accrocheur.\n\nMéfiez-vous des débuts comme « c’est pour ça » ou « la deuxième chose ». Retrouvez le contexte réellement prononcé dans la source, puis relancez le passage depuis le début.",
+          "example": {
+            "before": "C’est pour ça que j’ai arrêté.",
+            "after": "Je réécrivais chaque question pendant l’interview. C’est pour ça que j’ai arrêté.",
+            "explanation": "Exemple de rédaction, pas un résultat du produit. La seconde version précise l’habitude évoquée. Dans un vrai extrait, retrouvez le contexte dans l’enregistrement : n’inventez pas de propos."
+          },
+          "checks": [
+            "Le sujet est clair sans la conversation précédente.",
+            "La première phrase donne une raison de continuer."
+          ]
+        },
+        {
+          "title": "02 / Garder la réponse, pas seulement la question",
+          "body": "Une question intrigante ne suffit pas. Gardez la réponse, l’exemple ou la conclusion qui rend le passage utile. S’il s’agit d’un teaser, présentez-le comme tel.\n\nÉcoutez les deux points de coupe dans la source : même entre deux mots, on peut couper une respiration ou une nuance. Prolongez le passage si nécessaire, ou choisissez-en un autre.",
+          "checks": [
+            "La réponse ou la conclusion est présente.",
+            "Le début et la fin sonnent naturellement à l’écoute."
+          ]
+        },
+        {
+          "title": "03 / Vérifier ce que la coupe enlève",
+          "body": "Écoutez la conversation autour du passage. La personne peut citer quelqu’un, raconter une erreur ou nuancer ses propos dans la phrase suivante. Le format court doit conserver le sens.\n\nVérifiez aussi le titre et identifiez les séquences sponsorisées. Un message publicitaire bien formulé n’est pas automatiquement un temps fort éditorial.",
+          "checks": [
+            "Le montage conserve le sens et les nuances essentielles.",
+            "Le titre décrit fidèlement l’extrait.",
+            "Les passages sponsorisés sont identifiés et choisis délibérément."
+          ]
+        },
+        {
+          "title": "04 / Donner un rôle différent à chaque extrait",
+          "body": "Comparez les propositions retenues. Une explication, une histoire personnelle et un désaccord apportent souvent plus de variété que trois versions de la même réponse.\n\nRésumez en une phrase l’intérêt de chaque passage pour votre public. Si vous ne trouvez qu’un vague « moment intéressant », revoyez votre choix.",
+          "checks": [
+            "Cet extrait apporte une idée, une histoire ou un point de vue distinct.",
+            "Je peux expliquer son intérêt pour mon public."
+          ]
+        },
+        {
+          "title": "05 / Regarder tout le cadrage vertical",
+          "body": "Regardez les changements de caméra, de personne et les gestes sur toute la durée. Vérifiez aussi les objets et les présentations mentionnés.\n\nÉlargissez le cadrage ou affichez l’image entière si une coupe serrée supprime une information essentielle. Prévisualisez ensuite dans l’application de destination : son interface peut masquer l’image.",
+          "checks": [
+            "Les personnes et les éléments essentiels restent visibles.",
+            "Les sous-titres et titres ne cachent ni visages ni détails importants."
+          ]
+        },
+        {
+          "title": "06 / Comparer les sous-titres avec le son",
+          "body": "Écoutez en lisant les noms, nombres, termes spécialisés et négations. Une petite erreur peut changer le sens ; le correcteur orthographique ne suffit pas.\n\nVérifiez sur un écran de téléphone les retours à la ligne, le contraste et la synchronisation. Le texte doit rester fidèle à la source, sans concurrence visuelle avec le titre.",
+          "checks": [
+            "Les noms, nombres, négations et termes correspondent à l’audio.",
+            "Les sous-titres sont lisibles et suivent la parole."
+          ]
+        },
+        {
+          "title": "07 / Vérifier le fichier qui sera publié",
+          "body": "Regardez le fichier téléchargé du début à la fin avec le son. Vérifiez les premières et dernières images, les sous-titres, le cadrage et l’audio. Utilisez bien la dernière version.\n\nConfirmez vos droits sur l’enregistrement et les médias ajoutés. Vérifiez la couverture et le texte de publication, nommez clairement le fichier, puis prévisualisez-le dans l’application avant de publier.",
+          "checks": [
+            "Le fichier téléchargé se lit correctement avec le son du début à la fin.",
+            "La couverture et le texte correspondent à cette version.",
+            "J’ai l’autorisation de publier l’enregistrement et les médias ajoutés."
+          ]
+        }
+      ]
+    },
+    "tutorial": {
+      "title": "Créer des extraits de podcast pour TikTok.",
+      "metadataTitle": "Comment créer des extraits de podcast pour TikTok",
+      "description": "Choisissez un passage complet, vérifiez le cadrage vertical et les sous-titres, puis exportez votre extrait avec Scribix.",
+      "intro": "Un bon extrait donne assez de contexte à quelqu’un qui n’a pas écouté l’épisode. Choisissez une idée, puis travaillez les coupes, l’image et les sous-titres. Ce guide utilise un podcast filmé ou une interview et se termine par le téléchargement de la vidéo. La publication sur TikTok est une étape distincte.",
+      "category": "Tutoriel podcast",
+      "readingTime": "6 min de lecture",
+      "walkthroughCaption": "D’un projet existant au fichier exporté : sélection, texte, cadrage et sous-titres. La démonstration associe de vraies captures et des vidéos ; sa durée ne représente pas le temps de traitement. Source : Changeover Podcast, enregistrement fourni pour cet aperçu local.",
+      "sections": [
+        {
+          "title": "Avant de commencer",
+          "body": "Utilisez une vidéo que vous avez le droit de publier et gardez son audio pour vérifier les propos. Un épisode uniquement audio relève du parcours de transcription.\n\nFree permet d’exporter les propositions de l’IA telles quelles. Le montage, les sous-titres, le cadrage et la personnalisation de marque nécessitent une offre payante. Partez d’un fichier local : l’outil YouTube importe les sous-titres, pas la vidéo."
+        },
+        {
+          "title": "1. Importer votre podcast vidéo",
+          "body": "Choisissez le fichier sur votre appareil et suivez les indications de transfert et de traitement. Gardez la page ouverte pendant le transfert.\n\nL’exemple reprend un projet déjà importé ; la démonstration ne montre pas un nouvel import. Commencez avec un enregistrement et comparez les résultats à la conversation, sans juger uniquement le nombre d’extraits."
+        },
+        {
+          "title": "2. Choisir un passage compréhensible seul",
+          "body": "Regardez chaque proposition avant de la modifier. Le sujet est-il clair ? Y a-t-il une réponse, une explication ou une conclusion ? Le titre respecte-t-il les propos ?\n\nÉcoutez le contexte lorsqu’un passage commence par une référence floue ou une réponse à une question absente. Repérez les publicités et les répétitions, puis utilisez la checklist pour retenir des extraits distincts.",
+          "imageAlt": "Quatre extraits proposés et le premier sélectionné dans Scribix",
+          "imageCaption": "Cet enregistrement de 9 min 47 s contenait quatre propositions. La première, de 00:01.663 à 00:59.087, parle du calme du joueur ; les autres abordent la tactique, les autres joueurs et son image."
+        },
+        {
+          "title": "3. Ajuster le début et la fin",
+          "body": "Avec une offre payante, utilisez la transcription et les points de coupe pour trouver une entrée naturelle. Gardez la question si elle est nécessaire et la phrase qui termine vraiment le propos.\n\nRéécoutez le montage avec le son. Une coupe nette dans le texte peut interrompre une respiration ou supprimer une nuance. Si l’idée ne tient pas dans un extrait utile, choisissez un autre passage.",
+          "imageAlt": "Panneau Content avec transcription et minutages de la vidéo source",
+          "imageCaption": "Ouvrez Edit clip puis Content pour consulter les mots et les minutages. Dans cet exemple, la plage source reste 00:01.663–00:59.087."
+        },
+        {
+          "title": "4. Vérifier le cadrage vertical",
+          "body": "Regardez l’ensemble du passage, y compris les changements de caméra et de personne. Gardez visibles les gestes et les éléments mentionnés.\n\nUn cadrage plus large peut être préférable si deux personnes ou une présentation doivent rester à l’image. Vérifiez chaque transition, même avec le cadrage automatique.",
+          "imageAlt": "Réglages de cadrage à côté de l’aperçu vertical",
+          "imageCaption": "Framing propose Automatic follow, Show full frame et Crop a section manually. Le suivi automatique est sélectionné ici. Des bandes noires restent visibles ; vérifiez les changements de caméra avant d’ajuster."
+        },
+        {
+          "title": "5. Vérifier et mettre en forme les sous-titres",
+          "body": "Écoutez en lisant les noms, chiffres, termes spécialisés et négations. Corrigez le texte avant de choisir son style.\n\nSur un téléphone, vérifiez les retours à la ligne, le contraste, le rythme et la position. Évitez de masquer le visage et contrôlez aussi l’aperçu TikTok, où l’interface s’ajoute à l’image.",
+          "imageAlt": "Réglages du style, des couleurs, de la taille et de la position des sous-titres",
+          "imageCaption": "L’exemple utilise Karaoke punch, du texte blanc et un surlignage jaune. Correct transcript text permet de vérifier le texte. Comparez les noms prononcés avec l’audio avant publication."
+        },
+        {
+          "title": "6. Exporter et regarder le fichier final",
+          "body": "Choisissez Download. Preparing your video indique que le rendu est en cours ; téléchargez le fichier lorsqu’il est prêt. L’exemple ci-dessous a été exporté pendant cette démonstration.\n\nRegardez-le en entier avec le son et vérifiez les coupes, les sous-titres, le cadrage et les images de début et de fin. Après une modification, exportez une nouvelle version et vérifiez que la couverture et le texte lui correspondent.",
+          "videoCaption": "Le véritable export vertical de 57 secondes, avec son original et sous-titres. Regardez les changements de caméra, le texte et le cadrage. Ce candidat a été exporté tel quel ; appliquez les vérifications ci-dessus à votre propre extrait. Source : Changeover Podcast."
+        },
+        {
+          "title": "Avant de publier",
+          "body": "Prévisualisez la vidéo dans TikTok avec son interface, puis confirmez le public et les détails de publication. Ce guide ne suppose ni un compte connecté ni un parcours de publication directe vérifié.\n\nVous n’avez pas besoin de publier toutes les propositions. Gardez les passages clairs, exacts et utiles, puis commencez avec votre propre podcast vidéo."
+        }
+      ]
+    }
+  },
+  "demo": {
+    "brand": "Scribix",
+    "footer": "ESPACE RÉEL / DÉMONSTRATION LOCALE",
+    "credit": "Source : Changeover Podcast / vidéo fournie",
+    "cta": "Choisir. Affiner. Partager.",
+    "scenes": [
+      {
+        "label": "ENREGISTREMENT SOURCE",
+        "title": "Un podcast.\nPlus de possibilités.",
+        "body": "Partez d’une conversation\nqui mérite d’être partagée."
+      },
+      {
+        "label": "01 / SÉLECTION",
+        "title": "Une idée\ncomplète.",
+        "body": "Comparez les propositions.\nGardez le contexte."
+      },
+      {
+        "label": "02 / VÉRIFICATION",
+        "title": "Vérifiez\nles mots.",
+        "body": "Comparez le début et la fin\navec la source."
+      },
+      {
+        "label": "03 / CADRAGE",
+        "title": "Gardez la personne\ndans le cadre.",
+        "body": "Vérifiez le cadrage vertical.\nAjustez si nécessaire."
+      },
+      {
+        "label": "04 / SOUS-TITRES",
+        "title": "Des mots\nbien lisibles.",
+        "body": "Vérifiez le texte,\npuis choisissez le style."
+      },
+      {
+        "label": "05 / EXPORT",
+        "title": "Du montage\nau fichier final.",
+        "body": "Un véritable export Scribix.\nÀ vérifier avant publication."
+      },
+      {
+        "label": "SCRIBIX / EXTRAITS DE PODCAST",
+        "title": "Votre prochain\nextrait commence ici.",
+        "body": "Choisissez un passage à partager."
+      }
+    ]
+  }
+}

@@ -3384,5 +3384,9 @@
     "calendarHint": "Browse the calendar. Upgrade to schedule your posts.",
     "channelHint": "Connect your account to publish finished clips from Scribix.",
     "pro": "Pro"
+  },
+  "GuidesNav": {
+    "guides": "Guides",
+    "podcast": "AI podcast clip maker"
   }
 }

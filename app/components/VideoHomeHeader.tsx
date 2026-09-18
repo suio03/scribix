@@ -8,6 +8,7 @@ import { Logo } from "./Logo";
 import { useLoginModal } from "./LoginModal";
 
 export function VideoHomeHeader({ postSignInPath }: { postSignInPath: string }) {
+  const guidesT = useTranslations("GuidesNav");
   const t = useTranslations("VideoHome");
   const featuresT = useTranslations("Features");
   const sidebarT = useTranslations("Sidebar");
@@ -29,6 +30,7 @@ export function VideoHomeHeader({ postSignInPath }: { postSignInPath: string }) 
           <a href="#video-features" className="transition hover:text-white">
             {featuresT("label")}
           </a>
+          <Link href="/guides" className="transition hover:text-white">{guidesT("guides")}</Link>
           <Link href="/pricing" className="transition hover:text-white">
             {sidebarT("pricing")}
           </Link>

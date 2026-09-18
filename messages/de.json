@@ -3384,5 +3384,9 @@
     "calendarHint": "Durchsuche den Kalender. Upgrade zum Planen von Beiträgen.",
     "channelHint": "Verbinde dein Konto, um fertige Clips aus Scribix zu veröffentlichen.",
     "pro": "Pro"
+  },
+  "GuidesNav": {
+    "guides": "Anleitungen",
+    "podcast": "Podcast-Clips mit KI erstellen"
   }
 }

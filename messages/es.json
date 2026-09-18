@@ -3384,5 +3384,9 @@
     "calendarHint": "Explora el calendario. Mejora tu plan para programar publicaciones.",
     "channelHint": "Conecta tu cuenta para publicar clips terminados desde Scribix.",
     "pro": "Pro"
+  },
+  "GuidesNav": {
+    "guides": "Guías",
+    "podcast": "Creador de clips de podcast con IA"
   }
 }
