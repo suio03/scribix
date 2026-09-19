@@ -2,6 +2,7 @@ import createMiddleware from "next-intl/middleware";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
+import { OPUS_ALTERNATIVE_PATH } from "./lib/alternatives/routes";
 
 const intlMiddleware = createMiddleware(routing);
 const SINGLE_LANGUAGE_PATHS = new Set(["privacy", "refunds", "terms", "partners"]);
@@ -9,9 +10,18 @@ const SINGLE_LANGUAGE_PATHS = new Set(["privacy", "refunds", "terms", "partners"
 function routeRequest(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const parts = pathname.split("/").filter(Boolean);
+  const unprefixedParts = routing.locales.includes(parts[0] as (typeof routing.locales)[number])
+    ? parts.slice(1) : parts;
+
+  if (unprefixedParts.join("/") === "alternatives/opus-clip") {
+    const url = request.nextUrl.clone();
+    url.pathname = OPUS_ALTERNATIVE_PATH;
+    return NextResponse.redirect(url, 308);
+  }
 
   const isEnglishContent = (segments: string[]) =>
-    (segments.length === 1 && SINGLE_LANGUAGE_PATHS.has(segments[0]));
+    (segments.length === 1 && SINGLE_LANGUAGE_PATHS.has(segments[0])) ||
+    segments[0] === "alternatives";
 
   if (isEnglishContent(parts)) {
     const url = request.nextUrl.clone();
@@ -27,7 +37,7 @@ function routeRequest(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = `/${parts.slice(1).join("/")}`;
     url.search = search;
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(url, parts[1] === "alternatives" ? 308 : 307);
   }
 
   return intlMiddleware(request);

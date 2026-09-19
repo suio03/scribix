@@ -8,7 +8,11 @@ import { Footer } from "@/app/components/Footer";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import "./guides.css";
 
-export async function ContentShell({ children }: { children: ReactNode }) {
+export async function ContentShell({ children, showLanguageSwitcher = true, section = "guides" }: {
+  children: ReactNode;
+  showLanguageSwitcher?: boolean;
+  section?: "guides" | "alternatives";
+}) {
   const { ui } = getContentCopy(await getLocale());
   return (
     <div className="guide-surface min-h-screen bg-paper text-ink">
@@ -30,10 +34,10 @@ export async function ContentShell({ children }: { children: ReactNode }) {
             className="flex items-center gap-3 text-sm sm:gap-5"
           >
             <Link
-              href="/guides"
+              href={section === "alternatives" ? "/alternatives" : "/guides"}
               className="inline-flex min-h-11 items-center hover:text-accent"
             >
-              {ui.guides}
+              {section === "alternatives" ? "Alternatives" : ui.guides}
             </Link>
             <Link
               href="/pricing"
@@ -42,7 +46,7 @@ export async function ContentShell({ children }: { children: ReactNode }) {
               {ui.pricing}
             </Link>
             <ThemeToggle />
-            <LanguageSwitcher />
+            {showLanguageSwitcher ? <LanguageSwitcher /> : null}
             <Link
               href="/#upload"
               className="guide-button hidden sm:inline-flex"

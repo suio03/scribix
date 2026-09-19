@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { GUIDES } from "@/lib/guides/content";
 import { routing } from "@/i18n/routing";
 import { languageAlternates, urlFor } from "@/lib/metadata-url";
+import { ALTERNATIVES } from "@/lib/alternatives/registry";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const homeContentModified = new Date("2026-09-01T00:00:00.000Z");
@@ -9,6 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const aiNoteTakerModified = new Date("2026-07-23T00:00:00.000Z");
   const legalContentModified = new Date("2026-05-01T00:00:00.000Z");
   const entries: MetadataRoute.Sitemap = [
+    { url: urlFor("en", "/alternatives").href, changeFrequency: "monthly", priority: 0.6 },
+    ...ALTERNATIVES.map(article => ({ url: urlFor("en", article.path).href, lastModified: new Date(article.published), changeFrequency: "monthly" as const, priority: 0.6 })),
     { url: "https://scribix.io/partners", changeFrequency: "weekly", priority: 0.4 },
     {
       url: urlFor(routing.defaultLocale, "").href,

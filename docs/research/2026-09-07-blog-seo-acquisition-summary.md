@@ -1,6 +1,6 @@
 # Scribix 内容规划：Guides、长尾 SEO 与非广告获客
 
-初始调研：2026-09-07；规划更新：2026-09-19。关键词范围：美国市场、英语搜索。关键词指标保留 9 月 7 日 Google Ads Keyword Planner、SEMrush、Similarweb 的原始口径，本次未重新测量。
+初始调研：2026-09-07；规划更新：2026-09-20。关键词范围：美国市场、英语搜索。关键词指标保留 9 月 7 日 Google Ads Keyword Planner、SEMrush、Similarweb 的原始口径，本次未重新测量。
 
 本文是内容选题、优先级和执行路线的唯一维护入口。9 月 18 日竞品内容观察已合并；[竞品调研](2026-09-18-competitor-content-acquisition.md)仅保留证据，不维护另一份计划。
 
@@ -14,7 +14,7 @@ Scribix 应围绕「把长视频变成可发布的短视频」建立内容中心
 
 1. **播客切片**：建立 podcast clip maker 页面，并用 TikTok / Instagram 操作教程支撑。
 2. **横屏转竖屏**：建立功能页，展示人物、双人对话、演示文稿等实际构图结果。
-3. **OpusClip 替代方案**：有搜索需求，且难度估计相对可控；完成同素材实测后再发布比较页。
+3. **OpusClip 替代方案**：有搜索需求，且难度估计相对可控；首篇按官方功能、套餐和工作流选型比较，配产品演示。效果优劣结论仍须同素材实测。
 4. **长视频转短视频**：由首页承接主词及同意图变体，教程解决具体操作问题。
 5. **Reels 与 webinar**：第二批验证。Webinar 本次可见搜索量较小，不宜先作为主要内容支柱。
 
@@ -118,12 +118,12 @@ Autocomplete 出现了 `free`、`no watermark`、`online`、`for TikTok`、`for 
 | `/` | ai video clipper / long video to shorts | 主功能、实际结果、开始处理入口 |
 | `/podcast-clip-maker` | podcast clip maker / generator / clipper | 播客输入、选片、构图、字幕和导出示例 |
 | `/horizontal-video-to-vertical` | landscape to portrait / horizontal to vertical | 不同画面类型的竖屏结果和调整方式 |
-| `/alternatives/opus-clip` | opus clip alternative | 同素材实测、工作流差异、适用人群 |
+| `/alternatives/opus-clip-alternative` | opus clip alternative | 官方功能与套餐、工作流差异、适用人群；仅英文 |
 | `/guides` 与 `/guides/...` | 教程、故障排查、参考与案例 | 有独立价值的解释和可复现证据 |
 
 实际实现沿用 `app/[locale]` 和当前 URL / i18n 约定。相同意图的 maker、generator、clipper 等词由一个页面承接，避免重复内容和内部竞争。
 
-统一使用 Guides，不同时维护 Blog 和 Guides 两套入口；名称本身不代表 SEO 优势。Guides 基础设施应包括文章索引、统一布局、作者与日期、目录、相关内容、工具内链、metadata、canonical、按实际翻译生成的 hreflang、结构化数据与 sitemap。第一阶段不必引入编辑后台。
+教程、检查清单统一使用 Guides，不另建 Blog；对比内容单独使用 Alternatives 目录与页脚分组（2026-09-20 用户确认）。名称本身不代表 SEO 优势。Guides 基础设施应包括文章索引、统一布局、作者与日期、目录、相关内容、工具内链、metadata、canonical、按实际翻译生成的 hreflang、结构化数据与 sitemap。第一阶段不必引入编辑后台。
 
 ### 首批内容制作顺序
 
@@ -135,9 +135,15 @@ Autocomplete 出现了 `free`、`no watermark`、`online`、`for TikTok`、`for 
 | 2 | How to Convert Horizontal Video to Vertical Without Cutting Off Speakers | 横屏转竖屏词簇；完整标题未量测 | 裁切与保留全画面的对照；单人、双人和屏幕内容按实际能力说明，不承诺不存在的布局 |
 | 3 | Podcast Clip Checklist | 编辑选题，未验证搜索量 | 指代、上下文、答案完整性、广告、重复、标题忠实度的检查方法；正文直接可用，附可打印／下载清单，初期不强制留邮箱 |
 | 4 | 一期访谈最终保留哪些片段，为什么 | 编辑选题，未验证搜索量 | 同素材案例、保留／放弃理由和修正前后结果；只有完整计时才写耗时；自有实验不称客户案例 |
-| 5 | OpusClip vs Scribix for Podcast Clips | opus clip alternative 390 / KD 26；完整标题未量测 | 同素材同任务，记录日期、套餐、设置、步骤、最终文件和限制；证据齐备后发布 |
+| 5 | OpusClip Alternatives for Podcast Clips | opus clip alternative 390 / KD 26；完整标题未量测 | 比较 Scribix、Vizard、quso.ai 与 OpusClip 的官方功能和套餐；复用 Guide 媒体制作专业流程演示，不声称同素材性能测试 |
 
 OpusClip 比较文章与替代方案落地页内容重叠时，先做一个完整页面；有独立搜索意图和内容价值时再拆分。9 月 16 日竞品操作记录是准备材料，尚不足以证明 Scribix 与竞品最终输出的全面对比。
+
+对比内容语言规则（2026-09-20 用户确认）：alternatives / vs 对比文章和落地页仅发布英文，不安排翻译。对比页面在桌面及移动端均不显示语言切换器；仅生成英文 URL、自引用 canonical 和英文 sitemap 条目，不生成其他语言版本或指向这些版本的 hreflang。此规则适用于对比内容，无论放在 `/guides` 还是 `/alternatives`；教程、检查清单及 Guides 索引继续沿用现有多语言规则。首篇已本地实现；带 locale 前缀的 alternatives URL 重定向到英文地址。
+
+对比内容外链规则（2026-09-20 用户确认）：公开页面不添加竞品 URL 或外链；保留来源名称与核查日期，完整来源 URL 只在内部研究／内容记录中维护。
+
+首篇展示口径（2026-09-20 用户确认）：复用现有 Guide 的截图参考、成片与素材，通过重新排版的界面示意、重点标注和交互演示解释功能，不要求重新录制真实操作过程。官方功能比较不以竞品同素材实测为前置；若后续加入准确率、速度或效果优劣结论，则需补对应测试证据。
 
 How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Avg. volume 131 / KD 45、最近 28 天 <50 的证据保留，有独立材料再做，避免与首篇只是换标题。
 
@@ -189,7 +195,7 @@ How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Av
 | --- | --- | --- |
 | 首批 | Guides 基础、播客功能页、TikTok 播客教程、检查清单与配套演示 | 内容与产品事实一致；真实素材和导出可核查；页面及从内容到上传、首次导出的路径可用 |
 | 第二批 | 横屏转竖屏功能页与教程、同素材案例；补齐竞品对照实验 | 画面取舍和选片理由有实例；记录限制与人工修正；不以演示代替实测 |
-| 证据成熟后 | 发布比较内容；按查询与使用数据决定 Reels / webinar / 字幕内容 | 比较基于当日套餐与最终文件，选题有独立价值，已有页面及时更新 |
+| 证据成熟后 | 发布比较内容；按查询与使用数据决定 Reels / webinar / 字幕内容 | 功能比较核对当日官方资料，效果比较核对实测文件；选题有独立价值，已有页面及时更新 |
 
 这是实施顺序，不是已经完成的交付或固定周数承诺。衡量重点应是首次导出、重复使用和付费转化，同时用搜索曝光、查询词与点击判断覆盖效果。低流量阶段需要积累样本，不能凭几次访问决定方向。
 
@@ -216,9 +222,17 @@ How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Av
 
 分析沿用现有平台和事件体系，遵守 [tracking.md](../video-workspace/tracking.md) 与 `lib/video-workspace/analytics-contract.ts`，不新增追踪表或回放基础设施。
 
+### 英文对比页 — 2026-09-20 本地完成，尚未部署
+
+- `/alternatives/opus-clip-alternative` 比较四家工具的适用流程、免费限制、月付价格、编辑与输出；标注官方来源与核查日期。正文和套餐快照在 `lib/alternatives/opus-clip.ts`，Scribix 分钟数和价格引用 `lib/plans.ts`。
+- 专业流程演示使用 React/CSS 重排选片、边界／构图、字幕三个场景；复用 Guide 的 export poster 与 57.43 秒成片。没有重新剪片、转写、生成图片或提交社交平台。
+- 独立 `/alternatives` 汇总页和页脚 Alternatives 分组；已从 Guides 卡片及 CollectionPage 移除比较文章。对比页导航、返回入口和面包屑归属 Alternatives，正文保留相关教程链接。目录与文章均仅英文、隐藏语言切换器、各自单一 sitemap URL；六种 locale 前缀回到英文 URL，法语 Cookie / Accept-Language 不产生翻译页或 hreflang。
+- 验证：`npm run build`（含六语言校验）通过；Chrome ai-publisher 中桌面／390px 手机布局、浅深色演示、点击／键盘切换、FAQ、真实视频播放已检查。独立 localhost 生产预览验证英文路由、索引和 sitemap；无新部署。
+- 制作与来源记录见 [对比页内容备注](../content/opus-clip-alternatives.md)。
+
 ## 8. 后续需要补齐的证据
 
-- OpusClip 与 Scribix 同素材、同任务的实际比较，尤其是选片质量、构图、字幕调整和导出流程。
+- 若新增效果优劣结论，补 OpusClip 与 Scribix 同素材、同任务的实际比较，尤其是选片质量、构图、字幕调整和导出流程；不阻塞当前功能选型文章。
 - 当前产品对横屏转竖屏、免费额度、水印、URL 输入等能力和限制的逐项确认。
 - 浏览器扩展各商店的实际可访问状态及其到主功能的转化路径。
 - 内容上线后的真实查询、点击和使用数据，用于调整优先级。
