@@ -58,13 +58,13 @@ export default async function PartnersPage({ params }: { params: Promise<{ local
         </header>
         <section aria-label="ToolPilot partner" className="border-b border-line py-5">
           <a href="https://www.toolpilot.ai/" target="_blank" rel="noopener" className="inline-flex min-h-[52px] items-center">
-            {/* Official brand asset; a native image preserves the publisher's SVG. */}
+            {/* Publisher badge supplied for this directory listing. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="https://www.toolpilot.ai/cdn/shop/files/tp-b-h_bec97d1a-5538-498b-8a26-77de74f90ed5_690x190_crop_center.svg?v=1695882612"
-              alt="ToolPilot.ai"
-              width={180}
-              height={50}
+              src="/brand/toolpilot-featured.png"
+              alt="Featured on ToolPilot"
+              width={300}
+              height={66}
               className="h-auto w-[180px] object-contain"
             />
           </a>
