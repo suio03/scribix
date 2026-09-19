@@ -4,7 +4,7 @@ export const VIDEO_ANALYTICS_EVENTS = [
   "video_project_failed", "video_editor_load_failed", "video_editor_save_failed", "video_export_request_failed",
   "video_candidate_request_failed", "video_manual_request_failed",
   "video_project_created", "video_upload_completed", "video_candidates_started",
-  "video_candidates_completed", "video_manual_clip_ready",
+  "video_candidates_completed", "video_candidates_failed", "video_manual_clip_ready",
   "video_editor_opened", "video_edit_saved", "video_render_requested",
   "video_render_completed", "video_render_failed", "video_render_downloaded",
   "video_external_edit_required", "video_candidate_selected",

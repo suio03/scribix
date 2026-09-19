@@ -18,7 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { trackVideoAction, trackVideoFailure } from "./video-event-client";
+import { createCandidateResultObserver, trackVideoAction, trackVideoFailure } from "./video-event-client";
 import { VideoExportProvider } from "@/app/components/VideoExportProvider";
 import { FinalRenderPanel } from "@/app/components/FinalRenderPanel";
 import {
@@ -110,6 +110,9 @@ function VideoCandidateWorkspaceContent({
   const [editorSaveState, setEditorSaveState] = useState<VideoEditorSaveState>("saved");
   const [error, setError] = useState(false);
   const promotedPreviews = useRef(new Set<string>());
+  const candidateObserver = useRef<ReturnType<typeof createCandidateResultObserver> | null>(null);
+  const candidateRequestEpoch = useRef(0);
+  if (!candidateObserver.current) candidateObserver.current = createCandidateResultObserver();
   const [previewBusy, setPreviewBusy] = useState<string | null>(null);
   const [candidateToDelete, setCandidateToDelete] = useState<string | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
@@ -128,10 +131,12 @@ function VideoCandidateWorkspaceContent({
 
   useEffect(() => {
     let cancelled = false;
+    const epoch = candidateRequestEpoch.current;
     fetch(`/api/video-projects/${projectId}/candidates`).then(async response => {
       if (!response.ok) return;
       const data = await response.json() as { task?: AnalysisTaskView; batchAnalysisEnabled?: boolean; selection?: SelectionState; status?: string; transcriptReady?: boolean; transcriptId?: string };
-      if (cancelled) return;
+      if (cancelled || epoch !== candidateRequestEpoch.current) return;
+      candidateObserver.current?.observe(data);
       setBatchEnabled(Boolean(data.batchAnalysisEnabled));
       if (data.task) {setTask(data.task);setRangeStart(data.task.range.startMs / 1000);setRangeEnd(data.task.range.endMs / 1000);}
       if (data.selection) { setSelection(data.selection); if (data.selection.outcome !== "idle") setRequirements(data.selection.requirements); }
@@ -173,6 +178,7 @@ function VideoCandidateWorkspaceContent({
   useEffect(() => {
     if (!generating && (transcriptReady || !transcriptId)) return;
     const poll = window.setInterval(async () => {
+      const epoch = candidateRequestEpoch.current;
       try {
         if (!transcriptReady && transcriptId) await fetch(`/api/transcripts/${transcriptId}/status`, { cache: "no-store" });
         const response = await fetch(`/api/video-projects/${projectId}/candidates`);
@@ -185,6 +191,8 @@ function VideoCandidateWorkspaceContent({
           candidates?: StoredClipCandidate[];
           previews?: CandidatePreview[];
         };
+        if (epoch !== candidateRequestEpoch.current) return;
+        candidateObserver.current?.observe(payload);
         if (payload.task) setTask(payload.task);
         if (payload.selection) setSelection(payload.selection);
         setTranscriptReady(Boolean(payload.transcriptReady));
@@ -265,13 +273,16 @@ function VideoCandidateWorkspaceContent({
     setStatus("analyzing");
     setError(false);
     const startedAt = Date.now();
+    const requestId = task?.canRetry ? task.requestId : crypto.randomUUID();
+    candidateRequestEpoch.current++;
+    candidateObserver.current?.begin(requestId, startedAt);
     if (status !== "waiting") trackVideoAction("video_candidates_started");
     let requestStatus = 0;
     try {
       const response = await fetch(`/api/video-projects/${projectId}/candidates`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ requirements, requestId: task?.canRetry ? task.requestId : crypto.randomUUID(), retry: Boolean(task?.canRetry), adjust: selection?.outcome === "empty", ...(batchEnabled && !shortSource ? {analysisRange: {startMs: Math.round(rangeStart*1000), endMs: Math.round(rangeEnd*1000)}} : {}) }),
+        body: JSON.stringify({ requirements, requestId, retry: Boolean(task?.canRetry), adjust: selection?.outcome === "empty", ...(batchEnabled && !shortSource ? {analysisRange: {startMs: Math.round(rangeStart*1000), endMs: Math.round(rangeEnd*1000)}} : {}) }),
       });
       const payload = (await response.json()) as {
         task?: AnalysisTaskView;
@@ -282,14 +293,22 @@ function VideoCandidateWorkspaceContent({
         previews?: CandidatePreview[];
       };
       requestStatus = response.status;
+      // Fence GETs started before this response, including pre-retry failures.
+      candidateRequestEpoch.current++;
       if (payload.task) setTask(payload.task);
       if (payload.selection) setSelection(payload.selection);
       if (payload.error === "analysis_input_too_large" || payload.error === "invalid_analysis_range") {setRangeError(payload.error === "analysis_input_too_large" ? "dense" : "invalid");setStatus("draft");return;}
       if (payload.error === "unsupported_selection") { setUnsupported(true); setStatus("draft"); return; }
-      if (payload.error === "candidate_generation_active") return;
+      if (payload.error === "candidate_generation_active") {
+        candidateObserver.current?.abandon(requestId);
+        return;
+      }
       if (!response.ok || !payload.candidates) throw new Error("candidate_generation_failed");
-      if (payload.status !== "waiting" && payload.status !== "analyzing") trackVideoAction(payload.status === "editing" ? "video_manual_clip_ready" : "video_candidates_completed", {
-        elapsed_ms: Date.now() - startedAt,
+      candidateObserver.current?.accept(requestId);
+      candidateObserver.current?.observe({
+        ...payload,
+        status: payload.status ?? "candidates_ready",
+        selection: payload.selection ?? { requestId },
       });
       replaceWorkspace(
         payload.candidates,
@@ -299,6 +318,11 @@ function VideoCandidateWorkspaceContent({
     } catch {
       try {
         const current = await fetch(`/api/video-projects/${projectId}/candidates`).then(response => response.json()) as { selection?: SelectionState; status?: string; candidates?: StoredClipCandidate[]; previews?: CandidatePreview[] };
+        candidateRequestEpoch.current++;
+        if (current.selection?.requestId === requestId) {
+          candidateObserver.current?.accept(requestId);
+          candidateObserver.current?.observe(current);
+        }
         if (current.status === "analyzing" || (current.candidates?.length ?? 0) > 0) {
           replaceWorkspace(current.candidates ?? [], current.previews ?? [], current.status ?? "candidates_ready"); return;
         }

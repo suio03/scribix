@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { markSignInPending } from "@/lib/signin-tracking";
 import { Loader2 } from "lucide-react";
 
 export function ExtensionLoginButton({ redirectTo = "/" }: { redirectTo?: string }) {
@@ -10,6 +11,7 @@ export function ExtensionLoginButton({ redirectTo = "/" }: { redirectTo?: string
   async function continueWithGoogle() {
     if (pending) return;
     setPending(true);
+    markSignInPending();
     await signIn("google", { redirectTo });
   }
 

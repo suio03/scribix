@@ -76,6 +76,8 @@ export type PlausibleEvents = Record<VideoAnalyticsEvent, VideoAnalyticsProperti
     cycle: "monthly" | "yearly";
     transaction_id?: string;
   };
+  youtube_inspect_success: { step: "inspect"; tool_slug: string };
+  youtube_import_success: { step: "import"; tool_slug: string };
   youtube_inspect_attempt: { step: "inspect"; tool_slug: string };
   youtube_inspect_fail: {
     step: "inspect";
@@ -262,6 +264,33 @@ function sendToClarity(
   });
 }
 
+// Only buffer script readiness, not delivery failures. No persistent identity or replay.
+const READY_BUFFER_LIMIT = 100;
+const READY_BUFFER_TTL_MS = 30_000;
+type PendingSink = { expiresAt: number; send: () => boolean };
+let pendingSinks: PendingSink[] = [];
+let readinessTimer: ReturnType<typeof setTimeout> | undefined;
+
+export function flushAnalyticsBuffer(): void {
+  if (readinessTimer !== undefined) clearTimeout(readinessTimer);
+  readinessTimer = undefined;
+  const now = Date.now();
+  pendingSinks = pendingSinks.filter(item => {
+    if (item.expiresAt <= now) return false;
+    try { return !item.send(); } catch { return false; }
+  });
+  if (pendingSinks.length) readinessTimer = setTimeout(flushAnalyticsBuffer, 250);
+}
+
+function whenCollectorReady(send: () => boolean): void {
+  try {
+    if (send()) return;
+    pendingSinks.push({ expiresAt: Date.now() + READY_BUFFER_TTL_MS, send });
+    if (pendingSinks.length > READY_BUFFER_LIMIT) pendingSinks.shift();
+    if (readinessTimer === undefined) readinessTimer = setTimeout(flushAnalyticsBuffer, 250);
+  } catch { /* A failing collector must not block any other sink or business action. */ }
+}
+
 export function trackEvent<K extends keyof PlausibleEvents>(
   eventName: K,
   props?: PlausibleEvents[K]
@@ -282,27 +311,53 @@ export function trackEvent<K extends keyof PlausibleEvents>(
         }).catch(() => undefined);
       }
     } catch { /* Best effort; storage may be blocked. */ }
-    try {
-      window.gtag?.("event", eventName, {
+    whenCollectorReady(() => {
+      if (!window.gtag) return false;
+      window.gtag("event", eventName, {
         ...safe, page_location: "https://scribix.io/video-workspace",
         page_referrer: "", page_title: "Video workspace",
       });
-    } catch { /* Best effort. */ }
-    try { sendToClarity(eventName, safe); } catch { /* Best effort. */ }
+      return true;
+    });
+    whenCollectorReady(() => {
+      if (!window.clarity) return false;
+      sendToClarity(eventName, safe);
+      return true;
+    });
     return;
   }
 
-  try {
-    window.plausible?.(eventName, {
-      props: props ?? ({} as PlausibleEvents[K]),
-    });
-  } catch {
-    // Analytics must never block the product action being measured.
-  }
-
-  try {
+  // Do not attach raw error text or payment identifiers to the newly added GA sink.
+  const gaProps = Object.fromEntries(Object.entries(props ?? {}).filter(([key]) =>
+    !["error_message", "transaction_id", "checkout_id"].includes(key)
+  ));
+  const pageLocation = window.location?.href;
+  whenCollectorReady(() => {
+    if (!window.plausible) return false;
+    if (pageLocation && window.location.href !== pageLocation) {
+      // The legacy script always reads the current URL. Preserve the event's
+      // original page if navigation happened while its script was loading.
+      if (window.localStorage.getItem("plausible_ignore") !== "true"
+        && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(new URL(pageLocation).hostname)) {
+        void fetch("https://actone.app/api/event", {
+          method: "POST", headers: { "content-type": "text/plain" },
+          body: JSON.stringify({ n: eventName, u: pageLocation, d: "scribix.io", r: null, p: props ?? {} }),
+          keepalive: true, referrerPolicy: "no-referrer", credentials: "omit",
+        }).catch(() => undefined);
+      }
+    } else {
+      window.plausible(eventName, { props: props ?? ({} as PlausibleEvents[K]) });
+    }
+    return true;
+  });
+  whenCollectorReady(() => {
+    if (!window.gtag) return false;
+    window.gtag("event", eventName, { ...gaProps, page_location: pageLocation });
+    return true;
+  });
+  whenCollectorReady(() => {
+    if (!window.clarity) return false;
     sendToClarity(eventName, props);
-  } catch {
-    // Keep each analytics sink independent and best effort.
-  }
+    return true;
+  });
 }

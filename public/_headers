@@ -1,0 +1,3 @@
+# Static assets bypass the Next.js server on Cloudflare.
+https://local.scribix.io/*
+  X-Robots-Tag: noindex, nofollow

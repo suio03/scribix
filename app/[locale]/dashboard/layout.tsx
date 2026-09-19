@@ -1,7 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { auth } from "@/auth";
 import { getPathname, redirect } from "@/i18n/navigation";
-import { TrackSignInSuccess } from "@/app/components/Track";
 import { FeedbackWidget } from "@/app/components/FeedbackWidget";
 import { WorkspaceChrome } from "@/app/components/WorkspaceChrome";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
@@ -31,7 +30,6 @@ export default async function DashboardLayout({
 
   return (
     <>
-      <TrackSignInSuccess />
       <WorkspaceChrome
         signOutRedirect={homePath}
         usage={sidebarUsage}

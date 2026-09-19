@@ -17,7 +17,7 @@ import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "./Logo";
-import { markSignInPending } from "./Track";
+import { markSignInPending, clearSignInPending } from "@/lib/signin-tracking";
 
 type LoginModalContextValue = {
   openLogin: (redirectTo: string) => void;
@@ -149,6 +149,7 @@ export function LoginModalProvider({ children }: { children: ReactNode }) {
       await signIn("google", { redirectTo });
     } catch {
       setPending(false);
+      clearSignInPending();
       setSignInError(true);
     }
   }

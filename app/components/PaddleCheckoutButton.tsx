@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { markSignInPending } from "@/lib/signin-tracking";
 import { useRouter } from "@/i18n/navigation";
 import { trackEvent } from "@/lib/analytics";
 import type { BillingCycle, Tier } from "@/lib/plans";
@@ -46,6 +47,7 @@ export function PaddleCheckoutButton({
     onCheckoutStart?.();
     trackEvent("checkout_click", { tier, cycle, signed_in: signedIn });
     if (!signedIn) {
+      markSignInPending();
       await signIn(undefined, { callbackUrl: window.location.href });
       return;
     }
@@ -445,6 +447,7 @@ export function FreePlanButton({
       router.push("/dashboard/new");
       return;
     }
+    markSignInPending();
     await signIn(undefined, { callbackUrl: dashboardPath });
   }
 

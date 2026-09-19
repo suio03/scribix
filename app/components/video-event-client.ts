@@ -53,3 +53,50 @@ export function observeVideoRenderResults(
     });
   }
 }
+
+// Request IDs stay in memory; public events contain no task/project identifiers.
+export function createCandidateResultObserver() {
+  let active: { requestId: string; startedAt: number; armed: boolean } | null = null;
+  const settled = new Set<string>();
+  return {
+    begin(requestId: string, startedAt = Date.now()) {
+      settled.delete(requestId);
+      active = { requestId, startedAt, armed: false };
+    },
+    accept(requestId: string) {
+      if (active?.requestId === requestId) active.armed = true;
+    },
+    abandon(requestId: string) {
+      if (active?.requestId === requestId) active = null;
+    },
+    watch(requestId: string, startedAt = Date.now()) {
+      settled.delete(requestId);
+      active = { requestId, startedAt, armed: true };
+    },
+    observe(snapshot: {
+      status?: string;
+      task?: { requestId: string; status: string } | null;
+      selection?: { requestId: string | null } | null;
+    }) {
+      const requestId = snapshot.task?.requestId ?? snapshot.selection?.requestId;
+      if (!requestId || settled.has(requestId)) return;
+      const running = snapshot.status === "waiting" || snapshot.status === "analyzing";
+      if (!active) {
+        if (running) active = { requestId, startedAt: Date.now(), armed: true };
+        return; // Historical terminal states are not observations of a transition.
+      }
+      if (!active.armed || active.requestId !== requestId || running) return;
+      const failed = snapshot.status === "failed" || snapshot.status === "transcript_failed";
+      const completed = snapshot.status === "candidates_ready" || snapshot.status === "editing";
+      if (!failed && !completed) return;
+      settled.add(requestId);
+      const elapsed = Date.now() - active.startedAt;
+      active = null;
+      trackVideoAction(failed ? "video_candidates_failed" : snapshot.status === "editing"
+        ? "video_manual_clip_ready" : "video_candidates_completed", {
+        elapsed_ms: elapsed,
+        ...(failed ? { error_code: "generation_failed" } : {}),
+      });
+    },
+  };
+}

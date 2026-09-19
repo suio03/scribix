@@ -41,3 +41,23 @@ The automated tests use mocked collectors and send no real analytics. Live recei
 Candidate start follows an explicit request (or persisted pending request); waiting for transcription is not candidate completion. Resuming that request does not add another start. Successful empty results still count as completion. Upload navigation may happen before transcription completes; the existing in-browser poll continues to observe completion while mounted. Closing the page can lose browser observations.
 
 Selection requirements and generated/edited publishing text never enter event properties. Existing AI usage records capture cost; the new selection, quota and package records are operational state, not tracking tables. Video-only downloads use the existing `assetKind: video`; full downloads use `package`. Download remains an initiation signal, not publication. The tracking schema itself is unchanged; the overall feature requires the migration and Container release described in [publish preparation](publish-preparation.md).
+
+## Tracking repairs (2026-09-19, pending deployment)
+
+- Candidate polling discards responses started before a new request or its POST response, so a late pre-retry failure cannot settle the retried task. A rejected concurrent request releases its observer so polling can adopt the active server task.
+- Candidate POST acceptance and subsequent GET polling now share a request-scoped observer. `video_candidates_failed` means an observed failed task; `video_candidate_request_failed` remains an HTTP/request failure. Completion includes successful empty results. Historical terminal states are not replayed; a restored active task can produce one observed terminal event. After refresh, elapsed time measures the current browser observation interval, not the full server execution time. Task/request IDs stay in memory and do not enter public properties.
+- YouTube adds `youtube_inspect_success` and `youtube_import_success` after successful validated responses. Import success is not proof the destination transcript was displayed. Existing transcription success likewise means observed backend completion, not result visibility.
+- All public custom events now reach GA4 as well as Plausible and Clarity. GA4 excludes raw `error_message`, `transaction_id` and `checkout_id` properties. No GA revenue/purchase event is synthesized; payment truth remains in Paddle and existing transaction records.
+- Missing collector functions are buffered in memory for at most 30 seconds / 100 pending sink deliveries. Each ready sink drains once, independently. This is a script-readiness buffer, not durable delivery or an offline queue. Network failures, blocked scripts, page close and capacity/TTL expiry can still lose observations. Delayed legacy Plausible events that cross navigation use the existing endpoint with the original URL and no referrer.
+- Login success observation runs on all localized routes, confirms `/api/auth/session`, expires pending markers after 15 minutes and ignores responses for replaced markers. One Tap, modal, extension and pricing login entries set markers. No user ID is exported or bound to public events; login is not registration.
+- No new tables, migrations or business retries. Existing operational tables remain the authority for registrations, tasks, assets and payments. Public event counts remain counts, not a user/task-linked ordered funnel.
+
+Check analysis configuration parity with:
+
+```sh
+node scripts/sync-tracking-config.mjs /path/to/tracking/projects.json
+# Add missing goals, preserving historical goals, funnels and breakdowns:
+node scripts/sync-tracking-config.mjs /path/to/tracking/projects.json --write
+```
+
+The local Scribix report configuration was synchronized. Dashboard goal setup and production receipt still require release verification; the script does not configure a remote dashboard. Run `test:video-tracking` (including component-handler → sender tests), `test:video-workspace` and `build`. After deployment, verify live receipt for OAuth/One Tap, YouTube, asynchronous success/failure and repeated polls, then compare seven complete days with matching source/platform/version coverage. Do not backfill previously uncollected events or treat missing collection as zero conversion.

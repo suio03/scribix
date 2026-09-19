@@ -6,7 +6,7 @@ import { routing } from "./i18n/routing";
 const intlMiddleware = createMiddleware(routing);
 const SINGLE_LANGUAGE_PATHS = new Set(["privacy", "refunds", "terms", "partners"]);
 
-export default function middleware(request: NextRequest) {
+function routeRequest(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const parts = pathname.split("/").filter(Boolean);
 
@@ -31,6 +31,18 @@ export default function middleware(request: NextRequest) {
   }
 
   return intlMiddleware(request);
+}
+
+export default function middleware(request: NextRequest) {
+  const response = routeRequest(request);
+  // OpenNext returns middleware redirects before applying next.config headers.
+  if (
+    response.status >= 300 && response.status < 400 &&
+    request.headers.get("host")?.split(":")[0].toLowerCase() === "local.scribix.io"
+  ) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+  return response;
 }
 
 export const config = {

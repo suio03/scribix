@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { signIn } from "next-auth/react";
+import { markSignInPending } from "@/lib/signin-tracking";
 
 const ONE_TAP_COOLDOWN_KEY = "scribix:google-one-tap-cooldown-until";
 const ONE_TAP_COOLDOWN_MS = 60 * 60 * 1000;
@@ -103,6 +104,7 @@ export function GoogleOneTap({ clientId }: { clientId: string }) {
             redirect: false,
           });
           if (result?.ok) {
+            markSignInPending("google-onetap");
             clearCooldown();
             window.location.reload();
           }

@@ -5,6 +5,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "../../i18n/routing";
+import { TrackSignInSuccess } from "../components/Track";
 import Analytics from "../components/Analytics";
 import { LoginModalProvider } from "../components/LoginModal";
 import "./globals.css";
@@ -104,6 +105,7 @@ export default async function LocaleLayout({
       <Analytics />
       <body className="bg-paper text-ink antialiased">
         <NextIntlClientProvider>
+          <TrackSignInSuccess />
           <LoginModalProvider>{children}</LoginModalProvider>
         </NextIntlClientProvider>
       </body>

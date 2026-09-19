@@ -104,6 +104,7 @@ export function YouTubeImporter({
       setResult(inspectResult);
       setSelectedTrackId(preferredTrackId(inspectResult.tracks));
       setPhase("ready");
+      trackEvent("youtube_inspect_success", { step: "inspect", tool_slug: toolSlug });
     } catch (caught) {
       trackEvent("youtube_inspect_fail", {
         ...youtubeInspectFailureProps(caught),
@@ -137,6 +138,7 @@ export function YouTubeImporter({
       if (!imported.transcriptId) {
         throw new Error("youtube_fetch_failed");
       }
+      trackEvent("youtube_import_success", { step: "import", tool_slug: toolSlug });
       router.push(`/dashboard/transcripts/${imported.transcriptId}`);
     } catch (caught) {
       trackEvent("youtube_import_fail", {

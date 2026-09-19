@@ -15,7 +15,7 @@ export interface PartnerLink {
 
 export const MANAGED_SITES = new Set(['pixfy.io', 'scribix.io', 'fablepilot.com']);
 export const FRAGMENT_PATH = '/api/partner-links';
-const VISIBLE_COUNT = 8;
+const VISIBLE_COUNT = 12;
 
 function escape(value: string): string {
   return value.replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]!));
@@ -95,9 +95,9 @@ const CSS = `[data-partner-links-list]{border-top:1px solid color-mix(in srgb,cu
 @media(max-width:800px){[data-partner-layout="directory"] ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){[data-partner-links-list] ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}}
 @media(max-width:360px){[data-partner-links-list] ul{grid-template-columns:minmax(0,1fr)}}`;
-// Findly's reciprocal badge stays visible in the homepage footer permanently.
+// Required reciprocal badges stay visible in the homepage footer permanently.
 function isFooterOnly(link: PartnerLink): boolean {
-  return new URL(link.url).hostname.replace(/^www\./, '') === 'findly.tools';
+  return ['findly.tools', 'wired.business'].includes(new URL(link.url).hostname.replace(/^www\./, ''));
 }
 export function renderPartners(data: unknown, layout: "home" | "directory" = "home"): string {
   const links = prepareLinks(data);

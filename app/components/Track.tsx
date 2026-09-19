@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { observePendingSignIn } from "@/lib/signin-tracking";
+export { markSignInPending } from "@/lib/signin-tracking";
 import { trackEvent } from "@/lib/analytics";
 
 export function TrackToolVisit({ slug }: { slug: string }) {
@@ -10,25 +13,18 @@ export function TrackToolVisit({ slug }: { slug: string }) {
   return null;
 }
 
-const SIGNIN_FLAG = "scribix:signin_pending";
-
-// Flag is set just before OAuth redirect; sessionStorage survives the round-trip
-// so we can fire signin_success exactly once when the user returns signed in.
-export function markSignInPending() {
-  if (typeof window === "undefined") return;
-  try {
-    sessionStorage.setItem(SIGNIN_FLAG, "1");
-  } catch {}
-}
-
 export function TrackSignInSuccess() {
+  const pathname = usePathname();
   useEffect(() => {
-    try {
-      if (sessionStorage.getItem(SIGNIN_FLAG)) {
-        sessionStorage.removeItem(SIGNIN_FLAG);
-        trackEvent("signin_success", { method: "google" });
-      }
-    } catch {}
-  }, []);
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let checks = 0;
+    const check = async () => {
+      const finished = await observePendingSignIn();
+      if (!cancelled && !finished && ++checks < 12) timer = setTimeout(check, 5_000);
+    };
+    void check();
+    return () => { cancelled = true; if (timer !== undefined) clearTimeout(timer); };
+  }, [pathname]);
   return null;
 }

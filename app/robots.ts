@@ -7,8 +7,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         disallow: [
-          "/dashboard",
-          "/*/dashboard",
+          // Dashboard uses auth redirects and noindex; crawlers must be able to read them.
           "/admin",
           "/*/admin",
           "/api/",
@@ -18,6 +17,5 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: "https://scribix.io/sitemap.xml",
-    host: "https://scribix.io",
   };
 }
