@@ -139,7 +139,7 @@ Autocomplete 出现了 `free`、`no watermark`、`online`、`for TikTok`、`for 
 
 OpusClip 比较文章与替代方案落地页内容重叠时，先做一个完整页面；有独立搜索意图和内容价值时再拆分。9 月 16 日竞品操作记录是准备材料，尚不足以证明 Scribix 与竞品最终输出的全面对比。
 
-对比内容语言规则（2026-09-20 用户确认）：alternatives / vs 对比文章和落地页仅发布英文，不安排翻译。对比页面在桌面及移动端均不显示语言切换器；仅生成英文 URL、自引用 canonical 和英文 sitemap 条目，不生成其他语言版本或指向这些版本的 hreflang。此规则适用于对比内容，无论放在 `/guides` 还是 `/alternatives`；教程、检查清单及 Guides 索引继续沿用现有多语言规则。首篇已本地实现；带 locale 前缀的 alternatives URL 重定向到英文地址。
+对比内容语言规则（2026-09-20 用户确认）：alternatives / vs 对比文章和落地页仅发布英文，不安排翻译。对比页面在桌面及移动端均不显示语言切换器；仅生成英文 URL、自引用 canonical 和英文 sitemap 条目，不生成其他语言版本或指向这些版本的 hreflang。此规则适用于对比内容，无论放在 `/guides` 还是 `/alternatives`；教程、检查清单及 Guides 索引继续沿用现有多语言规则。首篇已上线；带 locale 前缀的 alternatives URL 通过 308 永久重定向到英文地址。
 
 对比内容外链规则（2026-09-20 用户确认）：公开页面不添加竞品 URL 或外链；保留来源名称与核查日期，完整来源 URL 只在内部研究／内容记录中维护。
 
@@ -222,12 +222,13 @@ How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Av
 
 分析沿用现有平台和事件体系，遵守 [tracking.md](../video-workspace/tracking.md) 与 `lib/video-workspace/analytics-contract.ts`，不新增追踪表或回放基础设施。
 
-### 英文对比页 — 2026-09-20 本地完成，尚未部署
+### 英文对比页 — 2026-09-20 已上线
 
 - `/alternatives/opus-clip-alternative` 比较四家工具的适用流程、免费限制、月付价格、编辑与输出；标注官方来源与核查日期。正文和套餐快照在 `lib/alternatives/opus-clip.ts`，Scribix 分钟数和价格引用 `lib/plans.ts`。
 - 专业流程演示使用 React/CSS 重排选片、边界／构图、字幕三个场景；复用 Guide 的 export poster 与 57.43 秒成片。没有重新剪片、转写、生成图片或提交社交平台。
 - 独立 `/alternatives` 汇总页和页脚 Alternatives 分组；已从 Guides 卡片及 CollectionPage 移除比较文章。对比页导航、返回入口和面包屑归属 Alternatives，正文保留相关教程链接。目录与文章均仅英文、隐藏语言切换器、各自单一 sitemap URL；六种 locale 前缀回到英文 URL，法语 Cookie / Accept-Language 不产生翻译页或 hreflang。
-- 验证：`npm run build`（含六语言校验）通过；Chrome ai-publisher 中桌面／390px 手机布局、浅深色演示、点击／键盘切换、FAQ、真实视频播放已检查。独立 localhost 生产预览验证英文路由、索引和 sitemap；无新部署。
+- 验证：`npm run build`（含六语言校验）通过；Chrome ai-publisher 中桌面／390px 手机布局、浅深色演示、点击／键盘切换、FAQ、真实视频播放已检查。独立 localhost 生产预览验证英文路由、索引和 sitemap。线上目录与文章均返回 200、自引用 canonical，无 hreflang 或竞品外链；19 个语言前缀／旧路径跳转均为 308 并保留查询参数，线上 sitemap 仅包含两个无前缀英文 alternatives URL。
+- 发布：功能提交 `efca9ea` 已推送 `origin/main`，通过隔离的已提交源码构建并部署到 `scribix.io`；Cloudflare 版本 `88083381-3b4f-4822-8980-d605bfc2ecf8`。没有数据库迁移。
 - 制作与来源记录见 [对比页内容备注](../content/opus-clip-alternatives.md)。
 
 ## 8. 后续需要补齐的证据

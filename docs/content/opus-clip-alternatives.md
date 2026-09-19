@@ -1,6 +1,6 @@
 # OpusClip alternatives: editorial and visual sources
 
-Prepared 2026-09-20. Delivery status lives in the [content plan](../research/2026-09-07-blog-seo-acquisition-summary.md). Public route after deployment: `/alternatives/opus-clip-alternative`.
+Prepared 2026-09-20. Delivery status lives in the [content plan](../research/2026-09-07-blog-seo-acquisition-summary.md). Public route: `/alternatives/opus-clip-alternative`.
 
 ## Scope
 
