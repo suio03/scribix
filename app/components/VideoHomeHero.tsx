@@ -117,7 +117,7 @@ export function VideoHomeHero({
                 onClick={() => trackVideoAction("video_home_cta_click")}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
               >
-                {t("primaryCta")}
+                {t("uploadCta")}
                 <ArrowRight size={16} strokeWidth={1.8} />
               </a>
             </div>
@@ -203,7 +203,7 @@ export function VideoHomeHero({
                             strokeWidth={1.8}
                             className="transition group-hover:-translate-y-0.5"
                           />
-                          {t("primaryCta")}
+                          {t("uploadCta")}
                         </button>
                         {videoOnlyError ? (
                           <p className="mt-4 text-[13px] text-red-600">
@@ -230,8 +230,8 @@ export function VideoHomeHero({
               onClick={chooseVideo}
               className="inline-flex min-h-12 items-center gap-3 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-[var(--action-text)] transition hover:-translate-y-0.5 hover:bg-accent-hover"
             >
-              {t("primaryCta")}
-              <ArrowRight size={18} />
+              <CloudUpload size={20} strokeWidth={1.8} aria-hidden="true" />
+              {t("uploadCta")}
             </button>
           </div>
         )}

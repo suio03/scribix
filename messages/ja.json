@@ -23,6 +23,7 @@
       "headline": "長尺動画を<accent>投稿できるショート動画へ。</accent>",
       "description": "ポッドキャスト、インタビュー、講座の見どころを発見。ショート動画に仕上げて、ScribixからYouTube、TikTok、LinkedInへ投稿できます。",
       "primaryCta": "無料でクリップを作成",
+      "uploadCta": "ファイルをアップロード",
       "secondaryCta": "使い方を見る",
       "ctaNote": "動画{freeTrialMinutes}分まで無料 · クレジットカード不要。",
       "trust": [
