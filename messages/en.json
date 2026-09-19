@@ -21,7 +21,7 @@
     "hero": {
       "eyebrow": "AI video clipper",
       "headline": "Turn long videos into <accent>publish-ready shorts.</accent>",
-      "description": "Scribix is an AI video clipper for podcasts, interviews, webinars, and talking-head videos. It finds complete moments in the conversation, then lets you refine every clip before export.",
+      "description": "Find the best moments in your podcasts, interviews and lessons. Shape them into finished shorts, then publish to YouTube, TikTok and LinkedIn from Scribix.",
       "primaryCta": "Create clips for free",
       "secondaryCta": "See how it works",
       "ctaNote": "{freeTrialMinutes} minutes of video included · No credit card required.",
@@ -29,7 +29,7 @@
         "AI-selected, self-contained clips",
         "Precise transcript-based cuts",
         "Dynamic captions and 9:16 framing",
-        "Final 1080 × 1920 MP4"
+        "Multi-platform publishing on paid plans"
       ],
       "previewLabel": "Scribix clip workspace",
       "previewProject": "Founder interview — Episode 12",
@@ -93,16 +93,16 @@
       "captionNote": "Styled from the supplied transcript. This is a caption demonstration, not a completed project export.",
       "trimTitle": "Keep the part that tells the story.",
       "trimBody": "Set the beginning and ending of your clip. Keep enough context, remove the excess, and preview the cut before export.",
-      "workflowLabel": "Three steps to a short",
-      "workflowTitle": "Upload. Refine. Download.",
-      "uploadTitle": "Start with your long video",
-      "uploadBody": "Upload your interview, podcast or recording. Scribix finds candidate moments for you to review.",
-      "refineTitle": "Make the clip yours",
-      "refineBody": "Choose a moment, refine the cut and framing, and style your captions. Editing controls are available on Creator.",
+      "workflowLabel": "From upload to your audience.",
+      "workflowTitle": "Upload. Create. Publish.",
+      "uploadTitle": "Bring your long video",
+      "uploadBody": "Upload a podcast, interview or lesson. Choose what you want to find, or let AI suggest the moments.",
+      "refineTitle": "Finish your shorts",
+      "refineBody": "Refine the cut, framing, captions and cover. Prepare a complete story for your audience.",
       "downloadTitle": "Download and share",
       "downloadBody": "Export the finished MP4 and cover. Upload them to your preferred social platform.",
       "cover": "cover",
-      "exploreCases": "Explore real examples",
+      "exploreCases": "Explore publishing",
       "format1": "Interview",
       "format2": "Lecture",
       "format3": "Screen + speaker",
@@ -115,11 +115,9 @@
       "shareAlike": "Adapted WikiLearn video excerpts are shared under CC BY-SA 4.0. Original embedded image credits are retained in the source recording.",
       "trimSource": "Interview with Steve Wozniak · Adjust this 10-second excerpt.",
       "clean": "Clean",
-      "focus": "Focus"
-    },
-    "demo": {
-      "title": "One conversation. Multiple finished shorts.",
-      "description": "Watch a real Scribix project become captioned, vertical clips. This silent demo shows the workflow in 15 seconds."
+      "focus": "Focus",
+      "publishTitle": "Send to your channels",
+      "publishBody": "Choose connected accounts, adjust each platform’s copy and publish. Follow each post’s status, or download your files."
     },
     "proof": {
       "eyebrow": "A real Scribix render",
@@ -191,24 +189,24 @@
       ]
     },
     "audiences": {
-      "label": "Built for repeat publishing",
-      "title": "For teams with more good footage than editing time.",
-      "intro": "Scribix is built for spoken long-form video where complete short clips are already inside the conversation—they just need to be found and finished.",
+      "label": "BUILT FOR YOUR CONTENT ROUTINE",
+      "title": "Your stories. More places to be seen.",
+      "intro": "One workspace for finding the moment, finishing the video and bringing it to your channels.",
       "items": [
         {
-          "label": "Long-form to short-form",
-          "title": "Video creators",
-          "body": "Turn long interviews, explainers, and creator videos into a steady stream of vertical clips without rebuilding every edit from scratch."
+          "label": "CREATORS",
+          "title": "Keep creating. Keep showing up.",
+          "body": "Turn talking-head videos and tutorials into focused shorts. Style the captions and prepare them for your channels."
         },
         {
-          "label": "Video and audio shows",
-          "title": "Podcasters and producers",
-          "body": "Turn podcast episodes and interviews into complete, compelling clips with captions and framing suited to short-form feeds."
+          "label": "PODCASTERS",
+          "title": "Let the conversation travel.",
+          "body": "Give a long episode more ways to be discovered. Pick the moments that stand on their own and share them across platforms."
         },
         {
-          "label": "Content operations",
-          "title": "Marketing and media teams",
-          "body": "Move from recorded webinars, customer stories, and founder conversations to branded social assets in one reviewable workflow."
+          "label": "TEAMS",
+          "title": "Keep your channels together.",
+          "body": "Manage connected accounts in one place. Tailor each destination’s post copy and track its publishing status."
         }
       ]
     },
@@ -225,19 +223,19 @@
       "items": [
         {
           "q": "How does the AI video clipper choose moments?",
-          "a": "Scribix analyzes the transcript, speaker turns, and word-level timestamps to suggest self-contained moments with a hook and clear theme. V1 does not analyze every frame of the full source video."
+          "a": "Scribix uses the spoken content and timing to suggest moments with a clear theme and enough context to stand on their own. Review the suggestions and choose what you want to share."
         },
         {
           "q": "Can I change the clips AI suggests?",
-          "a": "Creator users can change the clip’s original-video boundaries, correct caption text, adjust the vertical crop, apply brand styling, and select a cover frame. Free exports AI-generated clips as-is."
+          "a": "On a paid plan, refine the clip boundaries, correct captions, adjust framing and prepare the cover. Free accounts can export the suggested clips as they are."
         },
         {
           "q": "What does Scribix export?",
-          "a": "The short-video workflow produces a 1080 × 1920 H.264 MP4 with AAC audio, plus a cover image. You download these files and publish them through your preferred platform."
+          "a": "Download your finished MP4, cover and available post copy. On a paid plan, you can also send the finished video directly to connected social accounts."
         },
         {
           "q": "How long is my original video stored?",
-          "a": "Original videos are stored for 7 days on Free and 30 days on legacy Basic or Creator. Transcripts remain after the original expires, and each finished export is available for 30 days from export."
+          "a": "Source-video retention depends on your plan. Check your project and plan details for expiry dates, and download the materials you want to keep."
         },
         {
           "q": "Which source videos can I upload?",
@@ -246,14 +244,54 @@
         {
           "q": "Can I still use Scribix only for transcription?",
           "a": "Yes. Audio-to-text, YouTube transcript, AI notes, transcript editing, and text or subtitle exports remain available as dedicated tools."
+        },
+        {
+          "q": "Can I publish directly to multiple platforms?",
+          "a": "Yes. On a paid plan, connect YouTube, TikTok and LinkedIn accounts, select your destinations and edit each platform’s copy before sending. Each post has its own status. You can also download your video, cover and post copy."
         }
       ]
     },
     "final": {
-      "kicker": "The short clips are already in your long video",
-      "title": "Upload one long video. Leave with a finished short.",
-      "body": "Use AI video clipping to find complete moments, make the creative decisions that matter, and render a vertical MP4 ready for your audience.",
-      "cta": "Upload a video free"
+      "kicker": "CREATE → REFINE → PUBLISH",
+      "title": "Your next video deserves an audience.",
+      "body": "Start with the footage you already have. Create your shorts, prepare their covers and send them to your connected channels.",
+      "cta": "Start creating for free"
+    },
+    "presentation": {
+      "eyebrow": "From a good moment to a finished short.",
+      "title": "From upload to your audience.",
+      "intro": "Find the best moments in your podcasts, interviews and lessons. Shape them into finished shorts, then publish to YouTube, TikTok and LinkedIn from Scribix.",
+      "selection": {
+        "title": "Find the moments worth sharing.",
+        "body": "Review AI-suggested moments with their context and timing. Choose the stories you want to turn into shorts.",
+        "alt": "A podcast with three AI-suggested moments and a selection timeline."
+      },
+      "framing": {
+        "title": "Put your speaker in the picture.",
+        "body": "Turn wide recordings into vertical video. Adjust framing and zoom to keep the subject where you want them.",
+        "alt": "A crop outline on the original video points to a vertical output."
+      },
+      "captions": {
+        "title": "Make every word easy to follow.",
+        "body": "Correct the text and style the captions. Adjust position, color and emphasis to fit your video.",
+        "alt": "Three travel clips show different caption styles."
+      },
+      "trim": {
+        "title": "Cut to the words that matter.",
+        "body": "Refine the start and end using the transcript. Keep the context and remove what slows the story down.",
+        "alt": "A selected transcript passage and its highlighted timeline range."
+      },
+      "cover": {
+        "title": "Make the first impression count.",
+        "body": "Prepare a title and cover that give viewers a reason to watch. Keep the presentation consistent with your clip.",
+        "alt": "Cooking, travel and education cover designs."
+      },
+      "package": {
+        "title": "One clip. Multiple destinations.",
+        "body": "Connect your YouTube, TikTok and LinkedIn accounts. Select your destinations, tailor each platform’s copy and track individual post statuses. Social publishing is available on paid plans.",
+        "alt": "A finished clip connects to selected YouTube, TikTok and LinkedIn accounts with separate post copy and a publish button."
+      },
+      "illustrationNote": "Feature artwork uses generated people and illustrative content. The Hero includes real clip exports; publishing states are a demonstration, not live posts."
     }
   },
   "TopNav": {

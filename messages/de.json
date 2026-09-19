@@ -21,7 +21,7 @@
     "hero": {
       "eyebrow": "KI-Video-Clipper",
       "headline": "Verwandle lange Videos in <accent>veröffentlichungsfertige Shorts.</accent>",
-      "description": "Scribix ist ein KI-Video-Clipper für Podcasts, Interviews, Webinare und Talking-Head-Videos. Er findet eigenständige Gesprächsmomente und lässt dich jeden Clip vor dem Export präzise bearbeiten.",
+      "description": "Finde die besten Momente in Podcasts, Interviews und Lektionen. Gestalte fertige Kurzvideos und veröffentliche sie über Scribix auf YouTube, TikTok und LinkedIn.",
       "primaryCta": "Kostenlos Clips erstellen",
       "secondaryCta": "So funktioniert es",
       "ctaNote": "{freeTrialMinutes} Videominuten inklusive · Keine Kreditkarte erforderlich.",
@@ -29,7 +29,7 @@
         "Eigenständige Clips per KI",
         "Präzise Schnitte nach Transkript",
         "Dynamische Untertitel und 9:16",
-        "Finales MP4 in 1080 × 1920"
+        "Auf mehreren Plattformen veröffentlichen – mit kostenpflichtigem Tarif"
       ],
       "previewLabel": "Scribix Clip-Workspace",
       "previewProject": "Gründerinterview — Folge 12",
@@ -93,16 +93,16 @@
       "captionNote": "Auf Basis des mitgelieferten Transkripts gestaltet. Eine Untertiteldemonstration, kein fertiger Projektexport.",
       "trimTitle": "Behalte den Teil, der die Geschichte erzählt.",
       "trimBody": "Lege Anfang und Ende fest. Bewahre den Kontext, entferne Überflüssiges und prüfe den Schnitt vor dem Export.",
-      "workflowLabel": "In drei Schritten zum Clip",
-      "workflowTitle": "Hochladen. Bearbeiten. Herunterladen.",
-      "uploadTitle": "Starte mit deinem langen Video",
-      "uploadBody": "Lade dein Interview, deinen Podcast oder deine Aufnahme hoch. Scribix schlägt passende Momente zur Auswahl vor.",
-      "refineTitle": "Gestalte deinen Clip",
-      "refineBody": "Wähle einen Moment, passe Schnitt und Bildausschnitt an und gestalte die Untertitel. Bearbeitungsfunktionen sind in Creator verfügbar.",
+      "workflowLabel": "Vom Upload zum Publikum.",
+      "workflowTitle": "Hochladen. Gestalten. Veröffentlichen.",
+      "uploadTitle": "Starte mit deinem Video",
+      "uploadBody": "Lade einen Podcast, ein Interview oder eine Lektion hoch. Gib ein Thema an oder lass die KI Momente vorschlagen.",
+      "refineTitle": "Gestalte deine Kurzvideos",
+      "refineBody": "Verfeinere Schnitt, Ausschnitt, Untertitel und Cover für eine vollständige Geschichte.",
       "downloadTitle": "Herunterladen und teilen",
       "downloadBody": "Exportiere die fertige MP4 und das Cover. Lade sie auf deiner bevorzugten sozialen Plattform hoch.",
       "cover": "Cover",
-      "exploreCases": "Echte Beispiele ansehen",
+      "exploreCases": "Veröffentlichen entdecken",
       "format1": "Interview",
       "format2": "Vortrag",
       "format3": "Bildschirm + Sprecher",
@@ -115,11 +115,9 @@
       "shareAlike": "Bearbeitete WikiLearn-Videoausschnitte stehen unter CC BY-SA 4.0. Die ursprünglichen Bildnachweise bleiben in der Originalaufnahme erhalten.",
       "trimSource": "Interview mit Steve Wozniak · Passe diesen 10-Sekunden-Ausschnitt an.",
       "clean": "Klar",
-      "focus": "Fokus"
-    },
-    "demo": {
-      "title": "Ein Gespräch. Mehrere fertige Kurzvideos.",
-      "description": "Sieh, wie aus einem echten Scribix-Projekt vertikale Clips mit Untertiteln entstehen. Diese stumme Demo zeigt den Ablauf in 15 Sekunden."
+      "focus": "Fokus",
+      "publishTitle": "Erreiche deine Kanäle",
+      "publishBody": "Wähle verbundene Konten, passe Texte an und veröffentliche. Verfolge jeden Status oder lade die Dateien herunter."
     },
     "proof": {
       "eyebrow": "Ein echtes Scribix-Rendering",
@@ -191,24 +189,24 @@
       ]
     },
     "audiences": {
-      "label": "Für regelmäßige Veröffentlichungen",
-      "title": "Für Teams mit mehr gutem Material als Schnittzeit.",
-      "intro": "Scribix ist für gesprochene Langvideos gemacht, in denen vollständige Shorts bereits im Gespräch stecken und nur gefunden und fertiggestellt werden müssen.",
+      "label": "FÜR DEINEN CONTENT-ALLTAG",
+      "title": "Deine Geschichten. Mehr Sichtbarkeit.",
+      "intro": "Ein Arbeitsbereich für die Auswahl, die Gestaltung und die Veröffentlichung.",
       "items": [
         {
-          "label": "Langformat zu Kurzformat",
-          "title": "Videocreator",
-          "body": "Verwandle Interviews, Erklärvideos und Creator-Content in einen stetigen Strom vertikaler Clips, ohne jeden Schnitt neu aufzubauen."
+          "label": "CREATOR",
+          "title": "Kreativ bleiben. Sichtbar bleiben.",
+          "body": "Mache aus Erklärvideos und Tutorials fokussierte Kurzvideos mit passenden Untertiteln."
         },
         {
-          "label": "Video- und Audioshows",
-          "title": "Podcaster und Producer",
-          "body": "Finde vollständige, überzeugende Momente in langen Folgen und ergänze Untertitel und Bildausschnitte für Short-Form-Feeds."
+          "label": "PODCASTS",
+          "title": "Lass das Gespräch weiterziehen.",
+          "body": "Entdecke eigenständige Momente einer langen Folge und teile sie auf mehreren Plattformen."
         },
         {
-          "label": "Content Operations",
-          "title": "Marketing- und Medienteams",
-          "body": "Mache aus Webinaren, Kundengeschichten und Gründerinterviews gebrandete Social Assets in einem prüfbaren Workflow."
+          "label": "TEAMS",
+          "title": "Behalte deine Kanäle zusammen.",
+          "body": "Verwalte verbundene Konten, passe Beitragstexte an und verfolge den Veröffentlichungsstatus."
         }
       ]
     },
@@ -225,19 +223,19 @@
       "items": [
         {
           "q": "Wie wählt der KI-Video-Clipper passende Momente aus?",
-          "a": "Scribix analysiert Transkript, Sprecherwechsel und Wortzeitstempel, um eigenständige Momente mit Hook und klarem Thema vorzuschlagen. V1 analysiert nicht jedes Bild des gesamten Videos."
+          "a": "Scribix nutzt den gesprochenen Inhalt und die Zeitangaben, um eigenständige Momente mit einem klaren Thema vorzuschlagen. Prüfe die Vorschläge und wähle deine Favoriten."
         },
         {
           "q": "Kann ich die KI-Vorschläge ändern?",
-          "a": "Ja. Du kannst die Grenzen des Clips im Originalvideo ändern, Untertitel korrigieren, den vertikalen Ausschnitt anpassen, Branding anwenden und ein Titelbild wählen."
+          "a": "Mit einem kostenpflichtigen Tarif kannst du Grenzen, Untertitel, Ausschnitt und Cover bearbeiten. Kostenlose Konten exportieren die vorgeschlagenen Clips unverändert."
         },
         {
           "q": "Was exportiert Scribix?",
-          "a": "Der Kurzvideo-Workflow erzeugt ein 1080 × 1920 H.264 MP4 mit AAC-Audio sowie ein Titelbild. Diese Dateien kannst du über deine bevorzugte Plattform veröffentlichen."
+          "a": "Lade MP4, Cover und vorhandenen Beitragstext herunter. Mit einem kostenpflichtigen Tarif kannst du das Video auch direkt an verbundene Konten senden."
         },
         {
           "q": "Wie lange wird mein Originalvideo gespeichert?",
-          "a": "Originalvideos werden bei Free 7 Tage und beim bisherigen Basic oder Creator 30 Tage gespeichert. Das Transkript bleibt danach erhalten; jeder fertige Export ist ab Export 30 Tage verfügbar."
+          "a": "Die Aufbewahrung hängt vom Tarif ab. Prüfe die Ablaufdaten im Projekt und lade benötigte Materialien rechtzeitig herunter."
         },
         {
           "q": "Welche Videos kann ich hochladen?",
@@ -246,14 +244,54 @@
         {
           "q": "Kann ich Scribix weiterhin nur für Transkription nutzen?",
           "a": "Ja. Audio-zu-Text, YouTube-Transkripte, KI-Notizen, Transkriptbearbeitung sowie Text- und Untertitelexporte bleiben als eigene Werkzeuge verfügbar."
+        },
+        {
+          "q": "Kann ich direkt auf mehreren Plattformen veröffentlichen?",
+          "a": "Ja. Verbinde in einem kostenpflichtigen Tarif YouTube, TikTok und LinkedIn, wähle Konten und passe die Texte an. Jeder Beitrag hat einen eigenen Status. Video, Cover und Text lassen sich auch herunterladen."
         }
       ]
     },
     "final": {
-      "kicker": "Die kurzen Clips stecken schon im langen Video",
-      "title": "Ein langes Video hochladen. Mit einem fertigen Short weitergehen.",
-      "body": "Nutze KI-Video-Clipping, um eigenständige Momente zu finden, triff die wichtigen kreativen Entscheidungen und rendere ein vertikales MP4 für dein Publikum.",
-      "cta": "Video kostenlos hochladen"
+      "kicker": "GESTALTEN → VERFEINERN → VERÖFFENTLICHEN",
+      "title": "Dein nächstes Video verdient ein Publikum.",
+      "body": "Erstelle aus vorhandenem Material Kurzvideos und Cover und sende sie an deine verbundenen Kanäle.",
+      "cta": "Kostenlos loslegen"
+    },
+    "presentation": {
+      "eyebrow": "Vom guten Moment zum fertigen Clip.",
+      "title": "Vom Upload zum Publikum.",
+      "intro": "Finde die besten Momente in Podcasts, Interviews und Lektionen. Gestalte fertige Kurzvideos und veröffentliche sie über Scribix auf YouTube, TikTok und LinkedIn.",
+      "selection": {
+        "title": "Finde die Momente, die sich lohnen.",
+        "body": "Prüfe KI-Vorschläge mit Kontext und Zeitangaben. Wähle die Geschichten für deine Kurzvideos.",
+        "alt": "Ein Podcast mit drei KI-Vorschlägen und einer Auswahl auf der Zeitleiste."
+      },
+      "framing": {
+        "title": "Rücke die Person ins Bild.",
+        "body": "Mache aus breiten Aufnahmen vertikale Videos. Passe Ausschnitt und Zoom an dein Motiv an.",
+        "alt": "Ein markierter Ausschnitt führt vom Original zum Hochformat."
+      },
+      "captions": {
+        "title": "Mach jedes Wort verständlich.",
+        "body": "Korrigiere den Text und gestalte die Untertitel mit Position, Farbe und Hervorhebungen.",
+        "alt": "Drei Reiseclips mit unterschiedlichen Untertitelstilen."
+      },
+      "trim": {
+        "title": "Schneide auf den Punkt.",
+        "body": "Passe Anfang und Ende im Transkript an. Behalte den Kontext und entferne unnötige Passagen.",
+        "alt": "Eine Textauswahl mit markiertem Bereich auf der Zeitleiste."
+      },
+      "cover": {
+        "title": "Sorge für einen starken ersten Eindruck.",
+        "body": "Bereite Titel und Cover vor, die zum Anschauen einladen und zu deinem Clip passen.",
+        "alt": "Cover-Entwürfe für Kochen, Reisen und Bildung."
+      },
+      "package": {
+        "title": "Ein Clip. Mehrere Ziele.",
+        "body": "Verbinde YouTube, TikTok und LinkedIn. Wähle Konten, passe die Texte pro Plattform an und verfolge jeden Status. Veröffentlichen ist in kostenpflichtigen Tarifen verfügbar.",
+        "alt": "Ein Clip mit ausgewählten Plattformkonten, eigenen Beitragstexten und einer Schaltfläche zum Veröffentlichen."
+      },
+      "illustrationNote": "Die Funktionsbilder verwenden generierte Personen und Beispielinhalte. Das Hero zeigt echte Clip-Exporte; Veröffentlichungsstatus sind eine Demonstration."
     }
   },
   "TopNav": {

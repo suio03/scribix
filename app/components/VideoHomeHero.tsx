@@ -100,7 +100,9 @@ export function VideoHomeHero({
           <h1 className="tool-landing-title font-display text-[44px] font-medium leading-[1.02] tracking-[-0.02em] sm:text-[60px] lg:text-[76px]">
             {t.rich("headline", {
               accent: (chunks) => (
-                <span className="prism-generated-phrase text-accent">{chunks}</span>
+                <span className="prism-generated-phrase text-accent">
+                  {chunks}
+                </span>
               ),
             })}
           </h1>
@@ -122,115 +124,134 @@ export function VideoHomeHero({
           ) : null}
         </div>
 
-        <div id="upload" className="tool-landing-upload relative mt-10 scroll-mt-24 rise-in">
-          <div className="audio-upload-card relative overflow-hidden rounded-3xl border border-line bg-card shadow-[0_30px_80px_-40px_rgba(14,13,11,0.18)]">
-            <div className="grain" />
-            <div className="relative">
-              <div className="audio-upload-tabs flex items-stretch border-b border-line">
-                <div className="audio-upload-tab relative flex flex-1 items-center justify-center gap-2.5 px-4 py-4 text-[14px] text-ink sm:px-6">
-                  <CloudUpload size={17} strokeWidth={1.6} />
-                  <span className="font-medium">{t("eyebrow")}</span>
-                  <span className="hidden font-mono text-[10px] uppercase tracking-[0.15em] text-muted/70 sm:inline">
-                    {t("dropMeta")}
-                  </span>
-                  <span className="absolute inset-x-4 bottom-0 h-0.5 bg-accent sm:inset-x-6" />
+        {signedIn ? (
+          <div
+            id="upload"
+            className="tool-landing-upload relative mt-10 scroll-mt-24 rise-in"
+          >
+            <div className="audio-upload-card relative overflow-hidden rounded-3xl border border-line bg-card shadow-[0_30px_80px_-40px_rgba(14,13,11,0.18)]">
+              <div className="grain" />
+              <div className="relative">
+                <div className="audio-upload-tabs flex items-stretch border-b border-line">
+                  <div className="audio-upload-tab relative flex flex-1 items-center justify-center gap-2.5 px-4 py-4 text-[14px] text-ink sm:px-6">
+                    <CloudUpload size={17} strokeWidth={1.6} />
+                    <span className="font-medium">{t("eyebrow")}</span>
+                    <span className="hidden font-mono text-[10px] uppercase tracking-[0.15em] text-muted/70 sm:inline">
+                      {t("dropMeta")}
+                    </span>
+                    <span className="absolute inset-x-4 bottom-0 h-0.5 bg-accent sm:inset-x-6" />
+                  </div>
                 </div>
-              </div>
 
-              <div className="audio-upload-panel p-6 sm:p-10">
-                <div
-                  onDragOver={(event) => {
-                    event.preventDefault();
-                    setDragOver(true);
-                  }}
-                  onDragLeave={() => setDragOver(false)}
-                  onDrop={(event) => {
-                    event.preventDefault();
-                    setDragOver(false);
-                    const file = event.dataTransfer.files?.[0];
-                    if (file) {
-                      trackVideoAction("video_home_cta_click");
-                      acceptVideo(file);
-                    }
-                  }}
-                  className={`audio-upload-dropzone rounded-2xl border border-dashed bg-paper/40 px-6 py-12 text-center transition sm:py-16 ${
-                    dragOver ? "border-accent bg-accent/5" : "border-line"
-                  }`}
-                >
-                  <input
-                    ref={inputRef}
-                    type="file"
-                    accept={VIDEO_ACCEPT}
-                    className="hidden"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      event.currentTarget.value = "";
-                      if (file) acceptVideo(file);
+                <div className="audio-upload-panel p-6 sm:p-10">
+                  <div
+                    onDragOver={(event) => {
+                      event.preventDefault();
+                      setDragOver(true);
                     }}
-                  />
-
-                  {busy ? (
-                    <ProgressView
-                      phase={phase}
-                      progress={progress}
-                      filename={filename}
-                      processingLimitNoticeMin={processingLimitNoticeMin}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={(event) => {
+                      event.preventDefault();
+                      setDragOver(false);
+                      const file = event.dataTransfer.files?.[0];
+                      if (file) {
+                        trackVideoAction("video_home_cta_click");
+                        acceptVideo(file);
+                      }
+                    }}
+                    className={`audio-upload-dropzone rounded-2xl border border-dashed bg-paper/40 px-6 py-12 text-center transition sm:py-16 ${
+                      dragOver ? "border-accent bg-accent/5" : "border-line"
+                    }`}
+                  >
+                    <input
+                      ref={inputRef}
+                      type="file"
+                      accept={VIDEO_ACCEPT}
+                      className="hidden"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        event.currentTarget.value = "";
+                        if (file) acceptVideo(file);
+                      }}
                     />
-                  ) : (
-                    <>
-                      <span className="audio-upload-icon mx-auto inline-grid size-14 place-items-center rounded-xl bg-accent-soft text-accent">
-                        <Film size={26} strokeWidth={1.5} />
-                      </span>
-                      <p className="mt-6 text-[15px] text-ink">{t("dropTitle")}</p>
-                      <p className="mt-1.5 font-mono text-[12px] uppercase tracking-[0.15em] text-muted">
-                        {t("dropMeta")}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={chooseVideo}
-                        className="group mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
-                      >
-                        <CloudUpload
-                          size={16}
-                          strokeWidth={1.8}
-                          className="transition group-hover:-translate-y-0.5"
-                        />
-                        {t("primaryCta")}
-                      </button>
-                      {videoOnlyError ? (
-                        <p className="mt-4 text-[13px] text-red-600">{t("videoOnly")}</p>
-                      ) : null}
-                      <UploadErrorHelp
-                        error={uploadError}
-                        onRetry={retry}
-                        onChooseFile={chooseVideo}
-                        checkoutSuccessPath={postSignInPath}
+
+                    {busy ? (
+                      <ProgressView
+                        phase={phase}
+                        progress={progress}
+                        filename={filename}
+                        processingLimitNoticeMin={processingLimitNoticeMin}
                       />
-                    </>
-                  )}
+                    ) : (
+                      <>
+                        <span className="audio-upload-icon mx-auto inline-grid size-14 place-items-center rounded-xl bg-accent-soft text-accent">
+                          <Film size={26} strokeWidth={1.5} />
+                        </span>
+                        <p className="mt-6 text-[15px] text-ink">
+                          {t("dropTitle")}
+                        </p>
+                        <p className="mt-1.5 font-mono text-[12px] uppercase tracking-[0.15em] text-muted">
+                          {t("dropMeta")}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={chooseVideo}
+                          className="group mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-[14px] font-medium text-paper transition hover:bg-accent"
+                        >
+                          <CloudUpload
+                            size={16}
+                            strokeWidth={1.8}
+                            className="transition group-hover:-translate-y-0.5"
+                          />
+                          {t("primaryCta")}
+                        </button>
+                        {videoOnlyError ? (
+                          <p className="mt-4 text-[13px] text-red-600">
+                            {t("videoOnly")}
+                          </p>
+                        ) : null}
+                        <UploadErrorHelp
+                          error={uploadError}
+                          onRetry={retry}
+                          onChooseFile={chooseVideo}
+                          checkoutSuccessPath={postSignInPath}
+                        />
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-7 flex justify-center">
+            <button
+              type="button"
+              onClick={chooseVideo}
+              className="inline-flex min-h-12 items-center gap-3 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-[var(--action-text)] transition hover:-translate-y-0.5 hover:bg-accent-hover"
+            >
+              {t("primaryCta")}
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        )}
 
         {publicHero ? (
-          <p className="mt-4 text-center text-[12px] text-muted">{t("ctaNote")}</p>
+          <p className="mt-4 text-center text-[12px] text-muted">
+            {t("ctaNote")}
+          </p>
         ) : null}
+
+        {publicHero ? <VideoHomeDemo /> : null}
 
         <ul className="tool-proof-row mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-[13px]">
           {trust.map((item) => (
-            <li
-              key={item}
-              className="flex items-center gap-2 text-muted"
-            >
+            <li key={item} className="flex items-center gap-2 text-muted">
               <Check size={16} strokeWidth={1.8} className="text-accent" />
               <span className="font-medium">{item}</span>
             </li>
           ))}
         </ul>
-
-        {publicHero ? <VideoHomeDemo /> : null}
       </div>
 
       <PartialTranscriptModal

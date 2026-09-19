@@ -21,7 +21,7 @@
     "hero": {
       "eyebrow": "Generatore di clip AI",
       "headline": "Trasforma video lunghi in <accent>short pronti da pubblicare.</accent>",
-      "description": "Scribix è un generatore di clip AI per podcast, interviste, webinar e video parlati. Trova momenti completi nella conversazione e ti permette di rifinire ogni clip prima dell’esportazione.",
+      "description": "Trova i momenti migliori di podcast, interviste e lezioni. Crea clip completi e pubblicali su YouTube, TikTok e LinkedIn da Scribix.",
       "primaryCta": "Crea clip gratis",
       "secondaryCta": "Scopri come funziona",
       "ctaNote": "{freeTrialMinutes} minuti di video inclusi · Nessuna carta richiesta.",
@@ -29,7 +29,7 @@
         "Clip complete selezionate dall’AI",
         "Tagli precisi dalla trascrizione",
         "Sottotitoli dinamici e formato 9:16",
-        "MP4 finale 1080 × 1920"
+        "Pubblicazione multipiattaforma nei piani a pagamento"
       ],
       "previewLabel": "Workspace clip Scribix",
       "previewProject": "Intervista al fondatore — Episodio 12",
@@ -93,16 +93,16 @@
       "captionNote": "Creati dalla trascrizione fornita. È una dimostrazione dei sottotitoli, non un’esportazione di progetto completata.",
       "trimTitle": "Conserva la parte che racconta la storia.",
       "trimBody": "Imposta inizio e fine. Mantieni il contesto, elimina il superfluo e controlla il taglio prima di esportare.",
-      "workflowLabel": "La tua clip in tre passaggi",
-      "workflowTitle": "Carica. Perfeziona. Scarica.",
-      "uploadTitle": "Inizia dal tuo video lungo",
-      "uploadBody": "Carica la tua intervista, podcast o registrazione. Scribix trova i momenti da esaminare.",
-      "refineTitle": "Personalizza la clip",
-      "refineBody": "Scegli un momento, regola taglio e inquadratura e personalizza i sottotitoli. I controlli di modifica sono disponibili con Creator.",
+      "workflowLabel": "Dal caricamento al pubblico.",
+      "workflowTitle": "Carica. Crea. Pubblica.",
+      "uploadTitle": "Inizia dal tuo video",
+      "uploadBody": "Carica un podcast, un’intervista o una lezione. Indica un tema o lascia che l’IA suggerisca i momenti.",
+      "refineTitle": "Completa i tuoi clip",
+      "refineBody": "Affina taglio, inquadratura, sottotitoli e copertina per raccontare una storia completa.",
       "downloadTitle": "Scarica e condividi",
       "downloadBody": "Esporta il file MP4 finito e la copertina. Caricali sulla tua piattaforma social preferita.",
       "cover": "copertina",
-      "exploreCases": "Esplora esempi reali",
+      "exploreCases": "Scopri la pubblicazione",
       "format1": "Intervista",
       "format2": "Conferenza",
       "format3": "Schermo + relatore",
@@ -115,11 +115,9 @@
       "shareAlike": "Gli estratti WikiLearn adattati sono condivisi con licenza CC BY-SA 4.0. I crediti delle immagini sono conservati nella registrazione originale.",
       "trimSource": "Intervista a Steve Wozniak · Regola questo estratto di 10 secondi.",
       "clean": "Pulito",
-      "focus": "Enfasi"
-    },
-    "demo": {
-      "title": "Una conversazione. Più video brevi pronti.",
-      "description": "Guarda un vero progetto Scribix trasformarsi in clip verticali con sottotitoli. Questa demo senza audio mostra il flusso di lavoro in 15 secondi."
+      "focus": "Enfasi",
+      "publishTitle": "Invia ai tuoi canali",
+      "publishBody": "Scegli gli account, adatta i testi e pubblica. Segui gli stati o scarica i file."
     },
     "proof": {
       "eyebrow": "Un rendering reale di Scribix",
@@ -191,24 +189,24 @@
       ]
     },
     "audiences": {
-      "label": "Per pubblicare con continuità",
-      "title": "Per team con più buon materiale che tempo per montarlo.",
-      "intro": "Scribix è pensato per video parlati di lunga durata che contengono già clip complete: basta trovarle e rifinirle.",
+      "label": "PER LA TUA ROUTINE CREATIVA",
+      "title": "Le tue storie. In più luoghi.",
+      "intro": "Uno spazio per trovare il momento, completare il video e portarlo ai tuoi canali.",
       "items": [
         {
-          "label": "Dal lungo al breve",
-          "title": "Video creator",
-          "body": "Trasforma interviste, spiegazioni e video creator in un flusso costante di clip verticali senza ricostruire ogni montaggio da zero."
+          "label": "CREATOR",
+          "title": "Continua a creare e condividere.",
+          "body": "Trasforma spiegazioni e tutorial in clip mirati, con sottotitoli nel tuo stile."
         },
         {
-          "label": "Show video e audio",
-          "title": "Podcaster e producer",
-          "body": "Trova momenti completi negli episodi lunghi e aggiungi sottotitoli e inquadrature adatti ai feed short-form."
+          "label": "PODCAST",
+          "title": "Fai viaggiare la conversazione.",
+          "body": "Scegli momenti completi dei tuoi episodi e condividili su più piattaforme."
         },
         {
-          "label": "Content operations",
-          "title": "Team marketing e media",
-          "body": "Trasforma webinar, storie dei clienti e conversazioni con i founder in contenuti social di brand con un flusso revisionabile."
+          "label": "TEAM",
+          "title": "Riunisci i tuoi canali.",
+          "body": "Gestisci gli account collegati, adatta i testi e segui lo stato di ogni pubblicazione."
         }
       ]
     },
@@ -225,19 +223,19 @@
       "items": [
         {
           "q": "Come sceglie i momenti il generatore di clip AI?",
-          "a": "Scribix analizza trascrizione, turni dei parlanti e timestamp delle parole per proporre momenti autonomi con hook e tema chiaro. La V1 non analizza ogni fotogramma dell’intero video."
+          "a": "Scribix usa il contenuto parlato e i tempi per suggerire momenti autonomi con un tema chiaro. Esamina le proposte e scegli cosa condividere."
         },
         {
           "q": "Posso modificare i clip suggeriti dall’IA?",
-          "a": "Sì. Puoi cambiare i limiti del clip nel video originale, correggere i sottotitoli, regolare il crop verticale, applicare il brand e scegliere la copertina."
+          "a": "Con un piano a pagamento puoi modificare taglio, sottotitoli, inquadratura e copertina. Gli account gratuiti esportano i clip suggeriti senza modifiche."
         },
         {
           "q": "Cosa esporta Scribix?",
-          "a": "Il flusso genera un MP4 H.264 1080 × 1920 con audio AAC e un’immagine di copertina. Scarica i file e pubblicali sulla piattaforma che preferisci."
+          "a": "Scarica MP4, copertina e testo disponibile. Con un piano a pagamento puoi anche inviare il video agli account social collegati."
         },
         {
           "q": "Per quanto tempo viene conservato il video originale?",
-          "a": "I video originali vengono conservati 7 giorni con Free e 30 giorni con il precedente Basic o Creator. La trascrizione rimane disponibile e ogni esportazione completata resta disponibile per 30 giorni dalla creazione."
+          "a": "La conservazione del video originale dipende dal piano. Controlla le scadenze nel progetto e scarica i materiali da conservare."
         },
         {
           "q": "Quali video posso caricare?",
@@ -246,14 +244,54 @@
         {
           "q": "Posso ancora usare Scribix solo per trascrivere?",
           "a": "Sì. Audio in testo, trascrizioni YouTube, appunti IA, modifica delle trascrizioni ed esportazioni di testo o sottotitoli restano disponibili come strumenti dedicati."
+        },
+        {
+          "q": "Posso pubblicare direttamente su più piattaforme?",
+          "a": "Sì. Con un piano a pagamento, collega YouTube, TikTok e LinkedIn, scegli gli account e adatta i testi. Ogni post ha il proprio stato. Puoi anche scaricare video, copertina e testo."
         }
       ]
     },
     "final": {
-      "kicker": "Le clip brevi sono già nel tuo video lungo",
-      "title": "Carica un video lungo. Esci con uno short finito.",
-      "body": "Usa l’AI per trovare momenti completi, prendi le decisioni creative importanti e renderizza un MP4 verticale pronto per il pubblico.",
-      "cta": "Carica un video gratis"
+      "kicker": "CREA → AFFINA → PUBBLICA",
+      "title": "Il tuo prossimo video merita un pubblico.",
+      "body": "Parti dalle tue riprese, crea clip e copertine e inviali ai tuoi canali collegati.",
+      "cta": "Inizia gratis"
+    },
+    "presentation": {
+      "eyebrow": "Da un bel momento a un clip finito.",
+      "title": "Dal caricamento al pubblico.",
+      "intro": "Trova i momenti migliori di podcast, interviste e lezioni. Crea clip completi e pubblicali su YouTube, TikTok e LinkedIn da Scribix.",
+      "selection": {
+        "title": "Trova i momenti da condividere.",
+        "body": "Esamina i suggerimenti IA con contesto e tempi. Scegli le storie per i tuoi video brevi.",
+        "alt": "Un podcast con tre momenti suggeriti dall’IA e una timeline."
+      },
+      "framing": {
+        "title": "Metti il protagonista al centro.",
+        "body": "Trasforma le riprese orizzontali in video verticali. Regola inquadratura e zoom.",
+        "alt": "Un ritaglio sul video originale indica il risultato verticale."
+      },
+      "captions": {
+        "title": "Rendi ogni parola facile da seguire.",
+        "body": "Correggi il testo e personalizza posizione, colore ed enfasi dei sottotitoli.",
+        "alt": "Tre clip di viaggio con diversi stili di sottotitoli."
+      },
+      "trim": {
+        "title": "Taglia fino alle parole che contano.",
+        "body": "Regola inizio e fine dalla trascrizione. Mantieni il contesto ed elimina il superfluo.",
+        "alt": "Un passaggio selezionato e il relativo intervallo sulla timeline."
+      },
+      "cover": {
+        "title": "Cura la prima impressione.",
+        "body": "Prepara un titolo e una copertina che invitino a guardare e siano coerenti con il clip.",
+        "alt": "Copertine per cucina, viaggi e formazione."
+      },
+      "package": {
+        "title": "Un clip. Più destinazioni.",
+        "body": "Collega YouTube, TikTok e LinkedIn. Scegli gli account, adatta i testi e segui ogni stato. La pubblicazione è disponibile nei piani a pagamento.",
+        "alt": "Un clip collegato a tre account selezionati con testi distinti e un pulsante di pubblicazione."
+      },
+      "illustrationNote": "Le illustrazioni usano persone generate e contenuti di esempio. Il video principale contiene vere esportazioni; gli stati di pubblicazione sono dimostrativi."
     }
   },
   "TopNav": {

@@ -1,56 +1,69 @@
 # Homepage media and feature demonstrations
 
-## Components and behavior
+## Current design — 2026-09-19, v5
 
-- `app/components/VideoHomeHero.tsx` shows `VideoHomeDemo` to signed-out visitors. The 15-second Hero uses an existing Scribix project's source and exported clips. Its visual-first sequence shows timeline selection, three real outputs, then one enlarged portrait export beside the source. Only short functional labels and the source aspect ratio remain; do not restore a brand lockup, marketing headlines, clip titles or a text-heavy closing slide inside the video.
-- `app/components/VideoHomeShowcase.tsx` owns the source-format gallery, lesson selection, framing comparison, caption styles, video-only interview card, workflow illustrations and source credits.
-- `app/components/VideoHomeMarketing.tsx` assembles these sections with audiences, FAQ and the final upload CTA.
-- `useHomeVideoLoop.ts` plays muted, looping, inline video with no native controls. It pauses outside the viewport, in a hidden tab, or under reduced motion, and resumes when eligible. Posters remain available if autoplay is blocked.
-- The interview card is video-only: do not restore Reset, start/end sliders, duration readouts or interactive-preview instructions. Lesson selection and caption-style buttons remain interactive.
-- Homepage copy lives in `VideoHome.demo` and `VideoHome.showcase` in all six message files. Keep asset IDs, URLs, timing and source data in code.
+The public homepage follows a centered headline and CTA, one large Hero film, six independent feature illustrations, a new upload/create/publish workflow, three creator use cases and a publishing-oriented final CTA. Signed-in users retain the existing uploader. No persistent preview server should be started when the user reserves that step for themselves.
 
-## Proof versus illustration
+- `VideoHomeDemo.tsx`: 24-second silent autoplay loop and poster, with no controls or interactive playback buttons. Per the owner’s explicit request, Hero autoplay is enabled independently of reduced-motion settings. Offscreen/hidden-tab playback still pauses.
+- `VideoHomeShowcase.tsx`: server-rendered feature explanations and workflow; new generated-photo illustrations, without duplicated in-image marketing headings.
+- `VideoHomeMarketing.tsx`: creators, podcasters and teams; updated FAQ and final CTA. The old licensed-source audience cards, download-only workflow and final portrait stack have been replaced.
+- Copy and image descriptions are localized in six dictionaries. Platform lists and asset ordering remain in TypeScript. English content within the demo media is illustrative; adjacent explanations and accessible labels are localized.
 
-The Hero contains real project output. Its waveform, selection ranges, processing ribbons and portrait outline are schematic, not processing-speed measurements or tracking telemetry. Captions are baked into the original exports. The main source excerpt starts at 406.679 seconds to align with the primary candidate starting at 390.479 seconds, shown from output second 20 at demo second 3.8; the two secondary cards use separate output excerpts. The source-format gallery and feature demonstrations use licensed source excerpts prepared for the homepage; they are not completed Scribix project exports or customer endorsements. The portrait framing and caption media now run through the same MediaPipe/TalkNet v4 analysis and final renderer used by the product; selection times remain manually chosen, not AI-selected highlights. Keep this distinction in copy. Do not introduce invented AI scores or output counts.
+## Hero narrative
 
-Caption cues use the supplied Ellen Gertsen SRT, shifted by 30.07 seconds. They are phrase-level cues, not word-level timing. Clean/Focus styles render as HTML over the video and are not baked into its MP4.
+| Time | Intent | Media |
+| --- | --- | --- |
+| 0–6 s | Original conversation → finished shorts, with platform destinations visible | source-sync from 0; clip1 from 23 s, clip4 from 8 s, clip3 from 1 s |
+| 6–12 s | Landscape → portrait composition | source-sync from 7.8 s; clip1 from 24 s |
+| 12–18 s | Captioned output and styling | clip1 from 23 s |
+| 18–24 s | Multiple selected accounts → publish action → submission states | clip4 from 10 s; illustrated YouTube, TikTok and LinkedIn account rows |
 
-## Assets
+The source excerpt begins at original second 406.679; clip1 begins at 390.479. The framing pair therefore represents the same moment. Each film scene has its own Remotion Sequence to keep media offsets correct. The publishing sequence is a **visual demonstration**, not a live operation or speed measurement. No OAuth or social post is performed during media production.
 
-`public/media/home-demo/` contains the Hero MP4 and poster. `public/media/home-variety/` contains the current lower-page media. These delivery MP4s are short, silent H.264 loops with fast-start metadata; the full source recordings must not be bundled into the website.
+## Proof and generated illustration boundaries
 
-| Asset stem | Source | Source start | Duration | Display |
-| --- | --- | --- | --- | --- |
-| interview | ConversationEDU, Interview with Steve Wozniak | 00:30 | 10 seconds | 960 × 540; preserves camera cuts and both speakers |
-| lecture | Ellen Gertsen, Introduction | 09:04 | 10 seconds | 960 × 540; full slides |
-| captions | Ellen Gertsen, Introduction | 00:30.07 | 10 seconds | 540 × 960; automatic framing v4; fixed shot crop, zoom 0.8 |
-| robotics | ZDF, Was macht ein Roboterforscher? | 01:41 | 10 seconds | 960 × 540 |
-| robotics-portrait | Same robotics excerpt | 01:41 | 10 seconds | 540 × 960; automatic framing v4; shot-aware crop / zoom / fit |
-| lesson-1 / lesson-2 / lesson-3 | WikiLearn, Re-using freely-licensed media | 00:30 / 04:54 / 08:19 | 10 seconds each | 960 × 540; retains screen and speaker inset |
+Hero source footage and captioned video outputs are from the pre-existing `Vision-Future-compressed` project. Baked captions remain intact. Waveforms, crop outlines, buttons and publishing status transitions are schematic. Platform support is based on `app/components/publishing/shared/specs.ts`, the account/compose implementation and `docs/video-workspace/social-publishing.md`. Direct publishing requires a paid plan and connected accounts. Do not add unsupported platforms or claim provider acceptance based on an illustration.
 
-Each stem has a matching JPG poster. The old `home-features` files and unused `interview-portrait` are not required by the current homepage.
+The six static feature images use generated fictional people and example content:
 
-## Attribution
+1. Podcast: suggested moments connected to a source timeline.
+2. Cooking instruction: portrait crop and landscape source.
+3. Travel storyteller: three visibly different caption treatments.
+4. Design educator: transcript-based boundary editing.
+5. Cooking, travel and education: independently styled covers.
+6. Podcast: three destinations, platform-specific copy and explicit publishing action.
 
-The `VideoMediaCredits` disclosure at `#home-media-credits` links the source and license and identifies the adaptations. Preserve the credits when replacing or reusing assets.
+These are neither real customer projects nor endorsements. Example timestamps, spoken words and covers are illustrative. The page identifies this distinction. Do not invent virality scores, reach metrics or promise a fixed number of clips.
+
+## Assets and reproduction
+
+- `public/media/home-demo/scribix-hero-v5.mp4` and `.jpg`: 1600 × 900, 30 fps, 24 seconds, H.264, no audio, fast-start metadata; poster at second 1.
+- `public/media/home-features-v3/*.webp`: six 1600 × 900 feature illustrations.
+- `public/media/home-artwork/*.webp`: four generated photo assets used by the illustrations and lower-page sections.
+
+See [rendering instructions and exact image-generation prompt](../scripts/homepage-media/README.md). The built-in imagegen tool generated the photo sheet; Remotion creates the layouts and motion, Sharp compresses images, FFmpeg removes audio and prepares delivery metadata. Application runtime has no Remotion dependency. Old v2 and home-variety assets remain archival and are not referenced by the new homepage.
+
+## Retired licensed footage provenance
+
+The previous lower-page licensed source materials remain in `public/media/home-variety/`, but are no longer displayed by these homepage components:
 
 - [Steve Wozniak interview](https://commons.wikimedia.org/wiki/File:Interview_with_Steve_Wozniak.webm): ConversationEDU, CC BY 3.0.
-- [Ellen Gertsen introduction](https://www.youtube.com/watch?v=FjJxkNtCCAU): [NASA workshop licensing reference](https://science.nasa.gov/researchers/pi-launchpad-sessions/), Creative Commons Attribution.
+- [Ellen Gertsen introduction](https://www.youtube.com/watch?v=FjJxkNtCCAU): [NASA licensing reference](https://science.nasa.gov/researchers/pi-launchpad-sessions/), Creative Commons Attribution.
 - [Robotics interview](https://commons.wikimedia.org/wiki/File:Was_macht_ein_Roboterforscher%3F.webm): ZDF/logo/Simone Klein, CC BY 4.0.
-- [WikiLearn lesson](https://commons.wikimedia.org/wiki/File:WCC_module_5_-_23_-_re-using_freely-licensed_media.webm): Asaf (WMF), CC BY-SA 4.0. Adapted excerpts are shared under the same license; embedded example-image credits remain in the original recording.
+- [WikiLearn lesson](https://commons.wikimedia.org/wiki/File:WCC_module_5_-_23_-_re-using_freely-licensed_media.webm): Asaf (WMF), CC BY-SA 4.0. Adapted excerpts retain that license and embedded credits.
 
-## Local verification
+Restore attribution beside these materials if they are reused in a future homepage section.
 
-Run `npm run build:cloudflare` to rebuild the OpenNext assets used by the local Wrangler preview at port 3000. An ordinary Next build alone does not refresh that preview. This build does not deploy the site.
+## Verification
 
-Check desktop/mobile layouts, both themes, poster loading, silent looping without controls, lesson selection, caption style/cue changes and source credits. Preserve reduced-motion behavior. Full source masters and the editable Hero composition are local production inputs, not repository dependencies. The current editable revision is `/Users/laughingli/Documents/Codex/2026-09-05/x/outputs/scribix-hero-visual/`; it includes the asset ledger, timing notes, HyperFrames source and 1920 × 1080 master. The website serves a 1280 × 720 derivative and a poster from 10.9 seconds.
+Run `npm run check-locales` and `npm run build:cloudflare` (includes the Next production build). Verify media dimensions, duration, audio absence and fast-start order, inspect all six stills and a full-film contact sheet, and compare public assets with `.open-next/assets/`.
 
-## Lower-page regeneration — 2026-09-06
+For v3, the existing user-started local server was used in Chrome ai-publisher. The public page was inspected through 127.0.0.1 to avoid altering the signed-in localhost session. Desktop checks cover the Hero, illustration loading, publishing section and new workflow. Mobile and dark-theme browser acceptance are not yet established by that check. No new website server, production deployment, login change or real publication was performed.
 
-All eight current loops and their posters were regenerated from the same licensed masters and time ranges. Six landscape excerpts retain the whole frame, including slides and speaker insets. `robotics-portrait` and `captions` use `speaker-framing.py` (mediapipe-talknet-v4) and `renderFinal` from `containers/video-preview/final-render.mjs`, including the decoded-frame trim before cropping at shot boundaries. Analysis receives source audio; audio is removed only from the website derivative. Captions remain HTML overlays using the existing cues and style controls. The Hero is unchanged.
+### v4 refinement
 
-The caption example holds one crop for all 10 seconds, at zoom 0.8. Robotics uses separate stable crops per source shot; its close-up zooms out to protect the face, and the final question card stays in fit mode so the text remains readable. These deliberate source-shot changes are not continuous animated zooms.
+The publishing scene uses 680 × 112 destination cards instead of 935 × 158, with the clip and connections centered as a compact group. Channel badges share a fixed icon slot, with optical sizing that accounts for YouTube’s built-in clear space. Shared publishing-workspace icons are unchanged. The existing `local.scribix.io` tunnel was started at the owner’s request using `.wrangler/scribix-local-tunnel.token`; its ingress remains `http://localhost:3000`. Do not print the token or other tunnel process command lines.
 
-Local reproducibility inputs: `/Users/laughingli/Documents/Codex/2026-09-05/x/outputs/homepage-sources/` contains the masters. `.wrangler/home-demo-refresh/run.py` prepares the excerpts and invokes the installed Docker analysis image; `render.mjs` invokes the current final renderer. The same folder retains plans, diagnostics, full-resolution renders, delivery derivatives and previous website assets. Run from the repository root with `python3 .wrangler/home-demo-refresh/run.py`; it stages delivery files without publishing them. These local production inputs are not runtime dependencies.
+### v5 visual consistency
 
-Video and poster URLs include a media revision to refresh cached loops and posters together. The three Next Image workflow thumbnails use plain local paths because the image configuration rejects query strings. Validation included duration, dimensions, no audio, H.264/pixel format, fast-start metadata, full-loop contact sheets, and consecutive-frame inspection at the robotics cuts.
+All four Hero scenes use the same fixed light canvas (`#f0ebf8`), including publishing. The publishing headline and supporting labels use dark text; the standalone lower-page publishing illustration retains its own dark treatment. The video container shares the desktop H1 maximum width through `--hero-content-width`, is centered, and fits the available mobile width.

@@ -5,6 +5,8 @@ import { useEffect, type RefObject } from "react";
 /** Play a silent video (or synchronized pair) only while its preview is visible. */
 export function useHomeVideoLoop<T extends HTMLElement>(
   ref: RefObject<T | null>,
+  paused = false,
+  allowMotion = false,
 ) {
   useEffect(() => {
     const target = ref.current;
@@ -17,7 +19,12 @@ export function useHomeVideoLoop<T extends HTMLElement>(
     let visible = false;
     const update = () => {
       for (const video of videos) {
-        if (visible && !document.hidden && !reducedMotion.matches) {
+        if (
+          visible &&
+          !paused &&
+          !document.hidden &&
+          (!reducedMotion.matches || allowMotion)
+        ) {
           video.muted = true;
           void video.play().catch(() => {
             // Keep the poster visible when the browser blocks autoplay.
@@ -41,5 +48,5 @@ export function useHomeVideoLoop<T extends HTMLElement>(
       reducedMotion.removeEventListener("change", update);
       videos.forEach((video) => video.pause());
     };
-  }, [ref]);
+  }, [ref, paused, allowMotion]);
 }
