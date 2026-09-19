@@ -99,13 +99,17 @@ const CSS = `[data-partner-links-list]{border-top:1px solid color-mix(in srgb,cu
 function isFooterOnly(link: PartnerLink): boolean {
   return ['findly.tools', 'wired.business'].includes(new URL(link.url).hostname.replace(/^www\./, ''));
 }
-export function renderPartners(data: unknown, layout: "home" | "directory" = "home"): string {
+export function selectPartners(data: unknown, layout: "home" | "directory" = "home"): PartnerLink[] {
   const links = prepareLinks(data);
   const pinned = links.filter(isFooterOnly);
   const regular = links.filter(link => !isFooterOnly(link));
-  const displayed = layout === 'home'
-    ? [...pinned, ...regular.slice(0, Math.max(0, VISIBLE_COUNT - pinned.length))]
-    : regular;
+  const regularSlots = Math.max(0, VISIBLE_COUNT - pinned.length);
+  return layout === 'home'
+    ? [...pinned, ...regular.slice(0, regularSlots)]
+    : regular.slice(regularSlots);
+}
+export function renderPartners(data: unknown, layout: "home" | "directory" = "home"): string {
+  const displayed = selectPartners(data, layout);
   if (!displayed.length) return '';
   return `<section data-partner-links-list data-partner-layout="${layout}" aria-label="Partners and directories"><style>${CSS}</style>${layout === 'home' ? '<h2>Partners &amp; directories</h2>' : ''}<ul>${displayed.map(renderLink).join('')}</ul></section>`;
 }

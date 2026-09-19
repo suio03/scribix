@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-19 — partner placement
+
+- Keep homepage footer links out of the Partners directory and count only directory entries.
+- Add the official ToolPilot logo and homepage link exclusively to the Partners page.
+
 ## [Unreleased]
 
 ### Added
