@@ -97,7 +97,7 @@ const CSS = `[data-partner-links-list]{border-top:1px solid color-mix(in srgb,cu
 @media(max-width:360px){[data-partner-links-list] ul{grid-template-columns:minmax(0,1fr)}}`;
 // Required reciprocal badges stay visible in the homepage footer permanently.
 function isFooterOnly(link: PartnerLink): boolean {
-  return ['findly.tools', 'wired.business'].includes(new URL(link.url).hostname.replace(/^www\./, ''));
+  return ['findly.tools', 'wired.business', 'twelve.tools'].includes(new URL(link.url).hostname.replace(/^www\./, ''));
 }
 export function selectPartners(data: unknown, layout: "home" | "directory" = "home"): PartnerLink[] {
   const links = prepareLinks(data);
