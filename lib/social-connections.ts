@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { clipflightEnabled, clipflightRequest, socialStateHash } from "@/lib/clipflight";
+import { socialAccountLimitFor } from "@/lib/plans";
 
 type Params = { params: Promise<{ id: string }> };
 export function createConnectionHandlers(projectScoped: boolean) {
@@ -40,8 +41,25 @@ async function POST(request: Request, { params }: Params = { params: Promise.res
   if (!current) return Response.json({ error: "not_found" }, { status: 404 });
   if (!canUseSocialMedia(current.user.tier)) return socialUpgradeRequired();
   const body = await request.json().catch(() => null) as { platform?: string; locale?: string; accountId?: string } | null;
-  if (!PUBLISH_PLATFORMS.some(platform => platform === body?.platform) || !["en", "fr", "es", "it", "ja", "de"].includes(body?.locale ?? ""))
+  if (!body || !PUBLISH_PLATFORMS.some(platform => platform === body.platform) || !["en", "fr", "es", "it", "ja", "de"].includes(body.locale ?? ""))
     return Response.json({ error: "invalid_request" }, { status: 400 });
+  if (body?.accountId !== undefined && (typeof body.accountId !== "string" || !body.accountId || body.accountId.length > 128))
+    return Response.json({ error: "invalid_request" }, { status: 400 });
+  const maxAccounts = socialAccountLimitFor(current.user.tier, current.user.plan_version);
+  if (maxAccounts !== null || body.accountId) {
+    const accountsResponse = await clipflightRequest(current.user.id, "/accounts");
+    if (!accountsResponse.ok) return Response.json({ error: "social_service_unavailable" }, { status: 502 });
+    const accountsData = await accountsResponse.json() as { accounts?: Array<{ id?: string; platform?: string }> };
+    if (!Array.isArray(accountsData.accounts))
+      return Response.json({ error: "social_service_unavailable" }, { status: 502 });
+    const reconnecting = body.accountId
+      ? accountsData.accounts.some(account => account.id === body.accountId && account.platform === body.platform)
+      : false;
+    if (body.accountId && !reconnecting)
+      return Response.json({ error: "invalid_account" }, { status: 400 });
+    if (maxAccounts !== null && accountsData.accounts.length >= maxAccounts && !reconnecting)
+      return Response.json({ error: "social_account_limit", maxAccounts }, { status: 409 });
+  }
   const state = Array.from(crypto.getRandomValues(new Uint8Array(32)), b => b.toString(16).padStart(2, "0")).join("");
   const stateHash = await socialStateHash(state);
   const now = Math.floor(Date.now() / 1000);
@@ -49,7 +67,8 @@ async function POST(request: Request, { params }: Params = { params: Promise.res
   await current.env.DB.prepare(`INSERT INTO social_connection_returns (state_hash, user_id, project_id, locale, created_at, expires_at)
     VALUES (?, ?, ?, ?, ?, ?)`).bind(stateHash, current.user.id, current.projectId, body!.locale!, now, now + 600).run();
   const response = await clipflightRequest(current.user.id, "/connection-sessions", {
-    method: "POST", body: JSON.stringify({ platform: body!.platform, returnState: state }),
+    method: "POST", body: JSON.stringify({ platform: body!.platform, returnState: state,
+      maxAccounts }),
   });
   if (!response.ok) return Response.json({ error: "social_service_unavailable" }, { status: 502 });
   const data = await response.json() as { id: string; connectionUrl: string };

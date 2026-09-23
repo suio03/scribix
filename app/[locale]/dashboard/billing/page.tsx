@@ -1,6 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getPathname, Link, redirect } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { BillingPortalButton } from "@/app/components/BillingPortalButton";
 import { UpgradePlanButton } from "@/app/components/UpgradePlanButton";
@@ -21,11 +21,10 @@ export default async function BillingPage({
   }
 
   const { env } = getCloudflareContext();
-  const [row, billingT, accountT, pricingT, portalT, sp] = await Promise.all([
+  const [row, billingT, accountT, portalT, sp] = await Promise.all([
     getOrCreateCurrentUser(env.DB, session),
     getTranslations("Dashboard.billing"),
     getTranslations("Dashboard.account"),
-    getTranslations("PricingPage"),
     getTranslations("Dashboard.billingPortal"),
     searchParams,
   ]);
@@ -33,7 +32,7 @@ export default async function BillingPage({
   const tier: Tier = row?.tier ?? "free";
   const cycle = row?.billing_cycle ?? null;
   const status = row?.subscription_status ?? null;
-  const quotaMin = quotaMinutesFor(tier, cycle);
+  const quotaMin = quotaMinutesFor(tier, cycle, row?.plan_version);
   const usedMin = Math.max(0, row?.minutes_used_this_period ?? 0);
   const remainingMin = Math.max(0, quotaMin - usedMin);
   const usagePercent = Math.min(100, Math.round((usedMin / Math.max(1, quotaMin)) * 100));
@@ -43,13 +42,9 @@ export default async function BillingPage({
     tier === "free" ? "tierFree" : tier === "basic" ? "tierBasic" : "tierPro"
   );
   const cycleLabel = cycle
-    ? pricingT(cycle === "yearly" ? "billingYearly" : "billingMonthly")
+    ? accountT(cycle === "yearly" ? "cycleYearly" : "cycleMonthly")
     : billingT("noBillingInterval");
   const statusLabel = subscriptionStatusLabel(status, isPaid, billingT);
-  const checkoutSuccessPath = getPathname({
-    href: { pathname: "/dashboard/billing", query: { checkout: "ok" } },
-    locale,
-  });
 
   return (
     <main className="product-surface-refresh billing-refresh mx-auto max-w-[860px] px-4 py-10 sm:px-8 sm:py-12">
@@ -92,7 +87,6 @@ export default async function BillingPage({
             <div className="min-w-[190px]">
               {tier === "free" ? (
                 <UpgradePlanButton
-                  checkoutSuccessPath={checkoutSuccessPath}
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-accent px-5 text-[13px] font-semibold text-[var(--action-text)] transition hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/35"
                 >
                   {billingT("upgradePlan")}

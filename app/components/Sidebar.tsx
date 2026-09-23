@@ -33,7 +33,6 @@ import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import { Link, usePathname } from "@/i18n/navigation";
-import { PLANS, FREE_YOUTUBE_IMPORTS_PER_DAY } from "@/lib/plans";
 import { BillingPortalButton } from "./BillingPortalButton";
 import { useSidebar } from "./SidebarContext";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -436,13 +435,10 @@ export function Sidebar({
     label: t(`navLabels.${item.key}`),
   }));
   const usedMin = Math.max(0, Math.round(usage?.usedMin ?? 0));
-  const quotaMin = Math.max(1, Math.round(usage?.quotaMin ?? PLANS.free.minutesPerCycle));
+  const quotaMin = Math.max(0, Math.round(usage?.quotaMin ?? 0));
   const remainingMin = Math.max(0, quotaMin - usedMin);
   const usedYouTubeImports = Math.max(0, Math.round(usage?.usedYouTubeImports ?? 0));
-  const quotaYouTubeImports = Math.max(
-    1,
-    Math.round(usage?.quotaYouTubeImports ?? FREE_YOUTUBE_IMPORTS_PER_DAY)
-  );
+  const quotaYouTubeImports = Math.max(0, Math.round(usage?.quotaYouTubeImports ?? 0));
   const remainingYouTubeImports = Math.max(0, quotaYouTubeImports - usedYouTubeImports);
   const closeMobileSidebar = () => {
     setAccountOpen(false);
@@ -756,23 +752,27 @@ export function Sidebar({
                           {userLabel}
                         </p>
                       ) : null}
-                      <p className={`${userLabel ? "mt-0.5" : ""} text-[11px] text-muted`}>
-                        {t("currentPlanTitle")} · {sidebarPlanLabel(t, usage)}
-                      </p>
+                      {usage ? (
+                        <p className={`${userLabel ? "mt-0.5" : ""} text-[11px] text-muted`}>
+                          {t("currentPlanTitle")} · {sidebarPlanLabel(t, usage)}
+                        </p>
+                      ) : null}
                     </div>
 
-                    <div className="grid gap-px overflow-hidden rounded-xl border border-line bg-line">
-                      <AccountUsageStat
-                        label={t("usageTitle")}
-                        value={t("usageRemaining", { remaining: remainingMin })}
-                      />
-                      <AccountUsageStat
-                        label={t("youtubeUsageTitle")}
-                        value={t("youtubeUsageRemaining", {
-                          remaining: remainingYouTubeImports,
-                        })}
-                      />
-                    </div>
+                    {usage ? (
+                      <div className="grid gap-px overflow-hidden rounded-xl border border-line bg-line">
+                        <AccountUsageStat
+                          label={t("usageTitle")}
+                          value={t("usageRemaining", { remaining: remainingMin })}
+                        />
+                        <AccountUsageStat
+                          label={t("youtubeUsageTitle")}
+                          value={t("youtubeUsageRemaining", {
+                            remaining: remainingYouTubeImports,
+                          })}
+                        />
+                      </div>
+                    ) : null}
 
                     <div className="mt-2">
                       {usage?.canManageBilling ? (
@@ -871,15 +871,15 @@ function AccountUsageStat({
 
 function sidebarPlanLabel(
   t: ReturnType<typeof useTranslations<"Sidebar">>,
-  usage: SidebarUsage | undefined
+  usage: SidebarUsage
 ) {
-  const tier = usage?.tier ?? "free";
+  const tier = usage.tier;
   const tierLabel =
     tier === "free" ? t("tierFree") : tier === "basic" ? t("tierBasic") : t("tierPro");
   if (tier === "free") return tierLabel;
 
-  const cycle = usage?.billingCycle === "yearly" ? t("cycleYearly") : t("cycleMonthly");
-  const status = usage?.subscriptionStatus;
+  const cycle = usage.billingCycle === "yearly" ? t("cycleYearly") : t("cycleMonthly");
+  const status = usage.subscriptionStatus;
   if (status === "canceled") return `${tierLabel} - ${cycle} - ${t("statusCanceled")}`;
   if (status === "expired") return `${tierLabel} - ${cycle} - ${t("statusExpired")}`;
   return `${tierLabel} - ${cycle}`;

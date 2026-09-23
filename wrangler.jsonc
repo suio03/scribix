@@ -58,6 +58,13 @@
     "PADDLE_BASIC_YEARLY_PRICE_ID": "pri_01ktevek8v7mwd4crg71sm9em9",
     "PADDLE_PRO_MONTHLY_PRICE_ID": "pri_01kya7274z7tj43c0c02vmytpp",
     "PADDLE_PRO_YEARLY_PRICE_ID": "pri_01kya739why91ah1mpc0vfcdsw",
+    "PADDLE_HISTORICAL_PRO_MONTHLY_PRICE_ID": "pri_01ktevg56mngvqpbf0q1gna6b0",
+    "PADDLE_HISTORICAL_PRO_YEARLY_PRICE_ID": "pri_01ktevh9r6vsvdx6v9ga70r1as",
+    "PADDLE_V2_STARTER_MONTHLY_PRICE_ID": "pri_01m35vvz226a3de2cprphht0q1",
+    "PADDLE_V2_STARTER_YEARLY_PRICE_ID": "pri_01m35vwy32ks3jz4k3mgfzdxvm",
+    "PADDLE_V2_PRO_MONTHLY_PRICE_ID": "pri_01m35vy0nqcrdd6vg1rvx5ppxh",
+    "PADDLE_V2_PRO_YEARLY_PRICE_ID": "pri_01m35vyq086jb3dmxem8q875vs",
+    "PADDLE_V2_CHECKOUT_ENABLED": "false",
     "CLOUDFLARE_ACCOUNT_ID": "9955b1e01b98cb8e830f0543c4c002f2",
     "ADMIN_EMAILS": "laughinglyl90@gmail.com"
   },

@@ -926,9 +926,6 @@ export function Uploader(props: UseUploadOpts) {
       </div>
       <PartialTranscriptModal
         offer={partialOffer}
-        checkoutSuccessPath={
-          props.checkoutSuccessPath ?? props.postSignInPath ?? "/dashboard/new"
-        }
         onConfirm={confirmPartial}
         onCancel={cancelPartial}
         onUpgrade={trackPartialUpgrade}
@@ -939,13 +936,11 @@ export function Uploader(props: UseUploadOpts) {
 
 export function PartialTranscriptModal({
   offer,
-  checkoutSuccessPath,
   onConfirm,
   onCancel,
   onUpgrade,
 }: {
   offer: PartialTranscriptOffer | null;
-  checkoutSuccessPath: string;
   onConfirm: () => void;
   onCancel: () => void;
   onUpgrade: () => void;
@@ -964,15 +959,6 @@ export function PartialTranscriptModal({
     <UpgradePlanModal
       reason="quota"
       open
-      checkoutSuccessPath={checkoutSuccessPath}
-      onCheckoutStart={() => {
-        sessionStorage.setItem("scribix:upgrade_context", JSON.stringify({
-          reason: "quota",
-          error_code: "partial_transcript_upgrade",
-          suggested_tier: "pro",
-          tool_slug: offer.toolSlug,
-        }));
-      }}
       onClose={() => setUpgradeOpen(false)}
     />
   ) : (
@@ -1142,14 +1128,6 @@ export function UploadErrorHelp({
           <UpgradePlanModal
             reason={error.upgradeReason}
             open={upgradeOpen}
-            checkoutSuccessPath={checkoutSuccessPath}
-            onCheckoutStart={() => {
-              sessionStorage.setItem("scribix:upgrade_context", JSON.stringify({
-                reason: error.upgradeReason,
-                error_code: error.code,
-                suggested_tier: "pro",
-              }));
-            }}
             onClose={() => setUpgradeOpen(false)}
           />
         ) : null}
@@ -1248,14 +1226,6 @@ export function UploadErrorHelp({
         <UpgradePlanModal
           reason={error.upgradeReason}
           open={upgradeOpen}
-          checkoutSuccessPath={checkoutSuccessPath}
-          onCheckoutStart={() => {
-            sessionStorage.setItem("scribix:upgrade_context", JSON.stringify({
-              reason: error.upgradeReason,
-              error_code: error.code,
-              suggested_tier: "pro",
-            }));
-          }}
           onClose={() => setUpgradeOpen(false)}
         />
       ) : null}

@@ -24,7 +24,7 @@ export default async function AccountPage() {
   const tier: Tier = row?.tier ?? "free";
   const cycle = row?.billing_cycle ?? null;
   const usedMin = row?.minutes_used_this_period ?? 0;
-  const quotaMin = quotaMinutesFor(tier, cycle);
+  const quotaMin = quotaMinutesFor(tier, cycle, row?.plan_version);
 
   return (
     <main className="mx-auto max-w-[720px] px-4 py-12 sm:px-8">

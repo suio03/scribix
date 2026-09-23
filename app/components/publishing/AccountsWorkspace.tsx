@@ -109,10 +109,14 @@ function initialConnectionError() {
   return tx("m9b2473ab22", {v0: label});
 }
 
-  async function startAuthorization(platform: Platform) {
+  async function startAuthorization(platform: Platform, accountId?: string) {
     setConnectOpen(false);
     setActionError(null);
-    try { await startConnection(platform); } catch { setActionError(tx("m0bfda14788")); }
+    try { await startConnection(platform, accountId); }
+    catch (error) {
+      setActionError(tx(error instanceof PublishingRequestError && error.status === 409
+        ? "socialAccountLimitReached" : "m0bfda14788"));
+    }
   }
   const startReauthorization = startAuthorization;
   const [state, setState] = useState<AccountsState>({
@@ -170,7 +174,9 @@ function initialConnectionError() {
     if (typeof window === "undefined") return;
   const url = new URL(window.location.href);
 
-    setActionError(url.searchParams.get("socialConnection") === "failed" ? tx("connectionFailed") : initialConnectionError());
+    const connectionStatus = url.searchParams.get("socialConnection");
+    setActionError(connectionStatus === "limit" ? tx("socialAccountLimitReached")
+      : connectionStatus === "failed" ? tx("connectionFailed") : initialConnectionError());
     setSelectedPlatform(initialChannelFilter());
     if (url.searchParams.has("connectionError")) {
       url.searchParams.delete("connectionError");
@@ -502,7 +508,7 @@ function initialConnectionError() {
                               <button
                                 className="channel-card__menu-action" role="menuitem"
                                 type="button"
-                                onClick={() => { setOpenMenuAccountId(null); startReauthorization(channel.platform); }}
+                                onClick={() => { setOpenMenuAccountId(null); startReauthorization(channel.platform, channel.id); }}
                               >
                                 <LinkIcon size={16} />
                                 {tx("reconnectPlatform", {platform: PLATFORM_LABELS[channel.platform]})}

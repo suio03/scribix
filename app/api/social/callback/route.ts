@@ -26,6 +26,7 @@ export async function GET(request: Request) {
   await env.DB.prepare("UPDATE social_connection_returns SET status = ? WHERE state_hash = ? AND user_id = ?").bind(status, stateHash, user.id).run();
   const returnPath = record.project_id ? `/dashboard/video-projects/${encodeURIComponent(record.project_id)}` : "/dashboard/accounts";
   const destination = new URL(`${record.locale === "en" ? "" : `/${record.locale}`}${returnPath}`, socialOrigin(request));
-  destination.searchParams.set("socialConnection", status);
+  destination.searchParams.set("socialConnection",
+    status === "failed" && url.searchParams.get("connectionError") === "account-limit" ? "limit" : status);
   return new Response(null, { status: 303, headers: { Location: destination.href, "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" } });
 }

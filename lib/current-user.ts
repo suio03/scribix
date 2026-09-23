@@ -1,5 +1,5 @@
 import type { Session } from "next-auth";
-import type { BillingCycle, Tier } from "@/lib/plans";
+import type { BillingCycle, PlanVersion, Tier } from "@/lib/plans";
 import { maybeResetAllowancePeriod } from "@/lib/quota-period";
 
 export type CurrentUserRow = {
@@ -9,6 +9,7 @@ export type CurrentUserRow = {
   avatar_url: string | null;
   tier: Tier;
   billing_cycle: BillingCycle | null;
+  plan_version: PlanVersion | null;
   subscription_status: string | null;
   customer_id: string | null;
   subscription_id: string | null;
@@ -21,7 +22,7 @@ export type CurrentUserRow = {
 };
 
 const CURRENT_USER_SELECT = `
-  SELECT id, email, full_name, avatar_url, tier, billing_cycle, subscription_status,
+  SELECT id, email, full_name, avatar_url, tier, billing_cycle, plan_version, subscription_status,
          customer_id, subscription_id, minutes_used_this_period,
          youtube_imports_used_this_period, ai_questions_used_this_period,
          ai_free_questions_used,

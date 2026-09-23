@@ -57,7 +57,7 @@ export async function reserveQuota(
 > {
   const user = await db
     .prepare(
-      `SELECT id, tier, billing_cycle, minutes_used_this_period,
+      `SELECT id, tier, billing_cycle, plan_version, minutes_used_this_period,
               youtube_imports_used_this_period, ai_questions_used_this_period,
               period_started_at, period_ends_at
          FROM users WHERE id = ?1 AND deleted_at IS NULL`
@@ -67,7 +67,7 @@ export async function reserveQuota(
   if (!user) return { error: "user_not_found" };
 
   const fresh = await maybeResetAllowancePeriod(db, user);
-  const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle);
+  const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle, fresh.plan_version);
   const remaining = Math.max(0, cap - fresh.minutes_used_this_period);
   if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
 
@@ -110,7 +110,7 @@ export async function checkQuota(
 > {
   const user = await db
     .prepare(
-      `SELECT id, tier, billing_cycle, minutes_used_this_period,
+      `SELECT id, tier, billing_cycle, plan_version, minutes_used_this_period,
               youtube_imports_used_this_period, ai_questions_used_this_period,
               period_started_at, period_ends_at
          FROM users WHERE id = ?1 AND deleted_at IS NULL`
@@ -120,7 +120,7 @@ export async function checkQuota(
   if (!user) return { error: "user_not_found" };
 
   const fresh = await maybeResetAllowancePeriod(db, user);
-  const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle);
+  const cap = quotaMinutesFor(fresh.tier, fresh.billing_cycle, fresh.plan_version);
   const remaining = Math.max(0, cap - fresh.minutes_used_this_period);
   if (remaining === 0) return { error: "no_quota", remainingMin: 0, capMin: cap };
 

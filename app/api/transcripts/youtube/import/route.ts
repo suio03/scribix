@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const quota = await reserveYouTubeImport(env.DB, user.id);
+  const quota = await reserveYouTubeImport(env.DB, user.id, env.PADDLE_V2_CHECKOUT_ENABLED === "true");
   if ("error" in quota) {
     if (quota.error === "user_not_found") {
       return Response.json({ error: "user_not_found" }, { status: 404 });

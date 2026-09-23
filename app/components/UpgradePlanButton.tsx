@@ -4,13 +4,11 @@ import { useState } from "react";
 import { UpgradePlanModal } from "./UpgradePlanModal";
 
 export function UpgradePlanButton({
-  checkoutSuccessPath,
   children,
   className,
   onOpen,
   "aria-label": ariaLabel,
 }: {
-  checkoutSuccessPath: string;
   children: React.ReactNode;
   className: string;
   onOpen?: () => void;
@@ -32,7 +30,6 @@ export function UpgradePlanButton({
         {children}
       </button>
       <UpgradePlanModal
-        checkoutSuccessPath={checkoutSuccessPath}
         onClose={() => setOpen(false)}
         open={open}
         reason="plan"

@@ -1,4 +1,5 @@
-import { PLANS, PRICING_DISPLAY } from "@/lib/plans";
+import { PLANS } from "@/lib/plans";
+import { PRICING_V2 } from "@/lib/pricing-v2";
 import { OPUS_ALTERNATIVE_PATH } from "./routes";
 
 export const OPUS_COMPARISON = {
@@ -17,7 +18,7 @@ export const COMPARISON_TOOLS = [
     summary: "For a workflow centered on choosing a complete thought, refining its boundaries and preparing a captioned portrait clip.",
     free: `${PLANS.free.minutesPerCycle} source-processing minutes, once per account`,
     freeLimit: "Clip editing and brand controls require a paid plan.",
-    paid: `Pro: $${PRICING_DISPLAY.pro.monthly.amount}/month`,
+    paid: `Starter: $${PRICING_V2.starter.monthlyUsd}/month · Pro: $${PRICING_V2.pro.monthlyUsd}/month`,
     editing: "Candidate review, transcript-based selection, framing and caption controls on paid plans.",
     output: "Portrait MP4; review the actual export before sharing.",
     detail: "Start with a video file. Review suggested moments against the transcript, or select a passage yourself. Paid editing brings the cut, framing and captions into the same workflow. The demonstration below shows how those decisions fit together.",

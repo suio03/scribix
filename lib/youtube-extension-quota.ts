@@ -1,6 +1,7 @@
-import { FREE_YOUTUBE_IMPORTS_PER_DAY } from "@/lib/plans";
+import { FREE_YOUTUBE_IMPORTS_PER_DAY, V2_FREE_YOUTUBE_IMPORTS_PER_DAY } from "@/lib/plans";
 
 export const EXTENSION_YOUTUBE_IMPORTS_PER_DAY = FREE_YOUTUBE_IMPORTS_PER_DAY;
+export const V2_EXTENSION_YOUTUBE_IMPORTS_PER_DAY = V2_FREE_YOUTUBE_IMPORTS_PER_DAY;
 
 export type ExtensionYouTubeQuotaResult =
   | { ok: true; remaining: number; cap: number }
@@ -20,11 +21,12 @@ const QUOTA_CONFIG: Record<ExtensionQuotaScope, ExtensionQuotaConfig> = {
 
 export async function reserveExtensionYouTubeClientImport(
   db: D1Database,
-  clientId: string
+  clientId: string,
+  cap = EXTENSION_YOUTUBE_IMPORTS_PER_DAY
 ): Promise<ExtensionYouTubeQuotaResult> {
   const normalizedClientId = sanitizeExtensionClientId(clientId);
-  if (!normalizedClientId) return exceeded();
-  return reserveExtensionYouTubeImport(db, "client", normalizedClientId);
+  if (!normalizedClientId) return exceeded(cap);
+  return reserveExtensionYouTubeImport(db, "client", normalizedClientId, cap);
 }
 
 export async function refundExtensionYouTubeClientImport(
@@ -39,10 +41,11 @@ export async function refundExtensionYouTubeClientImport(
 export async function reserveExtensionYouTubeIpImport(
   db: D1Database,
   request: Request,
-  clientId: string
+  clientId: string,
+  cap = EXTENSION_YOUTUBE_IMPORTS_PER_DAY
 ): Promise<ExtensionYouTubeQuotaResult> {
   const key = await extensionIpQuotaKey(request, clientId);
-  return reserveExtensionYouTubeImport(db, "ip", key);
+  return reserveExtensionYouTubeImport(db, "ip", key, cap);
 }
 
 export async function refundExtensionYouTubeIpImport(
@@ -57,7 +60,8 @@ export async function refundExtensionYouTubeIpImport(
 async function reserveExtensionYouTubeImport(
   db: D1Database,
   scope: ExtensionQuotaScope,
-  quotaKey: string
+  quotaKey: string,
+  cap: number
 ): Promise<ExtensionYouTubeQuotaResult> {
   await ensureCurrentQuotaRow(db, scope, quotaKey);
 
@@ -71,16 +75,16 @@ async function reserveExtensionYouTubeImport(
           AND date(period_started_at) = date('now')
           AND youtube_imports_used_today + 1 <= ?2`
     )
-    .bind(quotaKey, EXTENSION_YOUTUBE_IMPORTS_PER_DAY)
+    .bind(quotaKey, cap)
     .run();
 
-  if (!result.meta?.changes) return exceeded();
+  if (!result.meta?.changes) return exceeded(cap);
 
-  const used = await readUsedToday(db, scope, quotaKey);
+  const used = await readUsedToday(db, scope, quotaKey, cap);
   return {
     ok: true,
-    remaining: Math.max(0, EXTENSION_YOUTUBE_IMPORTS_PER_DAY - used),
-    cap: EXTENSION_YOUTUBE_IMPORTS_PER_DAY,
+    remaining: Math.max(0, cap - used),
+    cap,
   };
 }
 
@@ -134,7 +138,8 @@ async function ensureCurrentQuotaRow(
 async function readUsedToday(
   db: D1Database,
   scope: ExtensionQuotaScope,
-  quotaKey: string
+  quotaKey: string,
+  cap: number
 ): Promise<number> {
   const { table, column } = QUOTA_CONFIG[scope];
   const row = await db
@@ -145,7 +150,7 @@ async function readUsedToday(
     )
     .bind(quotaKey)
     .first<{ youtube_imports_used_today: number }>();
-  return row?.youtube_imports_used_today ?? EXTENSION_YOUTUBE_IMPORTS_PER_DAY;
+  return row?.youtube_imports_used_today ?? cap;
 }
 
 async function extensionIpQuotaKey(request: Request, clientId: string): Promise<string> {
@@ -170,10 +175,10 @@ export function sanitizeExtensionClientId(value: string): string | null {
   return trimmed;
 }
 
-function exceeded(): ExtensionYouTubeQuotaResult {
+function exceeded(cap: number): ExtensionYouTubeQuotaResult {
   return {
     error: "youtube_quota_exceeded",
     remaining: 0,
-    cap: EXTENSION_YOUTUBE_IMPORTS_PER_DAY,
+    cap,
   };
 }

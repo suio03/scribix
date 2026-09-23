@@ -7,6 +7,7 @@ import { TranscriptRowMenu } from "@/app/components/TranscriptRowMenu";
 import { TrackToolVisit } from "@/app/components/Track";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { effectivePlanVersion } from "@/lib/plans";
 import { Link } from "@/i18n/navigation";
 
 type TranscriptRow = {
@@ -82,6 +83,7 @@ export default async function TranscriptsPage() {
             checkoutSuccessPath="/dashboard/transcripts"
             tier={user.tier}
             billingCycle={user.billing_cycle}
+            planVersion={effectivePlanVersion(user.tier, user.plan_version, env.PADDLE_V2_CHECKOUT_ENABLED === "true")}
           />
         </div>
       </section>

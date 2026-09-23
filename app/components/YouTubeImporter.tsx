@@ -8,6 +8,7 @@ import {
   youtubeImportsFor,
   youtubeMaxVideoSecFor,
   type BillingCycle,
+  type PlanVersion,
   type Tier,
 } from "@/lib/plans";
 import { trackEvent } from "@/lib/analytics";
@@ -36,6 +37,7 @@ export function YouTubeImporter({
   postSignInPath,
   tier = "free",
   billingCycle = null,
+  planVersion = null,
   toolSlug = "dashboard-transcribe",
   variant = "card",
 }: {
@@ -43,6 +45,7 @@ export function YouTubeImporter({
   postSignInPath: string;
   tier?: Tier;
   billingCycle?: BillingCycle | null;
+  planVersion?: PlanVersion | null;
   toolSlug?: string;
   variant?: "card" | "flat";
 }) {
@@ -166,7 +169,7 @@ export function YouTubeImporter({
           <h2 className="text-[18px] font-semibold tracking-tight text-ink">{t("title")}</h2>
           <p className="mt-1 text-sm leading-6 text-ink/65">{t("description")}</p>
           <p className="mt-1 text-[12px] leading-5 text-ink/50">
-            {youtubeLimitCopy(t, tier, billingCycle)}
+            {youtubeLimitCopy(t, tier, billingCycle, planVersion)}
           </p>
         </div>
       </div>
@@ -463,15 +466,16 @@ function normalizedYouTubeFailureCode(error: unknown): string {
 function youtubeLimitCopy(
   t: ReturnType<typeof useTranslations<"Dashboard.youtube">>,
   tier: Tier,
-  billingCycle: BillingCycle | null
+  billingCycle: BillingCycle | null,
+  planVersion: PlanVersion | null
 ): string {
-  const imports = youtubeImportsFor(tier, billingCycle);
+  const imports = youtubeImportsFor(tier, billingCycle, planVersion);
   const maxHours = formatHours(youtubeMaxVideoSecFor(tier));
   if (tier === "free") {
     return t("limitsFree", { imports, maxHours });
   }
   const period =
-    tier === "basic" && billingCycle === "yearly" ? t("periodYear") : t("periodMonth");
+    tier === "basic" && billingCycle === "yearly" && planVersion !== "v2" ? t("periodYear") : t("periodMonth");
   return t("limitsPaid", { imports, maxHours, period });
 }
 

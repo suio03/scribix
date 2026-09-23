@@ -98,6 +98,7 @@ export default async function VideoToTextPage({
             postSignInPath={pagePath}
             tier={sidebarUsage?.tier}
             billingCycle={sidebarUsage?.billingCycle}
+            planVersion={sidebarUsage?.planVersion}
             toolSlug="video-to-text"
           />
         }

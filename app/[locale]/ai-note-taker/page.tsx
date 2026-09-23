@@ -107,6 +107,7 @@ export default async function AiNoteTakerPage({
             postSignInPath={postSignInPath}
             tier={sidebarUsage?.tier}
             billingCycle={sidebarUsage?.billingCycle}
+            planVersion={sidebarUsage?.planVersion}
             namespace="AiNoteTaker.hero"
             toolSlug="ai-note-taker"
           />

@@ -10,11 +10,10 @@ export function resolvePlanMessages(messages: MessageTree, locale: string): Mess
     freeVideoRetentionDays: number.format(PLANS.free.videoSourceRetentionDays),
     paidVideoRetentionDays: number.format(PLANS.pro.videoSourceRetentionDays),
     freeTrialMinutes: number.format(PLANS.free.minutesPerCycle),
-    creatorMonthlyMinutes: number.format(PLANS.pro.monthly.minutesPerCycle),
   };
   function resolve(value: unknown): unknown {
     if (typeof value === "string") {
-      return value.replace(/\{(freeTrialMinutes|creatorMonthlyMinutes|freeVideoRetentionDays|paidVideoRetentionDays)\}/g,
+      return value.replace(/\{(freeTrialMinutes|freeVideoRetentionDays|paidVideoRetentionDays)\}/g,
         (_match, key: string) => facts[key]);
     }
     if (Array.isArray(value)) return value.map(resolve);

@@ -1,4 +1,4 @@
-import { youtubeImportsFor } from "@/lib/plans";
+import { effectivePlanVersion, youtubeImportsFor } from "@/lib/plans";
 import {
   maybeResetAllowancePeriod,
   type ResettableQuotaRow,
@@ -16,14 +16,16 @@ export type YouTubeQuotaResult =
 
 export async function checkYouTubeImportQuota(
   db: D1Database,
-  userId: string
+  userId: string,
+  v2CheckoutEnabled = false
 ): Promise<YouTubeQuotaResult> {
   const user = await readYouTubeQuotaUser(db, userId);
   if (!user) return { error: "user_not_found" };
 
   const paidFresh = await maybeResetAllowancePeriod(db, user);
   const fresh = await maybeResetYouTubeDailyQuota(db, paidFresh);
-  const cap = youtubeImportsFor(fresh.tier, fresh.billing_cycle);
+  const cap = youtubeImportsFor(fresh.tier, fresh.billing_cycle,
+    effectivePlanVersion(fresh.tier, fresh.plan_version, v2CheckoutEnabled));
   const remaining = Math.max(0, cap - fresh.youtube_imports_used_this_period);
   if (remaining <= 0) return { error: "youtube_quota_exceeded", remaining: 0, cap };
   return { ok: true, remaining, cap };
@@ -31,14 +33,16 @@ export async function checkYouTubeImportQuota(
 
 export async function reserveYouTubeImport(
   db: D1Database,
-  userId: string
+  userId: string,
+  v2CheckoutEnabled = false
 ): Promise<YouTubeQuotaResult> {
   const user = await readYouTubeQuotaUser(db, userId);
   if (!user) return { error: "user_not_found" };
 
   const paidFresh = await maybeResetAllowancePeriod(db, user);
   const fresh = await maybeResetYouTubeDailyQuota(db, paidFresh);
-  const cap = youtubeImportsFor(fresh.tier, fresh.billing_cycle);
+  const cap = youtubeImportsFor(fresh.tier, fresh.billing_cycle,
+    effectivePlanVersion(fresh.tier, fresh.plan_version, v2CheckoutEnabled));
   const remaining = Math.max(0, cap - fresh.youtube_imports_used_this_period);
   if (remaining <= 0) return { error: "youtube_quota_exceeded", remaining: 0, cap };
 
@@ -83,7 +87,7 @@ async function readYouTubeQuotaUser(
 ): Promise<YouTubeQuotaRow | null> {
   return db
     .prepare(
-      `SELECT id, tier, billing_cycle, minutes_used_this_period,
+      `SELECT id, tier, billing_cycle, plan_version, minutes_used_this_period,
               youtube_imports_used_this_period, youtube_imports_period_started_at,
               ai_questions_used_this_period, period_started_at, period_ends_at
          FROM users

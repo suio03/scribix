@@ -288,6 +288,7 @@ export default async function YouTubeToTranscriptPage({
               postSignInPath={toolPath}
               tier={sidebarUsage?.tier ?? "free"}
               billingCycle={sidebarUsage?.billingCycle ?? null}
+              planVersion={sidebarUsage?.planVersion ?? null}
               toolSlug="youtube-to-transcript"
             />
           </ToolHero>

@@ -29,7 +29,6 @@ type Props = {
   isPro: boolean;
   planTier: Tier;
   transcriptSource: AskAiTranscriptSource;
-  checkoutSuccessPath: string;
   partialTranscript: PartialTranscriptInfo | null;
 };
 
@@ -50,7 +49,6 @@ export function TranscriptWorkspace({
   isPro,
   planTier,
   transcriptSource,
-  checkoutSuccessPath,
   partialTranscript,
 }: Props) {
   const [exportOpen, setExportOpen] = useState(false);
@@ -83,7 +81,6 @@ export function TranscriptWorkspace({
         isPro={isPro}
         planTier={planTier}
         transcriptSource={transcriptSource}
-        checkoutSuccessPath={checkoutSuccessPath}
         partialTranscript={partialTranscript}
         onOpenExport={() => setExportOpen(true)}
         onOpenSpeakerEditor={(speaker) => setSpeakerModal({ open: true, focusSpeaker: speaker })}

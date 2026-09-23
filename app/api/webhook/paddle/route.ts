@@ -378,6 +378,7 @@ async function handleTransactionCompleted(
       `UPDATE users
         SET tier = ?1,
             billing_cycle = ?2,
+            plan_version = ?9,
             customer_id = ?3,
             product_id = ?4,
             subscription_id = COALESCE(?5, subscription_id),
@@ -397,7 +398,8 @@ async function handleTransactionCompleted(
         subscriptionId,
         period.startsAt,
         period.endsAt,
-        userId
+        userId,
+        plan.version
       ),
     env.DB.prepare(
       `INSERT INTO paddle_transactions
@@ -501,6 +503,7 @@ async function handleSubscriptionActive(
     `UPDATE users
         SET tier = ?1,
             billing_cycle = ?2,
+            plan_version = ?10,
             customer_id = ?3,
             product_id = ?4,
             subscription_id = COALESCE(?5, subscription_id),
@@ -522,7 +525,8 @@ async function handleSubscriptionActive(
       periodAdvanced ? 1 : 0,
       period.startsAt,
       period.endsAt,
-      user.id
+      user.id,
+      plan.version
     )
     .run();
 }
@@ -632,6 +636,7 @@ async function expireSubscription(
               billing_cycle = NULL,
               customer_id = COALESCE(?1, customer_id),
               product_id = NULL,
+              plan_version = NULL,
               subscription_id = NULL,
               subscription_status = 'expired',
               minutes_used_this_period = ?2,

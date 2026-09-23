@@ -1,5 +1,15 @@
 # Scribix social publishing through ClipFlight
 
+Pricing v2 implementation (local): Starter and Pro connection sessions carry
+caps of 6 and 18 active accounts respectively. Scribix checks the count before
+OAuth; Teleo migration `0019_external_account_limits.sql` enforces the cap
+atomically when OAuth saves or reactivates an account. Legacy paid subscriptions
+remain uncapped; their connection requests explicitly clear any former cap.
+Existing account reauthorization bypasses the Scribix new-account precheck,
+while Teleo still blocks a different account when the cap is full. Deploy
+Teleo's migration and API before enabling v2 checkout
+in Scribix; the current v2 checkout flag is off.
+
 Current record summary, 2026-09-18 (reconciled with recorded evidence, not a new remote check): the social publishing release was deployed on 2026-09-17, including the approved TikTok Direct Post integration and production flag. See [production release and readback evidence](tiktok-production-release-2026-09-17.md). Real TikTok account authorization/publication remains owner acceptance; deployment does not establish a successful post. The newer Planner/scheduling and AI Clips workflow changes remain local and are not part of that production release. The owner previously confirmed YouTube public-publishing verification; complete new-project Scribix acceptance, real LinkedIn OAuth/publication and provider renewal remain unconfirmed.
 
 

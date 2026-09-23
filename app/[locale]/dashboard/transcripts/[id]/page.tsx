@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
-import { getPathname, Link } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { redirect } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 import type { AaiTranscript } from "@/lib/aai";
@@ -80,10 +80,6 @@ export default async function TranscriptViewerPage({ params }: Params) {
     processingLimitSec: row.processing_limit_sec,
     partialRequested: row.partial_requested === 1,
   });
-  const checkoutSuccessPath = getPathname({
-    href: "/dashboard/transcripts",
-    locale,
-  });
 
   return (
     <main className="product-surface-refresh transcript-detail-refresh mx-auto max-w-[1400px] px-4 py-10 sm:px-8">
@@ -149,7 +145,6 @@ export default async function TranscriptViewerPage({ params }: Params) {
           isPro={user.tier === "pro"}
           planTier={user.tier}
           transcriptSource={analyticsTranscriptSource(row.source)}
-          checkoutSuccessPath={checkoutSuccessPath}
           partialTranscript={partial}
         />
       ) : (

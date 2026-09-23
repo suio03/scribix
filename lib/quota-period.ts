@@ -1,9 +1,10 @@
-import type { BillingCycle, Tier } from "@/lib/plans";
+import type { BillingCycle, PlanVersion, Tier } from "@/lib/plans";
 
 export type ResettableQuotaRow = {
   id: string;
   tier: Tier;
   billing_cycle: BillingCycle | null;
+  plan_version: PlanVersion | null;
   minutes_used_this_period: number;
   youtube_imports_used_this_period: number;
   ai_questions_used_this_period: number;
@@ -17,16 +18,16 @@ type AllowanceWindow = {
 };
 
 /**
- * Pro is billed yearly but receives a fresh monthly allowance. The Paddle
+ * Legacy Pro and both v2 paid plans are billed yearly but receive a fresh monthly allowance. The Paddle
  * billing period stays in `period_ends_at`; `period_started_at` tracks the
- * current allowance window for yearly Pro subscriptions.
+ * current allowance window for eligible yearly subscriptions.
  */
 export async function maybeResetAllowancePeriod<T extends ResettableQuotaRow>(
   db: D1Database,
   user: T,
   now = new Date()
 ): Promise<T> {
-  if (user.tier !== "pro" || user.billing_cycle !== "yearly") return user;
+  if (!usesMonthlyYearlyAllowance(user)) return user;
 
   const window = yearlyMonthlyAllowanceWindow(user.period_ends_at, now);
   if (!window) return user;
@@ -44,7 +45,7 @@ export async function maybeResetAllowancePeriod<T extends ResettableQuotaRow>(
               period_started_at = ?1
         WHERE id = ?2
           AND deleted_at IS NULL
-          AND tier = 'pro'
+          AND (tier = 'pro' OR (tier = 'basic' AND plan_version = 'v2'))
           AND billing_cycle = 'yearly'
           AND period_started_at = ?3`
     )
@@ -63,7 +64,7 @@ export async function maybeResetAllowancePeriod<T extends ResettableQuotaRow>(
 
   const fresh = await db
     .prepare(
-      `SELECT id, tier, billing_cycle, minutes_used_this_period,
+      `SELECT id, tier, billing_cycle, plan_version, minutes_used_this_period,
               youtube_imports_used_this_period, ai_questions_used_this_period,
               period_started_at, period_ends_at
          FROM users
@@ -77,15 +78,20 @@ export async function maybeResetAllowancePeriod<T extends ResettableQuotaRow>(
 }
 
 export function allowancePeriodEndsAt(
-  user: Pick<ResettableQuotaRow, "tier" | "billing_cycle" | "period_ends_at">,
+  user: Pick<ResettableQuotaRow, "tier" | "billing_cycle" | "plan_version" | "period_ends_at">,
   now = new Date()
 ): string {
-  if (user.tier !== "pro" || user.billing_cycle !== "yearly") {
+  if (!usesMonthlyYearlyAllowance(user)) {
     return user.period_ends_at;
   }
 
   return yearlyMonthlyAllowanceWindow(user.period_ends_at, now)?.endsAt.toISOString() ??
     user.period_ends_at;
+}
+
+function usesMonthlyYearlyAllowance(user: Pick<ResettableQuotaRow, "tier" | "billing_cycle" | "plan_version">): boolean {
+  return user.billing_cycle === "yearly" &&
+    (user.tier === "pro" || (user.tier === "basic" && user.plan_version === "v2"));
 }
 
 /**

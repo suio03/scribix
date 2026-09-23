@@ -256,7 +256,6 @@ export function VideoHomeHero({
 
       <PartialTranscriptModal
         offer={partialOffer}
-        checkoutSuccessPath={postSignInPath}
         onConfirm={confirmPartial}
         onCancel={cancelPartial}
         onUpgrade={trackPartialUpgrade}

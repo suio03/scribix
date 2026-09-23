@@ -345,7 +345,7 @@
     "currentPlanTitle": "Aktueller Plan",
     "manageBilling": "Abrechnung verwalten",
     "tierFree": "Kostenlos",
-    "tierBasic": "Starter (Bestandstarif)",
+    "tierBasic": "Starter",
     "tierPro": "Pro",
     "cycleMonthly": "monatlich",
     "cycleYearly": "jährlich",
@@ -550,178 +550,6 @@
       }
     ]
   },
-  "PricingPage": {
-    "metadata": {
-      "title": "Preise",
-      "description": "Einfache Scribix-Preise: {freeMinutes, number} kostenlose Minuten auf Lebenszeit, danach Pro mit {proMinutes, number} Transkriptionsminuten pro Monat.",
-      "ogTitle": "Scribix Preise",
-      "ogDescription": "Kostenloser und Pro-Tarif für Video- und Audiotranskription."
-    },
-    "h1": "Ein Plan. Alles, was du brauchst.",
-    "bestValue": "Bester Wert",
-    "annualPrefix": "Jährlich",
-    "billingToggleLabel": "Abrechnungsintervall",
-    "billingMonthly": "Monatlich",
-    "billingYearly": "Jährlich",
-    "billingYearlyBadge": "{savingsPercent, number} % sparen",
-    "billingYearlyNote": "{price} jährlich abgerechnet · {savings} sparen",
-    "noCreditCard": "Keine Kreditkarte erforderlich",
-    "chooseLabel": "{plan} wählen",
-    "currentPlanLabel": "Aktueller Plan",
-    "supportUpgradeLabel": "Support für Upgrade kontaktieren",
-    "unavailableLabel": "Nicht verfügbar",
-    "soonLabel": "Bald",
-    "buttonTitle": "Checkout wird in der nächsten Phase hinzugefügt",
-    "faqTitle": "Preis-FAQ",
-    "featureRows": [
-      {
-        "label": "Transkriptdateien",
-        "values": {
-          "free": "Auf {minutes, number} Min. gesamt begrenzt",
-          "starter": "Unbegrenzte Dateien innerhalb von {minutes, number} Min.",
-          "pro": "Innerhalb von {minutes, number} Min./Monat"
-        }
-      },
-      {
-        "label": "Minuten des Originalvideos",
-        "values": {
-          "free": "{minutes, number} Min. auf Lebenszeit",
-          "starter": "{minutes, number} Min./Monat",
-          "pro": "{hours, number} Std./Monat ({minutes, number} Min.)"
-        }
-      },
-      {
-        "label": "YouTube caption imports",
-        "values": {
-          "free": "{imports, number}/day",
-          "starter": "{imports, number}/month",
-          "pro": "{imports, number}/month"
-        }
-      },
-      {
-        "label": "Max YouTube caption video",
-        "values": {
-          "free": "{hours, number} hours",
-          "starter": "{hours, number} hours",
-          "pro": "{hours, number} hours"
-        }
-      },
-      {
-        "label": "Dateilänge",
-        "values": {
-          "free": "Lange Dateien möglich · insgesamt die ersten {freeMinutes, number} Min.",
-          "starter": "Bis zu {hours, number} Stunden",
-          "pro": "Bis zu {hours, number} Stunden"
-        }
-      },
-      {
-        "label": "Max. Dateigröße",
-        "values": {
-          "free": "{videoGb, number} GB Video / {audioGb, number} GB Audio",
-          "starter": "{videoGb, number} GB Video / {audioGb, number} GB Audio",
-          "pro": "{videoGb, number} GB Video / {audioGb, number} GB Audio"
-        }
-      },
-      {
-        "label": "Verarbeitungswarteschlange",
-        "values": {
-          "free": "Standard",
-          "starter": "Standard",
-          "pro": "Standard"
-        }
-      },
-      {
-        "label": "Transkriptionsmodell",
-        "values": {
-          "free": "Standard",
-          "starter": "Beste Genauigkeit",
-          "pro": "Bestes verfügbares Modell"
-        }
-      },
-      {
-        "label": "KI-Übersetzung",
-        "values": {
-          "free": "Nein",
-          "starter": "Ja",
-          "pro": "Ja"
-        }
-      },
-      {
-        "label": "Sprecherlabels",
-        "values": {
-          "free": "Ja",
-          "starter": "Ja",
-          "pro": "Ja"
-        }
-      },
-      {
-        "label": "Exporte",
-        "values": {
-          "free": "TXT, DOCX, SRT, VTT, CSV",
-          "starter": "Unbegrenzte Exporte",
-          "pro": "Unbegrenzte Exporte"
-        }
-      },
-      {
-        "label": "KI-Notizen",
-        "values": {
-          "free": "Nein",
-          "starter": "Ja",
-          "pro": "Ja"
-        }
-      }
-    ],
-    "plans": [
-      {
-        "name": "Kostenlos",
-        "cadence": "einmalig",
-        "summary": "Kostenlos aus {freeTrialMinutes} Minuten Video Clips erstellen und die KI-Auswahl exportieren."
-      },
-      {
-        "name": "Pro",
-        "cadence": "pro Monat",
-        "summary": "Jeden Monat aus {creatorMonthlyMinutes} Minuten Video Clips erstellen, bearbeiten und mit eigenem Branding versehen.",
-        "purchaseNote": "Jederzeit kündbar",
-        "annualCadence": "pro Jahr"
-      }
-    ],
-    "faqs": [
-      {
-        "question": "Kann ich kostenlos starten?",
-        "answer": "Ja. Kostenlos enthält {freeMinutes, number} Minuten lebenslang, damit du die Transkriptionsqualität testen kannst, bevor du einen kostenpflichtigen Plan wählst."
-      },
-      {
-        "question": "Was zählt als Transkriptionsminuten?",
-        "answer": "Minuten basieren auf der Länge der Audio- oder Videodatei, die du transkribierst. Eine 30-minütige Datei nutzt 30 Transkriptionsminuten."
-      },
-      {
-        "question": "Werden ungenutzte Minuten übertragen?",
-        "answer": "Nein. Pro enthält jeden Monat {proMinutes, number} Transkriptionsminuten. Das Kontingent wird monatlich zurückgesetzt und ungenutzte Minuten werden nicht übertragen – auch bei jährlicher Abrechnung."
-      },
-      {
-        "question": "Wie lang darf eine Datei maximal sein?",
-        "answer": "Kostenlos akzeptiert Dateien bis {proHours, number} Stunden und transkribiert bis zu den verbleibenden {freeMinutes, number} Lebenszeitminuten. Pro bietet ein größeres Monatskontingent."
-      },
-      {
-        "question": "Gibt es Größenlimits für Uploads?",
-        "answer": "Ja. Video-Uploads sind bei Pro bis {proVideoGb, number} GB und bei Kostenlos bis {freeVideoGb, number} GB möglich. Audio-Uploads dürfen bis zu {audioGb, number} GB groß sein. Quelldauer und verbleibendes Tarifkontingent gelten weiterhin."
-      },
-      {
-        "question": "Kann ich später den Plan wechseln?",
-        "answer": "Ja. Du kannst kostenlos starten, Pro abonnieren, wenn du es brauchst, und dein Abonnement in deinem Abrechnungskonto verwalten oder kündigen."
-      },
-      {
-        "question": "Gibt es eine kostenlose Testphase für kostenpflichtige Pläne?",
-        "answer": "Bezahlte Tarife haben keine separate Testphase. Nutze die {freeMinutes, number} kostenlosen Minuten auf Lebenszeit, um die Qualität vor dem Abo zu prüfen."
-      }
-    ],
-    "aiFeatures": "KI-Notizen + Übersetzung",
-    "included": "Enthalten",
-    "paidIncludedTitle": "Ebenfalls enthalten",
-    "paidIncludedDescription": "Unbegrenzte Exporte · Sprecherlabels · TXT, DOCX, SRT, VTT, CSV",
-    "exportFormats": "TXT, DOCX, SRT, VTT, CSV",
-    "usageExplanation": "Es zählt die Länge des Originalvideos. Transkription, KI-Highlight-Auswahl und Clip-Erstellung sind enthalten."
-  },
   "FAQ": {
     "label": "Häufig gestellte Fragen",
     "number": "04",
@@ -889,7 +717,7 @@
       "dangerZone": "Gefahrenzone",
       "deleteWarning": "Löschen Sie dauerhaft Ihr Konto, Ihre Transkriptionen und Audio. Dies kann nicht rückgängig gemacht werden.",
       "tierFree": "Kostenlos",
-      "tierBasic": "Starter (Bestandstarif)",
+      "tierBasic": "Starter",
       "tierPro": "Pro",
       "cycleMonthly": "monatlich",
       "cycleYearly": "jährlich",
@@ -993,7 +821,7 @@
       "upgradeSummaryModalTitle": "KI-Notizen erstellen",
       "upgradeSummaryModalBody": "Upgraden Sie, um fertige Transkripte in Übersicht, Kernpunkte und Aufgaben umzuwandeln.",
       "upgradeChatModalTitle": "Dieses Transkript befragen",
-      "upgradeChatModalBody": "Mit Pro erhalten Sie {count, number} KI-Fragen pro Kontingentzeitraum.",
+      "upgradeChatModalBody": "Starter enthält {starterCount, number} und Pro {proCount, number} Fragen an die KI pro Monat.",
       "upgradeQuotaModalTitle": "Weiter transkribieren",
       "upgradeQuotaModalBody": "Upgraden Sie, um mehr Transkriptionsminuten zu erhalten und ohne Warten fortzufahren.",
       "upgradeVideoStorageModalTitle": "Mehr Quellvideos behalten",
@@ -3198,6 +3026,7 @@
     "disconnectGroup": "Diese {count} {platform}-Kanäle nutzen eine gemeinsame Verbindung. Beim Trennen werden alle aus Scribix entfernt. Deine Videos bleiben erhalten.",
     "transportPending": "Deine ursprüngliche Veröffentlichungsanfrage bleibt erhalten. Wiederhole den Vorgang, um dieselbe Anfrage zu prüfen, bevor du einen weiteren Beitrag erstellst.",
     "connectionFailed": "Die Verbindung wurde nicht abgeschlossen. Deine bestehenden Kanäle bleiben erhalten. Versuche erneut, die Verbindung herzustellen.",
+    "socialAccountLimitReached": "Du hast das Limit für verbundene Konten erreicht. Trenne ein Konto, um einen Platz freizugeben.",
     "retryLoad": "Erneut versuchen",
     "chooseClip": "Clip auswählen →",
     "returnDraft": "Zurück zum Veröffentlichungsentwurf",
@@ -3423,6 +3252,30 @@
     "calendarHint": "Durchsuche den Kalender. Upgrade zum Planen von Beiträgen.",
     "channelHint": "Verbinde dein Konto, um fertige Clips aus Scribix zu veröffentlichen.",
     "pro": "Pro"
+  },
+  "PricingV2": {
+    "metadata": { "title": "Scribix Preise | Free, Starter & Pro", "description": "Vergleiche Free, Starter und Pro für KI-Videoclips. Die Videominuten umfassen die erste KI-Clip-Auswahl und normale Clip-Exporte." },
+    "hero": { "eyebrow": "Scribix Preise", "title": "Mach aus langen Videos Clips, die du gern veröffentlichst.", "body": "Starte kostenlos. Wähle einen Tarif nach der Länge deiner Ausgangsvideos. KI-ausgewählte Clips und Exporte sind enthalten; kostenpflichtige Tarife bieten eigene Clips, Bearbeitung und direkte Veröffentlichung in sozialen Netzwerken.", "previewTitle": "Vorschau auf die neuen Preise.", "previewBody": "Der Kauf dieser Tarife ist noch nicht verfügbar." },
+    "plans": {
+      "eyebrow": "Drei klare Tarife", "title": "Bezahle für Videominuten. Erstelle die Clips, die du brauchst.", "recommended": "Empfohlen", "sourceLabel": "Verarbeitbare Videominuten", "includes": "Enthalten", "noSocial": "Keine verbundenen Social-Media-Konten", "socialAccounts": "Bis zu {count} Social-Media-Konten verbinden", "keyFeatures": "Wichtige Funktionen", "everythingPlus": "Alles aus {plan}, plus",
+      "free": { "name": "Free", "summary": "Teste KI-Clips mit einem einmaligen Minutenkontingent.", "highlight1": "KI-ausgewählte Clips und Transkripte", "highlight2": "Originale KI-Schnitte exportieren", "highlight3": "Ausgangsvideos {days} Tage speichern" },
+      "starter": { "name": "Starter", "summary": "Für Creator, die jede Woche lange Videos in Clips verwandeln.", "highlight1": "Clips aus Transkripttext oder Zeitbereichen erstellen und bearbeiten", "highlight2": "Untertitel, Bildausschnitt und Branding bearbeiten", "highlight3": "Direkt auf verbundenen Social-Media-Konten veröffentlichen", "highlight4": "KI-Notizen, Übersetzung und {questions} Ask-AI-Fragen pro Monat", "highlight5": "{storage} GiB Speicher für Ausgangsvideos" },
+      "pro": { "name": "Pro", "summary": "Für Creator, die jeden Monat mehr Videomaterial verarbeiten.", "highlight1": "{questions} Ask-AI-Fragen pro Monat", "highlight2": "{imports} YouTube-Untertitelimporte pro Monat", "highlight3": "{storage} GiB Speicher für Ausgangsvideos" }
+    },
+    "billing": {"label": "Abrechnungszeitraum", "monthly": "Monatlich", "yearly": "Jährlich", "discountBadge": "{percent} % Rabatt", "perMonth": "/ Monat", "forever": "dauerhaft", "oneTime": "einmalig", "billedYearly": "{price} einmal jährlich berechnet", "billedMonthly": "Monatliche Abrechnung", "noCard": "Keine Kreditkarte erforderlich", "saveYearly": "Mit jährlicher Abrechnung {percent} % sparen", "yearlyRefresh": "{percent} % sparen · Videominuten werden monatlich erneuert", "freeAllowance": "Einmaliges Gratiskontingent"},
+    "actions": { "startFree": "Kostenlos starten", "manage": "Abo verwalten", "getPlan": "{plan} wählen", "checkoutSoon": "Kauf bald verfügbar" },
+    "explanation": "Ein {minutes} Minuten langes Ausgangsvideo verbraucht {minutes} Minuten deines Kontingents, einschließlich eines KI-Clipping-Durchlaufs. In kostenpflichtigen Tarifen kosten eigene Clips, Bearbeitung und Exporte keine zusätzlichen Minuten.",
+    "compare": { "eyebrow": "Tarife vergleichen", "title": "Alle Details im Überblick.", "feature": "Funktion", "minutes": "Kontingent für Ausgangsvideos", "transcript": "Automatisches Transkript", "speakers": "Sprecherkennzeichnung und Zeitstempel", "exports": "Transkript-Exporte", "aiClips": "KI-Clips", "customClips": "Eigene Clips aus Transkript oder Zeitbereich", "editing": "Clip-Bearbeitung und Branding", "output": "Endergebnis", "notes": "KI-Notizen", "translation": "Transkriptübersetzung", "askAi": "Ask AI", "youtube": "YouTube-Untertitelimporte", "accounts": "Verbundene Social-Media-Konten", "publishing": "Direkt in sozialen Netzwerken veröffentlichen", "storage": "Speicher für Ausgangsvideos", "platforms": "Plattformen für Veröffentlichungen", "footnote": "* Die direkte Veröffentlichung hängt von der Verfügbarkeit der jeweiligen Plattform ab. Bestehende Grenzen für Uploads, Clip-Länge und Rendering gelten weiterhin." },
+    "values": { "included": "Enthalten", "includedFootnote": "Enthalten*", "notIncluded": "Nicht enthalten", "onePass": "Ein Durchlauf pro Video", "minutes": "{minutes} Minuten", "lifetimeMinutes": "{minutes} Min., einmalig", "monthlyMinutes": "{minutes} Min. / Monat", "freeOutput": "Originale KI-Schnitte · MP4", "paidOutput": "1080 × 1920 MP4 · Cover · Veröffentlichungstext", "lifetimeQuestions": "{count} Fragen, einmalig", "monthlyQuestions": "{count} Fragen / Monat", "dailyImports": "{count} / Tag", "monthlyImports": "{count} / Monat", "upToAccounts": "Bis zu {count}", "storage": "{storage} GiB · {days} Tage" },
+    "how": { "eyebrow": "So funktioniert es", "title": "Ein KI-Durchlauf. Viel Raum für Bearbeitung.", "processLabel": "Verarbeiten", "processBody": "Lade ein Ausgangsvideo hoch. Seine Länge wird einmal vom Minutenkontingent abgezogen; Transkript und erster KI-Clipping-Durchlauf sind enthalten.", "editLabel": "Gestalte deinen Clip", "editBody": "Prüfe die KI-Vorschläge. Mit einem kostenpflichtigen Tarif kannst du weitere Clips aus Transkripttext oder genauen Zeitbereichen erstellen, bearbeiten und rendern, ohne weitere Minuten zu verbrauchen." },
+    "faq": {
+      "title": "Häufige Fragen.",
+      "clips": { "question": "Kosten Clips extra?", "answer": "Nein. Die Videominuten decken das Ausgangsvideo, sein Transkript, den ersten KI-Clipping-Durchlauf und die vorgeschlagenen Clips ab. Mit einem kostenpflichtigen Tarif verbrauchen eigene Clips, Bearbeitung und normale Exporte keine zusätzlichen Minuten." },
+      "regenerate": { "question": "Kann ich die KI-Vorschläge neu erzeugen?", "answer": "Jedes Video erhält einen KI-Clipping-Durchlauf. Thema und Bereich kannst du vorher wählen. Danach kannst du mit einem kostenpflichtigen Tarif Clips aus Transkripttext oder über Start- und Endzeiten erstellen. Clips lassen sich weiter bearbeiten und erneut als MP4 rendern." },
+      "minutes": { "question": "Was passiert, wenn meine Videominuten aufgebraucht sind?", "answer": "Du kannst ein weiteres Ausgangsvideo verarbeiten, sobald dein kostenpflichtiges Kontingent erneuert wird. Solange ein vorhandenes Video verfügbar ist und dein Tarif Bearbeitung umfasst, kannst du dessen Clips weiter bearbeiten und exportieren." },
+      "social": { "question": "Wie viele Social-Media-Konten kann ich verbinden?", "answer": "Starter umfasst bis zu {starterAccounts} aktive Konten, Pro bis zu {proAccounts} auf den unterstützten Plattformen. Jedes Profil zählt als eigenes Konto, auch mehrere Profile derselben Plattform. Wenn du ein Profil trennst, wird ein Platz frei." },
+      "yearly": { "question": "Wie funktioniert die jährliche Abrechnung?", "answer": "Der Jahrespreis wird einmal bezahlt. Videominuten und monatliche Ask-AI-Fragen werden jeden Monat erneuert und nicht übertragen. Kostenlose Videominuten gibt es einmalig." }
+    }
   },
   "GuidesNav": {
     "guides": "Anleitungen",

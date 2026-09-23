@@ -174,7 +174,6 @@ export function AudioUploadCard({
       </div>
       <PartialTranscriptModal
         offer={partialOffer}
-        checkoutSuccessPath={postSignInPath}
         onConfirm={confirmPartial}
         onCancel={cancelPartial}
         onUpgrade={trackPartialUpgrade}

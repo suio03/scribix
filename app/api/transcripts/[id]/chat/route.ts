@@ -14,6 +14,7 @@ import {
   AI_CHAT_HISTORY_PAGE_SIZE,
   AI_CHAT_QUESTION_CHAR_LIMIT,
   aiQuestionsFor,
+  hasMonthlyAiQuestions,
 } from "@/lib/plans";
 import { allowancePeriodEndsAt } from "@/lib/quota-period";
 
@@ -55,13 +56,13 @@ export async function GET(_: Request, { params }: Params) {
 
   const hasOlder = results.length > AI_CHAT_HISTORY_PAGE_SIZE;
   const messages = hasOlder ? results.slice(1) : results;
-  const cap = aiQuestionsFor(user.tier, user.billing_cycle);
+  const cap = aiQuestionsFor(user.tier, user.billing_cycle, user.plan_version);
   return Response.json({
     messages: messages.map(toChatMessage),
     hasOlder,
     used: usedQuestionsFor(user),
     cap,
-    resetAt: user.tier === "pro" ? allowancePeriodEndsAt(user) : null,
+    resetAt: hasMonthlyAiQuestions(user.tier, user.plan_version) ? allowancePeriodEndsAt(user) : null,
   });
 }
 
@@ -73,7 +74,7 @@ export async function POST(req: Request, { params }: Params) {
   const question = await readQuestion(req);
   if (question instanceof Response) return question;
 
-  const cap = aiQuestionsFor(user.tier, user.billing_cycle);
+  const cap = aiQuestionsFor(user.tier, user.billing_cycle, user.plan_version);
   if (usedQuestionsFor(user) >= cap) {
     return quotaExceededResponse(user, cap);
   }
@@ -153,7 +154,7 @@ export async function POST(req: Request, { params }: Params) {
       used,
       cap,
       remaining: Math.max(0, cap - used),
-      resetAt: user.tier === "pro" ? allowancePeriodEndsAt(user) : null,
+      resetAt: hasMonthlyAiQuestions(user.tier, user.plan_version) ? allowancePeriodEndsAt(user) : null,
       transcriptTruncated: result.transcriptTruncated,
       historyTruncated: result.historyTruncated,
     });
@@ -297,7 +298,7 @@ async function refundQuestion(
   db: D1Database,
   user: CurrentUserRow
 ): Promise<void> {
-  if (user.tier !== "pro") {
+  if (!hasMonthlyAiQuestions(user.tier, user.plan_version)) {
     await db.prepare(
       `UPDATE users
           SET ai_free_questions_used = MAX(0, ai_free_questions_used - 1)
@@ -326,7 +327,7 @@ async function reserveQuestion(
   user: CurrentUserRow,
   cap: number
 ) {
-  if (user.tier !== "pro") {
+  if (!hasMonthlyAiQuestions(user.tier, user.plan_version)) {
     return db.prepare(
       `UPDATE users
           SET ai_free_questions_used = ai_free_questions_used + 1
@@ -344,7 +345,7 @@ async function reserveQuestion(
         SET ai_questions_used_this_period = ai_questions_used_this_period + 1
       WHERE id = ?1
         AND deleted_at IS NULL
-        AND tier = 'pro'
+        AND (tier = 'pro' OR (tier = 'basic' AND plan_version = 'v2'))
         AND ai_questions_used_this_period + 1 <= ?2`
   )
     .bind(user.id, cap)
@@ -352,7 +353,7 @@ async function reserveQuestion(
 }
 
 function usedQuestionsFor(user: CurrentUserRow): number {
-  return user.tier === "pro"
+  return hasMonthlyAiQuestions(user.tier, user.plan_version)
     ? user.ai_questions_used_this_period
     : user.ai_free_questions_used;
 }
@@ -376,7 +377,7 @@ function quotaExceededResponse(user: CurrentUserRow, cap: number): Response {
       error: "ai_quota_exceeded",
       cap,
       remaining: 0,
-      resetAt: user.tier === "pro" ? allowancePeriodEndsAt(user) : null,
+      resetAt: hasMonthlyAiQuestions(user.tier, user.plan_version) ? allowancePeriodEndsAt(user) : null,
     },
     { status: 402 }
   );

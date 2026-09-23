@@ -2,13 +2,13 @@ import { auth } from "@/auth";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { createPaddleTransaction, paddleEnvironment, PaddleApiError } from "@/lib/paddle";
-import { getPaddlePlan, isBillingCycle, isPaddlePaidTier } from "@/lib/paddle-plans";
+import { getV2PaddlePlan, isBillingCycle, isPaddlePaidTier } from "@/lib/paddle-plans";
 
 export async function POST(req: Request) {
   const session = await auth();
   if (!session) return Response.json({ error: "unauthorized" }, { status: 401 });
 
-  let body: { tier?: string; cycle?: string; successUrl?: string; successPath?: string };
+  let body: { tier?: string; cycle?: string; version?: string; successUrl?: string; successPath?: string };
   try {
     body = await req.json();
   } catch {
@@ -32,7 +32,15 @@ export async function POST(req: Request) {
   if (!checkoutUrl) {
     return Response.json({ error: "invalid_success_url" }, { status: 400 });
   }
-  const plan = getPaddlePlan(env, tier, cycle);
+  // Legacy prices are recognized for existing subscriptions, not sold again.
+  if (body.version !== "v2") {
+    return Response.json({ error: "plan_not_available" }, { status: 403 });
+  }
+  const v2CheckoutEnabled = env.PADDLE_V2_CHECKOUT_ENABLED === "true";
+  if (!v2CheckoutEnabled) {
+    return Response.json({ error: "plan_not_available" }, { status: 403 });
+  }
+  const plan = getV2PaddlePlan(env, tier, cycle);
   if (!plan) {
     return Response.json({ error: "paddle_price_not_configured" }, { status: 503 });
   }
@@ -128,6 +136,20 @@ function withLocalPaddleEnv(env: CloudflareEnv): CloudflareEnv {
       process.env.PADDLE_PRO_MONTHLY_PRICE_ID ?? env.PADDLE_PRO_MONTHLY_PRICE_ID,
     PADDLE_PRO_YEARLY_PRICE_ID:
       process.env.PADDLE_PRO_YEARLY_PRICE_ID ?? env.PADDLE_PRO_YEARLY_PRICE_ID,
+    PADDLE_HISTORICAL_PRO_MONTHLY_PRICE_ID:
+      process.env.PADDLE_HISTORICAL_PRO_MONTHLY_PRICE_ID ?? env.PADDLE_HISTORICAL_PRO_MONTHLY_PRICE_ID,
+    PADDLE_HISTORICAL_PRO_YEARLY_PRICE_ID:
+      process.env.PADDLE_HISTORICAL_PRO_YEARLY_PRICE_ID ?? env.PADDLE_HISTORICAL_PRO_YEARLY_PRICE_ID,
+    PADDLE_V2_STARTER_MONTHLY_PRICE_ID:
+      process.env.PADDLE_V2_STARTER_MONTHLY_PRICE_ID ?? env.PADDLE_V2_STARTER_MONTHLY_PRICE_ID,
+    PADDLE_V2_STARTER_YEARLY_PRICE_ID:
+      process.env.PADDLE_V2_STARTER_YEARLY_PRICE_ID ?? env.PADDLE_V2_STARTER_YEARLY_PRICE_ID,
+    PADDLE_V2_PRO_MONTHLY_PRICE_ID:
+      process.env.PADDLE_V2_PRO_MONTHLY_PRICE_ID ?? env.PADDLE_V2_PRO_MONTHLY_PRICE_ID,
+    PADDLE_V2_PRO_YEARLY_PRICE_ID:
+      process.env.PADDLE_V2_PRO_YEARLY_PRICE_ID ?? env.PADDLE_V2_PRO_YEARLY_PRICE_ID,
+    PADDLE_V2_CHECKOUT_ENABLED:
+      process.env.PADDLE_V2_CHECKOUT_ENABLED ?? env.PADDLE_V2_CHECKOUT_ENABLED,
   };
 }
 

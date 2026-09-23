@@ -25,6 +25,7 @@ let paddleConfigPromise: Promise<PaddlePublicConfig | null> | null = null;
 export function PaddleCheckoutButton({
   tier,
   cycle,
+  version,
   signedIn,
   checkoutSuccessPath,
   children,
@@ -33,6 +34,7 @@ export function PaddleCheckoutButton({
 }: {
   tier: Exclude<Tier, "free">;
   cycle: BillingCycle;
+  version: "v2";
   signedIn: boolean;
   checkoutSuccessPath: string;
   children: React.ReactNode;
@@ -68,6 +70,7 @@ export function PaddleCheckoutButton({
         body: JSON.stringify({
           tier,
           cycle,
+          version,
           successPath: `${checkoutPath.pathname}${checkoutPath.search}`,
         }),
       });

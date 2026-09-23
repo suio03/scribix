@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
-import { quotaMinutesFor, type BillingCycle, type Tier } from "@/lib/plans";
+import { quotaMinutesFor, type BillingCycle, type PlanVersion, type Tier } from "@/lib/plans";
 
 type UserRow = {
   id: string;
@@ -8,6 +8,7 @@ type UserRow = {
   full_name: string | null;
   tier: Tier;
   billing_cycle: BillingCycle | null;
+  plan_version: PlanVersion | null;
   subscription_status: string | null;
   customer_id: string | null;
   minutes_used_this_period: number;
@@ -39,7 +40,7 @@ export default async function AdminUsersPage({
   const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
 
   const { results } = await env.DB.prepare(
-    `SELECT id, email, full_name, tier, billing_cycle, subscription_status,
+    `SELECT id, email, full_name, tier, billing_cycle, plan_version, subscription_status,
             customer_id, minutes_used_this_period, period_ends_at,
             created_at, deleted_at
        FROM users
@@ -115,7 +116,7 @@ export default async function AdminUsersPage({
                   </Td>
                   <Td>{planLabel(u.tier, u.billing_cycle, u.subscription_status)}</Td>
                   <Td>
-                    {u.minutes_used_this_period} / {quotaMinutesFor(u.tier, u.billing_cycle)} min
+                    {u.minutes_used_this_period} / {quotaMinutesFor(u.tier, u.billing_cycle, u.plan_version)} min
                   </Td>
                   <Td>{formatDate(u.period_ends_at)}</Td>
                   <Td>

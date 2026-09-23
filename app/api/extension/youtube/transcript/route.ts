@@ -11,6 +11,8 @@ import {
   refundExtensionYouTubeIpImport,
   reserveExtensionYouTubeClientImport,
   reserveExtensionYouTubeIpImport,
+  EXTENSION_YOUTUBE_IMPORTS_PER_DAY,
+  V2_EXTENSION_YOUTUBE_IMPORTS_PER_DAY,
 } from "@/lib/youtube-extension-quota";
 import { statusForYouTubeCaptionError, youtubeRequestId } from "@/lib/youtube-route";
 
@@ -46,6 +48,8 @@ export async function POST(req: Request) {
   if (!clientId) return extensionJson(req, { error: "missing_client_id" }, { status: 400 });
 
   const env = await cf();
+  const dailyCap = env.PADDLE_V2_CHECKOUT_ENABLED === "true"
+    ? V2_EXTENSION_YOUTUBE_IMPORTS_PER_DAY : EXTENSION_YOUTUBE_IMPORTS_PER_DAY;
 
   let ipQuotaReserved = false;
   let clientQuotaReserved = false;
@@ -58,7 +62,7 @@ export async function POST(req: Request) {
     await Promise.allSettled(refunds);
   };
 
-  const ipQuota = await reserveExtensionYouTubeIpImport(env.DB, req, clientId);
+  const ipQuota = await reserveExtensionYouTubeIpImport(env.DB, req, clientId, dailyCap);
   if ("error" in ipQuota) {
     return extensionJson(
       req,
@@ -68,7 +72,7 @@ export async function POST(req: Request) {
   }
   ipQuotaReserved = true;
 
-  const clientQuota = await reserveExtensionYouTubeClientImport(env.DB, clientId);
+  const clientQuota = await reserveExtensionYouTubeClientImport(env.DB, clientId, dailyCap);
   if ("error" in clientQuota) {
     await refundReservedQuota();
     return extensionJson(

@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { mergeLocalizedItems } from "@/lib/localized-items";
-import type { BillingCycle, Tier } from "@/lib/plans";
+import type { BillingCycle, PlanVersion, Tier } from "@/lib/plans";
 import {
   PartialTranscriptModal,
   ProgressView,
@@ -66,6 +66,7 @@ export function Generator({
   postSignInPath,
   tier = "free",
   billingCycle = null,
+  planVersion = null,
   namespace = "Generator",
   toolSlug = "home",
 }: {
@@ -73,6 +74,7 @@ export function Generator({
   postSignInPath: string;
   tier?: Tier;
   billingCycle?: BillingCycle | null;
+  planVersion?: PlanVersion | null;
   namespace?: GeneratorNamespace;
   toolSlug?: string;
 }) {
@@ -182,6 +184,7 @@ export function Generator({
                   postSignInPath={postSignInPath}
                   tier={tier}
                   billingCycle={billingCycle}
+                  planVersion={planVersion}
                   toolSlug={toolSlug}
                   variant="flat"
                 />
@@ -326,7 +329,6 @@ function UploadPane({
       </div>
       <PartialTranscriptModal
         offer={partialOffer}
-        checkoutSuccessPath={checkoutSuccessPath}
         onConfirm={confirmPartial}
         onCancel={cancelPartial}
         onUpgrade={trackPartialUpgrade}

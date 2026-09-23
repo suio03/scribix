@@ -77,7 +77,6 @@ type Props = {
   isPro: boolean;
   planTier: Tier;
   transcriptSource: AskAiTranscriptSource;
-  checkoutSuccessPath: string;
   onOpenExport: () => void;
   onOpenSpeakerEditor: (speaker?: string) => void;
   partialTranscript: PartialTranscriptInfo | null;
@@ -99,7 +98,6 @@ export function TranscriptViewer({
   isPro,
   planTier,
   transcriptSource,
-  checkoutSuccessPath,
   onOpenExport,
   onOpenSpeakerEditor,
   partialTranscript,
@@ -482,7 +480,6 @@ export function TranscriptViewer({
       <UpgradePlanModal
         reason={upgradeModal}
         open={upgradeModal !== null}
-        checkoutSuccessPath={checkoutSuccessPath}
         onClose={() => setUpgradeModal(null)}
       />
     </>

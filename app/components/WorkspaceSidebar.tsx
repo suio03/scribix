@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { CalendarDays, Home, Plus, FileText, FolderKanban, Link2, Send, X } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
-import { getPathname, Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Logo } from "./Logo";
 import { AccountMenu } from "./ProductTopbar";
@@ -34,15 +34,10 @@ export function WorkspaceSidebar({
   const socialPaid = canUseSocialMedia(usage?.tier);
   const workspaceT = useTranslations("WorkspaceNav");
   const dashboardT = useTranslations("Dashboard.list");
-  const locale = useLocale();
   const pathname = usePathname();
   const { isOpen, setOpen } = useSidebar();
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
-  const checkoutSuccessPath = getPathname({
-    href: { pathname: "/dashboard/billing", query: { checkout: "ok" } },
-    locale,
-  });
 
   const closeMobile = () => setOpen(false);
   const createActive = pathname === "/dashboard/new";
@@ -144,7 +139,6 @@ export function WorkspaceSidebar({
         <div className="border-t border-line p-3">
           {usage?.tier === "free" || !usage ? (
             <UpgradePlanButton
-              checkoutSuccessPath={checkoutSuccessPath}
               onOpen={closeMobile}
               className="flex w-full items-center justify-center rounded-xl bg-accent px-3 py-2.5 text-[12px] font-semibold text-[var(--action-text)] transition hover:bg-accent/90"
             >

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Uploader } from "./Uploader";
 import { Recorder } from "./Recorder";
 import { YouTubeImporter } from "./YouTubeImporter";
-import type { BillingCycle, Tier } from "@/lib/plans";
+import type { BillingCycle, PlanVersion, Tier } from "@/lib/plans";
 
 type Tab = "upload" | "youtube" | "record";
 
@@ -16,12 +16,14 @@ export function UploadOrRecord({
   checkoutSuccessPath,
   tier = "free",
   billingCycle = null,
+  planVersion = null,
 }: {
   signedIn: boolean;
   postSignInPath: string;
   checkoutSuccessPath?: string;
   tier?: Tier;
   billingCycle?: BillingCycle | null;
+  planVersion?: PlanVersion | null;
 }) {
   const t = useTranslations("Dashboard.uploadOrRecord");
   const [tab, setTab] = useState<Tab>("upload");
@@ -60,6 +62,7 @@ export function UploadOrRecord({
           postSignInPath={postSignInPath}
           tier={tier}
           billingCycle={billingCycle}
+          planVersion={planVersion}
         />
       ) : (
         <Recorder

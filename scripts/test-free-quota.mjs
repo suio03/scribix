@@ -65,15 +65,14 @@ test("Creator stays at 2,400 minutes for both billing cycles", () => {
 });
 const { resolvePlanMessages } = load("i18n/plan-messages.ts", { "../lib/plans": plans });
 for (const locale of ["en", "de", "es", "fr", "it", "ja"]) {
-  test(`${locale} resolves shared quota facts in nested and raw messages`, () => {
+  test(`${locale} resolves shared free quota facts and keeps pricing placeholders`, () => {
     const raw = JSON.parse(readFileSync(new URL(`../messages/${locale}.json`, import.meta.url), "utf8"));
     const before = JSON.stringify(raw);
     const copy = resolvePlanMessages(raw, locale);
     assert.equal(JSON.stringify(raw), before);
     assert.match(copy.VideoHome.hero.ctaNote, /60/);
-    assert.match(copy.PricingPage.plans[0].summary, /60/);
-    assert.ok(copy.PricingPage.plans[1].summary.includes(new Intl.NumberFormat(locale).format(2400)));
-    assert.doesNotMatch(JSON.stringify(copy), /\{(?:freeTrialMinutes|creatorMonthlyMinutes)\}/);
-    assert.ok(copy.PricingPage.faqs[0].answer.includes("{freeMinutes, number}"));
+    assert.equal(copy.PricingV2.values.monthlyMinutes.includes("{minutes}"), true);
+    assert.equal(copy.PricingV2.plans.starter.highlight4.includes("{questions}"), true);
+    assert.doesNotMatch(JSON.stringify(copy), /\{freeTrialMinutes\}/);
   });
 }

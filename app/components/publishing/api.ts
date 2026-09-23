@@ -19,10 +19,10 @@ export async function getAccounts(signal?: AbortSignal): Promise<AccountProvider
   const [{accounts}, policy] = await Promise.all([json<{accounts: (PublicAccount & {platform: Platform})[]}>("/api/social/connections", {signal}), getPublishPolicy(signal)]);
   return PUBLISH_PLATFORMS.filter(platform => platform !== "tiktok" || policy.tiktokPublishingEnabled).map(platform => ({platform, label: SPECS[platform].label, availability: "ready", callbackPath: "", requiredConfig: [], accounts: accounts.filter(account => account.platform === platform)}));
 }
-export async function startConnection(platform: Platform) {
+export async function startConnection(platform: Platform, accountId?: string) {
   const segment = location.pathname.split("/")[1];
   const locale = ["de", "es", "fr", "it", "ja"].includes(segment) ? segment : "en";
-  const result = await json<{connectionUrl: string}>("/api/social/connections", mutation("POST", {platform, locale}));
+  const result = await json<{connectionUrl: string}>("/api/social/connections", mutation("POST", {platform, locale, ...(accountId ? {accountId} : {})}));
   location.assign(result.connectionUrl);
 }
 export function disconnectPlatformAccount(accountId: string) {
