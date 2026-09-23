@@ -6,8 +6,8 @@ JSON for every job we ever submitted. This monthly job purges them and then
 hard-deletes the soft-deleted rows.
 
 This satisfies GDPR Article 17's "without undue delay" with a defined cadence.
-See `docs/archive/plans/progress.md` §11 for the design rationale (per-delete API call
-replaced by monthly bulk).
+Provider cleanup runs as a separate bulk operation instead of making each user-facing
+delete depend on an AssemblyAI API call; retry and verification steps are below.
 
 ## When
 

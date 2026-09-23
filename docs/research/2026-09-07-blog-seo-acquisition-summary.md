@@ -1,10 +1,10 @@
 # Scribix 内容规划：Guides、长尾 SEO 与非广告获客
 
-初始调研：2026-09-07；规划更新：2026-09-20。关键词范围：美国市场、英语搜索。关键词指标保留 9 月 7 日 Google Ads Keyword Planner、SEMrush、Similarweb 的原始口径，本次未重新测量。
+初始调研：2026-09-07；规划核对：2026-09-23。原关键词估计仅覆盖当时的美国英语市场，原始数据文件已移除；下文的选题顺序是产品与内容判断，不代表当前搜索量或竞争难度。
 
-本文是内容选题、优先级和执行路线的唯一维护入口。9 月 18 日竞品内容观察已合并；[竞品调研](2026-09-18-competitor-content-acquisition.md)仅保留证据，不维护另一份计划。
+本文是内容选题、优先级和执行路线的唯一维护入口。9 月 18 日竞品内容观察中的渠道方式已合并；具体竞品页面与效果须在执行前重新核查。
 
-状态：2026-09-19 首批内容已上线 scribix.io：Guides、选片清单、TikTok 教程与播客功能页均覆盖六语言。教程使用真实截图、导出成片和截图动画演示；当前交付与验证结果统一见第 7 节。关键词原始记录见 [video-seo-keywords.json](2026-09-07-video-seo-keywords.json)。
+状态：2026-09-19 首批内容已上线 scribix.io：Guides、选片清单、TikTok 教程与播客功能页均覆盖六语言；2026-09-20 英文 Alternatives 目录与首篇对比页已记录上线。教程使用真实截图、导出成片和截图动画演示；交付与验证结果统一见第 7 节。
 
 ## 1. 核心结论
 
@@ -12,11 +12,11 @@ Scribix 应围绕「把长视频变成可发布的短视频」建立内容中心
 
 建议优先顺序：
 
-1. **播客切片**：建立 podcast clip maker 页面，并用 TikTok / Instagram 操作教程支撑。
-2. **横屏转竖屏**：建立功能页，展示人物、双人对话、演示文稿等实际构图结果。
-3. **OpusClip 替代方案**：有搜索需求，且难度估计相对可控；首篇按官方功能、套餐和工作流选型比较，配产品演示。效果优劣结论仍须同素材实测。
+1. **播客切片**：播客功能页和 TikTok 教程已上线；后续按真实使用问题补充 Instagram 等内容。
+2. **横屏转竖屏**：待建立功能页，展示人物、双人对话、演示文稿等实际构图结果。
+3. **OpusClip 替代方案**：英文功能选型对比页已上线；若新增效果优劣结论，仍须同素材实测。
 4. **长视频转短视频**：由首页承接主词及同意图变体，教程解决具体操作问题。
-5. **Reels 与 webinar**：第二批验证。Webinar 本次可见搜索量较小，不宜先作为主要内容支柱。
+5. **Reels 与 webinar**：后续按实际查询、使用数据和产品能力验证，不先作为主要内容支柱。
 
 这些是根据产品匹配度、搜索意图、需求估计及内容制作成本作出的优先级判断，不代表排名或流量保证。
 
@@ -39,7 +39,7 @@ Scribix 可以先沿用代码管理内容的方式，补上文章索引和可复
 
 ## 3. Scribix 当前基础与内容边界
 
-9 月 7 日研究时首页定位为 AI Video Clipper / Turn Long Videos into Shorts。现有 SEO 页面仍主要覆盖 video-to-text、audio-to-text、mp3-to-text、youtube-to-transcript 和 ai-note-taker，尚未看到 Blog 路由与内容索引。
+9 月 7 日研究时首页定位为 AI Video Clipper / Turn Long Videos into Shorts；当时尚无 Guides 内容索引。Guides 与播客内容后续已上线，现行页面状态见第 7 节。
 
 实施时需要遵守以下事实边界：
 
@@ -49,69 +49,17 @@ Scribix 可以先沿用代码管理内容的方式，补上文章索引和可复
 - 新文章只为实际发布的语言版本输出 hreflang，不能因为站点支持某语言就声明文章已有该翻译。
 - 存在浏览器扩展发布资产，见 [browser-extension-publishing.md](../browser-extension-publishing.md)，但本次未核实各商店当前上架状态。
 
-## 4. 关键词数据与优先级
+## 4. 关键词与选题筛选
 
-### 4.1 数据口径
+2026-09-07 的 SEMrush、Google Ads Keyword Planner、Similarweb 和 Autocomplete 样本曾用于发现播客切片、横屏转竖屏、长视频转短视频及工具替代方案等意图。原始指标文件已移除；搜索量、KD、CPC 和工具之间的差异不再作为当前机会大小或执行顺序的依据。新增页面或投放前，重新核查目标市场的查询表达、搜索结果、产品匹配度和实际站点数据。
 
-- **SEMrush**：美国数据库，月搜索量估计；完整记录的更新时间列显示约 1 个月。以下主表统一用这套数据便于比较。
-- **Google Ads**：美国、英语、Google，2025-08 至 2026-07 的平均月搜索量区间。广告竞争程度不是 SEO 难度。
-- **Similarweb**：美国、Google、All traffic；界面显示最近 28 天，截至 9 月 3 日；`Avg. volume` 的具体平均窗口未单独核实。
-- **Google Autocomplete**：英语、美国参数，用于发现真实措辞与意图，不提供搜索量。
-- 未取得 Ahrefs 数据和 Google Trends 时间序列。
+同义变体由同一页面承接，避免仅换关键词创建重复内容。`podcast clips` 可能指观看或下载现成片段，优先核查 maker、generator、how to 等创作任务表达。`youtube to shorts` 需确认用户是否预期输入 URL；`free`、`no watermark` 等承诺必须与现行套餐和实际输出一致。
 
-不同工具的估计和时间窗口不能直接相加或取平均。同义变体可能重叠，不能把表内搜索量加总成可获得流量。缺失 KD 不等于难度为零。
-
-### 4.2 主要机会
-
-| 关键词 | SEMrush 月量估计 | KD | 页面与优先级建议 |
-| --- | ---: | ---: | --- |
-| podcast clip maker | 50 | 18 | 第一批播客功能页主词 |
-| ai podcast clip generator | 70 | 29 | 与播客功能页合并承接 |
-| podcast clipper | 30 | 23 | 同上，避免单独建同义页面 |
-| podcast clipping | 40 | 12 | 同簇覆盖，结合结果页判断工具 / 服务意图 |
-| how to clip podcasts for tiktok | 40 | 24 | 第一批操作教程 |
-| convert landscape video to portrait | 110 | 27 | 第一批横屏转竖屏功能页 |
-| horizontal video to vertical | 90 | 28 | 与上词合并承接 |
-| opus clip alternative | 390 | 26 | 第一批比较方向，先做实测 |
-| long video to short video ai | 260 | 38 | 首页核心词簇 |
-| long video to shorts | 110 | 35 | 首页核心词簇 |
-| ai video clipper | 320 | 76 | 首页定位词，竞争较高 |
-| video to reels converter | 40 | 23 | 第二批，需准确匹配转换需求 |
-| repurpose io alternative | 70 | 10 | 暂后置，跨平台分发意图与当前能力有差异 |
-| vizard alternative | 20 | 缺失 | 后续实测比较，不因 KD 缺失判断容易 |
-| webinar repurposing | 20 | 缺失 | 小规模试验，需求可能包含多种内容产出 |
-
-补充观察：
-
-- `add captions to video` 为 1,900 / KD 64，`auto captions` 为 1,900 / KD 76；量较大，但竞争也高，不宜作为第一阶段主攻方向。
-- `youtube shorts maker` 为 590 / KD 61，`youtube to shorts` 为 90 / KD 52；后者尤其要确认用户对 URL 导入的预期。
-- `how to make podcast clips for instagram` 与 `podcast clips for social media` 均为 20，KD 缺失，可作为后续教程方向。
-- `repurpose webinar content` 为 20、`webinar clips` 为 10，KD 均缺失；`ai interview clip generator` 未取得指标，不代表零需求。
-
-### 4.3 跨来源验证与差异
-
-| 关键词 / 词簇 | 补充来源 | 解读 |
-| --- | --- | --- |
-| opus clip alternative | Google Ads：100–1,000 / 月 | 支持存在替代方案需求 |
-| podcast clip maker | Google Ads：10–100 / 月 | 与 SEMrush 50 的量级一致 |
-| horizontal video to vertical 及多个近义词 | Google Ads：100–1,000 / 月 | 支持词簇需求，但近义词不可相加；SEMrush 90 与区间存在差异 |
-| ai podcast clip generator | Similarweb Avg. volume 212；最近 28 天 940 | 与 SEMrush 70 差异明显，不据此推断增长 |
-| long video to shorts | Similarweb Avg. volume 196；最近 28 天 <50 | 与 SEMrush 110 不一致，保留各自口径 |
-| how to turn long videos into shorts | Similarweb Avg. volume 131，KD 45；最近 28 天 <50 | 支持教程方向，不能把 131 当作已验证的近期月量 |
-
-Google Ads 的粗区间会伴随 +900% / -90% 等变化显示，本次不将其解释为精确市场趋势。Similarweb 生成列表含不相关词及异常长句，未把列表总量当成产品机会规模。
-
-### 4.4 意图与选题筛选
-
-Autocomplete 出现了 `free`、`no watermark`、`online`、`for TikTok`、`for Instagram`、`CapCut`、`alternative` 等修饰词，可以用来理解顾虑和任务，但不应每个变体生成一个页面。
-
-`podcast clips` 同时包含找娱乐片段、下载素材与制作切片的意图；`interview clips` 还有明显娱乐内容噪声。优先选择 maker、generator、how to 等更贴近创作任务的表达。
-
-暂不优先覆盖：泛 AI video generator / faceless video、与产品无关的素材下载、未兑现的免费无水印承诺，以及只有泛定义或空泛 Top 10 列表的文章。泛知识更可能直接被搜索摘要回答，这是内容策略判断，本次未测量其 AI 搜索点击损失。
+泛 AI video generator、素材下载和空泛工具榜单不优先。Reels、webinar、字幕等方向先看真实查询、授权素材、产品能力及是否能提供独立示例；不把旧工具估计相加为可获得流量。
 
 ## 5. 网站结构与内容顺序
 
-以下为统一路由规划；`/guides`、选片清单和 `/podcast-clip-maker` 已本地实现，其他页面按下文状态推进。
+以下为统一路由规划；`/guides`、选片清单、`/podcast-clip-maker` 与英文 `/alternatives/opus-clip-alternative` 已记录上线；`/horizontal-video-to-vertical` 仍是后续规划。
 
 | 路径 | 承接意图 | 内容重点 |
 | --- | --- | --- |
@@ -127,17 +75,17 @@ Autocomplete 出现了 `free`、`no watermark`、`online`、`for TikTok`、`for 
 
 ### 首批内容制作顺序
 
-以下关键词量沿用第 4 节，完整标题没有自动继承精确搜索量。发布以证据齐备为准，不强制等前一篇完成才推进独立任务。
+以下保留原选题依据，不代表当前关键词量或未完成顺序。发布以证据齐备为准，不强制等前一篇完成才推进独立任务。
 
 | 顺序 | 内容 | 需求依据 | 交付与证据 |
 | --- | --- | --- | --- |
-| 1 | How to Clip Podcasts for TikTok | SEMrush 40 / KD 24 | `/guides/how-to-clip-podcasts-for-tiktok`；获授权输入、选片理由、边界修正、构图、字幕、真实导出；配套操作演示 |
-| 2 | How to Convert Horizontal Video to Vertical Without Cutting Off Speakers | 横屏转竖屏词簇；完整标题未量测 | 裁切与保留全画面的对照；单人、双人和屏幕内容按实际能力说明，不承诺不存在的布局 |
-| 3 | Podcast Clip Checklist | 编辑选题，未验证搜索量 | 指代、上下文、答案完整性、广告、重复、标题忠实度的检查方法；正文直接可用，附可打印／下载清单，初期不强制留邮箱 |
-| 4 | 一期访谈最终保留哪些片段，为什么 | 编辑选题，未验证搜索量 | 同素材案例、保留／放弃理由和修正前后结果；只有完整计时才写耗时；自有实验不称客户案例 |
-| 5 | OpusClip Alternatives for Podcast Clips | opus clip alternative 390 / KD 26；完整标题未量测 | 比较 Scribix、Vizard、quso.ai 与 OpusClip 的官方功能和套餐；复用 Guide 媒体制作专业流程演示，不声称同素材性能测试 |
+| 1（已上线） | How to Clip Podcasts for TikTok | 具体操作问题 | `/guides/how-to-clip-podcasts-for-tiktok`；获授权输入、选片理由、边界修正、构图、字幕、真实导出；配套操作演示 |
+| 2（待制作） | How to Convert Horizontal Video to Vertical Without Cutting Off Speakers | 横屏转竖屏任务；发布前重查查询表达 | 裁切与保留全画面的对照；单人、双人和屏幕内容按实际能力说明，不承诺不存在的布局 |
+| 3（已上线） | Podcast Clip Checklist | 编辑选题，未验证搜索量 | 指代、上下文、答案完整性、广告、重复、标题忠实度的检查方法；正文直接可用，附可打印／下载清单，初期不强制留邮箱 |
+| 4（待制作） | 一期访谈最终保留哪些片段，为什么 | 编辑选题，未验证搜索量 | 同素材案例、保留／放弃理由和修正前后结果；只有完整计时才写耗时；自有实验不称客户案例 |
+| 5（已上线） | OpusClip Alternatives for Podcast Clips | 工具选型意图；历史指标不再沿用 | 比较 Scribix、Vizard、quso.ai 与 OpusClip 的官方功能和套餐；复用 Guide 媒体制作专业流程演示，不声称同素材性能测试 |
 
-OpusClip 比较文章与替代方案落地页内容重叠时，先做一个完整页面；有独立搜索意图和内容价值时再拆分。9 月 16 日竞品操作记录是准备材料，尚不足以证明 Scribix 与竞品最终输出的全面对比。
+OpusClip 对比内容已由一篇完整英文页面承接；有独立搜索意图和内容价值时再拆分。现有页面只比较功能和流程，不声称 Scribix 与竞品最终输出的全面效果对比。
 
 对比内容语言规则（2026-09-20 用户确认）：alternatives / vs 对比文章和落地页仅发布英文，不安排翻译。对比页面在桌面及移动端均不显示语言切换器；仅生成英文 URL、自引用 canonical 和英文 sitemap 条目，不生成其他语言版本或指向这些版本的 hreflang。此规则适用于对比内容，无论放在 `/guides` 还是 `/alternatives`；教程、检查清单及 Guides 索引继续沿用现有多语言规则。首篇已上线；带 locale 前缀的 alternatives URL 通过 308 永久重定向到英文地址。
 
@@ -145,7 +93,7 @@ OpusClip 比较文章与替代方案落地页内容重叠时，先做一个完�
 
 首篇展示口径（2026-09-20 用户确认）：复用现有 Guide 的截图参考、成片与素材，通过重新排版的界面示意、重点标注和交互演示解释功能，不要求重新录制真实操作过程。官方功能比较不以竞品同素材实测为前置；若后续加入准确率、速度或效果优劣结论，则需补对应测试证据。
 
-How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Avg. volume 131 / KD 45、最近 28 天 <50 的证据保留，有独立材料再做，避免与首篇只是换标题。
+How to Turn Long Videos into Shorts 保留为后续总览候选；有独立材料和查询证据再做，避免与现有页面只是换标题。
 
 ### 后续选题与维护边界
 
@@ -157,7 +105,7 @@ How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Av
 
 ## 6. 竞品的非广告获客方式
 
-以下结合 9 月 7 日与 9 月 18 日公开页面观察，证明相关内容和入口存在；历史培训或社群入口不证明当前持续运营。本次没有取得页面流量、渠道贡献、转化率或 ROI 数据。长尾页和比较页本身属于 SEO，另列渠道是为了区分内容建设和内容分发。
+以下方式来自 9 月 7 日与 9 月 18 日的公开页面观察，只作为渠道构思；具体入口是否仍存在、是否持续运营须重新核查。当时没有取得页面流量、渠道贡献、转化率或 ROI 数据。长尾页和比较页本身属于 SEO，另列渠道是为了区分内容建设和内容分发。
 
 | 方式 | 观察到的竞品实践 | Scribix 可以怎么做 |
 | --- | --- | --- |
@@ -171,7 +119,7 @@ How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Av
 | 可下载资料 | Repurpose 视频规格与变现指南 / cheat sheet | 制作短视频发布检查表、字幕安全区示意、播客选片清单 |
 | 平台与生态合作 | Repurpose 跨平台分发定位、YouTube Shorts 专题活动 | 长期方向；先验证产品与目标工作流的匹配 |
 
-9 月 18 日逐项页面、日期和证据限制见 [竞品内容调研](2026-09-18-competitor-content-acquisition.md)。其新增结论已体现在第 5 节制作顺序和第 7 节执行路线。
+9 月 18 日观察中的渠道取舍已体现在第 5 节制作顺序和第 7 节执行路线；上表不证明这些方式对 Scribix 的获客效果。
 
 9 月 7 日来源：
 
@@ -195,7 +143,7 @@ How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Av
 | --- | --- | --- |
 | 首批 | Guides 基础、播客功能页、TikTok 播客教程、检查清单与配套演示 | 内容与产品事实一致；真实素材和导出可核查；页面及从内容到上传、首次导出的路径可用 |
 | 第二批 | 横屏转竖屏功能页与教程、同素材案例；补齐竞品对照实验 | 画面取舍和选片理由有实例；记录限制与人工修正；不以演示代替实测 |
-| 证据成熟后 | 发布比较内容；按查询与使用数据决定 Reels / webinar / 字幕内容 | 功能比较核对当日官方资料，效果比较核对实测文件；选题有独立价值，已有页面及时更新 |
+| 证据成熟后 | 更新已上线比较页；按查询与使用数据决定 Reels / webinar / 字幕内容 | 功能比较核对当日官方资料，效果比较核对实测文件；选题有独立价值，已有页面及时更新 |
 
 这是实施顺序，不是已经完成的交付或固定周数承诺。衡量重点应是首次导出、重复使用和付费转化，同时用搜索曝光、查询词与点击判断覆盖效果。低流量阶段需要积累样本，不能凭几次访问决定方向。
 
@@ -216,7 +164,7 @@ How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Av
 
 演示复用已有项目，没有重新上传、改写字幕或制造前后对照。原始录音、字幕和截图保留原语；用户明确授权使用现有素材上线，但未独立核验源视频的公开再分发许可。素材记录与重制方法见[教程制作备注](../content/how-to-clip-podcasts-for-tiktok.md)，不另建进度表。
 
-素材起点：检查 [首页素材记录](../homepage-media.md) 中的获授权访谈／讲座原片及本地 master 是否仍可用。首页十秒静音循环只适合画面演示，不替代完整有声教程输入；真实项目输出与人工选段展示继续保持区分。先前测试视频也不能仅因用于内部调研就认定可公开使用。
+素材起点：检查 [首页素材记录](../homepage-media.md) 中的获授权访谈／讲座原片及本地 master 是否仍可用。首页无声演示只适合画面说明，不替代完整有声教程输入；真实项目输出与人工选段展示继续保持区分。先前测试视频也不能仅因用于内部调研就认定可公开使用。
 
 教程先覆盖上传、调整和导出；直接发布到 TikTok 等外部平台的步骤，需相应真实账号全流程验收后再写入。功能、部署与验收状态以 [产品 plan](../roadmap/video-product-plan.md) 和对应技术记录为准。
 
@@ -239,7 +187,7 @@ How to Turn Long Videos into Shorts 改为后续总览候选：原 Similarweb Av
 - 内容上线后的真实查询、点击和使用数据，用于调整优先级。
 - 竞品非广告渠道的实际流量贡献与转化数据；现有公开页面证据不足以推断哪个渠道最有效。
 
-原始关键词记录保留了 31 个 SEMrush 候选、Google Ads 区间、Similarweb 选定记录、来源差异与 12 个 Autocomplete 种子结果，见 [研究数据 JSON](2026-09-07-video-seo-keywords.json)。
+原始关键词数据文件已移除；后续调整优先级应重新取数，并结合 Search Console 的查询、点击与实际产品使用验证。
 
 
 ### 六语言本地化 — 2026-09-18

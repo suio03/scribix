@@ -1,10 +1,10 @@
 # Scribix 产品 plan：从素材到持续发布
 
-创建：2026-09-08；更新：2026-09-15。本文是视频产品功能状态与下一步优先级的统一入口，合并原 36 项功能建议与本次按用户流程梳理的清单。现迁至 roadmap 作为统一入口；旧 P0–P4 编号不再表示执行顺序。
+创建：2026-09-08；状态核对：2026-09-23（依据仓库代码与既有部署记录，未重新探测生产）。本文是视频产品功能状态与下一步优先级的统一入口；旧 P0–P4 编号不再表示执行顺序。
 
 目标：帮助持续更新播客、访谈和知识内容的个人及小团队，把一期内容做成一组完整、风格一致、可发布的短视频。竞品沿连续工作流扩展会有功能重叠；我们的验证重点是内容完整性、人工修改时间和下一次真实使用。
 
-2026-09-17 批量选片专项（本地实现，默认关闭，未部署，三小时真实素材未验收）：[AI Clips 生成与交付实施方案](ai-clips-generation-workflow.md)记录 180 分钟分析范围、资源预算、持久化任务、动态候选和按需预览；本阶段只包含单条编辑与导出。验证证据见 [后台分析验证记录](../video-workspace/ai-analysis-validation.md)。
+批量选片专项已于 2026-09-18 记录全量发布，三小时真实素材仍未验收：[AI Clips 生成与交付方案](ai-clips-generation-workflow.md)记录 180 分钟分析范围、资源预算、持久化任务、动态候选和按需预览；本阶段只包含单条编辑与导出。部署与验证证据见 [后台分析验证记录](../video-workspace/ai-analysis-validation.md)。
 
 ## 状态口径与依据
 
@@ -13,9 +13,9 @@
 - **已接入／待验收**：已有外部服务适配，不等于真实授权、发布或生产可用。
 - **未实现／未接入**：后续候选范围；写入 plan 不表示立即全部开发。
 
-本次核对本地代码与截至 2026-09-13 的实施记录，未查询远程部署或平台审核状态。Scribix 新发布流程在记录中仍为本地实现；ClipFlight / Teleo 的部分部署不能证明 Scribix 已上线。套餐、额度、保留期限及视频时长合同未因本 plan 改变。
+本表起始于 2026-09-13 的本地代码核对，后续追加的发布记录与验收说明须按各自日期阅读；本次未重新查询远程部署或平台审核状态。外部服务的部署不能单独证明 Scribix 全流程已验收。套餐、额度和保留期限未因本 plan 改变；视频时长以现行代码合同为准。
 
-实现依据：[选片](../../lib/video-workspace/selection.ts)、[代码合同](../../lib/video-workspace/contracts.ts)、[编辑](../video-workspace/editing-and-framing.md#editing)、[字幕与样式](../video-workspace/editing-and-framing.md#styles)、[发布准备](../video-workspace/publish-preparation.md)、[社交发布](../video-workspace/social-publishing.md)、[发布界面接入边界](../../app/components/publishing/README.md)。竞品证据保留在 [2026-09-08 调研](../research/2026-09-08-clipping-competitor-product-research.md)，其中本地差距是当日快照。
+实现依据：[选片](../../lib/video-workspace/selection.ts)、[代码合同](../../lib/video-workspace/contracts.ts)、[编辑](../video-workspace/editing-and-framing.md#editing)、[字幕与样式](../video-workspace/editing-and-framing.md#styles)、[发布准备](../video-workspace/publish-preparation.md)、[社交发布](../video-workspace/social-publishing.md)、[发布界面接入边界](../../app/components/publishing/README.md)。
 
 2026-09-15 编辑／发布入口调整：统一视频编辑区；字幕工具包含开场标题，封面工具包含封面文字；底部提供「下载」「发布」。发布跳转到独立页面并带入当前视频，必要时自动生成。账号复选框选择发布目标，平台标签仅切换文案与专属设置；一次提交到多个平台，文案分别保存，重试跳过已成功提交的平台。此前的弹窗／单平台提交方案已被此流程替代。提交后直接进入 History，同一次操作按任务合并展示各平台进度、文案与重试；侧栏统一使用 Channels，Publishing 内只保留 New post / History。localhost 提供不上传、不发帖的演示。开发验证未额外执行真实平台发布；定时发布与平台封面上传仍不在已接入范围内。
 
@@ -93,7 +93,7 @@
 | Instagram 等更多平台 | 未接入可用流程 | 图标和类型定义不算接入；按实际渠道需求扩展 |
 | 发布历史、状态、安全重试 | 已接入／待验收 | 当前最近 30 条记录；不确定的平台初始化不能盲目重试 |
 | 账号断开、重新连接与访问刷新 | 部分已有 | 已有入口；手动刷新仍有外部服务部署与真实续期待办 |
-| 定时发布与内容日历 | 未接入 | 外部服务字段不等于 Scribix 已开放排期 |
+| 定时发布与内容日历 | 本地已实现／待真实验收 | Scribix Planner 与外部排期桥接已在本地接通；远程发布和真实定时发帖仍按 [社交发布记录](../video-workspace/social-publishing.md) 验收 |
 | 自动导入 → 处理 → 按规则分发 | 未实现 | 依赖来源导入、稳定成片、排期与失败处理 |
 
 ### 复盘、协作与条件性扩展

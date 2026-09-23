@@ -1,6 +1,6 @@
 # AI Clips 生成设置与结果审阅
 
-2026-09-17，本地实现，尚未部署。依据用户提供的 Opus 网格／原文视图、Quso 左列表右预览，以及生成前设置流程。用户随后明确授权落地完整流程，取代第一阶段“固定 Auto、暂不调整结果工作区”的限制。
+2026-09-17 完成本地实现；2026-09-18 的批量分析发布记录见[验证记录](ai-analysis-validation.md)。本页保留生成设置与结果审阅的交互合同及当时本地验证，不以早期“尚未部署”描述当前状态。依据用户提供的 Opus 网格／原文视图、Quso 左列表右预览，以及生成前设置流程。
 
 ## 用户流程
 
@@ -20,7 +20,7 @@
 - 新 AI 候选的初始 RenderSpec 应用生成设置；已保存草稿优先，手动片段保持自身编辑。已有 clips 直接获得新的浏览与筛选，不自动重新选片或改变原有样式。
 - 迁移 `0043_clip_review_mark.sql` 增加独立 keep/discard 标记，允许多条收藏，与当前编辑选择分离。仅操作所属项目。
 - `GET editor?view=review` 允许所属用户只读预览；PUT/POST 继续执行编辑套餐权限。明确导出时才按既有机制准备草稿／快照。
-- 新任务后台开关仍默认关闭，迁移、Worker 与应用需按原发布顺序部署。本次仅应用本地迁移。
+- 当时本地验证使用关闭的后台开关；后续迁移、Worker 与应用发布结果见[验证记录](ai-analysis-validation.md)。
 
 ## 本地验证
 
@@ -47,4 +47,4 @@ Local verification: workspace contracts 56/56, six-locale validation, production
 
 ## 提交前复核（2026-09-18）
 
-当前全量本地改动包含 Home／Projects、Planner、后台分析、生成设置、审阅和手动选片。最终复核：workspace 56、AI candidates 12、AI analysis 12（实际本地 workerd，供应商 mock）、render scheduling 11、AAI completion 13、publish workflow 39 项通过；发布工作流使用 Node 24。六语言检查及 Next.js／OpenNext 生产构建通过。上述本地功能尚未部署，Planner 真实定时发布和三小时真实内容验收仍缺失。
+当时全量本地改动包含 Home／Projects、Planner、后台分析、生成设置、审阅和手动选片。最终复核：workspace 56、AI candidates 12、AI analysis 12（实际本地 workerd，供应商 mock）、render scheduling 11、AAI completion 13、publish workflow 39 项通过；发布工作流使用 Node 24。六语言检查及 Next.js／OpenNext 生产构建通过。当时尚未部署；后续发布记录见[验证记录](ai-analysis-validation.md)，Planner 真实定时发布和三小时真实内容验收仍缺失。

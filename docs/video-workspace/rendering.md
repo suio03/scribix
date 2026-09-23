@@ -8,7 +8,7 @@
 
 ## 预览代理与任务
 
-> 状态：本地实现与验证完成；生产调度已迁移到 Cloudflare Containers，尚未部署
+> 状态：早期本地验证保留为实现依据；现行部署与验收以[部署运维记录](operations.md)和[后台分析验证记录](ai-analysis-validation.md)为准
 > Migration：`0027_preview_proxy_jobs.sql`
 > Provider：Cloudflare Queue + Containers
 
@@ -18,7 +18,7 @@ M3 为每个候选 segment 单独生成带 5 秒 handles 的轻量 proxy。Proxy
 `preview-720p-v1`：最长边 1280、H.264、AAC、MP4 `faststart`。它保留源画幅，不烧入字幕、
 品牌或最终 9:16 crop，也绝不会成为最终 renderer 的输入。
 
-候选前 3 名在 M2 保存成功后自动入队；其余候选由用户首次打开时懒生成。每个 segment
+候选前 5 名在保存成功后自动入队；其余候选由用户首次打开时懒生成。每个 segment
 独立拥有 job、asset、幂等键和错误状态，因此一个坏 segment 不会影响 transcript、其他候选
 或已成功的 proxy。Proxy 保存 7 天，到期后由 cleanup worker 删除 R2 object 并软删除 asset。
 
@@ -153,7 +153,7 @@ Cloudflare Queue dispatcher 同时处理 preview 与 final 两类任务。final 
 7. 用 `ffprobe` 校验尺寸、codec、时长和音轨后上传，再回调结果。
 
 最终渲染不会读取 preview proxy，也不会把 proxy 作为中间转码源。
-AI 候选为 15–45 秒且只使用一个连续 source segment，不做语义拼接；手动修剪只读取用户上传的 original source，不生成或补写不存在的视频内容。
+AI 候选为 15–90 秒且只使用一个连续 source segment，不做语义拼接；手动修剪只读取用户上传的 original source，不生成或补写不存在的视频内容。
 
 ### 可靠性
 
@@ -171,7 +171,7 @@ AI 候选为 15–45 秒且只使用一个连续 source segment，不做语义�
 - `npm run test:video-workspace`：覆盖 Render Spec、job/result contract 与边界校验。
 - `npm run build`：验证 Next.js 路由、UI 和服务端模块集成。
 
-远程 D1 migration、生产 Cloudflare Container/Queue consumer 发布均未执行；代码、Container 镜像构建和 Wrangler dry-run 已在本地通过。
+上述本地验证发生时，远程 D1 migration 与生产 Cloudflare Container/Queue consumer 尚未发布；后续远程记录见[部署与运维](operations.md)及[后台分析验证](ai-analysis-validation.md)。
 
 
 ### Timed framing and cover selection

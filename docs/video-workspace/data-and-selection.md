@@ -92,25 +92,26 @@ proxies，并清空 transcript 的旧 `audio_r2_key` 和 project 的 `source_ass
 
 ## AI 候选与完整性
 
-> 状态：本地实现与验证完成
+> 状态：以下早期 M2 验证保留为实现依据；动态批量分析的现行范围与发布记录见 [AI Clips 方案](../roadmap/ai-clips-generation-workflow.md)及[验证记录](ai-analysis-validation.md)
 > Migrations：`0026_clip_candidate_feedback.sql`、`0032_clip_candidate_origin.sql`、`0033_candidate_drafts.sql`
 
 ### 范围
 
-M2 只生成和筛选候选，不生成 preview proxy，也不会自动触发最终渲染。候选的固定 V1
-约束如下：
+M2 的早期同步路径只生成和筛选候选，不自动触发最终渲染。现行批量路径的范围和数量由 [AI Clips 方案](../roadmap/ai-clips-generation-workflow.md)定义；共同边界如下：
 
 - AI 候选允许为 0 个，禁止为了凑数量返回弱候选。
 - Creator 和 grandfathered Basic 可对不超过 45 秒的原视频直接编辑；Free 仍走 AI 候选流程。
-- 45 秒以上、3 分钟以内的原视频最多返回 3 个候选；超过 3 分钟最多返回 5 个。
-- 每个 AI 候选总时长 15–45 秒；用户手动调整后的最终时间线最多 60 秒。
+- AI 候选时长为 15–90 秒；批量路径最多展示 120 条，但不按视频时长保证产出数量。旧同步路径关闭批量开关时仍使用 1／3／5 条上限。
+- 用户手动调整后的最终时间线最多 90 秒。
 - 每个 AI 候选只使用一个连续 source segment，不做语义拼接。
 - 完整性是硬门槛：只看原始口播时，陌生观众必须能理解必要背景、核心观点和完整收尾；标题、hook 和字幕不能修补缺失上下文。
-- 用户进入编辑器后可从 original source 手动调整，EDL 最多 3 个 segments、总时长最多 60 秒；AI 不会自动拼接分散片段或改变原意。
-- 45 秒内无法做到独立可理解时直接放弃候选，不延长到 60 秒，也不通过 AI 旁白补充背景。
-- 候选保存后前 3 名自动准备 preview proxies，其余首次打开时懒生成；选择候选与反馈不触发最终渲染。
+- 用户进入编辑器后可从 original source 手动调整，EDL 最多 3 个 segments、总时长最多 90 秒；AI 不会自动拼接分散片段或改变原意。
+- 在选定时长范围内无法做到独立可理解时放弃候选，不通过 AI 旁白补充背景。
+- 候选保存后只自动预热前 5 名的 preview proxies，其余首次打开时懒生成；选择候选与反馈不触发最终渲染。
 
-### 受控 AI 输入
+### 早期同步路径的受控 AI 输入
+
+以下记录保留旧同步路径的输入与二审边界；生产批量路径采用持久化分批发现、统一复审与按需预览，见 [AI Clips 方案](../roadmap/ai-clips-generation-workflow.md)。
 
 服务端读取现有 R2 transcript 的完整 words，在内存生成句子编号和 word 索引映射：
 
@@ -146,7 +147,7 @@ Provider 只返回候选内容和 `startSentenceId` / `endSentenceId`；稳定 c
 
 - `accept` 返回原始句子编号，保留第一阶段的原始范围。
 - `adjust` 只能修改首尾句子编号，且必须与原候选重叠，用于补齐背景或收尾；不能改写主题、hook、reason 或 score。
-- `reject` 将两个句子编号设为 null，删除 45 秒内无法修复的候选。
+- `reject` 将两个句子编号设为 null，删除在允许时长内无法修复的候选。
 
 二审必须恰好返回每个 candidate index 一次；缺失、重复、未知字段或非法 verdict 会使整个
 provider payload 在写入 D1 前失败。两阶段分别记录 token、reasoning token、cache hit 和估算费用；长文本第一阶段汇总各批次 usage。
@@ -160,7 +161,7 @@ provider payload 在写入 D1 前失败。两阶段分别记录 token、reasonin
 3. 二审 strict JSON Schema、candidate index 完整性与本地 exact-key 校验。
 4. 原始时间范围越界、反向区间和 segment 数量检查。
 5. 将有效句子编号直接映射到保留的真实 word 起止时间；拒绝未知、反向、不连续或超出该候选上下文的编号。显示的近似时间不参与反推，AI 新流程不依赖最近时间猜测。
-6. 单 segment 至少 2 秒；AI 候选总时长必须在 15–45 秒。
+6. 单 segment 至少 2 秒；AI 候选总时长必须在 15–90 秒。
 7. 同一候选的 source ranges 不得重叠。
 8. 按 score 排序，以 source 时间覆盖率 80% 为阈值去除高度重复候选。
 9. 再次通过共享 `ClipCandidate` contract 后才能写入 D1。

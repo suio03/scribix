@@ -14,7 +14,7 @@ M8 的本地实现覆盖输入边界、任务资源边界、恢复路径和可�
 
 - preview 与 final 当前共用 1 vCPU / 3 GiB / 6 GB 的 Container profile，application `max_instances=10`，Queue consumer `max_concurrency=1`。final 的单次 FFmpeg 执行有 55 分钟异常停止上限。
 - 同一用户最多两个已排队或执行中的 final jobs（提交额度）；执行时 preview 和 final 跨项目合计最多一个。滚动 24 小时最多创建 20 个 final jobs。API 先返回可读的 `429`，D1 trigger 再关闭并发请求的竞态窗口。
-- Render Spec 最长输出 60 秒、最多 3 segments；AI 候选本身只使用一个连续 segment。源视频和品牌资产沿用套餐、字节数和时长限制。
+- Render Spec 最长输出 90 秒、最多 3 segments；AI 候选本身只使用一个连续 segment。源视频和品牌资产沿用套餐、字节数和时长限制。
 - Logo/字体完成上传时同时检查对象大小与 magic bytes；伪装为图片或字体的内容会从 R2 删除并标记失败。
 - 原视频、Logo、字体、输出和封面全部使用 job-scoped 短期 URL。Container 不持有 R2 凭证，不能列举 bucket。
 - internal lease/progress/result 使用 job-scoped HMAC bearer token；浏览器会话不能调用这些内部流程。
@@ -151,11 +151,11 @@ export requests.
 
 ### 社交发布的附加依赖
 
-账号与发布接入、专用应用凭证、试点名单、精确 OAuth 回调、Teleo 外部迁移及平台验收统一见 [social-publishing](social-publishing.md)。生产回调不能直接沿用本地 `local.scribix.io`；外部服务部署不代表 Scribix 部署。TikTok 最近记录仍为 Direct Post 待审核；账号刷新仍有外部服务部署与真实续期待办。部署时重新核对，不把历史状态当实时查询结果。
+账号与发布接入、专用应用凭证、精确 OAuth 回调、外部迁移及平台验收统一见 [social-publishing](social-publishing.md)。当前没有用户 ID 发布白名单，仍须验证登录、套餐和资源归属。生产回调不能直接沿用本地 `local.scribix.io`；外部服务部署不代表 Scribix 全流程验收。TikTok Direct Post 已有批准和部署记录，真实账号授权及发布仍待用户验收，见[生产发布记录](tiktok-production-release-2026-09-17.md)。账号刷新也需核对外部部署与真实续期；部署时重查平台状态。
 
 ### 6. Production smoke 与试点
 
-使用 allowlist 内部账号依次验证：横屏有声、竖屏静音、连续片段修剪、Fill 拖动裁切与 Fit 模式、三个字幕模板、Logo/字体、取消、重试、重复 idempotency key、源过期、ZIP 下载、成片删除、账户删除。确认 Final Render 只读取 original source，同一 candidate 的新导出会替换旧导出。
+使用授权测试账号依次验证：横屏有声、竖屏静音、连续片段修剪、Fill 拖动裁切与 Fit 模式、三个字幕模板、Logo/字体、取消、重试、重复 idempotency key、源过期、ZIP 下载、成片删除、账户删除。确认 Final Render 只读取 original source，同一 candidate 的新导出会替换旧导出。
 
 同时验证公开入口：`/` 继续承接 AI video clipper 首页，`/video-to-text` 及五个 locale 版本承接原视频转文字页面；检查侧边栏链接、上传后登录回跳、自引用 canonical、reciprocal hreflang、Open Graph、JSON-LD 和 sitemap 记录。
 
@@ -215,7 +215,7 @@ GET /api/admin/video-workspace-metrics?days=30
 ### 建议放量阈值
 
 - 至少 30 个 terminal final jobs 后，首次/总体 render 成功率 ≥ 95%。
-- ≤60 秒输出的 p95 total latency ≤ 10 分钟，p95 start latency ≤ 5 分钟。
+- 原有 ≤60 秒输出的放量观察线：p95 total latency ≤ 10 分钟，p95 start latency ≤ 5 分钟；90 秒输出需单独积累真实任务样本，不套用该阈值。
 - 成功 render 的唯一下载率 ≥ 70%。
 - 通过自愿访谈记录实际外部修改需求；现有事件比率受入口和反馈覆盖限制，不设为无偏质量指标。
 - candidate 接受率和编辑时长只用于趋势：初始目标接受率 ≥ 40%、编辑 p50 ≤ 5 分钟，不以合成数据决定产品结论。

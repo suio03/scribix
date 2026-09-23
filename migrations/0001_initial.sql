@@ -1,4 +1,4 @@
--- Scribix v1 initial schema. Historical design: docs/archive/plans/progress.md §5.
+-- Scribix v1 initial schema. Subsequent schema changes live in the numbered migrations.
 
 -- Users
 CREATE TABLE users (
