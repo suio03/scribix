@@ -41,7 +41,7 @@ These are neither real customer projects nor endorsements. Example timestamps, s
 - `public/media/home-features-v3/*.webp`: six 1600 × 900 feature illustrations.
 - `public/media/home-artwork/*.webp`: four generated photo assets used by the illustrations and lower-page sections.
 
-See [rendering instructions and exact image-generation prompt](../scripts/homepage-media/README.md). The built-in imagegen tool generated the photo sheet; Remotion creates the layouts and motion, Sharp compresses images, FFmpeg removes audio and prepares delivery metadata. Application runtime has no Remotion dependency. Old v2 and home-variety assets remain archival and are not referenced by the new homepage.
+See [rendering instructions and exact image-generation prompt](../scripts/homepage-media/README.md). The built-in imagegen tool generated the photo sheet; Remotion creates the layouts and motion, Sharp compresses images, FFmpeg removes audio and prepares delivery metadata. Application runtime has no Remotion dependency. The original `scribix-hero` video and `home-variety` assets remain archival and are not referenced by the new homepage. Intermediate v2–v4 renders were not retained.
 
 ## Retired licensed footage provenance
 
