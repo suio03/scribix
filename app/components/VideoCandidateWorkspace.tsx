@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentProps } from "react";
+import { useEffect, useRef, useState, type ComponentProps, type KeyboardEvent, type ReactNode } from "react";
 import {
   LayoutGrid, List, ArrowLeft, Heart,
   AlertCircle,
@@ -31,6 +31,7 @@ import { AI_CLIP_MIN_DURATION_MS } from "@/lib/video-workspace/candidate-generat
 import { AI_ANALYSIS } from "@/lib/video-workspace/analysis-config";
 import type { StoredClipCandidate } from "@/lib/video-workspace/candidates";
 import { SourceClipWorkspace } from "./SourceClipWorkspace";
+import { AnalysisRangePicker } from "./AnalysisRangePicker";
 import { GenerationSettingsPanel } from "./GenerationSettingsPanel";
 import { ClipPreviewDialog } from "./ClipPreviewDialog";
 import { ClipStyledPoster } from "./ClipStyledPoster";
@@ -87,7 +88,7 @@ function VideoCandidateWorkspaceContent({
   const [batchEnabled, setBatchEnabled] = useState(false);
   const [task, setTask] = useState<AnalysisTaskView | null>(null);
   const [rangeStart, setRangeStart] = useState(0);
-  const [rangeEnd, setRangeEnd] = useState((sourceDurationMs ?? 0) / 1000);
+  const [rangeEnd, setRangeEnd] = useState(Math.min(sourceDurationMs ?? 0, AI_ANALYSIS.maxRangeMs) / 1000);
   const [rangeError, setRangeError] = useState<false | "invalid" | "dense">(false);
   const [selection, setSelection] = useState<SelectionState | null>(null);
   const [transcriptId, setTranscriptId] = useState<string | null>(null);
@@ -388,15 +389,34 @@ function VideoCandidateWorkspaceContent({
     }
   }, [selectedCandidateId, sourceAvailable, previews, previewBusy, candidates.length]);
 
+  const listRef = useRef<HTMLDivElement>(null);
+  // Arrow keys (and j/k) step through clips; list view also selects, grid view only moves focus.
+  const onListKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const keys = layout === "list"
+      ? { ArrowDown: 1, j: 1, ArrowUp: -1, k: -1 }
+      : { ArrowRight: 1, ArrowDown: 1, j: 1, ArrowLeft: -1, ArrowUp: -1, k: -1 };
+    const delta = keys[event.key as keyof typeof keys];
+    if (!delta || event.metaKey || event.ctrlKey || event.altKey) return;
+    const options = Array.from(listRef.current?.querySelectorAll<HTMLButtonElement>("[role=option]") ?? []);
+    const current = options.findIndex(option => option === document.activeElement);
+    const from = current >= 0 ? current : Math.max(0, reviewIndex);
+    const next = options[Math.min(options.length - 1, Math.max(0, from + delta))];
+    if (!next) return;
+    event.preventDefault();
+    next.focus();
+    next.scrollIntoView({ block: "nearest" });
+    if (layout === "list" && next.dataset.candidateId) selectCandidate(next.dataset.candidateId);
+  };
+
   useEffect(() => {
     if (!task && !batchEnabled && status === "waiting" && transcriptReady) void generate();
   }, [status, transcriptReady, task, batchEnabled]);
 
   return (
     <section id="clips" className="mt-3 scroll-mt-6">
-      <div className="mb-1 flex gap-2 border-b border-line pb-1" role="tablist" aria-label={sourceT("navigation")}>
-        <button role="tab" aria-selected={workspaceTab === "clips"} className={`rounded-lg px-4 py-2 text-sm font-semibold ${workspaceTab === "clips" ? "bg-accent/15 text-accent" : "text-muted"}`} onClick={()=>setWorkspaceTab("clips")}>{sourceT("clips",{count:candidates.length})}</button>
-        {sourceAvailable && <button role="tab" aria-selected={workspaceTab === "source"} className={`rounded-lg px-4 py-2 text-sm font-semibold ${workspaceTab === "source" ? "bg-accent/15 text-accent" : "text-muted"}`} onClick={()=>setWorkspaceTab("source")}>{sourceT("manualSelection")}</button>}
+      <div className="flex gap-1 border-b border-line" role="tablist" aria-label={sourceT("navigation")}>
+        <WorkspaceTab selected={workspaceTab === "clips"} icon={<Film size={15} />} onClick={()=>setWorkspaceTab("clips")}>{sourceT("clips",{count:candidates.length})}</WorkspaceTab>
+        {sourceAvailable && <WorkspaceTab selected={workspaceTab === "source"} icon={<Scissors size={15} />} onClick={()=>setWorkspaceTab("source")}>{sourceT("manualSelection")}</WorkspaceTab>}
       </div>
       {sourceAvailable && <div hidden={workspaceTab !== "source"}><SourceClipWorkspace active={workspaceTab === "source"} projectId={projectId} canEdit={canEdit} onCreated={(items,id)=>{setCandidates(items);setSelectedCandidateId(id);setWorkspaceTab("clips");setEditing(true);setPreviewOpen(false);setEditorSaveState("saved");}} /></div>}
       <div hidden={workspaceTab !== "clips"}>
@@ -421,7 +441,7 @@ function VideoCandidateWorkspaceContent({
             <button
               type="button"
               onClick={() => setWorkspaceTab("source")}
-              className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-[12px] font-medium text-ink transition hover:border-ink/35 hover:bg-ink hover:text-paper disabled:cursor-wait disabled:opacity-40"
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-line bg-card px-4 py-2 text-meta font-medium text-ink transition hover:border-ink/35 hover:bg-ink hover:text-paper disabled:cursor-wait disabled:opacity-40"
             >
               <Scissors size={14} />
               {t("createCustomClip")}
@@ -430,58 +450,51 @@ function VideoCandidateWorkspaceContent({
         ) : null}
       </div>
 
-      {status === "transcript_failed" ? <p role="alert" className="mt-5 rounded-xl border border-line p-4 text-sm">{ts("transcriptFailed")} {transcriptId ? <Link className="underline" href={`/dashboard/transcripts/${transcriptId}`}>{ts("reviewTranscript")}</Link> : null}</p> : null}
+      {status === "transcript_failed" ? <Notice tone="danger">{ts("transcriptFailed")} {transcriptId ? <Link className="font-semibold underline underline-offset-2" href={`/dashboard/transcripts/${transcriptId}`}>{ts("reviewTranscript")}</Link> : null}</Notice> : null}
       {selectionLoaded && status !== "transcript_failed" && sourceAvailable && !shortSource && !generating && !candidates.some(candidate => candidate.origin === "ai") && selection?.outcome !== "matched" ? (
         <div>
-          {batchEnabled ? <fieldset disabled={Boolean(task && ["waiting","running","failed"].includes(task.status))} className="mt-4 flex flex-wrap gap-4 rounded-xl border border-line p-4">
-            <legend className="text-sm">{ts("analysisRange")}</legend>
-            <label className="text-sm">{ts("rangeStart")}<input type="number" min={0} step={1} value={rangeStart} onChange={event=>setRangeStart(Number(event.target.value))} className="ml-2 w-28 rounded border border-line bg-paper p-2" /></label>
-            <label className="text-sm">{ts("rangeEnd")}<input type="number" min={0} step={1} value={rangeEnd} onChange={event=>setRangeEnd(Number(event.target.value))} className="ml-2 w-28 rounded border border-line bg-paper p-2" /></label>
-            <p className="w-full text-xs text-muted">{ts("rangeHint",{minutes:AI_ANALYSIS.maxRangeMs/60_000,minSeconds:AI_CLIP_MIN_DURATION_MS/1000,maxSeconds:VIDEO_WORKSPACE_LIMITS.maxAiCandidateDurationMs/1000})}</p>
+          {batchEnabled ? <fieldset disabled={Boolean(task && ["waiting","running","failed"].includes(task.status))} className="disabled:opacity-60">
+            <AnalysisRangePicker
+              durationMs={sourceDurationMs ?? 0}
+              maxRangeMs={AI_ANALYSIS.maxRangeMs}
+              start={rangeStart}
+              end={rangeEnd}
+              invalid={Boolean(rangeError)}
+              hint={ts("rangeHint",{minutes:AI_ANALYSIS.maxRangeMs/60_000,minSeconds:AI_CLIP_MIN_DURATION_MS/1000,maxSeconds:VIDEO_WORKSPACE_LIMITS.maxAiCandidateDurationMs/1000})}
+              onChange={(start,end)=>{setRangeStart(start);setRangeEnd(end);setRangeError(false);}}
+            />
           </fieldset> : null}
-          {rangeError ? <p role="alert" className="mt-2 text-sm text-red-600">{rangeError === "dense" ? ts("rangeDense") : ts("rangeInvalid",{minutes:AI_ANALYSIS.maxRangeMs/60_000})}</p> : null}
+          {rangeError ? <Notice tone="danger">{rangeError === "dense" ? ts("rangeDense") : ts("rangeInvalid",{minutes:AI_ANALYSIS.maxRangeMs/60_000})}</Notice> : null}
           {task?.status !== "failed" || task.canRetry ? <SelectionRequestForm requirements={requirements} selection={selection} unsupported={unsupported} onChange={setRequirements} onStart={() => void generate()}><GenerationSettingsPanel projectId={projectId} value={requirements} onChange={setRequirements} disabled={Boolean(task && ["waiting","running","failed"].includes(task.status))} durationMs={sourceDurationMs ?? 0}/></SelectionRequestForm> : null}
         </div>
       ) : null}
       {candidates.length > 0 && selection ? <p className="sr-only">{ts("summary")}: {selection.requirements.mode === "auto" ? ts("auto") : `${selection.requirements.topic} · ${ts(`kinds.${selection.requirements.kind}`)}`}</p> : null}
 
       {!sourceAvailable ? (
-        <div className="mt-5 flex items-center gap-2 rounded-xl border border-amber-300/35 bg-amber-100/35 px-4 py-3 text-xs text-amber-900 dark:bg-amber-400/10 dark:text-amber-100">
-          <Archive size={14} />
-          <span>{t("sourceUnavailableBody")}</span>
-        </div>
+        <Notice tone="info" icon={<Archive size={15} />}>{t("sourceUnavailableBody")}</Notice>
       ) : null}
 
       {error ? (
-        <p role="alert" className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-800">
-          {t("requestFailed")}
-        </p>
+        <Notice tone="danger">{t("requestFailed")}</Notice>
       ) : null}
 
-      {task ? <details open={task.status!=="completed" || Boolean(task.limitedReason)} className="mt-2 text-xs text-muted"><summary className="cursor-pointer py-1">{ts(`phases.${task.phase}`)} · {ts("batchProgress",{completed:task.completedBatches,total:task.totalBatches})}</summary><div role="status" className="mt-2 space-y-1">
-        <p>{ts(`phases.${task.phase}`)} · {ts("batchProgress",{completed:task.completedBatches,total:task.totalBatches})}</p>
-        <p>{ts("rangeSummary",{start:task.range.startMs/1000,end:task.range.endMs/1000})}</p>
-        {task.limitedReason ? <p>{ts("limited")}</p> : null}
-        {task.errorCode ? <p>{ts(task.errorCode === "unsupported_selection" ? "unsupported" : task.errorCode === "analysis_input_too_large" ? "rangeDense" : "partialFailed")} <code>{task.errorCode}</code></p> : null}
-        {task.steps.filter(step=>["failed","limited"].includes(step.status)).map(step=><p key={step.id}>{step.ranges.map(range=>ts("rangeSummary",{start:range.startMs/1000,end:range.endMs/1000})).join(" · ")} — {step.error_code ?? ts("limited")}</p>)}
-        {generating ? <p>{ts("canLeave")}</p> : null}
-      </div></details> : null}
+      {task && (task.status !== "completed" || task.limitedReason || task.errorCode) ? <AnalysisProgress task={task} active={generating} /> : null}
       {generating ? <CandidateSkeleton label={status === "waiting" ? ts("waiting") : t("analyzingBody")} /> : null}
 
       {!sourceAvailable && candidates.length === 0 ? (
-        <div className="mt-8 grid min-h-64 place-items-center rounded-2xl border border-dashed border-line bg-card/35 px-6 text-center">
+        <div className="mt-8 grid min-h-64 place-items-center rounded-card border border-dashed border-line bg-card/35 px-6 text-center">
           <div className="max-w-md py-12">
             <span className="mx-auto inline-grid size-11 place-items-center rounded-full border border-line bg-paper text-muted">
               <Archive size={18} />
             </span>
             <h3 className="mt-4 font-display text-xl font-semibold">{t("sourceUnavailableTitle")}</h3>
-            <p className="mt-2 text-[13px] leading-6 text-ink/55">{t("sourceUnavailableEmpty")}</p>
+            <p className="mt-2 text-body-sm leading-6 text-ink/55">{t("sourceUnavailableEmpty")}</p>
           </div>
         </div>
       ) : null}
 
       {sourceAvailable && shortSource && !generating && candidates.length === 0 ? (
-        <div className="mt-8 grid min-h-64 place-items-center rounded-2xl border border-dashed border-line bg-card/35 px-6 text-center">
+        <div className="mt-8 grid min-h-64 place-items-center rounded-card border border-dashed border-line bg-card/35 px-6 text-center">
           <div className="max-w-md py-12">
             <span className="mx-auto inline-grid size-11 place-items-center rounded-full border border-line bg-paper text-accent">
               <Sparkles size={18} />
@@ -489,7 +502,7 @@ function VideoCandidateWorkspaceContent({
             <h3 className="mt-4 font-display text-xl font-semibold">
               {status === "candidates_ready" ? t("noQualityTitle") : t("emptyTitle")}
             </h3>
-            <p className="mt-2 text-[13px] leading-6 text-ink/55">
+            <p className="mt-2 text-body-sm leading-6 text-ink/55">
               {status === "candidates_ready"
                 ? t(canEdit ? "noQualityBody" : "noQualityBodyFree")
                 : shortSource
@@ -500,7 +513,7 @@ function VideoCandidateWorkspaceContent({
               <button
                 type="button"
                 onClick={() => setWorkspaceTab("source")}
-                  className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[12px] font-semibold text-paper transition hover:bg-accent disabled:opacity-40"
+                  className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-meta font-semibold text-white transition hover:bg-[var(--accent-hover)] disabled:opacity-40"
               >
                 <Scissors size={14} />
                 {t("directEdit")}
@@ -511,16 +524,25 @@ function VideoCandidateWorkspaceContent({
       ) : null}
 
       {!generating && candidates.length > 0 ? <>
-        {editing ? <div className="mb-4 mt-4 flex items-center justify-between border-b border-line pb-4"><button type="button" disabled={editorSaveState !== "saved"} onClick={()=>{setEditing(false);if(layout==="grid")setPreviewOpen(true);}} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line px-4 text-sm font-semibold disabled:opacity-40"><ArrowLeft size={16}/>{tw("back")}</button><span className="text-xs text-muted">{tw("editing")}</span></div> : <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-y border-line py-2">
-          <div className="flex items-center gap-3"><div className="flex rounded-lg border border-line p-1">{(["list","grid"] as const).map(view=><button key={view} aria-label={tw(view)} aria-pressed={layout===view} onClick={()=>{setLayout(view);setPreviewOpen(false);}} className="grid size-10 place-items-center rounded-md text-muted hover:text-ink aria-pressed:bg-accent/10 aria-pressed:text-accent">{view==="list"?<List size={18}/>:<LayoutGrid size={18}/>}</button>)}</div><span className="text-sm font-semibold">{sourceT("clips",{count:candidates.length})}</span></div>
-          <div className="flex gap-2"><select aria-label={tw("filter")} value={filter} onChange={e=>setFilter(e.target.value)} className="min-h-11 rounded-lg border border-line bg-card px-3 text-sm">{["all","keep","discard"].map(v=><option key={v} value={v}>{tw(v)}</option>)}</select><select aria-label={tw("sort")} value={sort} onChange={e=>setSort(e.target.value)} className="min-h-11 rounded-lg border border-line bg-card px-3 text-sm">{["recommended","chronological","shortest","longest"].map(v=><option key={v} value={v}>{tw(v)}</option>)}</select></div>
+        {editing ? <div className="mb-4 mt-4 flex items-center justify-between gap-3 border-b border-line pb-4">
+          <button type="button" disabled={editorSaveState !== "saved"} onClick={()=>{setEditing(false);if(layout==="grid")setPreviewOpen(true);}} className="inline-flex min-h-10 items-center gap-2 rounded-control border border-line bg-card px-4 text-body-sm font-semibold text-ink transition hover:border-ink/30 disabled:opacity-40"><ArrowLeft size={16}/>{tw("back")}</button>
+          <span className="inline-flex items-center gap-2 text-meta text-muted"><span aria-hidden className="size-1.5 rounded-full bg-accent" />{tw("editing")}</span>
+        </div> : <div className={`mt-4 flex flex-wrap items-center justify-between gap-3 border border-line bg-card px-3 py-2 ${layout==="list" ? "rounded-t-card" : "rounded-card"}`}>
+          <div className="flex items-center gap-3">
+            <div className="flex rounded-control bg-paper p-0.5" role="group">{(["list","grid"] as const).map(view=><button key={view} type="button" aria-label={tw(view)} title={tw(view)} aria-pressed={layout===view} onClick={()=>{setLayout(view);setPreviewOpen(false);}} className="grid size-9 place-items-center rounded-[10px] text-muted transition hover:text-ink aria-pressed:bg-card aria-pressed:text-ink aria-pressed:shadow-sm">{view==="list"?<List size={17}/>:<LayoutGrid size={17}/>}</button>)}</div>
+            <span className="text-body-sm font-semibold text-ink">{sourceT("clips",{count:candidates.length})}</span>
+          </div>
+          <div className="flex gap-2">
+            <select aria-label={tw("filter")} value={filter} onChange={e=>setFilter(e.target.value)} className="min-h-10 rounded-control border border-line bg-card px-3 text-body-sm">{["all","keep","discard"].map(v=><option key={v} value={v}>{tw(v)}</option>)}</select>
+            <select aria-label={tw("sort")} value={sort} onChange={e=>setSort(e.target.value)} className="min-h-10 rounded-control border border-line bg-card px-3 text-body-sm">{["recommended","chronological","shortest","longest"].map(v=><option key={v} value={v}>{tw(v)}</option>)}</select>
+          </div>
         </div>}
-        <div className={!editing && layout==="list" ? "mt-0 grid items-start overflow-hidden rounded-b-2xl border-x border-b border-line bg-card lg:h-[calc(100dvh-250px)] lg:min-h-[500px] lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)]" : "mt-4"}>
-          {!editing ? <div className={layout==="list" ? "max-h-[340px] overflow-y-auto border-b border-line lg:h-full lg:max-h-none lg:border-b-0 lg:border-r" : "grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4"} role="listbox" aria-label={t("shortlistTitle")}>
+        <div className={!editing && layout==="list" ? "grid items-start overflow-hidden rounded-b-card border-x border-b border-line bg-card lg:h-[calc(100dvh-250px)] lg:min-h-[500px] lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)]" : "mt-4"}>
+          {!editing ? <div ref={listRef} onKeyDown={onListKeyDown} className={layout==="list" ? "max-h-[340px] overflow-y-auto border-b border-line lg:h-full lg:max-h-none lg:border-b-0 lg:border-r" : "grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4"} role="listbox" aria-label={t("shortlistTitle")}>
             {visibleCandidates.map(candidate=><CandidateTile key={candidate.id} layout={layout} projectId={projectId} candidate={candidate} number={candidate.rank+1} selected={candidate.id===selectedCandidateId} pending={candidate.id===pendingCandidateId} preview={previews.find(p=>p.candidateId===candidate.id)??null} previewBusy={candidate.id===previewBusy} sourceAvailable={sourceAvailable} coverUrl={initialRenders.find(r=>r.candidateId===candidate.id && r.videoUrl)?.coverUrl??null} onSelect={selectCandidate} onRequestPreview={requestPreview} onDelete={candidate.origin==="manual"?()=>setCandidateToDelete(candidate.id):undefined}/>)}
-            {!candidates.some(c=>filter==="all" || c.reviewMark===filter) ? <p className="p-6 text-sm text-muted">{tw("noResults")}</p> : null}
+            {!candidates.some(c=>filter==="all" || c.reviewMark===filter) ? <p className="p-6 text-body-sm text-muted">{tw("noResults")}</p> : null}
           </div> : null}
-          {selectedCandidate && (layout === "list" || editing || previewOpen) ? <ClipPreviewDialog modal={layout === "grid" && !editing} onClose={()=>setPreviewOpen(false)} onPrevious={reviewIndex>0?()=>selectCandidate(visibleCandidates[reviewIndex-1].id):undefined} onNext={reviewIndex>=0 && reviewIndex<visibleCandidates.length-1?()=>selectCandidate(visibleCandidates[reviewIndex+1].id):undefined}><div ref={editorRef} className={editing ? "mt-5 scroll-mt-6 rounded-2xl border border-line bg-card" : "min-w-0 scroll-mt-6 lg:h-full lg:overflow-y-auto"}>
+          {selectedCandidate && (layout === "list" || editing || previewOpen) ? <ClipPreviewDialog modal={layout === "grid" && !editing} onClose={()=>setPreviewOpen(false)} onPrevious={reviewIndex>0?()=>selectCandidate(visibleCandidates[reviewIndex-1].id):undefined} onNext={reviewIndex>=0 && reviewIndex<visibleCandidates.length-1?()=>selectCandidate(visibleCandidates[reviewIndex+1].id):undefined}><div ref={editorRef} className={editing ? "mt-5 scroll-mt-6 rounded-card border border-line bg-card" : "min-w-0 scroll-mt-6 lg:h-full lg:overflow-y-auto"}>
             {!sourceAvailable ? <ArchivedClipExport projectId={projectId} candidate={selectedCandidate} onExportDeleted={()=>setCandidates(current=>current.filter(c=>c.id!==selectedCandidate.id))}/> : editing && canEdit ? <VideoClipEditor key={selectedCandidate.id} projectId={projectId} candidateId={selectedCandidate.id} onSaveStateChange={setEditorSaveState} onTitleChange={title=>setCandidates(current=>current.map(c=>c.id===selectedCandidate.id?{...c,theme:title}:c))}/> : <ClipReviewPreview key={selectedCandidate.id} projectId={projectId} candidate={selectedCandidate} canEdit={canEdit} previewStatus={previews.find(p=>p.candidateId===selectedCandidate.id)?.status} onEdit={()=>{setPreviewOpen(false);setEditing(true);editorRef.current?.scrollIntoView({behavior:"smooth",block:"start"});}} onMark={async reviewMark=>{const r=await fetch(`/api/video-projects/${projectId}/candidates/${selectedCandidate.id}`,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({reviewMark})});if(!r.ok){setError(true);return;}setCandidates(current=>current.map(c=>c.id===selectedCandidate.id?{...c,reviewMark}:c));}}/>}
           </div></ClipPreviewDialog> : null}
         </div>
@@ -537,17 +559,17 @@ function VideoCandidateWorkspaceContent({
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-custom-clip-title"
-            className="surface-modal w-full max-w-[420px] overflow-hidden rounded-xl border border-line bg-card shadow-2xl shadow-ink/20"
+            className="surface-modal w-full max-w-[420px] overflow-hidden rounded-card border border-line bg-card shadow-2xl shadow-ink/20"
           >
             <div className="flex items-start gap-3 border-b border-line bg-paper/70 px-5 py-4">
-              <span className="mt-0.5 inline-grid size-9 shrink-0 place-items-center rounded-full bg-red-500/10 text-red-600">
+              <span className="mt-0.5 inline-grid size-9 shrink-0 place-items-center rounded-full bg-rec/10 text-rec">
                 <AlertTriangle size={18} strokeWidth={1.8} />
               </span>
               <div className="min-w-0 flex-1">
-                <h2 id="delete-custom-clip-title" className="text-[15px] font-semibold text-ink">
+                <h2 id="delete-custom-clip-title" className="text-title-sm font-semibold text-ink">
                   {t("deleteCustomTitle")}
                 </h2>
-                <p className="mt-1 text-[13px] leading-5 text-muted">{t("deleteCustomBody")}</p>
+                <p className="mt-1 text-body-sm text-muted">{t("deleteCustomBody")}</p>
               </div>
               <button
                 type="button"
@@ -564,7 +586,7 @@ function VideoCandidateWorkspaceContent({
                 type="button"
                 onClick={() => setCandidateToDelete(null)}
                 disabled={deleteBusy}
-                className="rounded-full border border-line px-4 py-2 text-[13px] font-medium text-ink transition hover:bg-ink/5 disabled:opacity-50"
+                className="rounded-full border border-line px-4 py-2 text-body-sm font-medium text-ink transition hover:bg-ink/5 disabled:opacity-50"
               >
                 {t("deleteCustomCancel")}
               </button>
@@ -572,7 +594,7 @@ function VideoCandidateWorkspaceContent({
                 type="button"
                 onClick={() => void deleteCustomClip()}
                 disabled={deleteBusy}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-red-700 disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-rec px-4 py-2 text-body-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
               >
                 {deleteBusy ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
                 {deleteBusy ? t("deletingCustom") : t("deleteCustomConfirm")}
@@ -599,13 +621,13 @@ function ArchivedClipExport({
   return (
     <section className="grid gap-6 px-5 py-6 sm:px-7 sm:py-7 lg:grid-cols-[minmax(0,0.88fr)_minmax(320px,1.12fr)]">
       <div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+        <p className="font-mono text-caption uppercase tracking-[0.16em] text-accent">
           {t("sourceUnavailableEyebrow")}
         </p>
         <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink">
           {candidate.theme === "manual_source" ? t("manualTitle") : candidate.theme}
         </h3>
-        <p className="mt-2 text-[13px] leading-6 text-ink/60">{t("archivedClipBody")}</p>
+        <p className="mt-2 text-body-sm leading-6 text-ink/60">{t("archivedClipBody")}</p>
       </div>
       <FinalRenderPanel
         projectId={projectId}
@@ -633,32 +655,32 @@ function FreeCandidateExport({
   return (
     <section className="grid gap-6 px-5 py-6 sm:px-7 sm:py-7 lg:grid-cols-[minmax(0,0.88fr)_minmax(320px,1.12fr)]">
       <div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+        <p className="font-mono text-caption uppercase tracking-[0.16em] text-accent">
           {t("eyebrow")}
         </p>
         <h3 className="mt-2 font-display text-2xl font-semibold tracking-tight text-ink">
           {t("title")}
         </h3>
-        <p className="mt-2 text-[13px] leading-6 text-ink/60">{t("body")}</p>
+        <p className="mt-2 text-body-sm leading-6 text-ink/60">{t("body")}</p>
 
-        <div className="mt-5 rounded-xl border border-line bg-paper/60 p-4">
-          <p className="text-[12px] font-semibold text-ink">{candidate.theme}</p>
-          <p className="mt-2 text-[11px] leading-5 text-ink/50">{t("included")}</p>
+        <div className="mt-5 rounded-control border border-line bg-paper/60 p-4">
+          <p className="text-meta font-semibold text-ink">{candidate.theme}</p>
+          <p className="mt-2 text-caption leading-5 text-ink/50">{t("included")}</p>
         </div>
       </div>
 
       <div className="space-y-4">
-        <div className="rounded-xl border border-accent/25 bg-accent/[0.055] p-4">
+        <div className="rounded-control border border-accent/25 bg-accent/[0.055] p-4">
           <div className="flex items-start gap-3">
             <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-accent/10 text-accent">
               <LockKeyhole size={14} />
             </span>
             <div>
-              <p className="text-[12px] font-semibold text-ink">{t("lockedTitle")}</p>
-              <p className="mt-1 text-[11px] leading-5 text-ink/55">{t("lockedBody")}</p>
+              <p className="text-meta font-semibold text-ink">{t("lockedTitle")}</p>
+              <p className="mt-1 text-caption leading-5 text-ink/55">{t("lockedBody")}</p>
               <Link
                 href="/pricing"
-                className="mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-[11px] font-semibold text-white transition hover:bg-ink"
+                className="mt-3 inline-flex rounded-full bg-accent px-4 py-2 text-caption font-semibold text-white transition hover:bg-ink"
               >
                 {t("upgrade")}
               </Link>
@@ -709,6 +731,7 @@ function CandidateTile({
   layout: "list" | "grid";
 }) {
   const t = useTranslations("Dashboard.videoCandidates");
+  const tw = useTranslations("ClipWorkflow");
   const durationMs = candidate.segments.reduce(
     (total, segment) => total + segment.endMs - segment.startMs,
     0
@@ -717,20 +740,34 @@ function CandidateTile({
   const processing = preview?.status === "processing";
   const failed = preview?.status === "failed";
 
+  const listLayout = layout === "list";
+  const scorePct = candidate.origin === "ai" ? Math.round(candidate.score * 100) : null;
+  const statusLine = pending ? (
+    <><Loader2 size={11} className="animate-spin" />{t("editor.saveState.saving")}</>
+  ) : queued ? (
+    <><Clock3 size={11} />{t("editor.finalRender.status.queued")}</>
+  ) : processing || previewBusy ? (
+    <><Loader2 size={11} className="animate-spin" />{t("previewProcessing")}</>
+  ) : failed ? (
+    <span className="inline-flex items-center gap-1.5 text-rec"><AlertCircle size={11} />{t("previewFailed")}</span>
+  ) : null;
+
   return (
     <div className="group relative min-w-0">
       <button
         type="button"
         role="option"
         aria-selected={selected}
+        data-candidate-id={candidate.id}
         onClick={() => onSelect(candidate.id)}
-        className={`w-full overflow-hidden border bg-card text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${layout === "list" ? "flex items-center gap-3 rounded-none border-x-0 border-t-0 p-3 min-h-24" : "rounded-xl"} ${
+        className={`relative w-full overflow-hidden text-left transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/60 ${listLayout ? "flex items-start gap-3 border-b border-line px-3 py-3" : "rounded-card border bg-card"} ${
           selected
-            ? "border-accent bg-accent/[0.07]"
-            : "border-line hover:-translate-y-0.5 hover:border-ink/30"
+            ? listLayout ? "bg-accent/[0.07]" : "border-accent ring-2 ring-accent/20"
+            : listLayout ? "hover:bg-ink/[0.03]" : "border-line hover:-translate-y-0.5 hover:border-ink/30"
         }`}
       >
-        <div className={`fixed-media-surface relative shrink-0 overflow-hidden bg-black ${layout === "list" ? "aspect-video w-24 rounded-lg" : "aspect-[9/16]"}`}>
+        {listLayout && selected ? <span aria-hidden className="absolute inset-y-2 left-0 w-[3px] rounded-r-full bg-accent" /> : null}
+        <div className={`fixed-media-surface relative shrink-0 overflow-hidden bg-black ${listLayout ? "aspect-video w-28 rounded-lg" : "aspect-[9/16]"}`}>
           {coverUrl ? (
             <div
               aria-hidden
@@ -738,51 +775,46 @@ function CandidateTile({
               style={{ backgroundImage: `url(${JSON.stringify(coverUrl).slice(1, -1)})` }}
             />
           ) : preview?.status === "ready" ? (
-            layout === "grid" ? <ClipStyledPoster projectId={projectId} candidateId={candidate.id}/> : <CandidatePreviewFrame projectId={projectId} candidateId={candidate.id} />
+            listLayout ? <CandidatePreviewFrame projectId={projectId} candidateId={candidate.id} /> : <ClipStyledPoster projectId={projectId} candidateId={candidate.id}/>
           ) : (
-            <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_35%,rgba(108,53,255,0.32),transparent_38%),linear-gradient(145deg,#201641,#09031b)] text-paper/45">
+            <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_35%,rgba(108,53,255,0.32),transparent_38%),linear-gradient(145deg,#201641,#09031b)] text-white/45">
               {queued ? (
-                <Clock3 size={20} />
+                <Clock3 size={18} />
               ) : processing || previewBusy ? (
-                <Loader2 size={20} className="animate-spin" />
+                <Loader2 size={18} className="animate-spin" />
               ) : failed ? (
-                <AlertCircle size={20} />
+                <AlertCircle size={18} />
               ) : (
-                <Film size={20} />
+                <Film size={18} />
               )}
             </div>
           )}
-          <span className="absolute left-2 top-2 rounded-full bg-black/65 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.08em] text-white/80 backdrop-blur">
-            {candidate.origin === "manual" ? t("manualEyebrow") : t("clipLabel", { number })}
+          <span className="absolute left-1.5 top-1.5 rounded-full bg-black/65 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.08em] text-white/85 backdrop-blur">
+            {candidate.origin === "manual" ? t("manualEyebrow") : `#${number}`}
           </span>
-          {selected ? (
-            <span className={`absolute top-2 inline-flex size-6 items-center justify-center rounded-full bg-accent text-white shadow ${onDelete ? "right-10" : "right-2"}`}>
-              <Check size={13} strokeWidth={2.5} />
-            </span>
-          ) : (
+          <span className="absolute bottom-1.5 right-1.5 rounded bg-black/70 px-1.5 py-0.5 font-mono text-[10px] text-white tabular-nums">
+            {formatDuration(durationMs)}
+          </span>
+          {!selected ? (
             <span className="absolute inset-0 m-auto grid size-9 place-items-center rounded-full border border-white/25 bg-black/45 text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
               <Play size={14} fill="currentColor" className="translate-x-px" />
             </span>
-          )}
+          ) : !listLayout ? (
+            <span className={`absolute top-1.5 inline-flex size-6 items-center justify-center rounded-full bg-accent text-white shadow ${onDelete ? "right-9" : "right-1.5"}`}>
+              <Check size={13} strokeWidth={2.5} />
+            </span>
+          ) : null}
         </div>
-        <div className="min-w-0 flex-1 p-2.5">
-          <p className="line-clamp-2 text-[12px] font-semibold leading-5 text-ink">
+        <div className={`min-w-0 flex-1 ${listLayout ? "pr-6" : "p-3"}`}>
+          <p className={`line-clamp-2 text-body-sm font-semibold ${selected ? "text-ink" : "text-ink/90"}`}>
             {candidate.origin === "manual" ? t("manualTitle") : candidate.theme}
           </p>
-          <p className="mt-1 font-mono text-[11px] text-muted">{candidate.segments.map(s=>`${clipTime(s.startMs)} – ${clipTime(s.endMs)}`).join(" · ")}</p>{candidate.reviewMark==="keep" ? <Heart size={13} className="mt-1 text-accent" fill="currentColor"/> : null}
-          <span className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-ink/45">
-            {pending ? (
-              <><Loader2 size={10} className="animate-spin" />{t("editor.saveState.saving")}</>
-            ) : queued ? (
-              <><Clock3 size={10} />{t("editor.finalRender.status.queued")}</>
-            ) : processing || previewBusy ? (
-              <><Loader2 size={10} className="animate-spin" />{t("previewProcessing")}</>
-            ) : failed ? (
-              <><AlertCircle size={10} />{t("previewFailed")}</>
-            ) : (
-              <><Clock3 size={10} />{formatDuration(durationMs)}</>
-            )}
-          </span>
+          <p className="mt-1 truncate font-mono text-caption text-muted tabular-nums">{candidate.segments.map(s=>`${clipTime(s.startMs)}–${clipTime(s.endMs)}`).join(" · ")}</p>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2 font-mono text-caption text-muted">
+            {scorePct !== null ? <span className="rounded-full bg-generated/25 px-1.5 py-px font-semibold text-generated-ink dark:bg-generated/15 dark:text-generated">{t("score", { score: scorePct })}</span> : null}
+            {candidate.reviewMark === "keep" ? <Heart size={12} className="text-accent" fill="currentColor" aria-label={tw("keep")} /> : null}
+            {statusLine ? <span className="inline-flex items-center gap-1.5">{statusLine}</span> : null}
+          </div>
         </div>
       </button>
       {onDelete ? (
@@ -791,9 +823,9 @@ function CandidateTile({
           onClick={onDelete}
           aria-label={t("deleteCustom")}
           title={t("deleteCustom")}
-          className="absolute right-2 top-2 inline-grid size-6 place-items-center rounded-full bg-black/65 text-white/70 backdrop-blur transition hover:bg-red-600 hover:text-white"
+          className={`absolute inline-grid size-6 place-items-center rounded-full transition ${listLayout ? "right-2 top-3 text-muted opacity-0 hover:bg-rec/10 hover:text-rec focus-visible:opacity-100 group-hover:opacity-100" : "right-1.5 top-1.5 bg-black/65 text-white/70 backdrop-blur hover:bg-rec hover:text-white"}`}
         >
-          <Trash2 size={11} />
+          <Trash2 size={12} />
         </button>
       ) : null}
       {sourceAvailable && (failed || !preview) && !processing ? (
@@ -801,7 +833,7 @@ function CandidateTile({
           type="button"
           disabled={previewBusy}
           onClick={() => void onRequestPreview(candidate.id)}
-          className="absolute bottom-2 right-2 rounded-full border border-line bg-paper px-2 py-1 text-[9px] font-semibold text-ink shadow-sm transition hover:border-ink/30 disabled:opacity-50"
+          className="absolute bottom-2 right-2 rounded-full border border-line bg-card px-2 py-1 text-caption font-semibold text-ink shadow-sm transition hover:border-ink/30 disabled:opacity-50"
         >
           {failed ? t("previewRetry") : t("previewPrepare")}
         </button>
@@ -848,13 +880,91 @@ async function fetchCandidatePreview(projectId: string, candidateId: string): Pr
 
 function CandidateSkeleton({ label }: { label: string }) {
   return (
-    <div role="status" aria-live="polite" className="mt-8 overflow-hidden rounded-2xl border border-line bg-card">
-      <div className="grid min-h-56 place-items-center bg-[linear-gradient(90deg,transparent,rgba(14,13,11,0.025),transparent)] px-6 text-center">
-        <div>
-          <Loader2 className="mx-auto animate-spin text-accent" size={22} />
-          <p className="mt-4 text-[13px] text-ink/55">{label}</p>
-        </div>
+    <div role="status" aria-live="polite" className="mt-4 overflow-hidden rounded-card border border-line bg-card">
+      <div className="flex items-center gap-3 border-b border-line px-4 py-3">
+        <Sparkles size={16} className="shrink-0 text-accent" />
+        <p className="text-body-sm text-ink/70">{label}</p>
+        <Loader2 size={14} className="ml-auto shrink-0 animate-spin text-muted" />
       </div>
+      <div aria-hidden className="divide-y divide-line">
+        {[0, 1, 2, 3].map((row) => (
+          <div key={row} className="flex items-start gap-3 px-3 py-3" style={{ opacity: 1 - row * 0.2 }}>
+            <div className="skeleton aspect-video w-28 shrink-0 rounded-lg" />
+            <div className="flex-1 space-y-2 pt-1">
+              <div className="skeleton h-3 w-3/4 rounded" />
+              <div className="skeleton h-3 w-1/2 rounded" />
+              <div className="skeleton h-2.5 w-20 rounded" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WorkspaceTab({ selected, icon, onClick, children }: { selected: boolean; icon: ReactNode; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={selected}
+      onClick={onClick}
+      className={`relative -mb-px inline-flex min-h-11 items-center gap-2 border-b-2 px-3 text-body-sm font-semibold transition ${selected ? "border-accent text-ink" : "border-transparent text-muted hover:text-ink"}`}
+    >
+      <span className={selected ? "text-accent" : ""}>{icon}</span>
+      {children}
+    </button>
+  );
+}
+
+function Notice({ tone, icon, children }: { tone: "danger" | "info"; icon?: ReactNode; children: ReactNode }) {
+  return (
+    <div
+      role={tone === "danger" ? "alert" : "status"}
+      className={`mt-4 flex items-start gap-2.5 rounded-control border px-4 py-3 text-body-sm ${tone === "danger" ? "border-rec/30 bg-rec/[0.07] text-ink" : "border-line bg-card text-ink/75"}`}
+    >
+      <span className={`mt-0.5 shrink-0 ${tone === "danger" ? "text-rec" : "text-muted"}`}>{icon ?? <AlertCircle size={15} />}</span>
+      <div className="min-w-0">{children}</div>
+    </div>
+  );
+}
+
+function AnalysisProgress({ task, active }: { task: AnalysisTaskView; active: boolean }) {
+  const ts = useTranslations("Dashboard.videoCandidates.selection");
+  const failedSteps = task.steps.filter((step) => ["failed", "limited"].includes(step.status));
+  const done = task.status === "completed";
+  const ratio = task.totalBatches ? task.completedBatches / task.totalBatches : done ? 1 : 0;
+  const clock = (ms: number) => clipTime(ms);
+  return (
+    <div role="status" className="mt-4 rounded-card border border-line bg-card p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="inline-flex items-center gap-2 text-body-sm font-semibold text-ink">
+          {active ? <Loader2 size={14} className="animate-spin text-accent" /> : task.errorCode ? <AlertCircle size={14} className="text-rec" /> : <Check size={14} className="text-sage" />}
+          {ts(`phases.${task.phase}`)}
+        </p>
+        <span className="font-mono text-caption text-muted tabular-nums">
+          {clock(task.range.startMs)}–{clock(task.range.endMs)}
+        </span>
+      </div>
+      {task.totalBatches ? (
+        <>
+          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-ink/[0.07]">
+            <div className={`h-full rounded-full transition-[width] duration-500 ${task.errorCode ? "bg-rec/70" : "bg-accent"}`} style={{ width: `${Math.round(ratio * 100)}%` }} />
+          </div>
+          <p className="mt-2 text-meta text-muted">{ts("batchProgress", { completed: task.completedBatches, total: task.totalBatches })}</p>
+        </>
+      ) : null}
+      {task.limitedReason ? <p className="mt-2 text-meta text-muted">{ts("limited")}</p> : null}
+      {task.errorCode ? <p className="mt-2 text-meta text-rec">{ts(task.errorCode === "unsupported_selection" ? "unsupported" : task.errorCode === "analysis_input_too_large" ? "rangeDense" : "partialFailed")}</p> : null}
+      {failedSteps.length ? (
+        <details className="mt-2 text-meta text-muted">
+          <summary className="cursor-pointer">{task.errorCode ?? ts("limited")}</summary>
+          <ul className="mt-1 space-y-0.5 font-mono text-caption">
+            {failedSteps.map((step) => <li key={step.id}>{step.ranges.map((range) => `${clock(range.startMs)}–${clock(range.endMs)}`).join(" · ")} — {step.error_code ?? step.status}</li>)}
+          </ul>
+        </details>
+      ) : null}
+      {active ? <p className="mt-2 text-meta text-muted">{ts("canLeave")}</p> : null}
     </div>
   );
 }

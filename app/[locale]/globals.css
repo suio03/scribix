@@ -20,6 +20,27 @@
   --color-rec: var(--rec);
 }
 
+/* Product UI scale (design-system.md). Prefer these over arbitrary text-[Npx]
+   and rounded-[Npx] values in task surfaces. */
+@theme {
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 1rem;
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.125rem;
+  --text-body-sm: 0.8125rem;
+  --text-body-sm--line-height: 1.25rem;
+  --text-title-sm: 1rem;
+  --text-title-sm--line-height: 1.5rem;
+  --text-title: 1.25rem;
+  --text-title--line-height: 1.75rem;
+
+  --radius-control: 12px;
+  --radius-card: 20px;
+  --radius-stage: 32px;
+
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 :root {
   --paper: #f8f7fc;
   --card: #ffffff;
@@ -109,6 +130,56 @@
 }
 .rise-in {
   animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Loading placeholder for task surfaces. */
+@keyframes skeleton-shimmer {
+  from { background-position: 150% 0; }
+  to { background-position: -50% 0; }
+}
+.skeleton {
+  background:
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--ink) 6%, transparent), transparent) 0 0 / 60% 100% no-repeat,
+    color-mix(in srgb, var(--ink) 5%, transparent);
+  animation: skeleton-shimmer 1.6s var(--ease-standard) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
+
+/* Two overlaid range inputs acting as start/end handles on one track. */
+.range-handles input[type="range"] {
+  pointer-events: none;
+  appearance: none;
+  background: transparent;
+}
+.range-handles input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto;
+  appearance: none;
+  width: 14px;
+  height: 28px;
+  border-radius: 6px;
+  border: 2px solid var(--card);
+  background: var(--accent);
+  box-shadow: 0 2px 6px -2px color-mix(in srgb, var(--accent) 60%, transparent);
+  cursor: ew-resize;
+}
+.range-handles input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+  width: 10px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid var(--card);
+  background: var(--accent);
+  cursor: ew-resize;
+}
+.range-handles input[type="range"]:focus-visible::-webkit-slider-thumb {
+  outline: 3px solid var(--generated);
+  outline-offset: 1px;
+}
+.range-handles input[type="range"]:focus-visible::-moz-range-thumb {
+  outline: 3px solid var(--generated);
+  outline-offset: 1px;
 }
 
 .grain {
@@ -2522,6 +2593,11 @@ details[open] .faq-icon {
 
 :where(.text-amber-600, .text-amber-700, .text-amber-800) {
   color: color-mix(in srgb, var(--generated-ink) 88%, var(--ink));
+}
+
+/* Dark ink on a translucent yellow tint is unreadable over dark surfaces. */
+.dark :where(.text-amber-600, .text-amber-700, .text-amber-800) {
+  color: var(--generated);
 }
 
 @media (prefers-reduced-transparency: reduce) {

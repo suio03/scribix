@@ -1,3 +1,4 @@
+import { Clock3 } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
@@ -93,12 +94,13 @@ export default async function VideoProjectPage({ params }: Params) {
     : accessibleCandidates.filter((candidate) => exportedCandidateIds.has(candidate.id));
   const candidateIds = new Set(candidates.map((candidate) => candidate.id));
   const previews = allPreviews.filter((preview) => candidateIds.has(preview.candidateId));
+  const expiresAt = parseDbTimestamp(project.source_expires_at);
 
   return (
     <main className="product-surface-refresh mx-auto max-w-[1440px] px-4 py-4 sm:px-6 sm:py-5">
       <Link
         href="/dashboard"
-        className="text-[13px] text-ink/55 transition hover:text-ink"
+        className="text-body-sm text-muted transition hover:text-ink"
       >
         {t("back")}
       </Link>
@@ -107,9 +109,27 @@ export default async function VideoProjectPage({ params }: Params) {
           <p className="sr-only">
             {t("workspaceLabel")}
           </p>
-          <h1 title={project.title} className="truncate font-display text-lg font-semibold tracking-tight text-ink">
+          <h1 title={project.title} className="truncate font-display text-title font-semibold tracking-tight text-ink sm:text-[1.5rem] sm:leading-8">
             {project.title}
           </h1>
+          <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-muted">
+            {project.source_duration_ms ? (
+              <span className="inline-flex items-center gap-1.5 font-mono tabular-nums">
+                <Clock3 size={13} aria-hidden />
+                {formatSourceDuration(project.source_duration_ms)}
+              </span>
+            ) : null}
+            {sourceAvailable ? (
+              <span className="inline-flex items-center gap-1.5">
+                <span aria-hidden className="size-1.5 rounded-full bg-sage" />
+                {expiresAt
+                  ? t("sourceAvailableUntil", {
+                    date: new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(expiresAt),
+                  })
+                  : t("sourceAvailable")}
+              </span>
+            ) : null}
+          </p>
         </div>
         <TranscriptRowMenu
           id={project.transcript_id}
@@ -135,4 +155,19 @@ export default async function VideoProjectPage({ params }: Params) {
       />
     </main>
   );
+}
+
+function formatSourceDuration(ms: number) {
+  const total = Math.round(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = String(total % 60).padStart(2, "0");
+  return h ? `${h}:${String(m).padStart(2, "0")}:${s}` : `${m}:${s}`;
+}
+
+// D1 timestamps may be SQLite "YYYY-MM-DD HH:MM:SS" (UTC) or ISO strings.
+function parseDbTimestamp(value: string | null) {
+  if (!value) return null;
+  const date = new Date(/[TZ+]/.test(value.slice(10)) ? value : `${value.replace(" ", "T")}Z`);
+  return Number.isNaN(date.getTime()) ? null : date;
 }

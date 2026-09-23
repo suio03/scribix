@@ -149,11 +149,6 @@ export function PricingV2({
                   <p className="mt-5 text-[16px] leading-7 text-muted sm:text-[17px]">{t("hero.body")}</p>
                 </>
               )}
-              {!checkoutEnabled ? (
-                <p className="mx-auto mt-6 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent-soft/55 px-4 py-2 text-[13px] leading-5 text-ink" role="status">
-                  <span className="font-semibold">{t("hero.previewTitle")}</span>{t("hero.previewBody")}
-                </p>
-              ) : null}
             </div>
             <div className="mt-8 flex justify-center">
               <BillingCycleToggle cycle={cycle} onChange={setCycle} />

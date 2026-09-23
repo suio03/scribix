@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-23 — video workspace polish
+
+- Refine workspace typography, clip cards, loading states, and analysis progress; add keyboard navigation between clips.
+- Add a visual analysis range picker that preserves fractional source boundaries and synchronizes clamped time inputs.
+- Show source duration and availability in the project header, and remove the obsolete pricing preview notice.
+- No database migrations or binding changes are required.
+
 ## 2026-09-23 — pricing v2
 
 - Launch Starter ($29/mo, $174/yr) and Pro ($69/mo, $414/yr) through versioned v2 Paddle prices; existing subscriptions keep their legacy entitlements.
