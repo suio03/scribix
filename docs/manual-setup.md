@@ -429,6 +429,13 @@ npx wrangler secret put CLEANUP_KEY --config wrangler.cleanup.jsonc
 
 ### 7.1 Production deploy
 
+Production deploys run through Cloudflare Workers Builds: pushing `main` to
+GitHub builds and deploys the `scribix` Worker. Apply any new remote D1
+migrations with `npm run db:migrate:remote` before pushing code that depends on
+them.
+
+For a manual or emergency deploy only:
+
 ```sh
 npm run deploy        # locale validation + OpenNext build + deploy
 ```

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-23 — pricing v2
+
+- Launch Starter ($29/mo, $174/yr) and Pro ($69/mo, $414/yr) through versioned v2 Paddle prices; existing subscriptions keep their legacy entitlements.
+- Cap connected social accounts at 6 (Starter) and 18 (Pro) for v2 plans, enforced atomically by ClipFlight migration `0019`.
+- Reduce free YouTube caption imports from 10 to 5 per UTC day.
+- Requires D1 migration `0043_pricing_plan_version.sql` (applied in production on 2026-09-23).
+
 ## 2026-09-19 — partner placement
 
 - Keep homepage footer links out of the Partners directory and count only directory entries.

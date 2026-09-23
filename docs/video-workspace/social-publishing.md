@@ -1,14 +1,14 @@
 # Scribix social publishing through ClipFlight
 
-Pricing v2 implementation (local): Starter and Pro connection sessions carry
+Pricing v2 (deployed 2026-09-23): Starter and Pro connection sessions carry
 caps of 6 and 18 active accounts respectively. Scribix checks the count before
 OAuth; Teleo migration `0019_external_account_limits.sql` enforces the cap
 atomically when OAuth saves or reactivates an account. Legacy paid subscriptions
 remain uncapped; their connection requests explicitly clear any former cap.
 Existing account reauthorization bypasses the Scribix new-account precheck,
-while Teleo still blocks a different account when the cap is full. Deploy
-Teleo's migration and API before enabling v2 checkout
-in Scribix; the current v2 checkout flag is off.
+while Teleo still blocks a different account when the cap is full. Teleo
+migration `0019` and its API were deployed before Scribix enabled v2 checkout on
+2026-09-23.
 
 Current record summary, 2026-09-18 (reconciled with recorded evidence, not a new remote check): the social publishing release was deployed on 2026-09-17, including the approved TikTok Direct Post integration and production flag. See [production release and readback evidence](tiktok-production-release-2026-09-17.md). Real TikTok account authorization/publication remains owner acceptance; deployment does not establish a successful post. The newer Planner/scheduling and AI Clips workflow changes remain local and are not part of that production release. The owner previously confirmed YouTube public-publishing verification; complete new-project Scribix acceptance, real LinkedIn OAuth/publication and provider renewal remain unconfirmed.
 
@@ -34,7 +34,7 @@ Release dependencies (reconcile applied migrations against the actual remote sta
 1. Follow the [Scribix migration checklist](operations.md#deployment), including both `0037` files and `0038`–`0040`. ClipFlight / Teleo needs `0014`–`0018` for this integration; later dated records below establish deployment of those external migrations, superseding the 2026-09-10 pending snapshot. The access-refresh route has a separate outstanding deployment dependency.
 2. Deploy the compatible video Container described in `publish-preparation.md`, then the schema-dependent app and cleanup Worker.
 3. Configure the dedicated application credential and exact return URL for the target environment. TikTok Direct Post approval was confirmed on 2026-09-17; separately verify URL/pull verification and the delivery configuration in ClipFlight for the target environment.
-4. Use ClipFlight main/Cloudflare Builds and Scribix's existing `npm run deploy` script when deploying the respective service. The 2026-09-17 production deployment is recorded in [the release evidence](tiktok-production-release-2026-09-17.md); subsequent local scheduling changes require a separate release.
+4. Both ClipFlight and Scribix deploy through Cloudflare Workers Builds on a `main` push; apply each service's remote migrations first. The 2026-09-17 production deployment is recorded in [the release evidence](tiktok-production-release-2026-09-17.md); subsequent local scheduling changes require a separate release.
 5. Owner reviews visuals and verifies each enabled platform with the correct account and an owned video. Record final video links and submission IDs for the Scribix flow; TikTok Direct Post approval is confirmed, but real publishing acceptance remains outstanding. Complete the relevant platform acceptance before production launch.
 
 Validation: `test:publish-workflow` includes real SQLite tests for immutable social submission, free-tier final-video access, cover independence, cross-user denial and OAuth return replay. Run it with `test:video-workspace`, `check-locales` and `build:cloudflare`. These do not replace live streaming, OAuth, public visibility or visual acceptance.

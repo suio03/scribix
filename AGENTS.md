@@ -17,7 +17,7 @@ Scribix is a Next.js App Router project deployed through OpenNext on Cloudflare.
 - `npm run dev:video-workspace`: run the app, local D1/Queue/Container bindings, and the shared remote media bucket after the Cloudflare build.
 - `npm run start`: serve a previously built Next.js app.
 - `npm run preview`: build with OpenNext and preview on Cloudflare using remote bindings.
-- `npm run deploy`: build and deploy the Cloudflare app.
+- Production deploys happen through Cloudflare Workers Builds when `main` is pushed to GitHub. Apply remote D1 migrations (`npm run db:migrate:remote`) before pushing code that depends on them. `npm run deploy` is a manual or emergency fallback only; do not run it for normal releases.
 - `npm run cf-typegen`: regenerate `cloudflare-env.d.ts` from Wrangler bindings.
 - `npm run db:migrate:local`: apply D1 migrations locally.
 - `npm run db:migrate:remote`: apply D1 migrations to remote D1.

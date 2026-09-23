@@ -7,7 +7,7 @@ the one-time items that are already verified and unchanged.
 ## Prereqs (from manual-setup.md)
 
 - [ ] Phase 0–6 complete locally and on `--remote` D1.
-- [ ] `npm run deploy` succeeds at least once to a `*.workers.dev` URL.
+- [ ] A `main` push deploys through Cloudflare Workers Builds (or `npm run deploy` succeeds manually) to a `*.workers.dev` URL.
 - [ ] Custom domain `scribix.io` attached in Cloudflare Workers.
 - [ ] Worker secrets set via `wrangler secret put` (see manual-setup §7.3).
 - [ ] `wrangler.jsonc` `vars` block has prod URLs.
