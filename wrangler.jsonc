@@ -64,7 +64,7 @@
     "PADDLE_V2_STARTER_YEARLY_PRICE_ID": "pri_01m35vwy32ks3jz4k3mgfzdxvm",
     "PADDLE_V2_PRO_MONTHLY_PRICE_ID": "pri_01m35vy0nqcrdd6vg1rvx5ppxh",
     "PADDLE_V2_PRO_YEARLY_PRICE_ID": "pri_01m35vyq086jb3dmxem8q875vs",
-    "PADDLE_V2_CHECKOUT_ENABLED": "false",
+    "PADDLE_V2_CHECKOUT_ENABLED": "true",
     "CLOUDFLARE_ACCOUNT_ID": "9955b1e01b98cb8e830f0543c4c002f2",
     "ADMIN_EMAILS": "laughinglyl90@gmail.com"
   },
