@@ -7,7 +7,6 @@ import { routing } from "@/i18n/routing";
 import { Footer } from "@/app/components/Footer";
 import { ProductTopbar } from "@/app/components/ProductTopbar";
 import { PricingV2 } from "@/app/components/PricingV2";
-import { WorkspaceChrome } from "@/app/components/WorkspaceChrome";
 import { Shell } from "@/app/components/Shell";
 import { getSidebarUsage } from "@/app/components/sidebarUsage";
 import { cf } from "@/lib/cf";
@@ -57,8 +56,17 @@ export default async function PricingPage({
     href: { pathname: "/dashboard", query: { checkout: "ok" } }, locale,
   });
   const sidebarUsage = await getSidebarUsage(session);
-  const content = (
-    <>
+  // Pricing stays a standalone public page; signed-in users only get the account topbar.
+  return (
+    <Shell>
+      <ProductTopbar
+        signedIn={!!session}
+        usage={sidebarUsage}
+        postSignInPath={dashboardNewPath}
+        signOutRedirect={homePath}
+        userImage={session?.user?.image ?? null}
+        userLabel={session?.user?.name ?? session?.user?.email ?? null}
+      />
       <PricingV2
         currentTier={currentTier}
         checkoutEnabled={env.PADDLE_V2_CHECKOUT_ENABLED === "true"}
@@ -66,26 +74,6 @@ export default async function PricingPage({
         checkoutSuccessPath={checkoutSuccessPath}
       />
       <Footer />
-    </>
-  );
-
-  return (
-    <Shell>
-      {session ? (
-        <WorkspaceChrome
-          signOutRedirect={homePath}
-          usage={sidebarUsage}
-          userImage={session.user?.image ?? null}
-          userLabel={session.user?.name ?? session.user?.email ?? null}
-        >
-          {content}
-        </WorkspaceChrome>
-      ) : (
-        <>
-          <ProductTopbar postSignInPath={dashboardNewPath} signOutRedirect={homePath} />
-          {content}
-        </>
-      )}
     </Shell>
   );
 }

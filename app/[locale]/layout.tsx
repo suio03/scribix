@@ -8,6 +8,8 @@ import { routing } from "../../i18n/routing";
 import { TrackSignInSuccess } from "../components/Track";
 import Analytics from "../components/Analytics";
 import { LoginModalProvider } from "../components/LoginModal";
+import { ThemeProvider } from "../components/ThemeProvider";
+import { ThemeScript } from "../components/ThemeScript";
 import "./globals.css";
 
 const geist = Geist({
@@ -102,11 +104,16 @@ export default async function LocaleLayout({
       className={`${geist.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <ThemeScript />
+      </head>
       <Analytics />
       <body className="bg-paper text-ink antialiased">
         <NextIntlClientProvider>
           <TrackSignInSuccess />
-          <LoginModalProvider>{children}</LoginModalProvider>
+          <ThemeProvider>
+            <LoginModalProvider>{children}</LoginModalProvider>
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>

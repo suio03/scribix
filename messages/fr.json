@@ -1,4 +1,10 @@
 {
+  "Theme": {
+    "label": "Thème",
+    "system": "Système",
+    "light": "Clair",
+    "dark": "Sombre"
+  },
   "SiteMetadata": {
     "title": "Générateur de clips IA : vidéos longues en shorts | Scribix",
     "description": "Générateur de clips IA pour podcasts, interviews, webinaires et vidéos face caméra. Repérez des moments complets, ajustez les sous-titres et exportez en MP4.",
@@ -748,7 +754,6 @@
       "remainingValue": "{remaining, number} minutes disponibles",
       "portalHelp": "Les moyens de paiement, les factures, les changements de forfait et l’annulation sont gérés dans Paddle.",
       "freeAllowanceLifetime": "Quota gratuit unique",
-      "comparePlans": "Comparer toutes les fonctionnalités",
       "choosePlanTitle": "Choisir le bon plan",
       "choosePlanDescription": "Pro inclut 2 400 minutes de transcription chaque mois, les notes IA et la traduction.",
       "checkoutOkTitle": "Abonnement actif — bienvenue.",
@@ -827,8 +832,6 @@
       "upgradeVideoStorageModalTitle": "Conservez vos vidéos sources",
       "upgradeVideoStorageModalBody": "Passez à un forfait supérieur pour conserver davantage de vidéos sources et continuer à créer des clips sans les téléverser à nouveau.",
       "upgradePlanModalTitle": "Changez de forfait",
-      "upgradePlanModalBody": "Obtenez plus de temps de traitement et débloquez toutes les fonctionnalités Creator.",
-      "upgradeComparePlans": "Comparer toutes les fonctionnalités",
       "upgradeBillingLabel": "Choisir la facturation",
       "upgradeYearly": "Annuel",
       "upgradeYearlyBadge": "Économisez 50 %",
@@ -3254,27 +3257,145 @@
     "pro": "Pro"
   },
   "PricingV2": {
-    "metadata": { "title": "Tarifs Scribix | Free, Starter et Pro", "description": "Comparez Free, Starter et Pro pour créer des clips vidéo avec l’IA. Les minutes de traitement incluent la première sélection de clips par l’IA et les exports habituels." },
-    "hero": { "eyebrow": "Tarifs Scribix", "title": "Transformez vos longues vidéos en clips prêts à publier.", "body": "Commencez gratuitement. Choisissez une offre selon la durée de vos vidéos sources. Les clips sélectionnés par l’IA et les exports sont inclus ; les offres payantes ajoutent les clips personnalisés, le montage et la publication directe sur les réseaux sociaux.", "previewTitle": "Aperçu des nouveaux tarifs.", "previewBody": "Le paiement pour ces offres n’est pas encore disponible." },
-    "plans": {
-      "eyebrow": "Trois offres claires", "title": "Payez les minutes de vidéo source. Créez les clips dont vous avez besoin.", "recommended": "Recommandé", "sourceLabel": "Vidéo source que vous pouvez traiter", "includes": "Inclus", "noSocial": "Aucun compte social connecté", "socialAccounts": "Connectez jusqu’à {count} comptes sociaux", "keyFeatures": "Fonctions principales", "everythingPlus": "Tout ce qui est inclus dans {plan}, plus",
-      "free": { "name": "Free", "summary": "Essayez les clips IA avec un quota de traitement unique.", "highlight1": "Clips sélectionnés par l’IA et transcriptions", "highlight2": "Export des découpes originales sélectionnées par l’IA", "highlight3": "Conservation des vidéos sources pendant {days} jours" },
-      "starter": { "name": "Starter", "summary": "Pour les créateurs qui transforment leurs longues vidéos en clips chaque semaine.", "highlight1": "Créez et modifiez des clips à partir de la transcription ou d’un intervalle de temps", "highlight2": "Modifiez les sous-titres, le cadrage et votre identité visuelle", "highlight3": "Publiez directement sur vos comptes sociaux connectés", "highlight4": "Notes IA, traduction et {questions} questions Ask AI par mois", "highlight5": "{storage} Gio de stockage pour les vidéos sources" },
-      "pro": { "name": "Pro", "summary": "Pour les créateurs qui traitent davantage de vidéos sources chaque mois.", "highlight1": "{questions} questions Ask AI par mois", "highlight2": "{imports} imports de sous-titres YouTube par mois", "highlight3": "{storage} Gio de stockage pour les vidéos sources" }
+    "metadata": {
+      "title": "Tarifs Scribix | Free, Starter et Pro",
+      "description": "Comparez Free, Starter et Pro pour créer des clips vidéo avec l’IA. Les minutes de traitement incluent la première sélection de clips par l’IA et les exports habituels."
     },
-    "billing": {"label": "Période de facturation", "monthly": "Mensuel", "yearly": "Annuel", "discountBadge": "-{percent} %", "perMonth": "/ mois", "forever": "à vie", "oneTime": "une seule fois", "billedYearly": "{price} facturés une fois par an", "billedMonthly": "Facturé chaque mois", "noCard": "Aucune carte bancaire requise", "saveYearly": "Économisez {percent} % avec la facturation annuelle", "yearlyRefresh": "Économisez {percent} % · les minutes sont renouvelées chaque mois", "freeAllowance": "Quota gratuit unique"},
-    "actions": { "startFree": "Commencer gratuitement", "manage": "Gérer mon abonnement", "getPlan": "Choisir {plan}", "checkoutSoon": "Paiement bientôt disponible" },
+    "hero": {
+      "eyebrow": "Tarifs Scribix",
+      "body": "Commencez gratuitement. Choisissez une offre selon la durée de vos vidéos sources. Les clips sélectionnés par l’IA et les exports sont inclus ; les offres payantes ajoutent les clips personnalisés, le montage et la publication directe sur les réseaux sociaux.",
+      "previewTitle": "Aperçu des nouveaux tarifs.",
+      "previewBody": "Le paiement pour ces offres n’est pas encore disponible."
+    },
+    "plans": {
+      "title": "Payez les minutes de vidéo source. Créez les clips dont vous avez besoin.",
+      "recommended": "Recommandé",
+      "sourceLabel": "Vidéo source que vous pouvez traiter",
+      "socialAccounts": "Connectez jusqu’à {count} comptes sociaux",
+      "keyFeatures": "Fonctions principales",
+      "everythingPlus": "Tout ce qui est inclus dans {plan}, plus",
+      "free": {
+        "name": "Free",
+        "summary": "Essayez les clips IA avec un quota de traitement unique.",
+        "highlight1": "Clips sélectionnés par l’IA et transcriptions",
+        "highlight2": "Export des découpes originales sélectionnées par l’IA",
+        "highlight3": "Conservation des vidéos sources pendant {days} jours"
+      },
+      "starter": {
+        "name": "Starter",
+        "summary": "Pour les créateurs qui transforment leurs longues vidéos en clips chaque semaine.",
+        "highlight1": "Créez et modifiez des clips à partir de la transcription ou d’un intervalle de temps",
+        "highlight2": "Modifiez les sous-titres, le cadrage et votre identité visuelle",
+        "highlight3": "Publiez directement sur vos comptes sociaux connectés",
+        "highlight4": "Notes IA, traduction et {questions} questions Ask AI par mois",
+        "highlight5": "{storage} Gio de stockage pour les vidéos sources"
+      },
+      "pro": {
+        "name": "Pro",
+        "summary": "Pour les créateurs qui traitent davantage de vidéos sources chaque mois.",
+        "highlight1": "{questions} questions Ask AI par mois",
+        "highlight2": "{imports} imports de sous-titres YouTube par mois",
+        "highlight3": "{storage} Gio de stockage pour les vidéos sources"
+      },
+      "current": "Offre actuelle"
+    },
+    "billing": {
+      "label": "Période de facturation",
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "discountBadge": "-{percent} %",
+      "perMonth": "/ mois",
+      "forever": "à vie",
+      "billedYearly": "{price} facturés une fois par an",
+      "billedMonthly": "Facturé chaque mois",
+      "noCard": "Aucune carte bancaire requise"
+    },
+    "actions": {
+      "startFree": "Commencer gratuitement",
+      "manage": "Gérer mon abonnement",
+      "getPlan": "Choisir {plan}",
+      "checkoutSoon": "Paiement bientôt disponible",
+      "changePlan": "Changer d’offre",
+      "openDashboard": "Aller au tableau de bord"
+    },
     "explanation": "Une vidéo source de {minutes} minutes utilise {minutes} minutes de votre quota, y compris une première sélection de clips par l’IA. Avec les offres payantes, la création de clips personnalisés, le montage et l’export ne consomment pas de minutes supplémentaires.",
-    "compare": { "eyebrow": "Comparer les offres", "title": "Tout voir en détail.", "feature": "Fonction", "minutes": "Quota de vidéo source", "transcript": "Transcription automatique", "speakers": "Identification des intervenants et horodatage", "exports": "Exports de transcription", "aiClips": "Clips IA", "customClips": "Clips personnalisés depuis la transcription ou un intervalle", "editing": "Montage des clips et identité visuelle", "output": "Fichier final", "notes": "Notes IA", "translation": "Traduction de transcription", "askAi": "Ask AI", "youtube": "Imports de sous-titres YouTube", "accounts": "Comptes sociaux connectés", "publishing": "Publication directe sur les réseaux sociaux", "storage": "Stockage des vidéos originales", "platforms": "Plateformes de publication", "footnote": "* La publication directe dépend de la disponibilité de chaque plateforme. Les limites actuelles d’import, de durée des clips et de rendu restent applicables." },
-    "values": { "included": "Inclus", "includedFootnote": "Inclus*", "notIncluded": "Non inclus", "onePass": "Un passage par vidéo", "minutes": "{minutes} minutes", "lifetimeMinutes": "{minutes} min, une seule fois", "monthlyMinutes": "{minutes} min / mois", "freeOutput": "Découpes IA originales · MP4", "paidOutput": "MP4 1080 × 1920 · couverture · texte de publication", "lifetimeQuestions": "{count} questions, une seule fois", "monthlyQuestions": "{count} questions / mois", "dailyImports": "{count} / jour", "monthlyImports": "{count} / mois", "upToAccounts": "Jusqu’à {count}", "storage": "{storage} Gio · {days} jours" },
-    "how": { "eyebrow": "Comment ça marche", "title": "Une analyse IA. Toute la liberté de monter.", "processLabel": "Traiter", "processBody": "Importez une vidéo source. Sa durée est déduite une seule fois de votre quota, transcription et première sélection de clips par l’IA comprises.", "editLabel": "Personnaliser", "editBody": "Examinez les suggestions de l’IA. Avec une offre payante, créez d’autres clips depuis la transcription ou des horaires précis, puis montez-les et exportez-les sans utiliser de minutes supplémentaires." },
+    "compare": {
+      "eyebrow": "Comparer les offres",
+      "title": "Tout voir en détail.",
+      "feature": "Fonction",
+      "minutes": "Quota de vidéo source",
+      "customClips": "Clips personnalisés depuis la transcription ou un intervalle",
+      "editing": "Montage des clips et identité visuelle",
+      "output": "Fichier final",
+      "notes": "Notes IA",
+      "translation": "Traduction de transcription",
+      "askAi": "Ask AI",
+      "youtube": "Imports de sous-titres YouTube",
+      "accounts": "Comptes sociaux connectés",
+      "publishing": "Publication directe sur les réseaux sociaux",
+      "storage": "Stockage des vidéos originales",
+      "platforms": "Plateformes de publication",
+      "footnote": "* La publication directe dépend de la disponibilité de chaque plateforme. Les limites actuelles d’import, de durée des clips et de rendu restent applicables.",
+      "allPlans": "Toutes les offres incluent la transcription automatique avec identification des intervenants et horodatage, les exports de transcription et une analyse IA de clips par vidéo."
+    },
+    "values": {
+      "included": "Inclus",
+      "includedFootnote": "Inclus*",
+      "notIncluded": "Non inclus",
+      "lifetimeMinutes": "{minutes} min, une seule fois",
+      "monthlyMinutes": "{minutes} min / mois",
+      "freeOutput": "Découpes IA originales · MP4",
+      "paidOutput": "MP4 1080 × 1920 · couverture · texte de publication",
+      "lifetimeQuestions": "{count} questions, une seule fois",
+      "monthlyQuestions": "{count} questions / mois",
+      "dailyImports": "{count} / jour",
+      "monthlyImports": "{count} / mois",
+      "upToAccounts": "Jusqu’à {count}",
+      "storage": "{storage} Gio · {days} jours"
+    },
+    "how": {
+      "eyebrow": "Comment ça marche",
+      "title": "Une analyse IA. Toute la liberté de monter.",
+      "processLabel": "Traiter",
+      "processBody": "Importez une vidéo source. Sa durée est déduite une seule fois de votre quota, transcription et première sélection de clips par l’IA comprises.",
+      "editLabel": "Personnaliser",
+      "editBody": "Examinez les suggestions de l’IA. Avec une offre payante, créez d’autres clips depuis la transcription ou des horaires précis, puis montez-les et exportez-les sans utiliser de minutes supplémentaires."
+    },
     "faq": {
       "title": "Vos questions, nos réponses.",
-      "clips": { "question": "Les clips coûtent-ils plus cher ?", "answer": "Non. Les minutes de traitement couvrent la vidéo source, sa transcription, la première sélection de clips par l’IA et les clips suggérés. Avec les offres payantes, les clips personnalisés, le montage et les exports habituels ne consomment pas de minutes supplémentaires." },
-      "regenerate": { "question": "Puis-je relancer les suggestions de l’IA ?", "answer": "Chaque vidéo bénéficie d’une sélection de clips par l’IA. Vous pouvez choisir le sujet et la plage à analyser avant de commencer. Ensuite, les offres payantes permettent de créer des clips en sélectionnant du texte dans la transcription ou des heures de début et de fin. Vous pouvez toujours modifier un clip et produire un nouveau MP4." },
-      "minutes": { "question": "Que se passe-t-il quand j’ai utilisé toutes mes minutes ?", "answer": "Vous pourrez traiter une autre vidéo source au renouvellement de votre quota payant. Tant qu’une vidéo déjà importée est disponible et que votre offre inclut le montage, vous pouvez continuer à modifier et à exporter ses clips." },
-      "social": { "question": "Combien de comptes sociaux puis-je connecter ?", "answer": "Starter comprend jusqu’à {starterAccounts} comptes actifs et Pro jusqu’à {proAccounts} sur les plateformes prises en charge. Chaque profil compte pour un compte, même si plusieurs profils sont sur la même plateforme. Déconnecter un profil libère une place." },
-      "yearly": { "question": "Comment fonctionne la facturation annuelle ?", "answer": "Le prix annuel est payé en une fois. Les minutes de traitement et les questions Ask AI mensuelles sont renouvelées chaque mois, sans report. Les minutes gratuites sont accordées une seule fois." }
+      "clips": {
+        "question": "Les clips coûtent-ils plus cher ?",
+        "answer": "Non. Les minutes de traitement couvrent la vidéo source, sa transcription, la première sélection de clips par l’IA et les clips suggérés. Avec les offres payantes, les clips personnalisés, le montage et les exports habituels ne consomment pas de minutes supplémentaires."
+      },
+      "regenerate": {
+        "question": "Puis-je relancer les suggestions de l’IA ?",
+        "answer": "Chaque vidéo bénéficie d’une sélection de clips par l’IA. Vous pouvez choisir le sujet et la plage à analyser avant de commencer. Ensuite, les offres payantes permettent de créer des clips en sélectionnant du texte dans la transcription ou des heures de début et de fin. Vous pouvez toujours modifier un clip et produire un nouveau MP4."
+      },
+      "minutes": {
+        "question": "Que se passe-t-il quand j’ai utilisé toutes mes minutes ?",
+        "answer": "Vous pourrez traiter une autre vidéo source au renouvellement de votre quota payant. Tant qu’une vidéo déjà importée est disponible et que votre offre inclut le montage, vous pouvez continuer à modifier et à exporter ses clips."
+      },
+      "social": {
+        "question": "Combien de comptes sociaux puis-je connecter ?",
+        "answer": "Starter comprend jusqu’à {starterAccounts} comptes actifs et Pro jusqu’à {proAccounts} sur les plateformes prises en charge. Chaque profil compte pour un compte, même si plusieurs profils sont sur la même plateforme. Déconnecter un profil libère une place."
+      },
+      "yearly": {
+        "question": "Comment fonctionne la facturation annuelle ?",
+        "answer": "Le prix annuel est payé en une fois. Les minutes de traitement et les questions Ask AI mensuelles sont renouvelées chaque mois, sans report. Les minutes gratuites sont accordées une seule fois."
+      }
+    },
+    "signedIn": {
+      "title": "Choisissez votre offre",
+      "body": "Vous êtes sur {plan}. Changez d’offre à tout moment — vos projets et transcriptions restent en place."
+    },
+    "modal": {
+      "body": "Plus de minutes source, des clips personnalisés, l’édition et la publication directe sur les réseaux sociaux.",
+      "proEverything": "Tout le contenu de Starter",
+      "onPro": "Vous êtes sur Pro, notre offre la plus complète.",
+      "checkoutUnavailable": "Le paiement n’est pas encore ouvert. Vous pourrez bientôt passer à une offre payante ici.",
+      "compareLink": "Comparer toutes les fonctionnalités",
+      "loading": "Chargement…",
+      "loadError": "Impossible de charger votre offre"
     }
   },
   "GuidesNav": {

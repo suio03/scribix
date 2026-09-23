@@ -26,6 +26,7 @@ import type { SidebarUsage } from "./sidebarUsage";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
+import { UpgradePlanButton } from "./UpgradePlanButton";
 import { useLoginModal } from "./LoginModal";
 import { SidebarToggle } from "./SidebarToggle";
 
@@ -178,13 +179,12 @@ export function ProductTopbar({
                 <span className="size-1.5 rounded-full bg-accent" />
                 {sidebarT("usageRemaining", { remaining: remainingMin })}
               </Link>
-              {usage?.tier !== "pro" ? (
-                <Link
-                  href="/dashboard/billing"
+              {usage?.tier !== "pro" && pathname !== "/pricing" ? (
+                <UpgradePlanButton
                   className="hidden rounded-full bg-accent px-3.5 py-2 text-[12px] font-semibold text-white transition hover:bg-accent/90 md:inline-flex"
                 >
                   {sidebarT("upgradePlan")}
-                </Link>
+                </UpgradePlanButton>
               ) : null}
               <div className="hidden items-center gap-0.5 sm:flex">
                 <LanguageSwitcher />

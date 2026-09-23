@@ -1,6 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getLocale, getTranslations } from "next-intl/server";
-import { Link, redirect } from "@/i18n/navigation";
+import { redirect } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { BillingPortalButton } from "@/app/components/BillingPortalButton";
 import { UpgradePlanButton } from "@/app/components/UpgradePlanButton";
@@ -173,17 +173,9 @@ export default async function BillingPage({
         )}
       </section>
 
-      <div className={`mt-5 flex flex-col gap-2 text-[12.5px] leading-5 text-muted sm:flex-row sm:items-center ${isPaid ? "sm:justify-between" : "sm:justify-end"}`}>
-        {isPaid ? <p>{billingT("portalHelp")}</p> : null}
-        {tier === "free" ? (
-          <Link
-            href="/pricing#compare-plans"
-            className="shrink-0 font-semibold text-accent underline decoration-accent/30 underline-offset-4 hover:decoration-accent"
-          >
-            {billingT("comparePlans")}
-          </Link>
-        ) : null}
-      </div>
+      {isPaid ? (
+        <p className="mt-5 text-[12.5px] leading-5 text-muted">{billingT("portalHelp")}</p>
+      ) : null}
     </main>
   );
 }

@@ -1,4 +1,10 @@
 {
+  "Theme": {
+    "label": "テーマ",
+    "system": "システムに合わせる",
+    "light": "ライト",
+    "dark": "ダーク"
+  },
   "SiteMetadata": {
     "title": "AI動画切り抜き｜長尺動画をショート動画に変換 | Scribix",
     "description": "Scribixは、対談・ポッドキャスト・インタビューなどの長尺動画から見どころを抽出するAI動画切り抜きツールです。字幕や画角を編集し、MP4を書き出せます。",
@@ -748,7 +754,6 @@
       "remainingValue": "{remaining, number}分利用可能",
       "portalHelp": "支払い方法、請求書、プラン変更、キャンセルはPaddleで管理されます。",
       "freeAllowanceLifetime": "初回のみの無料枠",
-      "comparePlans": "すべてのプラン機能を比較",
       "choosePlanTitle": "適切なプランを選択",
       "choosePlanDescription": "Proには毎月2,400分の文字起こし、AI議事録、翻訳が含まれます。",
       "checkoutOkTitle": "サブスクリプションがアクティブです—ようこそ。",
@@ -827,8 +832,6 @@
       "upgradeVideoStorageModalTitle": "元動画をより多く保存",
       "upgradeVideoStorageModalBody": "アップグレードすると元動画の保存容量が増え、再アップロードせずにクリップを作成し続けられます。",
       "upgradePlanModalTitle": "プランをアップグレード",
-      "upgradePlanModalBody": "処理時間を増やし、Creatorのすべての機能を利用できます。",
-      "upgradeComparePlans": "すべてのプラン機能を比較",
       "upgradeBillingLabel": "請求方法を選択",
       "upgradeYearly": "年額",
       "upgradeYearlyBadge": "50%お得",
@@ -3254,27 +3257,145 @@
     "pro": "Pro"
   },
   "PricingV2": {
-    "metadata": { "title": "Scribix の料金 | Free・Starter・Pro", "description": "AI 動画クリップ向けの Free、Starter、Pro を比較。処理分数には、最初の AI クリップ選定と通常のクリップ書き出しが含まれます。" },
-    "hero": { "eyebrow": "Scribix の料金", "title": "長い動画から、公開したくなるクリップを。", "body": "無料で始められます。処理する元動画の長さに合わせてプランを選んでください。AI によるクリップ選定と書き出しは料金に含まれます。有料プランでは、カスタムクリップ、編集、SNS への直接投稿も利用できます。", "previewTitle": "新料金のプレビュー。", "previewBody": "これらのプランはまだ購入できません。" },
-    "plans": {
-      "eyebrow": "わかりやすい 3 つのプラン", "title": "元動画の分数で選び、必要なクリップを作成。", "recommended": "おすすめ", "sourceLabel": "処理できる元動画", "includes": "含まれる内容", "noSocial": "SNS アカウントの連携なし", "socialAccounts": "SNS アカウントを最大 {count} 件連携", "keyFeatures": "主な機能", "everythingPlus": "{plan} の全機能に加えて",
-      "free": { "name": "Free", "summary": "一度きりの処理枠で AI クリップを試せます。", "highlight1": "AI が選ぶクリップと文字起こし", "highlight2": "AI が選んだ元のカットを書き出し", "highlight3": "元動画を {days} 日間保存" },
-      "starter": { "name": "Starter", "summary": "毎週、長い動画からクリップを作るクリエイター向け。", "highlight1": "文字起こしや時間範囲からクリップを作成・編集", "highlight2": "字幕、フレーミング、ブランド要素を編集", "highlight3": "連携した SNS アカウントに直接投稿", "highlight4": "AI ノート、翻訳、月 {questions} 回の Ask AI", "highlight5": "元動画の保存容量 {storage} GiB" },
-      "pro": { "name": "Pro", "summary": "毎月より多くの元動画を処理するクリエイター向け。", "highlight1": "月 {questions} 回の Ask AI", "highlight2": "月 {imports} 回の YouTube 字幕インポート", "highlight3": "元動画の保存容量 {storage} GiB" }
+    "metadata": {
+      "title": "Scribix の料金 | Free・Starter・Pro",
+      "description": "AI 動画クリップ向けの Free、Starter、Pro を比較。処理分数には、最初の AI クリップ選定と通常のクリップ書き出しが含まれます。"
     },
-    "billing": {"label": "請求間隔", "monthly": "月払い", "yearly": "年払い", "discountBadge": "{percent}%割引", "perMonth": "/ 月", "forever": "ずっと無料", "oneTime": "一度きり", "billedYearly": "年に 1 回 {price} を請求", "billedMonthly": "毎月請求", "noCard": "クレジットカード不要", "saveYearly": "年払いで {percent}% お得", "yearlyRefresh": "{percent}% お得・処理分数は毎月更新", "freeAllowance": "無料枠は一度きり"},
-    "actions": { "startFree": "無料で始める", "manage": "現在のサブスクリプションを管理", "getPlan": "{plan} を選ぶ", "checkoutSoon": "購入はまもなく可能になります" },
+    "hero": {
+      "eyebrow": "Scribix の料金",
+      "body": "無料で始められます。処理する元動画の長さに合わせてプランを選んでください。AI によるクリップ選定と書き出しは料金に含まれます。有料プランでは、カスタムクリップ、編集、SNS への直接投稿も利用できます。",
+      "previewTitle": "新料金のプレビュー。",
+      "previewBody": "これらのプランはまだ購入できません。"
+    },
+    "plans": {
+      "title": "元動画の分数で選び、必要なクリップを作成。",
+      "recommended": "おすすめ",
+      "sourceLabel": "処理できる元動画",
+      "socialAccounts": "SNS アカウントを最大 {count} 件連携",
+      "keyFeatures": "主な機能",
+      "everythingPlus": "{plan} の全機能に加えて",
+      "free": {
+        "name": "Free",
+        "summary": "一度きりの処理枠で AI クリップを試せます。",
+        "highlight1": "AI が選ぶクリップと文字起こし",
+        "highlight2": "AI が選んだ元のカットを書き出し",
+        "highlight3": "元動画を {days} 日間保存"
+      },
+      "starter": {
+        "name": "Starter",
+        "summary": "毎週、長い動画からクリップを作るクリエイター向け。",
+        "highlight1": "文字起こしや時間範囲からクリップを作成・編集",
+        "highlight2": "字幕、フレーミング、ブランド要素を編集",
+        "highlight3": "連携した SNS アカウントに直接投稿",
+        "highlight4": "AI ノート、翻訳、月 {questions} 回の Ask AI",
+        "highlight5": "元動画の保存容量 {storage} GiB"
+      },
+      "pro": {
+        "name": "Pro",
+        "summary": "毎月より多くの元動画を処理するクリエイター向け。",
+        "highlight1": "月 {questions} 回の Ask AI",
+        "highlight2": "月 {imports} 回の YouTube 字幕インポート",
+        "highlight3": "元動画の保存容量 {storage} GiB"
+      },
+      "current": "現在のプラン"
+    },
+    "billing": {
+      "label": "請求間隔",
+      "monthly": "月払い",
+      "yearly": "年払い",
+      "discountBadge": "{percent}%割引",
+      "perMonth": "/ 月",
+      "forever": "ずっと無料",
+      "billedYearly": "年に 1 回 {price} を請求",
+      "billedMonthly": "毎月請求",
+      "noCard": "クレジットカード不要"
+    },
+    "actions": {
+      "startFree": "無料で始める",
+      "manage": "現在のサブスクリプションを管理",
+      "getPlan": "{plan} を選ぶ",
+      "checkoutSoon": "購入はまもなく可能になります",
+      "changePlan": "プランを変更",
+      "openDashboard": "ダッシュボードへ"
+    },
     "explanation": "{minutes} 分の元動画は、最初の AI クリップ選定を含めて処理枠を {minutes} 分使用します。有料プランでは、カスタムクリップの作成、編集、書き出しで追加の処理分数は消費しません。",
-    "compare": { "eyebrow": "プラン比較", "title": "機能を詳しく比較。", "feature": "機能", "minutes": "元動画の処理枠", "transcript": "自動文字起こし", "speakers": "話者ラベルとタイムスタンプ", "exports": "文字起こしの書き出し", "aiClips": "AI クリップ", "customClips": "文字起こしや時間指定からカスタムクリップ作成", "editing": "クリップ編集とブランド設定", "output": "完成ファイル", "notes": "AI ノート", "translation": "文字起こしの翻訳", "askAi": "Ask AI", "youtube": "YouTube 字幕インポート", "accounts": "連携できる SNS アカウント", "publishing": "SNS への直接投稿", "storage": "元動画の保存容量", "platforms": "投稿先プラットフォーム", "footnote": "* 直接投稿は各プラットフォームの提供状況によって異なります。アップロード、クリップの長さ、レンダリングに関する既存の制限も適用されます。" },
-    "values": { "included": "利用可能", "includedFootnote": "利用可能*", "notIncluded": "対象外", "onePass": "動画ごとに 1 回", "minutes": "{minutes} 分", "lifetimeMinutes": "{minutes} 分・一度きり", "monthlyMinutes": "月 {minutes} 分", "freeOutput": "AI が選んだ元のカット・MP4", "paidOutput": "1080 × 1920 MP4・カバー・投稿文", "lifetimeQuestions": "{count} 回・一度きり", "monthlyQuestions": "月 {count} 回", "dailyImports": "1 日 {count} 回", "monthlyImports": "月 {count} 回", "upToAccounts": "最大 {count} 件", "storage": "{storage} GiB・{days} 日" },
-    "how": { "eyebrow": "使い方", "title": "AI の選定は 1 回。編集は柔軟に。", "processLabel": "処理", "processBody": "元動画をアップロードします。その長さに応じた処理分数が 1 回だけ消費され、文字起こしと最初の AI クリップ選定も含まれます。", "editLabel": "仕上げる", "editBody": "AI の提案を確認します。有料プランでは文字起こしや正確な時間指定から別のクリップを作り、追加の処理分数なしで編集・レンダリングできます。" },
+    "compare": {
+      "eyebrow": "プラン比較",
+      "title": "機能を詳しく比較。",
+      "feature": "機能",
+      "minutes": "元動画の処理枠",
+      "customClips": "文字起こしや時間指定からカスタムクリップ作成",
+      "editing": "クリップ編集とブランド設定",
+      "output": "完成ファイル",
+      "notes": "AI ノート",
+      "translation": "文字起こしの翻訳",
+      "askAi": "Ask AI",
+      "youtube": "YouTube 字幕インポート",
+      "accounts": "連携できる SNS アカウント",
+      "publishing": "SNS への直接投稿",
+      "storage": "元動画の保存容量",
+      "platforms": "投稿先プラットフォーム",
+      "footnote": "* 直接投稿は各プラットフォームの提供状況によって異なります。アップロード、クリップの長さ、レンダリングに関する既存の制限も適用されます。",
+      "allPlans": "すべてのプランに、話者ラベルとタイムスタンプ付きの自動文字起こし、文字起こしのエクスポート、動画ごとに1回のAIクリップ分析が含まれます。"
+    },
+    "values": {
+      "included": "利用可能",
+      "includedFootnote": "利用可能*",
+      "notIncluded": "対象外",
+      "lifetimeMinutes": "{minutes} 分・一度きり",
+      "monthlyMinutes": "月 {minutes} 分",
+      "freeOutput": "AI が選んだ元のカット・MP4",
+      "paidOutput": "1080 × 1920 MP4・カバー・投稿文",
+      "lifetimeQuestions": "{count} 回・一度きり",
+      "monthlyQuestions": "月 {count} 回",
+      "dailyImports": "1 日 {count} 回",
+      "monthlyImports": "月 {count} 回",
+      "upToAccounts": "最大 {count} 件",
+      "storage": "{storage} GiB・{days} 日"
+    },
+    "how": {
+      "eyebrow": "使い方",
+      "title": "AI の選定は 1 回。編集は柔軟に。",
+      "processLabel": "処理",
+      "processBody": "元動画をアップロードします。その長さに応じた処理分数が 1 回だけ消費され、文字起こしと最初の AI クリップ選定も含まれます。",
+      "editLabel": "仕上げる",
+      "editBody": "AI の提案を確認します。有料プランでは文字起こしや正確な時間指定から別のクリップを作り、追加の処理分数なしで編集・レンダリングできます。"
+    },
     "faq": {
       "title": "よくある質問。",
-      "clips": { "question": "クリップの作成に追加料金はかかりますか？", "answer": "かかりません。処理分数には元動画、文字起こし、最初の AI クリップ選定と提案されたクリップが含まれます。有料プランでは、カスタムクリップ、編集、通常の書き出しで追加の処理分数は消費しません。" },
-      "regenerate": { "question": "AI の提案を再生成できますか？", "answer": "各動画の AI クリップ選定は 1 回です。開始前にテーマと対象範囲を選べます。その後、有料プランでは文字起こしのテキストを選ぶか、開始・終了時刻を指定してクリップを作成できます。クリップの編集と新しい MP4 のレンダリングは引き続き可能です。" },
-      "minutes": { "question": "処理分数を使い切ったらどうなりますか？", "answer": "有料プランの利用枠が更新されると、別の元動画を処理できます。既存の元動画が保存され、プランに編集機能が含まれていれば、クリップの編集と書き出しを続けられます。" },
-      "social": { "question": "SNS アカウントは何件連携できますか？", "answer": "対応プラットフォーム全体で、Starter は最大 {starterAccounts} 件、Pro は最大 {proAccounts} 件のアクティブなアカウントを連携できます。同じプラットフォームの複数プロフィールも、それぞれ 1 件として数えます。連携を解除すると枠が空きます。" },
-      "yearly": { "question": "年払いはどのように機能しますか？", "answer": "年額は一度に支払います。処理分数と Ask AI の月間利用枠は毎月更新され、未使用分は繰り越されません。無料の処理分数は一度きりです。" }
+      "clips": {
+        "question": "クリップの作成に追加料金はかかりますか？",
+        "answer": "かかりません。処理分数には元動画、文字起こし、最初の AI クリップ選定と提案されたクリップが含まれます。有料プランでは、カスタムクリップ、編集、通常の書き出しで追加の処理分数は消費しません。"
+      },
+      "regenerate": {
+        "question": "AI の提案を再生成できますか？",
+        "answer": "各動画の AI クリップ選定は 1 回です。開始前にテーマと対象範囲を選べます。その後、有料プランでは文字起こしのテキストを選ぶか、開始・終了時刻を指定してクリップを作成できます。クリップの編集と新しい MP4 のレンダリングは引き続き可能です。"
+      },
+      "minutes": {
+        "question": "処理分数を使い切ったらどうなりますか？",
+        "answer": "有料プランの利用枠が更新されると、別の元動画を処理できます。既存の元動画が保存され、プランに編集機能が含まれていれば、クリップの編集と書き出しを続けられます。"
+      },
+      "social": {
+        "question": "SNS アカウントは何件連携できますか？",
+        "answer": "対応プラットフォーム全体で、Starter は最大 {starterAccounts} 件、Pro は最大 {proAccounts} 件のアクティブなアカウントを連携できます。同じプラットフォームの複数プロフィールも、それぞれ 1 件として数えます。連携を解除すると枠が空きます。"
+      },
+      "yearly": {
+        "question": "年払いはどのように機能しますか？",
+        "answer": "年額は一度に支払います。処理分数と Ask AI の月間利用枠は毎月更新され、未使用分は繰り越されません。無料の処理分数は一度きりです。"
+      }
+    },
+    "signedIn": {
+      "title": "プランを選択",
+      "body": "現在のプランは {plan} です。いつでもアップグレードでき、プロジェクトや文字起こしはそのまま残ります。"
+    },
+    "modal": {
+      "body": "ソース動画の処理時間の追加、カスタムクリップ、編集、SNSへの直接投稿が使えます。",
+      "proEverything": "Starter のすべての機能",
+      "onPro": "現在、最上位の Pro プランをご利用中です。",
+      "checkoutUnavailable": "有料プランの購入はまだ受け付けていません。まもなくここからアップグレードできるようになります。",
+      "compareLink": "すべての機能を比較",
+      "loading": "読み込み中…",
+      "loadError": "プランを読み込めませんでした"
     }
   },
   "GuidesNav": {

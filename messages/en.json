@@ -1,4 +1,10 @@
 {
+  "Theme": {
+    "label": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
   "SiteMetadata": {
     "title": "AI Video Clipper: Turn Long Videos into Shorts | Scribix",
     "description": "AI video clipper for podcasts, interviews, webinars, and talking-head videos. Find complete moments, edit captions and 9:16 framing, and export MP4 clips.",
@@ -748,7 +754,6 @@
       "remainingValue": "{remaining, number} minutes available",
       "portalHelp": "Payment methods, invoices, plan changes, and cancellation are managed through Paddle.",
       "freeAllowanceLifetime": "One-time free allowance",
-      "comparePlans": "Compare all plan features",
       "choosePlanTitle": "Choose the right plan",
       "choosePlanDescription": "Creator includes 2,400 minutes of uploaded video processing every month, plus clip editing and brand controls.",
       "checkoutOkTitle": "Subscription active — welcome aboard.",
@@ -828,8 +833,6 @@
       "upgradeVideoStorageModalTitle": "Keep your source videos",
       "upgradeVideoStorageModalBody": "Upgrade to retain more source-video storage and keep creating clips without re-uploading.",
       "upgradePlanModalTitle": "Upgrade your plan",
-      "upgradePlanModalBody": "Get more processing time and unlock every Creator feature.",
-      "upgradeComparePlans": "Compare all plan features",
       "upgradeBillingLabel": "Choose billing",
       "upgradeYearly": "Yearly",
       "upgradeYearlyBadge": "Save 50%",
@@ -3254,27 +3257,145 @@
     "pro": "Pro"
   },
   "PricingV2": {
-    "metadata": { "title": "Scribix Pricing | Free, Starter & Pro", "description": "Compare Free, Starter, and Pro plans for AI video clipping. Processing minutes include the first AI clipping pass and normal clip exports." },
-    "hero": { "eyebrow": "Scribix pricing", "title": "Turn long videos into clips worth publishing.", "body": "Start free. Choose a plan for how much source video you create from. AI-selected clips and exports are included; paid plans add custom clips, editing and direct social publishing.", "previewTitle": "New pricing preview.", "previewBody": "Checkout for these plans is not available yet." },
-    "plans": {
-      "eyebrow": "Three clear plans", "title": "Pay for source minutes. Make the clips you need.", "recommended": "Recommended", "sourceLabel": "Source video you can process", "includes": "Includes", "noSocial": "No connected social accounts", "socialAccounts": "Connect up to {count} social accounts", "keyFeatures": "Key features", "everythingPlus": "Everything in {plan}, plus",
-      "free": { "name": "Free", "summary": "Try AI clipping with a one-time processing allowance.", "highlight1": "AI-selected clips and transcripts", "highlight2": "Export the original AI-selected cuts", "highlight3": "{days}-day source video storage" },
-      "starter": { "name": "Starter", "summary": "For creators turning long videos into clips every week.", "highlight1": "Create and edit clips from transcript or time ranges", "highlight2": "Edit captions, framing and branding", "highlight3": "Publish directly to connected social accounts", "highlight4": "AI notes, translation and {questions} Ask AI questions / month", "highlight5": "{storage} GiB source video storage" },
-      "pro": { "name": "Pro", "summary": "For creators processing more source video each month.", "highlight1": "{questions} Ask AI questions each month", "highlight2": "{imports} YouTube caption imports each month", "highlight3": "{storage} GiB source video storage" }
+    "metadata": {
+      "title": "Scribix Pricing | Free, Starter & Pro",
+      "description": "Compare Free, Starter, and Pro plans for AI video clipping. Processing minutes include the first AI clipping pass and normal clip exports."
     },
-    "billing": {"label": "Billing interval", "monthly": "Monthly", "yearly": "Yearly", "discountBadge": "{percent}% OFF", "perMonth": "/ month", "forever": "forever", "oneTime": "one time", "billedYearly": "{price} billed once per year", "billedMonthly": "Billed monthly", "noCard": "No credit card required", "saveYearly": "Save {percent}% with yearly billing", "yearlyRefresh": "Save {percent}% · processing minutes refresh monthly", "freeAllowance": "One-time free allowance"},
-    "actions": { "startFree": "Start free", "manage": "Manage current subscription", "getPlan": "Get {plan}", "checkoutSoon": "Checkout coming soon" },
+    "hero": {
+      "eyebrow": "Scribix pricing",
+      "body": "Start free. Choose a plan for how much source video you create from. AI-selected clips and exports are included; paid plans add custom clips, editing and direct social publishing.",
+      "previewTitle": "New pricing preview.",
+      "previewBody": "Checkout for these plans is not available yet."
+    },
+    "plans": {
+      "title": "Pay for source minutes. Make the clips you need.",
+      "recommended": "Recommended",
+      "sourceLabel": "Source video you can process",
+      "socialAccounts": "Connect up to {count} social accounts",
+      "keyFeatures": "Key features",
+      "everythingPlus": "Everything in {plan}, plus",
+      "free": {
+        "name": "Free",
+        "summary": "Try AI clipping with a one-time processing allowance.",
+        "highlight1": "AI-selected clips and transcripts",
+        "highlight2": "Export the original AI-selected cuts",
+        "highlight3": "{days}-day source video storage"
+      },
+      "starter": {
+        "name": "Starter",
+        "summary": "For creators turning long videos into clips every week.",
+        "highlight1": "Create and edit clips from transcript or time ranges",
+        "highlight2": "Edit captions, framing and branding",
+        "highlight3": "Publish directly to connected social accounts",
+        "highlight4": "AI notes, translation and {questions} Ask AI questions / month",
+        "highlight5": "{storage} GiB source video storage"
+      },
+      "pro": {
+        "name": "Pro",
+        "summary": "For creators processing more source video each month.",
+        "highlight1": "{questions} Ask AI questions each month",
+        "highlight2": "{imports} YouTube caption imports each month",
+        "highlight3": "{storage} GiB source video storage"
+      },
+      "current": "Current plan"
+    },
+    "billing": {
+      "label": "Billing interval",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "discountBadge": "{percent}% OFF",
+      "perMonth": "/ month",
+      "forever": "forever",
+      "billedYearly": "{price} billed once per year",
+      "billedMonthly": "Billed monthly",
+      "noCard": "No credit card required"
+    },
+    "actions": {
+      "startFree": "Start free",
+      "manage": "Manage current subscription",
+      "getPlan": "Get {plan}",
+      "checkoutSoon": "Checkout coming soon",
+      "changePlan": "Change plan",
+      "openDashboard": "Go to dashboard"
+    },
     "explanation": "A {minutes}-minute source video uses {minutes} minutes of your allowance, including one AI clipping pass. On paid plans, creating custom clips, editing and exporting do not use more minutes.",
-    "compare": { "eyebrow": "Compare plans", "title": "The full picture.", "feature": "Feature", "minutes": "Source video allowance", "transcript": "Automatic transcript", "speakers": "Speaker labels and timestamps", "exports": "Transcript exports", "aiClips": "AI clipping", "customClips": "Custom clips from transcript or time", "editing": "Clip editing and brand controls", "output": "Final output", "notes": "AI notes", "translation": "Transcript translation", "askAi": "Ask AI", "youtube": "YouTube caption imports", "accounts": "Connected social accounts", "publishing": "Direct social publishing", "storage": "Original video storage", "platforms": "Publishing platforms", "footnote": "* Direct publishing depends on each platform’s availability. Existing upload, clip-length, and rendering limits still apply." },
-    "values": { "included": "Included", "includedFootnote": "Included*", "notIncluded": "Not included", "onePass": "One pass per video", "minutes": "{minutes} minutes", "lifetimeMinutes": "{minutes} min, lifetime", "monthlyMinutes": "{minutes} min / month", "freeOutput": "Original AI cuts · MP4", "paidOutput": "1080 × 1920 MP4 · cover · publishing copy", "lifetimeQuestions": "{count} questions, lifetime", "monthlyQuestions": "{count} questions / month", "dailyImports": "{count} / day", "monthlyImports": "{count} / month", "upToAccounts": "Up to {count}", "storage": "{storage} GiB · {days} days" },
-    "how": { "eyebrow": "How it works", "title": "One AI pass. Plenty of room to edit.", "processLabel": "Process", "processBody": "Upload a source video. Its duration uses processing minutes once, including the transcript and first AI clipping pass.", "editLabel": "Make it yours", "editBody": "Review the AI suggestions. Paid plans can create more clips from transcript text or exact times, then edit and render without spending more minutes." },
+    "compare": {
+      "eyebrow": "Compare plans",
+      "title": "The full picture.",
+      "feature": "Feature",
+      "minutes": "Source video allowance",
+      "customClips": "Custom clips from transcript or time",
+      "editing": "Clip editing and brand controls",
+      "output": "Final output",
+      "notes": "AI notes",
+      "translation": "Transcript translation",
+      "askAi": "Ask AI",
+      "youtube": "YouTube caption imports",
+      "accounts": "Connected social accounts",
+      "publishing": "Direct social publishing",
+      "storage": "Original video storage",
+      "platforms": "Publishing platforms",
+      "footnote": "* Direct publishing depends on each platform’s availability. Existing upload, clip-length, and rendering limits still apply.",
+      "allPlans": "Every plan includes automatic transcripts with speaker labels and timestamps, transcript exports, and one AI clipping pass per video."
+    },
+    "values": {
+      "included": "Included",
+      "includedFootnote": "Included*",
+      "notIncluded": "Not included",
+      "lifetimeMinutes": "{minutes} min, lifetime",
+      "monthlyMinutes": "{minutes} min / month",
+      "freeOutput": "Original AI cuts · MP4",
+      "paidOutput": "1080 × 1920 MP4 · cover · publishing copy",
+      "lifetimeQuestions": "{count} questions, lifetime",
+      "monthlyQuestions": "{count} questions / month",
+      "dailyImports": "{count} / day",
+      "monthlyImports": "{count} / month",
+      "upToAccounts": "Up to {count}",
+      "storage": "{storage} GiB · {days} days"
+    },
+    "how": {
+      "eyebrow": "How it works",
+      "title": "One AI pass. Plenty of room to edit.",
+      "processLabel": "Process",
+      "processBody": "Upload a source video. Its duration uses processing minutes once, including the transcript and first AI clipping pass.",
+      "editLabel": "Make it yours",
+      "editBody": "Review the AI suggestions. Paid plans can create more clips from transcript text or exact times, then edit and render without spending more minutes."
+    },
     "faq": {
       "title": "Questions, answered.",
-      "clips": { "question": "Do clips cost extra?", "answer": "No. Processing minutes cover the source video, its transcript, the first AI clipping pass, and its suggested clips. On paid plans, custom clips, editing, and normal exports do not use more processing minutes." },
-      "regenerate": { "question": "Can I regenerate the AI suggestions?", "answer": "Each video gets one AI clipping pass. You can choose the topic and range before starting. Afterwards, paid plans let you make clips by selecting transcript text or setting start and end times. Editing a clip and rendering a new MP4 remain available." },
-      "minutes": { "question": "What happens when I use all my processing minutes?", "answer": "You can process another source when your paid allowance refreshes. While an existing source is still available and your plan includes editing, you can keep editing and exporting its clips." },
-      "social": { "question": "How many social accounts can I connect?", "answer": "Starter includes up to {starterAccounts} active accounts and Pro up to {proAccounts} across supported platforms. Each profile counts as one account, including multiple profiles on the same platform. Disconnecting a profile frees its slot." },
-      "yearly": { "question": "How does yearly billing work?", "answer": "The yearly price is paid once. Processing minutes and monthly Ask AI allowances refresh each month and do not roll over. Free processing minutes are a one-time lifetime allowance." }
+      "clips": {
+        "question": "Do clips cost extra?",
+        "answer": "No. Processing minutes cover the source video, its transcript, the first AI clipping pass, and its suggested clips. On paid plans, custom clips, editing, and normal exports do not use more processing minutes."
+      },
+      "regenerate": {
+        "question": "Can I regenerate the AI suggestions?",
+        "answer": "Each video gets one AI clipping pass. You can choose the topic and range before starting. Afterwards, paid plans let you make clips by selecting transcript text or setting start and end times. Editing a clip and rendering a new MP4 remain available."
+      },
+      "minutes": {
+        "question": "What happens when I use all my processing minutes?",
+        "answer": "You can process another source when your paid allowance refreshes. While an existing source is still available and your plan includes editing, you can keep editing and exporting its clips."
+      },
+      "social": {
+        "question": "How many social accounts can I connect?",
+        "answer": "Starter includes up to {starterAccounts} active accounts and Pro up to {proAccounts} across supported platforms. Each profile counts as one account, including multiple profiles on the same platform. Disconnecting a profile frees its slot."
+      },
+      "yearly": {
+        "question": "How does yearly billing work?",
+        "answer": "The yearly price is paid once. Processing minutes and monthly Ask AI allowances refresh each month and do not roll over. Free processing minutes are a one-time lifetime allowance."
+      }
+    },
+    "signedIn": {
+      "title": "Choose your plan",
+      "body": "You're on {plan}. Upgrade any time — your projects and transcripts stay where they are."
+    },
+    "modal": {
+      "body": "Get more source minutes, custom clips, editing and direct social publishing.",
+      "proEverything": "Everything in Starter",
+      "onPro": "You're on Pro, our largest plan.",
+      "checkoutUnavailable": "Paid checkout isn't open yet. You'll be able to upgrade here soon.",
+      "compareLink": "Compare all features",
+      "loading": "Loading…",
+      "loadError": "Couldn't load your plan"
     }
   },
   "GuidesNav": {

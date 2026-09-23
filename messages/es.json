@@ -1,4 +1,10 @@
 {
+  "Theme": {
+    "label": "Tema",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro"
+  },
   "SiteMetadata": {
     "title": "Generador de clips con IA: vídeos largos a shorts | Scribix",
     "description": "Generador de clips con IA para podcasts, entrevistas, webinars y vídeos hablados. Encuentra momentos completos, ajusta subtítulos y exporta MP4.",
@@ -748,7 +754,6 @@
       "remainingValue": "{remaining, number} minutos disponibles",
       "portalHelp": "Los métodos de pago, las facturas, los cambios de plan y la cancelación se gestionan mediante Paddle.",
       "freeAllowanceLifetime": "Asignación gratuita única",
-      "comparePlans": "Comparar todas las funciones",
       "choosePlanTitle": "Elige el plan adecuado",
       "choosePlanDescription": "Pro incluye 2.400 minutos de transcripción cada mes, notas con IA y traducción.",
       "checkoutOkTitle": "Suscripción activa — bienvenido.",
@@ -827,8 +832,6 @@
       "upgradeVideoStorageModalTitle": "Conserva tus vídeos fuente",
       "upgradeVideoStorageModalBody": "Actualiza para disponer de más almacenamiento de vídeos fuente y seguir creando clips sin volver a subirlos.",
       "upgradePlanModalTitle": "Actualiza tu plan",
-      "upgradePlanModalBody": "Obtén más tiempo de procesamiento y desbloquea todas las funciones de Creator.",
-      "upgradeComparePlans": "Comparar todas las funciones",
       "upgradeBillingLabel": "Elige la facturación",
       "upgradeYearly": "Anual",
       "upgradeYearlyBadge": "Ahorra un 50 %",
@@ -3254,27 +3257,145 @@
     "pro": "Pro"
   },
   "PricingV2": {
-    "metadata": { "title": "Precios de Scribix | Free, Starter y Pro", "description": "Compara Free, Starter y Pro para crear clips de vídeo con IA. Los minutos de procesamiento incluyen la primera selección de clips con IA y las exportaciones habituales." },
-    "hero": { "eyebrow": "Precios de Scribix", "title": "Convierte vídeos largos en clips listos para publicar.", "body": "Empieza gratis. Elige un plan según la cantidad de vídeo original que proceses. Los clips seleccionados por IA y las exportaciones están incluidos; los planes de pago añaden clips personalizados, edición y publicación directa en redes sociales.", "previewTitle": "Vista previa de los nuevos precios.", "previewBody": "Todavía no se puede contratar estos planes." },
-    "plans": {
-      "eyebrow": "Tres planes claros", "title": "Paga por minutos de vídeo original. Crea los clips que necesites.", "recommended": "Recomendado", "sourceLabel": "Vídeo original que puedes procesar", "includes": "Incluye", "noSocial": "Sin cuentas sociales conectadas", "socialAccounts": "Conecta hasta {count} cuentas sociales", "keyFeatures": "Funciones principales", "everythingPlus": "Todo lo de {plan}, más",
-      "free": { "name": "Free", "summary": "Prueba los clips con IA con una asignación de procesamiento única.", "highlight1": "Clips seleccionados por IA y transcripciones", "highlight2": "Exportación de los cortes originales seleccionados por IA", "highlight3": "Almacenamiento del vídeo original durante {days} días" },
-      "starter": { "name": "Starter", "summary": "Para creadores que convierten vídeos largos en clips cada semana.", "highlight1": "Crea y edita clips desde la transcripción o intervalos de tiempo", "highlight2": "Edita subtítulos, encuadre y elementos de marca", "highlight3": "Publica directamente en tus cuentas sociales conectadas", "highlight4": "Notas con IA, traducción y {questions} preguntas de Ask AI al mes", "highlight5": "{storage} GiB de almacenamiento de vídeos originales" },
-      "pro": { "name": "Pro", "summary": "Para creadores que procesan más vídeo original cada mes.", "highlight1": "{questions} preguntas de Ask AI al mes", "highlight2": "{imports} importaciones de subtítulos de YouTube al mes", "highlight3": "{storage} GiB de almacenamiento de vídeos originales" }
+    "metadata": {
+      "title": "Precios de Scribix | Free, Starter y Pro",
+      "description": "Compara Free, Starter y Pro para crear clips de vídeo con IA. Los minutos de procesamiento incluyen la primera selección de clips con IA y las exportaciones habituales."
     },
-    "billing": {"label": "Periodo de facturación", "monthly": "Mensual", "yearly": "Anual", "discountBadge": "{percent} % menos", "perMonth": "/ mes", "forever": "para siempre", "oneTime": "una sola vez", "billedYearly": "{price} facturados una vez al año", "billedMonthly": "Facturación mensual", "noCard": "No se necesita tarjeta de crédito", "saveYearly": "Ahorra un {percent} % con la facturación anual", "yearlyRefresh": "Ahorra un {percent} % · los minutos se renuevan cada mes", "freeAllowance": "Asignación gratuita única"},
-    "actions": { "startFree": "Empezar gratis", "manage": "Gestionar suscripción actual", "getPlan": "Elegir {plan}", "checkoutSoon": "Contratación próximamente" },
+    "hero": {
+      "eyebrow": "Precios de Scribix",
+      "body": "Empieza gratis. Elige un plan según la cantidad de vídeo original que proceses. Los clips seleccionados por IA y las exportaciones están incluidos; los planes de pago añaden clips personalizados, edición y publicación directa en redes sociales.",
+      "previewTitle": "Vista previa de los nuevos precios.",
+      "previewBody": "Todavía no se puede contratar estos planes."
+    },
+    "plans": {
+      "title": "Paga por minutos de vídeo original. Crea los clips que necesites.",
+      "recommended": "Recomendado",
+      "sourceLabel": "Vídeo original que puedes procesar",
+      "socialAccounts": "Conecta hasta {count} cuentas sociales",
+      "keyFeatures": "Funciones principales",
+      "everythingPlus": "Todo lo de {plan}, más",
+      "free": {
+        "name": "Free",
+        "summary": "Prueba los clips con IA con una asignación de procesamiento única.",
+        "highlight1": "Clips seleccionados por IA y transcripciones",
+        "highlight2": "Exportación de los cortes originales seleccionados por IA",
+        "highlight3": "Almacenamiento del vídeo original durante {days} días"
+      },
+      "starter": {
+        "name": "Starter",
+        "summary": "Para creadores que convierten vídeos largos en clips cada semana.",
+        "highlight1": "Crea y edita clips desde la transcripción o intervalos de tiempo",
+        "highlight2": "Edita subtítulos, encuadre y elementos de marca",
+        "highlight3": "Publica directamente en tus cuentas sociales conectadas",
+        "highlight4": "Notas con IA, traducción y {questions} preguntas de Ask AI al mes",
+        "highlight5": "{storage} GiB de almacenamiento de vídeos originales"
+      },
+      "pro": {
+        "name": "Pro",
+        "summary": "Para creadores que procesan más vídeo original cada mes.",
+        "highlight1": "{questions} preguntas de Ask AI al mes",
+        "highlight2": "{imports} importaciones de subtítulos de YouTube al mes",
+        "highlight3": "{storage} GiB de almacenamiento de vídeos originales"
+      },
+      "current": "Plan actual"
+    },
+    "billing": {
+      "label": "Periodo de facturación",
+      "monthly": "Mensual",
+      "yearly": "Anual",
+      "discountBadge": "{percent} % menos",
+      "perMonth": "/ mes",
+      "forever": "para siempre",
+      "billedYearly": "{price} facturados una vez al año",
+      "billedMonthly": "Facturación mensual",
+      "noCard": "No se necesita tarjeta de crédito"
+    },
+    "actions": {
+      "startFree": "Empezar gratis",
+      "manage": "Gestionar suscripción actual",
+      "getPlan": "Elegir {plan}",
+      "checkoutSoon": "Contratación próximamente",
+      "changePlan": "Cambiar de plan",
+      "openDashboard": "Ir al panel"
+    },
     "explanation": "Un vídeo original de {minutes} minutos consume {minutes} minutos de tu asignación, incluida una primera selección de clips con IA. En los planes de pago, crear clips personalizados, editarlos y exportarlos no consume minutos adicionales.",
-    "compare": { "eyebrow": "Comparar planes", "title": "Todos los detalles.", "feature": "Función", "minutes": "Asignación de vídeo original", "transcript": "Transcripción automática", "speakers": "Identificación de hablantes y marcas de tiempo", "exports": "Exportación de transcripciones", "aiClips": "Clips con IA", "customClips": "Clips personalizados desde texto o tiempo", "editing": "Edición de clips y controles de marca", "output": "Resultado final", "notes": "Notas con IA", "translation": "Traducción de transcripciones", "askAi": "Ask AI", "youtube": "Importaciones de subtítulos de YouTube", "accounts": "Cuentas sociales conectadas", "publishing": "Publicación directa en redes sociales", "storage": "Almacenamiento de vídeos originales", "platforms": "Plataformas de publicación", "footnote": "* La publicación directa depende de la disponibilidad de cada plataforma. Siguen aplicándose los límites actuales de carga, duración de clips y renderizado." },
-    "values": { "included": "Incluido", "includedFootnote": "Incluido*", "notIncluded": "No incluido", "onePass": "Una pasada por vídeo", "minutes": "{minutes} minutos", "lifetimeMinutes": "{minutes} min, una sola vez", "monthlyMinutes": "{minutes} min / mes", "freeOutput": "Cortes originales con IA · MP4", "paidOutput": "MP4 1080 × 1920 · portada · texto para publicar", "lifetimeQuestions": "{count} preguntas, una sola vez", "monthlyQuestions": "{count} preguntas / mes", "dailyImports": "{count} / día", "monthlyImports": "{count} / mes", "upToAccounts": "Hasta {count}", "storage": "{storage} GiB · {days} días" },
-    "how": { "eyebrow": "Cómo funciona", "title": "Una pasada con IA. Mucho margen para editar.", "processLabel": "Procesar", "processBody": "Sube un vídeo original. Su duración consume minutos una sola vez e incluye la transcripción y la primera selección de clips con IA.", "editLabel": "Hazlo tuyo", "editBody": "Revisa las sugerencias de la IA. Los planes de pago permiten crear más clips desde el texto de la transcripción o tiempos exactos, y luego editarlos y renderizarlos sin consumir más minutos." },
+    "compare": {
+      "eyebrow": "Comparar planes",
+      "title": "Todos los detalles.",
+      "feature": "Función",
+      "minutes": "Asignación de vídeo original",
+      "customClips": "Clips personalizados desde texto o tiempo",
+      "editing": "Edición de clips y controles de marca",
+      "output": "Resultado final",
+      "notes": "Notas con IA",
+      "translation": "Traducción de transcripciones",
+      "askAi": "Ask AI",
+      "youtube": "Importaciones de subtítulos de YouTube",
+      "accounts": "Cuentas sociales conectadas",
+      "publishing": "Publicación directa en redes sociales",
+      "storage": "Almacenamiento de vídeos originales",
+      "platforms": "Plataformas de publicación",
+      "footnote": "* La publicación directa depende de la disponibilidad de cada plataforma. Siguen aplicándose los límites actuales de carga, duración de clips y renderizado.",
+      "allPlans": "Todos los planes incluyen transcripción automática con hablantes y marcas de tiempo, exportación de transcripciones y un análisis de clips con IA por vídeo."
+    },
+    "values": {
+      "included": "Incluido",
+      "includedFootnote": "Incluido*",
+      "notIncluded": "No incluido",
+      "lifetimeMinutes": "{minutes} min, una sola vez",
+      "monthlyMinutes": "{minutes} min / mes",
+      "freeOutput": "Cortes originales con IA · MP4",
+      "paidOutput": "MP4 1080 × 1920 · portada · texto para publicar",
+      "lifetimeQuestions": "{count} preguntas, una sola vez",
+      "monthlyQuestions": "{count} preguntas / mes",
+      "dailyImports": "{count} / día",
+      "monthlyImports": "{count} / mes",
+      "upToAccounts": "Hasta {count}",
+      "storage": "{storage} GiB · {days} días"
+    },
+    "how": {
+      "eyebrow": "Cómo funciona",
+      "title": "Una pasada con IA. Mucho margen para editar.",
+      "processLabel": "Procesar",
+      "processBody": "Sube un vídeo original. Su duración consume minutos una sola vez e incluye la transcripción y la primera selección de clips con IA.",
+      "editLabel": "Hazlo tuyo",
+      "editBody": "Revisa las sugerencias de la IA. Los planes de pago permiten crear más clips desde el texto de la transcripción o tiempos exactos, y luego editarlos y renderizarlos sin consumir más minutos."
+    },
     "faq": {
       "title": "Preguntas frecuentes.",
-      "clips": { "question": "¿Los clips tienen un coste adicional?", "answer": "No. Los minutos de procesamiento cubren el vídeo original, su transcripción, la primera selección de clips con IA y los clips sugeridos. En los planes de pago, los clips personalizados, la edición y las exportaciones habituales no consumen más minutos." },
-      "regenerate": { "question": "¿Puedo volver a generar las sugerencias de IA?", "answer": "Cada vídeo recibe una pasada de selección de clips con IA. Puedes elegir el tema y el intervalo antes de empezar. Después, los planes de pago te permiten crear clips seleccionando texto de la transcripción o fijando horas de inicio y fin. Puedes seguir editando un clip y renderizar un nuevo MP4." },
-      "minutes": { "question": "¿Qué pasa cuando agoto mis minutos de procesamiento?", "answer": "Podrás procesar otro vídeo original cuando se renueve tu asignación de pago. Mientras un vídeo existente siga disponible y tu plan incluya edición, podrás seguir editando y exportando sus clips." },
-      "social": { "question": "¿Cuántas cuentas sociales puedo conectar?", "answer": "Starter incluye hasta {starterAccounts} cuentas activas y Pro hasta {proAccounts} entre las plataformas admitidas. Cada perfil cuenta como una cuenta, incluso si hay varios en la misma plataforma. Desconectar un perfil libera su plaza." },
-      "yearly": { "question": "¿Cómo funciona la facturación anual?", "answer": "El precio anual se paga una vez. Los minutos de procesamiento y las preguntas mensuales de Ask AI se renuevan cada mes y no se acumulan. Los minutos gratuitos se conceden una sola vez." }
+      "clips": {
+        "question": "¿Los clips tienen un coste adicional?",
+        "answer": "No. Los minutos de procesamiento cubren el vídeo original, su transcripción, la primera selección de clips con IA y los clips sugeridos. En los planes de pago, los clips personalizados, la edición y las exportaciones habituales no consumen más minutos."
+      },
+      "regenerate": {
+        "question": "¿Puedo volver a generar las sugerencias de IA?",
+        "answer": "Cada vídeo recibe una pasada de selección de clips con IA. Puedes elegir el tema y el intervalo antes de empezar. Después, los planes de pago te permiten crear clips seleccionando texto de la transcripción o fijando horas de inicio y fin. Puedes seguir editando un clip y renderizar un nuevo MP4."
+      },
+      "minutes": {
+        "question": "¿Qué pasa cuando agoto mis minutos de procesamiento?",
+        "answer": "Podrás procesar otro vídeo original cuando se renueve tu asignación de pago. Mientras un vídeo existente siga disponible y tu plan incluya edición, podrás seguir editando y exportando sus clips."
+      },
+      "social": {
+        "question": "¿Cuántas cuentas sociales puedo conectar?",
+        "answer": "Starter incluye hasta {starterAccounts} cuentas activas y Pro hasta {proAccounts} entre las plataformas admitidas. Cada perfil cuenta como una cuenta, incluso si hay varios en la misma plataforma. Desconectar un perfil libera su plaza."
+      },
+      "yearly": {
+        "question": "¿Cómo funciona la facturación anual?",
+        "answer": "El precio anual se paga una vez. Los minutos de procesamiento y las preguntas mensuales de Ask AI se renuevan cada mes y no se acumulan. Los minutos gratuitos se conceden una sola vez."
+      }
+    },
+    "signedIn": {
+      "title": "Elige tu plan",
+      "body": "Estás en {plan}. Mejora cuando quieras: tus proyectos y transcripciones se mantienen."
+    },
+    "modal": {
+      "body": "Más minutos de vídeo fuente, clips personalizados, edición y publicación directa en redes sociales.",
+      "proEverything": "Todo lo de Starter",
+      "onPro": "Estás en Pro, nuestro plan más completo.",
+      "checkoutUnavailable": "El pago aún no está disponible. Pronto podrás mejorar tu plan aquí.",
+      "compareLink": "Comparar todas las funciones",
+      "loading": "Cargando…",
+      "loadError": "No se pudo cargar tu plan"
     }
   },
   "GuidesNav": {

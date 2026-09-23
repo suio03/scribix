@@ -137,21 +137,13 @@ export function WorkspaceSidebar({
         </nav>
 
         <div className="border-t border-line p-3">
-          {usage?.tier === "free" || !usage ? (
+          {usage?.tier !== "pro" ? (
             <UpgradePlanButton
               onOpen={closeMobile}
               className="flex w-full items-center justify-center rounded-xl bg-accent px-3 py-2.5 text-[12px] font-semibold text-[var(--action-text)] transition hover:bg-accent/90"
             >
               {sidebarT("upgradePlan")}
             </UpgradePlanButton>
-          ) : usage.tier === "basic" ? (
-            <Link
-              href="/dashboard/billing"
-              onClick={closeMobile}
-              className="flex items-center justify-center rounded-xl bg-accent px-3 py-2.5 text-[12px] font-semibold text-[var(--action-text)] transition hover:bg-accent/90"
-            >
-              {sidebarT("upgradePlan")}
-            </Link>
           ) : null}
 
           <div className="mt-3 flex items-center gap-1">
