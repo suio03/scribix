@@ -78,6 +78,7 @@ AAC 和 R2 object existence 检查。Worker 日志不输出 token、signed URL �
 - 容量/启动失败使用指数退避，5 次失败后把单 segment 标记为 `provider_unavailable` 并进入 DLQ。
 - queued job 未 dispatch 或 preparing claim 中断时重新入队。
 - reconciliation 读取 D1 lease 与 Container/job 状态，修复 STARTING/RUNNING/FAILED 漂移。
+- Container 以 `start()` 启动，不会进入 `healthy`，因此运行中的实例在 provider 中报告为 `preparing`。reconciliation 不得把已 lease 的 `running`/`uploading` job 降回 `preparing`，否则 signed `/progress` callback 返回 409，Container 会把这个 4xx 记录为 `invalid_render_spec`。
 - Container 成功但 result callback 缺失时标记 `upload_failed`，避免永久卡住。
 
 Container 必须以 `jobId` 作为 Durable Object name，并在启动前取得 D1 lease；deterministic output key、

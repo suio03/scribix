@@ -139,7 +139,7 @@ export requests.
 
 ### 5. 部署与观测
 
-按以下顺序：D1 migrations → private R2/CORS → Container image/application → Queue/DLQ consumer → 主 Next/OpenNext app → cleanup worker。默认 rollout 为 100%，因此 schema、Container 调度和其他依赖未就绪时不要部署主应用。
+按以下顺序：D1 migrations → private R2/CORS → Container image/application → Queue/DLQ consumer → 主 Next/OpenNext app → cleanup worker。主 app 随 `main` push 经 Workers Builds 部署；render dispatcher、Queue consumer 与 Container 需通过 `npm run deploy:video-render` 单独部署，cleanup worker 使用 `npm run deploy:cleanup`。默认 rollout 为 100%，因此 schema、Container 调度和其他依赖未就绪时不要部署主应用。
 
 配置并验证：
 
