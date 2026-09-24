@@ -46,7 +46,7 @@ async function fixture(t, userCount = 10, jobsPerUser = 5) {
       attempt INTEGER DEFAULT 0, error_code TEXT, provider_submitted_at TEXT,
       queued_at TEXT DEFAULT '2026-01-01 00:00:00', created_at TEXT DEFAULT '2026-01-01 00:00:00',
       updated_at TEXT DEFAULT '2026-01-01 00:00:00', started_at TEXT, completed_at TEXT,
-      output_asset_id TEXT, cover_asset_id TEXT);
+      upload_started_at TEXT, estimated_cost_microusd INTEGER, output_asset_id TEXT, cover_asset_id TEXT);
     CREATE TABLE media_assets(id TEXT PRIMARY KEY, status TEXT);`, [], true);
   const rows = [];
   for (let user = 0; user < userCount; user++) {
@@ -114,16 +114,19 @@ test("deleted projects are never dispatched; no pending work emits no wake", asy
   assert.equal(f.messages.length, 0);
 });
 
-function dispatcher(f, submit) {
+function dispatcher(f, submit, describe = async () => new Map()) {
   return load("workers/video-render-dispatcher.ts", {
     "@cloudflare/containers": { Container: class {} },
     "../lib/video-workspace/contracts": contracts,
     "../lib/video-workspace/render-scheduling": scheduling,
     "../lib/video-workspace/job-auth": { createScopedJobToken: async () => "test-only" },
     "../lib/video-workspace/events": { recordServerRenderEvent: async () => {} },
-    "../lib/video-workspace/operations": {},
+    "../lib/video-workspace/operations": {
+      parseRenderCostRates: () => null, percentile: () => null, renderErrorCategory: () => "none",
+    },
     "./video-render-provider": { CloudflareContainerRenderProvider: class {
       submit = submit;
+      describe = describe;
       async cancel() {}
     } },
   }).default;
@@ -213,4 +216,19 @@ test("active opens and exports outrank automatic warmups within a user without p
   await f.sql("UPDATE render_jobs SET priority=1 WHERE id='u00-j2'");
   assert.equal((await scheduling.claimNextRenderJob(f.db,10)).id,'u00-j2');
   assert.equal(await scheduling.claimNextRenderJob(f.db,10),null);
+});
+
+test("reconciliation never returns a leased job to preparing while its container runs", async (t) => {
+  const f = await fixture(t, 1, 2);
+  await f.sql(`UPDATE render_jobs SET status='running', provider='cloudflare-containers',
+    provider_job_id=id, started_at='2026-01-01 00:00:00'`);
+  await f.sql("UPDATE render_jobs SET status='preparing' WHERE id='u00-j1'");
+  // Containers started with start() report "running", which maps to preparing.
+  const worker = dispatcher(f, async () => { throw new Error("unexpected dispatch"); },
+    async (ids) => new Map(ids.map((id) => [id, "preparing"])));
+  let pending;
+  await worker.scheduled({}, env(f), { waitUntil(promise) { pending = promise; } });
+  await pending;
+  assert.deepEqual((await f.sql("SELECT id,status FROM render_jobs ORDER BY id")).results,
+    [{ id: "u00-j0", status: "running" }, { id: "u00-j1", status: "preparing" }]);
 });

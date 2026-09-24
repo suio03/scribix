@@ -237,9 +237,11 @@ async function reconcileJobs(env: Env): Promise<void> {
     // never arrives.
     if (state === "succeeded") continue;
     const status = state === "running" ? "running" : "preparing";
+    // start() never marks a container healthy, so a leased job reports as
+    // preparing; never downgrade it, or its signed progress callback is rejected.
     await env.DB.prepare(
       `UPDATE render_jobs
-          SET status = CASE WHEN status = 'uploading' THEN status ELSE ?1 END,
+          SET status = CASE WHEN status IN ('running', 'uploading') THEN status ELSE ?1 END,
               started_at = CASE WHEN ?1 = 'running' THEN COALESCE(started_at, CURRENT_TIMESTAMP) ELSE started_at END,
               updated_at = CURRENT_TIMESTAMP
         WHERE id = ?2 AND status IN ('preparing', 'running', 'uploading')`

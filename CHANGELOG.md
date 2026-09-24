@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-25 — render dispatcher fix
+
+- Stop dispatcher reconciliation from returning leased render jobs to `preparing`; the downgrade made the container's progress callback fail and every final export end as `invalid_render_spec`.
+- Requires redeploying the separate render worker (`npm run deploy:video-render`); no database migrations or binding changes are required.
+
 ## 2026-09-23 — video workspace polish
 
 - Refine workspace typography, clip cards, loading states, and analysis progress; add keyboard navigation between clips.
