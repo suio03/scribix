@@ -13,8 +13,10 @@ import {
   LayoutGrid,
   LogOut,
   Menu,
+  Mic,
   NotebookTabs,
   PlaySquare,
+  Scissors,
   UserRound,
   X,
   type LucideProps,
@@ -44,6 +46,25 @@ const TOOL_LINKS: readonly ToolLink[] = [
   { href: "/ai-note-taker", key: "aiNoteTaker", icon: LayoutGrid },
 ] as const;
 
+type ClipLink = {
+  href: string;
+  key: "longVideo" | "podcast";
+  icon: ComponentType<LucideProps>;
+};
+
+const CLIP_LINKS: readonly ClipLink[] = [
+  { href: "/long-video-to-short-video-ai", key: "longVideo", icon: Scissors },
+  { href: "/podcast-clip-maker", key: "podcast", icon: Mic },
+] as const;
+
+type NavMenu = "clips" | "tools";
+
+function useClipLabel() {
+  const clipLandingT = useTranslations("LongVideoLanding");
+  const guidesT = useTranslations("GuidesNav");
+  return (key: ClipLink["key"]) => key === "longVideo" ? clipLandingT("navLabel") : guidesT("podcast");
+}
+
 export function ProductTopbar({
   signedIn = false,
   workspace = false,
@@ -65,23 +86,24 @@ export function ProductTopbar({
   const sidebarT = useTranslations("Sidebar");
   const pathname = usePathname();
   const { openLogin } = useLoginModal();
-  const [toolsOpen, setToolsOpen] = useState(false);
+  const guidesT = useTranslations("GuidesNav");
+  const [openMenu, setOpenMenu] = useState<NavMenu | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const toolsRef = useRef<HTMLDivElement>(null);
+  const menusRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
   const remainingMin = Math.max(0, Math.round((usage?.quotaMin ?? PLANS.free.minutesPerCycle) - (usage?.usedMin ?? 0)));
 
   useEffect(() => {
-    if (!toolsOpen && !accountOpen) return;
+    if (!openMenu && !accountOpen) return;
     const closeMenus = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (!toolsRef.current?.contains(target)) setToolsOpen(false);
+      if (!menusRef.current?.contains(target)) setOpenMenu(null);
       if (!accountRef.current?.contains(target)) setAccountOpen(false);
     };
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      setToolsOpen(false);
+      setOpenMenu(null);
       setAccountOpen(false);
     };
     document.addEventListener("mousedown", closeMenus);
@@ -90,11 +112,11 @@ export function ProductTopbar({
       document.removeEventListener("mousedown", closeMenus);
       document.removeEventListener("keydown", closeOnEscape);
     };
-  }, [accountOpen, toolsOpen]);
+  }, [accountOpen, openMenu]);
 
   useEffect(() => {
     setMobileOpen(false);
-    setToolsOpen(false);
+    setOpenMenu(null);
     setAccountOpen(false);
   }, [pathname]);
 
@@ -143,27 +165,38 @@ export function ProductTopbar({
           ) : null}
 
           {!signedIn ? (
-            <div ref={toolsRef} className="relative">
-              <button
-                type="button"
-                onClick={() => setToolsOpen((open) => !open)}
-                aria-expanded={toolsOpen}
-                aria-haspopup="menu"
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition ${muted}`}
-              >
-                {t("tools")}
-                <ChevronDown size={13} className={`transition ${toolsOpen ? "rotate-180" : ""}`} />
-              </button>
-              {toolsOpen ? (
-                <ToolsMenu onNavigate={() => setToolsOpen(false)} />
-              ) : null}
+            <div ref={menusRef} className="flex items-center gap-1">
+              {(["clips", "tools"] as const).map((menu) => (
+                <div key={menu} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setOpenMenu((open) => open === menu ? null : menu)}
+                    aria-expanded={openMenu === menu}
+                    aria-haspopup="menu"
+                    className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium transition ${muted}`}
+                  >
+                    {menu === "clips" ? t("product") : t("tools")}
+                    <ChevronDown size={13} className={`transition ${openMenu === menu ? "rotate-180" : ""}`} />
+                  </button>
+                  {openMenu === menu ? (
+                    menu === "clips"
+                      ? <ClipsMenu onNavigate={() => setOpenMenu(null)} />
+                      : <ToolsMenu onNavigate={() => setOpenMenu(null)} />
+                  ) : null}
+                </div>
+              ))}
             </div>
           ) : null}
 
           {!signedIn ? (
-            <TopLink href="/pricing" active={pathname === "/pricing"}>
-              {sidebarT("pricing")}
-            </TopLink>
+            <>
+              <TopLink href="/guides" active={pathname.startsWith("/guides")}>
+                {guidesT("guides")}
+              </TopLink>
+              <TopLink href="/pricing" active={pathname === "/pricing"}>
+                {sidebarT("pricing")}
+              </TopLink>
+            </>
           ) : null}
           </nav>
         ) : null}
@@ -291,6 +324,33 @@ function TopLink({
   );
 }
 
+function ClipsMenu({ onNavigate }: { onNavigate: () => void }) {
+  const clipLabel = useClipLabel();
+  return (
+    <div
+      role="menu"
+      className="surface-popover absolute left-0 top-full z-50 mt-3 w-[288px] rounded-xl border border-line bg-paper p-2 text-ink"
+    >
+      <div className="grid gap-1">
+        {CLIP_LINKS.map(({ href, key, icon: Icon }) => (
+          <Link
+            key={key}
+            href={href}
+            role="menuitem"
+            onClick={onNavigate}
+            className="group flex items-center gap-3 rounded-lg px-2 py-2 text-[13px] font-medium text-muted transition hover:bg-card hover:text-ink"
+          >
+            <span className="inline-grid size-7 place-items-center rounded-md border border-line bg-card text-muted transition group-hover:border-accent/20 group-hover:text-accent">
+              <Icon size={15} strokeWidth={1.7} />
+            </span>
+            {clipLabel(key)}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ToolsMenu({ onNavigate }: { onNavigate: () => void }) {
   const t = useTranslations("TopNav");
   const sidebarT = useTranslations("Sidebar");
@@ -375,6 +435,8 @@ function MobileMenu({
 }) {
   const t = useTranslations("TopNav");
   const sidebarT = useTranslations("Sidebar");
+  const guidesT = useTranslations("GuidesNav");
+  const clipLabel = useClipLabel();
   const linkClass = "text-muted hover:bg-card hover:text-ink";
   return (
     <nav className="border-t border-line bg-paper px-4 py-4 lg:hidden" aria-label={t("mobileNav")}>
@@ -385,11 +447,20 @@ function MobileMenu({
             <Link href="/dashboard" onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[14px] font-medium ${linkClass}`}>{sidebarT("myLibrary")}</Link>
           </>
         ) : (
-          <Link href="/pricing" onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[14px] font-medium ${linkClass}`}>{sidebarT("pricing")}</Link>
+          <>
+            <Link href="/guides" onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[14px] font-medium ${linkClass}`}>{guidesT("guides")}</Link>
+            <Link href="/pricing" onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[14px] font-medium ${linkClass}`}>{sidebarT("pricing")}</Link>
+          </>
         )}
         {!signedIn ? (
           <>
-            <p className="px-3 pb-1 pt-3 font-mono text-[9px] uppercase tracking-[0.16em] text-muted">{t("supportingTools")}</p>
+            <p className="px-3 pb-1 pt-3 font-mono text-[9px] uppercase tracking-[0.16em] text-muted">{t("product")}</p>
+            <div className="grid grid-cols-2 gap-1">
+              {CLIP_LINKS.map(({ href, key }) => (
+                <Link key={key} href={href} onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[12px] font-medium ${linkClass}`}>{clipLabel(key)}</Link>
+              ))}
+            </div>
+            <p className="px-3 pb-1 pt-3 font-mono text-[9px] uppercase tracking-[0.16em] text-muted">{t("tools")}</p>
             <div className="grid grid-cols-2 gap-1">
               {TOOL_LINKS.map(({ href, key }) => (
                 <Link key={key} href={href} onClick={onNavigate} className={`rounded-xl px-3 py-2.5 text-[12px] font-medium ${linkClass}`}>{sidebarT(`navLabels.${key}`)}</Link>

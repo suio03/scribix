@@ -3399,5 +3399,145 @@
   "GuidesNav": {
     "guides": "Guides",
     "podcast": "Création d’extraits de podcast avec l’IA"
+  },
+  "LongVideoLanding": {
+    "meta": {
+      "title": "Vidéo longue en clips courts avec l’IA | Scribix",
+      "description": "Créez des clips courts à partir de vos vidéos longues. Sélectionnez les extraits proposés par l’IA, ajustez les sous-titres et le cadrage, puis exportez vos vidéos."
+    },
+    "navLabel": "Vidéo longue en clips courts",
+    "upload": "Importer une vidéo",
+    "hero": {
+      "eyebrow": "Extraits vidéo avec l’IA",
+      "title": "Vos vidéos longues, en <accent>clips courts</accent> avec l’IA.",
+      "intro": "Un passage de podcast, une réponse en interview, une idée à retenir d’un webinaire : Scribix vous propose des extraits à partir de vos enregistrements. Vérifiez-les, ajustez les sous-titres et le cadrage vertical, puis exportez votre sélection.",
+      "example": "Voir un exemple",
+      "note": "{minutes} minutes de traitement offertes au total. Inscription requise."
+    },
+    "demo": {
+      "label": "Une vidéo, un nouveau format.",
+      "alt": "Exemple illustré : une intervenante filmée à l’horizontale est recadrée dans un clip vertical avec des sous-titres de démonstration.",
+      "caption": "Illustration générée par IA : personnage fictif et sous-titres d’exemple.",
+      "line1": "Une idée.",
+      "line2": "Un autre regard."
+    },
+    "benefits": {
+      "moments": "Extraits proposés par l’IA",
+      "captions": "Sous-titres ajustables",
+      "framing": "Cadrage vertical",
+      "choice": "Vous gardez le dernier mot"
+    },
+    "workflow": {
+      "eyebrow": "De l’enregistrement au clip",
+      "title": "Comment créer des clips courts à partir d’une vidéo longue ?",
+      "intro": "L’IA fait une première sélection. Vous vérifiez chaque extrait avant de le partager.",
+      "steps": {
+        "upload": {
+          "title": "Importez votre vidéo",
+          "text": "Choisissez un podcast filmé, une interview, un webinaire ou un cours enregistré sur votre appareil."
+        },
+        "review": {
+          "title": "Examinez les extraits",
+          "text": "Parcourez les suggestions de l’IA et comparez-les à la conversation d’origine pour en vérifier le sens."
+        },
+        "refine": {
+          "title": "Ajustez le montage",
+          "text": "Avec un forfait payant, modifiez les points de coupe, corrigez les sous-titres et affinez le cadrage vertical."
+        },
+        "export": {
+          "title": "Exportez votre sélection",
+          "text": "Lancez le rendu du clip choisi, puis téléchargez la vidéo pour la partager sur vos réseaux."
+        }
+      }
+    },
+    "controls": {
+      "eyebrow": "Le choix du montage vous appartient",
+      "title": "Le bon passage. <accent>Le bon point de coupe.</accent>",
+      "intro": "Un extrait doit rester compréhensible, même pour quelqu’un qui n’a pas vu la vidéo complète.",
+      "planNote": "La modification des clips nécessite un forfait payant.",
+      "compare": "Comparer les forfaits",
+      "items": {
+        "context": {
+          "title": "Gardez une idée complète",
+          "text": "Relisez la transcription et vérifiez le contexte. L’extrait doit contenir les éléments nécessaires pour comprendre le propos."
+        },
+        "cut": {
+          "title": "Ajustez le début et la fin",
+          "text": "Placez les points de coupe autour des mots utiles. Gardez l’introduction de l’idée et sa conclusion dans le même clip."
+        },
+        "vertical": {
+          "title": "Vérifiez le format vertical",
+          "text": "Ajustez le cadrage autour de la personne qui parle et corrigez les sous-titres pour faciliter le suivi de la conversation."
+        }
+      }
+    },
+    "useCases": {
+      "eyebrow": "Pour vos contenus parlés",
+      "title": "Faites découvrir les idées de vos vidéos longues.",
+      "guideIntro": "Vous travaillez sur un podcast ?",
+      "guideLink": "Consulter le guide des extraits de podcast",
+      "items": {
+        "podcasts": {
+          "label": "Podcasts et interviews",
+          "title": "Une réponse qui mérite son extrait.",
+          "text": "Isolez un avis argumenté, une anecdote ou une réponse utile, tout en préservant le sens de la conversation.",
+          "example": "Une question et sa réponse."
+        },
+        "webinars": {
+          "label": "Webinaires et présentations",
+          "title": "Un conseil à partager.",
+          "text": "Consacrez un clip à une explication concrète. Vérifiez que les diapositives ou les détails visuels indispensables restent visibles.",
+          "example": "Une idée à mettre en pratique."
+        },
+        "lessons": {
+          "label": "Cours et vidéos face caméra",
+          "title": "Une notion bien expliquée.",
+          "text": "Créez un extrait pédagogique centré sur une notion, avec assez de contexte pour les personnes qui vous découvrent.",
+          "example": "Un point précis à retenir."
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "Avant de commencer",
+      "title": "Vos questions sur les clips vidéo IA.",
+      "intro": "Fichiers, possibilités de montage et limites du forfait gratuit.",
+      "items": {
+        "longVideo": {
+          "question": "Puis-je créer des clips à partir d’une vidéo d’une heure ?",
+          "answer": "Oui, si le fichier respecte la limite d’importation de votre forfait et si votre solde de minutes est suffisant. Le forfait gratuit comprend {minutes} minutes de traitement au total. Si votre solde ne couvre pas toute la vidéo, seule la partie couverte peut être traitée. Vérifiez la limite affichée avant de continuer."
+        },
+        "types": {
+          "question": "Quels types de vidéos choisir ?",
+          "answer": "Privilégiez les contenus parlés : podcasts filmés, interviews, webinaires, cours et vidéos face caméra. Un son clair et des idées compréhensibles seules facilitent la sélection. Vérifiez avant l’export les passages qui dépendent de diapositives, d’une démonstration ou d’autres éléments visuels."
+        },
+        "editing": {
+          "question": "Peut-on modifier les extraits sélectionnés par l’IA ?",
+          "answer": "Oui, avec un forfait payant : vous pouvez ajuster le début et la fin, corriger le texte des sous-titres, modifier leur style et affiner le cadrage. Le forfait gratuit permet de vérifier et d’exporter les clips proposés sans modification. Relisez les sous-titres et vérifiez le sens avant de partager."
+        },
+        "count": {
+          "question": "Combien de clips peut-on obtenir par vidéo ?",
+          "answer": "Il n’y a pas de nombre garanti. Les propositions dépendent du contenu et des passages qui peuvent se comprendre seuls. Vous pouvez obtenir plusieurs suggestions, quelques-unes ou aucune. Sélectionnez celles qui sont utiles à votre public."
+        },
+        "youtube": {
+          "question": "Puis-je coller un lien YouTube ?",
+          "answer": "Pour créer des clips, importez un fichier vidéo depuis votre appareil. L’importation de la vidéo source par URL YouTube n’est pas encore prise en charge. L’outil de transcription YouTube de Scribix importe les sous-titres, pas les images de la vidéo nécessaires au montage."
+        },
+        "free": {
+          "question": "Que comprend l’offre gratuite ?",
+          "answer": "Après inscription, vous disposez de {minutes} minutes de traitement au total et pouvez importer des vidéos jusqu’à {uploadGiB} Gio. Vous pouvez vérifier et exporter les clips proposés par l’IA sans modification. Le montage nécessite un forfait payant. Les minutes gratuites ne se renouvellent pas chaque mois."
+        }
+      }
+    },
+    "storage": {
+      "label": "Conservation des vidéos",
+      "title": "Conservez votre fichier d’origine.",
+      "text": "Les vidéos sources importées sont conservées {freeDays} jours avec le forfait gratuit et {paidDays} jours avec un forfait payant. Une fois la source supprimée lors du nettoyage, il n’est plus possible de créer de nouveaux rendus à partir de celle-ci. Téléchargez les clips que vous souhaitez garder.",
+      "privacy": "Consulter notre politique de confidentialité."
+    },
+    "final": {
+      "eyebrow": "Commencez avec un enregistrement existant",
+      "title": "Votre prochaine vidéo longue a des idées à partager.",
+      "note": "Choisissez vos extraits, ajustez-les et partagez-les quand ils sont prêts."
+    }
   }
 }

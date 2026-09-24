@@ -3399,5 +3399,145 @@
   "GuidesNav": {
     "guides": "Guide",
     "podcast": "Crea clip dai podcast con l’IA"
+  },
+  "LongVideoLanding": {
+    "meta": {
+      "title": "Da video lunghi a clip brevi con l’IA | Scribix",
+      "description": "Ricava clip brevi da podcast, interviste e webinar con l’IA. Controlla i passaggi proposti, modifica sottotitoli e inquadratura verticale ed esporta i tuoi video."
+    },
+    "navLabel": "Da video lunghi a clip brevi",
+    "upload": "Carica un video",
+    "hero": {
+      "eyebrow": "Clip brevi dai tuoi video con l’IA",
+      "title": "Le idee dei tuoi video lunghi, in <accent>clip brevi.</accent>",
+      "intro": "Parti da un podcast, un’intervista o un webinar. L’IA di Scribix propone i passaggi da trasformare in clip: controllali, sistema i sottotitoli e l’inquadratura verticale, poi esporta quelli che vuoi condividere.",
+      "example": "Guarda un esempio",
+      "note": "{minutes} minuti di elaborazione gratuiti complessivi. È richiesta la registrazione."
+    },
+    "demo": {
+      "label": "Un video, un nuovo formato.",
+      "alt": "Esempio illustrato: una persona ripresa in orizzontale viene reinquadrata in una clip verticale con sottotitoli dimostrativi.",
+      "caption": "Dimostrazione generata con l’IA: persona immaginaria e sottotitoli di esempio.",
+      "line1": "Un’idea.",
+      "line2": "Un altro sguardo."
+    },
+    "benefits": {
+      "moments": "Passaggi suggeriti dall’IA",
+      "captions": "Sottotitoli modificabili",
+      "framing": "Inquadratura verticale",
+      "choice": "Scegli tu cosa condividere"
+    },
+    "workflow": {
+      "eyebrow": "Dal video originale alla clip",
+      "title": "Come ricavare clip brevi da un video lungo.",
+      "intro": "Una prima selezione con l’IA, poi il tuo controllo su ogni passaggio.",
+      "steps": {
+        "upload": {
+          "title": "Carica la registrazione",
+          "text": "Scegli dal tuo dispositivo il file di un podcast video, un’intervista, un webinar o una lezione."
+        },
+        "review": {
+          "title": "Controlla le proposte",
+          "text": "Guarda le clip suggerite e confrontale con la conversazione originale per verificarne il senso."
+        },
+        "refine": {
+          "title": "Rifinisci ogni clip",
+          "text": "Con un piano a pagamento puoi spostare i punti di taglio, correggere i sottotitoli e regolare l’inquadratura verticale."
+        },
+        "export": {
+          "title": "Esporta e condividi",
+          "text": "Avvia il rendering della clip scelta e scarica il video da condividere sui tuoi canali."
+        }
+      }
+    },
+    "controls": {
+      "eyebrow": "Il montaggio resta nelle tue mani",
+      "title": "Scegli il passaggio. <accent>Dagli il taglio giusto.</accent>",
+      "intro": "Una clip deve funzionare anche per chi non ha visto il video completo. Controlla che il messaggio arrivi senza perdere il contesto.",
+      "planNote": "La modifica delle clip è disponibile con i piani a pagamento.",
+      "compare": "Confronta i piani",
+      "items": {
+        "context": {
+          "title": "Mantieni un’idea completa",
+          "text": "Leggi la trascrizione e torna al video originale. Verifica che l’estratto includa ciò che serve per capire il discorso."
+        },
+        "cut": {
+          "title": "Decidi dove iniziare e finire",
+          "text": "Regola i punti di taglio intorno alle parole importanti. Tieni insieme la premessa e la conclusione dell’idea."
+        },
+        "vertical": {
+          "title": "Cura il formato verticale",
+          "text": "Controlla che chi parla rimanga nell’inquadratura e correggi i sottotitoli per rendere la conversazione facile da seguire."
+        }
+      }
+    },
+    "useCases": {
+      "eyebrow": "Per i contenuti in cui si parla",
+      "title": "Nuove occasioni per i video che hai già girato.",
+      "guideIntro": "Stai lavorando a un podcast?",
+      "guideLink": "Leggi la guida alle clip di podcast",
+      "items": {
+        "podcasts": {
+          "label": "Podcast e interviste",
+          "title": "Una risposta da condividere.",
+          "text": "Ricava un’opinione, un racconto o una risposta utile da una conversazione più lunga, senza cambiarne il significato.",
+          "example": "Una domanda, una risposta completa."
+        },
+        "webinars": {
+          "label": "Webinar e presentazioni",
+          "title": "Un consiglio da mettere in pratica.",
+          "text": "Dedica una clip a una spiegazione concreta. Controlla che slide e dettagli visivi indispensabili restino nell’inquadratura.",
+          "example": "Uno spunto utile da portare con sé."
+        },
+        "lessons": {
+          "label": "Lezioni e video parlati",
+          "title": "Un concetto alla volta.",
+          "text": "Crea un breve contenuto didattico su un’idea precisa, con il contesto necessario per chi ti vede per la prima volta.",
+          "example": "Una spiegazione che si capisce."
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "Prima di caricare",
+      "title": "Domande sulle clip video con l’IA.",
+      "intro": "File, strumenti di modifica e limiti del piano gratuito.",
+      "items": {
+        "longVideo": {
+          "question": "Posso ricavare clip da un video di un’ora?",
+          "answer": "Sì, se il file rispetta il limite di caricamento del tuo piano e hai abbastanza minuti disponibili. Il piano gratuito include {minutes} minuti di elaborazione complessivi. Se il saldo non copre l’intero video, è possibile elaborare solo la parte coperta. Controlla il limite indicato prima di proseguire."
+        },
+        "types": {
+          "question": "Quali video sono più adatti?",
+          "answer": "Parti da contenuti parlati: podcast, interviste, webinar, lezioni e spiegazioni davanti alla videocamera. Audio chiaro e idee comprensibili da sole aiutano a scegliere i passaggi. Prima di esportare, controlla le clip che dipendono da slide, dimostrazioni o altri elementi visivi."
+        },
+        "editing": {
+          "question": "Posso modificare le clip scelte dall’IA?",
+          "answer": "Sì. Con un piano a pagamento puoi regolare inizio e fine, correggere il testo dei sottotitoli, cambiarne lo stile e affinare l’inquadratura. Il piano gratuito permette di controllare ed esportare le proposte originali dell’IA senza modificarle. Verifica significato e sottotitoli prima di condividere."
+        },
+        "count": {
+          "question": "Quante clip si ottengono da un video?",
+          "answer": "Non c’è un numero fisso. Le proposte dipendono dal contenuto e dai passaggi che possono essere compresi da soli. Potresti ottenere diverse clip, poche oppure nessuna. Valuta le proposte e scegli quelle utili al tuo pubblico."
+        },
+        "youtube": {
+          "question": "Posso incollare un link di YouTube?",
+          "answer": "Per questo flusso di creazione delle clip devi caricare un file video dal tuo dispositivo. L’importazione del video originale tramite URL YouTube non è ancora supportata. Lo strumento di trascrizione YouTube di Scribix importa i sottotitoli, non il filmato necessario per il montaggio."
+        },
+        "free": {
+          "question": "Cosa posso fare con il piano gratuito?",
+          "answer": "Dopo la registrazione hai {minutes} minuti di elaborazione complessivi e puoi caricare video fino a {uploadGiB} GiB. Puoi controllare ed esportare le clip originali suggerite dall’IA. Per modificarle serve un piano a pagamento. I minuti gratuiti non si rinnovano ogni mese."
+        }
+      }
+    },
+    "storage": {
+      "label": "Conservazione dei video",
+      "title": "Tieni una copia del video originale.",
+      "text": "I video sorgente caricati vengono conservati per {freeDays} giorni con il piano gratuito e per {paidDays} giorni con i piani a pagamento. Dopo la rimozione del file sorgente non puoi generare nuovi video da quella sorgente. Scarica le clip che vuoi conservare.",
+      "privacy": "Leggi l’informativa sulla privacy."
+    },
+    "final": {
+      "eyebrow": "Parti da una registrazione che hai già",
+      "title": "Trova la prossima clip nei tuoi video lunghi.",
+      "note": "Scegli i passaggi, rifinisci il risultato e condividilo quando è pronto."
+    }
   }
 }

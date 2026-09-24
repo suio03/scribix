@@ -8,8 +8,9 @@ import { Footer } from "@/app/components/Footer";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import "./guides.css";
 
-export async function ContentShell({ children, showLanguageSwitcher = true, section = "guides" }: {
+export async function ContentShell({ children, showLanguageSwitcher = true, section = "guides", primaryAction }: {
   children: ReactNode;
+  primaryAction?: ReactNode;
   showLanguageSwitcher?: boolean;
   section?: "guides" | "alternatives";
 }) {
@@ -47,12 +48,12 @@ export async function ContentShell({ children, showLanguageSwitcher = true, sect
             </Link>
             <ThemeToggle />
             {showLanguageSwitcher ? <LanguageSwitcher /> : null}
-            <Link
+            {primaryAction ?? <Link
               href="/#upload"
               className="guide-button hidden sm:inline-flex"
             >
               {ui.create} <span aria-hidden="true">↗</span>
-            </Link>
+            </Link>}
           </nav>
         </div>
       </header>

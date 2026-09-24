@@ -3399,5 +3399,145 @@
   "GuidesNav": {
     "guides": "Anleitungen",
     "podcast": "Podcast-Clips mit KI erstellen"
+  },
+  "LongVideoLanding": {
+    "meta": {
+      "title": "Lange Videos in kurze Clips umwandeln mit KI | Scribix",
+      "description": "Erstelle mit KI kurze Clips aus Podcasts, Interviews und Webinaren. Prüfe die Vorschläge, passe Untertitel und Hochformat an und exportiere deine Auswahl."
+    },
+    "navLabel": "Lange Videos mit KI in Clips umwandeln",
+    "upload": "Video hochladen",
+    "hero": {
+      "eyebrow": "Kurze Clips aus langen Videos",
+      "title": "Mit KI vom langen Video zum <accent>kurzen Clip.</accent>",
+      "intro": "In deinen Podcasts, Interviews und Webinaren stecken Momente zum Teilen. Scribix schlägt dir passende Ausschnitte vor. Prüfe den Inhalt, passe Untertitel und Hochformat an und exportiere deine Auswahl.",
+      "example": "Beispiel ansehen",
+      "note": "Insgesamt {minutes} kostenlose Verarbeitungsminuten. Registrierung erforderlich."
+    },
+    "demo": {
+      "label": "Ein Video. Ein neues Format.",
+      "alt": "Illustriertes Beispiel: Eine Sprecherin aus einer Aufnahme im Querformat wird in einem Hochformat-Clip mit Beispieluntertiteln gezeigt.",
+      "caption": "Mit KI erstellte Illustration mit einer fiktiven Person und Beispieluntertiteln.",
+      "line1": "Eine Idee.",
+      "line2": "Ein neuer Blick."
+    },
+    "benefits": {
+      "moments": "Clip-Vorschläge mit KI",
+      "captions": "Untertitel zum Anpassen",
+      "framing": "Clips im Hochformat",
+      "choice": "Du entscheidest, was du teilst"
+    },
+    "workflow": {
+      "eyebrow": "Vom Upload bis zum Export",
+      "title": "So machst du aus langen Videos kurze Clips.",
+      "intro": "Die KI trifft eine Vorauswahl. Du prüfst, welcher Ausschnitt für sich stehen kann.",
+      "steps": {
+        "upload": {
+          "title": "Aufnahme hochladen",
+          "text": "Wähle einen Video-Podcast, ein Interview, ein Webinar oder eine Unterrichtsaufnahme von deinem Gerät."
+        },
+        "review": {
+          "title": "Vorschläge prüfen",
+          "text": "Sieh dir die vorgeschlagenen Clips an und vergleiche sie mit dem ursprünglichen Gespräch."
+        },
+        "refine": {
+          "title": "Clips bearbeiten",
+          "text": "Mit einem kostenpflichtigen Tarif kannst du Schnittpunkte, Untertitel und den Bildausschnitt im Hochformat anpassen."
+        },
+        "export": {
+          "title": "Exportieren und teilen",
+          "text": "Lass den ausgewählten Clip rendern und lade das fertige Video herunter, um es auf deinen Kanälen zu teilen."
+        }
+      }
+    },
+    "controls": {
+      "eyebrow": "Du behältst die Kontrolle",
+      "title": "Die KI schlägt vor. <accent>Du setzt den Schnitt.</accent>",
+      "intro": "Ein kurzer Ausschnitt braucht genug Kontext. Entscheide, ob er auch ohne das vollständige Video verständlich ist.",
+      "planNote": "Die Clip-Bearbeitung ist in kostenpflichtigen Tarifen verfügbar.",
+      "compare": "Tarife vergleichen",
+      "items": {
+        "context": {
+          "title": "Einen Gedanken vollständig zeigen",
+          "text": "Lies das Transkript und prüfe die Stelle im Originalvideo. Im Clip sollte alles enthalten sein, was man zum Verständnis braucht."
+        },
+        "cut": {
+          "title": "Anfang und Ende festlegen",
+          "text": "Passe die Schnittpunkte an die wichtigen Wörter an. Lass die Einleitung eines Gedankens und seine Aussage zusammen."
+        },
+        "vertical": {
+          "title": "Das Hochformat prüfen",
+          "text": "Behalte die sprechende Person im Bild und korrigiere die Untertitel, damit sich das Gespräch gut verfolgen lässt."
+        }
+      }
+    },
+    "useCases": {
+      "eyebrow": "Für Gespräche und Erklärungen",
+      "title": "Hol mehr aus deinen vorhandenen Aufnahmen.",
+      "guideIntro": "Du schneidest einen Podcast?",
+      "guideLink": "Zum Leitfaden für Podcast-Clips",
+      "items": {
+        "podcasts": {
+          "label": "Podcasts und Interviews",
+          "title": "Eine Antwort, die für sich steht.",
+          "text": "Wähle eine klare Meinung, eine Geschichte oder eine hilfreiche Antwort aus einem längeren Gespräch aus.",
+          "example": "Eine Frage mit vollständiger Antwort."
+        },
+        "webinars": {
+          "label": "Webinare und Präsentationen",
+          "title": "Ein Tipp zum Weitergeben.",
+          "text": "Mach aus einer konkreten Erklärung einen eigenen Clip. Prüfe, ob wichtige Folien und visuelle Details im Bild bleiben.",
+          "example": "Ein Gedanke für die Praxis."
+        },
+        "lessons": {
+          "label": "Lernvideos und Vorträge",
+          "title": "Ein Thema verständlich erklären.",
+          "text": "Konzentriere den Clip auf einen einzelnen Gedanken. Gib auch Menschen, die dich zum ersten Mal sehen, genug Kontext.",
+          "example": "Ein Lernmoment pro Clip."
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "Vor dem Hochladen",
+      "title": "Fragen zu deinen KI-Clips.",
+      "intro": "Welche Aufnahmen passen, was du bearbeiten kannst und was kostenlos ist.",
+      "items": {
+        "longVideo": {
+          "question": "Kann ich ein einstündiges Video in Clips aufteilen?",
+          "answer": "Ja, wenn die Datei innerhalb des Upload-Limits deines Tarifs liegt und du genug Verarbeitungsminuten hast. Kostenlose Konten erhalten insgesamt {minutes} Minuten. Reicht dein Restguthaben nicht für das ganze Video, kann nur der abgedeckte Teil verarbeitet werden. Prüfe das angezeigte Limit, bevor du fortfährst."
+        },
+        "types": {
+          "question": "Welche Videos eignen sich dafür?",
+          "answer": "Beginne mit Aufnahmen, bei denen das Gesprochene im Mittelpunkt steht: Podcasts, Interviews, Webinare, Lernvideos und Vorträge. Klarer Ton und in sich verständliche Gedanken erleichtern die Auswahl. Prüfe vor dem Export besonders die Clips, die Folien, Vorführungen oder anderen visuellen Kontext brauchen."
+        },
+        "editing": {
+          "question": "Kann ich die von der KI ausgewählten Clips bearbeiten?",
+          "answer": "Ja. In kostenpflichtigen Tarifen kannst du Anfang und Ende, Untertiteltext, Untertitelstil und Bildausschnitt anpassen. Im kostenlosen Tarif kannst du die ursprünglichen KI-Vorschläge prüfen und unverändert exportieren. Kontrolliere vor dem Teilen den Inhalt und die Untertitel."
+        },
+        "count": {
+          "question": "Wie viele Clips entstehen aus einem Video?",
+          "answer": "Es gibt keine feste Anzahl. Die Vorschläge hängen vom Inhalt und davon ab, welche Ausschnitte für sich verständlich sind. Ein Video kann mehrere, wenige oder keine Vorschläge ergeben. Wähle die Clips aus, die deinem Publikum etwas bieten."
+        },
+        "youtube": {
+          "question": "Kann ich einen YouTube-Link einfügen?",
+          "answer": "Für diesen Clip-Workflow lädst du eine Videodatei von deinem Gerät hoch. Das Originalvideo lässt sich derzeit nicht per YouTube-URL importieren. Das separate YouTube-Transkript-Tool von Scribix importiert Untertitel, aber nicht das Videomaterial für den Schnitt."
+        },
+        "free": {
+          "question": "Was kann ich kostenlos nutzen?",
+          "answer": "Nach der Registrierung erhältst du insgesamt {minutes} Verarbeitungsminuten und kannst Videos bis {uploadGiB} GiB hochladen. Du kannst die ursprünglichen KI-Vorschläge prüfen und exportieren. Zum Bearbeiten brauchst du einen kostenpflichtigen Tarif. Die kostenlosen Minuten werden nicht monatlich aufgefüllt."
+        }
+      }
+    },
+    "storage": {
+      "label": "Speicherung deiner Videos",
+      "title": "Bewahre dein Originalvideo auf.",
+      "text": "Hochgeladene Quelldateien bleiben im kostenlosen Tarif {freeDays} Tage und in kostenpflichtigen Tarifen {paidDays} Tage gespeichert. Nach dem Löschen der Quelle können daraus keine neuen Clips mehr gerendert werden. Lade die Clips herunter, die du behalten möchtest.",
+      "privacy": "Datenschutzerklärung lesen."
+    },
+    "final": {
+      "eyebrow": "Starte mit einer vorhandenen Aufnahme",
+      "title": "Mach aus deinem nächsten langen Video kurze Clips.",
+      "note": "Momente auswählen, Clips anpassen und teilen, wenn sie bereit sind."
+    }
   }
 }

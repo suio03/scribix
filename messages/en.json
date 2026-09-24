@@ -3399,5 +3399,145 @@
   "GuidesNav": {
     "guides": "Guides",
     "podcast": "AI podcast clip maker"
+  },
+  "LongVideoLanding": {
+    "meta": {
+      "title": "Long Video to Short Video AI | Scribix",
+      "description": "Turn long videos into short clips with AI. Find moments in podcasts, interviews, and webinars, then review, refine, and export captioned vertical clips with Scribix."
+    },
+    "navLabel": "Long video to short video AI",
+    "upload": "Upload your video",
+    "hero": {
+      "eyebrow": "Long video to short video AI",
+      "title": "Turn long videos into <accent>short clips</accent> with AI.",
+      "intro": "Turn your podcasts, interviews, and webinars into short clips. Review AI-selected moments, refine captions and vertical framing, and export the clips you want to share.",
+      "example": "See an example",
+      "note": "{minutes} free lifetime processing minutes. Sign up to start."
+    },
+    "demo": {
+      "label": "One source. A new format.",
+      "alt": "Illustrated example: a speaker in a landscape recording is reframed as a vertical clip with example captions.",
+      "caption": "AI-generated demonstration with a fictional speaker and example captions.",
+      "line1": "One idea.",
+      "line2": "A new perspective."
+    },
+    "benefits": {
+      "moments": "AI-selected moments",
+      "captions": "Captions you can refine",
+      "framing": "Vertical video framing",
+      "choice": "You choose what to share"
+    },
+    "workflow": {
+      "eyebrow": "From upload to export",
+      "title": "How to turn a long video into short clips.",
+      "intro": "A simple workflow with room for your judgment at every step.",
+      "steps": {
+        "upload": {
+          "title": "Upload your video",
+          "text": "Start with a podcast, interview, webinar, or lesson saved on your device."
+        },
+        "review": {
+          "title": "Review the suggested clips",
+          "text": "Explore AI-selected moments and check each suggestion against the original conversation."
+        },
+        "refine": {
+          "title": "Refine your clips",
+          "text": "On a paid plan, adjust the cut, correct captions, and fine-tune the vertical framing."
+        },
+        "export": {
+          "title": "Export and share",
+          "text": "Render your chosen clip and download the video, ready to share on your channels."
+        }
+      }
+    },
+    "controls": {
+      "eyebrow": "Your editorial control",
+      "title": "Choose the moment. <accent>Shape the final clip.</accent>",
+      "intro": "AI gives you a starting point. You decide whether the clip tells the story you intended.",
+      "planNote": "Clip editing is available on paid plans.",
+      "compare": "Compare plans",
+      "items": {
+        "context": {
+          "title": "Find a complete thought",
+          "text": "Look for a moment that makes sense on its own. Review the transcript and source context before you choose what to share."
+        },
+        "cut": {
+          "title": "Keep control of the cut",
+          "text": "Adjust the start and end of a clip around the words that matter. Keep the setup and the point together."
+        },
+        "vertical": {
+          "title": "Make it work vertically",
+          "text": "Check the portrait crop, keep the speaker in frame, and refine captions so viewers can follow the conversation."
+        }
+      }
+    },
+    "useCases": {
+      "eyebrow": "Made for the spoken word",
+      "title": "Make more from the videos you already have.",
+      "guideIntro": "Working on a podcast?",
+      "guideLink": "Explore the podcast clipping guide",
+      "items": {
+        "podcasts": {
+          "label": "Podcasts & interviews",
+          "title": "A conversation worth sharing.",
+          "text": "Bring a clear opinion, a memorable story, or a useful answer out of a longer conversation.",
+          "example": "A question. A complete answer."
+        },
+        "webinars": {
+          "label": "Webinars & presentations",
+          "title": "Let the useful part travel.",
+          "text": "Give a practical explanation or takeaway its own clip. Check that any essential visual context still fits the frame.",
+          "example": "One takeaway people can use."
+        },
+        "lessons": {
+          "label": "Lessons & talking-head videos",
+          "title": "One idea at a time.",
+          "text": "Turn a focused explanation into a short learning moment, with enough context for someone seeing you for the first time.",
+          "example": "A concept made clear."
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "Before you upload",
+      "title": "A few things worth knowing.",
+      "intro": "Your source, your edits, and what’s included.",
+      "items": {
+        "longVideo": {
+          "question": "Can I turn a one-hour video into short clips?",
+          "answer": "Yes, if the file fits your plan’s upload limit and you have enough processing minutes. Free accounts include {minutes} lifetime processing minutes. If you have fewer minutes left than the video needs, only the covered portion can be processed; review the limit shown before continuing."
+        },
+        "types": {
+          "question": "What types of videos work best?",
+          "answer": "Start with speech-led recordings: podcasts, interviews, webinars, lessons, and talking-head videos. Clear audio and self-contained ideas give you useful moments to work with. Review clips that depend on slides, demonstrations, or visual context before exporting."
+        },
+        "editing": {
+          "question": "Can I edit the clips selected by AI?",
+          "answer": "Yes. Paid plans let you adjust clip boundaries, correct subtitle text, change caption styling, and refine framing. Free users can review and export the original AI-suggested clips. Check every clip for meaning and caption accuracy before sharing."
+        },
+        "count": {
+          "question": "How many clips will I get from one video?",
+          "answer": "There is no fixed number. Suggestions depend on the material and the moments that can stand on their own. A video may produce several candidates, a few, or none. Review the suggestions and choose the ones that serve your audience."
+        },
+        "youtube": {
+          "question": "Can I upload a YouTube link?",
+          "answer": "For this clipping workflow, upload a video file from your device. Importing a YouTube URL as the source video is not currently supported. Scribix’s separate YouTube transcript tool imports captions; it does not import the source footage for clipping."
+        },
+        "free": {
+          "question": "What can I do for free?",
+          "answer": "Sign up to get {minutes} lifetime processing minutes, upload video files up to {uploadGiB} GiB, and review and export original AI-suggested clips. Editing requires a paid plan. Free processing minutes do not reset monthly."
+        }
+      }
+    },
+    "storage": {
+      "label": "Video storage",
+      "title": "Keep a copy of your source.",
+      "text": "Uploaded source videos are retained for {freeDays} days on Free and {paidDays} days on paid plans. After source cleanup, you can’t render new clips from that source. Download the clips you want to keep.",
+      "privacy": "Read our privacy policy."
+    },
+    "final": {
+      "eyebrow": "Start with a video you already have",
+      "title": "Turn your next long video into short clips.",
+      "note": "Review the moments. Make them yours. Share when you’re ready."
+    }
   }
 }

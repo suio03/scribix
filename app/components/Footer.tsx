@@ -24,6 +24,8 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
     getTranslations("Footer"),
   ]);
   const guidesT = await getTranslations("GuidesNav");
+  const clipLandingT = await getTranslations("LongVideoLanding");
+  const topNavT = await getTranslations("TopNav");
   const legal = LEGAL_LINKS.filter(
     (link) => !("englishOnly" in link) || locale === "en"
   );
@@ -64,14 +66,21 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
           </p>
         </div>
 
-        <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,1fr)_240px]">
+        <div className="mt-8 grid gap-8 sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_240px]">
+        <nav aria-label={topNavT("product")}>
+          <h2 className="mb-4 font-mono text-xs font-medium uppercase tracking-wider text-muted">{topNavT("product")}</h2>
+          <ul className="space-y-2 text-[13px] text-muted">
+            <li><Link href="/long-video-to-short-video-ai" className="inline-flex min-h-10 items-center transition hover:text-ink">{clipLandingT("navLabel")}</Link></li>
+            <li><Link href="/podcast-clip-maker" className="inline-flex min-h-10 items-center transition hover:text-ink">{guidesT("podcast")}</Link></li>
+            <li><Link href="/guides" className="inline-flex min-h-10 items-center transition hover:text-ink">{guidesT("guides")}</Link></li>
+          </ul>
+        </nav>
         <nav aria-label={t("toolsLabel")}>
-          <ul className="flex flex-wrap gap-x-6 gap-y-3 text-[13px] text-muted">
-            <li><Link href="/guides" className="transition hover:text-ink">{guidesT("guides")}</Link></li>
-            <li><Link href="/podcast-clip-maker" className="transition hover:text-ink">{guidesT("podcast")}</Link></li>
+          <h2 className="mb-4 font-mono text-xs font-medium uppercase tracking-wider text-muted">{t("toolsLabel")}</h2>
+          <ul className="space-y-2 text-[13px] text-muted">
             {TOOL_LINKS.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="transition hover:text-ink">
+                <Link href={link.href} className="inline-flex min-h-10 items-center transition hover:text-ink">
                   {t(`toolLabels.${link.key}`)}
                 </Link>
               </li>
