@@ -696,7 +696,7 @@
       "eyebrow": "Inizia qualcosa di nuovo",
       "title": "Crea clip",
       "description": "Carica un video lungo e trasforma i momenti migliori in clip brevi.",
-      "back": "Torna alle clip",
+      "back": "Tutti i progetti",
       "workflowLabel": "Flusso di creazione delle clip",
       "recommended": "Principale",
       "clipsTitle": "Trasforma un video in clip brevi",
@@ -1244,10 +1244,10 @@
         "rangeEnd": "Fine (secondi)",
         "rangeHint": "Clip automatiche: {minSeconds}–{maxSeconds} secondi. Analizza fino a {minutes} minuti. Questo non riduce i costi di trascrizione.",
         "rangeInvalid": "Scegli un intervallo valido di massimo {minutes} minuti nel video.",
-        "batchProgress": "{completed} / {total} lotti di ricerca completati",
+        "batchProgress": "{completed} di {total} sezioni analizzate",
         "rangeSummary": "Intervallo selezionato: {start}–{end} secondi",
         "limited": "I risultati sono limitati dal budget di analisi o visualizzazione; alcuni momenti potrebbero non essere stati trovati.",
-        "partialFailed": "Parte dell’analisi non è stata completata. I lotti riusciti sono salvati.",
+        "partialFailed": "Alcune sezioni non sono state analizzate. Riprova per completarle; le sezioni completate vengono mantenute.",
         "canLeave": "Puoi lasciare questa pagina. L’analisi continua in background.",
         "phases": {
           "planning": "Pianificazione",
@@ -1258,7 +1258,10 @@
           "completed": "Completato",
           "grouping": "Confronto dei momenti correlati"
         },
-        "rangeDense": "Questo intervallo contiene troppo parlato per una sola analisi. Scegli un intervallo più breve."
+        "rangeDense": "Questo intervallo contiene troppo parlato per una sola analisi. Scegli un intervallo più breve.",
+        "affectedRanges": "Intervalli interessati",
+        "partialRange": "Sono stati trascritti solo i primi {minutes, number} minuti, quindi le clip possono provenire solo da quella parte.",
+        "partialSkipped": "Alcune sezioni non sono state analizzate, quindi queste clip provengono dal resto dell’intervallo."
       },
       "publish": {
         "title": "Pronto da condividere",
@@ -1454,7 +1457,11 @@
       "cannotReadMetadata": "Impossibile leggere i metadati multimediali.",
       "transcriptionFailed": "Errore di trascrizione.",
       "transcriptionGeneric": "Trascrizione {status}.",
-      "uploadFallback": "Caricamento non riuscito durante {step}. Controlla la console del browser per i dettagli."
+      "uploadFallback": "Caricamento non riuscito durante {step}. Controlla la console del browser per i dettagli.",
+      "partialClipsKnownBody": "Questo video dura {totalMin, number} minuti. Trova ora clip nei primi {processingMin, number} minuti oppure passa a un piano superiore per usare l’intero video.",
+      "partialClipsUnknownBody": "Questo browser non è riuscito a determinare la durata del video. Trova clip fino ai primi {processingMin, number} minuti oppure passa a un piano superiore per usare l’intero video.",
+      "partialClipsUpgrade": "Passa a un piano superiore e usa l’intero video",
+      "partialClipsConfirm": "Usa i primi {minutes, number} minuti"
     },
     "recorder": {
       "start": "Avvia registrazione",

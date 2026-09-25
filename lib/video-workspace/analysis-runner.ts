@@ -24,9 +24,12 @@ async function addStep(env: AnalysisEnv, task: AnalysisTask, id: string, kind: s
 async function taskUpdate(env: AnalysisEnv, task: AnalysisTask, phase: string, limited: string | null = task.limited_reason) {
   await env.DB.prepare("UPDATE ai_analysis_tasks SET phase=?1,limited_reason=?2 WHERE id=?3 AND lease_token=?4 AND lease_until>unixepoch()").bind(phase, limited, task.id, task.lease_token).run();
 }
+// Model output is nondeterministic, so a malformed or empty response can succeed on another attempt.
+const RETRYABLE_OUTPUT_CODES = new Set(["invalid_candidate_payload", "invalid_candidate_review_payload", "invalid_groups", "invalid_json", "empty_output"]);
 function transient(error: unknown) {
   if (error instanceof CandidateGenerationError) return false;
   if (error instanceof OpenAICandidateError && error.providerCode === "missing_api_key") return false;
+  if (error instanceof OpenAICandidateError && RETRYABLE_OUTPUT_CODES.has(error.providerCode ?? "")) return true;
   if (error instanceof OpenAICandidateError) return !error.providerCode && !error.status || error.status === 429 || (error.status ?? 0) >= 500;
   return true; // Storage/network failures can recover; immutable input errors are explicitly classified.
 }
@@ -92,11 +95,20 @@ async function execute(env: AnalysisEnv, task: AnalysisTask) {
   // Original discovery always precedes supplements and review. Failed batches do not discard successes.
   const next = steps.find(s => s.status === "pending" || s.status === "running");
   if (next) { await executeStep(env, task, next, analysis); return; }
-  if (steps.some(s => s.status === "failed")) {
-    await env.DB.prepare("UPDATE ai_analysis_tasks SET status='failed',error_code='partial_analysis_failed',retryable=?1 WHERE id=?2 AND lease_token=?3")
-      .bind(steps.some(s => s.status === "failed" && s.retryable) ? 1 : 0, task.id, task.lease_token).run(); return;
+  const failed = steps.filter(s => s.status === "failed");
+  if (failed.length) {
+    // Exhausted steps are skipped once any discovery succeeded; the task only fails when nothing usable exists.
+    const discovered = steps.some(s => ["discover", "supplement"].includes(s.kind) && s.status === "done");
+    // Reviews gate every final clip, so losing all of them must stay retryable rather than commit an empty result.
+    const reviews = steps.filter(s => s.kind === "review");
+    const reviewedNothing = reviews.length > 0 && !reviews.some(s => s.status === "done");
+    if (!discovered || reviewedNothing || failed.some(s => s.kind === "capability")) {
+      await env.DB.prepare("UPDATE ai_analysis_tasks SET status='failed',error_code='partial_analysis_failed',retryable=?1 WHERE id=?2 AND lease_token=?3")
+        .bind(failed.some(s => s.retryable) ? 1 : 0, task.id, task.lease_token).run(); return;
+    }
+    task.limited_reason ??= "partial_analysis";
   }
-  const outputs = await Promise.all(steps.map(async s => ({ step: s, result: await read<StepResult>(env, s.result_key!) })));
+  const outputs = await Promise.all(steps.filter(s => s.status !== "failed").map(async s => ({ step: s, result: await read<StepResult>(env, s.result_key!) })));
   if (task.phase === "discovery") {
     let calls = steps.filter(s => s.kind === "discover").length;
     let limited = task.limited_reason;
@@ -123,8 +135,10 @@ async function execute(env: AnalysisEnv, task: AnalysisTask) {
   }
   if (task.phase === "grouping") {
     const grouped = outputs.find(o => o.step.kind === "group");
-    const groups = (grouped?.result.groups ?? []) as number[][];
-    const proposed = grouped?.result.candidates.candidates ?? [];
+    const groupStep = failed.find(s => s.kind === "group");
+    // Without a grouping result, review every shortlisted candidate as its own group.
+    const proposed = grouped?.result.candidates.candidates ?? (groupStep ? (await read<StepInput>(env, groupStep.input_key)).candidates ?? [] : []);
+    const groups = (grouped?.result.groups ?? proposed.map((_, i) => [i])) as number[][];
     const topics=(grouped?.result.topics ?? []) as number[][];
     const candidates = groups.flatMap(group => group.map(i => ({ ...proposed[i], topicGroup: group[0], topicCluster:topics.findIndex(topic=>topic.includes(i)) })));
     for (let i = 0; i < candidates.length; i += AI_ANALYSIS.reviewBatchSize) await addStep(env, task, `r${String(i).padStart(3, "0")}`, "review", { candidates: candidates.slice(i, i + AI_ANALYSIS.reviewBatchSize) });

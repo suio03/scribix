@@ -56,6 +56,7 @@ function VideoCandidateWorkspaceContent({
   projectId,
   initialStatus,
   sourceDurationMs,
+  analyzableDurationMs,
   initialCandidates,
   initialPreviews,
   initialSelectedCandidateId,
@@ -66,6 +67,7 @@ function VideoCandidateWorkspaceContent({
   projectId: string;
   initialStatus: ProjectStatus;
   sourceDurationMs: number | null;
+  analyzableDurationMs: number;
   initialCandidates: StoredClipCandidate[];
   initialPreviews: CandidatePreview[];
   initialSelectedCandidateId: string | null;
@@ -88,7 +90,7 @@ function VideoCandidateWorkspaceContent({
   const [batchEnabled, setBatchEnabled] = useState(false);
   const [task, setTask] = useState<AnalysisTaskView | null>(null);
   const [rangeStart, setRangeStart] = useState(0);
-  const [rangeEnd, setRangeEnd] = useState(Math.min(sourceDurationMs ?? 0, AI_ANALYSIS.maxRangeMs) / 1000);
+  const [rangeEnd, setRangeEnd] = useState(Math.min(analyzableDurationMs, AI_ANALYSIS.maxRangeMs) / 1000);
   const [rangeError, setRangeError] = useState<false | "invalid" | "dense">(false);
   const [selection, setSelection] = useState<SelectionState | null>(null);
   const [transcriptId, setTranscriptId] = useState<string | null>(null);
@@ -268,7 +270,7 @@ function VideoCandidateWorkspaceContent({
 
   const generate = async () => {
     if (status === "analyzing") return;
-    if (batchEnabled && !shortSource && !task?.canRetry && (!Number.isFinite(rangeStart) || !Number.isFinite(rangeEnd) || rangeStart < 0 || rangeEnd <= rangeStart || rangeEnd * 1000 > (sourceDurationMs ?? 0) || (rangeEnd-rangeStart)*1000 > AI_ANALYSIS.maxRangeMs)) {setRangeError("invalid");return;}
+    if (batchEnabled && !shortSource && !task?.canRetry && (!Number.isFinite(rangeStart) || !Number.isFinite(rangeEnd) || rangeStart < 0 || rangeEnd <= rangeStart || rangeEnd * 1000 > analyzableDurationMs || (rangeEnd-rangeStart)*1000 > AI_ANALYSIS.maxRangeMs)) {setRangeError("invalid");return;}
     setRangeError(false);
     setUnsupported(false);
     setStatus("analyzing");
@@ -455,7 +457,7 @@ function VideoCandidateWorkspaceContent({
         <div>
           {batchEnabled ? <fieldset disabled={Boolean(task && ["waiting","running","failed"].includes(task.status))} className="disabled:opacity-60">
             <AnalysisRangePicker
-              durationMs={sourceDurationMs ?? 0}
+              durationMs={analyzableDurationMs}
               maxRangeMs={AI_ANALYSIS.maxRangeMs}
               start={rangeStart}
               end={rangeEnd}
@@ -464,6 +466,7 @@ function VideoCandidateWorkspaceContent({
               onChange={(start,end)=>{setRangeStart(start);setRangeEnd(end);setRangeError(false);}}
             />
           </fieldset> : null}
+          {batchEnabled && sourceDurationMs && analyzableDurationMs < sourceDurationMs ? <p className="mt-2 text-meta text-muted">{ts("partialRange",{minutes:Math.floor(analyzableDurationMs/60_000)})}</p> : null}
           {rangeError ? <Notice tone="danger">{rangeError === "dense" ? ts("rangeDense") : ts("rangeInvalid",{minutes:AI_ANALYSIS.maxRangeMs/60_000})}</Notice> : null}
           {task?.status !== "failed" || task.canRetry ? <SelectionRequestForm requirements={requirements} selection={selection} unsupported={unsupported} onChange={setRequirements} onStart={() => void generate()}><GenerationSettingsPanel projectId={projectId} value={requirements} onChange={setRequirements} disabled={Boolean(task && ["waiting","running","failed"].includes(task.status))} durationMs={sourceDurationMs ?? 0}/></SelectionRequestForm> : null}
         </div>
@@ -954,13 +957,13 @@ function AnalysisProgress({ task, active }: { task: AnalysisTaskView; active: bo
           <p className="mt-2 text-meta text-muted">{ts("batchProgress", { completed: task.completedBatches, total: task.totalBatches })}</p>
         </>
       ) : null}
-      {task.limitedReason ? <p className="mt-2 text-meta text-muted">{ts("limited")}</p> : null}
+      {task.limitedReason ? <p className="mt-2 text-meta text-muted">{ts(task.limitedReason === "partial_analysis" ? "partialSkipped" : "limited")}</p> : null}
       {task.errorCode ? <p className="mt-2 text-meta text-rec">{ts(task.errorCode === "unsupported_selection" ? "unsupported" : task.errorCode === "analysis_input_too_large" ? "rangeDense" : "partialFailed")}</p> : null}
       {failedSteps.length ? (
         <details className="mt-2 text-meta text-muted">
-          <summary className="cursor-pointer">{task.errorCode ?? ts("limited")}</summary>
+          <summary className="cursor-pointer">{ts("affectedRanges")}</summary>
           <ul className="mt-1 space-y-0.5 font-mono text-caption">
-            {failedSteps.map((step) => <li key={step.id}>{step.ranges.map((range) => `${clock(range.startMs)}–${clock(range.endMs)}`).join(" · ")} — {step.error_code ?? step.status}</li>)}
+            {failedSteps.map((step) => <li key={step.id}>{step.ranges.map((range) => `${clock(range.startMs)}–${clock(range.endMs)}`).join(" · ")}</li>)}
           </ul>
         </details>
       ) : null}

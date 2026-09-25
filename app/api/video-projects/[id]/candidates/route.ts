@@ -1,5 +1,5 @@
 import { latestAnalysisTask, submitAnalysisTask, retryAnalysisTask } from "@/lib/video-workspace/analysis-tasks";
-import { parseAnalysisRange } from "@/lib/video-workspace/analysis-config";
+import { analyzableDurationMs, parseAnalysisRange } from "@/lib/video-workspace/analysis-config";
 import { DEFAULT_SELECTION, parseSelection, type SelectionRequirements, type SelectionState } from "@/lib/video-workspace/selection";
 import { recoverProjectRenderQueue } from "@/lib/video-workspace/render-scheduling";
 import { auth } from "@/auth";
@@ -42,6 +42,7 @@ type CandidateProjectRow = {
   transcript_status: string;
   transcript_r2_key: string | null;
   source_duration_ms: number | null;
+  processing_limit_sec: number | null;
   source_status: string | null;
   source_expires_at: string | null;
   updated_at: string;
@@ -124,7 +125,7 @@ export async function POST(request: Request, { params }: Params) {
   if (currentTask && ["waiting","running","failed"].includes(currentTask.status)) return Response.json({error:"candidate_generation_active"},{status:409});
   if (useBatch && env.AI_CLIPS_BATCH_ENABLED === "true") {
     let range;
-    try {range = parseAnalysisRange(body.analysisRange,project.source_duration_ms ?? 0);}
+    try {range = parseAnalysisRange(body.analysisRange,analyzableDurationMs(project.source_duration_ms,project.processing_limit_sec));}
     catch {return Response.json({error:"invalid_analysis_range"},{status:400});}
     if (project.transcript_status === "completed" && project.transcript_r2_key) {
       const object = await env.SCRIBIX_MEDIA.get(project.transcript_r2_key);
@@ -400,6 +401,7 @@ async function candidateContext(params: Params["params"]): Promise<
     `SELECT p.id, p.status, p.transcript_id,
             t.status AS transcript_status, t.transcript_r2_key,
             a.duration_ms AS source_duration_ms,
+            t.processing_limit_sec,
             a.status AS source_status, a.expires_at AS source_expires_at,
             p.updated_at, p.selection_json, p.selection_request_id, p.selection_outcome, p.selection_adjustments
        FROM video_projects p

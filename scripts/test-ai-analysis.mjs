@@ -98,14 +98,23 @@ test('waiting transcript starts without browser, expired lease is recovered, con
   const claims = (await Promise.all(Array.from({ length: 15 }, () => f.call('claim')))).map(r => r.result).filter(Boolean);
   assert.equal(claims.length, 4); assert.equal(claims.filter(c => c.user_id === 'u').length, 2);
 });
-test('temporary provider failures preserve successes, retry only unfinished steps with immutable input', async t => {
+test('a step that fails twice is skipped and the task completes with the remaining sections', async t => {
   const f = await fixture(t); await f.call('submit', { input: f.input }); await f.call('turn');
   f.failures(3);
   f.respond(() => ({ candidates: [] }));
   for (let i = 0; i < 15; i++)await f.call('turn');
-  const failed = (await f.call('status')).result; assert.equal(failed.status, 'failed'); assert.equal(failed.canRetry, true); assert.ok(failed.completedBatches > 0); assert.ok(failed.completedBatches < failed.totalBatches);
+  const status = (await f.call('status')).result; assert.equal(status.status, 'completed'); assert.equal(status.canRetry, false);
+  assert.equal(status.limitedReason, 'partial_analysis'); assert.equal(status.steps.filter(s => s.status === 'failed').length, 1);
+});
+test('when every discovery section fails the task stays retryable and retry runs only unfinished steps', async t => {
+  const f = await fixture(t); await f.call('submit', { input: f.input }); await f.call('turn');
+  const total = (await f.db.prepare("SELECT COUNT(*) n FROM ai_analysis_steps WHERE kind='discover'").first()).n;
+  f.failures(total * 2);
+  f.respond(() => ({ candidates: [] }));
+  for (let i = 0; i < 15; i++)await f.call('turn');
+  const failed = (await f.call('status')).result; assert.equal(failed.status, 'failed'); assert.equal(failed.canRetry, true); assert.equal(failed.completedBatches, 0);
   const calls = f.requests(); assert.equal((await f.call('retry')).result, true);
-  for (let i = 0; i < 15; i++)await f.call('turn'); assert.equal((await f.call('status')).result.status, 'completed'); assert.equal(f.requests(), calls + 1);
+  for (let i = 0; i < 15; i++)await f.call('turn'); assert.equal((await f.call('status')).result.status, 'completed'); assert.equal(f.requests(), calls + total);
 });
 test('90-second candidates are reviewed and committed once, manual clips survive and only five previews warm', async t => {
   const f = await fixture(t); await f.call('submit', { input: f.input });
@@ -126,6 +135,30 @@ test('90-second candidates are reviewed and committed once, manual clips survive
   assert.ok(candidates.results.every(c => JSON.parse(c.segments_json)[0].endMs - JSON.parse(c.segments_json)[0].startMs > 60000));
   assert.equal((await f.db.prepare('SELECT COUNT(*) n FROM render_jobs').first()).n, 5);
   for (let i = 0; i < 3; i++)await f.call('turn'); assert.equal((await f.db.prepare("SELECT COUNT(*) n FROM clip_candidates WHERE origin='ai'").first()).n, candidates.results.length);
+});
+test('when every review fails the task stays retryable instead of committing an empty result', async t => {
+  const f = await fixture(t); await f.call('submit', { input: f.input });
+  let reviewsFail = true;
+  f.respond(request => {
+    if (request.text.format.name === 'analysis_topic_groups') return { groups: JSON.parse(request.input[0].content[0].text).map(c => [c.index]), topics: [] };
+    if (request.text.format.name === 'video_clip_sentence_completeness_review') {
+      if (reviewsFail) return { reviews: 'malformed' };
+      const refs = JSON.parse(request.input[0].content[0].text.split('CANDIDATES TO REVIEW (context is not automatically included in a clip):\n')[1].split('\nProposed metadata')[0]);
+      return { reviews: refs.map(c => ({ candidateIndex: c.candidateIndex, verdict: 'accept', completenessScore: 1, completenessReason: 'complete', startSentenceId: c.startSentenceId, endSentenceId: c.endSentenceId, theme: 'Faithful title', hook: 'Faithful hook' })) };
+    }
+    const ids = [...request.input[0].content[0].text.matchAll(/^(s\d+)\|/gm)].map(m => m[1]);
+    return { candidates: ids[8] ? [{ theme: `Topic ${ids[0]}`, hook: 'A complete point', reason: 'Complete', score: .9, startSentenceId: ids[0], endSentenceId: ids[8] }] : [] };
+  });
+  for (let i = 0; i < 40; i++)await f.call('turn');
+  const failed = (await f.call('status')).result;
+  assert.equal(failed.status, 'failed', JSON.stringify(failed)); assert.equal(failed.canRetry, true);
+  assert.notEqual((await f.db.prepare("SELECT selection_outcome FROM video_projects WHERE id='p'").first()).selection_outcome, 'empty');
+  const discoveries = (await f.db.prepare("SELECT COUNT(*) n FROM ai_analysis_attempts a JOIN ai_analysis_steps s ON s.task_id=a.task_id AND s.id=a.step_id WHERE s.kind IN ('discover','supplement')").first()).n;
+  reviewsFail = false; assert.equal((await f.call('retry')).result, true);
+  for (let i = 0; i < 40; i++)await f.call('turn');
+  assert.equal((await f.call('status')).result.status, 'completed');
+  assert.ok((await f.db.prepare("SELECT COUNT(*) n FROM clip_candidates WHERE origin='ai'").first()).n > 0);
+  assert.equal((await f.db.prepare("SELECT COUNT(*) n FROM ai_analysis_attempts a JOIN ai_analysis_steps s ON s.task_id=a.task_id AND s.id=a.step_id WHERE s.kind IN ('discover','supplement')").first()).n, discoveries);
 });
 test('R2 result survives a failed step write without repeating a provider request', async t => {
   const f = await fixture(t); f.respond(() => ({ candidates: [] })); await f.call('submit', { input: f.input }); await f.call('turn'); await f.call('turn');
@@ -190,4 +223,12 @@ test('a waiting task rejects an over-budget transcript without model calls and c
  await f.r2.put('transcript',JSON.stringify({words:Array.from({length:400},(_,i)=>({text:'x'.repeat(4000)+'.',start:i*1000,end:i*1000+900}))}));
  await f.call('turn');assert.equal((await f.call('status')).result.status,'rejected');assert.equal(f.requests(),0);
  assert.ok((await f.call('submit',{input:{...f.input,requestId:'request_2',range:{startMs:0,endMs:20000}}})).result);
+});
+test('a malformed model response is retried per step instead of failing the task permanently', async t => {
+  const f = await fixture(t); await f.call('submit', { input: f.input }); await f.call('turn');
+  let malformed = 1;
+  f.respond(() => malformed-- > 0 ? { candidates: [{ theme: 'x' }] } : { candidates: [] });
+  for (let i = 0; i < 15; i++)await f.call('turn');
+  assert.equal((await f.call('status')).result.status, 'completed');
+  assert.equal((await f.db.prepare("SELECT COUNT(*) n FROM ai_analysis_attempts WHERE error_code='invalid_candidate_payload'").first()).n, 1);
 });

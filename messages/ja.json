@@ -696,7 +696,7 @@
       "eyebrow": "新しく始める",
       "title": "クリップを作成",
       "description": "長い動画をアップロードし、最も良い場面を短いクリップに変換します。",
-      "back": "クリップに戻る",
+      "back": "すべてのプロジェクト",
       "workflowLabel": "クリップ作成フロー",
       "recommended": "メイン",
       "clipsTitle": "動画から短いクリップを作成",
@@ -1244,10 +1244,10 @@
         "rangeEnd": "終了（秒）",
         "rangeHint": "自動クリップ：{minSeconds}〜{maxSeconds}秒。最大{minutes}分を分析できます。文字起こし料金は減額されません。",
         "rangeInvalid": "元動画の範囲内で最大{minutes}分の有効な範囲を選択してください。",
-        "batchProgress": "発見バッチ：{completed} / {total} 完了",
+        "batchProgress": "{total} セクション中 {completed} セクションを分析済み",
         "rangeSummary": "選択範囲：{start}〜{end}秒",
         "limited": "分析または表示の上限に達しました。すべての場面を発見できていない可能性があります。",
-        "partialFailed": "一部の分析を完了できませんでした。成功したバッチは保存されています。",
+        "partialFailed": "一部のセクションを分析できませんでした。再試行すると残りを完了できます。完了したセクションは保持されます。",
         "canLeave": "このページを離れても、分析はバックグラウンドで続きます。",
         "phases": {
           "planning": "計画中",
@@ -1258,7 +1258,10 @@
           "completed": "完了",
           "grouping": "関連する場面を比較中"
         },
-        "rangeDense": "この範囲の発話量は1回の分析上限を超えています。範囲を短くしてください。"
+        "rangeDense": "この範囲の発話量は1回の分析上限を超えています。範囲を短くしてください。",
+        "affectedRanges": "対象の範囲",
+        "partialRange": "文字起こしされたのは最初の {minutes, number} 分のみのため、クリップはその部分からのみ作成できます。",
+        "partialSkipped": "一部のセクションを分析できなかったため、これらのクリップは範囲の残りの部分から作成されています。"
       },
       "publish": {
         "title": "共有の準備",
@@ -1454,7 +1457,11 @@
       "cannotReadMetadata": "メディアメタデータを読み取ることができません。",
       "transcriptionFailed": "文字起こしエラー。",
       "transcriptionGeneric": "文字起こし {status}。",
-      "uploadFallback": "{step} 中にアップロードに失敗しました。詳細はブラウザコンソールで確認してください。"
+      "uploadFallback": "{step} 中にアップロードに失敗しました。詳細はブラウザコンソールで確認してください。",
+      "partialClipsKnownBody": "この動画は {totalMin, number} 分です。今すぐ最初の {processingMin, number} 分からクリップを探すか、アップグレードして動画全体を使用してください。",
+      "partialClipsUnknownBody": "このブラウザでは動画の長さを判定できませんでした。最初の最大 {processingMin, number} 分からクリップを探すか、アップグレードして動画全体を使用してください。",
+      "partialClipsUpgrade": "アップグレードして動画全体を使う",
+      "partialClipsConfirm": "最初の {minutes, number} 分を使う"
     },
     "recorder": {
       "start": "録音を開始",

@@ -8,6 +8,7 @@ import { Link, redirect } from "@/i18n/navigation";
 import { cf } from "@/lib/cf";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { videoWorkspaceAccessFor } from "@/lib/video-workspace/access";
+import { analyzableDurationMs } from "@/lib/video-workspace/analysis-config";
 import { listClipCandidates } from "@/lib/video-workspace/candidates";
 import { listFinalRenders } from "@/lib/video-workspace/final-jobs";
 import { listCandidatePreviews } from "@/lib/video-workspace/preview-jobs";
@@ -35,6 +36,7 @@ export default async function VideoProjectPage({ params }: Params) {
             END AS status,
             p.transcript_id, p.draft_candidate_id, t.title,
             a.duration_ms AS source_duration_ms,
+            t.processing_limit_sec,
             a.expires_at AS source_expires_at,
             CASE
               WHEN a.id IS NOT NULL
@@ -61,6 +63,7 @@ export default async function VideoProjectPage({ params }: Params) {
       draft_candidate_id: string | null;
       title: string;
       source_duration_ms: number | null;
+      processing_limit_sec: number | null;
       source_expires_at: string | null;
       source_available: number;
     }>();
@@ -97,7 +100,7 @@ export default async function VideoProjectPage({ params }: Params) {
   const expiresAt = parseDbTimestamp(project.source_expires_at);
 
   return (
-    <main className="product-surface-refresh mx-auto max-w-[1440px] px-4 py-4 sm:px-6 sm:py-5">
+    <main className="product-surface-refresh mx-auto max-w-[1440px] px-4 pb-24 pt-4 sm:px-6 sm:pt-5">
       <Link
         href="/dashboard"
         className="text-body-sm text-muted transition hover:text-ink"
@@ -145,6 +148,7 @@ export default async function VideoProjectPage({ params }: Params) {
         projectId={project.id}
         initialStatus={project.status}
         sourceDurationMs={project.source_duration_ms}
+        analyzableDurationMs={analyzableDurationMs(project.source_duration_ms, project.processing_limit_sec)}
         initialCandidates={candidates}
         initialPreviews={previews}
         initialSelectedCandidateId={project.draft_candidate_id}

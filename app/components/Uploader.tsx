@@ -929,6 +929,7 @@ export function Uploader(props: UseUploadOpts) {
         onConfirm={confirmPartial}
         onCancel={cancelPartial}
         onUpgrade={trackPartialUpgrade}
+        clips={props.videoOnly}
       />
     </>
   );
@@ -939,11 +940,13 @@ export function PartialTranscriptModal({
   onConfirm,
   onCancel,
   onUpgrade,
+  clips = false,
 }: {
   offer: PartialTranscriptOffer | null;
   onConfirm: () => void;
   onCancel: () => void;
   onUpgrade: () => void;
+  clips?: boolean;
 }) {
   const t = useTranslations("Dashboard.uploader");
   const [upgradeOpen, setUpgradeOpen] = useState(false);
@@ -982,10 +985,10 @@ export function PartialTranscriptModal({
             </h2>
             <p className="mt-2 text-[14px] leading-6 text-ink/62">
               {sourceMinutes === null
-                ? t("partialUnknownBody", {
+                ? t(clips ? "partialClipsUnknownBody" : "partialUnknownBody", {
                     processingMin: offer.processingMin,
                   })
-                : t("partialKnownBody", {
+                : t(clips ? "partialClipsKnownBody" : "partialKnownBody", {
                     totalMin: sourceMinutes,
                     processingMin: offer.processingMin,
                   })}
@@ -1031,14 +1034,14 @@ export function PartialTranscriptModal({
             }}
             className="rounded-xl border border-line bg-paper px-4 py-3 text-[13px] font-semibold text-ink transition hover:border-ink/35 hover:bg-card"
           >
-            {t("partialUpgrade")}
+            {t(clips ? "partialClipsUpgrade" : "partialUpgrade")}
           </button>
           <button
             type="button"
             onClick={onConfirm}
             className="rounded-xl bg-accent px-4 py-3 text-[13px] font-semibold text-paper transition hover:bg-accent/90"
           >
-            {t("partialConfirm", { minutes: offer.processingMin })}
+            {t(clips ? "partialClipsConfirm" : "partialConfirm", { minutes: offer.processingMin })}
           </button>
         </div>
       </div>

@@ -696,7 +696,7 @@
       "eyebrow": "Start something new",
       "title": "Create clips",
       "description": "Upload a long video and turn its best moments into short clips.",
-      "back": "Back to clips",
+      "back": "All projects",
       "workflowLabel": "Clip workflow",
       "recommended": "Primary",
       "clipsTitle": "Turn a video into short clips",
@@ -1244,10 +1244,10 @@
         "rangeEnd": "End (seconds)",
         "rangeHint": "Auto clips: {minSeconds}–{maxSeconds} seconds. Analyze up to {minutes} minutes. This does not reduce transcription charges.",
         "rangeInvalid": "Choose a valid range of up to {minutes} minutes within the source.",
-        "batchProgress": "{completed} / {total} discovery batches completed",
+        "batchProgress": "{completed} of {total} sections analyzed",
         "rangeSummary": "Selected range: {start}–{end} seconds",
         "limited": "Results are limited by the analysis or display budget; discovery may not cover every moment.",
-        "partialFailed": "Some analysis could not finish. Successful batches are saved.",
+        "partialFailed": "Some sections could not be analyzed. Retry to finish them; completed sections are kept.",
         "canLeave": "You can leave this page. Analysis continues in the background.",
         "phases": {
           "planning": "Planning",
@@ -1258,7 +1258,10 @@
           "completed": "Completed",
           "grouping": "Comparing related moments"
         },
-        "rangeDense": "This range contains too much speech for one analysis task. Choose a smaller range."
+        "rangeDense": "This range contains too much speech for one analysis task. Choose a smaller range.",
+        "affectedRanges": "Affected ranges",
+        "partialRange": "Only the first {minutes, number} minutes were transcribed, so clips can come from that part only.",
+        "partialSkipped": "Some sections could not be analyzed, so these clips come from the rest of the range."
       },
       "publish": {
         "title": "Ready to share",
@@ -1454,7 +1457,11 @@
       "cannotReadMetadata": "Cannot read media metadata.",
       "transcriptionFailed": "Transcription error.",
       "transcriptionGeneric": "Transcription {status}.",
-      "uploadFallback": "Upload failed while {step}. Check the browser console for details."
+      "uploadFallback": "Upload failed while {step}. Check the browser console for details.",
+      "partialClipsKnownBody": "This video is {totalMin, number} minutes. Find clips in the first {processingMin, number} minutes now, or upgrade to use the full video.",
+      "partialClipsUnknownBody": "This browser couldn’t determine the video length. Find clips in up to the first {processingMin, number} minutes, or upgrade to use the full video.",
+      "partialClipsUpgrade": "Upgrade and use the full video",
+      "partialClipsConfirm": "Use the first {minutes, number} minutes"
     },
     "recorder": {
       "start": "Start recording",

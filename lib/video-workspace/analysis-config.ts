@@ -15,10 +15,15 @@ export const AI_ANALYSIS = {
   topicRepeatPenalty: 0.05,
   globalConcurrency: 4,
   userConcurrency: 2,
-  attempts: 3,
+  attempts: 2,
   leaseSeconds: 300,
 } as const;
 export type AnalysisRange = { startMs: number; endMs: number };
+// Partial transcripts only contain words up to the processing limit, so clips cannot come from later source time.
+export function analyzableDurationMs(sourceDurationMs: number | null, processingLimitSec: number | null): number {
+  const source = sourceDurationMs ?? 0;
+  return processingLimitSec ? Math.min(source, processingLimitSec * 1000) : source;
+}
 export function parseAnalysisRange(value: unknown, sourceDurationMs: number): AnalysisRange {
   const range = value === undefined ? { startMs: 0, endMs: sourceDurationMs } : value as AnalysisRange;
   if (!range || !Number.isSafeInteger(range.startMs) || !Number.isSafeInteger(range.endMs) ||

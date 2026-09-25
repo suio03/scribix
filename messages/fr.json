@@ -696,7 +696,7 @@
       "eyebrow": "Commencer quelque chose",
       "title": "Créer des clips",
       "description": "Téléversez une vidéo longue et transformez ses meilleurs moments en clips courts.",
-      "back": "Retour aux clips",
+      "back": "Tous les projets",
       "workflowLabel": "Création de clips",
       "recommended": "Principal",
       "clipsTitle": "Transformer une vidéo en clips courts",
@@ -1244,10 +1244,10 @@
         "rangeEnd": "Fin (secondes)",
         "rangeHint": "Clips auto : {minSeconds}–{maxSeconds} secondes. Analysez jusqu’à {minutes} minutes. Cela ne réduit pas les frais de transcription.",
         "rangeInvalid": "Choisissez une plage valide de {minutes} minutes maximum dans la source.",
-        "batchProgress": "{completed} / {total} lots de recherche terminés",
+        "batchProgress": "{completed} sur {total} sections analysées",
         "rangeSummary": "Plage sélectionnée : {start}–{end} secondes",
         "limited": "Les résultats sont limités par le budget d’analyse ou d’affichage ; certains moments peuvent ne pas avoir été trouvés.",
-        "partialFailed": "Une partie de l’analyse a échoué. Les lots réussis sont enregistrés.",
+        "partialFailed": "Certaines sections n’ont pas pu être analysées. Réessayez pour les terminer ; les sections terminées sont conservées.",
         "canLeave": "Vous pouvez quitter cette page. L’analyse continue en arrière-plan.",
         "phases": {
           "planning": "Planification",
@@ -1258,7 +1258,10 @@
           "completed": "Terminé",
           "grouping": "Comparaison des moments similaires"
         },
-        "rangeDense": "Cette plage contient trop de paroles pour une seule analyse. Choisissez une plage plus courte."
+        "rangeDense": "Cette plage contient trop de paroles pour une seule analyse. Choisissez une plage plus courte.",
+        "affectedRanges": "Plages concernées",
+        "partialRange": "Seules les {minutes, number} premières minutes ont été transcrites, les clips ne peuvent donc provenir que de cette partie.",
+        "partialSkipped": "Certaines sections n’ont pas pu être analysées, ces clips proviennent donc du reste de la plage."
       },
       "publish": {
         "title": "Prêt à partager",
@@ -1454,7 +1457,11 @@
       "cannotReadMetadata": "Impossible de lire les métadonnées du média.",
       "transcriptionFailed": "Erreur de transcription.",
       "transcriptionGeneric": "Transcription {status}.",
-      "uploadFallback": "Le téléversement a échoué lors de {step}. Vérifiez la console du navigateur pour plus de détails."
+      "uploadFallback": "Le téléversement a échoué lors de {step}. Vérifiez la console du navigateur pour plus de détails.",
+      "partialClipsKnownBody": "Cette vidéo dure {totalMin, number} minutes. Trouvez dès maintenant des clips dans les {processingMin, number} premières minutes, ou passez à une offre supérieure pour utiliser la vidéo entière.",
+      "partialClipsUnknownBody": "Ce navigateur n’a pas pu déterminer la durée de la vidéo. Trouvez des clips dans les {processingMin, number} premières minutes au maximum, ou passez à une offre supérieure pour utiliser la vidéo entière.",
+      "partialClipsUpgrade": "Passer à une offre supérieure et utiliser la vidéo entière",
+      "partialClipsConfirm": "Utiliser les {minutes, number} premières minutes"
     },
     "recorder": {
       "start": "Commencer l'enregistrement",

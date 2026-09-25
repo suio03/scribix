@@ -696,7 +696,7 @@
       "eyebrow": "Empieza algo nuevo",
       "title": "Crear clips",
       "description": "Sube un vídeo largo y convierte sus mejores momentos en clips cortos.",
-      "back": "Volver a los clips",
+      "back": "Todos los proyectos",
       "workflowLabel": "Flujo de creación de clips",
       "recommended": "Principal",
       "clipsTitle": "Convertir un vídeo en clips cortos",
@@ -1244,10 +1244,10 @@
         "rangeEnd": "Fin (segundos)",
         "rangeHint": "Clips automáticos: {minSeconds}–{maxSeconds} segundos. Analiza hasta {minutes} minutos. Esto no reduce los cargos de transcripción.",
         "rangeInvalid": "Elige un rango válido de hasta {minutes} minutos dentro del vídeo.",
-        "batchProgress": "{completed} / {total} lotes de búsqueda completados",
+        "batchProgress": "{completed} de {total} secciones analizadas",
         "rangeSummary": "Rango seleccionado: {start}–{end} segundos",
         "limited": "Los resultados están limitados por el presupuesto de análisis o visualización; puede que no se hayan encontrado todos los momentos.",
-        "partialFailed": "Parte del análisis no pudo terminar. Los lotes completados se han guardado.",
+        "partialFailed": "Algunas secciones no se pudieron analizar. Vuelve a intentarlo para terminarlas; las secciones completadas se conservan.",
         "canLeave": "Puedes salir de esta página. El análisis continúa en segundo plano.",
         "phases": {
           "planning": "Planificando",
@@ -1258,7 +1258,10 @@
           "completed": "Completado",
           "grouping": "Comparando momentos relacionados"
         },
-        "rangeDense": "Este rango contiene demasiado texto hablado para una sola tarea. Elige un rango menor."
+        "rangeDense": "Este rango contiene demasiado texto hablado para una sola tarea. Elige un rango menor.",
+        "affectedRanges": "Rangos afectados",
+        "partialRange": "Solo se transcribieron los primeros {minutes, number} minutos, así que los clips solo pueden salir de esa parte.",
+        "partialSkipped": "Algunas secciones no se pudieron analizar, así que estos clips salen del resto del rango."
       },
       "publish": {
         "title": "Listo para compartir",
@@ -1454,7 +1457,11 @@
       "cannotReadMetadata": "No se pueden leer los metadatos del medio.",
       "transcriptionFailed": "Error de transcripción.",
       "transcriptionGeneric": "Transcripción {status}.",
-      "uploadFallback": "La subida falló mientras {step}. Revisa la consola del navegador para más detalles."
+      "uploadFallback": "La subida falló mientras {step}. Revisa la consola del navegador para más detalles.",
+      "partialClipsKnownBody": "Este video dura {totalMin, number} minutos. Busca clips en los primeros {processingMin, number} minutos ahora o mejora tu plan para usar el video completo.",
+      "partialClipsUnknownBody": "Este navegador no pudo determinar la duración del video. Busca clips en hasta los primeros {processingMin, number} minutos o mejora tu plan para usar el video completo.",
+      "partialClipsUpgrade": "Mejorar plan y usar el video completo",
+      "partialClipsConfirm": "Usar los primeros {minutes, number} minutos"
     },
     "recorder": {
       "start": "Comenzar grabación",
