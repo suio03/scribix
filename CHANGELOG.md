@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-25 — homepage stock footage redesign
+
+- Rebuild the logged-out homepage media from licensed Pexels stock: a continuously scrolling ten-clip wall below the Hero (pauses on hover), six looping feature demos, workflow and audience loops, and a new Hero film from one stock interview with sample captions. No person appears in more than one place.
+- Loops play only while visible and show posters to reduced-motion viewers; the Hero and clip-wall notes state that the footage is stock and the people do not endorse Scribix, in all locales.
+- Remove the generated-photo artwork and v3 feature stills; render scripts no longer depend on them or on the old Hero footage.
+- No database migrations or binding changes are required.
+
 ## 2026-09-25 — clip flow walkthrough fixes
 
 - AI clip analysis retries each step at most twice, skips exhausted sections and completes with the remaining results; only a task where every discovery section failed stays retryable.

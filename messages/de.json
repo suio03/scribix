@@ -298,7 +298,25 @@
         "body": "Verbinde YouTube, TikTok und LinkedIn. Wähle Konten, passe die Texte pro Plattform an und verfolge jeden Status. Veröffentlichen ist in kostenpflichtigen Tarifen verfügbar.",
         "alt": "Ein Clip mit ausgewählten Plattformkonten, eigenen Beitragstexten und einer Schaltfläche zum Veröffentlichen."
       },
-      "illustrationNote": "Die Funktionsbilder verwenden generierte Personen und Beispielinhalte. Das Hero zeigt echte Clip-Exporte; Veröffentlichungsstatus sind eine Demonstration."
+      "illustrationNote": "Die Demos auf dieser Seite verwenden lizenziertes Pexels-Stockmaterial mit Beispieluntertiteln und -titeln; die gezeigten Personen empfehlen Scribix nicht. Veröffentlichungsstatus sind eine Demonstration."
+    },
+    "clipWall": {
+      "eyebrow": "Was du erstellen kannst",
+      "title": "Ein langes Video. Shorts für jedes Format.",
+      "intro": "Interviews, Streams, Unterricht, Vorträge, Rezepte und Vlogs: Scribix findet die stärksten Momente, setzt sie ins Hochformat und fügt anpassbare Untertitel hinzu.",
+      "categories": {
+        "podcast": "Podcast",
+        "streaming": "Streaming",
+        "business": "Business",
+        "education": "Bildung",
+        "keynote": "Keynote",
+        "cooking": "Kochen",
+        "storytelling": "Geschichten",
+        "travel": "Reisen",
+        "tech": "Tech",
+        "beauty": "Beauty"
+      },
+      "note": "Beispielhafte Clips aus lizenziertem Pexels-Stockmaterial; die Untertitel sind Beispieltext. Die gezeigten Personen sind nicht mit Scribix verbunden und empfehlen Scribix nicht."
     }
   },
   "TopNav": {

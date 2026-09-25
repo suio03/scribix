@@ -298,7 +298,25 @@
         "body": "Connect your YouTube, TikTok and LinkedIn accounts. Select your destinations, tailor each platform’s copy and track individual post statuses. Social publishing is available on paid plans.",
         "alt": "A finished clip connects to selected YouTube, TikTok and LinkedIn accounts with separate post copy and a publish button."
       },
-      "illustrationNote": "Feature artwork uses generated people and illustrative content. The Hero includes real clip exports; publishing states are a demonstration, not live posts."
+      "illustrationNote": "Homepage demos use licensed Pexels stock footage with sample captions and titles; the people shown do not endorse Scribix. Publishing states are a demonstration, not live posts."
+    },
+    "clipWall": {
+      "eyebrow": "What you can make",
+      "title": "One long video. Shorts for every format.",
+      "intro": "Interviews, streams, lessons, talks, recipes and vlogs: Scribix finds the strongest moments, frames them vertically and adds captions you can restyle.",
+      "categories": {
+        "podcast": "Podcast",
+        "streaming": "Streaming",
+        "business": "Business",
+        "education": "Education",
+        "keynote": "Keynote",
+        "cooking": "Cooking",
+        "storytelling": "Storytelling",
+        "travel": "Travel",
+        "tech": "Tech",
+        "beauty": "Beauty"
+      },
+      "note": "Illustrative examples made from licensed Pexels stock footage; captions are sample text. The people shown are not affiliated with and do not endorse Scribix."
     }
   },
   "TopNav": {

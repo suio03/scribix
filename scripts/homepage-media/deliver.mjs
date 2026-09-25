@@ -1,20 +1,7 @@
 import { execFileSync } from "node:child_process";
 import path from "node:path";
-import sharp from "sharp";
 const root = process.cwd();
-for (const variant of [
-  "selection",
-  "framing",
-  "captions",
-  "trim",
-  "cover",
-  "package",
-]) {
-  await sharp(path.join(root, `.artifacts/homepage-film/${variant}.png`))
-    .webp({ quality: 82 })
-    .toFile(path.join(root, `public/media/home-features-v3/${variant}.webp`));
-}
-if (!process.argv.includes("--stills")) {
+{
   const delivery = path.join(root, "public/media/home-demo");
   execFileSync("ffmpeg", [
     "-hide_banner",

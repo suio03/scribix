@@ -298,7 +298,25 @@
         "body": "Connectez YouTube, TikTok et LinkedIn. Choisissez vos comptes, adaptez les textes et suivez chaque statut. La publication est incluse dans les offres payantes.",
         "alt": "Un clip relié à trois comptes sélectionnés avec des textes distincts et un bouton de publication."
       },
-      "illustrationNote": "Les illustrations utilisent des personnes générées et du contenu fictif. La vidéo principale contient de vrais exports ; les statuts de publication sont une démonstration."
+      "illustrationNote": "Les démos de cette page utilisent des vidéos Pexels sous licence avec des sous-titres et titres d’exemple ; les personnes présentées ne recommandent pas Scribix. Les statuts de publication sont une démonstration."
+    },
+    "clipWall": {
+      "eyebrow": "Ce que vous pouvez créer",
+      "title": "Une longue vidéo. Des shorts pour chaque format.",
+      "intro": "Interviews, lives, cours, conférences, recettes et vlogs : Scribix repère les meilleurs moments, les cadre à la verticale et ajoute des sous-titres personnalisables.",
+      "categories": {
+        "podcast": "Podcast",
+        "streaming": "Streaming",
+        "business": "Entreprise",
+        "education": "Éducation",
+        "keynote": "Conférence",
+        "cooking": "Cuisine",
+        "storytelling": "Récit",
+        "travel": "Voyage",
+        "tech": "Tech",
+        "beauty": "Beauté"
+      },
+      "note": "Exemples illustratifs réalisés avec des vidéos Pexels sous licence ; les sous-titres sont des textes d’exemple. Les personnes présentées ne sont pas affiliées à Scribix et ne le recommandent pas."
     }
   },
   "TopNav": {

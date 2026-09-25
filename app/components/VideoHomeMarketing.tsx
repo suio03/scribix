@@ -1,5 +1,5 @@
 import { VideoUploadLink } from "./VideoUploadLink";
-import Image from "next/image";
+import { HomeLoopVideo } from "./HomeLoopVideo";
 import { PUBLISH_PLATFORMS, SPECS } from "./publishing/shared/specs";
 import styles from "./VideoHomeShowcase.module.css";
 import {
@@ -14,6 +14,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { mergeLocalizedItems } from "@/lib/localized-items";
 import { SectionLabel } from "./SectionLabel";
+import { VideoHomeClipWall } from "./VideoHomeClipWall";
 import { VideoFeatureShowcase, VideoSimpleWorkflow } from "./VideoHomeShowcase";
 
 type ItemCopy = { title: string; body: string };
@@ -37,6 +38,7 @@ export async function VideoHomeMarketing() {
 
   return (
     <>
+      <VideoHomeClipWall />
       <VideoFeatureShowcase />
       <VideoSimpleWorkflow />
 
@@ -48,15 +50,12 @@ export async function VideoHomeMarketing() {
             <p className={styles.intro}>{t("audiences.intro")}</p>
           </div>
           <div className={styles.audienceGrid}>
-            {audiences.map((audience, index) => (
+            {audiences.map((audience) => (
               <article key={audience.key} className={styles.audienceCard}>
                 <div className={styles.audiencePicture}>
-                  <Image
-                    src={`/media/home-artwork/${["travel", "podcast", "design"][index]}.webp`}
-                    alt=""
-                    fill
-                    sizes="(max-width: 767px) 90vw, 380px"
-                    className="object-cover"
+                  <HomeLoopVideo
+                    src={`/media/home-loops/audience-${audience.key}.mp4`}
+                    poster={`/media/home-loops/audience-${audience.key}.jpg`}
                   />
                   <span>{audience.label}</span>
                 </div>

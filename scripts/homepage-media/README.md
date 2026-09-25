@@ -1,33 +1,41 @@
-# Homepage film and artwork
+# Homepage film and loops
 
-The 2026-09-19 v3 revision adds a fourth Hero scene for multi-platform publishing, plus six independently composed feature images. `composition.jsx` is the 24-second film; `artwork.jsx` composes the static illustrations and publishing scene. Layouts, typography and platform marks are deterministic React/Remotion elements. Fictional photos are generated separately.
+`composition.jsx` is the 24-second Hero film; `artwork.jsx` holds its publishing scene and platform marks. Since v6 (2026-09-25) the Hero is built from one Pexels interview shot from three angles, with sample captions drawn in Remotion. Sources and trims are listed in [docs/homepage-media.md](../../docs/homepage-media.md#stock-footage-and-honesty-boundaries).
 
 ```sh
-node scripts/homepage-media/prepare.mjs /path/to/scribix-hero-visual/assets
+node scripts/homepage-media/prepare.mjs .artifacts/homepage-film/stock/hero
 REMOTION_TOOLCHAIN_DIR=/path/to/remotion-project node scripts/homepage-media/render.mjs
 ```
 
-Requires Remotion 4.0.484, React, FFmpeg, installed Chrome and the app's Sharp dependency. `REMOTION_BROWSER` overrides the Chrome executable. Use `--stills` to render only images. Full source videos and intermediate PNGs stay under ignored `.artifacts/homepage-film/`. No preview service is needed; export uses a temporary renderer connection.
+Run both from the repository root. `prepare.mjs` expects the Pexels downloads for 6878732, 6883839 and 6883833 (filenames starting with the id, as Pexels names them) and writes trimmed 30 fps inputs, the Geist and caption fonts and platform icons to ignored `.artifacts/homepage-film/public/`. Requires Remotion 4.0.484, React, FFmpeg and installed Chrome; `REMOTION_BROWSER` overrides the Chrome executable. No preview service is needed; export uses a temporary renderer connection.
 
-Delivery:
-- `public/media/home-demo/scribix-hero-v5.mp4` and `.jpg`
-- `public/media/home-features-v3/*.webp`
-- `public/media/home-artwork/{podcast,cooking,travel,design}.webp`
-
-## Generated source asset
-
-Tool: built-in `image_gen` (not CLI/API fallback). One contact sheet was generated, visually inspected, split into four photographic assets and saved in the repository. Each scene represents a fictional creator. It is not a testimonial or proof of actual product output. The movie still uses the existing genuine clip exports.
-
-Original generated file: `/Users/laughingli/.codex/generated_images/01a0b961-a2b8-7133-a3fe-d5a7ee1ba0aa/exec-cb422c48-5df3-48f5-8e84-16f335e990e9.png`. A production copy is under `.artifacts/homepage-film/generated-contact-sheet.png`. Final crops are repository delivery inputs, so future renders do not depend on the generated-images folder.
-
-Exact generation prompt:
-
-> Generate one cohesive photographic contact sheet asset for a video creation software website, exactly a 2 by 2 grid of four equally sized landscape photographs, no gutters, no text or logos or UI. Each quadrant is independently usable as a content thumbnail. Top left: warm terracotta podcast studio, friendly Black female host with curly hair speaking into a broadcast microphone, medium shot, cinematic warm side lighting. Top right: East Asian male cooking instructor in sage apron in bright beautiful kitchen presenting a bowl with herbs, waist up, subject centered with space around him for vertical reframing. Bottom left: young woman outdoor travel storyteller wearing blue hiking jacket on coastal overlook, expressive hands, rich teal sea and golden natural light. Bottom right: male creative educator in ivory shirt beside colorful paper and design objects in cobalt blue studio, medium shot. Fictional people, polished authentic editorial photography, varied skin tones, natural skin texture, premium video still quality. All four images have completely different composition and palette. No celebrities, no captions, no watermark. Overall 3:2 landscape canvas.
-
-The contact-sheet boundary is at x=768 and y=494. Retain each full quadrant before applying layout-specific object-fit crops.
+Delivery: `public/media/home-demo/scribix-hero-v5.mp4` and `.jpg` (poster at 1 s).
 
 ## Publishing illustration
 
 Platform selection follows the app's `PUBLISH_PLATFORMS`: YouTube, TikTok, LinkedIn. YouTube/LinkedIn assets and TikTok path geometry are reused from the existing app. The film illustrates selected accounts → explicit publish action → submitted states. These are **not live posts**. Do not use these assets to imply completed provider acceptance, automatic publishing without consent, unsupported networks, or guaranteed delivery speed. Scheduling is not advertised in this revision.
 
-The v4 movie reduces the final publishing group footprint; the v3 static illustrations remain unchanged. Hero playback is automatic and has no user controls.
+Hero playback is automatic and has no user controls.
+
+## Stock footage loops (v6)
+
+`loops.jsx` defines ten 540 × 960 clip-wall cards (`wall-01`…`wall-10`) and six 1600 × 900 feature loops (`feature-selection`, `-framing`, `-captions`, `-trim`, `-cover`, `-package`), all 8 seconds except `wall-03` (7 s). Every card draws a Pexels clip through `Footage`, a focus-point crop of the normalized 16:9 source, and overlays captions with the product's template sizes, colours and positions. Wall-card crops, templates and sample cues live in `WALL_CARDS`.
+
+1. Download the Pexels clips listed in [docs/homepage-media.md](../../docs/homepage-media.md#stock-footage-and-honesty-boundaries) and save them as `.artifacts/homepage-film/stock/<name>.mp4`, where `<name>` is the `STOCK` key in `render-loops.mjs` (`wall-01`, `feat-framing`, …) or one of `flow-source`, `use-fitness`, `use-podcast`, `use-business`.
+2. Render:
+
+```sh
+REMOTION_TOOLCHAIN_DIR=/path/to/remotion-project node scripts/homepage-media/render-loops.mjs            # everything
+REMOTION_TOOLCHAIN_DIR=/path/to/remotion-project node scripts/homepage-media/render-loops.mjs wall-04 feature-cover
+REMOTION_TOOLCHAIN_DIR=/path/to/remotion-project node scripts/homepage-media/render-loops.mjs sections   # workflow + audience only
+```
+
+The script trims each stock clip to a silent 1920 × 1080, 30 fps copy, extracts the six cover-picker frames, bundles `loops.jsx` and renders a CRF 16 `.master.mp4`, a web `.mp4` and a poster into `.artifacts/homepage-film/loops/`. The `sections` step trims the workflow and audience clips with FFmpeg only; no overlays.
+
+3. Review frame samples, then copy only the web files into `public/media/home-loops/`:
+
+```sh
+cd .artifacts/homepage-film/loops && cp wall-*.{mp4,jpg} feature-*.{mp4,jpg} workflow-* audience-* ../../../public/media/home-loops/ && rm -f ../../../public/media/home-loops/*.master.mp4
+```
+
+Never publish the masters (about 64 MB). Keep people unique across sections; when replacing a clip, update the source table in the docs.

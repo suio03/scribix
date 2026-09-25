@@ -1,12 +1,12 @@
-import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { HomeLoopVideo } from "./HomeLoopVideo";
 import { VideoUploadLink } from "./VideoUploadLink";
 import styles from "./VideoHomeShowcase.module.css";
 
 import { CompactPlatformIcon } from "./publishing/icons";
 import { PUBLISH_PLATFORMS, SPECS } from "./publishing/shared/specs";
-const BASE = "/media/home-artwork";
+const BASE = "/media/home-loops";
 const FEATURES = [
   "selection",
   "framing",
@@ -42,12 +42,10 @@ export async function VideoFeatureShowcase() {
                   <ArrowUpRight size={16} />
                 </VideoUploadLink>
               </div>
-              <Image
-                src={`/media/home-features-v3/${feature}.webp`}
-                alt={t(`${feature}.alt`)}
-                width={1600}
-                height={900}
-                sizes="(max-width: 767px) 100vw, 760px"
+              <HomeLoopVideo
+                src={`${BASE}/feature-${feature}.mp4`}
+                poster={`${BASE}/feature-${feature}.jpg`}
+                label={t(`${feature}.alt`)}
                 className={styles.featureImage}
               />
             </article>
@@ -77,23 +75,23 @@ export async function VideoSimpleWorkflow() {
               <div className={styles.journeyVisual}>
                 {step === "upload" ? (
                   <div className={styles.uploadPreview}>
-                    <Image
-                      src={`${BASE}/podcast.webp`}
-                      alt=""
-                      width={300}
-                      height={180}
+                    <HomeLoopVideo
+                      src={`${BASE}/workflow-source.mp4`}
+                      poster={`${BASE}/workflow-source.jpg`}
                     />
                     <span>↑ Interview.mp4</span>
                   </div>
                 ) : step === "refine" ? (
                   <div className={styles.clipStack}>
-                    {["podcast", "travel", "design"].map((name) => (
-                      <Image
-                        key={name}
-                        src={`${BASE}/${name}.webp`}
+                    {[0, 1, 2].map((index) => (
+                      // eslint-disable-next-line @next/next/no-img-element -- 160×284 static frame
+                      <img
+                        key={index}
+                        src={`${BASE}/workflow-clip-${index}.jpg`}
                         width={80}
-                        height={140}
+                        height={142}
                         alt=""
+                        loading="lazy"
                       />
                     ))}
                   </div>

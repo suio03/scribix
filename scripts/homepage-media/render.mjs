@@ -1,6 +1,5 @@
 import { createRequire } from "node:module";
 import path from "node:path";
-import { mkdir } from "node:fs/promises";
 const root = process.cwd();
 const toolchain = process.env.REMOTION_TOOLCHAIN_DIR;
 if (!toolchain)
@@ -9,11 +8,7 @@ if (!toolchain)
   );
 const require = createRequire(path.resolve(toolchain, "package.json"));
 const { bundle } = require("@remotion/bundler");
-const {
-  renderMedia,
-  renderStill,
-  selectComposition,
-} = require("@remotion/renderer");
+const { renderMedia, selectComposition } = require("@remotion/renderer");
 const modules = path.resolve(toolchain, "node_modules");
 const serveUrl = await bundle({
   entryPoint: path.join(root, "scripts/homepage-media/composition.jsx"),
@@ -38,41 +33,18 @@ const browserExecutable =
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const base = { serveUrl, browserExecutable };
 const composition = await selectComposition({ ...base, id: "Homepage" });
-await mkdir(path.join(root, "public/media/home-features-v3"), { recursive: true });
-for (const variant of [
-  "selection",
-  "framing",
-  "captions",
-  "trim",
-  "cover",
-  "package",
-]) {
-  await renderStill({
-    ...base,
-    composition: { ...composition, props: { variant } },
-    inputProps: { variant },
-    frame: 60,
-    output: path.join(root, `.artifacts/homepage-film/${variant}.png`),
-  });
-  console.log(`Still: ${variant}`);
-}
-if (!process.argv.includes("--stills")) {
-  await renderMedia({
-    ...base,
-    composition,
-    codec: "h264",
-    pixelFormat: "yuv420p",
-    crf: 23,
-    concurrency: 3,
-    outputLocation: path.join(
-      root,
-      "public/media/home-demo/scribix-hero-v5.mp4",
-    ),
-    onProgress: ({ progress }) => {
-      if (Math.floor(progress * 100) % 20 === 0) process.stdout.write(".");
-    },
-  });
-  console.log("\nFilm rendered");
-}
+await renderMedia({
+  ...base,
+  composition,
+  codec: "h264",
+  pixelFormat: "yuv420p",
+  crf: 23,
+  concurrency: 3,
+  outputLocation: path.join(root, "public/media/home-demo/scribix-hero-v5.mp4"),
+  onProgress: ({ progress }) => {
+    if (Math.floor(progress * 100) % 20 === 0) process.stdout.write(".");
+  },
+});
+console.log("\nFilm rendered");
 
 await import("./deliver.mjs");

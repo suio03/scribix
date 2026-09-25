@@ -1,9 +1,8 @@
-import { FeatureArtwork, Publish, Platform } from "./artwork.jsx";
+import { Publish, Platform } from "./artwork.jsx";
 import React from "react";
 import {
   AbsoluteFill,
   Composition,
-  Img,
   OffthreadVideo,
   interpolate,
   registerRoot,
@@ -21,14 +20,78 @@ const box = {
   borderRadius: 24,
   boxShadow: "0 24px 55px #25164425",
 };
-function Media({ src, x, y, w, h, start = 0, still = false, style = {} }) {
+// Sample caption cues (seconds from each prepared clip's start); the stock
+// footage has no usable speech, so the words are illustrative.
+const CUES = {
+  "short-guest.mp4": [
+    { from: 0.3, to: 2.8, text: "I almost quit" },
+    { from: 2.8, to: 6, text: "after the first season." },
+  ],
+  "short-host.mp4": [
+    { from: 0.3, to: 2.6, text: "So what kept" },
+    { from: 2.6, to: 6, text: "you going?" },
+  ],
+  "short-crop.mp4": [
+    { from: 0.3, to: 2.4, text: "Honestly?" },
+    { from: 2.4, to: 6, text: "The listeners did." },
+  ],
+};
+/** A finished 9:16 short: the clip plus word-highlighted captions. */
+export function Short({ src, width }) {
+  const t = useCurrentFrame() / 30;
+  const cue = CUES[src].filter((c) => c.from <= t).at(-1);
+  const k = width / 1080;
+  let active = -1;
+  let words = [];
+  if (cue) {
+    words = cue.text.split(" ");
+    active = Math.min(
+      words.length - 1,
+      Math.floor(((t - cue.from) / (cue.to - cue.from)) * words.length),
+    );
+  }
+  return (
+    <>
+      <OffthreadVideo
+        src={staticFile(src)}
+        muted
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+      {cue && (
+        <div
+          style={{
+            position: "absolute",
+            left: "6%",
+            width: "88%",
+            top: "72%",
+            textAlign: "center",
+            fontFamily: "Caption, sans-serif",
+            fontWeight: 700,
+            fontSize: 84 * k,
+            lineHeight: 1.12,
+            textTransform: "uppercase",
+            color: "white",
+            WebkitTextStroke: `${5 * k}px rgba(0,0,0,0.8)`,
+            paintOrder: "stroke fill",
+            textShadow: `0 ${2 * k}px ${4 * k}px rgba(0,0,0,0.95)`,
+          }}
+        >
+          {words.map((word, i) => (
+            <span key={i} style={{ color: i === active ? yellow : undefined }}>
+              {i > 0 ? " " : ""}
+              {word}
+            </span>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+function Media({ src, x, y, w, h, start = 0, style = {} }) {
   return (
     <div style={{ ...box, left: x, top: y, width: w, height: h, ...style }}>
-      {still ? (
-        <Img
-          src={staticFile(src.replace(".mp4", ".jpg"))}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
+      {CUES[src] ? (
+        <Short src={src} width={w} />
       ) : (
         <OffthreadVideo
           src={staticFile(src)}
@@ -158,7 +221,7 @@ function Heading({ number, title, subtitle }) {
     </>
   );
 }
-function Results({ frame = 0, still = false }) {
+function Results({ frame = 0 }) {
   return (
     <>
       <Heading
@@ -166,14 +229,7 @@ function Results({ frame = 0, still = false }) {
         title="One conversation. More to share."
         subtitle="Find moments. Finish clips. Publish across platforms."
       />
-      <Media
-        src="source-sync.mp4"
-        x={80}
-        y={305}
-        w={570}
-        h={321}
-        still={still}
-      />
+      <Media src="source.mp4" x={80} y={305} w={570} h={321} />
       <Pill x={103} y={328}>
         16:9 · Original
       </Pill>
@@ -193,22 +249,16 @@ function Results({ frame = 0, still = false }) {
           strokeLinejoin="round"
         />
       </svg>
-      {[
-        ["clip1.mp4", 23],
-        ["clip4.mp4", 8],
-        ["clip3.mp4", 1],
-      ].map(([src, start], i) => (
+      {["short-guest.mp4", "short-host.mp4", "short-crop.mp4"].map((src, i) => (
         <React.Fragment key={src}>
           <Media
             src={src}
-            start={start}
             x={790 + i * 241}
             y={280 + (i === 1 ? -22 : 0)}
             w={218}
             h={388}
-            still={still}
             style={{
-              transform: `translateY(${still ? 0 : Math.sin(frame / 35 + i) * 5}px)`,
+              transform: `translateY(${Math.sin(frame / 35 + i) * 5}px)`,
               border: "5px solid white",
             }}
           />
@@ -246,7 +296,7 @@ function Results({ frame = 0, still = false }) {
     </>
   );
 }
-function Framing({ frame = 0, still = false }) {
+function Framing() {
   return (
     <>
       <Heading
@@ -254,22 +304,14 @@ function Framing({ frame = 0, still = false }) {
         title="Made for the vertical screen."
         subtitle="Keep the speaker in focus. Keep the story intact."
       />
-      <Media
-        src="source-sync.mp4"
-        start={7.8}
-        x={80}
-        y={305}
-        w={780}
-        h={439}
-        still={still}
-      />
+      <Media src="source.mp4" start={6} x={80} y={305} w={780} h={439} />
       <div
         style={{
           ...box,
-          left: 374,
-          top: 310,
-          width: 235,
-          height: 427,
+          left: 596,
+          top: 308,
+          width: 229,
+          height: 433,
           border: `3px solid ${yellow}`,
           boxShadow: "0 0 0 2px #21163740",
         }}
@@ -278,13 +320,11 @@ function Framing({ frame = 0, still = false }) {
         16:9
       </Pill>
       <Media
-        src="clip1.mp4"
-        start={24}
+        src="short-crop.mp4"
         x={1050}
         y={243}
         w={284}
         h={505}
-        still={still}
         style={{ border: "6px solid white" }}
       />
       <Pill x={1094} y={768} light>
@@ -305,7 +345,7 @@ function Framing({ frame = 0, still = false }) {
     </>
   );
 }
-function Captions({ frame = 0, still = false }) {
+function Captions() {
   return (
     <>
       <Heading
@@ -314,13 +354,11 @@ function Captions({ frame = 0, still = false }) {
         subtitle="Readable captions. A finished short."
       />
       <Media
-        src="clip1.mp4"
-        start={23}
+        src="short-guest.mp4"
         x={135}
         y={245}
         w={300}
         h={534}
-        still={still}
         style={{ border: "6px solid white" }}
       />
       <div style={{ position: "absolute", left: 550, top: 325, width: 830 }}>
@@ -369,139 +407,6 @@ function Captions({ frame = 0, still = false }) {
     </>
   );
 }
-function EditStill() {
-  return (
-    <>
-      <Heading
-        number="04"
-        title="A tighter story starts here."
-        subtitle="Refine the beginning. Land the ending."
-      />
-      <Media src="source-sync.mp4" x={80} y={300} w={650} h={366} still />
-      <div
-        style={{
-          ...box,
-          left: 810,
-          top: 300,
-          width: 640,
-          height: 365,
-          background: "white",
-          padding: 40,
-        }}
-      >
-        <div style={{ color: "#82758f", fontSize: 18, marginBottom: 24 }}>
-          TRANSCRIPT / EDIT SELECTION
-        </div>
-        <div style={{ fontSize: 30, lineHeight: 1.5, color: "#b9b0c4" }}>
-          …{" "}
-          <span
-            style={{
-              color: ink,
-              background: "#e5dbff",
-              boxDecorationBreak: "clone",
-              padding: "5px 8px",
-            }}
-          >
-            do something that was beyond his lifetime within his lifetime
-          </span>{" "}
-          …
-        </div>
-        <div style={{ marginTop: 35, color: purple, fontSize: 24 }}>
-          06:30.479 → 07:05.479
-        </div>
-      </div>
-      <Waves x={80} y={704} w={1370} />
-    </>
-  );
-}
-function PackageStill({ cover = false }) {
-  return (
-    <>
-      <Heading
-        number={cover ? "05" : "06"}
-        title={
-          cover
-            ? "Give your clip a first impression."
-            : "Ready beyond the editor."
-        }
-        subtitle={
-          cover
-            ? "Shape the title. Create the cover."
-            : "Video, cover and post copy. Together."
-        }
-      />
-      <Media src="clip1.mp4" x={110} y={250} w={285} h={507} still />
-      <div
-        style={{
-          ...box,
-          left: 490,
-          top: 285,
-          width: 410,
-          height: 440,
-          background: ink,
-          padding: 32,
-          color: "white",
-          transform: "rotate(-4deg)",
-        }}
-      >
-        <div style={{ fontSize: 18, color: yellow, letterSpacing: 3 }}>
-          THE AI CONVERSATION
-        </div>
-        <div
-          style={{
-            fontSize: 56,
-            fontWeight: 750,
-            lineHeight: 1.05,
-            letterSpacing: -2,
-            marginTop: 60,
-          }}
-        >
-          Why GPUs
-          <br />
-          are a<br />
-          <span style={{ color: yellow }}>“time machine”</span>
-        </div>
-      </div>
-      <div
-        style={{
-          ...box,
-          left: 975,
-          top: 330,
-          width: 435,
-          height: 355,
-          background: "white",
-          padding: 32,
-        }}
-      >
-        <div
-          style={{
-            color: purple,
-            fontSize: 20,
-            fontWeight: 700,
-            marginBottom: 35,
-          }}
-        >
-          {cover ? "COVER + TITLE" : "EXPORT PACKAGE"}
-        </div>
-        {(cover
-          ? ["Why GPUs are a", "“time machine”", "A new way to think about AI."]
-          : ["MP4   Finished video", "JPG    Cover image", "TXT    Post copy"]
-        ).map((s, i) => (
-          <div
-            key={s}
-            style={{
-              fontSize: i === 2 ? 24 : 28,
-              padding: "19px 0",
-              borderBottom: "1px solid #eee8f4",
-            }}
-          >
-            {s}
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
 function Scene({ variant }) {
   const frame = useCurrentFrame();
   const entrance = interpolate(frame, [0, 16], [10, 0], {
@@ -535,7 +440,7 @@ function Scene({ variant }) {
           >
             Choose your accounts. Tailor your copy. Publish from Scribix.
           </div>
-          <Publish film />
+          <Publish film clip={<Short src="short-host.mp4" width={250} />} />
         </>
       ) : variant === "selection" ? (
         <Results frame={frame} />
@@ -547,10 +452,9 @@ function Scene({ variant }) {
     </AbsoluteFill>
   );
 }
-export function Film({ variant = "film" }) {
+export function Film() {
   const frame = useCurrentFrame();
   const scenes = ["selection", "framing", "captions", "publish"];
-  if (variant !== "film") return <FeatureArtwork variant={variant} />;
   return (
     <AbsoluteFill
       style={{
@@ -559,7 +463,7 @@ export function Film({ variant = "film" }) {
         fontFamily: "Geist, sans-serif",
       }}
     >
-      <style>{`@font-face{font-family:Geist;src:url('${staticFile("body.ttf")}')}`}</style>
+      <style>{`@font-face{font-family:Geist;font-weight:100 900;src:url('${staticFile("body.woff2")}') format('woff2')}@font-face{font-family:Caption;font-weight:700;src:url('${staticFile("caption.woff2")}') format('woff2')}`}</style>
       <div
         style={{
           position: "absolute",
@@ -568,23 +472,11 @@ export function Film({ variant = "film" }) {
           borderRadius: 28,
         }}
       />
-      {variant === "film" ? (
-        scenes.map((name, i) => (
-          <Sequence key={name} from={i * 180} durationInFrames={180}>
-            <Scene variant={name} />
-          </Sequence>
-        ))
-      ) : variant === "selection" ? (
-        <Results still />
-      ) : variant === "framing" ? (
-        <Framing still />
-      ) : variant === "captions" ? (
-        <Captions still />
-      ) : variant === "trim" ? (
-        <EditStill />
-      ) : (
-        <PackageStill cover={variant === "cover"} />
-      )}
+      {scenes.map((name, i) => (
+        <Sequence key={name} from={i * 180} durationInFrames={180}>
+          <Scene variant={name} />
+        </Sequence>
+      ))}
       <div
         style={{
           position: "absolute",
@@ -601,10 +493,7 @@ export function Film({ variant = "film" }) {
             style={{
               height: 3,
               flex: 1,
-              background:
-                variant === "film" && Math.floor(frame / 180) === i
-                  ? purple
-                  : "#d9cfe5",
+              background: Math.floor(frame / 180) === i ? purple : "#d9cfe5",
             }}
           />
         ))}
