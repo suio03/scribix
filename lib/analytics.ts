@@ -159,6 +159,7 @@ export type PlausibleEvents = Record<VideoAnalyticsEvent, VideoAnalyticsProperti
     error_code: string;
     error_message?: string;
     paddle_status?: number;
+    paddle_code?: string;
   };
 };
 

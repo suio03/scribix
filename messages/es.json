@@ -3314,7 +3314,8 @@
       "getPlan": "Elegir {plan}",
       "checkoutSoon": "Contratación próximamente",
       "changePlan": "Cambiar de plan",
-      "openDashboard": "Ir al panel"
+      "openDashboard": "Ir al panel",
+      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
     },
     "explanation": "Un vídeo original de {minutes} minutos consume {minutes} minutos de tu asignación, incluida una primera selección de clips con IA. En los planes de pago, crear clips personalizados, editarlos y exportarlos no consume minutos adicionales.",
     "compare": {

@@ -3314,7 +3314,8 @@
       "getPlan": "Choisir {plan}",
       "checkoutSoon": "Paiement bientôt disponible",
       "changePlan": "Changer d’offre",
-      "openDashboard": "Aller au tableau de bord"
+      "openDashboard": "Aller au tableau de bord",
+      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
     },
     "explanation": "Une vidéo source de {minutes} minutes utilise {minutes} minutes de votre quota, y compris une première sélection de clips par l’IA. Avec les offres payantes, la création de clips personnalisés, le montage et l’export ne consomment pas de minutes supplémentaires.",
     "compare": {

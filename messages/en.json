@@ -3314,7 +3314,8 @@
       "getPlan": "Get {plan}",
       "checkoutSoon": "Checkout coming soon",
       "changePlan": "Change plan",
-      "openDashboard": "Go to dashboard"
+      "openDashboard": "Go to dashboard",
+      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
     },
     "explanation": "A {minutes}-minute source video uses {minutes} minutes of your allowance, including one AI clipping pass. On paid plans, creating custom clips, editing and exporting do not use more minutes.",
     "compare": {

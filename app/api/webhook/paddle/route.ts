@@ -538,6 +538,29 @@ async function handleSubscriptionEnded(
 ) {
   const user = await findBillingUser(env.DB, subscription.custom_data?.userId, subscription.customer_id);
   if (!user) throw new Error("user_not_found");
+  // A late event for a replaced subscription must not end the current one.
+  if (subscription.id && user.subscription_id && user.subscription_id !== subscription.id) {
+    console.info("Ignoring ended event for a replaced Paddle subscription", {
+      userId: user.id,
+      subscriptionId: subscription.id,
+    });
+    return;
+  }
+
+  // Paddle emits subscription.canceled/paused once the change is effective
+  // (immediate cancellations, refunds, dunning exhaustion, or a scheduled
+  // change reaching its date). Those payloads carry no current period, so the
+  // inferred period would wrongly extend access. End access now instead.
+  const status = subscription.status?.toLowerCase();
+  if (status === "canceled" || status === "paused") {
+    await expireSubscription(env.DB, user.id, subscription.customer_id ?? user.customer_id);
+    await discordAlert("subscription_expired", {
+      userId: user.id,
+      customerId: subscription.customer_id,
+      subscriptionId: subscription.id,
+    });
+    return;
+  }
 
   const priceId = priceIdFromSubscription(subscription);
   const plan =
@@ -592,7 +615,17 @@ async function notifyTransaction(env: CloudflareEnv, transaction: PaddleTransact
     kind: paddlePaymentKind(transaction.origin, true),
     plan: plan ? (plan.tier === "pro" ? "Creator" : "Starter") : undefined, cycle: plan?.cycle,
     sandbox: env.NEXT_PUBLIC_PADDLE_ENV !== "production", ...details,
+    email: notificationEmail(user?.email, details.email),
   }, env.DISCORD_CHECKOUT_WEBHOOK_URL);
+}
+
+// Paddle's customer email is whatever the payer typed at checkout. Show the
+// Scribix login too when they differ, so support can find the account.
+function notificationEmail(accountEmail?: string | null, billingEmail?: string | null) {
+  if (accountEmail && billingEmail && accountEmail.toLowerCase() !== billingEmail.toLowerCase()) {
+    return `${accountEmail}（付款邮箱：${billingEmail}）`;
+  }
+  return billingEmail || accountEmail;
 }
 
 async function findBillingUser(

@@ -46,7 +46,7 @@
     "deploy:video-render": "wrangler deploy -c wrangler.video-render.jsonc",
     "deploy:cloudflare-video-poc": "wrangler deploy -c wrangler.video-container-poc.jsonc --x-autoconfig=false",
     "test:free-quota": "node --test scripts/test-free-quota.mjs",
-    "test:payments": "node --test tests/payment-notifications.test.cjs",
+    "test:payments": "node --test tests/payment-notifications.test.cjs tests/paddle-webhook.test.cjs",
     "test:pricing-v2": "node --test scripts/test-pricing-v2.mjs",
     "test:publish-workflow": "node --test scripts/test-publish-workflow.mjs",
     "test:publish-render": "node scripts/video-workspace/test-publish-render.mjs",

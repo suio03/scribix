@@ -92,7 +92,11 @@ export async function POST(req: Request) {
         error,
       });
     }
-    return Response.json(checkout);
+    // First-time buyers type an email in Paddle; prefill the Scribix login so
+    // billing records match the account. Returning customers already have one.
+    const customerEmail =
+      !user.customer_id?.startsWith("ctm_") && user.email ? user.email : undefined;
+    return Response.json({ ...checkout, ...(customerEmail ? { customerEmail } : {}) });
   } catch (error) {
     if (error instanceof PaddleApiError) {
       const details = paddleErrorDetails(error);

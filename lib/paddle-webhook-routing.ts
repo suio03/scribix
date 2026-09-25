@@ -15,6 +15,35 @@ type PaddleEventData = {
   } | null;
 };
 
+// One Paddle account sends every product's events to every destination.
+// Sibling-product prices are listed so their events without
+// custom_data.project are ignored instead of alerting as unknown. Keep in
+// sync with ai-music/config.ts; Paddle price IDs are unique across
+// environments, so sandbox and production share this map.
+const SIBLING_PADDLE_PRICE_PROJECTS: Readonly<Record<string, string>> = {
+  // Muzix production
+  pri_01krxwhyrfvyp61ah9nbw6x1vq: "muzix", // Virtuoso monthly
+  pri_01kyshtbatpf67sc491xdag378: "muzix", // Virtuoso yearly
+  pri_01krxwjfan6zftk08aa492hn5r: "muzix", // legacy Virtuoso yearly
+  pri_01krxwk7dt11mevj5tkhgpr5yc: "muzix", // Maestro monthly
+  pri_01krxwksfg0s939bq5wz0tpaea: "muzix", // Maestro yearly
+  pri_01krxwh6ds45p2vjna14tzrxtv: "muzix", // Pro Pack
+  pri_01krxwgd146fzvzzm6dx91gr9m: "muzix", // Extra Pack
+  // Muzix sandbox
+  pri_01krxgds44rmh4k2stnfa3g7rt: "muzix",
+  pri_01krxgge203dnet6j5vqyyx7m9: "muzix",
+  pri_01krxgmavr2bnkj8eetfz3nbks: "muzix",
+  pri_01krxgn3dqfy85enqep0wmnbqs: "muzix",
+  pri_01krxgqjz9b2vyvvf7tx4v69s9: "muzix",
+  pri_01krxgpxzthjy1gcxypygqt7sm: "muzix",
+};
+
+export function siblingPaddlePriceProject(priceId: string): string | null {
+  return Object.hasOwn(SIBLING_PADDLE_PRICE_PROJECTS, priceId)
+    ? SIBLING_PADDLE_PRICE_PROJECTS[priceId]
+    : null;
+}
+
 export function resolvePaddleEventScope(
   data: PaddleEventData,
   expectedProject: string,
@@ -34,6 +63,12 @@ export function resolvePaddleEventScope(
   }
   if (hasOwnedPrice) {
     return { kind: "owned", source: "price", priceIds };
+  }
+  const siblingProject = priceIds
+    .map(siblingPaddlePriceProject)
+    .find((value): value is string => Boolean(value) && value !== expectedProject);
+  if (siblingProject) {
+    return { kind: "foreign", project: siblingProject, priceIds };
   }
   return { kind: "unknown", priceIds };
 }

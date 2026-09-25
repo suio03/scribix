@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { markSignInPending } from "@/lib/signin-tracking";
 import { useRouter } from "@/i18n/navigation";
 import { trackEvent } from "@/lib/analytics";
@@ -12,6 +13,9 @@ type CheckoutResponse = {
   transactionId?: string;
   url?: string | null;
   error?: string;
+  paddleStatus?: number;
+  paddleCode?: string | null;
+  customerEmail?: string;
 };
 
 type PaddlePublicConfig = {
@@ -43,6 +47,7 @@ export function PaddleCheckoutButton({
 }) {
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
+  const t = useTranslations("PricingV2.actions");
 
   async function startCheckout() {
     setFailed(false);
@@ -85,7 +90,8 @@ export function PaddleCheckoutButton({
           cycle,
           stage: "create_checkout",
           error_code: json.error ?? "checkout_failed",
-          paddle_status: response.status,
+          paddle_status: json.paddleStatus ?? response.status,
+          ...(json.paddleCode ? { paddle_code: json.paddleCode } : {}),
         });
         setFailed(true);
         return;
@@ -122,6 +128,7 @@ export function PaddleCheckoutButton({
         readyPaddle.Checkout.open({
           transactionId: json.transactionId,
           settings: { successUrl: checkoutSuccessUrl },
+          ...(json.customerEmail ? { customer: { email: json.customerEmail } } : {}),
         });
         trackEvent("checkout_opened", {
           tier,
@@ -168,17 +175,24 @@ export function PaddleCheckoutButton({
   }
 
   return (
-    <button
-      type="button"
-      onClick={startCheckout}
-      disabled={pending}
-      aria-busy={pending}
-      className={`${className} ${pending ? "cursor-wait opacity-70" : ""} ${
-        failed ? "ring-2 ring-red-500/70 ring-offset-2 ring-offset-paper" : ""
-      }`}
-    >
-      {children}
-    </button>
+    <div className="w-full">
+      <button
+        type="button"
+        onClick={startCheckout}
+        disabled={pending}
+        aria-busy={pending}
+        className={`${className} ${pending ? "cursor-wait opacity-70" : ""} ${
+          failed ? "ring-2 ring-red-500/70 ring-offset-2 ring-offset-paper" : ""
+        }`}
+      >
+        {children}
+      </button>
+      {failed && (
+        <p role="alert" className="mt-2 text-center text-xs text-red-500">
+          {t("checkoutFailed")}
+        </p>
+      )}
+    </div>
   );
 }
 

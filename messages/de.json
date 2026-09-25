@@ -3314,7 +3314,8 @@
       "getPlan": "{plan} wählen",
       "checkoutSoon": "Kauf bald verfügbar",
       "changePlan": "Tarif wechseln",
-      "openDashboard": "Zum Dashboard"
+      "openDashboard": "Zum Dashboard",
+      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
     },
     "explanation": "Ein {minutes} Minuten langes Ausgangsvideo verbraucht {minutes} Minuten deines Kontingents, einschließlich eines KI-Clipping-Durchlaufs. In kostenpflichtigen Tarifen kosten eigene Clips, Bearbeitung und Exporte keine zusätzlichen Minuten.",
     "compare": {

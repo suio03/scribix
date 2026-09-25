@@ -3314,7 +3314,8 @@
       "getPlan": "{plan} を選ぶ",
       "checkoutSoon": "購入はまもなく可能になります",
       "changePlan": "プランを変更",
-      "openDashboard": "ダッシュボードへ"
+      "openDashboard": "ダッシュボードへ",
+      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
     },
     "explanation": "{minutes} 分の元動画は、最初の AI クリップ選定を含めて処理枠を {minutes} 分使用します。有料プランでは、カスタムクリップの作成、編集、書き出しで追加の処理分数は消費しません。",
     "compare": {
