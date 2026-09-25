@@ -16,7 +16,7 @@ API、校验和错误处理以 [chat route](../app/api/transcripts/[id]/chat/rou
 
 ## 额度、删除与成本
 
-- Free / grandfathered Basic 使用终身体验额度，Creator（后端 `pro`）使用 allowance period 额度；体验计数不会随周期重置。
+- Free 与旧版 Starter（`basic`，legacy）使用终身体验额度；v2 Starter、v2 Pro 及旧版 Pro/Creator 使用 allowance period 额度，数值见 `aiQuestionsFor`。体验计数不会随周期重置。
 - 条件 UPDATE 防止超过 cap；调用或保存失败时尝试回退。周期额度回退带 `period_started_at` 守卫，避免跨周期修改新额度。
 - 清空对话或删除 transcript 不返还已使用额度。删除 transcript 和账号时清除相关聊天内容。
 - `ai_usage_events` 保存模型、token 和预估费用，不保存问题、回答或原文；删除 transcript / 账号时解除相关 ID，保留匿名成本记录。成本记账失败不应使已生成的回答失败。
@@ -37,7 +37,7 @@ Transcript 工作区提供 Ask AI / AI Notes 切换、额度、发送状态、�
 以下从旧计划保留；本次整理未执行这些生产测试，也不将旧勾选项升级为当前证据。
 
 - [ ] 确认生产部署健康及相关 migration 状态。
-- [ ] 登录态验证 Free / Basic 终身额度、Creator 周期额度、成功扣减和失败回退。
+- [ ] 登录态验证 Free／旧版 Starter 终身额度、v2 及旧版 Pro 周期额度、成功扣减和失败回退。
 - [ ] 覆盖音频、视频、YouTube 来源。
 - [ ] 清空对话、删除 transcript、删除账号后核查聊天清理。
 - [ ] 验证原文事实问题、无依据问题、原文内嵌指令、长 transcript 截断和超出历史窗口的追问。

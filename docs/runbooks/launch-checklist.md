@@ -46,10 +46,10 @@ the one-time items that are already verified and unchanged.
 ## Smoke tests on prod
 
 - [ ] Sign in with Google → user row appears in D1.
-- [ ] `/pricing` and the upgrade modal offer Creator only (backend tier `pro`): yearly is selected by
-  default at **$120/year**, and monthly is available at **$20/month**.
-- [ ] Both Creator billing options open the Paddle overlay with the matching live
-  price ID.
+- [ ] `/pricing` and the upgrade modal offer Free, Starter and Pro with the amounts
+  in `lib/pricing-v2.ts`; no legacy price is offered.
+- [ ] Every Starter and Pro billing option opens the Paddle overlay with the matching
+  live `PADDLE_V2_*` price ID and a prefilled account email.
 - [ ] Completed Paddle checkout returns to `/dashboard?checkout=ok`, webhook
   activates the tier, and duplicate webhook delivery is ignored.
 - [ ] `/dashboard/account` opens Paddle Customer Portal for a `ctm_*` customer.
@@ -65,14 +65,14 @@ the one-time items that are already verified and unchanged.
   export panel. TXT/DOCX/VTT include the notice; SRT/CSV bodies stay unchanged.
 - [ ] Open the partial upgrade path before upload, complete or close Paddle,
   and confirm the same file can be selected again without automatic upload.
-- [ ] On a completed transcript, Free opens the AI Notes upgrade flow; Pro and
-  grandfathered Starter generate an overview, key points, and action items.
+- [ ] On a completed transcript, Free opens the AI Notes upgrade flow; every paid plan
+  (v2 and legacy Starter/Pro) generates an overview, key points, and action items.
 - [ ] On a completed transcript, Ask AI opens by default beside the transcript;
   a starter sends immediately, a custom follow-up survives refresh, and clearing
   the conversation removes messages without restoring allowance.
-- [ ] Free/grandfathered Starter (`basic`) Ask AI stops after 3 lifetime
-  questions; Pro stops at 300 for the current allowance period and shows its
-  reset date. A controlled provider failure refunds the reserved question.
+- [ ] Free and legacy Starter (`basic`) Ask AI stop after 3 lifetime questions;
+  v2 Starter, v2 Pro and legacy Pro/Creator stop at their `lib/plans.ts` allowance
+  for the current period and show its reset date. A controlled provider failure refunds the reserved question.
 - [ ] Ask a supported fact, an absent fact, and a transcript containing an
   embedded instruction. Answers stay grounded, absent facts are identified as
   missing, and transcript text cannot override the system instructions.
@@ -164,9 +164,9 @@ the one-time items that are already verified and unchanged.
 - [ ] Verify domain in Google Search Console + Bing Webmaster.
 - [ ] OG card preview looks right (`https://scribix.io` → opengraph-image
   redirects to the static `public/brand/social.png` asset).
-- [ ] Pricing, account usage, and Terms agree that yearly Creator receives 2,400
-  minutes of uploaded video processing each month, resets monthly, and does not
-  roll over.
+- [ ] Pricing, account usage, and Terms agree that yearly Starter and Pro receive
+  their monthly `V2_PLANS` allowance each month, reset monthly, and do not roll
+  over; legacy Creator subscribers still see 2,400 minutes per month.
 - [ ] Paddle Customer Portal plan switching is restricted so unsupported
   self-service downgrades are not exposed.
 

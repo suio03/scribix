@@ -105,13 +105,13 @@ Before deployment, and again against production after deployment, verify:
 - Submit recovery: explicit retryable AAI failure retries safely; ambiguous timeout continues polling without creating a second job, and stale cleanup returns reserved quota.
 - Record: start, pause, stop-while-paused, resume, preview, discard, upload, permission denial, and unsupported-browser messaging; paused wall-clock time must not increase the uploaded duration.
 - YouTube: URL survives OAuth, inspect resumes, import does not run automatically, plan limits are correct, and events retain the originating `tool_slug`.
-- AI Notes and translation: Free read and generation requests return the upgrade boundary; Pro and grandfathered Starter retain access.
+- AI Notes and translation: Free read and generation requests return the upgrade boundary; every paid plan retains access.
 - Ask AI: a starter and follow-up answer from the current transcript, persisted
   history survives refresh, clearing removes messages without refunding quota,
-  Free/grandfathered Starter (`basic`) and Pro boundaries behave as configured,
+  Free/legacy Starter lifetime and v2/legacy Pro period boundaries behave as configured,
   and `ai_usage_events` records input/cached/output tokens plus estimated cost
   without prompt content.
-- Checkout: new purchase UI offers Creator only (backend tier `pro`), defaults to $120 yearly, allows $20 monthly, and sends the matching live price ID. Verify completed, closed, and failed paths; the completed transaction appears once in the ownership records and no amount is sent to Plausible.
+- Checkout: new purchase UI offers v2 Starter and Pro at the `lib/pricing-v2.ts` amounts and sends the matching live `PADDLE_V2_*` price ID. Verify completed, closed, and failed paths; the completed transaction appears once in the ownership records and no amount is sent to Plausible.
 - SEO: `/sitemap.xml`, `/robots.txt`, canonical/hreflang, `/`,
   `/video-to-text`, `/ai-note-taker`, English plus at least one localized page;
   the homepage and video-to-text page keep distinct intent and canonical URLs,

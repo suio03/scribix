@@ -80,7 +80,7 @@ so an R2 prefix lifecycle would also delete permanent transcript data.
 
 The hourly cleanup worker deletes completed non-video audio after 14 days and
 retained original videos at their plan-specific expiry: Free 7 days, legacy
-Basic 30 days, and Creator (backend tier `pro`) 30 days. Each completed final
+Basic 30 days, and Pro/Creator (backend tier `pro`) 30 days. Each completed final
 video and cover is retained for 30 days from export; a newer export of the same
 clip still supersedes and removes the older files immediately. The worker only
 clears a database key after R2 confirms deletion. Keep the bucket's default 7-day abort rule for incomplete
@@ -272,24 +272,39 @@ Edge sign-in. Build and publishing instructions live in
 
 ## Phase 4 — Paddle payments
 
-Scribix uses Paddle Billing. New purchases offer the public Creator plan
-(backend tier `pro`) only: $20 monthly or $120 yearly. Existing Starter
-subscriptions remain supported as a grandfathered legacy tier. The app opens Paddle overlay checkout through Paddle.js and falls
-back to Paddle's hosted checkout URL if Paddle.js is not initialized.
+Scribix uses Paddle Billing. New purchases offer the v2 Starter (backend tier
+`basic`) and Pro (backend tier `pro`) plans, monthly or yearly. Public amounts
+come from `lib/pricing-v2.ts` and allowances from `V2_PLANS` in `lib/plans.ts`;
+Paddle remains the source of truth for charged amounts. New checkout requires
+`PADDLE_V2_CHECKOUT_ENABLED=true`; setting it to `false` is the rollback switch
+and marks paid checkout unavailable. Existing legacy subscriptions (Starter,
+Creator and the earlier Pro prices) keep their original entitlements. The app
+opens Paddle overlay checkout through Paddle.js and falls back to Paddle's
+hosted checkout URL if Paddle.js is not initialized.
 
 ### 4.1 Products and prices
 
-Create recurring Paddle prices for new Creator purchases, and retain the existing
-Starter prices for grandfathered subscriptions:
+New purchases use the v2 prices:
 
-- Creator monthly → `PADDLE_PRO_MONTHLY_PRICE_ID`
-- Creator yearly → `PADDLE_PRO_YEARLY_PRICE_ID`
-- Legacy Starter monthly → `PADDLE_BASIC_MONTHLY_PRICE_ID`
-- Legacy Starter yearly → `PADDLE_BASIC_YEARLY_PRICE_ID`
+- Starter monthly / yearly → `PADDLE_V2_STARTER_MONTHLY_PRICE_ID` / `PADDLE_V2_STARTER_YEARLY_PRICE_ID`
+- Pro monthly / yearly → `PADDLE_V2_PRO_MONTHLY_PRICE_ID` / `PADDLE_V2_PRO_YEARLY_PRICE_ID`
 
-Use Paddle price IDs (`pri_...`), not product IDs. The app maps legacy Starter
-to internal tier `basic`. Do not remove its price IDs while grandfathered
-subscriptions still exist, and do not expose them in new purchase UI.
+Legacy prices stay configured only so existing subscriptions resolve to their
+original tier (`lib/paddle-plans.ts`):
+
+- Legacy Starter → `PADDLE_BASIC_MONTHLY_PRICE_ID`, `PADDLE_BASIC_YEARLY_PRICE_ID`
+- Legacy Creator → `PADDLE_PRO_MONTHLY_PRICE_ID`, `PADDLE_PRO_YEARLY_PRICE_ID`
+- Earlier Pro → `PADDLE_HISTORICAL_PRO_MONTHLY_PRICE_ID`, `PADDLE_HISTORICAL_PRO_YEARLY_PRICE_ID`
+
+Use Paddle price IDs (`pri_...`), not product IDs. Do not remove legacy price
+IDs while subscriptions still use them, and never offer them in new checkout.
+
+The Paddle account is shared with Muzix, so every event reaches both
+destinations. Scribix owns events with `custom_data.project = "scribix"` or a
+configured Scribix price. Muzix prices are listed in
+`SIBLING_PADDLE_PRICE_PROJECTS` (`lib/paddle-webhook-routing.ts`) and are
+acknowledged silently; add new Muzix prices there, otherwise their events alert
+as `unowned_event`.
 
 ### 4.2 Local env
 
@@ -304,6 +319,13 @@ PADDLE_BASIC_MONTHLY_PRICE_ID=pri_...
 PADDLE_BASIC_YEARLY_PRICE_ID=pri_...
 PADDLE_PRO_MONTHLY_PRICE_ID=pri_...
 PADDLE_PRO_YEARLY_PRICE_ID=pri_...
+PADDLE_HISTORICAL_PRO_MONTHLY_PRICE_ID=pri_...
+PADDLE_HISTORICAL_PRO_YEARLY_PRICE_ID=pri_...
+PADDLE_V2_STARTER_MONTHLY_PRICE_ID=pri_...
+PADDLE_V2_STARTER_YEARLY_PRICE_ID=pri_...
+PADDLE_V2_PRO_MONTHLY_PRICE_ID=pri_...
+PADDLE_V2_PRO_YEARLY_PRICE_ID=pri_...
+PADDLE_V2_CHECKOUT_ENABLED=true
 ```
 
 ### 4.3 Webhook destination
@@ -483,7 +505,14 @@ Public/non-secret vars go in `wrangler.jsonc` under `vars`:
   "PADDLE_BASIC_MONTHLY_PRICE_ID": "pri_...",
   "PADDLE_BASIC_YEARLY_PRICE_ID": "pri_...",
   "PADDLE_PRO_MONTHLY_PRICE_ID": "pri_...",
-  "PADDLE_PRO_YEARLY_PRICE_ID": "pri_..."
+  "PADDLE_PRO_YEARLY_PRICE_ID": "pri_...",
+  "PADDLE_HISTORICAL_PRO_MONTHLY_PRICE_ID": "pri_...",
+  "PADDLE_HISTORICAL_PRO_YEARLY_PRICE_ID": "pri_...",
+  "PADDLE_V2_STARTER_MONTHLY_PRICE_ID": "pri_...",
+  "PADDLE_V2_STARTER_YEARLY_PRICE_ID": "pri_...",
+  "PADDLE_V2_PRO_MONTHLY_PRICE_ID": "pri_...",
+  "PADDLE_V2_PRO_YEARLY_PRICE_ID": "pri_...",
+  "PADDLE_V2_CHECKOUT_ENABLED": "true"
 }
 ```
 
@@ -536,6 +565,13 @@ PADDLE_BASIC_MONTHLY_PRICE_ID=
 PADDLE_BASIC_YEARLY_PRICE_ID=
 PADDLE_PRO_MONTHLY_PRICE_ID=
 PADDLE_PRO_YEARLY_PRICE_ID=
+PADDLE_HISTORICAL_PRO_MONTHLY_PRICE_ID=
+PADDLE_HISTORICAL_PRO_YEARLY_PRICE_ID=
+PADDLE_V2_STARTER_MONTHLY_PRICE_ID=
+PADDLE_V2_STARTER_YEARLY_PRICE_ID=
+PADDLE_V2_PRO_MONTHLY_PRICE_ID=
+PADDLE_V2_PRO_YEARLY_PRICE_ID=
+PADDLE_V2_CHECKOUT_ENABLED=true
 
 # Admin / ops (Phase 6)
 ADMIN_EMAILS=
@@ -546,6 +582,6 @@ DISCORD_FEEDBACK_WEBHOOK_URL=
 
 ## Free allowance and pricing copy
 
-Free includes 60 lifetime source-processing minutes. Creator retains 2,400 minutes per month for monthly and yearly billing. `lib/plans.ts` is the canonical limit; quota preflight, atomic reservations and usage displays read it. Existing Free users keep their usage and gain 15 minutes of remaining allowance when moving from the old 45-minute cap. No database reset or migration is needed.
+Free includes a lifetime source-processing trial. New v2 Starter and Pro subscriptions receive the monthly `V2_PLANS` allowance on both billing cycles; legacy Starter keeps its original monthly/yearly allowance and legacy Creator keeps 2,400 minutes per month. `lib/plans.ts` is the canonical limit; quota preflight, atomic reservations and usage displays read it.
 
-Pricing describes original video duration, with transcription, highlight selection and clip generation included. `i18n/plan-messages.ts` resolves shared `{freeTrialMinutes}` and `{creatorMonthlyMinutes}` facts from the plan before ICU formatting, including nested/raw copy. Do not hard-code these allowances in translations or UI fallbacks. `npm run test:free-quota` covers the 60/61-minute boundary, partial reservations, existing users and all six locales.
+Pricing describes original video duration, with transcription, highlight selection and clip generation included. `i18n/plan-messages.ts` resolves shared plan facts such as `{freeTrialMinutes}` and video-retention days from the plan before ICU formatting, including nested/raw copy. Do not hard-code these allowances in translations or UI fallbacks. `npm run test:free-quota` covers the 60/61-minute boundary, partial reservations, existing users and all six locales.

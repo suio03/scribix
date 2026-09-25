@@ -129,7 +129,7 @@ No R2 policy, remote migration or deployment was changed during local implementa
 
 ## 自动构图与说话人跟随
 
-Status: implemented and verified locally; not deployed. Current analyzer: `mediapipe-talknet-v4`.
+Status: deployed in the production video container. Current analyzer: `mediapipe-talknet-v4`.
 
 ### Pipeline and shared geometry
 
