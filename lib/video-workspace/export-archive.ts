@@ -7,7 +7,8 @@ export function exportFileName(title: string, number: number, clipTitle: string)
 }
 
 export function attachmentHeader(name: string): string {
-  return `attachment; filename="scribix-export.zip"; filename*=UTF-8''${encodeURIComponent(name).replace(/['()*]/g, char => "%" + char.charCodeAt(0).toString(16))}`;
+  const extension = name.match(/\.([a-z0-9]+)$/i)?.[1] ?? "zip";
+  return `attachment; filename="scribix-export.${extension}"; filename*=UTF-8''${encodeURIComponent(name).replace(/['()*]/g, char => "%" + char.charCodeAt(0).toString(16))}`;
 }
 
 // Store compressed video as-is, streaming one asset at a time with backpressure.

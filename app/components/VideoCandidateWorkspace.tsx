@@ -468,7 +468,7 @@ function VideoCandidateWorkspaceContent({
           </fieldset> : null}
           {batchEnabled && sourceDurationMs && analyzableDurationMs < sourceDurationMs ? <p className="mt-2 text-meta text-muted">{ts("partialRange",{minutes:Math.floor(analyzableDurationMs/60_000)})}</p> : null}
           {rangeError ? <Notice tone="danger">{rangeError === "dense" ? ts("rangeDense") : ts("rangeInvalid",{minutes:AI_ANALYSIS.maxRangeMs/60_000})}</Notice> : null}
-          {task?.status !== "failed" || task.canRetry ? <SelectionRequestForm requirements={requirements} selection={selection} unsupported={unsupported} onChange={setRequirements} onStart={() => void generate()}><GenerationSettingsPanel projectId={projectId} value={requirements} onChange={setRequirements} disabled={Boolean(task && ["waiting","running","failed"].includes(task.status))} durationMs={sourceDurationMs ?? 0}/></SelectionRequestForm> : null}
+          {task?.status !== "failed" || task.canRetry ? <SelectionRequestForm requirements={requirements} selection={selection} unsupported={unsupported} onChange={setRequirements} onStart={() => void generate()}><GenerationSettingsPanel projectId={projectId} value={requirements} onChange={setRequirements} disabled={Boolean(task && ["waiting","running","failed"].includes(task.status))} durationMs={analyzableDurationMs}/></SelectionRequestForm> : null}
         </div>
       ) : null}
       {candidates.length > 0 && selection ? <p className="sr-only">{ts("summary")}: {selection.requirements.mode === "auto" ? ts("auto") : `${selection.requirements.topic} · ${ts(`kinds.${selection.requirements.kind}`)}`}</p> : null}

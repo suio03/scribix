@@ -896,7 +896,7 @@
       "createClips": "Buscar clips de vídeo",
       "creatingClips": "Abriendo el espacio…",
       "createClipsFailed": "No se pudo abrir el espacio de clips.",
-      "back": "← Volver a los clips",
+      "back": "← Todos los proyectos",
       "workspaceLabel": "Espacio de vídeos cortos",
       "workflow": {
         "label": "Etapas de creación de clips",
@@ -984,7 +984,7 @@
         "versionSaved": "Versión {version} guardada",
         "play": "Reproducir vista previa continua",
         "pause": "Pausar vista previa",
-        "previewMissing": "Cada segmento restante necesita una vista previa lista para la reproducción continua.",
+        "previewMissing": "Preparando la vista previa. Se reproducirá aquí cuando esté lista.",
         "continuousTimeline": "Línea de tiempo virtual",
         "proxyRefreshing": "Preparando la vista previa de tu clip guardado. Podrás reproducirlo cuando esté listo.",
         "segment": "Corte {number}",
@@ -3207,7 +3207,7 @@
     "styleExample": "Ejemplos de estilo. Los clips usarán las palabras e imágenes de tu vídeo.",
     "headline": "Añadir un título inicial",
     "headlineHelp": "El título se basa en el contenido hablado. Podrás editarlo después.",
-    "usage": "Fuente: unos {minutes} minutos. La transcripción usa los minutos de tu plan; acortar el rango de análisis no reduce ese cargo. Se mantienen los límites de exportación.",
+    "usage": "Disponible para clips: unos {minutes} minutos. La transcripción usa los minutos de tu plan; acortar el rango de análisis no reduce ese cargo. Se mantienen los límites de exportación.",
     "saveDefaults": "Guardar como predeterminado",
     "defaultsSaved": "Preferencias guardadas en este dispositivo",
     "review": "Vista previa del clip",
@@ -3322,7 +3322,7 @@
       "checkoutSoon": "Contratación próximamente",
       "changePlan": "Cambiar de plan",
       "openDashboard": "Ir al panel",
-      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
+      "checkoutFailed": "No se pudo abrir el pago. Inténtalo de nuevo en un momento."
     },
     "explanation": "Un vídeo original de {minutes} minutos consume {minutes} minutos de tu asignación, incluida una primera selección de clips con IA. En los planes de pago, crear clips personalizados, editarlos y exportarlos no consume minutos adicionales.",
     "compare": {

@@ -896,7 +896,7 @@
       "createClips": "Videoclips finden",
       "creatingClips": "Arbeitsbereich wird geöffnet…",
       "createClipsFailed": "Der Clip-Arbeitsbereich konnte nicht geöffnet werden.",
-      "back": "← Zurück zu Clips",
+      "back": "← Alle Projekte",
       "workspaceLabel": "Kurzvideo-Arbeitsbereich",
       "workflow": {
         "label": "Schritte der Clip-Erstellung",
@@ -984,7 +984,7 @@
         "versionSaved": "Version {version} gespeichert",
         "play": "Durchgehende Vorschau abspielen",
         "pause": "Vorschau pausieren",
-        "previewMissing": "Für die durchgehende Wiedergabe benötigt jeder verbleibende Abschnitt eine fertige Vorschau.",
+        "previewMissing": "Die Vorschau wird vorbereitet. Sie wird hier abgespielt, sobald sie fertig ist.",
         "continuousTimeline": "Virtuelle Timeline",
         "proxyRefreshing": "Die Vorschau deines gespeicherten Clips wird vorbereitet. Du kannst ihn abspielen, sobald sie bereit ist.",
         "segment": "Schnitt {number}",
@@ -3207,7 +3207,7 @@
     "styleExample": "Stilbeispiele. Die Clips verwenden Text und Bilder aus deinem Video.",
     "headline": "Titel am Anfang hinzufügen",
     "headlineHelp": "Der Titel basiert auf dem gesprochenen Inhalt und lässt sich später bearbeiten.",
-    "usage": "Quelle: etwa {minutes} Minuten. Die Transkription wird gemäß deinem Minutenkontingent berechnet; ein kürzerer Analysebereich senkt diese Kosten nicht. Exportlimits gelten weiterhin.",
+    "usage": "Für Clips verfügbar: etwa {minutes} Minuten. Die Transkription wird gemäß deinem Minutenkontingent berechnet; ein kürzerer Analysebereich senkt diese Kosten nicht. Exportlimits gelten weiterhin.",
     "saveDefaults": "Als Standard speichern",
     "defaultsSaved": "Standard auf diesem Gerät gespeichert",
     "review": "Clip-Vorschau",
@@ -3322,7 +3322,7 @@
       "checkoutSoon": "Kauf bald verfügbar",
       "changePlan": "Tarif wechseln",
       "openDashboard": "Zum Dashboard",
-      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
+      "checkoutFailed": "Der Checkout konnte nicht geöffnet werden. Versuche es gleich noch einmal."
     },
     "explanation": "Ein {minutes} Minuten langes Ausgangsvideo verbraucht {minutes} Minuten deines Kontingents, einschließlich eines KI-Clipping-Durchlaufs. In kostenpflichtigen Tarifen kosten eigene Clips, Bearbeitung und Exporte keine zusätzlichen Minuten.",
     "compare": {

@@ -896,7 +896,7 @@
       "createClips": "Trouver des clips vidéo",
       "creatingClips": "Ouverture de l’espace…",
       "createClipsFailed": "Impossible d’ouvrir l’espace de clips.",
-      "back": "← Retour aux clips",
+      "back": "← Tous les projets",
       "workspaceLabel": "Espace vidéo courte",
       "workflow": {
         "label": "Étapes de création des clips",
@@ -984,7 +984,7 @@
         "versionSaved": "Version {version} enregistrée",
         "play": "Lire l’aperçu continu",
         "pause": "Mettre l’aperçu en pause",
-        "previewMissing": "Chaque segment restant doit avoir un aperçu prêt pour la lecture continue.",
+        "previewMissing": "Préparation de l’aperçu. Il s’affichera ici dès qu’il sera prêt.",
         "continuousTimeline": "Timeline virtuelle",
         "proxyRefreshing": "Préparation de l’aperçu de votre extrait enregistré. Vous pourrez le lire dès qu’il sera prêt.",
         "segment": "Coupe {number}",
@@ -3207,7 +3207,7 @@
     "styleExample": "Exemples de style. Les clips utiliseront les paroles et les images de votre vidéo.",
     "headline": "Ajouter un titre au début",
     "headlineHelp": "Le titre reprend le contenu parlé. Vous pourrez le modifier ensuite.",
-    "usage": "Source : environ {minutes} minutes. La transcription utilise les minutes de votre forfait ; réduire la plage analysée ne réduit pas ce coût. Les limites d’export restent applicables.",
+    "usage": "Disponible pour les clips : environ {minutes} minutes. La transcription utilise les minutes de votre forfait ; réduire la plage analysée ne réduit pas ce coût. Les limites d’export restent applicables.",
     "saveDefaults": "Enregistrer par défaut",
     "defaultsSaved": "Préférences enregistrées sur cet appareil",
     "review": "Aperçu du clip",
@@ -3322,7 +3322,7 @@
       "checkoutSoon": "Paiement bientôt disponible",
       "changePlan": "Changer d’offre",
       "openDashboard": "Aller au tableau de bord",
-      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
+      "checkoutFailed": "Impossible d’ouvrir le paiement. Réessayez dans un instant."
     },
     "explanation": "Une vidéo source de {minutes} minutes utilise {minutes} minutes de votre quota, y compris une première sélection de clips par l’IA. Avec les offres payantes, la création de clips personnalisés, le montage et l’export ne consomment pas de minutes supplémentaires.",
     "compare": {

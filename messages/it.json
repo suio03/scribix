@@ -896,7 +896,7 @@
       "createClips": "Trova clip video",
       "creatingClips": "Apertura dell’area…",
       "createClipsFailed": "Impossibile aprire l’area clip.",
-      "back": "← Torna alle clip",
+      "back": "← Tutti i progetti",
       "workspaceLabel": "Area video brevi",
       "workflow": {
         "label": "Fasi di creazione delle clip",
@@ -984,7 +984,7 @@
         "versionSaved": "Versione {version} salvata",
         "play": "Riproduci anteprima continua",
         "pause": "Metti in pausa l’anteprima",
-        "previewMissing": "Ogni segmento rimasto richiede un’anteprima pronta per la riproduzione continua.",
+        "previewMissing": "Stiamo preparando l’anteprima. Verrà riprodotta qui appena sarà pronta.",
         "continuousTimeline": "Timeline virtuale",
         "proxyRefreshing": "Preparazione dell’anteprima della clip salvata. Potrai riprodurla quando sarà pronta.",
         "segment": "Taglio {number}",
@@ -3207,7 +3207,7 @@
     "styleExample": "Esempi di stile. I clip useranno parole e immagini del tuo video.",
     "headline": "Aggiungi un titolo iniziale",
     "headlineHelp": "Il titolo si basa sul contenuto parlato. Potrai modificarlo in seguito.",
-    "usage": "Sorgente: circa {minutes} minuti. La trascrizione usa i minuti del piano; un intervallo di analisi più breve non riduce questo costo. Restano validi i limiti di esportazione.",
+    "usage": "Disponibili per le clip: circa {minutes} minuti. La trascrizione usa i minuti del piano; un intervallo di analisi più breve non riduce questo costo. Restano validi i limiti di esportazione.",
     "saveDefaults": "Salva come predefinito",
     "defaultsSaved": "Preferenze salvate su questo dispositivo",
     "review": "Anteprima del clip",
@@ -3322,7 +3322,7 @@
       "checkoutSoon": "Acquisto disponibile a breve",
       "changePlan": "Cambia piano",
       "openDashboard": "Vai alla dashboard",
-      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
+      "checkoutFailed": "Impossibile aprire il pagamento. Riprova tra un momento."
     },
     "explanation": "Un video originale di {minutes} minuti utilizza {minutes} minuti della tua quota, compresa la prima selezione di clip con l’IA. Nei piani a pagamento, creare clip personalizzate, modificarle ed esportarle non consuma altri minuti.",
     "compare": {

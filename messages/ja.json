@@ -896,7 +896,7 @@
       "createClips": "動画クリップを探す",
       "creatingClips": "ワークスペースを開いています…",
       "createClipsFailed": "クリップワークスペースを開けませんでした。",
-      "back": "← クリップに戻る",
+      "back": "← すべてのプロジェクト",
       "workspaceLabel": "ショート動画ワークスペース",
       "workflow": {
         "label": "クリップ作成のステップ",
@@ -984,7 +984,7 @@
         "versionSaved": "バージョン {version} を保存しました",
         "play": "連続プレビューを再生",
         "pause": "プレビューを一時停止",
-        "previewMissing": "連続再生には、残っているすべてのセグメントのプレビューが必要です。",
+        "previewMissing": "プレビューを準備しています。準備ができるとここで再生されます。",
         "continuousTimeline": "仮想タイムライン",
         "proxyRefreshing": "保存済みのクリップのプレビューを準備しています。準備ができ次第、再生できます。",
         "segment": "カット {number}",
@@ -3207,7 +3207,7 @@
     "styleExample": "スタイルの見本です。実際のクリップには元動画の映像と発言を使用します。",
     "headline": "冒頭にタイトルを追加",
     "headlineHelp": "選ばれた発言に基づくタイトルです。後から編集できます。",
-    "usage": "元動画：約{minutes}分。文字起こしはプランの分数枠を使用します。分析範囲を短くしても、この消費は減りません。書き出し制限も適用されます。",
+    "usage": "クリップに使用できる長さ：約{minutes}分。文字起こしはプランの分数枠を使用します。分析範囲を短くしても、この消費は減りません。書き出し制限も適用されます。",
     "saveDefaults": "既定の設定として保存",
     "defaultsSaved": "この端末に設定を保存しました",
     "review": "クリップのプレビュー",
@@ -3322,7 +3322,7 @@
       "checkoutSoon": "購入はまもなく可能になります",
       "changePlan": "プランを変更",
       "openDashboard": "ダッシュボードへ",
-      "checkoutFailed": "Checkout couldn't open. Please try again in a moment."
+      "checkoutFailed": "お支払い画面を開けませんでした。しばらくしてからもう一度お試しください。"
     },
     "explanation": "{minutes} 分の元動画は、最初の AI クリップ選定を含めて処理枠を {minutes} 分使用します。有料プランでは、カスタムクリップの作成、編集、書き出しで追加の処理分数は消費しません。",
     "compare": {

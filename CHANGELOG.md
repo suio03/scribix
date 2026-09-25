@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-09-25 — clip flow walkthrough fixes
+
+- AI clip analysis retries each step at most twice, skips exhausted sections and completes with the remaining results; only a task where every discovery section failed stays retryable.
+- Limit analysis ranges to the transcribed part of partial Free transcripts, with clip-specific partial-upload copy.
+- Show a visible message when paid checkout cannot open.
+- Name single video and cover downloads after the project and clip, show hour-aware clip times, keep the feedback button clear of clip review controls, and clarify project navigation, preview-preparation and usable-duration copy in all locales.
+- No database migrations or binding changes are required.
+
 ## 2026-09-25 — render dispatcher fix
 
 - Stop dispatcher reconciliation from returning leased render jobs to `preparing`; the downgrade made the container's progress callback fail and every final export end as `invalid_render_spec`.

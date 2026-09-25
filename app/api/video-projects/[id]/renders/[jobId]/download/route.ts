@@ -27,17 +27,24 @@ export async function GET(request: Request, { params }: Params) {
   const requestedFormat = new URL(request.url).searchParams.get("format");
   if (requestedFormat === "video" || requestedFormat === "cover") {
     if (requestedFormat === "cover" && !videoWorkspaceAccessFor(user.tier).canEditClips) return Response.json({ error: "upgrade_required" }, { status: 402 });
-    const asset = await env.DB.prepare(`SELECT a.r2_key FROM render_jobs j
+    const asset = await env.DB.prepare(`SELECT a.r2_key, t.title, c.theme,
+        (SELECT COUNT(*) FROM clip_candidates preceding
+          WHERE preceding.project_id = c.project_id AND preceding.user_id = c.user_id
+            AND preceding.status <> 'deleted' AND preceding.rank < c.rank) AS rank
+      FROM render_jobs j
       JOIN video_projects p ON p.id = j.project_id AND p.user_id = j.user_id
+      JOIN transcripts t ON t.id = p.transcript_id
+      JOIN project_versions v ON v.id = j.project_version_id AND v.user_id = j.user_id
+      JOIN clip_candidates c ON c.id = v.candidate_id AND c.user_id = j.user_id
       JOIN media_assets a ON a.id = CASE WHEN ?4 = 'video' THEN j.output_asset_id ELSE j.cover_asset_id END AND a.user_id = j.user_id
       WHERE j.id = ?1 AND j.project_id = ?2 AND j.user_id = ?3 AND j.kind = 'final'
         AND j.superseded_at IS NULL AND p.deleted_at IS NULL AND a.status = 'ready' AND a.deleted_at IS NULL
         AND (a.expires_at IS NULL OR a.expires_at > CURRENT_TIMESTAMP)`)
-      .bind(jobId, projectId, user.id, requestedFormat).first<{ r2_key: string }>();
+      .bind(jobId, projectId, user.id, requestedFormat).first<{ r2_key: string; title: string; theme: string; rank: number }>();
     const object = asset?.r2_key ? await env.SCRIBIX_MEDIA.get(asset.r2_key) : null;
-    if (!object) return Response.json({ error: "render_asset_missing" }, { status: 410 });
+    if (!asset || !object) return Response.json({ error: "render_asset_missing" }, { status: 410 });
     return new Response(object.body, { headers: {
-      "cache-control": "private, no-store", "content-disposition": attachmentHeader(`scribix-${requestedFormat}.${requestedFormat === "video" ? "mp4" : "jpg"}`),
+      "cache-control": "private, no-store", "content-disposition": attachmentHeader(`${exportFileName(asset.title, asset.rank + 1, asset.theme)}${requestedFormat === "video" ? ".mp4" : "-cover.jpg"}`),
       "content-type": requestedFormat === "video" ? "video/mp4" : "image/jpeg", "x-content-type-options": "nosniff",
     } });
   }
