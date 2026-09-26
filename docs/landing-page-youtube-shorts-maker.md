@@ -1,12 +1,14 @@
-# YouTube Shorts Maker — multilingual release preparation
+# YouTube Shorts Maker — implementation and release
 
-Prepared 2026-09-27. Initially English only with a fresh clip demo. After English review, the user requested localization through `lyl-keyword-localizer`; French, Spanish, Italian, German and Japanese are now implemented. The user subsequently authorized pre-launch fixes: indexing eligibility, sitemap discovery, internal links and metadata are now prepared in code. No deployment or commit was performed.
+Implemented in six languages and pushed to `origin/main` on 2026-09-27 in commit `c6d09db` after the user authorized release. Cloudflare Workers Builds is the deployment path; a Git push alone does not establish production availability or search-engine indexing.
+
+The initial English review stage required a fresh clip demo. The user then approved localization and pre-launch SEO fixes. Current implementation and media contracts are recorded below; localized copy documents point here for release context.
 
 ## Intent and copy
 
 Research: [competitor page audit](research/2026-09-27-youtube-shorts-maker-competitors.md). The subsequent user-approved direction is three distinct pages: Shorts maker (including YouTube to Shorts), YouTube clip maker, and YouTube to TikTok. This change implements only the first. It does not present one page as owning all four keyword intents.
 
-Page paths: `/youtube-shorts-maker` (English) and `/{fr,es,it,de,ja}/youtube-shorts-maker`. Standard locale routing, the language picker and six-language/x-default alternates are enabled; each locale has its own canonical. The review-only `noindex` has been removed. The sitemap emits all six URLs with language alternates and a 2026-09-27 modification date. Localized links from Footer and the long-video page provide inbound discovery. These are code changes, not evidence of a production deployment or search-engine indexing.
+Page paths: `/youtube-shorts-maker` (English) and `/{fr,es,it,de,ja}/youtube-shorts-maker`. Standard locale routing, the language picker and six-language/x-default alternates are enabled; each locale has its own canonical. The review-only `noindex` has been removed. The sitemap emits all six URLs with language alternates and a 2026-09-27 modification date. Localized links from Footer and the long-video page provide inbound discovery. Indexing eligibility is configured; actual search-engine indexing is not verified.
 
 Title: YouTube Shorts Maker — Turn Your Videos into Shorts | Scribix.
 
@@ -40,8 +42,8 @@ Claims follow `lib/plans.ts`, `docs/video-workspace/editing-and-framing.md` and 
 - Localization validation: all five localized routes inspected at 390px; Japanese and longer Latin-script headings adjusted to avoid awkward mobile wrapping. Desktop French/Japanese and English regression inspected. Language-menu navigation preserves the Shorts route. German free FAQ resolves the canonical 60-minute / 2 GiB facts and the upload action opens the German login modal. No sign-in or upload submitted.
 - Hero autoplay and offscreen pause verified in the browser; localized source paths and posters resolve. No browser console errors observed.
 - Final production build, TypeScript, six-language parity/ICU validation and `git diff --check` passed after the layout fixes.
-- Existing user-owned port 3000 server reused. No new deployment, remote migration or social publishing operation.
+- Existing user-owned port 3000 server reused for local verification. This release has no binding or migration changes and does not require the separate video-render worker to be redeployed.
 
 ## Pre-launch verification — 2026-09-27
 
-Six-language rendered HTML and sitemap checks cover robots, a single H1 containing the local category, self-canonical, seven hreflang entries, shared OG dimensions/alt/site name, localized WebPage JSON-LD and two inbound links from the long-video page (body and Footer). The long-video sitemap modification date now reflects the new links. `CLAUDE.md` lists nine core routes. All checks passed, along with the production build, locale parity and `git diff --check`. Chrome desktop and 390px English/Japanese screenshots confirm the H1 grouping preserves the visual hierarchy; the new long-video body link was clicked through to the Shorts page. No deployment is implied.
+Six-language rendered HTML and sitemap checks cover robots, a single H1 containing the local category, self-canonical, seven hreflang entries, shared OG dimensions/alt/site name, localized WebPage JSON-LD and two inbound links from the long-video page (body and Footer). The long-video sitemap modification date now reflects the new links. `CLAUDE.md` lists nine core routes. All checks passed, along with the production build, locale parity and `git diff --check`. Chrome desktop and 390px English/Japanese screenshots confirm the H1 grouping preserves the visual hierarchy; the new long-video body link was clicked through to the Shorts page. Production availability must be checked independently of these local checks.

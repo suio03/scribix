@@ -1,6 +1,6 @@
 # YouTube Shorts maker：五语言本地化依据
 
-调研与实现日期：2026-09-27。使用 `lyl-keyword-localizer` 与 `lyl-landing-page`。用户在英文验收阶段后要求开始翻译；按现有站点范围完成 fr / es / it / de / ja，保留英文。不包含发布。
+调研与实现日期：2026-09-27。使用 `lyl-keyword-localizer` 与 `lyl-landing-page`。用户在英文验收阶段后要求开始翻译；按现有站点范围完成 fr / es / it / de / ja，保留英文。该调研阶段不包含发布；后续发布状态统一见[实现与发布说明](../landing-page-youtube-shorts-maker.md)。
 
 ## Localization Handoff Brief
 
@@ -49,4 +49,4 @@
 - 运行时文案：`messages/{en,fr,es,it,de,ja}.json` 的 `YouTubeShortsLanding`（原文 84 个稳定键；上线准备另增 navLabel）。
 - 可读译稿：`docs/landing-page-{fr,es,it,de,ja}-youtube-shorts-maker.md`。运行时字典是后续改稿的唯一执行来源。
 - 路由：`/youtube-shorts-maker` 和五个语言前缀版本；恢复语言菜单，分别设置 canonical，并列出六语言及 x-default。
-- 初稿保留 noindex 且不加入导航／sitemap；2026-09-27 用户授权上线准备后，已移除 noindex，加入六语言 sitemap、Footer 和 long-video 入站链接。仍未部署。
+- 初稿保留 noindex 且不加入导航／sitemap；2026-09-27 用户授权上线准备后，已移除 noindex，加入六语言 sitemap、Footer 和 long-video 入站链接。后续用户已授权 ship；发布记录统一见[实现与发布说明](../landing-page-youtube-shorts-maker.md)。

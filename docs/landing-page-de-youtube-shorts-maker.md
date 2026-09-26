@@ -1,6 +1,6 @@
 # YouTube Shorts maker — de review copy
 
-Generated 2026-09-27. Localized copy; release metadata and inbound links prepared 2026-09-27, not yet published. Runtime source: `messages/de.json` → `YouTubeShortsLanding`. Quota placeholders are populated from `lib/plans.ts`.
+Generated 2026-09-27. Localized copy. See [implementation and release](landing-page-youtube-shorts-maker.md) for shared release status. Runtime source: `messages/de.json` → `YouTubeShortsLanding`. Quota placeholders are populated from `lib/plans.ts`.
 
 [Keyword evidence and localization decisions](research/2026-09-27-youtube-shorts-keyword-localization.md).
 
