@@ -11,12 +11,18 @@ export type GuideText = {
   sections: {
     title: string; body: string; checks?: string[];
     example?: { before: string; after: string; explanation: string };
-    imageAlt?: string; imageCaption?: string; videoCaption?: string;
+    imageAlt?: string; imageCaption?: string; videoCaption?: string; relatedLabel?: string;
+    diagram?: FramingDiagramCopy;
   }[];
+};
+export type FramingDiagramCopy = {
+  title: string;
+  items: { title: string; body: string }[];
+  caption: string;
 };
 export type ContentCopy = {
   ui: typeof en.ui; podcast: typeof en.podcast; demo: typeof en.demo;
-  guides: Record<"checklist" | "tutorial", GuideText>;
+  guides: Record<"checklist" | "tutorial" | "reframing", GuideText>;
 };
 const copies: Record<string, ContentCopy> = { en, fr, es, it, ja, de };
 export function getContentCopy(locale: string): ContentCopy {

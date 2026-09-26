@@ -12,6 +12,7 @@ import {
   JsonLd,
 } from "@/app/components/guides/ContentShell";
 import { PrintButton } from "@/app/components/guides/PrintButton";
+import { FramingDiagram } from "@/app/components/guides/FramingDiagram";
 import { GUIDES, getGuide } from "@/lib/guides/content";
 import { contentMetadata } from "@/lib/guides/metadata";
 
@@ -201,6 +202,8 @@ export default async function GuidePage({ params }: { params: Params }) {
                     <a href={section.video.src} download className="mt-4 inline-block text-sm font-medium text-accent underline underline-offset-4">{ui.download}</a>
                   </figure>
                 ) : null}
+                {section.diagram ? <FramingDiagram copy={section.diagram} /> : null}
+                {section.related ? <p className="mt-6"><Link href={section.related.href} className="font-medium text-accent underline underline-offset-4">{section.related.label}</Link></p> : null}
                 {section.example ? (
                   <figure className="my-7 rounded-2xl border border-line bg-card p-6">
                     <div className="grid gap-6 sm:grid-cols-2">

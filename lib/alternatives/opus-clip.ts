@@ -1,12 +1,14 @@
 import { PLANS } from "@/lib/plans";
 import { PRICING_V2 } from "@/lib/pricing-v2";
-import { OPUS_ALTERNATIVE_PATH } from "./routes";
+import { OPUS_ALTERNATIVE_PATH, VIZARD_ALTERNATIVE_PATH } from "./routes";
 
 export const OPUS_COMPARISON = {
   path: OPUS_ALTERNATIVE_PATH,
   title: "OpusClip Alternatives for Podcast Clips",
   description: "Compare Scribix, Vizard and quso.ai with OpusClip for podcast clips. See editing workflows, free-plan limits, monthly pricing and a Scribix product demonstration.",
   published: "2026-09-20",
+  modified: "2026-09-26",
+  modifiedDisplayDate: "September 26, 2026",
   displayDate: "September 20, 2026",
 } as const;
 
@@ -34,14 +36,15 @@ export const COMPARISON_TOOLS = [
     detail: "Vizard gives you a way to explore editing on its Free plan. Creator adds higher-resolution exports and scheduling; Business adds a shared workspace and brand kit. That tier distinction matters when you are choosing for a team rather than one creator.",
     caveat: "The free tier’s storage window is short. Download what you need, and check the credit amount and team-seat cost before subscribing.",
     sourceLabel: "Vizard pricing",
+    comparisonPath: VIZARD_ALTERNATIVE_PATH,
   },
   {
     id: "quso", name: "quso.ai", role: "Connect clips with social planning",
     summary: "A shortlist option when editing and distributing content belong in the same subscription.",
     free: "75 credits/month", freeLimit: "720p rendering, TikTok publishing and 7-day retention.",
     paid: "Lite: $29/month", editing: "Lite includes a desktop editor and three aspect ratios.",
-    output: "Lite includes publishing and scheduling to six platforms.",
-    detail: "quso.ai combines clipping with publishing features. Lite covers the editor and scheduling; Essential adds its Content Planner, while Growth adds brand tools and social analytics. Match the tier to the part of your workflow you want to consolidate.",
+    output: "Lite includes TikTok publishing; Essential adds scheduling to seven platforms.",
+    detail: "quso.ai combines clipping with publishing features. Lite covers the editor and TikTok publishing; Essential adds multi-platform scheduling and its Content Planner, while Growth adds brand tools and social analytics. Match the tier to the part of your workflow you want to consolidate.",
     caveat: "Do not assume every social-management feature is included in Lite. Monthly and annual plans also have different credit allowances.",
     sourceLabel: "quso.ai pricing",
   },

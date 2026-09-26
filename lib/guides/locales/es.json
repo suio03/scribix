@@ -238,7 +238,8 @@
           "title": "4. Comprueba el encuadre vertical",
           "body": "Mira todo el clip, no solo la primera imagen. Revisa los cambios de cámara, de hablante y los gestos. Mantén visibles los elementos a los que se hace referencia.\n\nUn encuadre más amplio puede funcionar mejor si deben verse dos personas o una presentación. Comprueba cada transición, incluso con encuadre automático.",
           "imageAlt": "Controles de encuadre junto a la vista previa vertical",
-          "imageCaption": "Framing ofrece Automatic follow, Show full frame y Crop a section manually. Aquí está seleccionado el seguimiento automático. El resultado conserva bandas negras; revisa los cambios de cámara antes de ajustar."
+          "imageCaption": "Framing ofrece Automatic follow, Show full frame y Crop a section manually. Aquí está seleccionado el seguimiento automático. El resultado conserva bandas negras; revisa los cambios de cámara antes de ajustar.",
+          "relatedLabel": "¿Recortar o mantener el encuadre completo? Lee la guía para pasar un vídeo horizontal a vertical"
         },
         {
           "title": "5. Revisa el texto y el estilo de los subtítulos",
@@ -254,6 +255,67 @@
         {
           "title": "Antes de publicar",
           "body": "Previsualiza el archivo en TikTok con su interfaz y confirma el público y los detalles de la publicación. Esta guía no presupone una cuenta conectada ni un proceso de publicación directa validado.\n\nNo necesitas publicar todos los clips sugeridos. Prioriza los momentos claros, fieles y útiles y empieza con tu propio podcast en video."
+        }
+      ]
+    },
+    "reframing": {
+      "title": "Cómo pasar un vídeo horizontal a vertical sin cortar a las personas",
+      "metadataTitle": "De vídeo horizontal a vertical: cómo ajustar el encuadre",
+      "description": "Aprende cuándo recortar y cuándo conservar la imagen completa al pasar un vídeo a 9:16. Consejos para entrevistas, una persona en cámara y grabaciones de pantalla.",
+      "intro": "Pasar un vídeo horizontal a vertical exige algo más que cambiar la relación de aspecto. Primero decide qué necesita ver quien lo mira: una cara, las dos personas o lo que ocurre en la pantalla. Después elige cómo encuadrarlo.",
+      "category": "Guía de encuadre",
+      "readingTime": "6 min de lectura",
+      "sections": [
+        {
+          "title": "01 / Sin recortar no significa llenar toda la pantalla",
+          "body": "Si quieres conservar la imagen horizontal completa dentro de un lienzo vertical, tendrás que reducirla. Quedará espacio arriba y abajo. Para llenar el lienzo, en cambio, hay que recortar parte de los laterales y decidir qué se mantiene visible.\n\nUna imagen 16:9 no puede llenar un encuadre 9:16 conservando a la vez sus proporciones y todos sus bordes. Estirarla deforma a las personas; girarla las deja de lado. Conserva la imagen completa cuando ambos lados sean importantes. Recorta solo si el encuadre más estrecho sigue mostrando lo necesario.",
+          "diagram": {
+            "title": "Una escena, tres formas de encuadrar",
+            "items": [
+              {
+                "title": "Recorte centrado fijo",
+                "body": "El centro puede dejar fuera a las dos personas."
+              },
+              {
+                "title": "Recorte hacia una persona",
+                "body": "Una queda visible; la otra está fuera del encuadre."
+              },
+              {
+                "title": "Imagen completa",
+                "body": "Ambas quedan visibles, con espacio arriba y abajo."
+              }
+            ],
+            "caption": "Esquema de encuadre, no un vídeo exportado con Scribix ni una prueba de seguimiento automático."
+          }
+        },
+        {
+          "title": "02 / Una persona: comprueba también cómo se mueve",
+          "body": "Empieza encuadrando a quien habla. Deja margen sobre la cabeza y alrededor de los gestos u objetos necesarios para entender la explicación. Reproduce todo el fragmento: un encuadre que funciona al principio puede fallar cuando la persona se inclina.\n\nEl seguimiento automático es un punto de partida que debes revisar. Si pierde al sujeto, ajusta la sección afectada. No decidas mirando solo un fotograma. Abre el encuadre o conserva la imagen completa cuando el movimiento lo exija. Ampliar la imagen no recupera detalles que no existen en el original."
+        },
+        {
+          "title": "03 / Una entrevista: ¿hace falta ver a las dos personas?",
+          "body": "Un recorte centrado de un plano abierto puede mostrar el hueco entre los participantes. Seguir a quien habla puede servir para una respuesta completa, pero oculta la reacción de la otra persona. Si esa reacción cambia el sentido del diálogo, conserva a ambas.\n\nLa imagen completa muestra caras más pequeñas, pero mantiene el contexto. Scribix no ofrece actualmente una composición de pantalla dividida para dos personas. Revisa cada cambio de turno y los momentos en que hablan a la vez."
+        },
+        {
+          "title": "04 / Grabaciones de pantalla: prioriza lo que se debe leer",
+          "body": "En una demostración de software, la parte importante puede ser un botón, un gráfico o un texto. Un encuadre que sigue la cara del presentador puede ocultar precisamente lo que está explicando.\n\nConservar toda la pantalla evita perder información, pero los textos pequeños pueden resultar ilegibles en el móvil. Elige un fragmento centrado en una zona y encuádrala si es posible. Si necesitas mostrar el escritorio completo y la cara en espacios separados, utiliza un editor que permita esa composición; Scribix no la ofrece actualmente."
+        },
+        {
+          "title": "05 / Ajusta el encuadre en Scribix",
+          "body": "Sube un archivo de vídeo original que tengas permiso para utilizar. Elige un clip sugerido o selecciona un fragmento por tu cuenta con un plan de pago. Este flujo crea clips verticales cortos; no convierte una grabación entera a cualquier formato. Importar una transcripción de YouTube no importa el vídeo original para recortarlo.\n\nAbre los controles de encuadre del editor. Revisa el modo automático, elige el ajuste que conserva la imagen completa o modifica el recorte y el zoom. Si la composición cambia durante el clip, ajusta las secciones correspondientes, comprueba las transiciones y guarda antes de exportar.\n\nLos ajustes de encuadre y la edición de subtítulos requieren un plan de pago. Las cuentas gratuitas pueden revisar y exportar los clips sugeridos sin modificarlos. Coloca los subtítulos después de decidir el encuadre para que no tapen caras ni información importante.",
+          "imageAlt": "Captura existente del panel de encuadre de Scribix con una vista previa vertical",
+          "imageCaption": "Captura de nuestra guía de pódcast. Fuente: Changeover Podcast. Muestra los controles, no una nueva comparación de recortes. La interfaz capturada y los subtítulos conservan su idioma original."
+        },
+        {
+          "title": "06 / Revisa el archivo exportado en el móvil",
+          "body": "Reproduce el MP4 guardado con sonido de principio a fin. Si se corta una cabeza, revisa la sección de encuadre correspondiente. Si aparecen bandas negras, comprueba si has conservado la imagen completa o si las bandas ya estaban en el original. Quitarlas también puede eliminar contenido útil.\n\nSi la imagen pierde nitidez, reduce el zoom y utiliza el mejor archivo original disponible. Exportar a un tamaño mayor no recupera el detalle perdido. Mira también la vista previa de la aplicación de destino: sus botones pueden cubrir los subtítulos.\n\nEl ejemplo siguiente es un archivo vertical existente con sus bandas originales. Demuestra que un archivo 9:16 puede contener una imagen horizontal, pero no prueba qué modo se seleccionó ni una mejora del seguimiento automático.",
+          "videoCaption": "Exportación existente de Scribix de 57 segundos con audio, subtítulos y bandas originales. Fuente: Changeover Podcast. No se ha realizado una nueva prueba de antes y después.",
+          "checks": [
+            "Las personas y los detalles importantes permanecen visibles.",
+            "Los cambios de turno y encuadre se ven con comodidad.",
+            "Los subtítulos se leen y no tapan información esencial.",
+            "He revisado el archivo y la vista previa de la aplicación de destino."
+          ]
         }
       ]
     }

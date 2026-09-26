@@ -238,7 +238,8 @@
           "title": "4. Das Hochkantbild prüfen",
           "body": "Sieh dir den ganzen Ausschnitt an, nicht nur das erste Bild. Prüfe Kamera- und Sprecherwechsel, Gesten und erwähnte Gegenstände.\n\nEin weiterer Bildausschnitt kann besser sein, wenn beide Personen oder eine Präsentation sichtbar bleiben müssen. Prüfe jeden Übergang auch bei automatischer Bildführung.",
           "imageAlt": "Bildausschnitt-Einstellungen neben der Hochkantvorschau",
-          "imageCaption": "Framing bietet Automatic follow, Show full frame und Crop a section manually. Hier ist die automatische Bildführung gewählt. Schwarze Bereiche bleiben sichtbar; prüfe die Kameraschnitte vor weiteren Anpassungen."
+          "imageCaption": "Framing bietet Automatic follow, Show full frame und Crop a section manually. Hier ist die automatische Bildführung gewählt. Schwarze Bereiche bleiben sichtbar; prüfe die Kameraschnitte vor weiteren Anpassungen.",
+          "relatedLabel": "Zuschneiden oder das ganze Bild behalten? Lesen Sie den Leitfaden zum Umwandeln von Quer- in Hochformat"
         },
         {
           "title": "5. Untertitel prüfen und gestalten",
@@ -254,6 +255,67 @@
         {
           "title": "Vor der Veröffentlichung",
           "body": "Prüfe die Datei in TikTok mit dessen Oberfläche und bestätige Zielgruppe und Beitragsdetails. Diese Anleitung setzt weder ein verbundenes Konto noch einen geprüften direkten Veröffentlichungsablauf voraus.\n\nDu musst nicht jeden Vorschlag veröffentlichen. Wähle klare, korrekte und hilfreiche Ausschnitte und beginne mit deinem eigenen Video-Podcast."
+        }
+      ]
+    },
+    "reframing": {
+      "title": "Video von Querformat in Hochformat: Personen im Bild behalten",
+      "metadataTitle": "Video von Querformat in Hochformat umwandeln: der passende Bildausschnitt",
+      "description": "Zuschneiden oder das ganze Bild erhalten? So wählst du den Bildausschnitt für eine Person, ein Interview zu zweit oder eine Bildschirmaufnahme im 9:16-Format.",
+      "intro": "Ein Video im Querformat wird nicht allein durch ein neues Seitenverhältnis zu einem guten Hochformat-Clip. Entscheide zuerst, was sichtbar bleiben muss: ein Gesicht, beide Gesprächspartner oder der Bildschirminhalt. Danach wählst du den Ausschnitt.",
+      "category": "Bildausschnitt und Hochformat",
+      "readingTime": "6 Min. Lesezeit",
+      "sections": [
+        {
+          "title": "01 / Ohne Zuschneiden oder ohne abgeschnittene Personen?",
+          "body": "Das sind zwei verschiedene Ziele. Damit das gesamte Querformatbild in ein Hochformat passt, musst du es verkleinern. Oben und unten bleibt Platz. Soll es die Fläche ausfüllen, musst du Teile der Seiten abschneiden und auswählen, was sichtbar bleibt.\n\nEin 16:9-Bild kann ein 9:16-Format nicht vollständig ausfüllen und gleichzeitig seine Proportionen sowie alle ursprünglichen Bildränder behalten. Strecken verzerrt Gesichter, Drehen legt Personen auf die Seite. Erhalte das ganze Bild, wenn beide Seiten wichtig sind. Schneide nur zu, wenn der kleinere Ausschnitt die Aussage noch verständlich zeigt.",
+          "diagram": {
+            "title": "Eine Szene, drei Bildausschnitte",
+            "items": [
+              {
+                "title": "Fester mittiger Zuschnitt",
+                "body": "Die Mitte kann beide Personen aus dem Bild drängen."
+              },
+              {
+                "title": "Zuschnitt auf eine Person",
+                "body": "Eine Person bleibt sichtbar, die andere außerhalb des Bildes."
+              },
+              {
+                "title": "Vollständiges Bild",
+                "body": "Beide bleiben sichtbar; oben und unten bleibt Platz."
+              }
+            ],
+            "caption": "Schematische Darstellung, kein Scribix-Export und kein Test der automatischen Motivverfolgung."
+          }
+        },
+        {
+          "title": "02 / Eine Person: auch die Bewegung prüfen",
+          "body": "Beginne bei einem Gespräch vor der Kamera mit einem Ausschnitt um die sprechende Person. Lass über dem Kopf und um erklärende Gesten oder Gegenstände Platz. Spiele die ganze Passage ab: Ein am Anfang passender Ausschnitt kann scheitern, sobald sich die Person zur Seite lehnt.\n\nDie automatische Verfolgung ist ein Vorschlag, den du prüfen solltest. Verliert sie das Motiv, passe den betroffenen Abschnitt an. Verlasse dich nicht auf ein einzelnes Vorschaubild. Wähle einen weiteren Ausschnitt oder das ganze Bild, wenn die Bewegung sonst nicht hineinpasst. Mehr Zoom stellt keine fehlenden Details wieder her."
+        },
+        {
+          "title": "03 / Zwei Personen: ist die Reaktion wichtig?",
+          "body": "Bei einem weit aufgenommenen Interview kann ein mittiger Zuschnitt nur den Raum zwischen den Personen zeigen. Der sprechenden Person zu folgen kann für eine eigenständige Antwort passen, blendet aber die Reaktion des Gegenübers aus. Beeinflusst diese Reaktion die Bedeutung, sollten beide sichtbar bleiben.\n\nDas vollständige Bild zeigt kleinere Gesichter, erhält aber den Gesprächskontext. Scribix bietet derzeit kein geteiltes Layout mit zwei Personen übereinander. Prüfe jeden Sprecherwechsel und Stellen, an denen beide gleichzeitig sprechen."
+        },
+        {
+          "title": "04 / Bildschirmaufnahmen: die Erklärung muss lesbar bleiben",
+          "body": "Bei einer Softwaredemo oder Präsentation kann ein Button, ein Diagramm oder ein Text das eigentliche Motiv sein. Ein Ausschnitt, der dem Gesicht folgt, kann genau diese Information entfernen.\n\nDas ganze Bild erhält die Informationen, kleine Schrift wird auf dem Smartphone aber möglicherweise unleserlich. Wähle nach Möglichkeit eine kurze Passage über einen einzelnen Bildschirmbereich und richte den Ausschnitt darauf aus. Brauchst du den gesamten Desktop und ein separates Gesichtsfeld, benötigst du einen Editor mit diesem Layout; Scribix bietet es derzeit nicht."
+        },
+        {
+          "title": "05 / Den Bildausschnitt in Scribix einstellen",
+          "body": "Lade eine Originalvideodatei hoch, die du verwenden darfst. Wähle einen vorgeschlagenen Clip oder mit einem kostenpflichtigen Tarif selbst eine Passage aus. Dieser Ablauf erstellt kurze Hochformat-Clips; er wandelt keine vollständige Aufnahme in beliebige Seitenverhältnisse um. Der YouTube-Transkriptimport lädt nicht das Originalvideo zum Schneiden.\n\nÖffne im Editor die Einstellungen für den Bildausschnitt. Prüfe den automatischen Vorschlag, wähle die Darstellung des vollständigen Bildes oder passe Zuschnitt und Zoom an. Soll sich der Ausschnitt im Clip ändern, bearbeite die betroffenen Abschnitte, prüfe die Übergänge und speichere vor dem Export.\n\nÄnderungen am Bildausschnitt und an Untertiteln erfordern einen kostenpflichtigen Tarif. Kostenlose Konten können die vorgeschlagenen Clips unverändert prüfen und exportieren. Kontrolliere nach dem Zuschnitt, ob die Untertitel Gesichter oder wichtige Bildschirminhalte verdecken.",
+          "imageAlt": "Vorhandener Screenshot der Scribix-Bildausschnittsteuerung mit Hochformat-Vorschau",
+          "imageCaption": "Vorhandener Screenshot aus unserem Podcast-Guide. Quelle: Changeover Podcast. Er zeigt die Bedienelemente, keinen neuen Zuschnittvergleich. Oberfläche und Untertitel bleiben in ihrer ursprünglichen Sprache."
+        },
+        {
+          "title": "06 / Den Export auf dem Smartphone ansehen",
+          "body": "Spiele die gespeicherte MP4-Datei mit Ton vollständig ab. Verschwindet ein Kopf, prüfe den entsprechenden Abschnitt. Bei schwarzen Balken: Hast du bewusst das vollständige Bild gewählt oder waren die Balken schon in der Quelldatei? Sie wegzuschneiden kann auch wichtige Inhalte entfernen.\n\nWirkt das Bild unscharf, reduziere den Zoom und verwende die beste verfügbare Originaldatei. Ein größerer Export rekonstruiert keine verlorenen Details. Prüfe auch die Vorschau in der Ziel-App: Deren Bedienelemente können Untertitel verdecken, obwohl sie innerhalb des exportierten Bildes liegen.\n\nDas folgende Beispiel ist ein vorhandener Hochformat-Export mit seinen ursprünglichen Balken. Es zeigt, dass eine 9:16-Datei ein breites Bild enthalten kann. Es belegt weder die Auswahl eines bestimmten Modus noch eine Verbesserung durch automatische Verfolgung.",
+          "videoCaption": "Vorhandener Scribix-Export von 57 Sekunden mit ursprünglichem Ton, Untertiteln und Balken. Quelle: Changeover Podcast. Kein neuer Vorher-nachher-Test.",
+          "checks": [
+            "Wichtige Personen und Details bleiben durchgehend sichtbar.",
+            "Sprecherwechsel und Bildübergänge lassen sich angenehm ansehen.",
+            "Untertitel sind lesbar und verdecken nichts Wesentliches.",
+            "Ich habe die Datei und die Vorschau der Ziel-App geprüft."
+          ]
         }
       ]
     }

@@ -63,9 +63,9 @@ export default async function GuidesPage({
               className="group flex min-w-0 flex-col rounded-[24px] border border-line bg-card p-5 transition hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:p-7"
             >
               <div className="relative aspect-video overflow-hidden rounded-2xl bg-accent-soft" aria-hidden="true">
-                {guide.walkthrough ? (
+                {guide.walkthrough || guide.thumbnail ? (
                   <Image
-                    src={guide.walkthrough.poster}
+                    src={guide.walkthrough?.poster ?? guide.thumbnail!}
                     alt=""
                     fill
                     sizes="(min-width: 1240px) 518px, (min-width: 768px) 45vw, 90vw"

@@ -107,7 +107,8 @@
           "title": "4. Check the vertical picture",
           "body": "Watch the whole portrait composition, not just its first frame. Follow changes of speaker, camera cuts and gestures. Check that the crop keeps the person and anything they refer to visible.\n\nAdjust the framing when it loses important information. A wider composition can be preferable to a close-up when two people or a presentation need to remain in view. Do not assume that automatic framing has handled every transition correctly.",
           "imageAlt": "Framing controls beside the portrait podcast preview",
-          "imageCaption": "The Framing panel offers Automatic follow, Show full frame and Crop a section manually. Automatic follow was already selected here. This output retains black space above and below the picture; review camera changes before deciding whether to adjust it."
+          "imageCaption": "The Framing panel offers Automatic follow, Show full frame and Crop a section manually. Automatic follow was already selected here. This output retains black space above and below the picture; review camera changes before deciding whether to adjust it.",
+          "relatedLabel": "Choosing between a crop and the full frame? Read the horizontal-to-vertical framing guide"
         },
         {
           "title": "5. Correct and style the captions",
@@ -123,6 +124,67 @@
         {
           "title": "Before you post",
           "body": "Preview the file in TikTok and check how the video looks with the platform interface around it. Confirm your intended audience and post details there. This walkthrough does not assume that your Scribix account is connected to TikTok or that a direct publishing flow has been tested.\n\nYou do not need to publish every suggested clip. A smaller set of clear, accurate moments can serve your audience better than a batch you have not reviewed.\n\nStart with your video podcast."
+        }
+      ]
+    },
+    "reframing": {
+      "title": "How to turn horizontal video vertical without cutting off speakers",
+      "metadataTitle": "Horizontal video to vertical: keep speakers in frame",
+      "description": "Choose between cropping and keeping the full frame. Learn how to reframe one speaker, a two-person interview or a screen recording for a 9:16 clip.",
+      "intro": "A horizontal recording does not become a useful vertical clip just because you change its shape. Decide what the viewer needs to see, then choose a crop or keep the whole frame. Here is how to make that decision before you export.",
+      "category": "Framing guide",
+      "readingTime": "6 min read",
+      "sections": [
+        {
+          "title": "01 / Without cropping, or without losing the speaker?",
+          "body": "These are different goals. To keep every part of a landscape frame inside a portrait canvas, scale the full image down. A wide recording will leave space above and below. To fill that same canvas, crop away some of the sides and choose which part remains visible.\n\nA 16:9 picture cannot fill a 9:16 frame while preserving its proportions and every original edge. Stretching distorts people; rotating makes them sideways. Neither solves the framing problem. Start with the full frame when both sides contain essential information, and crop only when a narrower view still tells the story.",
+          "diagram": {
+            "title": "One scene, three framing choices",
+            "items": [
+              {
+                "title": "Fixed centre crop",
+                "body": "The middle can miss both speakers."
+              },
+              {
+                "title": "Crop toward a speaker",
+                "body": "One person is visible; the other is outside the frame."
+              },
+              {
+                "title": "Keep the full frame",
+                "body": "Both stay visible, with empty space above and below."
+              }
+            ],
+            "caption": "Illustration of framing geometry, not a Scribix export or an automatic tracking test."
+          }
+        },
+        {
+          "title": "02 / One speaker: check the movement, not just the first frame",
+          "body": "For a talking-head clip, begin with a crop around the person who is speaking. Leave room above the head and around any hand gesture or object that explains the point. Play the whole passage: a crop that works at the start may fail when the speaker leans sideways.\n\nAutomatic following is a starting point to review. If it loses the subject, adjust the framing over the affected section rather than trusting a still preview. Use a wider composition or keep the full image when the movement will not fit. Zooming in cannot recover detail missing from the source."
+        },
+        {
+          "title": "03 / Two people: decide whether the reaction matters",
+          "body": "In a wide interview, a fixed centre crop may show the space between the guests. Following the current speaker can work for a self-contained answer, but it hides the other person’s reaction. If that reaction changes the meaning, keep both people visible.\n\nUse the full-frame option when the conversation needs both sides. You will trade larger faces for more context. Scribix does not currently offer a two-person split-screen layout; do not plan a stacked composition around that feature. Check every change of speaker and moments when both speak at once."
+        },
+        {
+          "title": "04 / A screen recording needs a different decision",
+          "body": "A face is not always the subject. For software demos and slide presentations, identify the button, chart or text the viewer must read. A crop that follows the presenter can remove the actual explanation.\n\nKeeping the full frame preserves information, but small interface text may become unreadable on a phone. Pick a shorter passage about one screen area and frame that area if possible. If the task requires the whole desktop and a separate face view, use an editor that supports that layout; Scribix does not currently provide a presenter-plus-screen split view."
+        },
+        {
+          "title": "05 / Apply the choice in Scribix",
+          "body": "Upload an original video file you have permission to use, then choose a suggested clip or select a passage yourself on a paid plan. This workflow produces short portrait clips; it is not a converter for exporting an entire recording at any aspect ratio. YouTube transcript import does not import the original video for clipping.\n\nOpen the editor’s framing controls. Review Auto for the suggested framing, use Fit to retain the full source picture, or adjust the crop and zoom for the part you want to show. For changes during the clip, work with the framing sections, preview the transitions and save your adjustments before exporting.\n\nFraming adjustments and caption editing require a paid plan. Free accounts can review and export the original AI candidates. After choosing the frame, correct captions and check their position so that they do not cover the face or important screen content.",
+          "imageAlt": "Existing Scribix framing panel showing a portrait preview and framing controls",
+          "imageCaption": "Existing Framing screenshot from our podcast guide. Source: Changeover Podcast. This is interface evidence, not a new crop comparison; the screenshot and source subtitles retain their original language."
+        },
+        {
+          "title": "06 / Check the exported file on a phone",
+          "body": "Watch the saved MP4 with sound, from beginning to end. If a head disappears, inspect the corresponding framing section. If there are black bars, check whether you deliberately kept the whole image or whether the bars are already part of the uploaded file. Cropping them away may also remove useful content.\n\nIf the result looks soft, reduce the zoom and return to the best original file available. Re-exporting at a larger size does not recreate detail lost in a tight crop. Check the video in the destination app’s preview as well: interface overlays can cover captions even when they fit inside your exported frame.\n\nThe example below is an existing portrait export with its original letterboxing. It shows that a 9:16 file can retain a wide picture. It is not evidence that Fit was selected or that automatic framing improved this shot.",
+          "videoCaption": "Existing 57-second Scribix export from the podcast guide, with original audio, captions and letterboxing. Source: Changeover Podcast. No new before-and-after test was performed.",
+          "checks": [
+            "The important person or detail stays visible throughout.",
+            "Speaker changes and framing transitions are comfortable to watch.",
+            "Captions remain readable without hiding essential content.",
+            "I checked the exported file and the destination app preview."
+          ]
         }
       ]
     }

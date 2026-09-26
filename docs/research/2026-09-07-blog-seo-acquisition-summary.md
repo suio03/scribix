@@ -80,7 +80,7 @@ Scribix 可以先沿用代码管理内容的方式，补上文章索引和可复
 | 顺序 | 内容 | 需求依据 | 交付与证据 |
 | --- | --- | --- | --- |
 | 1（已上线） | How to Clip Podcasts for TikTok | 具体操作问题 | `/guides/how-to-clip-podcasts-for-tiktok`；获授权输入、选片理由、边界修正、构图、字幕、真实导出；配套操作演示 |
-| 2（待制作） | How to Convert Horizontal Video to Vertical Without Cutting Off Speakers | 横屏转竖屏任务；发布前重查查询表达 | 裁切与保留全画面的对照；单人、双人和屏幕内容按实际能力说明，不承诺不存在的布局 |
+| 2（本地完成，未发布） | How to Turn Horizontal Video Vertical Without Cutting Off Speakers | 六语言本地表达已调研，未取得搜索量 | `/guides/how-to-convert-horizontal-video-to-vertical`；裁切／全画面构图示意、单人／双人／屏幕场景、既有截图和真实导出，不声称新实测 |
 | 3（已上线） | Podcast Clip Checklist | 编辑选题，未验证搜索量 | 指代、上下文、答案完整性、广告、重复、标题忠实度的检查方法；正文直接可用，附可打印／下载清单，初期不强制留邮箱 |
 | 4（待制作） | 一期访谈最终保留哪些片段，为什么 | 编辑选题，未验证搜索量 | 同素材案例、保留／放弃理由和修正前后结果；只有完整计时才写耗时；自有实验不称客户案例 |
 | 5（已上线） | OpusClip Alternatives for Podcast Clips | 工具选型意图；历史指标不再沿用 | 比较 Scribix、Vizard、quso.ai 与 OpusClip 的官方功能和套餐；复用 Guide 媒体制作专业流程演示，不声称同素材性能测试 |
@@ -178,6 +178,16 @@ How to Turn Long Videos into Shorts 保留为后续总览候选；有独立材�
 - 验证：`npm run build`（含六语言校验）通过；Chrome ai-publisher 中桌面／390px 手机布局、浅深色演示、点击／键盘切换、FAQ、真实视频播放已检查。独立 localhost 生产预览验证英文路由、索引和 sitemap。线上目录与文章均返回 200、自引用 canonical，无 hreflang 或竞品外链；19 个语言前缀／旧路径跳转均为 308 并保留查询参数，线上 sitemap 仅包含两个无前缀英文 alternatives URL。
 - 发布：功能提交 `efca9ea` 已推送 `origin/main`，通过隔离的已提交源码构建并部署到 `scribix.io`；Cloudflare 版本 `88083381-3b4f-4822-8980-d605bfc2ecf8`。没有数据库迁移。
 - 制作与来源记录见 [对比页内容备注](../content/opus-clip-alternatives.md)。
+
+### 第二篇英文对比页 — 2026-09-26 本地完成，未发布
+
+用户确认选题 Vizard。`/alternatives/vizard-alternative` 提供 Scribix 与 Vizard 的直接比较：免费编辑权限、月付／年付额度、文本操作、输出和切换限制；复用已有 Guide 媒体，不声称竞品实测。已接入本地 Alternatives 目录、页脚和 sitemap，保持仅英文。
+
+首篇 quso.ai 描述同步修正为 Lite 包含 TikTok 发布、Essential 增加七平台排程，保留原发布日期并更新修改日期。两页复用公共比较样式。研究、来源和验证见 [Vizard 内容记录](../content/vizard-alternative.md)；本节不表示生产已上线。
+
+### 第二篇操作 Guide — 2026-09-26 本地完成，未发布
+
+用户要求先调研本地语言搜索表达，再进行六语言写作。已完成 [本地表达研究](2026-09-26-horizontal-vertical-localization.md)，据此制作横屏转竖屏 Guide，覆盖 en/fr/es/it/ja/de。新增构图 SVG 示意，复用现有 Framing 截图和真实导出；说明付费编辑、裁切与保留完整画面的取舍，以及当前不支持的分屏布局。已接入本地 Guides 索引与六语言 sitemap，未制作独立功能页。来源、实现及验证见 [内容备注](../content/horizontal-video-to-vertical.md)。
 
 ## 8. 后续需要补齐的证据
 

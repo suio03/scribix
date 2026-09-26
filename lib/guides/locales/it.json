@@ -238,7 +238,8 @@
           "title": "4. Controlla l’inquadratura verticale",
           "body": "Guarda tutta la clip, non solo il primo fotogramma. Segui cambi di camera, interlocutori e gesti, mantenendo visibili gli elementi citati.\n\nUn’inquadratura più ampia può funzionare meglio quando servono entrambe le persone o una presentazione. Controlla ogni passaggio, anche con l’inquadratura automatica.",
           "imageAlt": "Controlli dell’inquadratura accanto all’anteprima verticale",
-          "imageCaption": "Framing offre Automatic follow, Show full frame e Crop a section manually. Qui è selezionato il tracciamento automatico. Restano bande nere: controlla i cambi di camera prima di intervenire."
+          "imageCaption": "Framing offre Automatic follow, Show full frame e Crop a section manually. Qui è selezionato il tracciamento automatico. Restano bande nere: controlla i cambi di camera prima di intervenire.",
+          "relatedLabel": "Ritagliare o mantenere l’intera inquadratura? Leggi la guida per passare da video orizzontale a verticale"
         },
         {
           "title": "5. Controlla testo e stile dei sottotitoli",
@@ -254,6 +255,67 @@
         {
           "title": "Prima di pubblicare",
           "body": "Controlla l’anteprima in TikTok con la sua interfaccia e conferma pubblico e dettagli del post. Questa guida non presuppone un account collegato o una pubblicazione diretta già verificata.\n\nNon devi pubblicare tutte le proposte. Preferisci passaggi chiari, fedeli e utili e inizia con il tuo videopodcast."
+        }
+      ]
+    },
+    "reframing": {
+      "title": "Da video orizzontale a verticale: come non tagliare le persone",
+      "metadataTitle": "Video da orizzontale a verticale: scegliere l’inquadratura",
+      "description": "Scopri quando ritagliare e quando mantenere l’intera immagine in un video 9:16. Una guida per interviste, riprese di una persona e registrazioni dello schermo.",
+      "intro": "Trasformare un video da orizzontale a verticale non significa soltanto cambiare le proporzioni. Prima scegli cosa deve vedere il pubblico: un volto, entrambi gli interlocutori o il contenuto dello schermo. Poi adatta l’inquadratura.",
+      "category": "Guida all’inquadratura",
+      "readingTime": "6 min di lettura",
+      "sections": [
+        {
+          "title": "01 / Senza ritaglio o senza tagliare le persone?",
+          "body": "Per mantenere tutta l’immagine orizzontale dentro un formato verticale devi ridurla: rimane spazio sopra e sotto. Per riempire il formato, invece, devi ritagliare una parte dei lati e decidere cosa lasciare visibile.\n\nUn’immagine 16:9 non può riempire un fotogramma 9:16 conservando sia le proporzioni sia tutti i bordi originali. Allungarla deforma i volti; ruotarla mette le persone di lato. Mantieni l’intera immagine quando entrambi i lati sono importanti. Ritaglia solo se la porzione rimasta racconta ancora ciò che serve.",
+          "diagram": {
+            "title": "Una scena, tre inquadrature",
+            "items": [
+              {
+                "title": "Ritaglio centrale fisso",
+                "body": "Il centro può escludere entrambe le persone."
+              },
+              {
+                "title": "Ritaglio su una persona",
+                "body": "Una rimane visibile; l’altra è fuori campo."
+              },
+              {
+                "title": "Immagine intera",
+                "body": "Entrambe restano visibili, con spazio sopra e sotto."
+              }
+            ],
+            "caption": "Schema delle inquadrature, non un’esportazione Scribix o un test del tracciamento automatico."
+          }
+        },
+        {
+          "title": "02 / Una persona: controlla anche il movimento",
+          "body": "Parti da un’inquadratura sulla persona che parla. Lascia margine sopra la testa e intorno ai gesti o agli oggetti utili alla spiegazione. Guarda tutta la clip: un ritaglio corretto all’inizio può perdere il soggetto quando si sposta.\n\nIl tracciamento automatico è un punto di partenza da verificare. Se perde il soggetto, correggi la sezione interessata invece di fidarti di un solo fotogramma. Allarga l’inquadratura o conserva l’immagine intera se il movimento lo richiede. Lo zoom non recupera dettagli assenti dal file originale."
+        },
+        {
+          "title": "03 / Due persone: conta anche la reazione?",
+          "body": "In un’intervista ripresa in campo largo, il ritaglio centrale può mostrare lo spazio fra le persone. Seguire chi parla può bastare per una risposta autonoma, ma nasconde la reazione dell’altra persona. Se quella reazione cambia il significato dello scambio, mantieni visibili entrambi.\n\nL’immagine intera rende i volti più piccoli, ma conserva il contesto. Scribix non offre attualmente un layout a schermo diviso per due persone. Controlla ogni cambio di interlocutore e i momenti in cui parlano contemporaneamente."
+        },
+        {
+          "title": "04 / Registrazioni dello schermo: prima la leggibilità",
+          "body": "In un tutorial su un software, il soggetto può essere un pulsante, un grafico o una frase. Seguire il volto di chi presenta può eliminare proprio la parte da spiegare.\n\nMantenere tutto lo schermo conserva le informazioni, ma i testi piccoli possono diventare illeggibili sul telefono. Se possibile, scegli un passaggio dedicato a una sola area e inquadra quella. Se servono tutto il desktop e un riquadro separato per il volto, usa un editor con quel layout: Scribix non lo offre attualmente."
+        },
+        {
+          "title": "05 / Imposta l’inquadratura in Scribix",
+          "body": "Carica un file video originale che hai il permesso di utilizzare. Scegli una clip proposta oppure seleziona un passaggio con un piano a pagamento. Questo flusso crea brevi clip verticali, non converte una registrazione intera in qualsiasi formato. L’importazione della trascrizione YouTube non importa il video originale.\n\nApri i controlli dell’inquadratura nell’editor. Verifica il risultato automatico, scegli l’opzione che mantiene l’immagine intera oppure regola ritaglio e zoom. Per variare il quadro durante la clip, modifica le sezioni interessate, guarda le transizioni e salva prima di esportare.\n\nLe modifiche all’inquadratura e ai sottotitoli richiedono un piano a pagamento. Gli account gratuiti possono rivedere ed esportare le clip suggerite senza modificarle. Dopo aver scelto il quadro, posiziona i sottotitoli in modo che non coprano volti o informazioni importanti.",
+          "imageAlt": "Schermata esistente dei controlli di inquadratura Scribix con anteprima verticale",
+          "imageCaption": "Schermata della guida podcast esistente. Fonte: Changeover Podcast. Mostra i controlli, non un nuovo confronto fra ritagli. L’interfaccia e i sottotitoli restano nella lingua originale."
+        },
+        {
+          "title": "06 / Controlla il file esportato sul telefono",
+          "body": "Guarda il file MP4 salvato con l’audio, dall’inizio alla fine. Se una testa esce dal quadro, verifica la sezione corrispondente. Se compaiono bande nere, controlla se hai scelto di mantenere l’immagine intera o se le bande erano già nel file originale. Eliminarle può rimuovere anche contenuti utili.\n\nSe il risultato è poco nitido, riduci lo zoom e riparti dal miglior originale disponibile. Esportare a dimensioni maggiori non ricrea i dettagli persi. Controlla anche l’anteprima nell’app di destinazione: i suoi pulsanti possono coprire i sottotitoli.\n\nL’esempio seguente è un’esportazione verticale esistente con le bande originali. Mostra che un file 9:16 può contenere un’immagine larga; non dimostra quale modalità sia stata selezionata o un miglioramento del tracciamento.",
+          "videoCaption": "Esportazione Scribix esistente di 57 secondi, con audio, sottotitoli e bande originali. Fonte: Changeover Podcast. Nessun nuovo test prima/dopo.",
+          "checks": [
+            "Le persone e i dettagli importanti restano visibili.",
+            "I cambi di interlocutore e inquadratura sono gradevoli da guardare.",
+            "I sottotitoli sono leggibili e non coprono informazioni essenziali.",
+            "Ho controllato il file e l’anteprima nell’app di destinazione."
+          ]
         }
       ]
     }

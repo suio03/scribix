@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [
     { url: urlFor("en", "/long-video-to-short-video-ai").href, lastModified: new Date("2026-09-24T00:00:00.000Z"), changeFrequency: "monthly", priority: 0.8, alternates: { languages: languageAlternates("/long-video-to-short-video-ai") } },
     { url: urlFor("en", "/alternatives").href, changeFrequency: "monthly", priority: 0.6 },
-    ...ALTERNATIVES.map(article => ({ url: urlFor("en", article.path).href, lastModified: new Date(article.published), changeFrequency: "monthly" as const, priority: 0.6 })),
+    ...ALTERNATIVES.map(article => ({ url: urlFor("en", article.path).href, lastModified: new Date(article.modified), changeFrequency: "monthly" as const, priority: 0.6 })),
     { url: "https://scribix.io/partners", changeFrequency: "weekly", priority: 0.4 },
     {
       url: urlFor(routing.defaultLocale, "").href,

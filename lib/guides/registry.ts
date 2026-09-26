@@ -62,6 +62,7 @@ export const GUIDE_REGISTRY = [
       },
       {
         "id": "step-5",
+        "related": "/guides/how-to-convert-horizontal-video-to-vertical",
         "image": {
           "src": "/media/guides/podcast-tiktok/framing.jpg",
           "width": 1280,
@@ -88,5 +89,19 @@ export const GUIDE_REGISTRY = [
         "id": "step-8"
       }
     ]
-  }
+  },
+  {
+    key: "reframing",
+    slug: "how-to-convert-horizontal-video-to-vertical",
+    published: "2026-09-26",
+    thumbnail: "/media/guides/podcast-tiktok/framing.jpg",
+    sections: [
+      { id: "crop-or-fit", diagram: "framing" },
+      { id: "one-speaker" },
+      { id: "two-speakers" },
+      { id: "screen-recordings" },
+      { id: "scribix-framing", image: { src: "/media/guides/podcast-tiktok/framing.jpg", width: 1280, height: 665 } },
+      { id: "check-export", video: { src: "/media/guides/podcast-tiktok/export.mp4", poster: "/media/guides/podcast-tiktok/export-poster.jpg", portrait: true } },
+    ],
+  },
 ] as const;

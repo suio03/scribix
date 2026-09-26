@@ -47,3 +47,7 @@ Next production build and locale parity pass. Chrome checks include scene switch
 Use `localhost` for local preview. The existing dev asset prefix does not hydrate reliably through `127.0.0.1` in this session. A production preview bound to `127.0.0.1` also exposed an absolute-rewrite host mismatch affecting existing legal pages; binding the temporary preview to `localhost` resolved it without changing shared host logic. This is local verification, not Cloudflare deployment verification.
 
 Navigation separation check (2026-09-20): Guides remains tutorials/checklists; Alternatives owns comparison navigation. No placeholder Vizard or Quso links are created before those pages exist.
+
+## 2026-09-26 local maintenance (not deployed)
+
+Rechecked https://quso.ai/pricing: Lite lists TikTok publishing; Essential adds scheduling to seven platforms. Corrected the output and detail copy in the local article. Preserve the September 20 publication date, with September 26 modification metadata and a scoped source note. Shared comparison CSS now lives in `app/components/guides/comparison.css` for both articles.

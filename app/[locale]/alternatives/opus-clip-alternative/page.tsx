@@ -5,7 +5,7 @@ import { ContentShell, JsonLd } from "@/app/components/guides/ContentShell";
 import { ComparisonDemo } from "@/app/components/guides/ComparisonDemo";
 import { OPUS_COMPARISON as article, COMPARISON_TOOLS, COMPARISON_FAQS } from "@/lib/alternatives/opus-clip";
 import { socialImages } from "@/lib/metadata-url";
-import "./comparison.css";
+import "@/app/components/guides/comparison.css";
 
 const canonical = `https://scribix.io${article.path}`;
 
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: article.title, description: article.description, url: canonical,
     siteName: "Scribix", type: "article", publishedTime: article.published,
-    modifiedTime: article.published, images: socialImages,
+    modifiedTime: article.modified, images: socialImages,
   },
   twitter: { card: "summary_large_image", title: article.title, description: article.description, images: socialImages },
 };
@@ -38,7 +38,7 @@ export default async function OpusClipAlternatives({ params }: {
         "@context": "https://schema.org",
         "@graph": [
           { "@type": "Article", headline: article.title, description: article.description,
-            datePublished: article.published, dateModified: article.published, inLanguage: "en",
+            datePublished: article.published, dateModified: article.modified, inLanguage: "en",
             mainEntityOfPage: canonical,
             author: { "@type": "Organization", name: "Scribix", url: "https://scribix.io" },
             publisher: { "@type": "Organization", name: "Scribix", url: "https://scribix.io" } },
@@ -54,7 +54,7 @@ export default async function OpusClipAlternatives({ params }: {
           <p className="guide-eyebrow mt-10">The creator’s shortlist / Comparison</p>
           <h1 className="guide-title mt-5 max-w-[990px]">OpusClip alternatives<br />for <span className="text-accent">podcast clips.</span></h1>
           <p className="comparison-intro">The right tool fits the work after the first cut. Compare Scribix, Vizard and quso.ai with OpusClip—from reviewing the conversation to finishing a clip you want to share.</p>
-          <div className="comparison-byline"><span>By Scribix</span><time dateTime={article.published}>Updated {article.displayDate}</time><a href="#sources">Sources &amp; approach ↗</a></div>
+          <div className="comparison-byline"><span>By Scribix</span><time dateTime={article.modified}>Updated {article.modifiedDisplayDate}</time><a href="#sources">Sources &amp; approach ↗</a></div>
           <p className="comparison-disclosure">We make Scribix. This guide compares published features and workflow fit; it is not a head-to-head output benchmark.</p>
         </header>
 
@@ -110,7 +110,7 @@ export default async function OpusClipAlternatives({ params }: {
           <div className="comparison-tool-details">
             {COMPARISON_TOOLS.slice(1).map(tool => <section id={tool.id} key={tool.id} className="comparison-tool-detail" aria-labelledby={`${tool.id}-title`}>
               <div><p className="guide-eyebrow">{tool.role}</p><h3 id={`${tool.id}-title`}>{tool.name}</h3></div>
-              <div><p>{tool.detail}</p><p className="comparison-tool-caveat"><strong>Check before choosing:</strong> {tool.caveat}</p></div>
+              <div><p>{tool.detail}</p><p className="comparison-tool-caveat"><strong>Check before choosing:</strong> {tool.caveat}</p>{"comparisonPath" in tool ? <Link href={tool.comparisonPath} className="comparison-text-link">Compare Vizard and Scribix in detail ↗</Link> : null}</div>
             </section>)}
           </div>
         </section>
@@ -129,6 +129,7 @@ export default async function OpusClipAlternatives({ params }: {
           <h2 id="sources-title">Sources &amp; approach</h2>
           <p>Published by Scribix. Recommendations reflect our interpretation of workflow fit. Competitor features and plan limits were checked against each vendor’s own pricing page on {article.displayDate}; Vizard’s monthly Creator price was checked in its live plan selector. No competitor performance tests were conducted for this article.</p>
           <ul>{COMPARISON_TOOLS.map(tool => <li key={tool.id}>{tool.sourceLabel}</li>)}</ul>
+          <p>quso.ai’s publishing tiers were rechecked on September 26, 2026: Lite lists TikTok publishing; Essential adds scheduling to seven platforms.</p>
           <p>Scribix illustrations reuse material from our <Link href="/guides/how-to-clip-podcasts-for-tiktok">podcast clipping guide</Link>. They explain the workflow; they do not measure processing speed, demonstrate new edits or imply endorsement by the people shown.</p>
         </section>
 

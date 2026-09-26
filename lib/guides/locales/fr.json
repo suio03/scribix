@@ -238,7 +238,8 @@
           "title": "4. Vérifier le cadrage vertical",
           "body": "Regardez l’ensemble du passage, y compris les changements de caméra et de personne. Gardez visibles les gestes et les éléments mentionnés.\n\nUn cadrage plus large peut être préférable si deux personnes ou une présentation doivent rester à l’image. Vérifiez chaque transition, même avec le cadrage automatique.",
           "imageAlt": "Réglages de cadrage à côté de l’aperçu vertical",
-          "imageCaption": "Framing propose Automatic follow, Show full frame et Crop a section manually. Le suivi automatique est sélectionné ici. Des bandes noires restent visibles ; vérifiez les changements de caméra avant d’ajuster."
+          "imageCaption": "Framing propose Automatic follow, Show full frame et Crop a section manually. Le suivi automatique est sélectionné ici. Des bandes noires restent visibles ; vérifiez les changements de caméra avant d’ajuster.",
+          "relatedLabel": "Recadrer ou garder l’image entière ? Lisez le guide pour passer une vidéo horizontale en verticale"
         },
         {
           "title": "5. Vérifier et mettre en forme les sous-titres",
@@ -254,6 +255,67 @@
         {
           "title": "Avant de publier",
           "body": "Prévisualisez la vidéo dans TikTok avec son interface, puis confirmez le public et les détails de publication. Ce guide ne suppose ni un compte connecté ni un parcours de publication directe vérifié.\n\nVous n’avez pas besoin de publier toutes les propositions. Gardez les passages clairs, exacts et utiles, puis commencez avec votre propre podcast vidéo."
+        }
+      ]
+    },
+    "reframing": {
+      "title": "Passer une vidéo horizontale en verticale sans couper les personnes",
+      "metadataTitle": "Vidéo horizontale en verticale : bien garder les personnes dans le cadre",
+      "description": "Recadrer ou conserver toute l’image ? Choisissez le bon cadrage pour une personne, une interview à deux ou une capture d’écran au format vertical 9:16.",
+      "intro": "Pour passer une vidéo horizontale en verticale, changer le format ne suffit pas. Il faut décider ce que le public doit voir : un visage, les deux personnes ou le contenu d’un écran. Voici comment choisir le cadrage avant d’exporter.",
+      "category": "Guide de cadrage",
+      "readingTime": "6 min de lecture",
+      "sections": [
+        {
+          "title": "01 / Sans recadrer ou sans couper les personnes ?",
+          "body": "Conserver toute l’image et remplir un écran vertical sont deux objectifs différents. Pour faire entrer une image paysage entière dans un cadre portrait, il faut la réduire : il reste alors de l’espace au-dessus et en dessous. Pour remplir le cadre, il faut retirer une partie des côtés.\n\nUne image 16:9 ne peut pas remplir un cadre 9:16 en conservant à la fois ses proportions et tous ses bords. L’étirer déforme les visages ; la faire pivoter couche les personnes. Si les deux côtés sont importants, commencez par garder toute l’image. Ne recadrez que si la zone restante suffit à comprendre la scène.",
+          "diagram": {
+            "title": "Une scène, trois choix de cadrage",
+            "items": [
+              {
+                "title": "Recadrage centré fixe",
+                "body": "Le centre peut laisser les deux personnes hors champ."
+              },
+              {
+                "title": "Cadrage sur une personne",
+                "body": "Une personne reste visible ; l’autre sort du cadre."
+              },
+              {
+                "title": "Image entière",
+                "body": "Les deux restent visibles, avec de l’espace en haut et en bas."
+              }
+            ],
+            "caption": "Schéma de cadrage, pas un export Scribix ni un test du suivi automatique."
+          }
+        },
+        {
+          "title": "02 / Une personne : regardez aussi ses mouvements",
+          "body": "Pour une personne face caméra, commencez par cadrer celle qui parle. Gardez de la marge au-dessus de la tête et autour des gestes ou objets qui expliquent son propos. Regardez ensuite tout l’extrait : un cadrage correct au début peut couper la personne lorsqu’elle se penche.\n\nLe suivi automatique est un point de départ à vérifier. S’il perd le sujet, corrigez la partie concernée au lieu de vous fier à une image fixe. Élargissez le cadre ou conservez l’image entière si les mouvements sont trop amples. Un zoom ne recrée pas les détails absents de la vidéo source."
+        },
+        {
+          "title": "03 / Une interview à deux : la réaction compte-t-elle ?",
+          "body": "Dans un plan large, un recadrage centré peut montrer surtout l’espace entre les personnes. Suivre celle qui parle convient parfois à une réponse autonome, mais masque la réaction de l’autre. Si cette réaction change le sens de l’échange, gardez les deux dans le cadre.\n\nConserver toute l’image réduit la taille des visages, mais préserve le contexte. Scribix ne propose pas actuellement de disposition en écran partagé pour deux personnes. Vérifiez chaque changement de prise de parole et les moments où les deux parlent ensemble."
+        },
+        {
+          "title": "04 / Capture d’écran : gardez l’explication lisible",
+          "body": "Dans une démonstration de logiciel ou une présentation, le sujet principal peut être un bouton, un graphique ou du texte. Suivre le visage de la personne risque de faire disparaître ce qu’elle explique.\n\nL’image entière conserve les informations, mais les petits caractères peuvent devenir illisibles sur téléphone. Choisissez si possible un passage consacré à une seule zone et cadrez cette zone. Si vous devez montrer tout le bureau et le visage dans deux espaces distincts, utilisez un logiciel adapté : cette disposition n’est pas proposée dans Scribix."
+        },
+        {
+          "title": "05 / Choisir le cadrage dans Scribix",
+          "body": "Importez un fichier vidéo original que vous avez le droit d’utiliser. Choisissez un extrait proposé ou sélectionnez vous-même un passage avec une offre payante. Ce parcours sert à produire de courts extraits verticaux, pas à convertir un enregistrement entier dans tous les formats. L’import de transcription YouTube n’importe pas la vidéo source.\n\nDans l’éditeur, ouvrez les réglages de cadrage. Vérifiez le résultat proposé par le mode automatique, choisissez l’option qui conserve l’image entière, ou ajustez le recadrage et le zoom. Si le cadre doit évoluer, réglez les sections concernées, regardez les transitions et enregistrez avant l’export.\n\nLes réglages de cadrage et l’édition des sous-titres nécessitent une offre payante. Un compte gratuit permet de consulter et d’exporter les extraits proposés tels quels. Après le cadrage, vérifiez que les sous-titres ne masquent ni les visages ni les détails importants.",
+          "imageAlt": "Capture existante du panneau de cadrage Scribix avec aperçu vertical",
+          "imageCaption": "Capture du guide podcast existant. Source : Changeover Podcast. Elle montre les commandes, pas un nouveau test de recadrage. L’interface capturée et les sous-titres restent dans leur langue d’origine."
+        },
+        {
+          "title": "06 / Vérifier le fichier exporté sur un téléphone",
+          "body": "Regardez le MP4 enregistré avec le son, du début à la fin. Si une tête sort du cadre, vérifiez la section correspondante. En présence de bandes noires, demandez-vous si vous avez choisi de garder toute l’image ou si elles figurent déjà dans le fichier source. Les retirer peut aussi supprimer une partie utile.\n\nSi l’image devient floue, réduisez le zoom et repartez du meilleur fichier original disponible. Un export plus grand ne restitue pas les détails perdus. Vérifiez aussi l’aperçu dans l’application de destination : ses boutons peuvent recouvrir des sous-titres pourtant bien placés dans le fichier.\n\nL’exemple ci-dessous est un export vertical existant qui conserve ses bandes. Il montre qu’un fichier 9:16 peut contenir une image large, sans prouver qu’un mode précis a été utilisé ni que le suivi automatique a amélioré ce plan.",
+          "videoCaption": "Export Scribix existant de 57 secondes : son, sous-titres et bandes d’origine conservés. Source : Changeover Podcast. Aucun nouveau test avant/après.",
+          "checks": [
+            "Les personnes et détails importants restent visibles.",
+            "Les changements de personne et de cadrage restent agréables à regarder.",
+            "Les sous-titres sont lisibles et ne cachent rien d’essentiel.",
+            "J’ai vérifié le fichier et l’aperçu dans l’application de destination."
+          ]
         }
       ]
     }
