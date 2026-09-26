@@ -1,6 +1,6 @@
 # Vizard alternative: editorial and implementation notes
 
-Prepared 2026-09-26 after the user selected Vizard. Local implementation only; no production release. Delivery status lives in the [content plan](../research/2026-09-07-blog-seo-acquisition-summary.md). See the [research brief](../research/2026-09-26-second-alternative.md) for candidate selection and unavailable search-volume metrics.
+Prepared 2026-09-26 after the user selected Vizard. Published on 2026-09-26; production verification is recorded below. Delivery status lives in the [content plan](../research/2026-09-07-blog-seo-acquisition-summary.md). See the [research brief](../research/2026-09-26-second-alternative.md) for candidate selection and unavailable search-volume metrics.
 
 ## Scope and sources
 
@@ -35,4 +35,8 @@ Production availability of the advertised Scribix flow and source facts should b
 - Chrome `ai-publisher`: desktop and 390px mobile layout, light/dark theme, scene selection and FAQ expansion checked. Mobile page has no document-level horizontal overflow; comparison table has its own scroll container. Restored original theme and viewport.
 - Native video played to 32.99 seconds of 57.433 seconds without a media error, then was paused.
 - Local HTTP checks: new article, directory, existing Opus article and sitemap return 200; single English Vizard sitemap URL; English canonical and no hreflang; all six locale prefixes return 308 preserving query parameters. Corrected quso.ai copy appears in the old article.
-- Local preview: http://localhost:3000/alternatives/vizard-alternative . No commit, push or production deployment.
+- Local preview: http://localhost:3000/alternatives/vizard-alternative . This preview preceded the production release recorded below.
+
+## Production release — 2026-09-26
+
+Commit `4172cc7` was pushed to `origin/main`. Cloudflare Workers Build `2a222352-724e-4c32-baa1-db67d1c47370` succeeded and deployed version `107a956c-0b52-4c84-babd-de5266ac203f` at 12:22:48 UTC (22:22:48 Melbourne). The article and Alternatives directory return 200; English self-canonical, absent hreflang, one sitemap entry and the corrected OpusClip article copy were verified on production. The staged release snapshot passed `npm run build`, including locale validation, independently of unrelated workspace edits. This verifies content availability, not search indexing or a new end-to-end product test.

@@ -1,6 +1,6 @@
 # Horizontal video to vertical: Guide production notes
 
-Prepared 2026-09-26. Local implementation only; no production release. Status is maintained in the [content plan](../research/2026-09-07-blog-seo-acquisition-summary.md).
+Prepared 2026-09-26. Published on 2026-09-26; production verification is recorded below. Status is maintained in the [content plan](../research/2026-09-07-blog-seo-acquisition-summary.md).
 
 ## Research before localization
 
@@ -27,7 +27,7 @@ The screenshot documents the interface. The existing 57.433-second export retain
 
 ## Release boundary
 
-The prepared publication date is September 26. Update to the actual release date if publishing later. No commit, push, production deployment, schema change or new analytics instrumentation is part of this preparation. Local content validation does not replace live product acceptance or search-indexing verification.
+The prepared publication date is September 26. Update to the actual release date if publishing later. No schema change or new analytics instrumentation is included. Local content validation does not replace live product acceptance or search-indexing verification.
 
 ## Local verification — 2026-09-26
 
@@ -36,4 +36,8 @@ The prepared publication date is September 26. Update to the actual release date
 - Chrome `ai-publisher`: English desktop layout and three-view framing illustration, 390px Japanese article/illustration, German long paragraphs and loaded framing screenshot inspected. French, Spanish, Italian, German and Japanese mobile document widths checked without horizontal overflow.
 - Language picker tested from English to Japanese and back from German to English. In-page section navigation, an interactive checklist item and dark-theme illustration checked. Original theme and viewport restored.
 - Existing export playback checked in the guide; source media is shared unchanged with the previous tutorial.
-- No production publishing or search-indexing verification.
+- These checks preceded the production release below; search indexing remains unverified.
+
+## Production release — 2026-09-26
+
+Published with commit `4172cc7` through the successful Cloudflare build and version recorded in [Vizard release notes](vizard-alternative.md#production-release--2026-09-26). All six production articles and localized Guide directories return 200. Each article has its own canonical and seven language alternates (six locales plus x-default), with no noindex; all six URLs appear in the production sitemap. The isolated release snapshot passed `npm run build` and six-language validation. No new product-flow acceptance or search-indexing claim is implied.

@@ -1,6 +1,6 @@
 # 第二篇 Alternative：选题调研与制作 brief
 
-调研日期：2026-09-26。状态：用户已选定 Vizard；本地页面已实现，尚未发布。实现与验证见 [内容记录](../content/vizard-alternative.md)。内容上线状态仍统一维护在 [内容规划](2026-09-07-blog-seo-acquisition-summary.md)。
+调研日期：2026-09-26。状态：用户已选定 Vizard；页面已于 2026-09-26 发布（`4172cc7`）。实现与验证见 [内容记录](../content/vizard-alternative.md)。内容上线状态仍统一维护在 [内容规划](2026-09-07-blog-seo-acquisition-summary.md)。
 
 ## 结论
 
@@ -97,7 +97,7 @@ H1：`Vizard Alternative for Podcast Clips: Scribix Compared`
 
 ## 本轮发现的旧内容维护项
 
-第一篇 `lib/alternatives/opus-clip.ts` 写 quso.ai Lite 包含六平台发布与排程。本次 [quso.ai 官方价格页](https://quso.ai/pricing) 把 Lite 标为 TikTok 发布，七平台排程放在 Essential。新文章不得沿用旧描述；建议下一次内容更新同步核实并修正首篇。后续页面实施已在本地修正首篇这两处描述，并更新修改日期；线上尚未发布。
+第一篇 `lib/alternatives/opus-clip.ts` 写 quso.ai Lite 包含六平台发布与排程。本次 [quso.ai 官方价格页](https://quso.ai/pricing) 把 Lite 标为 TikTok 发布，七平台排程放在 Essential。新文章不得沿用旧描述；建议下一次内容更新同步核实并修正首篇。后续页面实施已修正首篇这两处描述，并更新修改日期；随 `4172cc7` 发布，线上已验证。
 
 Klap 的 [当前价格页](https://klap.app/pricing) 使用 clips/mo：Basic 100、Pro 300、Pro+ 1,000；默认年付折算价分别 $14／$39／$94 每月。本轮未验证月付开关和试用条件，不把这些年付数字标成月付，也不沿用旧的“处理分钟数”比较。
 

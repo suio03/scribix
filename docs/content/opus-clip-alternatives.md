@@ -48,6 +48,6 @@ Use `localhost` for local preview. The existing dev asset prefix does not hydrat
 
 Navigation separation check (2026-09-20): Guides remains tutorials/checklists; Alternatives owns comparison navigation. No placeholder Vizard or Quso links are created before those pages exist.
 
-## 2026-09-26 local maintenance (not deployed)
+## 2026-09-26 published maintenance
 
-Rechecked https://quso.ai/pricing: Lite lists TikTok publishing; Essential adds scheduling to seven platforms. Corrected the output and detail copy in the local article. Preserve the September 20 publication date, with September 26 modification metadata and a scoped source note. Shared comparison CSS now lives in `app/components/guides/comparison.css` for both articles.
+Rechecked https://quso.ai/pricing: Lite lists TikTok publishing; Essential adds scheduling to seven platforms. Corrected the output and detail copy; published in `4172cc7` and verified on production. Preserve the September 20 publication date, with September 26 modification metadata and a scoped source note. Shared comparison CSS now lives in `app/components/guides/comparison.css` for both articles.
