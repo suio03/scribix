@@ -1,0 +1,45 @@
+/* Preserve the shared HTML and original links; animate only their presentation. */
+.carousel {
+  min-width: 0;
+}
+
+.carousel [data-partner-layout="home"] {
+  overflow: clip;
+}
+
+.carousel [data-partner-layout="home"] ul {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: max-content;
+  gap: 20px;
+  padding: 6px 4px 12px;
+}
+
+.carousel [data-partner-layout="home"] li {
+  flex: 0 0 180px;
+  min-height: 48px;
+}
+
+.carousel [data-auto-loop="true"] {
+  animation: partner-loop var(--partner-loop-duration) linear infinite;
+}
+
+.carousel ul:not([data-auto-loop="true"]) [data-loop-copy] {
+  display: none;
+}
+
+.carousel:hover [data-auto-loop],
+.carousel:focus-within [data-auto-loop] {
+  animation-play-state: paused;
+}
+
+@keyframes partner-loop {
+  to { transform: translateX(calc(-1 * var(--partner-loop-distance))); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel [data-auto-loop="true"] {
+    animation: none;
+  }
+}

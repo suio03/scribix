@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "next-intl";
+import styles from "./HomePartners.module.css";
 
 const EMPTY_HTML = { __html: "" };
 
@@ -12,6 +13,48 @@ export default function HomePartners() {
   const locale = useLocale();
   const isHome = pathname === "/" && locale === "en";
   const container = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = container.current;
+    if (!isHome || !element) return;
+    let list: HTMLUListElement | null = null;
+    let originals: HTMLElement[] = [];
+    const measure = () => {
+      if (!list || !originals.length) return;
+      const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
+      const distance = originals.reduce((total, item) => total + item.getBoundingClientRect().width + gap, 0);
+      list.style.setProperty("--partner-loop-distance", `${distance}px`);
+      list.style.setProperty("--partner-loop-duration", `${distance / 32}s`);
+      list.dataset.autoLoop = String(distance - gap > element.clientWidth);
+    };
+    const resize = new ResizeObserver(measure);
+    resize.observe(element);
+    const attach = () => {
+      const next = element.querySelector<HTMLUListElement>("[data-partner-layout='home'] ul");
+      if (next === list) return;
+      list = next;
+      if (!list) return;
+      originals = Array.from(list.children).filter((item): item is HTMLElement => item instanceof HTMLElement && !item.hasAttribute("data-loop-copy"));
+      // Keep every original crawlable link. A second visual sequence makes the
+      // end and start identical, so the animation never travels backwards.
+      for (const item of originals) {
+        const copy = item.cloneNode(true) as HTMLElement;
+        copy.setAttribute("data-loop-copy", "");
+        copy.setAttribute("aria-hidden", "true");
+        copy.querySelectorAll("a").forEach(link => link.setAttribute("tabindex", "-1"));
+        list.appendChild(copy);
+      }
+      measure();
+    };
+    const mutation = new MutationObserver(attach);
+    mutation.observe(element, { childList: true, subtree: true });
+    attach();
+    return () => {
+      mutation.disconnect();
+      resize.disconnect();
+      list?.querySelectorAll("[data-loop-copy]").forEach(copy => copy.remove());
+      list?.removeAttribute("data-auto-loop");
+    };
+  }, [isHome]);
 
   useEffect(() => {
     const element = container.current;
@@ -41,7 +84,7 @@ export default function HomePartners() {
 
   if (!isHome) return null;
   return (
-    <div>
+    <div className={styles.carousel}>
       <div
         ref={container}
         data-partner-links-slot="home"
