@@ -42,7 +42,7 @@ const steps = [
 const controls = [
   { key: "context", icon: ScanText },
   { key: "cut", icon: Scissors },
-  { key: "vertical", icon: Crop },
+  { key: "vertical", icon: Crop, guide: "/guides/how-to-convert-horizontal-video-to-vertical" },
 ] as const;
 const benefits = [
   { key: "moments", icon: ScanText },
@@ -63,6 +63,7 @@ export default async function LongVideoToShortVideoPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const [session, t] = await Promise.all([auth(), getTranslations("LongVideoLanding")]);
+  const shortsT = await getTranslations("YouTubeShortsLanding");
   const signedIn = !!session;
 
   return (
@@ -117,9 +118,9 @@ export default async function LongVideoToShortVideoPage({ params }: Props) {
               <p className={styles.planNote}>{t("controls.planNote")} <Link href="/pricing">{t("controls.compare")} <ArrowRight size={14} aria-hidden="true" /></Link></p>
             </div>
             <div className={styles.controls}>
-              {controls.map(({ key, icon: Icon }) => (
-                <article key={key}><div className={styles.icon}><Icon size={22} strokeWidth={1.7} aria-hidden="true" /></div><div><h3>{t(`controls.items.${key}.title`)}</h3><p>{t(`controls.items.${key}.text`)}</p></div></article>
-              ))}
+              {controls.map(control => { const { key, icon: Icon } = control; return (
+                <article key={key}><div className={styles.icon}><Icon size={22} strokeWidth={1.7} aria-hidden="true" /></div><div><h3>{t(`controls.items.${key}.title`)}</h3><p>{t(`controls.items.${key}.text`)}</p>{"guide" in control ? <p className={styles.guideLink}><Link href={control.guide}>{t("controls.items.vertical.guideLink")} <ArrowRight size={15} aria-hidden="true" /></Link></p> : null}</div></article>
+              ); })}
             </div>
           </div>
         </section>
@@ -149,6 +150,7 @@ export default async function LongVideoToShortVideoPage({ params }: Props) {
           <h2 id="final-title">{t("final.title")}</h2>
           <ClipLandingUploadButton signedIn={signedIn} />
           <p className={styles.ctaNote}>{t("final.note")}</p>
+          <p className={styles.guideLink}><Link href="/youtube-shorts-maker">{shortsT("navLabel")} <ArrowRight size={15} aria-hidden="true" /></Link></p>
         </section>
       </div>
     </ContentShell>

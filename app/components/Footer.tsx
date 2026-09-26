@@ -24,6 +24,7 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
     getTranslations("Footer"),
   ]);
   const guidesT = await getTranslations("GuidesNav");
+  const shortsT = await getTranslations("YouTubeShortsLanding");
   const clipLandingT = await getTranslations("LongVideoLanding");
   const topNavT = await getTranslations("TopNav");
   const legal = LEGAL_LINKS.filter(
@@ -71,6 +72,7 @@ export async function Footer({ compact = false }: { compact?: boolean }) {
           <h2 className="mb-4 font-mono text-xs font-medium uppercase tracking-wider text-muted">{topNavT("product")}</h2>
           <ul className="space-y-2 text-[13px] text-muted">
             <li><Link href="/long-video-to-short-video-ai" className="inline-flex min-h-10 items-center transition hover:text-ink">{clipLandingT("navLabel")}</Link></li>
+            <li><Link href="/youtube-shorts-maker" className="inline-flex min-h-10 items-center transition hover:text-ink">{shortsT("navLabel")}</Link></li>
             <li><Link href="/podcast-clip-maker" className="inline-flex min-h-10 items-center transition hover:text-ink">{guidesT("podcast")}</Link></li>
             <li><Link href="/guides" className="inline-flex min-h-10 items-center transition hover:text-ink">{guidesT("guides")}</Link></li>
           </ul>

@@ -11,11 +11,13 @@ export function HomeLoopVideo({
   poster,
   className,
   label,
+  controls = false,
 }: {
   src: string;
   poster: string;
   className?: string;
   label?: string;
+  controls?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -57,6 +59,7 @@ export function HomeLoopVideo({
       src={src}
       poster={poster}
       className={className}
+      controls={controls}
       muted
       loop
       playsInline
